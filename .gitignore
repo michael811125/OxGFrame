@@ -19,6 +19,7 @@ sysinfo.txt
 *.unitypackage
 [Mm]emoryCaptures/
 *.wlt
+[Ss]erverData/
 
 # ==================== #
 # Unity 2020 generated #
