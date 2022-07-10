@@ -1,0 +1,84 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using GSIFrame;
+
+public class #SCRIPTNAME# : GSIM
+{
+    // Suggest to create a Singleton or Not (up to you)
+    private static #SCRIPTNAME# _instance = null;
+    public static #SCRIPTNAME# GetInstance()
+    {
+        if (_instance == null) _instance = new #SCRIPTNAME#();
+        return _instance;
+    }
+
+    /*
+    // >>> EXAMPLE <<<
+
+    public static byte none = 0;
+    public static byte startupStage = 1;
+    public static byte logoStage = 2;
+    public static byte patchStage = 3;
+    public static byte loginStage = 4;
+    public static byte enterStage = 5;
+
+    // >>> EXAMPLE <<<
+    */
+
+    public #SCRIPTNAME#()
+    {
+        /*
+        // >>> EXAMPLE <<<
+
+        GameStageBase gameStage;
+
+        // None
+        gameStage = new NoneStageExample(GSIMExample.none);
+        this.AddGameStage(GSIMExample.none, gameStage);
+
+        // 1. Game Startup Stage
+        gameStage = new StartupStageExample(GSIMExample.startupStage);
+        this.AddGameStage(GSIMExample.startupStage, gameStage);
+
+        // 2. Game Logo Show Stage
+        gameStage = new LogoStageExample(GSIMExample.logoStage);
+        this.AddGameStage(GSIMExample.logoStage, gameStage);
+
+        // 3. Game Patch Stage (The App in this stage is Hot-Update stage. The H5 doesn't require Hot-Update, so you can to do preload in this Stage.)
+        gameStage = new PatchStageExample(GSIMExample.patchStage);
+        this.AddGameStage(GSIMExample.patchStage, gameStage);
+
+        // 4. Game Login Stage
+        gameStage = new LoginStageExample(GSIMExample.loginStage);
+        this.AddGameStage(GSIMExample.loginStage, gameStage);
+
+        // 5. Game Enter Stage
+        gameStage = new EnterStageExample(GSIMExample.enterStage);
+        this.AddGameStage(GSIMExample.enterStage, gameStage);
+
+        // ※Remark: Also you can create your own stage of game
+
+        // >>> EXAMPLE <<<
+        */
+    }
+
+    /// <summary>
+    /// Call by Main MonoBehaviour Start (Such as CoreSystem)
+    /// </summary>
+    public override void OnStart()
+    {
+        /* Start first game stage in here. (like this ↓)  */
+        //this.ChangeGameStage(GSIMExample.startupStage);
+    }
+
+    /// <summary>
+    /// Call by Main MonoBehaviour Update (Such as CoreSystem)
+    /// </summary>
+    /// <param name="dt"></param>
+    public override void OnUpdate(float dt = 0.0f)
+    {
+        base.OnUpdate(dt); // Must be called
+    }
+}
+

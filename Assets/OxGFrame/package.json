@@ -1,0 +1,12 @@
+{
+  "name": "com.michaelo.oxgframe",
+  "displayName": "OxGFrame",
+  "description": "The OxGFrame is a framework based on Unity for accelerating game development, including asset loading (AssetLoader), user interface (UIFrame), game scene (GSFrame), game object (EntityFrame), audio and video (MediaFrame), game system integration (GSIFrame), network (NetFrame), event registration (EventCenter), API registration (APICenter), Http.Acax (imitation Ajax concept), etc. are all modularly designed, which can be easily started and effectively speed up development efficiency, and supports multi-platform Win, Android, iOS, WebGL.",
+  "version": "1.0.0",
+  "unity": "2021.3",
+  "license": "MIT",
+  "dependencies": {},
+  "author": {
+    "name": "MichaelO"
+  },
+}

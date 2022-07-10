@@ -1,0 +1,56 @@
+using CoreFrame.EntityFrame;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class #SCRIPTNAME# : EntityBase
+{
+    public override void BeginInit()
+    {
+        /**
+         * Initial before binding (Init 1)
+         */
+    }
+
+    protected override void InitOnceComponents()
+    {
+        /**
+         * Initial after binding (Init 2)
+         */
+    }
+
+    protected override void InitOnceEvents()
+    {
+        /**
+          * Initial after binding (Init 3)
+          */
+    }
+
+    protected override void OnShow(object obj)
+    {
+        /**
+         * OnEnable
+         */
+    }
+
+    protected override void OnClose()
+    {
+        /**
+         * OnDisable
+         */
+    }
+
+    public override void OnRelease()
+    {
+        /*
+         * OnDestroy
+         */
+    }
+
+    protected override void OnUpdate(float dt)
+    {
+        /*
+         * Update
+         */
+    }
+}

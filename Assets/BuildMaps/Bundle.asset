@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f945b6b9257b14549bdeab3606da5cf4, type: 3}
+  m_Name: Bundle
+  m_EditorClassIdentifier: 
+  allowCustomBuild: 0
+  sourceName: Bundle
+  providerName: Test
+  customBuildMaps: []
+  _dictBuildBundleInfo:
+    list:
+    - Key: Assets/OxGFrame/AssetLoader/Example/Prefabs/model_01.prefab
+      Value:
+        assetPath: Assets/OxGFrame/AssetLoader/Example/Prefabs/model_01.prefab
+        assetBundleName: models/model_01
+        assetBundleVariant: 
+    - Key: Assets/OxGFrame/AssetLoader/Example/Model/ice_devil.FBX
+      Value:
+        assetPath: Assets/OxGFrame/AssetLoader/Example/Model/ice_devil.FBX
+        assetBundleName: models/model_01_depend
+        assetBundleVariant: 
+    - Key: Assets/OxGFrame/AssetLoader/Example/Model/IceDevil_AnimatorController.controller
+      Value:
+        assetPath: Assets/OxGFrame/AssetLoader/Example/Model/IceDevil_AnimatorController.controller
+        assetBundleName: models/model_01_depend
+        assetBundleVariant: 
+    - Key: Assets/OxGFrame/AssetLoader/Example/Model/Materials/nideer.mat
+      Value:
+        assetPath: Assets/OxGFrame/AssetLoader/Example/Model/Materials/nideer.mat
+        assetBundleName: models/model_01_depend
+        assetBundleVariant: 
+    - Key: Assets/OxGFrame/AssetLoader/Example/Model/Materials/nideer_sm.mat
+      Value:
+        assetPath: Assets/OxGFrame/AssetLoader/Example/Model/Materials/nideer_sm.mat
+        assetBundleName: models/model_01_depend
+        assetBundleVariant: 
+    - Key: Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.dds
+      Value:
+        assetPath: Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.dds
+        assetBundleName: models/model_01_depend
+        assetBundleVariant: 
+    - Key: Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.tga
+      Value:
+        assetPath: Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.tga
+        assetBundleName: models/model_01_depend
+        assetBundleVariant: 
+    keyCollision: 0

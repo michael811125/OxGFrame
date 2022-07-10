@@ -1,0 +1,76 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using CoreFrame.UIFrame;
+using Cysharp.Threading.Tasks;
+
+public class DemoLoadingUI : UIBase
+{
+    public override void BeginInit()
+    {
+        //this.uiType = new UINode(NodeType.Independent);
+        //this.isCloseAndDestroy = false;
+    }
+
+    protected override async UniTask OpenSub()
+    {
+        /**
+        * Open Sub With Async
+        */
+    }
+
+    protected override void CloseSub()
+    {
+        /**
+        * Close Sub
+        */
+    }
+
+    protected override void InitOnceComponents()
+    {
+        /**
+         * Do Somthing Init Once In Here (For Components)
+         */
+    }
+
+    protected override void InitOnceEvents()
+    {
+        /**
+          * Do Somthing Init Once In Here (For Events)
+          */
+    }
+
+    protected override void OnShow(object obj)
+    {
+        /**
+         * Do Something Init With Every Showing In Here
+         */
+    }
+
+    protected override void OnUpdate(float dt)
+    {
+        /**
+         * Do Update Per FrameRate
+         */
+    }
+
+    protected override void ShowAnim(AnimEndCb animEndCb)
+    {
+        animEndCb(); // Must Keep, Because Parent Already Set AnimCallback
+    }
+
+    protected override void HideAnim(AnimEndCb animEndCb)
+    {
+        animEndCb(); // Must Keep, Because Parent Already Set AnimCallback
+    }
+
+    protected override void OnClose()
+    {
+
+    }
+
+    public override void OnRelease()
+    {
+
+    }
+}
