@@ -9,7 +9,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架, 並且使用 UniTask
 ---
 
 ## 其他庫依賴
-<font color=#FF4040 size=3> >>> (*使用 [unitypackage](https://github.com/michael811125/OxGFrame/releases) 匯入的話，需要先行安裝以下 <<< </font>
+※ 使用 [unitypackage](https://github.com/michael811125/OxGFrame/releases) 匯入的話，需要先行安裝以下
 
 - [UnitTask Version 2.3.1 or higher](https://github.com/Cysharp/UniTask)
 - [MyBox version 1.7.0 or higher](https://github.com/Deadcows/MyBox)
