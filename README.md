@@ -8,11 +8,12 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架, 並且使用 UniTask
 
 ---
 
-## 其他庫依賴 (必要)
+## 其他庫依賴
+<font color=#FF4040 size=3> >>> (*使用 [unitypackage](https://github.com/michael811125/OxGFrame/releases) 匯入的話，需要先行安裝以下 <<< </font>
 
 - [UnitTask Version 2.3.1 or higher](https://github.com/Cysharp/UniTask)
-- [UnityWebSocket Version 2.6.6 or higher](https://github.com/psygames/UnityWebSocket)
 - [MyBox version 1.7.0 or higher](https://github.com/Deadcows/MyBox)
+- [UnityWebSocket Version 2.6.6 or higher](https://github.com/psygames/UnityWebSocket) (如果使用 [unitypackage](https://github.com/michael811125/OxGFrame/releases) 的方式匯入，但是不使用 NetFrame 模塊框架的話 (取消勾選匯入此模塊)，則此庫可以不需要先行安裝)
 
 【備註】Unity 2021.3.4f1 以下的額外需安裝 [com.unity.nuget.newtonsoft-json](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/wiki/Install-official-via-UPM)，對於 [jillejr.newtonsoft.json-for-unity](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/issues/145) 附加作者額外說明 (Unity 2021.3.4f1 以上的版本此庫可以不用安裝)。
 
