@@ -708,7 +708,7 @@ public class CacheBundle : AssetCache<BundlePack>, IBundle
 
 #if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
         // 使用[文件流]加載方式, 只能存在於Persistent的路徑 (因為StreamingAssets只使用UnityWebRequest方式請求)
-        if (BundleConfig.bBundleStream && !this.HasInStreamingAssets(fileName))
+        if (BundleConfig.bBundleStreamMode && !this.HasInStreamingAssets(fileName))
         {
             // 解密方式
             string cryptogramType = BundleConfig.cryptogramArgs[0].ToUpper();

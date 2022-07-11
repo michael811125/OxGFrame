@@ -92,7 +92,7 @@ namespace AssetLoader.Bundle
         public const string APPLE_STORE = "apple_store";
 
         // 佈署配置檔
-        public const string cfgFullPathName = "bundle_cfg";
+        public const string cfgFullPathName = "bundle_cfg.txt";
 
         // Bundle平台路徑
         public const string bundleDir = "/AssetBundles";  // Build 目錄
