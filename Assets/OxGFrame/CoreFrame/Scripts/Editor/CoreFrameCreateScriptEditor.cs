@@ -23,7 +23,7 @@ public static class CoreFrameCreateScriptEditor
     }
 
     #region GSFrame Script Create
-    [MenuItem(itemName: "Assets/Create/CoreFrame/GSFrame/TplScripts/TplGS.cs", isValidateFunction: false, priority: 51)]
+    [MenuItem(itemName: "Assets/Create/OxGFrame/CoreFrame/GSFrame/TplScripts/TplGS.cs", isValidateFunction: false, priority: 51)]
     public static void CreateScriptTplGS()
     {
         string currentPath = pathFinder;
@@ -34,7 +34,7 @@ public static class CoreFrameCreateScriptEditor
     #endregion
 
     #region UIFrame Script Create
-    [MenuItem(itemName: "Assets/Create/CoreFrame/UIFrame/TplScripts/TplUI.cs", isValidateFunction: false, priority: 51)]
+    [MenuItem(itemName: "Assets/Create/OxGFrame/CoreFrame/UIFrame/TplScripts/TplUI.cs", isValidateFunction: false, priority: 51)]
     public static void CreateScriptTplUI()
     {
         string currentPath = pathFinder;
@@ -45,7 +45,7 @@ public static class CoreFrameCreateScriptEditor
     #endregion
 
     #region EntityFrame Script Create
-    [MenuItem(itemName: "Assets/Create/CoreFrame/EntityFrame/TplScripts/TplEntity.cs", isValidateFunction: false, priority: 51)]
+    [MenuItem(itemName: "Assets/Create/OxGFrame/CoreFrame/EntityFrame/TplScripts/TplEntity.cs", isValidateFunction: false, priority: 51)]
     public static void CreateScriptTplEntity()
     {
         string currentPath = pathFinder;

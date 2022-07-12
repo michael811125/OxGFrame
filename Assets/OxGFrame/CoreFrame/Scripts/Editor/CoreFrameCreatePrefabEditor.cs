@@ -72,13 +72,13 @@ public static class CoreFrameCreatePrefabEditor
             return Path.GetDirectoryName(path);
     }
 
-    [MenuItem("Assets/Create/CoreFrame/GSFrame/TplPrefabs/TplGS", isValidateFunction: false, priority: 51)]
+    [MenuItem("Assets/Create/OxGFrame/CoreFrame/GSFrame/TplPrefabs/TplGS", isValidateFunction: false, priority: 51)]
     public static void CreateTplGS()
     {
         CreatePrefabAsset("NewTplGS", ScriptableObject.CreateInstance<DoCreatePrefabAsset>());
     }
 
-    [MenuItem("Assets/Create/CoreFrame/UIFrame/TplPrefabs/TplUI", isValidateFunction: false, priority: 51)]
+    [MenuItem("Assets/Create/OxGFrame/CoreFrame/UIFrame/TplPrefabs/TplUI", isValidateFunction: false, priority: 51)]
     public static void CreateTplUI()
     {
         CreatePrefabAsset("NewTplUI", ScriptableObject.CreateInstance<DoCreateUIPrefabAsset>());

@@ -19,7 +19,7 @@ public static class GSIFrameCreateScriptEditor
     }
 
     #region GSIFrame Script Create
-    [MenuItem(itemName: "Assets/Create/GSIFrame/TplGStage.cs (Game Stage)", isValidateFunction: false, priority: 51)]
+    [MenuItem(itemName: "Assets/Create/OxGFrame/GSIFrame/TplGStage.cs (Game Stage)", isValidateFunction: false, priority: 51)]
     public static void CreateScriptTplGameStage()
     {
         string currentPath = pathFinder;
@@ -28,7 +28,7 @@ public static class GSIFrameCreateScriptEditor
         ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplGStage.cs");
     }
 
-    [MenuItem(itemName: "Assets/Create/GSIFrame/TplGSIM.cs (Game System Integration Manager)", isValidateFunction: false, priority: 51)]
+    [MenuItem(itemName: "Assets/Create/OxGFrame/GSIFrame/TplGSIM.cs (Game System Integration Manager)", isValidateFunction: false, priority: 51)]
     public static void CreateScriptGameFrame()
     {
         string currentPath = pathFinder;
