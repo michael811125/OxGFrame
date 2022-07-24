@@ -1,4 +1,6 @@
-﻿using Cysharp.Threading.Tasks;
+﻿#define ENABLE_BUNDLE_STREAM_MODE // 啟用文件流讀取 (內存較小)
+
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,15 +22,19 @@ namespace AssetLoader.Bundle
         static BundleConfig()
         {
             bAssetDatabaseMode = GetAssetDatabaseMode();
-            bBundleStreamMode = GetBundleStreamMode();
+            //bBundleStreamMode = GetBundleStreamMode();
         }
 
         // 啟用Editor中的AssetDatabase讀取資源模式
         public static bool bAssetDatabaseMode = true;
         public const string KEY_ASSET_DATABASE_MODE = "bAssetDatabaseMode";
-        // 啟用文件流讀取 (內存較小)
+
+#if ENABLE_BUNDLE_STREAM_MODE
         public static bool bBundleStreamMode = true;
-        public const string KEY_BUNDLE_STREAM_MODE = "bBundleStreamMode";
+#else
+        public static bool bBundleStreamMode = false;
+#endif
+        //public const string KEY_BUNDLE_STREAM_MODE = "bBundleStreamMode";
 
         public static void SaveAssetDatabaseMode(bool active)
         {
@@ -41,16 +47,16 @@ namespace AssetLoader.Bundle
             return Convert.ToBoolean(PlayerPrefs.GetString(KEY_ASSET_DATABASE_MODE, "true"));
         }
 
-        public static void SaveBundleStreamMode(bool active)
-        {
-            PlayerPrefs.SetString(KEY_BUNDLE_STREAM_MODE, active.ToString());
-            PlayerPrefs.Save();
-        }
+        //public static void SaveBundleStreamMode(bool active)
+        //{
+        //    PlayerPrefs.SetString(KEY_BUNDLE_STREAM_MODE, active.ToString());
+        //    PlayerPrefs.Save();
+        //}
 
-        public static bool GetBundleStreamMode()
-        {
-            return Convert.ToBoolean(PlayerPrefs.GetString(KEY_BUNDLE_STREAM_MODE, "true"));
-        }
+        //public static bool GetBundleStreamMode()
+        //{
+        //    return Convert.ToBoolean(PlayerPrefs.GetString(KEY_BUNDLE_STREAM_MODE, "true"));
+        //}
 
         // [NONE], [OFFSET, dummySize], [XOR, key], [AES, key, iv] => ex: "None" or "offset, 32" or "Xor, 123" or "Aes, key, iv"
         private static string _cryptogram;

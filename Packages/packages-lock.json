@@ -88,7 +88,7 @@
       "hash": "4aa8a2b8760cfbebb037182d67a96f14292efd6f"
     },
     "com.unity.burst": {
-      "version": "1.6.5",
+      "version": "1.6.6",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -127,7 +127,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "3.0.14",
+      "version": "3.0.15",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -136,7 +136,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.15",
+      "version": "2.0.16",
       "depth": 0,
       "source": "registry",
       "dependencies": {

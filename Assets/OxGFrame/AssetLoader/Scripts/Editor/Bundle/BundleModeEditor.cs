@@ -15,8 +15,8 @@ public class BundleModeEditor : EditorWindow
 
     [SerializeField]
     public bool enableAssetDatabaseMode = false;
-    [SerializeField]
-    public bool enableBundleLoadFromStream = false;
+    //[SerializeField]
+    //public bool enableBundleLoadFromStream = false;
 
     internal const string KEY_SAVE_DATA_FOR_BUNDLE_MODE_EDITOR = "KEY_SAVE_DATA_FOR_BUNDLE_MODE_EDITOR";
 
@@ -26,16 +26,17 @@ public class BundleModeEditor : EditorWindow
         _instance = null;
         GetInstance().titleContent = new GUIContent("Bundle Mode");
         GetInstance().Show();
-        GetInstance().minSize = new Vector2(400f, 120f);
+        GetInstance().maxSize = new Vector2(400f, 60f);
+        GetInstance().minSize = GetInstance().maxSize;
     }
 
     private void OnEnable()
     {
         this.enableAssetDatabaseMode = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVE_DATA_FOR_BUNDLE_MODE_EDITOR, "enableAssetDatabaseMode", "true"));
-        this.enableBundleLoadFromStream = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVE_DATA_FOR_BUNDLE_MODE_EDITOR, "enableBundleLoadFromStream", "true"));
+        //this.enableBundleLoadFromStream = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVE_DATA_FOR_BUNDLE_MODE_EDITOR, "enableBundleLoadFromStream", "true"));
 
         BundleConfig.SaveAssetDatabaseMode(this.enableAssetDatabaseMode);
-        BundleConfig.SaveBundleStreamMode(this.enableBundleLoadFromStream);
+        //BundleConfig.SaveBundleStreamMode(this.enableBundleLoadFromStream);
     }
 
     private void OnDisable()
@@ -65,27 +66,27 @@ public class BundleModeEditor : EditorWindow
         EditorGUILayout.EndVertical();
         // ↑↑↑ AssetDatabase Section ↑↑↑
 
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
+        //EditorGUILayout.Space();
+        //EditorGUILayout.Space();
 
         // ↓↓↓ Stream Section ↓↓↓
-        style = new GUIStyle();
-        bg = new Texture2D(1, 1);
-        pixels = Enumerable.Repeat(new Color(1f, 0.76f, 0.4f, 0.5f), Screen.width * Screen.height).ToArray();
-        bg.SetPixels(pixels);
-        bg.Apply();
-        style.normal.background = bg;
-        EditorGUILayout.BeginVertical(style);
-        centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
-        centeredStyle.alignment = TextAnchor.UpperCenter;
-        GUILayout.Label(new GUIContent("Bundle Stream Mode"), centeredStyle);
-        EditorGUILayout.Space();
+        //style = new GUIStyle();
+        //bg = new Texture2D(1, 1);
+        //pixels = Enumerable.Repeat(new Color(1f, 0.76f, 0.4f, 0.5f), Screen.width * Screen.height).ToArray();
+        //bg.SetPixels(pixels);
+        //bg.Apply();
+        //style.normal.background = bg;
+        //EditorGUILayout.BeginVertical(style);
+        //centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+        //centeredStyle.alignment = TextAnchor.UpperCenter;
+        //GUILayout.Label(new GUIContent("Bundle Stream Mode"), centeredStyle);
+        //EditorGUILayout.Space();
 
-        this.enableBundleLoadFromStream = GUILayout.Toggle(this.enableBundleLoadFromStream, new GUIContent("Enable Bundle Load From Stream", "If checked will use load from stream, can reduce memory."));
-        BundleConfig.SaveBundleStreamMode(this.enableBundleLoadFromStream);
-        EditorStorage.SaveData(KEY_SAVE_DATA_FOR_BUNDLE_MODE_EDITOR, "enableBundleLoadFromStream", this.enableBundleLoadFromStream.ToString());
+        //this.enableBundleLoadFromStream = GUILayout.Toggle(this.enableBundleLoadFromStream, new GUIContent("Enable Bundle Load From Stream", "If checked will use load from stream, can reduce memory."));
+        //BundleConfig.SaveBundleStreamMode(this.enableBundleLoadFromStream);
+        //EditorStorage.SaveData(KEY_SAVE_DATA_FOR_BUNDLE_MODE_EDITOR, "enableBundleLoadFromStream", this.enableBundleLoadFromStream.ToString());
 
-        EditorGUILayout.EndVertical();
+        //EditorGUILayout.EndVertical();
         // ↑↑↑ Stream Section ↑↑↑
     }
 }
