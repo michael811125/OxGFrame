@@ -77,6 +77,12 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架, 並且使用 UniTask
 
 ---
 
+### Unity 版本
+
+建議使用 Unity 2021.3.5f1(LTS) or higher 版本 - [Unity Download](https://unity3d.com/get-unity/download/archive)
+
+---
+
 ## License
 
 This library is under the MIT License.
