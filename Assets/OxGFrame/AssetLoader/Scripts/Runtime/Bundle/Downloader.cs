@@ -29,7 +29,7 @@ namespace AssetLoader.Bundle
             this._bd = bd;
         }
 
-        private void _Reset()
+        public void Reset()
         {
             this._stackWaitFiles.Clear();
             this.dlBytes = 0;
@@ -64,7 +64,7 @@ namespace AssetLoader.Bundle
         {
             Debug.Log("<color=#FFE700>【開始斷點續傳模式下載】</color>");
 
-            this._Reset();
+            this.Reset();
 
             // 取得更新配置檔中要下載的資源文件, 進行下載等待柱列
             foreach (var file in this._bd.GetUpdateCfg().RES_FILES)
@@ -146,19 +146,31 @@ namespace AssetLoader.Bundle
             var fileUrl = await BundleConfig.GetServerBundleUrl() + $@"/{this._bd.GetServerCfg().PRODUCT_NAME}" + $@"/{this._bd.GetServerCfg().EXPORT_NAME}" + $@"{dlFullName}";
 
             // 標檔頭請求
-            var header = UnityWebRequest.Head(fileUrl);
-            await header.SendWebRequest().WithCancellation(this._bd.cts.Token);
+            UnityWebRequest header = null;
+            try
+            {
+                header = UnityWebRequest.Head(fileUrl);
+                await header.SendWebRequest().WithCancellation(this._bd.cts.Token);
 
-            // 如果資源請求不到, 將進行重新請求嘗試
-            if (header.result == UnityWebRequest.Result.ProtocolError || header.result == UnityWebRequest.Result.ConnectionError)
+                // 如果資源請求不到, 將進行重新請求嘗試
+                if (header.result == UnityWebRequest.Result.ProtocolError || header.result == UnityWebRequest.Result.ConnectionError)
+                {
+                    Debug.Log($"<color=#FF0000>Header failed. URL: {fileUrl}</color>");
+
+                    this._retryDownload = true;
+
+                    header?.Dispose();
+
+                    return;
+                }
+            }
+            catch
             {
                 Debug.Log($"<color=#FF0000>Header failed. URL: {fileUrl}</color>");
 
                 this._retryDownload = true;
 
-                header.Dispose();
-
-                return;
+                header?.Dispose();
             }
 
             // 從標檔頭中取出請求該檔案的總長度 (總大小)
@@ -173,8 +185,11 @@ namespace AssetLoader.Bundle
             }
             catch
             {
+                this._retryDownload = true;
+
                 fs?.Close();
                 fs?.Dispose();
+
                 return;
             }
             long fileSize = fs.Length;
@@ -187,9 +202,21 @@ namespace AssetLoader.Bundle
                 fs.Seek(fileSize, SeekOrigin.Begin);
 
                 // 檔案請求下載
-                var request = UnityWebRequest.Get(fileUrl);
-                request.SetRequestHeader("Range", $"bytes={fileSize}-{totalSize}");
-                request.SendWebRequest().WithCancellation(this._bd.cts.Token).Forget();
+                UnityWebRequest request = null;
+                try
+                {
+                    request = UnityWebRequest.Get(fileUrl);
+                    request.SetRequestHeader("Range", $"bytes={fileSize}-{totalSize}");
+                    request.SendWebRequest().WithCancellation(this._bd.cts.Token).Forget();
+                }
+                catch
+                {
+                    Debug.Log($"<color=#FF0000>Request failed. URL: {fileUrl}</color>");
+
+                    this._retryDownload = true;
+
+                    request?.Dispose();
+                }
 
                 int pos = 0;
                 while (true)
@@ -197,6 +224,7 @@ namespace AssetLoader.Bundle
                     if (request == null)
                     {
                         Debug.Log($"<color=#FF0000>Request is null. URL: {fileUrl}</color>");
+                        this._retryDownload = true;
                         break;
                     }
 

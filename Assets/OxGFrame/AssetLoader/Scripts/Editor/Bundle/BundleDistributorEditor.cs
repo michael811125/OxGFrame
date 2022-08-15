@@ -16,7 +16,7 @@ namespace AssetLoader.Bundle
         public static void ExportBundleAndConfig(string sourceDir, string destDir, string productName = null)
         {
             // 生成配置檔數據
-            var cfg = GenerateCfg(sourceDir);
+            var cfg = GenerateCfg(productName, sourceDir);
 
             productName = (productName == null) ? cfg.PRODUCT_NAME : productName;
 
@@ -42,10 +42,10 @@ namespace AssetLoader.Bundle
             Debug.Log($"<color=#00FF00>【成功輸出目錄】 主程式版本: {cfg.APP_VERSION}, 資源檔版本: {cfg.RES_VERSION}, 輸出名稱: {cfg.EXPORT_NAME}</color>");
         }
 
-        public static void GenerateBundleCfg(string sourceDir, string destDir)
+        public static void GenerateBundleCfg(string productName, string sourceDir, string destDir)
         {
             // 生成配置檔數據
-            var cfg = GenerateCfg(sourceDir);
+            var cfg = GenerateCfg(productName, sourceDir);
 
             // 配置檔序列化, 將進行寫入
             string jsonCfg = JsonConvert.SerializeObject(cfg);
@@ -57,7 +57,7 @@ namespace AssetLoader.Bundle
             Debug.Log($"<color=#00FF00>【成功建立配置檔】主程式版本: {cfg.APP_VERSION}, 資源檔版本: {cfg.RES_VERSION}</color>");
         }
 
-        public static VersionFileCfg GenerateCfg(string sourcePath = null)
+        public static VersionFileCfg GenerateCfg(string productName, string sourcePath = null)
         {
             var cfg = new VersionFileCfg(); // 生成配置檔
 
@@ -85,7 +85,7 @@ namespace AssetLoader.Bundle
             }
 
             // 產品名稱
-            cfg.PRODUCT_NAME = Application.productName;
+            cfg.PRODUCT_NAME = productName;
 
             // 主程式版本
             cfg.APP_VERSION = Application.version;

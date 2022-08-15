@@ -223,7 +223,7 @@ namespace CoreFrame
                     return null;
                 }
 
-                GameObject instPref = Instantiate(uiBase.gameObject, uiCanvas.transform); // instantiate 【UI Prefab】 (需先指定Instantiate Parent為UIRoot不然Canvas初始會跑掉)
+                GameObject instPref = Instantiate(uiBase.gameObject, uiCanvas.goRoot.transform); // instantiate 【UI Prefab】 (需先指定Instantiate Parent為UIRoot不然Canvas初始會跑掉)
 
                 // 激活檢查, 如果主體Active為false必須打開
                 if (!instPref.activeSelf) instPref.SetActive(true);
@@ -237,7 +237,7 @@ namespace CoreFrame
                 this._AdjustCanvas(uiCanvas, uiBase);       // 調整Canvas相關組件參數
 
                 uiBase.SetNames(bundleName, assetName);
-                uiBase.BeginInit();                          // Clone取得UIBase組件後, 也需要初始UI相關配置, 不然後面無法正常運作
+                uiBase.BeginInit();                         // Clone取得UIBase組件後, 也需要初始UI相關配置, 不然後面無法正常運作
                 uiBase.InitFirst();                         // Clone取得UIBase組件後, 也需要初始UI相關綁定組件設定
 
                 // >>> 需在InitThis之後, 以下設定開始生效 <<<

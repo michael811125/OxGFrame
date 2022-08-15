@@ -197,7 +197,7 @@ public class BundleConfigGeneratorEditor : EditorWindow
             switch (operationType)
             {
                 case OperationType.GenerateConfigToSourceFolder:
-                    BundleDistributorEditor.GenerateBundleCfg(this.sourceFolder, this.sourceFolder);
+                    BundleDistributorEditor.GenerateBundleCfg(this.productName, this.sourceFolder, this.sourceFolder);
                     EditorUtility.DisplayDialog("Process Message", "Generate Config To SourceFolder.", "OK");
                     break;
                 case OperationType.ExportAndConfigFromSourceFolder:
@@ -205,7 +205,7 @@ public class BundleConfigGeneratorEditor : EditorWindow
                     EditorUtility.DisplayDialog("Process Message", "Export And Config From SourceFolder.", "OK");
                     break;
                 case OperationType.GenerateConfigToSourceFolderAndOnlyExportSameConfig:
-                    BundleDistributorEditor.GenerateBundleCfg(this.sourceFolder, this.sourceFolder);
+                    BundleDistributorEditor.GenerateBundleCfg(this.productName, this.sourceFolder, this.sourceFolder);
                     string fullExportFolder = $"{this.exportFolder}/{this.productName}";
                     if (Directory.Exists(fullExportFolder)) Directory.Delete(fullExportFolder, true);
                     Directory.CreateDirectory(fullExportFolder);

@@ -169,9 +169,9 @@ namespace AssetLoader.Bundle
         /// <param name="complete"></param>
         public void Check(Action complete = null, Downloader.Progression progression = null)
         {
-            BundleDistributor.GetInstance().TaskCancel();
-            BundleDistributor.GetInstance().Reset();
-            BundleDistributor.GetInstance()._Execute(complete, progression).Forget();
+            this.TaskCancel();
+            this.Reset();
+            this._Execute(complete, progression).Forget();
         }
 
         /// <summary>
@@ -215,6 +215,17 @@ namespace AssetLoader.Bundle
         {
             this.TaskCancel();
             this.SetExecuteStatus(BundleDistributor.ExecuteStatus.PROCESSING);
+            this._downloader.Reset();
+            this._Execute().Forget();
+        }
+
+        /// <summary>
+        /// 重新嘗試下載配置檔
+        /// </summary>
+        public void RetryDownloadConfig()
+        {
+            this.TaskCancel();
+            this.SetExecuteStatus(BundleDistributor.ExecuteStatus.DOWLOADING_CONFIG);
             this._Execute().Forget();
         }
 
@@ -268,32 +279,40 @@ namespace AssetLoader.Bundle
             // 取得Server端配置檔的URL
             this._serverCfg = new VersionFileCfg();
             string url = await BundleConfig.GetServerBundleUrl() + $@"/{streamingCfg.PRODUCT_NAME}/{BundleConfig.bundleCfgName}{BundleConfig.cfgExt}";
-            Debug.Log(url);
 
             // 請求Server的配置檔
-            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            try
             {
-                await request.SendWebRequest().WithCancellation(this.cts.Token);
-
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+                using (UnityWebRequest request = UnityWebRequest.Get(url))
                 {
-                    // Do retry connect to server
+                    await request.SendWebRequest().WithCancellation(this.cts.Token);
 
-                    Debug.Log($"<color=#FF0000>Server request failed. URL: {url}</color>");
+                    if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+                    {
+                        // Do retry connect to server
 
-                    this.executeStatus = ExecuteStatus.SERVER_REQUEST_ERROR;
+                        Debug.Log($"<color=#FF0000>Server request failed. URL: {url}</color>");
+
+                        this.executeStatus = ExecuteStatus.SERVER_REQUEST_ERROR;
+                    }
+                    else
+                    {
+                        Debug.Log($"SERVER REQ: {url}");
+
+                        string json = request.downloadHandler.text;
+                        this._serverCfg = JsonConvert.DeserializeObject<VersionFileCfg>(json);
+
+                        this.executeStatus = ExecuteStatus.PROCESSING;
+
+                        this._Execute().Forget();
+                    }
                 }
-                else
-                {
-                    Debug.Log($"SERVER REQ: {url}");
+            }
+            catch (Exception ex)
+            {
+                Debug.Log($"<color=#FF0000>Server request failed. URL: {url}</color>\nError: {ex}");
 
-                    string json = request.downloadHandler.text;
-                    this._serverCfg = JsonConvert.DeserializeObject<VersionFileCfg>(json);
-
-                    this.executeStatus = ExecuteStatus.PROCESSING;
-
-                    this._Execute().Forget();
-                }
+                this.executeStatus = ExecuteStatus.SERVER_REQUEST_ERROR;
             }
         }
 
@@ -334,16 +353,37 @@ namespace AssetLoader.Bundle
                 }
 #endif
             }
+            // 如果本地已經有配置檔, 則需要去比對主程式版本, 並且從新的App中的配置檔寫入至本地配置檔中
+            else
+            {
+                // 從StreamingAssets讀取配置檔 (StreamingAssets 使用 Request)
+                string streamingAssetsCfgPath = BundleConfig.GetStreamingAssetsBundleConfigPath();
+                string streamingCfgJson = await this._GetFileFromStreamingAssets(streamingAssetsCfgPath);
+                var streamingAssetsCfg = JsonConvert.DeserializeObject<VersionFileCfg>(streamingCfgJson);
 
-            var localCfg = new VersionFileCfg();
+                // 從本地端讀取配置檔 (持久化路徑使用 File.Read)
+                string localCfgPath = BundleConfig.GetLocalDlFileSaveBundleConfigPath();
+                string localCfgJson = File.ReadAllText(localCfgPath);
+                var localCfg = JsonConvert.DeserializeObject<VersionFileCfg>(localCfgJson);
+
+                // 如果主程式版本不一致表示有更新App, 則將本地配置檔的主程式版本寫入成StreamingAssets配置檔中的APP_VERSION
+                if (streamingAssetsCfg.APP_VERSION != localCfg.APP_VERSION)
+                {
+                    localCfg.APP_VERSION = streamingAssetsCfg.APP_VERSION;
+                    localCfgJson = JsonConvert.SerializeObject(localCfg);
+                    File.WriteAllText(localCfgPath, localCfgJson); // 進行寫入存儲
+                }
+            }
 
             {
+                var localCfg = new VersionFileCfg();
+
                 try
                 {
                     // 從本地端讀取配置檔
                     string localCfgPath = BundleConfig.GetLocalDlFileSaveBundleConfigPath();
-                    string tempCfg = File.ReadAllText(localCfgPath);
-                    localCfg = JsonConvert.DeserializeObject<VersionFileCfg>(tempCfg);
+                    string localCfgJson = File.ReadAllText(localCfgPath);
+                    localCfg = JsonConvert.DeserializeObject<VersionFileCfg>(localCfgJson);
                 }
                 catch
                 {
@@ -362,7 +402,7 @@ namespace AssetLoader.Bundle
                     this.TaskCancel();
 
                     Debug.Log("主程式版本不符, 需更新主程式 (商店下載更新)");
-                    Debug.Log($"LOCAL APP_VER: { localCfg.APP_VERSION}, SERVER APP_VER: {this._serverCfg.APP_VERSION}");
+                    Debug.Log($"LOCAL APP_VER: {localCfg.APP_VERSION}, SERVER APP_VER: {this._serverCfg.APP_VERSION}");
                     return;
                 }
                 // 比對資源版本
@@ -380,12 +420,12 @@ namespace AssetLoader.Bundle
                     this.TaskCancel();
 
                     Debug.Log($"無需更新資源 (當前已是最新版本)");
-                    Debug.Log($"LOCAL RES_VER: { localCfg.RES_VERSION}, SERVER RES_VER: {this._serverCfg.RES_VERSION}");
+                    Debug.Log($"LOCAL RES_VER: {localCfg.RES_VERSION}, SERVER RES_VER: {this._serverCfg.RES_VERSION}");
                     return;
                 }
 
                 // 如果資源版本與服務端的資源版本不一致, 以下開始執行系列程序
-                Debug.Log($"LOCAL RES_VER: { localCfg.RES_VERSION}, SERVER RES_VER: {this._serverCfg.RES_VERSION}");
+                Debug.Log($"LOCAL RES_VER: {localCfg.RES_VERSION}, SERVER RES_VER: {this._serverCfg.RES_VERSION}");
 
                 // Local配置檔與Server配置檔進行資源文件比對, 並且建立更新用的配置檔 (用於文件更新的依據配置檔)
                 this._updateCfg = new VersionFileCfg();
