@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [1.3.0] - 2022-08-18
+- Added ButtonPlus Component (inherit UGUI Button).
+- Added NodePool Component (GameObject Pool).
+- Added Canvas, CanvasScaler, GraphicRaycaster for UICanvas(Init on Awake).
+- Added Canvas, GraphicRaycaster for UIBase (Init on Awake).
+- Fixed When UI Canvas render mode is WorldSpace occurred transform issue.
+- Fixed Bundle Offset Type of Cryptogram encrypt random issue, extend can set random seed to fixed random values.
+
 ## [1.2.0] - 2022-08-15
 - Added UISafeAreaAdapter Component.
 - Modified When install new app version will compare StreamingAssets cfg app version to Local cfg app version, if different will write StreamingAssets cfg app version to Local cfg.

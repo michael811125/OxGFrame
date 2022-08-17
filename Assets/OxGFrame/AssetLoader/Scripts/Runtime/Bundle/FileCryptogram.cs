@@ -15,8 +15,10 @@ namespace AssetLoader.Bundle
             /// </summary>
             /// <param name="sourceFile"></param>
             /// <returns></returns>
-            public static bool OffsetEncryptFile(string sourceFile, int dummySize = 0)
+            public static bool OffsetEncryptFile(string sourceFile, int randomSeed, int dummySize = 0)
             {
+                UnityEngine.Random.InitState(randomSeed);
+
                 byte[] dataBytes = File.ReadAllBytes(sourceFile);
                 int totalLength = dataBytes.Length + dummySize;
                 byte[] offsetDatabytes = new byte[totalLength];

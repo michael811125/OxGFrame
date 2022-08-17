@@ -264,7 +264,7 @@ namespace AssetLoader.Bundle
             }
         }
 
-        public static void OffsetEncryptBundleFiles(string dir, int dummySize = 0)
+        public static void OffsetEncryptBundleFiles(string dir, int randomSeed, int dummySize = 0)
         {
             // 取得目錄下所有檔案
             FileInfo[] files = GetFilesRecursively(dir);
@@ -277,7 +277,7 @@ namespace AssetLoader.Bundle
 
                 // 執行各檔案的加密
                 string fPath = files[i].Directory.ToString() + $@"\{files[i].Name}";
-                FileCryptogram.Offset.OffsetEncryptFile(fPath, dummySize);
+                FileCryptogram.Offset.OffsetEncryptFile(fPath, randomSeed, dummySize);
             }
         }
 

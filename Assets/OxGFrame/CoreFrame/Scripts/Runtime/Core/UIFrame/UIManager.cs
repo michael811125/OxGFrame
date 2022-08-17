@@ -223,7 +223,12 @@ namespace CoreFrame
                     return null;
                 }
 
-                GameObject instPref = Instantiate(uiBase.gameObject, uiCanvas.goRoot.transform); // instantiate 【UI Prefab】 (需先指定Instantiate Parent為UIRoot不然Canvas初始會跑掉)
+                // 透過 RenderMode 區分預設父層級
+                Transform parent;
+                if (uiCanvas.canvas.renderMode == RenderMode.WorldSpace) parent = uiCanvas.transform;
+                else parent = uiCanvas.goRoot.transform;
+                // instantiate 【UI Prefab】 (需先指定 Instantiate Parent 為 UIRoot 不然 Canvas 初始會跑掉)
+                GameObject instPref = Instantiate(uiBase.gameObject, parent);
 
                 // 激活檢查, 如果主體Active為false必須打開
                 if (!instPref.activeSelf) instPref.SetActive(true);
@@ -283,8 +288,8 @@ namespace CoreFrame
             private void _AdjustCanvas(UICanvas uiCanvas, UIBase uiBase)
             {
                 // 調整uiBase Canvas (會繼承於主Canvas設定 => SortingLayerName, AdditionalShaderChannels)
-                Canvas uiBaseCanvas = uiBase.GetComponent<Canvas>();
-                Canvas mainCanvas = uiCanvas.GetComponent<Canvas>();
+                Canvas uiBaseCanvas = uiBase.canvas;
+                Canvas mainCanvas = uiCanvas.canvas;
                 uiBaseCanvas.overridePixelPerfect = true;
                 uiBaseCanvas.pixelPerfect = true;
                 uiBaseCanvas.overrideSorting = true;
@@ -292,8 +297,8 @@ namespace CoreFrame
                 uiBaseCanvas.additionalShaderChannels = mainCanvas.additionalShaderChannels;
 
                 // 調整uiBase Graphic Raycaster (會繼承於主Canvas設定 => ignoreReversedGraphics, blockingObjects, blockingMask)
-                GraphicRaycaster uiBaseGraphicRaycaster = uiBase.GetComponent<GraphicRaycaster>();
-                GraphicRaycaster mainGraphicRaycaster = uiCanvas.GetComponent<GraphicRaycaster>();
+                GraphicRaycaster uiBaseGraphicRaycaster = uiBase.graphicRaycaster;
+                GraphicRaycaster mainGraphicRaycaster = uiCanvas.graphicRaycaster;
                 uiBaseGraphicRaycaster.ignoreReversedGraphics = mainGraphicRaycaster.ignoreReversedGraphics;
                 uiBaseGraphicRaycaster.blockingObjects = mainGraphicRaycaster.blockingObjects;
                 uiBaseGraphicRaycaster.blockingMask = mainGraphicRaycaster.blockingMask;
@@ -322,7 +327,7 @@ namespace CoreFrame
             /// <param name="uiBase"></param>
             private void _SetSortingOrder(UIBase uiBase)
             {
-                Canvas uiBaseCanvas = uiBase.gameObject?.GetComponent<Canvas>();
+                Canvas uiBaseCanvas = uiBase?.canvas;
                 if (uiBaseCanvas == null) return;
 
                 // 設置sortingOrder (UIBase 中設置的 order 需要再 -=1, 保留給 Renderer)
@@ -342,7 +347,7 @@ namespace CoreFrame
             /// <param name="go">要搜尋的根物件節點</param>
             private void _SetRendererOrder(UIBase uiBase)
             {
-                Canvas uiBaseCanvas = uiBase.gameObject?.GetComponent<Canvas>();
+                Canvas uiBaseCanvas = uiBase?.canvas;
                 if (uiBaseCanvas == null) return;
 
                 Renderer[] renderers = uiBase.gameObject?.GetComponentsInChildren<Renderer>();
@@ -740,7 +745,7 @@ namespace CoreFrame
                         this._dictStackCounter[key] = UISysDefine.ORDER_DIFFERENCE - 2;
                     }
 
-                    Canvas uiBaseCanvas = uiBase.gameObject?.GetComponent<Canvas>();
+                    Canvas uiBaseCanvas = uiBase?.canvas;
                     if (uiBaseCanvas != null)
                     {
                         // 堆疊層數 > 1 主要是因為預留層級給Renderer組件

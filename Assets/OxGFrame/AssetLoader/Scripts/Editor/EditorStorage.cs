@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine;
 
-public class EditorStorage : MonoBehaviour
+public class EditorStorage
 {
     public static void SaveString(string key, string value)
     {

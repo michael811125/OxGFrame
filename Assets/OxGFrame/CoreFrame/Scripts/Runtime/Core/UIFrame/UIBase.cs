@@ -13,12 +13,21 @@ namespace CoreFrame
 
         public class UIBase : FrameBase
         {
+            [HideInInspector] public Canvas canvas;
+            [HideInInspector] public GraphicRaycaster graphicRaycaster;
+
             [Tooltip("UI相關設置")]
             public UISetting uiSetting = new UISetting();       // 定義UI類型, 用於取決於要新增至UIRoot中哪個對應的節點
             [Tooltip("是否自動生成Mask")]
             public bool autoMask = false;                       // 是否自動生成Mask
             [ConditionalField(nameof(autoMask)), Tooltip("Mask相關設置")]
             public MaskSetting maskSetting = new MaskSetting(); // 定義Mask類型 (Popup系列)
+
+            private void Awake()
+            {
+                this.canvas = GetComponent<Canvas>();
+                this.graphicRaycaster = this.GetComponent<GraphicRaycaster>();
+            }
 
             /// <summary>
             /// 僅執行一次, 只交由UIManager加載資源時呼叫初始參數

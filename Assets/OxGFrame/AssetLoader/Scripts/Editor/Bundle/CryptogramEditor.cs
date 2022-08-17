@@ -48,6 +48,7 @@ public class CryptogramEditor : EditorWindow
         this.autoSave = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "autoSave", "false"));
         if (this.autoSave)
         {
+            this.randomSeed = Convert.ToInt32(EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "randomSeed", "1"));
             this.dummySize = Convert.ToInt32(EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "dummySize", "0"));
             this.xorKey = Convert.ToInt32(EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "xorKey", "0"));
             this.aesKey = EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "aesKey", "file_key");
@@ -107,6 +108,8 @@ public class CryptogramEditor : EditorWindow
     }
 
     [SerializeField]
+    public int randomSeed = 1;
+    [SerializeField]
     public int dummySize = 0;
     private void _DrawOffsetView()
     {
@@ -123,6 +126,13 @@ public class CryptogramEditor : EditorWindow
         centeredStyle.alignment = TextAnchor.UpperCenter;
         GUILayout.Label(new GUIContent("Offset Settings"), centeredStyle);
         EditorGUILayout.Space();
+
+        this.randomSeed = EditorGUILayout.IntField(new GUIContent("Random Seed", "Fixed random values."), this.randomSeed);
+        if (this.randomSeed <= 0) this.randomSeed = 1;
+        if (this.autoSave)
+        {
+            EditorStorage.SaveData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "randomSeed", this.randomSeed.ToString());
+        }
 
         this.dummySize = EditorGUILayout.IntField(new GUIContent("Offset Dummy Size", "Add dummy bytes into front of file (per byte = Random 0 ~ 255)."), this.dummySize);
         if (this.dummySize < 0) this.dummySize = 0;
@@ -238,7 +248,7 @@ public class CryptogramEditor : EditorWindow
             switch (cryptogramType)
             {
                 case CryptogramType.OFFSET:
-                    BundleDistributorEditor.OffsetEncryptBundleFiles(this.sourceFolder, this.dummySize);
+                    BundleDistributorEditor.OffsetEncryptBundleFiles(this.sourceFolder, this.randomSeed, this.dummySize);
                     EditorUtility.DisplayDialog("Crytogram Message", "[OFFSET] Encrypt Process.", "OK");
                     break;
                 case CryptogramType.XOR:

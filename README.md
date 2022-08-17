@@ -1,14 +1,14 @@
-# OxGFrame
+![OxGFrame](Docs/OxGFrame_Logo.png)
 
 ---
 
 ## 基本介紹
 
-OxGFrame 是基於 Unity 用於加快遊戲開發的框架, 並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EntityFrame)、影音 (MediaFrame)、遊戲整合 (GSIFrame)、網路 (NetFrame)、事件註冊 (EventCenter)、API註冊 (APICenter)、Http.Acax (仿Ajax概念)等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、Android、iOS，WebGL。
+OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EntityFrame)、影音 (MediaFrame)、遊戲整合 (GSIFrame)、網路 (NetFrame)、事件註冊 (EventCenter)、API註冊 (APICenter)、Http.Acax (仿Ajax概念)等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、Android、iOS，WebGL。
 
 ---
 
-## 其他庫依賴
+## 第三方庫依賴
 ※ 使用 [Release unitypackage](https://github.com/michael811125/OxGFrame/releases) 匯入的話，需要先行安裝以下
 
 - [UnitTask Version 2.3.1 or higher](https://github.com/Cysharp/UniTask)
@@ -23,7 +23,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架, 並且使用 UniTask
 
 ### AssetLoader
 
-只要是遊戲製作，不可避免有資源加載問題，採用計數管理方式進行資源管控 (支援 Resource 與 AssetBundle)，Resource 就不多做說明。 其中 AssetBundle 則採用自帶的配置檔進行主程式與資源版本比對，實現資源熱更新流程，並且下載器支援斷點續傳，也對於 AssetBundle 打包出來的資源，提供現有加密方式 Offset (偏移量方式)、XOR、AES 實現檔案加密，還有針對加速 AssetBundle 開發方案提供在 Unity Editor 編輯器下能夠切換 AssetDatabase Mode 提高在 Unity Editor 編輯器中的開發效率。
+只要是遊戲製作，不可避免有資源加載問題，採用計數管理方式進行資源管控 (支援 Resource 與 AssetBundle)。 其中 AssetBundle 則採用自帶的配置檔進行主程式與資源版本比對，實現資源熱更新流程，並且下載器支援斷點續傳，也對於 AssetBundle 打包出來的資源，提供現有加密方式 Offset (偏移量方式)、XOR、AES 實現檔案加密，還有針對加速 AssetBundle 開發方案提供在 Unity Editor 編輯器下能夠切換 AssetDatabase Mode 提高在 Unity Editor 編輯器中的開發效率。
 
 - Cacher【CacheResource, CacheBundle】(主要資源加載操作)
 - KeyCacher【KeyResource, KeyBundle】(Link Cacher 進行 Key 索引，用於分類資源群組快取操作)
@@ -35,15 +35,19 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架, 並且使用 UniTask
 
 ### CoreFrame
 
-此模塊含蓋遊戲主要製作，針對 UI、Scene、Prefab 分別使用 UIFrame、GSFrame、USFrame、EntityFrame 皆實現 Singleton Manager 進行控管與動態調度，UI 的部分針對 MaskEvent 也可以自行覆寫建立 Mask 事件，皆支援 Resources 與 AssetBundle 加載方式 (多載)，並且實現物件命名綁定功能 (UIBase and GSBase = _Node@XXX, EntityBase = ~Node@XXX, 類型均為 GameObject)。
+此模塊含蓋遊戲主要製作，針對製作對應使用 UI Prefab => UIFrame、Scene Prefab => GSFrame、Other Prefab => EntityFrame、Unity Scene => USFrame 皆實現 Singleton Manager 進行控管與動態調度。支援 Resources 與 AssetBundle 加載方式 (多載)，並且實現物件命名綁定功能 (UIBase and GSBase = _Node@XXX, EntityBase = ~Node@XXX, 類型均為 GameObject)。
 
-- UIFram : 使用 UIManager 管理掛載 UIBase 的 Prefab 
-- GSFrame : 使用 GSManager 管理掛載 GSBase 的 Prefab 
+- UIFram (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab (UI 的部分針對 MaskEvent 也可以自行覆寫建立 Mask 事件)
+- GSFrame (Game Scene) : 使用 GSManager 管理掛載 GSBase 的 Prefab 
 - USFrame (Unity Scene) : 使用 USManager 管理 Unity 場景 (支援 Bundle)
 - EntityFrame : 使用 EntityManager 管理掛載 EntityBase 的 Prefab 
 - EventCenter : 自行建立 EventCenter 並且繼承 EventCenterBase (事件註冊管理，建議單例)
 - UMT (Unity Main Thread)
-- Utility (DeltaTimer, RealTimer, DTUpdate, RTUpdate)
+- Utility 
+  - Timer => DeltaTimer, RealTimer, DTUpdate, RTUpdate
+  - Adapter => UISafeAreaAdpater
+  - ButtonPlus => ButtonPlus (inherit UGUI Button), 擴展 Transition Scale, 長按功能
+  - Pool => NodePool (物件池)
 
 ※備註 : Right-Click Create/OxGFrame/CoreFrame... (Template cs and prefab)
 
@@ -52,7 +56,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架, 並且使用 UniTask
 遊戲影音部分，支援多平台加載方式 (Local, StreamingAssets, URL)，主要也對於 WebGL 有進行細節校正，因為 WebGL 對於 Audio 請求部分是無法取得正確長度 (官方放棄修正)，導致音訊控制會有致命缺陷，所以支援預置體製作時，可進行 Preload 請求 Clip 長度進行預設置。
 
 - AudioFrame : 使用 AudioManager 管理掛載 AudioBase 的 Prefab，且採用 Unity Mixer 進行各音軌控制
-- VideoFrame : 使用 VideoManager 管理掛載 VideoBase 的 Prefab，且支援 RenderTexture, Camera)
+- VideoFrame : 使用 VideoManager 管理掛載 VideoBase 的 Prefab，且支援 RenderTexture, Camera
 
 ### GSIFrame (Game System Integration)
 

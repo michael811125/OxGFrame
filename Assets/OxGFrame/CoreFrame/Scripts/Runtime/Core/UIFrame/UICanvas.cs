@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace CoreFrame
 {
@@ -11,6 +12,9 @@ namespace CoreFrame
         {
             /* 階層 Canvas > UIRoot > UINodes, UIMaskManager, UIFreezeManager */
 
+            [HideInInspector] public Canvas canvas;
+            [HideInInspector] public CanvasScaler canvasScaler;
+            [HideInInspector] public GraphicRaycaster graphicRaycaster;
             [HideInInspector] public GameObject goRoot;    // UI根節點物件
             public Dictionary<string, GameObject> goNodes; // UI節點物件
             public UIMaskManager uiMaskManager = null;     // UIMaskMgr, 由UIManager進行單例管控
@@ -19,6 +23,13 @@ namespace CoreFrame
             public UICanvas()
             {
                 this.goNodes = new Dictionary<string, GameObject>();
+            }
+
+            private void Awake()
+            {
+                this.canvas = this.GetComponent<Canvas>();
+                this.canvasScaler = this.GetComponent<CanvasScaler>();
+                this.graphicRaycaster = this.GetComponent<GraphicRaycaster>();
             }
 
             public GameObject GetUINode(NodeType nodeType)

@@ -1,52 +1,56 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-[DisallowMultipleComponent]
-public class UISafeAreaAdapter : MonoBehaviour
+namespace CoreFrame.Utility
 {
-    public bool refreshAlways = false;
-    public RectTransform panel;
-
-    private Resolution _lateResolution;
-
-    private void Awake()
+    [DisallowMultipleComponent]
+    [AddComponentMenu("OxGFrame/Utility/Adapter/UISafeAreaAdapter")]
+    public class UISafeAreaAdapter : MonoBehaviour
     {
-        this._lateResolution = Screen.currentResolution;
-        this._InitPanel();
-    }
+        public bool refreshAlways = false;
+        public RectTransform panel;
 
-    private void Start()
-    {
-        this.RefreshViewSize();
-    }
+        private Resolution _lateResolution;
 
-    private void LateUpdate()
-    {
-        if (this.refreshAlways || this._lateResolution.width != Screen.currentResolution.width || this._lateResolution.height != Screen.currentResolution.height)
+        private void Awake()
+        {
+            this._lateResolution = Screen.currentResolution;
+            this._InitPanel();
+        }
+
+        private void Start()
         {
             this.RefreshViewSize();
-            this._lateResolution = Screen.currentResolution;
         }
-    }
 
-    private void _InitPanel()
-    {
-        if (this.panel == null) this.panel = this.GetComponent<RectTransform>();
-    }
+        private void LateUpdate()
+        {
+            if (this.refreshAlways || this._lateResolution.width != Screen.currentResolution.width || this._lateResolution.height != Screen.currentResolution.height)
+            {
+                this.RefreshViewSize();
+                this._lateResolution = Screen.currentResolution;
+            }
+        }
 
-    public void RefreshViewSize()
-    {
-        if (this.panel == null) return;
+        private void _InitPanel()
+        {
+            if (this.panel == null) this.panel = this.GetComponent<RectTransform>();
+        }
 
-        Debug.Log($"<color=#FFFF00>Current Safe Area w: {Screen.safeArea.width}, h: {Screen.safeArea.height}, x: {Screen.safeArea.position.x}, y: {Screen.safeArea.position.y}</color>");
-        Debug.Log($"<color=#32CD32>Current Resolution w: {Screen.currentResolution.width}, h: {Screen.currentResolution.height}, dpi: {Screen.dpi}</color>");
+        public void RefreshViewSize()
+        {
+            if (this.panel == null) return;
 
-        Vector2 anchorMin = Screen.safeArea.position;
-        Vector2 anchorMax = Screen.safeArea.position + Screen.safeArea.size;
-        anchorMin.x /= Screen.width;
-        anchorMin.y /= Screen.height;
-        anchorMax.x /= Screen.width;
-        anchorMax.y /= Screen.height;
-        this.panel.anchorMin = anchorMin;
-        this.panel.anchorMax = anchorMax;
+            Debug.Log($"<color=#FFFF00>Current Safe Area w: {Screen.safeArea.width}, h: {Screen.safeArea.height}, x: {Screen.safeArea.position.x}, y: {Screen.safeArea.position.y}</color>");
+            Debug.Log($"<color=#32CD32>Current Resolution w: {Screen.currentResolution.width}, h: {Screen.currentResolution.height}, dpi: {Screen.dpi}</color>");
+
+            Vector2 anchorMin = Screen.safeArea.position;
+            Vector2 anchorMax = Screen.safeArea.position + Screen.safeArea.size;
+            anchorMin.x /= Screen.width;
+            anchorMin.y /= Screen.height;
+            anchorMax.x /= Screen.width;
+            anchorMax.y /= Screen.height;
+            this.panel.anchorMin = anchorMin;
+            this.panel.anchorMax = anchorMax;
+        }
     }
 }
