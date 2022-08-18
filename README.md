@@ -4,7 +4,7 @@
 
 ## 基本介紹
 
-OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EntityFrame)、影音 (MediaFrame)、遊戲整合 (GSIFrame)、網路 (NetFrame)、事件註冊 (EventCenter)、API註冊 (APICenter)、Http.Acax (仿Ajax概念)等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、Android、iOS，WebGL。
+OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EPFrame)、影音 (MediaFrame)、遊戲整合 (GSIFrame)、網路 (NetFrame)、事件註冊 (EventCenter)、API註冊 (APICenter)、Http.Acax (仿Ajax概念)等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、Android、iOS，WebGL。
 
 ---
 
@@ -35,7 +35,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 ### CoreFrame
 
-此模塊含蓋遊戲主要製作，針對製作對應使用 UI Prefab => UIFrame、Scene Prefab => GSFrame、Other Prefab => EPFrame、Unity Scene => USFrame 皆實現 Singleton Manager 進行控管與動態調度。支援 Resources 與 AssetBundle 加載方式 (多載)，並且實現物件命名綁定功能 (UIBase and GSBase = _Node@XXX, EntityBase = ~Node@XXX, 類型均為 GameObject)。
+此模塊含蓋遊戲主要製作，針對製作對應使用 UI Prefab => UIFrame、Scene Prefab => GSFrame、Other Prefab => EPFrame、Unity Scene => USFrame 皆實現 Singleton Manager 進行控管與動態調度。支援 Resources 與 AssetBundle 加載方式 (多載)，並且實現物件命名綁定功能 (UIBase and GSBase = _Node@XXX, EPBase = ~Node@XXX, 類型均為 GameObject)。
 
 - UIFram (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab (UI 的部分針對 MaskEvent 也可以自行覆寫建立 Mask 事件)
 - GSFrame (Game Scene) : 使用 GSManager 管理掛載 GSBase 的 Prefab 
