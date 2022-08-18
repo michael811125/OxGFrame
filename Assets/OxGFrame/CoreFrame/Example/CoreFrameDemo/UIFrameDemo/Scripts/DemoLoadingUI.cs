@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using CoreFrame.UIFrame;
+﻿using OxGFrame.CoreFrame.UIFrame;
 using Cysharp.Threading.Tasks;
 
 public class DemoLoadingUI : UIBase

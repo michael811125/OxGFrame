@@ -1,6 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 
-namespace CoreFrame
+namespace OxGFrame.CoreFrame
 {
     public interface IFrameBase
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CoreFrame
+namespace OxGFrame.CoreFrame
 {
     public class FrameSysDefine
     {

@@ -1,7 +1,7 @@
-﻿using AssetLoader.Bundle;
-using Cysharp.Threading.Tasks;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Cysharp.Threading.Tasks;
+using OxGFrame.AssetLoader.Bundle;
+using OxGFrame.AssetLoader.Cacher;
+using OxGFrame.AssetLoader.KeyCahcer;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;

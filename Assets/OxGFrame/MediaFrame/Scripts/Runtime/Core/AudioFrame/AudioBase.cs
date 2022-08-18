@@ -1,12 +1,10 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace MediaFrame.AudioFrame
+namespace OxGFrame.MediaFrame.AudioFrame
 {
     [RequireComponent(typeof(AudioSource))]
     public class AudioBase : MediaBase

@@ -4,471 +4,456 @@ using UnityEngine;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine.UI;
-using AssetLoader;
+using OxGFrame.AssetLoader;
 
-namespace CoreFrame
+namespace OxGFrame.CoreFrame.UIFrame
 {
-    namespace UIFrame
+    public class UIManager : FrameManager<UIBase>
     {
-        public class UIManager : FrameManager<UIBase>
+        private Dictionary<string, UICanvas> _dictUICanvas = new Dictionary<string, UICanvas>(); // Canvas物件節點
+        private Dictionary<string, int> _dictStackCounter = new Dictionary<string, int>();       // 堆疊式計數快取 (Key = id + NodeType)
+
+        private static readonly object _locker = new object();
+        private static UIManager _instance = null;
+        public static UIManager GetInstance()
         {
-            private Dictionary<string, UICanvas> _dictUICanvas = new Dictionary<string, UICanvas>(); // Canvas物件節點
-            private Dictionary<string, int> _dictStackCounter = new Dictionary<string, int>();       // 堆疊式計數快取 (Key = id + NodeType)
-
-            private static readonly object _locker = new object();
-            private static UIManager _instance = null;
-            public static UIManager GetInstance()
+            if (_instance == null)
             {
-                if (_instance == null)
+                lock (_locker)
                 {
-                    lock (_locker)
+                    _instance = FindObjectOfType(typeof(UIManager)) as UIManager;
+                    if (_instance == null) _instance = new GameObject(UISysDefine.UI_MANAGER_NAME).AddComponent<UIManager>();
+                }
+            }
+            return _instance;
+        }
+
+        private void Awake()
+        {
+            DontDestroyOnLoad(this);
+
+            // 初始會進行設置UICanvas環境 (如果尚未配置, 在UI加載時也會進行檢測)
+            this._SetupAllUICanvas();
+        }
+
+        #region 初始建立Node相關方法
+        /// <summary>
+        /// 設置全部可以匹配的UICanvas環境
+        /// </summary>
+        private void _SetupAllUICanvas()
+        {
+            // 以下迴圈查找能夠設置的UICanvas
+            foreach (var canvasName in Enum.GetNames(typeof(CanvasType)))
+            {
+                if (this._SetupAndCheckUICanvas(canvasName)) continue;
+            }
+        }
+
+        /// <summary>
+        /// 透過對應名稱查找物件, 並且設置與檢查是否有匹配的UICanvas環境
+        /// </summary>
+        /// <param name="canvasName"></param>
+        private bool _SetupAndCheckUICanvas(string canvasName)
+        {
+            if (this._dictUICanvas.ContainsKey(canvasName)) return true;
+
+            // 查找與CanvasType定義名稱一樣的Canvas物件
+            GameObject goCanvas = null;
+            if (UISysDefine.bFindAllCanvases)
+            {
+                foreach (var canvas in FindObjectsOfType(typeof(Canvas)) as Canvas[])
+                {
+                    if (canvas.gameObject.name == canvasName)
                     {
-                        _instance = FindObjectOfType(typeof(UIManager)) as UIManager;
-                        if (_instance == null) _instance = new GameObject(UISysDefine.UI_MANAGER_NAME).AddComponent<UIManager>();
+                        goCanvas = canvas.gameObject;
+                        break;
                     }
                 }
-                return _instance;
             }
+            else goCanvas = GameObject.Find(canvasName);
 
-            private void Awake()
+            if (goCanvas != null)
             {
-                DontDestroyOnLoad(this);
-
-                // 初始會進行設置UICanvas環境 (如果尚未配置, 在UI加載時也會進行檢測)
-                this._SetupAllUICanvas();
-            }
-
-            #region 初始建立Node相關方法
-            /// <summary>
-            /// 設置全部可以匹配的UICanvas環境
-            /// </summary>
-            private void _SetupAllUICanvas()
-            {
-                // 以下迴圈查找能夠設置的UICanvas
-                foreach (var canvasName in Enum.GetNames(typeof(CanvasType)))
+                if (!this._dictUICanvas.ContainsKey(canvasName))
                 {
-                    if (this._SetupAndCheckUICanvas(canvasName)) continue;
-                }
-            }
+                    // 取得或建立UICanvas
+                    UICanvas uiCanvas = goCanvas.GetComponent<UICanvas>();
+                    if (uiCanvas == null) uiCanvas = goCanvas.AddComponent<UICanvas>();
 
-            /// <summary>
-            /// 透過對應名稱查找物件, 並且設置與檢查是否有匹配的UICanvas環境
-            /// </summary>
-            /// <param name="canvasName"></param>
-            private bool _SetupAndCheckUICanvas(string canvasName)
-            {
-                if (this._dictUICanvas.ContainsKey(canvasName)) return true;
+                    // 設置UIRoot (parent = Canvas)
+                    var goUIRoot = this._CreateUIRoot(uiCanvas, UISysDefine.UI_ROOT_NAME, goCanvas.transform);
+                    uiCanvas.goRoot = goUIRoot;
 
-                // 查找與CanvasType定義名稱一樣的Canvas物件
-                GameObject goCanvas = null;
-                if (UISysDefine.bFindAllCanvases)
-                {
-                    foreach (var canvas in FindObjectsOfType(typeof(Canvas)) as Canvas[])
+                    // 設置UINode (parent = UIRoot)
+                    foreach (var nodeType in UISysDefine.UI_NODES.Keys.ToArray())
                     {
-                        if (canvas.gameObject.name == canvasName)
+                        if (!uiCanvas.goNodes.ContainsKey(nodeType.ToString()))
                         {
-                            goCanvas = canvas.gameObject;
-                            break;
+                            uiCanvas.goNodes.Add(nodeType.ToString(), this._CreateUINode(uiCanvas, nodeType, goUIRoot.transform));
                         }
                     }
+
+                    // 建立UIMask & UIFreeze容器 (parent = UIRoot)
+                    GameObject uiMaskGo = this._CreateUIContainer(uiCanvas, UISysDefine.UI_MASK_NAME, goUIRoot.transform);
+                    GameObject uiFreezeGo = this._CreateUIContainer(uiCanvas, UISysDefine.UI_FREEZE_NAME, goUIRoot.transform);
+                    uiCanvas.uiMaskManager = new UIMaskManager(uiCanvas.gameObject.layer, uiMaskGo.transform);
+                    uiCanvas.uiFreezeManager = new UIFreezeManager(uiCanvas.gameObject.layer, uiFreezeGo.transform);
+
+                    this._dictUICanvas.Add(canvasName, uiCanvas);
                 }
-                else goCanvas = GameObject.Find(canvasName);
-
-                if (goCanvas != null)
-                {
-                    if (!this._dictUICanvas.ContainsKey(canvasName))
-                    {
-                        // 取得或建立UICanvas
-                        UICanvas uiCanvas = goCanvas.GetComponent<UICanvas>();
-                        if (uiCanvas == null) uiCanvas = goCanvas.AddComponent<UICanvas>();
-
-                        // 設置UIRoot (parent = Canvas)
-                        var goUIRoot = this._CreateUIRoot(uiCanvas, UISysDefine.UI_ROOT_NAME, goCanvas.transform);
-                        uiCanvas.goRoot = goUIRoot;
-
-                        // 設置UINode (parent = UIRoot)
-                        foreach (var nodeType in UISysDefine.UI_NODES.Keys.ToArray())
-                        {
-                            if (!uiCanvas.goNodes.ContainsKey(nodeType.ToString()))
-                            {
-                                uiCanvas.goNodes.Add(nodeType.ToString(), this._CreateUINode(uiCanvas, nodeType, goUIRoot.transform));
-                            }
-                        }
-
-                        // 建立UIMask & UIFreeze容器 (parent = UIRoot)
-                        GameObject uiMaskGo = this._CreateUIContainer(uiCanvas, UISysDefine.UI_MASK_NAME, goUIRoot.transform);
-                        GameObject uiFreezeGo = this._CreateUIContainer(uiCanvas, UISysDefine.UI_FREEZE_NAME, goUIRoot.transform);
-                        uiCanvas.uiMaskManager = new UIMaskManager(uiCanvas.gameObject.layer, uiMaskGo.transform);
-                        uiCanvas.uiFreezeManager = new UIFreezeManager(uiCanvas.gameObject.layer, uiFreezeGo.transform);
-
-                        this._dictUICanvas.Add(canvasName, uiCanvas);
-                    }
-                }
-                else
-                {
-                    Debug.Log($"<color=#FFD600>【Setup Failed】Not found UICanvas:</color> <color=#FF6ECB>{canvasName}</color>");
-                    return false;
-                }
-
-                return true;
             }
-
-            private GameObject _CreateUIRoot(UICanvas uiCanvas, string name, Transform parent)
+            else
             {
-                // 檢查是否已經有先被創立了
-                GameObject uiRootChecker = parent.Find(name)?.gameObject;
-                if (uiRootChecker != null) return uiRootChecker;
-
-                GameObject uiRootGo = new GameObject(UISysDefine.UI_ROOT_NAME, typeof(RectTransform));
-                // 設置繼承主Canvas的Layer
-                uiRootGo.layer = uiCanvas.gameObject.layer;
-                // 設置uiRoot為Canvas的子節點
-                uiRootGo.transform.SetParent(parent);
-
-                // 校正RectTransform
-                RectTransform uiRootRect = uiRootGo.GetComponent<RectTransform>();
-                uiRootRect.anchorMin = Vector2.zero;
-                uiRootRect.anchorMax = Vector2.one;
-                uiRootRect.sizeDelta = Vector2.zero;
-                uiRootRect.localScale = Vector3.one;
-                uiRootRect.localPosition = Vector3.zero;
-
-                return uiRootGo;
-            }
-
-            private GameObject _CreateUINode(UICanvas uiCanvas, NodeType nodeType, Transform parent)
-            {
-                // 檢查是否已經有先被創立了
-                GameObject uiNodeChecker = parent.Find(nodeType.ToString())?.gameObject;
-                if (uiNodeChecker != null) return uiNodeChecker;
-
-                GameObject uiNodeGo = new GameObject(nodeType.ToString(), typeof(RectTransform), typeof(Canvas));
-                // 設置繼承主Canvas的Layer
-                uiNodeGo.layer = uiCanvas.gameObject.layer;
-                // 設置uiNode為uiRoot的子節點
-                uiNodeGo.transform.SetParent(parent);
-
-                // 校正RectTransform
-                RectTransform uiNodeRect = uiNodeGo.GetComponent<RectTransform>();
-                uiNodeRect.anchorMin = Vector2.zero;
-                uiNodeRect.anchorMax = Vector2.one;
-                uiNodeRect.sizeDelta = Vector2.zero;
-                uiNodeRect.localScale = Vector3.one;
-                uiNodeRect.localPosition = Vector3.zero;
-
-                // 設置Canvas參數 (會繼承於主Canvas設定 => SortingLayerName, AdditionalShaderChannels)
-                Canvas uiNodeCanvas = uiNodeGo.GetComponent<Canvas>();
-                Canvas mainCanvas = uiCanvas.GetComponent<Canvas>();
-                uiNodeCanvas.overridePixelPerfect = true;
-                uiNodeCanvas.pixelPerfect = true;
-                uiNodeCanvas.overrideSorting = true;
-                uiNodeCanvas.sortingLayerName = mainCanvas.sortingLayerName;
-                uiNodeCanvas.sortingOrder = UISysDefine.UI_NODES[nodeType];
-                uiNodeCanvas.additionalShaderChannels = mainCanvas.additionalShaderChannels;
-
-                return uiNodeGo;
-            }
-
-            private GameObject _CreateUIContainer(UICanvas uiCanvas, string name, Transform parent)
-            {
-                // 檢查是否已經有先被創立了
-                GameObject uiContainerChecker = parent.Find(name)?.gameObject;
-                if (uiContainerChecker != null) return uiContainerChecker;
-
-                GameObject uiContainerGo = new GameObject(name, typeof(RectTransform));
-                // 設置繼承主Canvas的Layer
-                uiContainerGo.layer = uiCanvas.gameObject.layer;
-                // 設置uiContainer為uiRoot的子節點
-                uiContainerGo.transform.SetParent(parent);
-
-                // 校正Transform
-                uiContainerGo.transform.localScale = Vector3.one;
-                uiContainerGo.transform.localPosition = Vector3.zero;
-
-                return uiContainerGo;
-            }
-            #endregion
-
-            /// <summary>
-            /// 透過 CanvasType 取得對應的 UICanvas
-            /// </summary>
-            /// <param name="canvasType"></param>
-            /// <returns></returns>
-            public UICanvas GetUICanvas(CanvasType canvasType)
-            {
-                if (this._dictUICanvas.Count == 0) return null;
-
-                if (this._dictUICanvas.TryGetValue(canvasType.ToString(), out var uiCanvas)) return uiCanvas;
-
-                return null;
-            }
-
-            #region 實作Loading
-            protected override UIBase Instantiate(UIBase uiBase, string bundleName, string assetName, AddIntoCache addIntoCache)
-            {
-                // 先從來源物件中取得UIBase, 需先取得UICanvas環境, 後續Instantiate時才能取得正常比例
-                UICanvas uiCanvas = null;
-                if (uiBase != null)
-                {
-                    // 先檢查與設置UICanvas環境
-                    if (this._SetupAndCheckUICanvas(uiBase.uiSetting.canvasType.ToString()))
-                    {
-                        uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasType);
-                    }
-                }
-
-                if (uiCanvas == null)
-                {
-                    Debug.Log($"<color=#FFD600>【Loading Failed】Not found UICanvas:</color> <color=#FF6ECB>{uiBase.uiSetting.canvasType}</color>");
-                    return null;
-                }
-
-                // 透過 RenderMode 區分預設父層級
-                Transform parent;
-                if (uiCanvas.canvas.renderMode == RenderMode.WorldSpace) parent = uiCanvas.transform;
-                else parent = uiCanvas.goRoot.transform;
-                // instantiate 【UI Prefab】 (需先指定 Instantiate Parent 為 UIRoot 不然 Canvas 初始會跑掉)
-                GameObject instPref = Instantiate(uiBase.gameObject, parent);
-
-                // 激活檢查, 如果主體Active為false必須打開
-                if (!instPref.activeSelf) instPref.SetActive(true);
-
-                instPref.name = instPref.name.Replace("(Clone)", ""); // Replace Name
-                uiBase = instPref.GetComponent<UIBase>();             // 取得UIBase組件
-                if (uiBase == null) return null;
-
-                addIntoCache?.Invoke(uiBase);
-
-                this._AdjustCanvas(uiCanvas, uiBase);       // 調整Canvas相關組件參數
-
-                uiBase.SetNames(bundleName, assetName);
-                uiBase.BeginInit();                         // Clone取得UIBase組件後, 也需要初始UI相關配置, 不然後面無法正常運作
-                uiBase.InitFirst();                         // Clone取得UIBase組件後, 也需要初始UI相關綁定組件設定
-
-                // >>> 需在InitThis之後, 以下設定開始生效 <<<
-
-                if (!this.SetParent(uiBase)) return null;   // 透過UIFormType類型, 設置Parent
-                this._SetSortingOrder(uiBase);              // SortingOrder設置需在SetActive(false)之前就設置, 基於UIFormType的階層去設置排序
-                this._SetRendererOrder(uiBase);             // 設置UI物件底下的Renderer組件為UI層, 使得Renderer為正確的UI階層與渲染順序
-
-                uiBase.gameObject.SetActive(false);         // 最後設置完畢後, 關閉GameObject的Active為false
-
-                return uiBase;
-            }
-            #endregion
-
-            #region 相關校正與設置
-            /// <summary>
-            /// 依照對應的Node類型設置母節點
-            /// </summary>
-            /// <param name="uiBase"></param>
-            protected override bool SetParent(UIBase uiBase)
-            {
-                var uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasType);
-                if (uiCanvas == null)
-                {
-                    Debug.Log($"<color=#FF0068>When UI <color=#FF9000>[{uiBase.assetName}]</color> to set parent failed. Not found UICanvas:</color> <color=#FF9000>[{uiBase.uiSetting.canvasType}]</color>");
-                    return false;
-                }
-
-                var goNode = uiCanvas.GetUINode(uiBase.uiSetting.nodeType);
-                if (goNode != null)
-                {
-                    uiBase.gameObject.transform.SetParent(goNode.transform);
-                    return true;
-                }
-
+                Debug.Log($"<color=#FFD600>【Setup Failed】Not found UICanvas:</color> <color=#FF6ECB>{canvasName}</color>");
                 return false;
             }
 
-            /// <summary>
-            /// 調整 UIBase 的 Canvas 相關組件參數
-            /// </summary>
-            /// <param name="uiBase"></param>
-            private void _AdjustCanvas(UICanvas uiCanvas, UIBase uiBase)
+            return true;
+        }
+
+        private GameObject _CreateUIRoot(UICanvas uiCanvas, string name, Transform parent)
+        {
+            // 檢查是否已經有先被創立了
+            GameObject uiRootChecker = parent.Find(name)?.gameObject;
+            if (uiRootChecker != null) return uiRootChecker;
+
+            GameObject uiRootGo = new GameObject(UISysDefine.UI_ROOT_NAME, typeof(RectTransform));
+            // 設置繼承主Canvas的Layer
+            uiRootGo.layer = uiCanvas.gameObject.layer;
+            // 設置uiRoot為Canvas的子節點
+            uiRootGo.transform.SetParent(parent);
+
+            // 校正RectTransform
+            RectTransform uiRootRect = uiRootGo.GetComponent<RectTransform>();
+            uiRootRect.anchorMin = Vector2.zero;
+            uiRootRect.anchorMax = Vector2.one;
+            uiRootRect.sizeDelta = Vector2.zero;
+            uiRootRect.localScale = Vector3.one;
+            uiRootRect.localPosition = Vector3.zero;
+
+            return uiRootGo;
+        }
+
+        private GameObject _CreateUINode(UICanvas uiCanvas, NodeType nodeType, Transform parent)
+        {
+            // 檢查是否已經有先被創立了
+            GameObject uiNodeChecker = parent.Find(nodeType.ToString())?.gameObject;
+            if (uiNodeChecker != null) return uiNodeChecker;
+
+            GameObject uiNodeGo = new GameObject(nodeType.ToString(), typeof(RectTransform), typeof(Canvas));
+            // 設置繼承主Canvas的Layer
+            uiNodeGo.layer = uiCanvas.gameObject.layer;
+            // 設置uiNode為uiRoot的子節點
+            uiNodeGo.transform.SetParent(parent);
+
+            // 校正RectTransform
+            RectTransform uiNodeRect = uiNodeGo.GetComponent<RectTransform>();
+            uiNodeRect.anchorMin = Vector2.zero;
+            uiNodeRect.anchorMax = Vector2.one;
+            uiNodeRect.sizeDelta = Vector2.zero;
+            uiNodeRect.localScale = Vector3.one;
+            uiNodeRect.localPosition = Vector3.zero;
+
+            // 設置Canvas參數 (會繼承於主Canvas設定 => SortingLayerName, AdditionalShaderChannels)
+            Canvas uiNodeCanvas = uiNodeGo.GetComponent<Canvas>();
+            Canvas mainCanvas = uiCanvas.GetComponent<Canvas>();
+            uiNodeCanvas.overridePixelPerfect = true;
+            uiNodeCanvas.pixelPerfect = true;
+            uiNodeCanvas.overrideSorting = true;
+            uiNodeCanvas.sortingLayerName = mainCanvas.sortingLayerName;
+            uiNodeCanvas.sortingOrder = UISysDefine.UI_NODES[nodeType];
+            uiNodeCanvas.additionalShaderChannels = mainCanvas.additionalShaderChannels;
+
+            return uiNodeGo;
+        }
+
+        private GameObject _CreateUIContainer(UICanvas uiCanvas, string name, Transform parent)
+        {
+            // 檢查是否已經有先被創立了
+            GameObject uiContainerChecker = parent.Find(name)?.gameObject;
+            if (uiContainerChecker != null) return uiContainerChecker;
+
+            GameObject uiContainerGo = new GameObject(name, typeof(RectTransform));
+            // 設置繼承主Canvas的Layer
+            uiContainerGo.layer = uiCanvas.gameObject.layer;
+            // 設置uiContainer為uiRoot的子節點
+            uiContainerGo.transform.SetParent(parent);
+
+            // 校正Transform
+            uiContainerGo.transform.localScale = Vector3.one;
+            uiContainerGo.transform.localPosition = Vector3.zero;
+
+            return uiContainerGo;
+        }
+        #endregion
+
+        /// <summary>
+        /// 透過 CanvasType 取得對應的 UICanvas
+        /// </summary>
+        /// <param name="canvasType"></param>
+        /// <returns></returns>
+        public UICanvas GetUICanvas(CanvasType canvasType)
+        {
+            if (this._dictUICanvas.Count == 0) return null;
+
+            if (this._dictUICanvas.TryGetValue(canvasType.ToString(), out var uiCanvas)) return uiCanvas;
+
+            return null;
+        }
+
+        #region 實作Loading
+        protected override UIBase Instantiate(UIBase uiBase, string bundleName, string assetName, AddIntoCache addIntoCache)
+        {
+            // 先從來源物件中取得UIBase, 需先取得UICanvas環境, 後續Instantiate時才能取得正常比例
+            UICanvas uiCanvas = null;
+            if (uiBase != null)
             {
-                // 調整uiBase Canvas (會繼承於主Canvas設定 => SortingLayerName, AdditionalShaderChannels)
-                Canvas uiBaseCanvas = uiBase.canvas;
-                Canvas mainCanvas = uiCanvas.canvas;
-                uiBaseCanvas.overridePixelPerfect = true;
-                uiBaseCanvas.pixelPerfect = true;
-                uiBaseCanvas.overrideSorting = true;
-                uiBaseCanvas.sortingLayerName = mainCanvas.sortingLayerName;
-                uiBaseCanvas.additionalShaderChannels = mainCanvas.additionalShaderChannels;
-
-                // 調整uiBase Graphic Raycaster (會繼承於主Canvas設定 => ignoreReversedGraphics, blockingObjects, blockingMask)
-                GraphicRaycaster uiBaseGraphicRaycaster = uiBase.graphicRaycaster;
-                GraphicRaycaster mainGraphicRaycaster = uiCanvas.graphicRaycaster;
-                uiBaseGraphicRaycaster.ignoreReversedGraphics = mainGraphicRaycaster.ignoreReversedGraphics;
-                uiBaseGraphicRaycaster.blockingObjects = mainGraphicRaycaster.blockingObjects;
-                uiBaseGraphicRaycaster.blockingMask = mainGraphicRaycaster.blockingMask;
-
-                // 是否自動遞迴設置LayerMask
-                if (UISysDefine.bAutoSetLayerRecursively) this._SetLayerRecursively(uiBase.gameObject, uiCanvas.gameObject.layer);
-            }
-
-            /// <summary>
-            /// 遞迴設置LayerMask
-            /// </summary>
-            /// <param name="go"></param>
-            /// <param name="layer"></param>
-            private void _SetLayerRecursively(GameObject go, int layer)
-            {
-                go.layer = layer;
-                foreach (Transform child in go.transform)
+                // 先檢查與設置UICanvas環境
+                if (this._SetupAndCheckUICanvas(uiBase.uiSetting.canvasType.ToString()))
                 {
-                    this._SetLayerRecursively(child.gameObject, layer);
+                    uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasType);
                 }
             }
 
-            /// <summary>
-            /// 設置SortingOrder渲染排序
-            /// </summary>
-            /// <param name="uiBase"></param>
-            private void _SetSortingOrder(UIBase uiBase)
+            if (uiCanvas == null)
             {
-                Canvas uiBaseCanvas = uiBase?.canvas;
-                if (uiBaseCanvas == null) return;
-
-                // 設置sortingOrder (UIBase 中設置的 order 需要再 -=1, 保留給 Renderer)
-                if ((uiBase.uiSetting.order -= 1) < 0) uiBase.uiSetting.order = 0;
-                // ORDER_DIFFERENCE - 2 => 1 保留給下一個UI階層, 另外一個 1 保留給 Renderer
-                int uiOrder = (uiBase.uiSetting.order >= (UISysDefine.ORDER_DIFFERENCE - 2)) ? (UISysDefine.ORDER_DIFFERENCE - 2) : uiBase.uiSetting.order;
-                int uiNodeOrder = UISysDefine.UI_NODES[uiBase.uiSetting.nodeType];
-                // 判斷非Stack, 則進行設置累加, 反之則不進行
-                if (!uiBase.uiSetting.stack) uiBaseCanvas.sortingOrder = uiNodeOrder + uiOrder;
-                else uiBaseCanvas.sortingOrder = uiNodeOrder;
+                Debug.Log($"<color=#FFD600>【Loading Failed】Not found UICanvas:</color> <color=#FF6ECB>{uiBase.uiSetting.canvasType}</color>");
+                return null;
             }
 
-            /// <summary>
-            /// 設置UI底下子物件的Renderer階層與渲染順序 (非UI物件)
-            /// </summary>
-            /// <param name="uiBase"></param>
-            /// <param name="go">要搜尋的根物件節點</param>
-            private void _SetRendererOrder(UIBase uiBase)
+            // 透過 RenderMode 區分預設父層級
+            Transform parent;
+            if (uiCanvas.canvas.renderMode == RenderMode.WorldSpace) parent = uiCanvas.transform;
+            else parent = uiCanvas.goRoot.transform;
+            // instantiate 【UI Prefab】 (需先指定 Instantiate Parent 為 UIRoot 不然 Canvas 初始會跑掉)
+            GameObject instPref = Instantiate(uiBase.gameObject, parent);
+
+            // 激活檢查, 如果主體Active為false必須打開
+            if (!instPref.activeSelf) instPref.SetActive(true);
+
+            instPref.name = instPref.name.Replace("(Clone)", ""); // Replace Name
+            uiBase = instPref.GetComponent<UIBase>();             // 取得UIBase組件
+            if (uiBase == null) return null;
+
+            addIntoCache?.Invoke(uiBase);
+
+            this._AdjustCanvas(uiCanvas, uiBase);       // 調整Canvas相關組件參數
+
+            uiBase.SetNames(bundleName, assetName);
+            uiBase.BeginInit();                         // Clone取得UIBase組件後, 也需要初始UI相關配置, 不然後面無法正常運作
+            uiBase.InitFirst();                         // Clone取得UIBase組件後, 也需要初始UI相關綁定組件設定
+
+            // >>> 需在InitThis之後, 以下設定開始生效 <<<
+
+            if (!this.SetParent(uiBase)) return null;   // 透過UIFormType類型, 設置Parent
+            this._SetSortingOrder(uiBase);              // SortingOrder設置需在SetActive(false)之前就設置, 基於UIFormType的階層去設置排序
+            this._SetRendererOrder(uiBase);             // 設置UI物件底下的Renderer組件為UI層, 使得Renderer為正確的UI階層與渲染順序
+
+            uiBase.gameObject.SetActive(false);         // 最後設置完畢後, 關閉GameObject的Active為false
+
+            return uiBase;
+        }
+        #endregion
+
+        #region 相關校正與設置
+        /// <summary>
+        /// 依照對應的Node類型設置母節點
+        /// </summary>
+        /// <param name="uiBase"></param>
+        protected override bool SetParent(UIBase uiBase)
+        {
+            var uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasType);
+            if (uiCanvas == null)
             {
-                Canvas uiBaseCanvas = uiBase?.canvas;
-                if (uiBaseCanvas == null) return;
-
-                Renderer[] renderers = uiBase.gameObject?.GetComponentsInChildren<Renderer>();
-                if (renderers == null || renderers.Length == 0) return;
-
-                // 設置Renderer的sortingLayerName
-                string sortingLayerName = uiBaseCanvas.sortingLayerName;
-                // 設置Renderer的sortingOrder【Renderer需要 > 本身UI的階層才能夠正常顯示, 所以才 +1 (否則會與父節點同屬階層被本身UI遮住)】
-                int sortingOrder = uiBaseCanvas.sortingOrder + 1;
-
-                // 進行迴圈設置
-                foreach (var renderer in renderers)
-                {
-                    renderer.sortingLayerName = sortingLayerName;
-                    renderer.sortingOrder = sortingOrder;
-                }
+                Debug.Log($"<color=#FF0068>When UI <color=#FF9000>[{uiBase.assetName}]</color> to set parent failed. Not found UICanvas:</color> <color=#FF9000>[{uiBase.uiSetting.canvasType}]</color>");
+                return false;
             }
-            #endregion
 
-            #region Show
-            public override async UniTask<UIBase> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null)
+            var goNode = uiCanvas.GetUINode(uiBase.uiSetting.nodeType);
+            if (goNode != null)
             {
-                if (string.IsNullOrEmpty(assetName)) return null;
+                uiBase.gameObject.transform.SetParent(goNode.transform);
+                return true;
+            }
 
-                UIBase uiBase = this.GetFromAllCache(assetName);
+            return false;
+        }
 
-                if (uiBase != null && !uiBase.allowInstantiate)
+        /// <summary>
+        /// 調整 UIBase 的 Canvas 相關組件參數
+        /// </summary>
+        /// <param name="uiBase"></param>
+        private void _AdjustCanvas(UICanvas uiCanvas, UIBase uiBase)
+        {
+            // 調整uiBase Canvas (會繼承於主Canvas設定 => SortingLayerName, AdditionalShaderChannels)
+            Canvas uiBaseCanvas = uiBase.canvas;
+            Canvas mainCanvas = uiCanvas.canvas;
+            uiBaseCanvas.overridePixelPerfect = true;
+            uiBaseCanvas.pixelPerfect = true;
+            uiBaseCanvas.overrideSorting = true;
+            uiBaseCanvas.sortingLayerName = mainCanvas.sortingLayerName;
+            uiBaseCanvas.additionalShaderChannels = mainCanvas.additionalShaderChannels;
+
+            // 調整uiBase Graphic Raycaster (會繼承於主Canvas設定 => ignoreReversedGraphics, blockingObjects, blockingMask)
+            GraphicRaycaster uiBaseGraphicRaycaster = uiBase.graphicRaycaster;
+            GraphicRaycaster mainGraphicRaycaster = uiCanvas.graphicRaycaster;
+            uiBaseGraphicRaycaster.ignoreReversedGraphics = mainGraphicRaycaster.ignoreReversedGraphics;
+            uiBaseGraphicRaycaster.blockingObjects = mainGraphicRaycaster.blockingObjects;
+            uiBaseGraphicRaycaster.blockingMask = mainGraphicRaycaster.blockingMask;
+
+            // 是否自動遞迴設置LayerMask
+            if (UISysDefine.bAutoSetLayerRecursively) this._SetLayerRecursively(uiBase.gameObject, uiCanvas.gameObject.layer);
+        }
+
+        /// <summary>
+        /// 遞迴設置LayerMask
+        /// </summary>
+        /// <param name="go"></param>
+        /// <param name="layer"></param>
+        private void _SetLayerRecursively(GameObject go, int layer)
+        {
+            go.layer = layer;
+            foreach (Transform child in go.transform)
+            {
+                this._SetLayerRecursively(child.gameObject, layer);
+            }
+        }
+
+        /// <summary>
+        /// 設置SortingOrder渲染排序
+        /// </summary>
+        /// <param name="uiBase"></param>
+        private void _SetSortingOrder(UIBase uiBase)
+        {
+            Canvas uiBaseCanvas = uiBase?.canvas;
+            if (uiBaseCanvas == null) return;
+
+            // 設置sortingOrder (UIBase 中設置的 order 需要再 -=1, 保留給 Renderer)
+            if ((uiBase.uiSetting.order -= 1) < 0) uiBase.uiSetting.order = 0;
+            // ORDER_DIFFERENCE - 2 => 1 保留給下一個UI階層, 另外一個 1 保留給 Renderer
+            int uiOrder = (uiBase.uiSetting.order >= (UISysDefine.ORDER_DIFFERENCE - 2)) ? (UISysDefine.ORDER_DIFFERENCE - 2) : uiBase.uiSetting.order;
+            int uiNodeOrder = UISysDefine.UI_NODES[uiBase.uiSetting.nodeType];
+            // 判斷非Stack, 則進行設置累加, 反之則不進行
+            if (!uiBase.uiSetting.stack) uiBaseCanvas.sortingOrder = uiNodeOrder + uiOrder;
+            else uiBaseCanvas.sortingOrder = uiNodeOrder;
+        }
+
+        /// <summary>
+        /// 設置UI底下子物件的Renderer階層與渲染順序 (非UI物件)
+        /// </summary>
+        /// <param name="uiBase"></param>
+        /// <param name="go">要搜尋的根物件節點</param>
+        private void _SetRendererOrder(UIBase uiBase)
+        {
+            Canvas uiBaseCanvas = uiBase?.canvas;
+            if (uiBaseCanvas == null) return;
+
+            Renderer[] renderers = uiBase.gameObject?.GetComponentsInChildren<Renderer>();
+            if (renderers == null || renderers.Length == 0) return;
+
+            // 設置Renderer的sortingLayerName
+            string sortingLayerName = uiBaseCanvas.sortingLayerName;
+            // 設置Renderer的sortingOrder【Renderer需要 > 本身UI的階層才能夠正常顯示, 所以才 +1 (否則會與父節點同屬階層被本身UI遮住)】
+            int sortingOrder = uiBaseCanvas.sortingOrder + 1;
+
+            // 進行迴圈設置
+            foreach (var renderer in renderers)
+            {
+                renderer.sortingLayerName = sortingLayerName;
+                renderer.sortingOrder = sortingOrder;
+            }
+        }
+        #endregion
+
+        #region Show
+        public override async UniTask<UIBase> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null)
+        {
+            if (string.IsNullOrEmpty(assetName)) return null;
+
+            UIBase uiBase = this.GetFromAllCache(assetName);
+
+            if (uiBase != null && !uiBase.allowInstantiate)
+            {
+                if (this.CheckIsShowing(assetName))
                 {
-                    if (this.CheckIsShowing(assetName))
-                    {
-                        Debug.LogWarning(string.Format("【UI】{0}已經存在了!!!", assetName));
-                        return null;
-                    }
-                }
-
-                await this.ShowLoading(groupId, string.Empty, loadingUIAssetName); // 開啟預顯加載UI
-
-                uiBase = await this.LoadIntoAllCache(string.Empty, assetName, progression, false);
-                if (uiBase == null)
-                {
-                    Debug.LogWarning(string.Format("找不到相對路徑資源【UI】: {0}", assetName));
+                    Debug.LogWarning(string.Format("【UI】{0}已經存在了!!!", assetName));
                     return null;
                 }
-
-                uiBase.SetGroupId(groupId);
-                uiBase.SetHidden(false);
-                await this.LoadAndDispay(uiBase, obj);
-
-                Debug.Log(string.Format("顯示UI: 【{0}】", assetName));
-
-                this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載UI
-
-                return uiBase;
             }
 
-            public override async UniTask<UIBase> Show(int groupId, string bundleName, string assetName, object obj = null, string loadingUIBundleName = null, string loadingUIAssetName = null, Progression progression = null)
+            await this.ShowLoading(groupId, string.Empty, loadingUIAssetName); // 開啟預顯加載UI
+
+            uiBase = await this.LoadIntoAllCache(string.Empty, assetName, progression, false);
+            if (uiBase == null)
             {
-                if (string.IsNullOrEmpty(bundleName) && string.IsNullOrEmpty(assetName)) return null;
+                Debug.LogWarning(string.Format("找不到相對路徑資源【UI】: {0}", assetName));
+                return null;
+            }
 
-                UIBase uiBase = this.GetFromAllCache(assetName);
+            uiBase.SetGroupId(groupId);
+            uiBase.SetHidden(false);
+            await this.LoadAndDispay(uiBase, obj);
 
-                if (uiBase != null && !uiBase.allowInstantiate)
+            Debug.Log(string.Format("顯示UI: 【{0}】", assetName));
+
+            this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載UI
+
+            return uiBase;
+        }
+
+        public override async UniTask<UIBase> Show(int groupId, string bundleName, string assetName, object obj = null, string loadingUIBundleName = null, string loadingUIAssetName = null, Progression progression = null)
+        {
+            if (string.IsNullOrEmpty(bundleName) && string.IsNullOrEmpty(assetName)) return null;
+
+            UIBase uiBase = this.GetFromAllCache(assetName);
+
+            if (uiBase != null && !uiBase.allowInstantiate)
+            {
+                if (this.CheckIsShowing(assetName))
                 {
-                    if (this.CheckIsShowing(assetName))
-                    {
-                        Debug.LogWarning(string.Format("【UI】{0}已經存在了!!!", assetName));
-                        return null;
-                    }
-                }
-
-                await this.ShowLoading(groupId, loadingUIBundleName, loadingUIAssetName); // 開啟預顯加載UI
-
-                uiBase = await this.LoadIntoAllCache(bundleName, assetName, progression, false);
-                if (uiBase == null)
-                {
-                    Debug.LogWarning(string.Format("找不到相對路徑資源【UI】: {0}", assetName));
+                    Debug.LogWarning(string.Format("【UI】{0}已經存在了!!!", assetName));
                     return null;
                 }
-
-                uiBase.SetGroupId(groupId);
-                uiBase.SetHidden(false);
-                await this.LoadAndDispay(uiBase, obj);
-
-                Debug.Log(string.Format("顯示UI: 【{0}】", assetName));
-
-                this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載UI
-
-                return uiBase;
             }
-            #endregion
 
-            #region Close
-            /// <summary>
-            /// 將 Close 方法封裝 (由接口 Close 與 CloseAll 統一調用)
-            /// </summary>
-            /// <param name="assetName"></param>
-            /// <param name="disableDoSub"></param>
-            /// <param name="withDestroy"></param>
-            /// <param name="doAll"></param>
-            private void _Close(string assetName, bool disableDoSub, bool withDestroy, bool doAll)
+            await this.ShowLoading(groupId, loadingUIBundleName, loadingUIAssetName); // 開啟預顯加載UI
+
+            uiBase = await this.LoadIntoAllCache(bundleName, assetName, progression, false);
+            if (uiBase == null)
             {
-                if (string.IsNullOrEmpty(assetName) || !this.HasInAllCache(assetName)) return;
+                Debug.LogWarning(string.Format("找不到相對路徑資源【UI】: {0}", assetName));
+                return null;
+            }
 
-                if (doAll)
+            uiBase.SetGroupId(groupId);
+            uiBase.SetHidden(false);
+            await this.LoadAndDispay(uiBase, obj);
+
+            Debug.Log(string.Format("顯示UI: 【{0}】", assetName));
+
+            this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載UI
+
+            return uiBase;
+        }
+        #endregion
+
+        #region Close
+        /// <summary>
+        /// 將 Close 方法封裝 (由接口 Close 與 CloseAll 統一調用)
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="disableDoSub"></param>
+        /// <param name="withDestroy"></param>
+        /// <param name="doAll"></param>
+        private void _Close(string assetName, bool disableDoSub, bool withDestroy, bool doAll)
+        {
+            if (string.IsNullOrEmpty(assetName) || !this.HasInAllCache(assetName)) return;
+
+            if (doAll)
+            {
+                FrameStack<UIBase> stack = this.GetStackFromAllCache(assetName);
+                foreach (var uiBase in stack.cache.ToArray())
                 {
-                    FrameStack<UIBase> stack = this.GetStackFromAllCache(assetName);
-                    foreach (var uiBase in stack.cache.ToArray())
-                    {
-                        uiBase.SetHidden(false);
-                        this.ExitAndHide(uiBase, disableDoSub);
-
-                        if (withDestroy) this.Destroy(uiBase, assetName);
-                        else if (uiBase.allowInstantiate) this.Destroy(uiBase, assetName);
-                        else if (uiBase.onCloseAndDestroy) this.Destroy(uiBase, assetName);
-                    }
-                }
-                else
-                {
-                    UIBase uiBase = this.GetFromAllCache(assetName);
-                    if (uiBase == null) return;
-
                     uiBase.SetHidden(false);
                     this.ExitAndHide(uiBase, disableDoSub);
 
@@ -476,323 +461,335 @@ namespace CoreFrame
                     else if (uiBase.allowInstantiate) this.Destroy(uiBase, assetName);
                     else if (uiBase.onCloseAndDestroy) this.Destroy(uiBase, assetName);
                 }
+            }
+            else
+            {
+                UIBase uiBase = this.GetFromAllCache(assetName);
+                if (uiBase == null) return;
 
-                Debug.Log(string.Format("關閉UI: 【{0}】", assetName));
+                uiBase.SetHidden(false);
+                this.ExitAndHide(uiBase, disableDoSub);
+
+                if (withDestroy) this.Destroy(uiBase, assetName);
+                else if (uiBase.allowInstantiate) this.Destroy(uiBase, assetName);
+                else if (uiBase.onCloseAndDestroy) this.Destroy(uiBase, assetName);
             }
 
-            public override void Close(string assetName, bool disableDoSub = false, bool withDestroy = false)
-            {
-                // 如果沒有強制Destroy + 不是顯示狀態則直接return
-                if (!withDestroy && !this.CheckIsShowing(assetName)) return;
-                this._Close(assetName, disableDoSub, withDestroy, false);
-            }
+            Debug.Log(string.Format("關閉UI: 【{0}】", assetName));
+        }
 
-            public override void CloseAll(bool disableDoSub = false, bool withDestroy = false, params string[] withoutAssetNames)
-            {
-                if (this._dictAllCache.Count == 0) return;
+        public override void Close(string assetName, bool disableDoSub = false, bool withDestroy = false)
+        {
+            // 如果沒有強制Destroy + 不是顯示狀態則直接return
+            if (!withDestroy && !this.CheckIsShowing(assetName)) return;
+            this._Close(assetName, disableDoSub, withDestroy, false);
+        }
 
-                foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
+        public override void CloseAll(bool disableDoSub = false, bool withDestroy = false, params string[] withoutAssetNames)
+        {
+            if (this._dictAllCache.Count == 0) return;
+
+            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
+            {
+                string assetName = stack.assetName;
+
+                var uiBase = stack.Peek();
+
+                // 檢查排除執行的UI
+                bool checkWithout = false;
+                if (withoutAssetNames.Length > 0)
                 {
-                    string assetName = stack.assetName;
-
-                    var uiBase = stack.Peek();
-
-                    // 檢查排除執行的UI
-                    bool checkWithout = false;
-                    if (withoutAssetNames.Length > 0)
+                    for (int i = 0; i < withoutAssetNames.Length; i++)
                     {
-                        for (int i = 0; i < withoutAssetNames.Length; i++)
-                        {
-                            if (assetName == withoutAssetNames[i]) checkWithout = true;
-                        }
+                        if (assetName == withoutAssetNames[i]) checkWithout = true;
                     }
-
-                    // 排除在外的UI直接略過處理
-                    if (checkWithout) continue;
-
-                    // 如果沒有強制Destroy + 不是顯示狀態則直接略過處理
-                    if (!withDestroy && !this.CheckIsShowing(uiBase)) continue;
-
-                    // 如有啟用CloseAll需跳過開關, 則不列入關閉執行
-                    if (uiBase.uiSetting.whenCloseAllToSkip) continue;
-
-                    this._Close(assetName, disableDoSub, withDestroy, true);
                 }
+
+                // 排除在外的UI直接略過處理
+                if (checkWithout) continue;
+
+                // 如果沒有強制Destroy + 不是顯示狀態則直接略過處理
+                if (!withDestroy && !this.CheckIsShowing(uiBase)) continue;
+
+                // 如有啟用CloseAll需跳過開關, 則不列入關閉執行
+                if (uiBase.uiSetting.whenCloseAllToSkip) continue;
+
+                this._Close(assetName, disableDoSub, withDestroy, true);
             }
+        }
 
-            public override void CloseAll(int groupId, bool disableDoSub = false, bool withDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(int groupId, bool disableDoSub = false, bool withDestroy = false, params string[] withoutAssetNames)
+        {
+            if (this._dictAllCache.Count == 0) return;
+
+            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
-                if (this._dictAllCache.Count == 0) return;
+                string assetName = stack.assetName;
 
-                foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
+                var uiBase = stack.Peek();
+
+                if (uiBase.groupId != groupId) continue;
+
+                // 檢查排除執行的UI
+                bool checkWithout = false;
+                if (withoutAssetNames.Length > 0)
                 {
-                    string assetName = stack.assetName;
-
-                    var uiBase = stack.Peek();
-
-                    if (uiBase.groupId != groupId) continue;
-
-                    // 檢查排除執行的UI
-                    bool checkWithout = false;
-                    if (withoutAssetNames.Length > 0)
+                    for (int i = 0; i < withoutAssetNames.Length; i++)
                     {
-                        for (int i = 0; i < withoutAssetNames.Length; i++)
-                        {
-                            if (assetName == withoutAssetNames[i]) checkWithout = true;
-                        }
+                        if (assetName == withoutAssetNames[i]) checkWithout = true;
                     }
-
-                    // 排除在外的UI直接略過處理
-                    if (checkWithout) continue;
-
-                    // 如果沒有強制Destroy + 不是顯示狀態則直接略過處理
-                    if (!withDestroy && !this.CheckIsShowing(uiBase)) continue;
-
-                    // 如有啟用CloseAll需跳過開關, 則不列入關閉執行
-                    if (uiBase.uiSetting.whenCloseAllToSkip) continue;
-
-                    this._Close(assetName, disableDoSub, withDestroy, true);
                 }
+
+                // 排除在外的UI直接略過處理
+                if (checkWithout) continue;
+
+                // 如果沒有強制Destroy + 不是顯示狀態則直接略過處理
+                if (!withDestroy && !this.CheckIsShowing(uiBase)) continue;
+
+                // 如有啟用CloseAll需跳過開關, 則不列入關閉執行
+                if (uiBase.uiSetting.whenCloseAllToSkip) continue;
+
+                this._Close(assetName, disableDoSub, withDestroy, true);
             }
-            #endregion
+        }
+        #endregion
 
-            #region Reveal
-            /// <summary>
-            /// 將 Reveal 方法封裝 (由接口 Reveal 與 RevealAll 統一調用)
-            /// </summary>
-            /// <param name="assetName"></param>
-            private void _Reveal(string assetName)
+        #region Reveal
+        /// <summary>
+        /// 將 Reveal 方法封裝 (由接口 Reveal 與 RevealAll 統一調用)
+        /// </summary>
+        /// <param name="assetName"></param>
+        private void _Reveal(string assetName)
+        {
+            if (string.IsNullOrEmpty(assetName) || !this.HasInAllCache(assetName)) return;
+
+            if (this.CheckIsShowing(assetName))
             {
-                if (string.IsNullOrEmpty(assetName) || !this.HasInAllCache(assetName)) return;
-
-                if (this.CheckIsShowing(assetName))
-                {
-                    Debug.LogWarning(string.Format("【UI】{0}已經解除隱藏了!!!", assetName));
-                    return;
-                }
-
-                FrameStack<UIBase> stack = this.GetStackFromAllCache(assetName);
-                foreach (var uiBase in stack.cache.ToArray())
-                {
-                    if (!uiBase.isHidden) return;
-
-                    this.LoadAndDispay(uiBase).Forget();
-
-                    Debug.Log(string.Format("解除隱藏UI: 【{0}】", assetName));
-                }
+                Debug.LogWarning(string.Format("【UI】{0}已經解除隱藏了!!!", assetName));
+                return;
             }
 
-            public override void Reveal(string assetName)
+            FrameStack<UIBase> stack = this.GetStackFromAllCache(assetName);
+            foreach (var uiBase in stack.cache.ToArray())
             {
+                if (!uiBase.isHidden) return;
+
+                this.LoadAndDispay(uiBase).Forget();
+
+                Debug.Log(string.Format("解除隱藏UI: 【{0}】", assetName));
+            }
+        }
+
+        public override void Reveal(string assetName)
+        {
+            this._Reveal(assetName);
+        }
+
+        public override void RevealAll()
+        {
+            if (this._dictAllCache.Count == 0) return;
+
+            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
+            {
+                string assetName = stack.assetName;
+
+                var uiBase = stack.Peek();
+
+                if (!uiBase.isHidden) continue;
+
                 this._Reveal(assetName);
             }
+        }
 
-            public override void RevealAll()
+        public override void RevealAll(int groupId)
+        {
+            if (this._dictAllCache.Count == 0) return;
+
+            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
-                if (this._dictAllCache.Count == 0) return;
+                string assetName = stack.assetName;
 
-                foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
-                {
-                    string assetName = stack.assetName;
+                var uiBase = stack.Peek();
 
-                    var uiBase = stack.Peek();
+                if (uiBase.groupId != groupId) continue;
 
-                    if (!uiBase.isHidden) continue;
+                if (!uiBase.isHidden) continue;
 
-                    this._Reveal(assetName);
-                }
+                this._Reveal(assetName);
+            }
+        }
+        #endregion
+
+        #region Hide
+        /// <summary>
+        /// 將 Hide 方法封裝 (由接口 Hide 與 HideAll 統一調用)
+        /// </summary>
+        /// <param name="assetName"></param>
+        private void _Hide(string assetName)
+        {
+            if (string.IsNullOrEmpty(assetName) || !this.HasInAllCache(assetName)) return;
+
+            FrameStack<UIBase> stack = this.GetStackFromAllCache(assetName);
+
+            if (!this.CheckIsShowing(stack.Peek())) return;
+
+            foreach (var uiBase in stack.cache.ToArray())
+            {
+                uiBase.SetHidden(true);
+                this.ExitAndHide(uiBase);
             }
 
-            public override void RevealAll(int groupId)
+            Debug.Log(string.Format("隱藏UI: 【{0}】", assetName));
+        }
+
+        public override void Hide(string assetName)
+        {
+            this._Hide(assetName);
+        }
+
+        public override void HideAll(params string[] withoutAssetNames)
+        {
+            if (this._dictAllCache.Count == 0) return;
+
+            // 需要注意快取需要temp出來, 因為如果for迴圈裡有功能直接對快取進行操作會出錯
+            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
-                if (this._dictAllCache.Count == 0) return;
+                string assetName = stack.assetName;
 
-                foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
+                var uiBase = stack.Peek();
+
+                // 檢查排除執行的UI
+                bool checkWithout = false;
+                if (withoutAssetNames.Length > 0)
                 {
-                    string assetName = stack.assetName;
-
-                    var uiBase = stack.Peek();
-
-                    if (uiBase.groupId != groupId) continue;
-
-                    if (!uiBase.isHidden) continue;
-
-                    this._Reveal(assetName);
-                }
-            }
-            #endregion
-
-            #region Hide
-            /// <summary>
-            /// 將 Hide 方法封裝 (由接口 Hide 與 HideAll 統一調用)
-            /// </summary>
-            /// <param name="assetName"></param>
-            private void _Hide(string assetName)
-            {
-                if (string.IsNullOrEmpty(assetName) || !this.HasInAllCache(assetName)) return;
-
-                FrameStack<UIBase> stack = this.GetStackFromAllCache(assetName);
-
-                if (!this.CheckIsShowing(stack.Peek())) return;
-
-                foreach (var uiBase in stack.cache.ToArray())
-                {
-                    uiBase.SetHidden(true);
-                    this.ExitAndHide(uiBase);
+                    for (int i = 0; i < withoutAssetNames.Length; i++)
+                    {
+                        if (assetName == withoutAssetNames[i]) checkWithout = true;
+                    }
                 }
 
-                Debug.Log(string.Format("隱藏UI: 【{0}】", assetName));
-            }
+                // 排除在外的UI直接略過處理
+                if (checkWithout) continue;
 
-            public override void Hide(string assetName)
-            {
+                // 如有啟用HideAll需跳過開關, 則不列入關閉執行
+                if (uiBase.uiSetting.whenHideAllToSkip) continue;
+
                 this._Hide(assetName);
             }
+        }
 
-            public override void HideAll(params string[] withoutAssetNames)
+        public override void HideAll(int groupId, params string[] withoutAssetNames)
+        {
+            if (this._dictAllCache.Count == 0) return;
+
+            // 需要注意快取需要temp出來, 因為如果for迴圈裡有功能直接對快取進行操作會出錯
+            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
-                if (this._dictAllCache.Count == 0) return;
+                string assetName = stack.assetName;
 
-                // 需要注意快取需要temp出來, 因為如果for迴圈裡有功能直接對快取進行操作會出錯
-                foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
+                var uiBase = stack.Peek();
+
+                if (uiBase.groupId != groupId) continue;
+
+                // 檢查排除執行的UI
+                bool checkWithout = false;
+                if (withoutAssetNames.Length > 0)
                 {
-                    string assetName = stack.assetName;
-
-                    var uiBase = stack.Peek();
-
-                    // 檢查排除執行的UI
-                    bool checkWithout = false;
-                    if (withoutAssetNames.Length > 0)
+                    for (int i = 0; i < withoutAssetNames.Length; i++)
                     {
-                        for (int i = 0; i < withoutAssetNames.Length; i++)
-                        {
-                            if (assetName == withoutAssetNames[i]) checkWithout = true;
-                        }
+                        if (assetName == withoutAssetNames[i]) checkWithout = true;
                     }
+                }
 
-                    // 排除在外的UI直接略過處理
-                    if (checkWithout) continue;
+                // 排除在外的UI直接略過處理
+                if (checkWithout) continue;
 
-                    // 如有啟用HideAll需跳過開關, 則不列入關閉執行
-                    if (uiBase.uiSetting.whenHideAllToSkip) continue;
+                // 如有啟用HideAll需跳過開關, 則不列入關閉執行
+                if (uiBase.uiSetting.whenHideAllToSkip) continue;
 
-                    this._Hide(assetName);
+                this._Hide(assetName);
+            }
+        }
+        #endregion
+
+        #region 開啟窗體 & 關閉窗體
+        protected override async UniTask LoadAndDispay(UIBase uiBase, object obj = null)
+        {
+            // 非隱藏才正規處理
+            if (!uiBase.isHidden) await uiBase.PreInit();
+            uiBase.Display(obj);
+
+            // 堆疊式管理 (只有非隱藏才進行堆疊計數管理)
+            if (uiBase.uiSetting.stack && !uiBase.isHidden)
+            {
+                // canvasType + nodeType (進行歸類處理, 同屬一個canvas並且在同一個node)
+                string key = $"{uiBase.uiSetting.canvasType}{uiBase.uiSetting.nodeType}";
+                NodeType nodeType = uiBase.uiSetting.nodeType;
+
+                if (!this._dictStackCounter.ContainsKey(key)) this._dictStackCounter.Add(key, 0);
+
+                // 確保在節點中的第一個UI物件, 堆疊層數是從0開始
+                var uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasType);
+                var goNode = uiCanvas?.GetUINode(uiBase.uiSetting.nodeType);
+                if (goNode != null)
+                {
+                    if (goNode.transform.childCount == 1) this._dictStackCounter[key] = 0;
+                }
+
+                // 堆疊層數++
+                this._dictStackCounter[key]++;
+                if (this._dictStackCounter[key] >= (UISysDefine.ORDER_DIFFERENCE - 2))
+                {
+                    this._dictStackCounter[key] = UISysDefine.ORDER_DIFFERENCE - 2;
+                }
+
+                Canvas uiBaseCanvas = uiBase?.canvas;
+                if (uiBaseCanvas != null)
+                {
+                    // 堆疊層數 > 1 主要是因為預留層級給Renderer組件
+                    if (this._dictStackCounter[key] > 1)
+                    {
+                        // 需先還原原階層順序, 以下再進行堆疊層數計數的計算
+                        uiBaseCanvas.sortingOrder = UISysDefine.UI_NODES[nodeType];
+                        uiBaseCanvas.sortingOrder += this._dictStackCounter[key] - 1;
+                        this._SetRendererOrder(uiBase);
+                    }
+                }
+
+                uiBase.gameObject.transform.SetAsLastSibling();
+            }
+        }
+
+        protected override void ExitAndHide(UIBase uiBase, bool disableDoSub = false)
+        {
+            uiBase.Hide(disableDoSub);
+
+            // 堆疊式管理 (只有非隱藏才進行堆疊計數管理)
+            if (uiBase.uiSetting.stack && !uiBase.isHidden)
+            {
+                // canvasType + nodeType (進行歸類處理, 同屬一個canvas並且在同一個node)
+                string key = $"{uiBase.uiSetting.canvasType}{uiBase.uiSetting.nodeType}";
+
+                if (this._dictStackCounter.ContainsKey(key))
+                {
+                    // 堆疊層數--
+                    this._dictStackCounter[key]--;
+                    if (this._dictStackCounter[key] <= 0) this._dictStackCounter.Remove(key);
                 }
             }
+        }
+        #endregion
 
-            public override void HideAll(int groupId, params string[] withoutAssetNames)
+        /// <summary>
+        /// 從快取中移除UICanvas
+        /// </summary>
+        /// <param name="canvasName"></param>
+        public void RemoveUICanvasFromCache(string canvasName)
+        {
+            if (this._dictUICanvas.ContainsKey(canvasName))
             {
-                if (this._dictAllCache.Count == 0) return;
-
-                // 需要注意快取需要temp出來, 因為如果for迴圈裡有功能直接對快取進行操作會出錯
-                foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
-                {
-                    string assetName = stack.assetName;
-
-                    var uiBase = stack.Peek();
-
-                    if (uiBase.groupId != groupId) continue;
-
-                    // 檢查排除執行的UI
-                    bool checkWithout = false;
-                    if (withoutAssetNames.Length > 0)
-                    {
-                        for (int i = 0; i < withoutAssetNames.Length; i++)
-                        {
-                            if (assetName == withoutAssetNames[i]) checkWithout = true;
-                        }
-                    }
-
-                    // 排除在外的UI直接略過處理
-                    if (checkWithout) continue;
-
-                    // 如有啟用HideAll需跳過開關, 則不列入關閉執行
-                    if (uiBase.uiSetting.whenHideAllToSkip) continue;
-
-                    this._Hide(assetName);
-                }
-            }
-            #endregion
-
-            #region 開啟窗體 & 關閉窗體
-            protected override async UniTask LoadAndDispay(UIBase uiBase, object obj = null)
-            {
-                // 非隱藏才正規處理
-                if (!uiBase.isHidden) await uiBase.PreInit();
-                uiBase.Display(obj);
-
-                // 堆疊式管理 (只有非隱藏才進行堆疊計數管理)
-                if (uiBase.uiSetting.stack && !uiBase.isHidden)
-                {
-                    // canvasType + nodeType (進行歸類處理, 同屬一個canvas並且在同一個node)
-                    string key = $"{uiBase.uiSetting.canvasType}{uiBase.uiSetting.nodeType}";
-                    NodeType nodeType = uiBase.uiSetting.nodeType;
-
-                    if (!this._dictStackCounter.ContainsKey(key)) this._dictStackCounter.Add(key, 0);
-
-                    // 確保在節點中的第一個UI物件, 堆疊層數是從0開始
-                    var uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasType);
-                    var goNode = uiCanvas?.GetUINode(uiBase.uiSetting.nodeType);
-                    if (goNode != null)
-                    {
-                        if (goNode.transform.childCount == 1) this._dictStackCounter[key] = 0;
-                    }
-
-                    // 堆疊層數++
-                    this._dictStackCounter[key]++;
-                    if (this._dictStackCounter[key] >= (UISysDefine.ORDER_DIFFERENCE - 2))
-                    {
-                        this._dictStackCounter[key] = UISysDefine.ORDER_DIFFERENCE - 2;
-                    }
-
-                    Canvas uiBaseCanvas = uiBase?.canvas;
-                    if (uiBaseCanvas != null)
-                    {
-                        // 堆疊層數 > 1 主要是因為預留層級給Renderer組件
-                        if (this._dictStackCounter[key] > 1)
-                        {
-                            // 需先還原原階層順序, 以下再進行堆疊層數計數的計算
-                            uiBaseCanvas.sortingOrder = UISysDefine.UI_NODES[nodeType];
-                            uiBaseCanvas.sortingOrder += this._dictStackCounter[key] - 1;
-                            this._SetRendererOrder(uiBase);
-                        }
-                    }
-
-                    uiBase.gameObject.transform.SetAsLastSibling();
-                }
-            }
-
-            protected override void ExitAndHide(UIBase uiBase, bool disableDoSub = false)
-            {
-                uiBase.Hide(disableDoSub);
-
-                // 堆疊式管理 (只有非隱藏才進行堆疊計數管理)
-                if (uiBase.uiSetting.stack && !uiBase.isHidden)
-                {
-                    // canvasType + nodeType (進行歸類處理, 同屬一個canvas並且在同一個node)
-                    string key = $"{uiBase.uiSetting.canvasType}{uiBase.uiSetting.nodeType}";
-
-                    if (this._dictStackCounter.ContainsKey(key))
-                    {
-                        // 堆疊層數--
-                        this._dictStackCounter[key]--;
-                        if (this._dictStackCounter[key] <= 0) this._dictStackCounter.Remove(key);
-                    }
-                }
-            }
-            #endregion
-
-            /// <summary>
-            /// 從快取中移除UICanvas
-            /// </summary>
-            /// <param name="canvasName"></param>
-            public void RemoveUICanvasFromCache(string canvasName)
-            {
-                if (this._dictUICanvas.ContainsKey(canvasName))
-                {
-                    this._dictUICanvas[canvasName] = null;
-                    this._dictUICanvas.Remove(canvasName);
-                }
+                this._dictUICanvas[canvasName] = null;
+                this._dictUICanvas.Remove(canvasName);
             }
         }
     }

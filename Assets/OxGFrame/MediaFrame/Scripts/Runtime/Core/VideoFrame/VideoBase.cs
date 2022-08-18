@@ -1,14 +1,11 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Video;
 
-namespace MediaFrame.VideoFrame
+namespace OxGFrame.MediaFrame.VideoFrame
 {
     [RequireComponent(typeof(VideoPlayer))]
     public class VideoBase : MediaBase

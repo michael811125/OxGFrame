@@ -1,11 +1,9 @@
-﻿using NetFrame.APICenter;
+﻿using OxGFrame.NetFrame.APICenter;
 using Newtonsoft.Json.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class APIQueryTest : APIBase
 {
+    // Custom your response handler (自行定義委派)
     public delegate void Rh(object obj);
 
     public APIQueryTest(int funcId) : base(funcId) { }
@@ -36,5 +34,4 @@ public class APIQueryTest : APIBase
              }
         );
     }
-
 }

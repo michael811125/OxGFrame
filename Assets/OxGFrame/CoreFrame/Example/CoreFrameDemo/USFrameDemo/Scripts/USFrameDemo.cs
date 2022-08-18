@@ -1,5 +1,5 @@
-﻿using AssetLoader.Bundle;
-using CoreFrame.USFrame;
+﻿using OxGFrame.AssetLoader.Bundle;
+using OxGFrame.CoreFrame.USFrame;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;

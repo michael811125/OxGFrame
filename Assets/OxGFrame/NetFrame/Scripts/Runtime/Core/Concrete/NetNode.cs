@@ -1,8 +1,8 @@
-﻿using CoreFrame.Utility;
+﻿using OxGFrame.CoreFrame.Utility.Timer;
 using System;
 using UnityEngine;
 
-namespace NetFrame
+namespace OxGFrame.NetFrame
 {
     public delegate void ResponseHandler(byte[] data);
     public delegate void FirstSendHandler();
@@ -77,6 +77,15 @@ namespace NetFrame
             this._reconnectTicker = new RealTimer();
         }
 
+        public NetNode(ISocket socket, INetTips netTips = null)
+        {
+            this._hearBeatTicker = new RealTimer();
+            this._receiveMsgTicker = new RealTimer();
+            this._reconnectTicker = new RealTimer();
+
+            this.Init(socket, netTips);
+        }
+
         public T GetSocket<T>() where T : ISocket
         {
             T socket = (T)this._socket;
@@ -127,11 +136,20 @@ namespace NetFrame
                 this._netStatus = NetStatus.CONNECTING; // 目前處於CONNECTING狀態
                 this._NetStatusHandler();
 
-                this._firstSendHandler?.Invoke();       // Mud需要重連時在重新初始第一次封包
+                this._firstSendHandler?.Invoke();       // 重連時重新初始第一次封包
 
                 this._netOption = netOption;            // 設置NetOption (連線配置)
                 this._socket.CreateConnect(netOption);  // 最後再建立Socket連線 (TCP/IP: 需先InitNetSocket註冊後才能Handle, Websocket: 透過原先EventHandler再進行註冊)  
             }
+        }
+
+        /// <summary>
+        /// 設置 NetTips (設置其他實作的 NetTips)
+        /// </summary>
+        /// <param name="netTips"></param>
+        public void SetNetTips(INetTips netTips)
+        {
+            this._netTips = netTips;
         }
 
         private void _NetStatusHandler(object args = null)

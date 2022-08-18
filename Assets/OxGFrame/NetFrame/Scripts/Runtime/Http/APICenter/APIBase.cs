@@ -1,20 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace NetFrame
+﻿namespace OxGFrame.NetFrame.APICenter
 {
-    namespace APICenter
+    public abstract class APIBase
     {
-        public abstract class APIBase
-        {
-            private int _fundId = 0;
-            public int GetFuncId() { return this._fundId; }
+        private int _fundId = 0;
+        public int GetFuncId() { return this._fundId; }
 
-            public APIBase(int funcId)
-            {
-                this._fundId = funcId;
-            }
+        public APIBase(int funcId)
+        {
+            this._fundId = funcId;
         }
     }
 }

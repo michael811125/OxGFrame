@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityWebSocket;
 
-namespace NetFrame
+namespace OxGFrame.NetFrame
 {
     public class WebSock : ISocket
     {

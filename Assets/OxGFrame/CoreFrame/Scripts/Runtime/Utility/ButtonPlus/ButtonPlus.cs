@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
 
-namespace CoreFrame.Utility
+namespace OxGFrame.CoreFrame.Utility
 {
     [AddComponentMenu("OxGFrame/Utility/Button/ButtonPlus")]
     public class ButtonPlus : Button

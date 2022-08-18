@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace CoreFrame.Utility
+namespace OxGFrame.CoreFrame.Utility.Timer
 {
     public static class RealTime
     {

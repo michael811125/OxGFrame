@@ -1,9 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-namespace AssetLoader
+namespace OxGFrame.AssetLoader
 {
     public delegate void Progression(float progress, float reqSize, float totalSize);
 

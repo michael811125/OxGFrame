@@ -1,17 +1,7 @@
-﻿using NetFrame.APICenter;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using OxGFrame.NetFrame.APICenter;
 
-public class APICenterExample : APICenterBase
+public class APICenterExample : APICenterBase<APICenterExample>
 {
-    private static APICenterExample _instance = null;
-    public static APICenterExample GetInstance()
-    {
-        if (_instance == null) _instance = new APICenterExample();
-        return _instance;
-    }
-
     #region declaration and definition API_xBASE
     public const int APIQueryTest = API_xBASE + 1;
     #endregion

@@ -1,11 +1,11 @@
 ﻿using Cysharp.Threading.Tasks;
+using OxGFrame.AssetLoader.Cacher;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-namespace MediaFrame
+namespace OxGFrame.MediaFrame
 {
     public abstract class MediaManager<T> : MonoBehaviour where T : MediaBase
     {

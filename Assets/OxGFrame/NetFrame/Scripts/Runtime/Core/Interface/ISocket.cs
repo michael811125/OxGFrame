@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NetFrame
+namespace OxGFrame.NetFrame
 {
     public interface ISocket
     {

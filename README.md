@@ -35,13 +35,13 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 ### CoreFrame
 
-此模塊含蓋遊戲主要製作，針對製作對應使用 UI Prefab => UIFrame、Scene Prefab => GSFrame、Other Prefab => EntityFrame、Unity Scene => USFrame 皆實現 Singleton Manager 進行控管與動態調度。支援 Resources 與 AssetBundle 加載方式 (多載)，並且實現物件命名綁定功能 (UIBase and GSBase = _Node@XXX, EntityBase = ~Node@XXX, 類型均為 GameObject)。
+此模塊含蓋遊戲主要製作，針對製作對應使用 UI Prefab => UIFrame、Scene Prefab => GSFrame、Other Prefab => EPFrame、Unity Scene => USFrame 皆實現 Singleton Manager 進行控管與動態調度。支援 Resources 與 AssetBundle 加載方式 (多載)，並且實現物件命名綁定功能 (UIBase and GSBase = _Node@XXX, EntityBase = ~Node@XXX, 類型均為 GameObject)。
 
 - UIFram (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab (UI 的部分針對 MaskEvent 也可以自行覆寫建立 Mask 事件)
 - GSFrame (Game Scene) : 使用 GSManager 管理掛載 GSBase 的 Prefab 
 - USFrame (Unity Scene) : 使用 USManager 管理 Unity 場景 (支援 Bundle)
-- EntityFrame : 使用 EntityManager 管理掛載 EntityBase 的 Prefab 
-- EventCenter : 自行建立 EventCenter 並且繼承 EventCenterBase (事件註冊管理，建議單例)
+- EPFrame (Entity Prefab) : 使用 EPManager 管理掛載 EPBase 的 Prefab
+- EventCenter : 自行建立 EventCenter 並且繼承 EventCenterBase (事件註冊管理)
 - UMT (Unity Main Thread)
 - Utility 
   - Timer => DeltaTimer, RealTimer, DTUpdate, RTUpdate
@@ -62,7 +62,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 遊戲整合模塊，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商業Logo階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), GamingStage (遊玩階段), FightStage (戰鬥階段) 等, 以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
 
-- GSM (Game Stage Manager)，用於繼承實現管理層與註冊階段，建議進行單例
+- GSM (Game Stage Manager)，用於繼承實現管理層與註冊階段
 - GStage (Game Stage)，遊戲階段基類
 
 ※備註 : Right-Click Create/OxGFrame/GSIFrame... (Template cs)
@@ -77,8 +77,9 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 - Websock
 - INetTips
 - Acax (類似 Ajax 方式，請求 API)
-- APICenter : 自行建立 APICenter 並且繼承 APICenterBase (Http API 註冊管理，建議單例)
+- APICenter : 自行建立 APICenter 並且繼承 APICenterBase (Http API 註冊管理)
 
+※備註 : Right-Click Create/OxGFrame/NetFrame... (Template cs)
 ---
 
 ### Unity 版本

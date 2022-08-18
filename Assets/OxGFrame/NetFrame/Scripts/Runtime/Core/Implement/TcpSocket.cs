@@ -5,7 +5,7 @@ using System.IO;
 using UnityEngine;
 using System.Threading;
 
-namespace NetFrame
+namespace OxGFrame.NetFrame
 {
     public delegate void WaitReadNetPacket();
 

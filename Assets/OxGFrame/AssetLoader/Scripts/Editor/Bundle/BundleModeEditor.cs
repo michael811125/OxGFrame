@@ -1,4 +1,4 @@
-﻿using AssetLoader.Bundle;
+﻿using OxGFrame.AssetLoader.Bundle;
 using System;
 using System.Linq;
 using UnityEditor;

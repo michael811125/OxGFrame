@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AssetLoader.AssetCacher
+namespace OxGFrame.AssetLoader.Cacher
 {
     public abstract class AssetCache<T> : ICache<T>
     {

@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-namespace CoreFrame.Utility
+namespace OxGFrame.CoreFrame.Utility.Timer
 {
     public class DeltaTimer
     {

@@ -1,8 +1,8 @@
-﻿using AssetLoader.AssetObject;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
+using OxGFrame.AssetLoader.Cacher;
 using UnityEngine;
 
-namespace AssetLoader
+namespace OxGFrame.AssetLoader
 {
     public interface IBundle
     {

@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using UnityEngine;
 
-namespace CoreFrame.Utility
+namespace OxGFrame.CoreFrame.Utility.Timer
 {
     public class DTUpdate
     {

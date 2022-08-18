@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CoreFrame
+namespace OxGFrame.CoreFrame
 {
     public static class Binder
     {
@@ -42,7 +42,7 @@ namespace CoreFrame
             if (_CheckIsToBindChildren(name))
             {
                 // 只有EntityBase的綁定前綴字需要區分, 避免相衝
-                if (typeof(EntityFrame.EntityBase).IsInstanceOfType(fBase) && _CheckNodeHasPrefixEntity(name))
+                if (typeof(EPFrame.EPBase).IsInstanceOfType(fBase) && _CheckNodeHasPrefixEntity(name))
                 {
                     _BindIntoCollector(name, go, fBase);
                 }

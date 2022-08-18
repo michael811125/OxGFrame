@@ -1,14 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using CoreFrame.UIFrame;
-using AssetLoader.Bundle;
-using Cysharp.Threading.Tasks;
+﻿using UnityEngine;
+using OxGFrame.CoreFrame.UIFrame;
 using UnityEngine.InputSystem;
-using CoreFrame.Utility;
-using System.Threading;
-using CoreFrame.GSFrame;
-using System;
+using OxGFrame.CoreFrame.Utility.Timer;
+using OxGFrame.CoreFrame.UMT;
 
 public class UIFrameDemo : MonoBehaviour
 {
@@ -80,7 +74,7 @@ public class RunThread
     public void Run()
     {
         //this.Open();
-        CoreFrame.UMT.UnityMainThread.worker.AddJob(this.Open);
+        UnityMainThread.worker.AddJob(this.Open);
     }
 
     public async void Open()

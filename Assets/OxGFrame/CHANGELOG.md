@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [1.4.0] - 2022-08-18 (Breaking Changes)
+- Renamed namespace add OxGFrame front of AnyFrame (ex: CoreFrame => OxGFrame.CoreFrame).
+- Renamed EntityFrame => EPFrame (Entity Prefab).
+- Added APICenter TplScript (Right-Click to Create).
+- Added EventCenter TplScript (Right-Click to Create).
+- Added Network Example for NetFrame.
+- Added GSI (Game System Integration) Example for GSIFrame.
+- Added APICenter, EventCenter, GSI singleton (Implement in base class).
+
+#### 【Remark】Namespace already chagned (add OxGFrame front of AnyFrame).
+
 ## [1.3.0] - 2022-08-18
 - Added ButtonPlus Component (inherit UGUI Button).
 - Added NodePool Component (GameObject Pool).

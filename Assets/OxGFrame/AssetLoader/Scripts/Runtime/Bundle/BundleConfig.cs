@@ -7,7 +7,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace AssetLoader.Bundle
+namespace OxGFrame.AssetLoader.Bundle
 {
     public static class BundleConfig
     {

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Video;
 
-namespace MediaFrame.VideoFrame
+namespace OxGFrame.MediaFrame.VideoFrame
 {
     public enum SourceType
     {

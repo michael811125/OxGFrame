@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AssetLoader.AssetObject
+namespace OxGFrame.AssetLoader.Cacher
 {
     public class AssetObject
     {

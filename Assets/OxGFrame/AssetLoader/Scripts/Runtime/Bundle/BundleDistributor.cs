@@ -1,15 +1,13 @@
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace AssetLoader.Bundle
+namespace OxGFrame.AssetLoader.Bundle
 {
     public class BundleDistributor
     {

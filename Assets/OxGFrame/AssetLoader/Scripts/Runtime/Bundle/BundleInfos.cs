@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
-namespace AssetLoader.Bundle
+namespace OxGFrame.AssetLoader.Bundle
 {
     public class ResFileInfo
     {

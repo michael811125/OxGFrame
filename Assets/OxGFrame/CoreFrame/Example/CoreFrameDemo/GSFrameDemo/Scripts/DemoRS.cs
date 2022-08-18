@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
-using CoreFrame.GSFrame;
+using OxGFrame.CoreFrame.GSFrame;
 
 public class DemoRS : GSBase
 {

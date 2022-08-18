@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace NetFrame
+namespace OxGFrame.NetFrame
 {
     public class NetManager
     {

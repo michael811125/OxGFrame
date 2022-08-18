@@ -1,7 +1,5 @@
-﻿using CoreFrame.EventCenter;
-using Cysharp.Threading.Tasks;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Cysharp.Threading.Tasks;
+using OxGFrame.CoreFrame.EventCenter;
 using UnityEngine;
 
 public class EEventTest : EventBase

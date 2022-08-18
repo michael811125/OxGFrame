@@ -1,12 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using UnityEngine;
 
-namespace MediaFrame.VideoFrame
+namespace OxGFrame.MediaFrame.VideoFrame
 {
     public class VideoManager : MediaManager<VideoBase>
     {

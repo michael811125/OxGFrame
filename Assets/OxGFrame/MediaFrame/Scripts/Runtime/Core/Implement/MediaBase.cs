@@ -1,12 +1,11 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace MediaFrame
+namespace OxGFrame.MediaFrame
 {
     [DisallowMultipleComponent]
     public abstract class MediaBase : MonoBehaviour, IMediaBase

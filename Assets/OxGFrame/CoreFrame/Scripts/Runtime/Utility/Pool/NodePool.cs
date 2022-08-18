@@ -2,7 +2,7 @@
 using UnityEngine;
 using MyBox;
 
-namespace CoreFrame.Utility
+namespace OxGFrame.CoreFrame.Utility
 {
     [AddComponentMenu("OxGFrame/Utility/Pool/NodePool")]
     public class NodePool : MonoBehaviour

@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using CoreFrame.UIFrame;
+﻿using UnityEngine;
+using OxGFrame.CoreFrame.UIFrame;
 using Cysharp.Threading.Tasks;
 using UnityEngine.UI;
 

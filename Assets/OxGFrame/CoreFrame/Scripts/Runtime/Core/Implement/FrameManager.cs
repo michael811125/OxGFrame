@@ -1,13 +1,13 @@
-﻿using AssetLoader;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
+using OxGFrame.AssetLoader;
+using OxGFrame.AssetLoader.Cacher;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace CoreFrame
+namespace OxGFrame.CoreFrame
 {
     [DisallowMultipleComponent]
     public abstract class FrameManager<T> : MonoBehaviour where T : FrameBase

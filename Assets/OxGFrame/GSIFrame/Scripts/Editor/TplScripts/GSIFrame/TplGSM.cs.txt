@@ -1,18 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using GSIFrame;
+﻿using OxGFrame.GSIFrame;
 
-public class #SCRIPTNAME# : GSIM
+public class #SCRIPTNAME# : GSM<#SCRIPTNAME#>
 {
-    // Suggest to create a Singleton or Not (up to you)
-    private static #SCRIPTNAME# _instance = null;
-    public static #SCRIPTNAME# GetInstance()
-    {
-        if (_instance == null) _instance = new #SCRIPTNAME#();
-        return _instance;
-    }
-
     /*
     // >>> EXAMPLE <<<
 
@@ -34,28 +23,28 @@ public class #SCRIPTNAME# : GSIM
         GameStageBase gameStage;
 
         // None
-        gameStage = new NoneStageExample(GSIMExample.none);
-        this.AddGameStage(GSIMExample.none, gameStage);
+        gameStage = new NoneStageExample(#SCRIPTNAME#.none);
+        this.AddGameStage(#SCRIPTNAME#.none, gameStage);
 
         // 1. Game Startup Stage
-        gameStage = new StartupStageExample(GSIMExample.startupStage);
-        this.AddGameStage(GSIMExample.startupStage, gameStage);
+        gameStage = new StartupStageExample(#SCRIPTNAME#.startupStage);
+        this.AddGameStage(#SCRIPTNAME#.startupStage, gameStage);
 
         // 2. Game Logo Show Stage
-        gameStage = new LogoStageExample(GSIMExample.logoStage);
-        this.AddGameStage(GSIMExample.logoStage, gameStage);
+        gameStage = new LogoStageExample(#SCRIPTNAME#.logoStage);
+        this.AddGameStage(#SCRIPTNAME#.logoStage, gameStage);
 
         // 3. Game Patch Stage (The App in this stage is Hot-Update stage. The H5 doesn't require Hot-Update, so you can to do preload in this Stage.)
-        gameStage = new PatchStageExample(GSIMExample.patchStage);
-        this.AddGameStage(GSIMExample.patchStage, gameStage);
+        gameStage = new PatchStageExample(#SCRIPTNAME#.patchStage);
+        this.AddGameStage(#SCRIPTNAME#.patchStage, gameStage);
 
         // 4. Game Login Stage
-        gameStage = new LoginStageExample(GSIMExample.loginStage);
-        this.AddGameStage(GSIMExample.loginStage, gameStage);
+        gameStage = new LoginStageExample(#SCRIPTNAME#.loginStage);
+        this.AddGameStage(#SCRIPTNAME#.loginStage, gameStage);
 
         // 5. Game Enter Stage
-        gameStage = new EnterStageExample(GSIMExample.enterStage);
-        this.AddGameStage(GSIMExample.enterStage, gameStage);
+        gameStage = new EnterStageExample(#SCRIPTNAME#.enterStage);
+        this.AddGameStage(#SCRIPTNAME#.enterStage, gameStage);
 
         // ※Remark: Also you can create your own stage of game
 
@@ -69,7 +58,7 @@ public class #SCRIPTNAME# : GSIM
     public override void OnStart()
     {
         /* Start first game stage in here. (like this ↓)  */
-        //this.ChangeGameStage(GSIMExample.startupStage);
+        //this.ChangeGameStage(#SCRIPTNAME#.startupStage);
     }
 
     /// <summary>

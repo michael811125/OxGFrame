@@ -1,0 +1,27 @@
+using OxGFrame.CoreFrame.EventCenter;
+
+public class #SCRIPTNAME# : EventCenterBase<#SCRIPTNAME#>
+{
+    /*
+    // >>> EXAMPLE <<<
+
+    #region declaration and definition EVENT_xBASE
+    public const int EEventTest = EVENT_xBASE + 1;
+    #endregion
+
+    // >>> EXAMPLE <<<
+    */
+
+    public #SCRIPTNAME#()
+    {
+        /*
+        // >>> EXAMPLE <<<
+
+        #region Register Event
+        this.Register(new EEventTest(EEventTest));
+        #endregion
+
+        // >>> EXAMPLE <<<
+        */
+    }
+}

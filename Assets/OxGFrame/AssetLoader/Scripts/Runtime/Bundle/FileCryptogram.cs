@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
-namespace AssetLoader.Bundle
+namespace OxGFrame.AssetLoader.Bundle
 {
     public class FileCryptogram
     {

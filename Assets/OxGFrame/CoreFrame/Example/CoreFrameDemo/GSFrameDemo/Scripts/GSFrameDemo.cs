@@ -1,6 +1,4 @@
-﻿using CoreFrame.GSFrame;
-using System.Collections;
-using System.Collections.Generic;
+﻿using OxGFrame.CoreFrame.GSFrame;
 using UnityEngine;
 
 public class GSFrameDemo : MonoBehaviour

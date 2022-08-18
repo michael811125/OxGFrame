@@ -1,17 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace GSIFrame
+namespace OxGFrame.GSIFrame
 {
-    public class GSIM
+    public class GSM<T> where T : GSM<T>, new()
     {
-        protected Dictionary<byte, GStage> _dictGameStage = null;    // GameStage快取
-        protected byte _incomingGstId = 0;                           // 用於紀錄Incoming GameStageId (新的GameStageId)
-        public byte curGstId { get; private set; }                   // 紀錄當前的GameStageId
-        public GStage curGameStage { get; private set; }             // 當前GameStage
+        protected Dictionary<byte, GStage> _dictGameStage = null;    // GameStage 快取
+        protected byte _incomingGstId = 0;                           // 用於紀錄 Incoming GameStageId (新的 GameStageId)
+        public byte curGstId { get; private set; }                   // 紀錄當前的 GameStageId
+        public GStage curGameStage { get; private set; }             // 當前 GameStage
 
-        public GSIM()
+        private static readonly object _locker = new object();
+        private static T _instance = null;
+        public static T GetInstance()
+        {
+            if (_instance == null)
+            {
+                lock (_locker)
+                {
+                    _instance = new T();
+                }
+            }
+            return _instance;
+        }
+
+        public GSM()
         {
             this._dictGameStage = new Dictionary<byte, GStage>();
 
@@ -19,13 +32,13 @@ namespace GSIFrame
             this.curGameStage = null;
         }
 
-        ~GSIM()
+        ~GSM()
         {
             this.ReleaseAllGameStage();
         }
 
         /// <summary>
-        /// 透過GameStageId返回對應的GameStage
+        /// 透過 GameStageId 返回對應的 GameStage
         /// </summary>
         /// <param name="gstId">GameStageId</param>
         /// <returns></returns>
@@ -36,7 +49,7 @@ namespace GSIFrame
         }
 
         /// <summary>
-        /// 透過GameStageId返回對應的GameStage (泛型)
+        /// 透過 GameStageId 返回對應的 GameStage (泛型)
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="gstId"></param>
@@ -48,7 +61,7 @@ namespace GSIFrame
         }
 
         /// <summary>
-        /// 加入建立好的GameStageId與GameStage
+        /// 加入建立好的 GameStageId 與 GameStage
         /// </summary>
         /// <param name="gstId">GameStageId</param>
         /// <param name="gameStage"></param>
@@ -67,10 +80,10 @@ namespace GSIFrame
 
         /// <summary>
         /// <para>
-        /// 透過指定的GameStageId非立即切換GameStage
+        /// 透過指定的 GameStageId 非立即切換 GameStage
         /// </para>
         /// <para>
-        /// 說明: 非立即切換GameStage的情況下, 將會交由UpdateGameStage更新依照下一幀數去切換
+        /// 說明: 下一幀數才切換 (同階段不允許, 只能使用 Force)
         /// </para>
         /// </summary>
         /// <param name="gstId">GameStageId</param>
@@ -79,18 +92,21 @@ namespace GSIFrame
             this._incomingGstId = gstId;
 
 #if UNITY_EDITOR
-            Debug.Log(string.Format("<color=#00B8FF> 【>>>>>> Change GameStage <<<<<<】 : {0}</color>", this._incomingGstId));
+            if (this._incomingGstId == this.curGstId)
+                Debug.Log(string.Format("<color=#ff54ac> 【>>>>>> Same GameStage (Change Failed - try Force) <<<<<<】 : {0}</color>", this._incomingGstId));
+            else
+                Debug.Log(string.Format("<color=#00B8FF> 【>>>>>> Change GameStage <<<<<<】 : {0}</color>", this._incomingGstId));
 #endif
         }
 
         /// <summary>
-        /// 透過指定的GameStageId立即切換GameStage
+        /// 透過指定的 GameStageId 立即強制切換 GameStage
         /// </summary>
         /// <param name="gstId">GameStageId</param>
-        public void ChangeGameStageImmediate(byte gstId)
+        public void ChangeGameStageForce(byte gstId)
         {
 #if UNITY_EDITOR
-            Debug.Log(string.Format("<color=#00B8FF> 【>>>>>> Change GameStage Immediate <<<<<<】 : {0}</color>", gstId));
+            Debug.Log(string.Format("<color=#00B8FF> 【>>>>>> Change GameStage Force <<<<<<】 : {0}</color>", gstId));
 #endif
 
             this.ReleaseGameStage();                        // 立即釋放原本的GameStage
@@ -99,10 +115,10 @@ namespace GSIFrame
         }
 
         /// <summary>
-        /// 【由OnUpdate調用】處理GameStage要Update的過程
+        /// 【由 OnUpdate 調用】處理 GameStage 要 Update 的過程
         /// </summary>
         /// <param name="dt"></param>
-        public void UpdateGameStage(float dt = 0.0f)
+        protected void UpdateGameStage(float dt = 0.0f)
         {
             // 非立即的切換GameStage的情況下會去判斷, 如果curGstId與incomingGstId不同的話, 就會進入切換
             if (this.curGstId != this._incomingGstId)
@@ -118,9 +134,9 @@ namespace GSIFrame
         }
 
         /// <summary>
-        /// 處理當前GameStage要初始的過程
+        /// 處理當前 GameStage 要初始的過程
         /// </summary>
-        public void InitGameStage()
+        protected void InitGameStage()
         {
             if (!this._dictGameStage.ContainsKey(this.curGstId))
             {
@@ -134,29 +150,29 @@ namespace GSIFrame
         }
 
         /// <summary>
-        /// 執行當前GameStage釋放的相關程序
+        /// 執行當前 GameStage 釋放的相關程序
         /// </summary>
-        public void ReleaseGameStage()
+        protected void ReleaseGameStage()
         {
             if (this.curGameStage == null) return;
             this.curGameStage.ReleaseStage();
         }
 
         /// <summary>
-        /// 清除釋放所有GameStage, 直接清空dictGameStage
+        /// 清除釋放所有 GameStage, 直接清空 dictGameStage
         /// </summary>
-        public void ReleaseAllGameStage()
+        protected void ReleaseAllGameStage()
         {
             this._dictGameStage.Clear();
         }
 
         /// <summary>
-        /// 子類實作, 並且透過主要的MonoBehaviour Start調用
+        /// 子類實作, 並且透過主要的 MonoBehaviour Start 調用
         /// </summary>
         public virtual void OnStart() { }
 
         /// <summary>
-        /// 子類實作, 並且透過主要的MonoBehaviour Update調用
+        /// 子類實作, 並且透過主要的 MonoBehaviour Update 調用
         /// </summary>
         /// <param name="dt"></param>
         public virtual void OnUpdate(float dt = 0.0f)
