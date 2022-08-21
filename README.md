@@ -1,4 +1,6 @@
-![OxGFrame](Docs/OxGFrame_Logo.png)
+<p align="center">
+  <img width="545" height="215" src="Docs/OxGFrame_Logo.png">
+</p>
 
 ---
 
