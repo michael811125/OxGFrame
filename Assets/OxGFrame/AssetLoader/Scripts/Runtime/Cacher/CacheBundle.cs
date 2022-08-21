@@ -55,7 +55,7 @@ namespace OxGFrame.AssetLoader.Cacher
         /// <param name="bundleName"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public override async UniTask PreloadInCache(string bundleName, Progression progression = null)
+        public override async UniTask Preload(string bundleName, Progression progression = null)
         {
 #if UNITY_EDITOR
             if (BundleConfig.bAssetDatabaseMode) return;
@@ -123,7 +123,7 @@ namespace OxGFrame.AssetLoader.Cacher
             Debug.Log("【預加載】 => 當前<< CacheBundle >>快取數量 : " + this.Count);
         }
 
-        public override async UniTask PreloadInCache(string[] bundleNames, Progression progression = null)
+        public override async UniTask Preload(string[] bundleNames, Progression progression = null)
         {
 #if UNITY_EDITOR
             if (BundleConfig.bAssetDatabaseMode) return;
@@ -306,7 +306,7 @@ namespace OxGFrame.AssetLoader.Cacher
         /// [使用計數管理] 從快取【釋放】單個Bundle (釋放Bundle記憶體, 連動銷毀實例對象也會 Missing 場景上有引用的對象)
         /// </summary>
         /// <param name="bundleName"></param>
-        public override void ReleaseFromCache(string bundleName)
+        public override void Unload(string bundleName)
         {
 #if UNITY_EDITOR
             if (BundleConfig.bAssetDatabaseMode) return;
@@ -357,7 +357,7 @@ namespace OxGFrame.AssetLoader.Cacher
         /// <summary>
         /// [強制釋放] 從快取中【釋放】全部Bundle (釋放Bundle記憶體, 連動銷毀實例對象也會 Missing 場景上有引用的對象)
         /// </summary>
-        public override void ReleaseCache()
+        public override void Release()
         {
 #if UNITY_EDITOR
             if (BundleConfig.bAssetDatabaseMode) return;

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [1.5.0] - 2022-08-21 (Breaking Changes)
+- Organized category separate APICenter, EventCenter, Utility.
+- Renamed GSM => GStageManager (Game Stage Manager).
+- Renamed AssetLoader name of methods.
+  - PreloadInCache => Preload
+  - ReleaseFromCache => Unload
+  - ReleaseCache => Release
+- Added HeartBeatAction, OutReciveAction, ReconnectAcion for NetNode (Callback handler).
+
 ## [1.4.0] - 2022-08-18 (Breaking Changes)
 - Renamed namespace add OxGFrame front of AnyFrame (ex: CoreFrame => OxGFrame.CoreFrame).
 - Renamed EntityFrame => EPFrame (Entity Prefab).

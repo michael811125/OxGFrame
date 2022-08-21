@@ -346,8 +346,8 @@ namespace OxGFrame.MediaFrame
         /// <param name="assetName"></param>
         protected virtual void Destroy(T mBase, string assetName)
         {
-            if (string.IsNullOrEmpty(mBase.bundleName)) CacheResource.GetInstance().ReleaseFromCache(mBase.assetName);
-            else CacheBundle.GetInstance().ReleaseFromCache(mBase.bundleName);
+            if (string.IsNullOrEmpty(mBase.bundleName)) CacheResource.GetInstance().Unload(mBase.assetName);
+            else CacheBundle.GetInstance().Unload(mBase.bundleName);
 
             mBase.OnRelease();
 

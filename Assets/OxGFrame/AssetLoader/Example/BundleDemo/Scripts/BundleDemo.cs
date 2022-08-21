@@ -187,7 +187,7 @@ public class BundleDemo : MonoBehaviour
 
     public async void PreloadBundle()
     {
-        await KeyBundle.GetInstance().PreloadInCache(this._taskId, this.bundleName);
+        await KeyBundle.GetInstance().Preload(this._taskId, this.bundleName);
     }
 
     public async void LoadBundle()
@@ -197,11 +197,11 @@ public class BundleDemo : MonoBehaviour
         if (go != null) Instantiate(go, this.container.transform);
 
         // 方法二. 透過KeyBundle連動Key進行加載 (【自行】實例化)
-        //GameObject go = await KeyBundle.GetInstance().Load(this._taskId, this.bundleName, this.assetName);
+        //GameObject go = await KeyBundle.GetInstance().Load<GameObject>(this._taskId, this.bundleName, this.assetName);
         //if (go != null) Instantiate(go, this.container.transform);
 
         // 方法三. 透過KeyBundle連動Key進行加載 (【自動】實例化)
-        //await KeyBundle.GetInstance().LoadWithClone(this._taskId, this.bundleName, this.assetName, this.container.transform, 1.1f);
+        //GameObject instGo = await KeyBundle.GetInstance().LoadWithClone(this._taskId, this.bundleName, this.assetName, this.container.transform);
     }
 
     public void UnloadBundle()
@@ -211,10 +211,10 @@ public class BundleDemo : MonoBehaviour
             Destroy(t.gameObject);
 
             // 方法一. 直接CacheBundle進行單個移除
-            CacheBundle.GetInstance().ReleaseFromCache(this.bundleName);
+            CacheBundle.GetInstance().Unload(this.bundleName);
 
             // 方法二. 透過KeyBundle連動Key進行單個移除
-            //KeyBundle.GetInstance().ReleaseFromCache(this._taskId, this.bundleName);
+            //KeyBundle.GetInstance().Unload(this._taskId, this.bundleName);
         }
     }
 
@@ -226,9 +226,9 @@ public class BundleDemo : MonoBehaviour
         }
 
         // 方法一. 直接CacheBundle進行全部釋放
-        CacheBundle.GetInstance().ReleaseCache();
+        CacheBundle.GetInstance().Release();
 
         // 方法二. 透過KeyBundle連動Key進行全部釋放
-        //KeyBundle.GetInstance().ReleaseCache(this._taskId);
+        //KeyBundle.GetInstance().Release(this._taskId);
     }
 }

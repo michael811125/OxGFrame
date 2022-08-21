@@ -16,6 +16,22 @@ public class NetworkExample : MonoBehaviour
         wsNetNode.SetResponseHandler(ProcessRecvData);
         // 設置第一次初始封包回調
         wsNetNode.SetFirstSendHandler(ProcessFirstSend);
+        // 設置心跳檢測回調
+        wsNetNode.SetHeartBeatAction(() =>
+        {
+            /* Process Heart Beat */
+        });
+        // 設置超時處理回調
+        wsNetNode.SetOutReciveAction(() =>
+        {
+            /* Process Out Of Recive */
+        });
+        // 設置重連處理回調
+        wsNetNode.SetReconnectAction(() =>
+        {
+            /* Process Reconnect */
+        });
+
         // 加入節點至 NetManager
         NetManager.GetInstance().AddNetNode(wsNetNode, 0);
         #endregion
@@ -26,6 +42,23 @@ public class NetworkExample : MonoBehaviour
         tcpNetNode.SetResponseHandler(ProcessRecvData);
         // 設置第一次初始封包回調
         tcpNetNode.SetFirstSendHandler(ProcessFirstSend);
+        // 設置心跳檢測回調
+        tcpNetNode.SetHeartBeatAction(() =>
+        {
+            /* Process Heart Beat */
+        });
+        // 設置超時處理回調
+        tcpNetNode.SetOutReciveAction(() =>
+        {
+            /* Process Out Of Recive */
+        });
+        // 設置重連處理回調
+        tcpNetNode.SetReconnectAction(() =>
+        {
+            /* Process Reconnect */
+        });
+
+        // 加入節點至 NetManager
         NetManager.GetInstance().AddNetNode(tcpNetNode, 1);
         #endregion
     }

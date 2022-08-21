@@ -10,13 +10,13 @@ namespace OxGFrame.AssetLoader
 
         T GetFromCache(string name);
 
-        UniTask PreloadInCache(string name, Progression progression);
+        UniTask Preload(string name, Progression progression);
 
-        UniTask PreloadInCache(string[] names, Progression progression);
+        UniTask Preload(string[] names, Progression progression);
 
-        void ReleaseFromCache(string name);
+        void Unload(string name);
 
-        void ReleaseCache();
+        void Release();
 
         UniTask<int> GetAssetsLength(params string[] names);
     }

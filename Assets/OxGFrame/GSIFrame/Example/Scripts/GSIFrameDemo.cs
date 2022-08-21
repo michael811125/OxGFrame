@@ -8,37 +8,37 @@ public class GSIFrameDemo : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GSIExample.GetInstance().OnStart();
+        GSMExample.GetInstance().OnStart();
     }
 
     // Update is called once per frame
     void Update()
     {
-        GSIExample.GetInstance().OnUpdate(Time.deltaTime);
+        GSMExample.GetInstance().OnUpdate(Time.deltaTime);
 
         if (Keyboard.current.numpad1Key.wasReleasedThisFrame)
         {
-            GSIExample.GetInstance().ChangeGameStage(GSIExample.startupStage);
+            GSMExample.GetInstance().ChangeGameStage(GSMExample.startupStage);
         }
 
         if (Keyboard.current.numpad2Key.wasReleasedThisFrame)
         {
-            GSIExample.GetInstance().ChangeGameStage(GSIExample.logoStage);
+            GSMExample.GetInstance().ChangeGameStage(GSMExample.logoStage);
         }
 
         if (Keyboard.current.numpad3Key.wasReleasedThisFrame)
         {
-            GSIExample.GetInstance().ChangeGameStage(GSIExample.patchStage);
+            GSMExample.GetInstance().ChangeGameStage(GSMExample.patchStage);
         }
 
         if (Keyboard.current.numpad4Key.wasReleasedThisFrame)
         {
-            GSIExample.GetInstance().ChangeGameStage(GSIExample.loginStage);
+            GSMExample.GetInstance().ChangeGameStage(GSMExample.loginStage);
         }
 
         if (Keyboard.current.numpad5Key.wasReleasedThisFrame)
         {
-            GSIExample.GetInstance().ChangeGameStage(GSIExample.enterStage);
+            GSMExample.GetInstance().ChangeGameStage(GSMExample.enterStage);
         }
     }
 }

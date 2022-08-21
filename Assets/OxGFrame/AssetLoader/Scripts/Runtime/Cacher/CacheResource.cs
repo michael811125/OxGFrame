@@ -40,7 +40,7 @@ namespace OxGFrame.AssetLoader.Cacher
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public override async UniTask PreloadInCache(string assetName, Progression progression = null)
+        public override async UniTask Preload(string assetName, Progression progression = null)
         {
             if (string.IsNullOrEmpty(assetName)) return;
 
@@ -96,7 +96,7 @@ namespace OxGFrame.AssetLoader.Cacher
             Debug.Log("【預加載】 => 當前<< CacheResource >>快取數量 : " + this.Count);
         }
 
-        public override async UniTask PreloadInCache(string[] assetNames, Progression progression = null)
+        public override async UniTask Preload(string[] assetNames, Progression progression = null)
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
@@ -235,7 +235,7 @@ namespace OxGFrame.AssetLoader.Cacher
         /// [使用計數管理] 從快取【釋放】單個資源 (釋放快取, 並且釋放資源記憶體)
         /// </summary>
         /// <param name="assetName"></param>
-        public override void ReleaseFromCache(string assetName)
+        public override void Unload(string assetName)
         {
             if (this.HasInCache(assetName))
             {
@@ -256,7 +256,7 @@ namespace OxGFrame.AssetLoader.Cacher
         /// <summary>
         /// [強制釋放] 從快取中【釋放】全部資源 (釋放快取, 並且釋放資源記憶體)
         /// </summary>
-        public override void ReleaseCache()
+        public override void Release()
         {
             if (this.Count == 0) return;
 

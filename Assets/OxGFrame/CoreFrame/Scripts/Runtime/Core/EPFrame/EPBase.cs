@@ -22,8 +22,8 @@ namespace OxGFrame.CoreFrame.EPFrame
         private void OnDestroy()
         {
             this.OnRelease();
-            if (string.IsNullOrEmpty(this.bundleName)) CacheResource.GetInstance().ReleaseFromCache(this.assetName);
-            else CacheBundle.GetInstance().ReleaseFromCache(this.bundleName);
+            if (string.IsNullOrEmpty(this.bundleName)) CacheResource.GetInstance().Unload(this.assetName);
+            else CacheBundle.GetInstance().Unload(this.bundleName);
         }
 
         public override void BeginInit() { }

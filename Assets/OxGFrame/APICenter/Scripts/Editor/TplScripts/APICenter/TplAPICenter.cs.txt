@@ -1,0 +1,27 @@
+﻿using OxGFrame.APICenter;
+
+public class #SCRIPTNAME# : APICenterBase<#SCRIPTNAME#>
+{
+    /*
+    // >>> EXAMPLE <<<
+
+    #region declaration and definition API_xBASE
+    public const int APIQueryTest = API_xBASE + 1;
+    #endregion
+
+    // >>> EXAMPLE <<<
+    */
+
+    public #SCRIPTNAME#()
+    {
+        /*
+        // >>> EXAMPLE <<<
+
+        #region Register Event
+        this.Register(new APIQueryTest(APIQueryTest));
+        #endregion
+
+        // >>> EXAMPLE <<<
+        */
+    }
+}

@@ -13,12 +13,12 @@ namespace OxGFrame.AssetLoader
 
         void DelFromCache(int id, string name);
 
-        UniTask PreloadInCache(int id, string name, Progression progression);
+        UniTask Preload(int id, string name, Progression progression);
 
-        UniTask PreloadInCache(int id, string[] names, Progression progression);
+        UniTask Preload(int id, string[] names, Progression progression);
 
-        void ReleaseFromCache(int id, string name);
+        void Unload(int id, string name);
 
-        void ReleaseCache(int id);
+        void Release(int id);
     }
 }

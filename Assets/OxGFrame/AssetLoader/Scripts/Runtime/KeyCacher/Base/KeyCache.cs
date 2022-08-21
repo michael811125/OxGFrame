@@ -76,12 +76,12 @@ namespace OxGFrame.AssetLoader.KeyCacher
             }
         }
 
-        public abstract UniTask PreloadInCache(int id, string name, Progression progression);
+        public abstract UniTask Preload(int id, string name, Progression progression);
 
-        public abstract UniTask PreloadInCache(int id, string[] names, Progression progression);
+        public abstract UniTask Preload(int id, string[] names, Progression progression);
 
-        public abstract void ReleaseFromCache(int id, string name);
+        public abstract void Unload(int id, string name);
 
-        public abstract void ReleaseCache(int id);
+        public abstract void Release(int id);
     }
 }

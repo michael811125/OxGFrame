@@ -23,21 +23,21 @@ namespace OxGFrame.AssetLoader.KeyCahcer
         /// <param name="id"></param>
         /// <param name="bundleName"></param>
         /// <returns></returns>
-        public override async UniTask PreloadInCache(int id, string bundleName, Progression progression = null)
+        public override async UniTask Preload(int id, string bundleName, Progression progression = null)
         {
             if (string.IsNullOrEmpty(bundleName)) return;
 
-            await CacheBundle.GetInstance().PreloadInCache(bundleName, progression);
+            await CacheBundle.GetInstance().Preload(bundleName, progression);
             if (CacheBundle.GetInstance().HasInCache(bundleName)) this.AddIntoCache(id, bundleName);
 
             Debug.Log("【預加載】 => 當前<< KeyBundle >>快取數量 : " + this.Count);
         }
 
-        public override async UniTask PreloadInCache(int id, string[] bundleNames, Progression progression = null)
+        public override async UniTask Preload(int id, string[] bundleNames, Progression progression = null)
         {
             if (bundleNames == null || bundleNames.Length == 0) return;
 
-            await CacheBundle.GetInstance().PreloadInCache(bundleNames, progression);
+            await CacheBundle.GetInstance().Preload(bundleNames, progression);
             foreach (string bundleName in bundleNames)
             {
                 if (string.IsNullOrEmpty(bundleName)) continue;
@@ -141,7 +141,7 @@ namespace OxGFrame.AssetLoader.KeyCahcer
         /// </summary>
         /// <param name="id"></param>
         /// <param name="bundleName"></param>
-        public override void ReleaseFromCache(int id, string bundleName)
+        public override void Unload(int id, string bundleName)
         {
             var keyGroup = this.GetFromCache(id, bundleName);
             if (keyGroup != null)
@@ -150,7 +150,7 @@ namespace OxGFrame.AssetLoader.KeyCahcer
 
                 // 使用引用計數釋放
                 if (keyGroup.refCount <= 0) this.DelFromCache(id, keyGroup.name);
-                CacheBundle.GetInstance().ReleaseFromCache(keyGroup.name);
+                CacheBundle.GetInstance().Unload(keyGroup.name);
             }
 
             Debug.Log("【單個釋放】 => 當前<< KeyBundle >>快取數量 : " + this.Count);
@@ -159,7 +159,7 @@ namespace OxGFrame.AssetLoader.KeyCahcer
         /// <summary>
         /// 【釋放】全部索引Key快取, 並且釋放資源快取
         /// </summary>
-        public override void ReleaseCache(int id)
+        public override void Release(int id)
         {
             if (this._keyCacher.Count > 0)
             {
@@ -169,14 +169,14 @@ namespace OxGFrame.AssetLoader.KeyCahcer
 
                     if (keyGroup.refCount <= 0)
                     {
-                        CacheBundle.GetInstance().ReleaseFromCache(keyGroup.name);
+                        CacheBundle.GetInstance().Unload(keyGroup.name);
                     }
                     else
                     {
                         // 依照計數次數釋放
                         for (int i = 0; i < keyGroup.refCount; i++)
                         {
-                            CacheBundle.GetInstance().ReleaseFromCache(keyGroup.name);
+                            CacheBundle.GetInstance().Unload(keyGroup.name);
                         }
                     }
 

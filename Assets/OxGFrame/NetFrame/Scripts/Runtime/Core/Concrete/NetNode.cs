@@ -1,4 +1,4 @@
-﻿using OxGFrame.CoreFrame.Utility.Timer;
+﻿using OxGFrame.Utility.Timer;
 using System;
 using UnityEngine;
 
@@ -59,13 +59,16 @@ namespace OxGFrame.NetFrame
 
         protected RealTimer _hearBeatTicker = null;          // 心跳檢測計循環計時器
         private float _heartBeatTick = 60f;                  // 心跳檢測時間, 預設 = 60秒
+        protected Action _heartBeatAction = null;            // 心跳檢測 Callback
 
-        protected RealTimer _receiveMsgTicker = null;        // 超時檢測循環計時器
-        private float _receiveTick = 10f;                    // 超時檢測時間, 預設 = 10秒
+        protected RealTimer _outReceiveTicker = null;        // 超時檢測循環計時器
+        private float _outReceiveTick = 10f;                 // 超時檢測時間, 預設 = 10秒
+        protected Action _outReceiveAction = null;           // 超時檢測 Callback
 
         protected RealTimer _reconnectTicker = null;         // 斷線重連循環計時器
         private float _reconnectTick = 5f;                   // 斷線重連時間, 預設 = 5秒
         private int _autoReconnectCount = 0;                 // 自動連線次數 (由NetOption帶入)
+        protected Action _reconnectAction = null;            // 斷線重連 Callback
 
         protected ResponseHandler _responseHandler = null;   // 接收的回調
         protected FirstSendHandler _firstSendHandler = null; // 第一次封包的回調
@@ -73,14 +76,14 @@ namespace OxGFrame.NetFrame
         public NetNode()
         {
             this._hearBeatTicker = new RealTimer();
-            this._receiveMsgTicker = new RealTimer();
+            this._outReceiveTicker = new RealTimer();
             this._reconnectTicker = new RealTimer();
         }
 
         public NetNode(ISocket socket, INetTips netTips = null)
         {
             this._hearBeatTicker = new RealTimer();
-            this._receiveMsgTicker = new RealTimer();
+            this._outReceiveTicker = new RealTimer();
             this._reconnectTicker = new RealTimer();
 
             this.Init(socket, netTips);
@@ -176,7 +179,7 @@ namespace OxGFrame.NetFrame
 
         public void OnUpdate()
         {
-            this._ProcessReceiveMsg();
+            this._ProcessOutReceive();
             this._ProcessHeartBeat();
             this._ProcessAutoReconnect();
         }
@@ -188,13 +191,13 @@ namespace OxGFrame.NetFrame
 
             this._isCloseForce = false;
             this._ResetAutoReconnect();
-            this._ResetReceiveMsgTicker();
+            this._ResetOutReceiveTicker();
             this._ResetHeartBeatTicker();
         }
 
         private void _OnMessage(byte[] data)
         {
-            this._ResetReceiveMsgTicker();
+            this._ResetOutReceiveTicker();
             this._ResetHeartBeatTicker();
 
             this._responseHandler?.Invoke(data);
@@ -266,31 +269,43 @@ namespace OxGFrame.NetFrame
         }
 
         #region 超時Ticker處理
-        public void SetReceiveMsgTickerTime(float time)
+        public void SetOutReciveAction(Action outReciveAction)
         {
-            this._receiveTick = time;
+            this._outReceiveAction = outReciveAction;
         }
 
-        private void _ResetReceiveMsgTicker()
+        public void SetOutReceiveTickerTime(float time)
         {
-            if (this._receiveMsgTicker == null) this._receiveMsgTicker = new RealTimer();
-
-            this._receiveMsgTicker.Play();
-            this._receiveMsgTicker.SetTick(this._receiveTick);
+            this._outReceiveTick = time;
         }
 
-        private void _ProcessReceiveMsg()
+        private void _ResetOutReceiveTicker()
         {
-            if (this._receiveMsgTicker.IsPause()) return;
+            if (this._outReceiveTicker == null) this._outReceiveTicker = new RealTimer();
 
-            if (this._receiveMsgTicker.IsTickTimeout())
+            this._outReceiveTicker.Play();
+            this._outReceiveTicker.SetTick(this._outReceiveTick);
+        }
+
+        private void _ProcessOutReceive()
+        {
+            if (this._outReceiveTicker.IsPause()) return;
+
+            if (this._outReceiveTicker.IsTickTimeout())
             {
-                Debug.Log("NetNode 已經超時都無接收數據... ReceiveMsgTicker close Network! (暫時無作用)");
+                this._outReceiveAction?.Invoke();
+
+                Debug.Log("<color=#FFC100>NetNode 超時處理...</color>");
             }
         }
         #endregion
 
         #region 心跳檢測Ticker處理
+        public void SetHeartBeatAction(Action heartBeatAction)
+        {
+            this._heartBeatAction = heartBeatAction;
+        }
+
         public void SetHeartBeatTickerTime(float time)
         {
             this._heartBeatTick = time;
@@ -310,12 +325,19 @@ namespace OxGFrame.NetFrame
 
             if (this._hearBeatTicker.IsTickTimeout())
             {
-                Debug.Log("NetNode 心跳檢測... Send Heartbeat Signal");
+                this._heartBeatAction?.Invoke();
+
+                Debug.Log("<color=#8EFF00>NetNode 心跳檢測...</color>");
             }
         }
         #endregion
 
         #region 斷線重連Ticker處理
+        public void SetReconnectAction(Action reconnectAction)
+        {
+            this._reconnectAction = reconnectAction;
+        }
+
         public void SetReconnectTickerTime(float time)
         {
             this._reconnectTick = time;
@@ -356,7 +378,9 @@ namespace OxGFrame.NetFrame
                     this.Connect(this._netOption);
                     if (this._autoReconnectCount > 0) this._autoReconnectCount -= 1;
 
-                    Debug.Log("<color=#FF000F>嘗試重新連接...</color>");
+                    this._reconnectAction?.Invoke();
+
+                    Debug.Log("<color=#FF0000>NetNode 嘗試重新連接...</color>");
                 }
             }
             else
@@ -374,7 +398,7 @@ namespace OxGFrame.NetFrame
         private void _StopTicker()
         {
             if (this._hearBeatTicker != null) this._hearBeatTicker.Pause();
-            if (this._receiveMsgTicker != null) this._receiveMsgTicker.Pause();
+            if (this._outReceiveTicker != null) this._outReceiveTicker.Pause();
             if (this._reconnectTicker != null) this._reconnectTicker.Pause();
         }
 
@@ -384,8 +408,11 @@ namespace OxGFrame.NetFrame
             this._netTips = null;
             this._netOption = null;
             this._hearBeatTicker = null;
-            this._receiveMsgTicker = null;
+            this._heartBeatAction = null;
+            this._outReceiveTicker = null;
+            this._outReceiveAction = null;
             this._reconnectTicker = null;
+            this._reconnectAction = null;
             this._responseHandler = null;
             this._firstSendHandler = null;
         }

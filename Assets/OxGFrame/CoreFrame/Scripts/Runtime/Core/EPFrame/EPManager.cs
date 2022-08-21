@@ -91,7 +91,7 @@ namespace OxGFrame.CoreFrame.EPFrame
         {
             if (!string.IsNullOrEmpty(assetName))
             {
-                await CacheResource.GetInstance().PreloadInCache(assetName, progression);
+                await CacheResource.GetInstance().Preload(assetName, progression);
             }
 
             // 等待執行完畢
@@ -108,7 +108,7 @@ namespace OxGFrame.CoreFrame.EPFrame
         {
             if (!string.IsNullOrEmpty(bundleName) && !string.IsNullOrEmpty(assetName))
             {
-                await CacheBundle.GetInstance().PreloadInCache(bundleName, progression);
+                await CacheBundle.GetInstance().Preload(bundleName, progression);
             }
 
             // 等待執行完畢
@@ -135,7 +135,7 @@ namespace OxGFrame.CoreFrame.EPFrame
                     }
 
                     float lastSize = 0;
-                    await CacheResource.GetInstance().PreloadInCache(assetNames[i], (float progress, float reqSize, float totalSize) =>
+                    await CacheResource.GetInstance().Preload(assetNames[i], (float progress, float reqSize, float totalSize) =>
                     {
                         this.reqSize += reqSize - lastSize;
                         lastSize = reqSize;
@@ -187,7 +187,7 @@ namespace OxGFrame.CoreFrame.EPFrame
                     }
 
                     float lastSize = 0;
-                    await CacheBundle.GetInstance().PreloadInCache(bundleAssetNames[row, 0], (float progress, float reqSize, float totalSize) =>
+                    await CacheBundle.GetInstance().Preload(bundleAssetNames[row, 0], (float progress, float reqSize, float totalSize) =>
                     {
                         this.reqSize += reqSize - lastSize;
                         lastSize = reqSize;

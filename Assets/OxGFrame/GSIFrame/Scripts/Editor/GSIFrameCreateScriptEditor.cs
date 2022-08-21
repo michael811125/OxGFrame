@@ -4,7 +4,7 @@ using UnityEditor;
 public static class GSIFrameCreateScriptEditor
 {
     // Template Game Stage Manager Path
-    private const string TPL_GSM_SCRIPT_PATH = "TplScripts/GSIFrame/TplGSM.cs.txt";
+    private const string TPL_GSM_SCRIPT_PATH = "TplScripts/GSIFrame/TplGStageManager.cs.txt";
     // Template Game Stage Path
     private const string TPL_GSTAGE_SCRIPT_PATH = "TplScripts/GSIFrame/TplGStage.cs.txt";
 
@@ -19,7 +19,7 @@ public static class GSIFrameCreateScriptEditor
     }
 
     #region GSIFrame Script Create
-    [MenuItem(itemName: "Assets/Create/OxGFrame/GSIFrame/TplGStage.cs (Game Stage)", isValidateFunction: false, priority: 51)]
+    [MenuItem(itemName: "Assets/Create/OxGFrame/GSIFrame/TplScripts/TplGStage.cs (Game Stage)", isValidateFunction: false, priority: 51)]
     public static void CreateScriptTplGStage()
     {
         string currentPath = pathFinder;
@@ -28,7 +28,7 @@ public static class GSIFrameCreateScriptEditor
         ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplGStage.cs");
     }
 
-    [MenuItem(itemName: "Assets/Create/OxGFrame/GSIFrame/TplGSM.cs (Game Stage Manager)", isValidateFunction: false, priority: 51)]
+    [MenuItem(itemName: "Assets/Create/OxGFrame/GSIFrame/TplScripts/TplGStageManager.cs (Game Stage Manager)", isValidateFunction: false, priority: 51)]
     public static void CreateScriptTplGSM()
     {
         string currentPath = pathFinder;

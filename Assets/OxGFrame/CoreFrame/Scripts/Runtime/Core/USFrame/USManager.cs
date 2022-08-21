@@ -102,7 +102,7 @@ namespace OxGFrame.CoreFrame.USFrame
         /// <returns></returns>
         public async UniTask PreloadSceneBundle(string bundleName, Progression progression = null)
         {
-            await CacheBundle.GetInstance().PreloadInCache(bundleName, progression);
+            await CacheBundle.GetInstance().Preload(bundleName, progression);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace OxGFrame.CoreFrame.USFrame
         /// <returns></returns>
         public async UniTask PreloadSceneBundle(string[] bundleNames, Progression progression = null)
         {
-            await CacheBundle.GetInstance().PreloadInCache(bundleNames, progression);
+            await CacheBundle.GetInstance().Preload(bundleNames, progression);
         }
 
         /// <summary>

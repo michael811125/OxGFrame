@@ -1,7 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace OxGFrame.AssetLoader.Cacher
 {
@@ -19,13 +17,13 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public abstract T GetFromCache(string name);
 
-        public abstract UniTask PreloadInCache(string name, Progression progression);
+        public abstract UniTask Preload(string name, Progression progression);
 
-        public abstract UniTask PreloadInCache(string[] names, Progression progression);
+        public abstract UniTask Preload(string[] names, Progression progression);
 
-        public abstract void ReleaseFromCache(string name);
+        public abstract void Unload(string name);
 
-        public abstract void ReleaseCache();
+        public abstract void Release();
 
         public abstract UniTask<int> GetAssetsLength(params string[] names);
     }

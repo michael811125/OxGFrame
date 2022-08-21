@@ -582,8 +582,8 @@ namespace OxGFrame.CoreFrame
         {
             fBase.OnRelease(); // 執行FrameBase相關釋放程序
 
-            if (string.IsNullOrEmpty(fBase.bundleName)) CacheResource.GetInstance().ReleaseFromCache(fBase.assetName);
-            else CacheBundle.GetInstance().ReleaseFromCache(fBase.bundleName);
+            if (string.IsNullOrEmpty(fBase.bundleName)) CacheResource.GetInstance().Unload(fBase.assetName);
+            else CacheBundle.GetInstance().Unload(fBase.bundleName);
 
             if (!fBase.gameObject.IsDestroyed()) Destroy(fBase.gameObject); // 刪除FrameBase物件
 
