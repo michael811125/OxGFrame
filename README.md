@@ -1,4 +1,4 @@
-![OxGFrame](Docs/OxGFrame_Logo.png)
+![OxGFrame](Docs/OxGFrame_Logo_v2.png)
 
 ---
 
