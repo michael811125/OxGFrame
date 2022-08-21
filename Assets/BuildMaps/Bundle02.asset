@@ -18,19 +18,19 @@ MonoBehaviour:
   customBuildMaps: []
   _dictBuildBundleInfo:
     list:
-    - Key: Assets/OxGFrame/CoreFrame/Example/CoreFrameDemo/USFrameDemo/Scenes/LevelDemo01.unity
+    - Key: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo01.unity
       Value:
-        assetPath: Assets/OxGFrame/CoreFrame/Example/CoreFrameDemo/USFrameDemo/Scenes/LevelDemo01.unity
+        assetPath: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo01.unity
         assetBundleName: scenes
         assetBundleVariant: 
-    - Key: Assets/OxGFrame/CoreFrame/Example/CoreFrameDemo/USFrameDemo/Scenes/LevelDemo02.unity
+    - Key: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo02.unity
       Value:
-        assetPath: Assets/OxGFrame/CoreFrame/Example/CoreFrameDemo/USFrameDemo/Scenes/LevelDemo02.unity
+        assetPath: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo02.unity
         assetBundleName: scenes
         assetBundleVariant: 
-    - Key: Assets/OxGFrame/CoreFrame/Example/CoreFrameDemo/USFrameDemo/Scenes/LevelDemo03.unity
+    - Key: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo03.unity
       Value:
-        assetPath: Assets/OxGFrame/CoreFrame/Example/CoreFrameDemo/USFrameDemo/Scenes/LevelDemo03.unity
+        assetPath: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo03.unity
         assetBundleName: scenes
         assetBundleVariant: 
     keyCollision: 0
