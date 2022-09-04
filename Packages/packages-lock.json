@@ -5,18 +5,16 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "9e2163616b9c527fa9461544e2bcc5f93fd12d83"
+      "hash": "f48cb4b03e6214d9a02cedfda6f26635dad001fb"
     },
     "com.domybest.mybox": {
       "version": "https://github.com/Deadcows/MyBox.git",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.unity.ugui": "1.0.0",
-        "com.unity.modules.ai": "1.0.0",
-        "com.unity.modules.physics2d": "1.0.0"
+        "com.unity.ugui": "1.0.0"
       },
-      "hash": "efa34f54bc82efb74dcad7b6d3387a521afe611d"
+      "hash": "a587ed2ede07a2b401d27089117d238b4ce7ebf7"
     },
     "com.unity.2d.animation": {
       "version": "7.0.6",
@@ -85,7 +83,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "4aa8a2b8760cfbebb037182d67a96f14292efd6f"
+      "hash": "38e6e2f61783cbdc3105d68dddaac884031e4e85"
     },
     "com.unity.burst": {
       "version": "1.7.3",
@@ -168,7 +166,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.memoryprofiler": {
-      "version": "0.6.0-preview.1",
+      "version": "0.7.1-preview.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
