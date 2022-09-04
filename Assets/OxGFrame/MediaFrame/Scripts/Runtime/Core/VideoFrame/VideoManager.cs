@@ -5,7 +5,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 {
     public class VideoManager : MediaManager<VideoBase>
     {
-        private GameObject _goRoot = null;                                // 根節點物件
+        private GameObject _goRoot = null; // 根節點物件
 
         private static readonly object _locker = new object();
         private static VideoManager _instance = null;

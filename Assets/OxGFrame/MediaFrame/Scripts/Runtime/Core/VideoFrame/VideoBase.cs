@@ -104,7 +104,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this._videoPlayer.Prepare();
             Debug.Log($"{this.mediaName} video is preparing...");
             var cts = new CancellationTokenSource();
-            cts.CancelAfterSlim(TimeSpan.FromSeconds(5));
+            cts.CancelAfterSlim(TimeSpan.FromSeconds(5f));
             await UniTask.WaitUntil(() => { return this._videoPlayer.isPrepared; }, PlayerLoopTiming.FixedUpdate, cts.Token);
             Debug.Log($"{this.mediaName} video is prepared");
 
@@ -124,6 +124,12 @@ namespace OxGFrame.MediaFrame.VideoFrame
                     this._SetTargetCamera();
                     break;
             }
+
+            this._mediaLength = this._currentLength = (1f * this._videoPlayer.frameCount / this._videoPlayer.frameRate);
+
+            this.isPrepared = true;
+
+            Debug.Log($"<color=#00EEFF>【Init Once】 Video length: {this._mediaLength} (s)</color>");
         }
 
         /// <summary>
@@ -168,14 +174,6 @@ namespace OxGFrame.MediaFrame.VideoFrame
         {
             if (this._videoPlayer == null) return;
 
-            if (this._videoPlayer.isPrepared && !this.isPrepared)
-            {
-                this.isPrepared = true;
-                this._mediaLength = this._currentLength = (1f * this._videoPlayer.frameCount / this._videoPlayer.frameRate);
-                Debug.Log($"<color=#00EEFF>【Init Once】 Video length: {this._mediaLength} (s)</color>");
-            }
-
-            // 在Media準備之後, 如果尚未初始設置, 則一律return
             if (!this.isPrepared) return;
 
             if (this.IsPaused()) return;
@@ -185,8 +183,6 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 this._currentLength -= dt;
                 if (this.CurrentLength() <= 0f)
                 {
-                    this._currentLength = this.Length();
-
                     if (this._loops >= 0)
                     {
                         this._videoPlayer.Stop();
@@ -199,6 +195,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                         }
                         else this._videoPlayer.Play();
                     }
+                    this._currentLength = this.Length();
                 }
             }
         }

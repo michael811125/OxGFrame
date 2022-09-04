@@ -1,8 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Cacher;
-using System;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 namespace OxGFrame.MediaFrame
@@ -246,21 +244,10 @@ namespace OxGFrame.MediaFrame
             mBase.SetNames(bundleName, assetName, mediaName);
 
             await mBase.Init();
-            var cts = new CancellationTokenSource();
-            cts.CancelAfterSlim(TimeSpan.FromSeconds(5));
-            try
-            {
-                await UniTask.WaitUntil(() => { return mBase.isPrepared; }, PlayerLoopTiming.LastUpdate, cts.Token);
-            }
-            catch (OperationCanceledException ex)
-            {
-                if (ex.CancellationToken == cts.Token)
-                {
-                    Debug.Log($"{mBase.mediaName} Media init WaitUntil Timeout");
-                }
-            }
 
             // >>> 需在Init之後, 以下設定開始生效 <<<
+
+            if (mBase == null || mBase.gameObject.IsDestroyed()) return default;
 
             mBase.gameObject.SetActive(false);
 
@@ -351,8 +338,8 @@ namespace OxGFrame.MediaFrame
 
             mBase.OnRelease();
 
-            if (!mBase.gameObject.IsDestroyed()) Destroy(mBase.gameObject);                // 刪除MediaBase物件
-            this._listAllCache.Remove(mBase);                                             // 刪除MediaBase柱列快取
+            if (!mBase.gameObject.IsDestroyed()) Destroy(mBase.gameObject);              // 刪除MediaBase物件
+            this._listAllCache.Remove(mBase);                                            // 刪除MediaBase柱列快取
             if (this.HasAssetInCache(assetName)) this._dictAssetCache.Remove(assetName); // 刪除資源快取
 
             Debug.Log(string.Format("Destroy Media: {0}", assetName));

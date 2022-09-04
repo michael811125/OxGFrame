@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.5.1] - 2022-09-05
+- Optimized MediaFrame (Audio, Video).
+- Removed ButtonPlus Component.
+
 ## [1.5.0] - 2022-08-21 (Breaking Changes)
 - Organized category separate APICenter, EventCenter, Utility.
 - Renamed GSM => GStageManager (Game Stage Manager).

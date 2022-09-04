@@ -95,12 +95,11 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 ### Utility
 
-各通用組件 => Adapter, ButtonPlus (UGUI), Pool, Timer
+各通用組件 => Adapter, Pool, Timer
 
 - Utility 
   - Timer => DeltaTimer, RealTimer, DTUpdate, RTUpdate
   - Adapter => UISafeAreaAdpater
-  - ButtonPlus => ButtonPlus (inherit UGUI Button), 擴展 Transition Scale, 長按功能
   - Pool => NodePool (物件池)
 
 ---

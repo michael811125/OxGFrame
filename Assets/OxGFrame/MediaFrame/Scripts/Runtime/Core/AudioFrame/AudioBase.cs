@@ -1,6 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
-using System;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -41,15 +40,9 @@ namespace OxGFrame.MediaFrame.AudioFrame
         public override async UniTask Init()
         {
             this._audioSource = this.GetComponent<AudioSource>();
-            this._InitPreloadLength();
             await this._InitAudio();
 
             this._isInit = true; // Mark all init is finished.
-        }
-
-        private void _InitPreloadLength()
-        {
-            this._mediaLength = this._currentLength = (this.audioLength >= 0f) ? this.audioLength : 0f;
         }
 
         private async UniTask _InitAudio()
@@ -92,8 +85,12 @@ namespace OxGFrame.MediaFrame.AudioFrame
             this._audioSource.playOnAwake = false;
             this._audioSource.priority = this.audioType.priority;
             this._audioSource.outputAudioMixerGroup = this._mixerGroup;
-            //this._mediaLength = this._currentLength = this._audioSource.clip.length;
             this._audioSource.loop = (this.loops == -1) ? true : false;
+            this._mediaLength = this._currentLength = (this.audioLength > 0) ? this.audioLength : this.audioClip.length;
+
+            this.isPrepared = true;
+
+            Debug.Log($"<color=#00EEFF>【Init Once】 Audio length: {this._mediaLength} (s)</color>");
         }
 
         public async UniTask<AudioClip> GetAudioFromStreamingAssets()
@@ -116,14 +113,6 @@ namespace OxGFrame.MediaFrame.AudioFrame
         {
             if (this._audioSource == null) return;
 
-            if (this.audioClip != null && this.audioClip.preloadAudioData && !this.isPrepared)
-            {
-                this._mediaLength = this._currentLength = (this.audioLength > 0) ? this.audioLength : this.audioClip.length;
-                this.isPrepared = true;
-                Debug.Log($"<color=#00EEFF>【Init Once】 Audio length: {this._mediaLength} (s)</color>");
-            }
-
-            // 在Media準備之後, 如果尚未初始設置, 則一律return
             if (!this.isPrepared) return;
 
             if (this.IsPaused()) return;
@@ -133,8 +122,6 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 this._currentLength -= dt;
                 if (this.CurrentLength() <= 0f)
                 {
-                    this._currentLength = this.Length();
-
                     if (this._loops >= 0)
                     {
                         this._audioSource.Stop();
@@ -147,6 +134,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                         }
                         else this._audioSource.Play();
                     }
+                    this._currentLength = this.Length();
                 }
             }
         }
@@ -163,8 +151,11 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             if (this._loops == -1) this._audioSource.loop = true;
 
-            this._audioSource.clip.LoadAudioData();
-            Debug.Log($"Load AudioName: {this.mediaName}, AudioSource => Time: {this._audioSource.time}, TimeSamples: {this._audioSource.timeSamples}; AudioClip => Time: {this._audioSource.clip.length}, Samples: {this._audioSource.clip.samples}, Freq: {this._audioSource.clip.frequency}");
+            if (!this._audioSource.clip.preloadAudioData)
+            {
+                this._audioSource.clip.LoadAudioData();
+                Debug.Log($"Load AudioName: {this.mediaName}, AudioSource => Time: {this._audioSource.time}, TimeSamples: {this._audioSource.timeSamples}; AudioClip => Time: {this._audioSource.clip.length}, Samples: {this._audioSource.clip.samples}, Freq: {this._audioSource.clip.frequency}");
+            }
 
             if (!this.IsPaused()) this._audioSource.Play();
             else this._audioSource.UnPause();

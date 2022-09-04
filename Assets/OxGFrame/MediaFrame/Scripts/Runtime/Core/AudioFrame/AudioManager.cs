@@ -443,39 +443,6 @@ namespace OxGFrame.MediaFrame.AudioFrame
         }
 
         /// <summary>
-        /// 統一封裝處理 List 快取 (新增)
-        /// </summary>
-        /// <param name="listCache"></param>
-        /// <param name="audBase"></param>
-        /// <param name="loops"></param>
-        /// <returns></returns>
-        //private void _PushListCache(List<AudioBase> listCache, AudioBase audBase, int loops)
-        //{
-        //    if (audBase == null) return;
-        //    listCache.Add(audBase);
-        //    audBase.Play(loops);
-        //}
-
-        ///// <summary>
-        ///// 統一封裝處理 List 快取 (移除)
-        ///// </summary>
-        ///// <param name="listCahced"></param>
-        ///// <param name="audBase"></param>
-        ///// <param name="pause"></param>
-        //private void _RemoveListCache(List<AudioBase> listCahced, AudioBase audBase, bool pause, bool disableEndEvent)
-        //{
-        //    if (listCahced.Count == 0) return;
-
-        //    listCahced.Remove(audBase);
-        //    if (!pause)
-        //    {
-        //        if (disableEndEvent) audBase.SetEndEvent(null);
-        //        audBase.Stop();
-        //    }
-        //    else audBase.Pause();
-        //}
-
-        /// <summary>
         /// 請求音訊
         /// </summary>
         /// <param name="url"></param>
