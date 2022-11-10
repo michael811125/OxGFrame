@@ -10,7 +10,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 ---
 
-## 第三方庫依賴
+## 第三方庫依賴 (需先安裝)
 
 - [UnitTask Version 2.3.1 or higher](https://github.com/Cysharp/UniTask)
 - [MyBox version 1.7.0 or higher](https://github.com/Deadcows/MyBox)
@@ -24,12 +24,17 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 ### AssetLoader
 
-只要是遊戲製作，不可避免有資源加載問題，採用計數管理方式進行資源管控 (支援 Resource 與 AssetBundle)，建議成對呼叫 Load & Unload 。 其中 AssetBundle 則採用自帶的配置檔進行主程式與資源版本比對，實現資源熱更新流程，並且下載器支援斷點續傳，也對於 AssetBundle 打包出來的資源，提供現有加密方式 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密，還有針對加速 AssetBundle 開發方案提供在 Unity Editor 編輯器下能夠切換 AssetDatabase Mode 提高在 Unity Editor 編輯器中的開發效率。
+只要是遊戲製作，不可避免有資源加載問題，採用計數管理方式進行資源管控 (支援 Resource 與 AssetBundle)，一定要成對呼叫 Load & Unload (如果沒有成對呼叫，會導致計數不正確) 。 其中 AssetBundle 則採用自帶的配置檔進行主程式與資源版本比對，實現資源熱更新流程，並且下載器支援斷點續傳，也對於 AssetBundle 打包出來的資源，提供現有加密方式 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密，還有針對加速 AssetBundle 開發方案提供在 Unity Editor 編輯器下能夠切換 AssetDatabase Mode 提高在 Unity Editor 編輯器中的開發效率。
 
-- Cacher【CacheResource, CacheBundle】(主要資源加載操作)
+**選擇使用 Bundle 開發時，需要先將 BundleSetup 拖曳置場景中，才能驅動 BundleDistributor。**
+
+- Cacher【CacheResource, CacheBundle】(資源主要加載器)
+  - 如果沒有群組化需求，可以直接使用 Cacher 進行資源 Load & Unload (成對式)
 - KeyCacher【KeyResource, KeyBundle】(Link Cacher 進行 Key 索引，用於分類資源群組快取操作)
+  - 如果有群組化需求，使用 KeyCacher 指定 GroupId 進行 Load 時，則相對需要使用 KeyCacher 進行 Unload (成對式)
 - BundleDistributor (資源熱更核心)
 - Downloader (下載器)
+  - 支援 Slice Mode (針對大檔進行切割式下載)
 - FileCryptogram (檔案加解密)
   - **Bundle 加密推薦 HTXOR**
   - 運算效率 HTXOR ~= OFFSET > XOR > AES
@@ -39,7 +44,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 【備註】AssetBundle 打包建議使用 [AssetBundle Browser Plus v1.9.1 or higher](https://github.com/michael811125/AssetBundles-Browser-Plus) 作為打包策略規劃。
 
-※如有要運行 BundleDemo，找到 OxGFrame/AssetLoader/Example/BundleDemo/ExportBundles.zip 解壓後直接放到 Server，再自行更改 StreamingAssets/burlcfg 中的 IP。
+※如果有要運行 BundleDemo，找到 OxGFrame/AssetLoader/Example/BundleDemo/ExportBundles.zip 解壓後直接放到 Server，再自行更改 StreamingAssets/burlcfg 中的 IP。
 
 ### CoreFrame
 
