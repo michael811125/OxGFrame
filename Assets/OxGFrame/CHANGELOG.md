@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [1.6.1] - 2022-11-10
+- Fixed Downloader if gets rdlMd5 from PlayerPrefs is empty will download file directly, but actually file is exist leads to file index write error issue.
+
 ## [1.6.0] - 2022-11-10 (Breaking Changes)
 - Added Stop method for Utility Timer.
 - Added ButtonPlus in Utility (implements Unity Button).

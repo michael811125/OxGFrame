@@ -29,7 +29,7 @@ namespace OxGFrame.AssetLoader.Bundle
         public long dlBytes { get; private set; }                    // 下載大小
         public int dlCount { get; private set; }                     // 下載數量
 
-        private FileStream _fs = null;                               // 用於斷點續傳開啟檔案比對用
+        private FileStream _fs = null;
         private long _fileSize = 0;
         private BundleDistributor _bd = null;
 
@@ -141,33 +141,31 @@ namespace OxGFrame.AssetLoader.Bundle
                 // 下載前記錄該資源的 Md5
                 PlayerPrefs.SetString(rdlMd5Name, dlFile.md5);
             }
-            else
-            {
-                // 判斷檔案是否已經存在於本地端, 再去判斷資源是否過期 or 下載完成了
-                if (File.Exists(filePath))
-                {
-                    // 判斷需要下載的資源 Md5 是否過期, 有則刪除舊檔案
-                    if (rdlMd5 != dlFile.md5)
-                    {
-                        // 刪除資源檔
-                        File.Delete(filePath);
-                        // 記錄新資源的 Md5
-                        PlayerPrefs.SetString(rdlMd5Name, dlFile.md5);
-                    }
-                    else
-                    {
-                        // 讀取本地端檔案內容的 Md5
-                        var localMd5 = BundleUtility.MakeMd5ForFile(filePath);
-                        // 假如已經完成下載, 並且該資源檔的 Md5 與服務端的 Md5 一致, 則跳過處理執行下一個的下載
-                        if (localMd5 == dlFile.md5)
-                        {
-                            this.dlBytes += dlFile.size;
-                            this.dlCount += 1;
-                            Debug.Log($"<color=#fff09f>Already has file: {dlFullName}. Skip to next! </color>");
 
-                            this.NextFileDownload().Forget();
-                            return;
-                        }
+            // 判斷檔案是否已經存在於本地端, 再去判斷資源是否過期 or 下載完成了
+            if (File.Exists(filePath))
+            {
+                // 判斷需要下載的資源 Md5 是否過期, 有則刪除舊檔案
+                if (rdlMd5 != dlFile.md5)
+                {
+                    // 刪除資源檔
+                    File.Delete(filePath);
+                    // 記錄新資源的 Md5
+                    PlayerPrefs.SetString(rdlMd5Name, dlFile.md5);
+                }
+                else
+                {
+                    // 讀取本地端檔案內容的 Md5
+                    var localMd5 = BundleUtility.MakeMd5ForFile(filePath);
+                    // 假如已經完成下載, 並且該資源檔的 Md5 與服務端的 Md5 一致, 則跳過處理執行下一個的下載
+                    if (localMd5 == dlFile.md5)
+                    {
+                        this.dlBytes += dlFile.size;
+                        this.dlCount += 1;
+                        Debug.Log($"<color=#fff09f>Already has file: {dlFullName}. Skip to next! </color>");
+
+                        this.NextFileDownload().Forget();
+                        return;
                     }
                 }
             }
