@@ -12,6 +12,7 @@ namespace UnityWebSocket
     public class WebSocket : IWebSocket
     {
         public string Address { get; private set; }
+        public string[] SubProtocols { get; private set; }
 
         public WebSocketState ReadyState
         {
@@ -36,6 +37,8 @@ namespace UnityWebSocket
             }
         }
 
+        public string BinaryType { get; set; } = "arraybuffer";
+
         public event EventHandler<OpenEventArgs> OnOpen;
         public event EventHandler<CloseEventArgs> OnClose;
         public event EventHandler<ErrorEventArgs> OnError;
@@ -44,10 +47,22 @@ namespace UnityWebSocket
         private ClientWebSocket socket;
         private bool isOpening => socket != null && socket.State == System.Net.WebSockets.WebSocketState.Open;
 
-        #region APIs
+        #region APIs 
         public WebSocket(string address)
         {
             this.Address = address;
+        }
+
+        public WebSocket(string address, string subProtocol)
+        {
+            this.Address = address;
+            this.SubProtocols = new string[] { subProtocol };
+        }
+
+        public WebSocket(string address, string[] subProtocols)
+        {
+            this.Address = address;
+            this.SubProtocols = subProtocols;
         }
 
         public void ConnectAsync()
@@ -61,6 +76,15 @@ namespace UnityWebSocket
                 return;
             }
             socket = new ClientWebSocket();
+            if (this.SubProtocols != null)
+            {
+                foreach (var protocol in this.SubProtocols)
+                {
+                    if (string.IsNullOrEmpty(protocol)) continue;
+                    Log($"Add Sub Protocol {protocol}");
+                    socket.Options.AddSubProtocol(protocol);
+                }
+            }
             Task.Run(ConnectTask);
         }
 
@@ -256,7 +280,7 @@ namespace UnityWebSocket
 
         private void HandleMessage(Opcode opcode, byte[] rawData)
         {
-            Log($"OnMessage, type: {opcode}, size: {rawData.Length}");
+            Log($"OnMessage, type: {opcode}, size: {rawData.Length}\n{BitConverter.ToString(rawData)}");
 #if !UNITY_WEB_SOCKET_ENABLE_ASYNC
             HandleEventSync(new MessageEventArgs(opcode, rawData));
 #else

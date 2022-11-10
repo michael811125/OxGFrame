@@ -1,314 +1,336 @@
 var WebSocketLibrary =
 {
-	$webSocketManager:
-	{
-		/*
-		 * Map of instances
-		 *
-		 * Instance structure:
-		 * {
-		 * 	url: string,
-		 * 	ws: WebSocket
-		 * }
-		 */
-		instances: {},
+    $webSocketManager:
+    {
+        /*
+         * Map of instances
+         *
+         * Instance structure:
+         * {
+         *     url: string,
+         *     ws: WebSocket,
+         *	   binaryType: string,
+         *     subProtocols: string[],
+         * }
+         */
+        instances: {},
 
-		/* Last instance ID */
-		lastId: 0,
+        /* Last instance ID */
+        lastId: 0,
 
-		/* Event listeners */
-		onOpen: null,
-		onMessage: null,
-		onError: null,
-		onClose: null,
-	},
+        /* Event listeners */
+        onOpen: null,
+        onMessage: null,
+        onError: null,
+        onClose: null
+    },
 
-	/**
-	 * Set onOpen callback
-	 *
-	 * @param callback Reference to C# static function
-	 */
-	WebSocketSetOnOpen: function(callback)
-	{
-		webSocketManager.onOpen = callback;
-	},
+    /**
+     * Set onOpen callback
+     *
+     * @param callback Reference to C# static function
+     */
+    WebSocketSetOnOpen: function(callback)
+    {
+        webSocketManager.onOpen = callback;
+    },
 
-	/**
-	 * Set onMessage callback
-	 *
-	 * @param callback Reference to C# static function
-	 */
-	WebSocketSetOnMessage: function(callback)
-	{
-		webSocketManager.onMessage = callback;
-	},
+    /**
+     * Set onMessage callback
+     *
+     * @param callback Reference to C# static function
+     */
+    WebSocketSetOnMessage: function(callback)
+    {
+        webSocketManager.onMessage = callback;
+    },
 
-	/**
-	 * Set onMessage callback
-	 *
-	 * @param callback Reference to C# static function
-	 */
-	WebSocketSetOnMessageStr: function(callback)
-	{
-		webSocketManager.onMessageStr = callback;
-	},
+    /**
+     * Set onMessage callback
+     *
+     * @param callback Reference to C# static function
+     */
+    WebSocketSetOnMessageStr: function(callback)
+    {
+        webSocketManager.onMessageStr = callback;
+    },
 
-	/**
-	 * Set onError callback
-	 *
-	 * @param callback Reference to C# static function
-	 */
-	WebSocketSetOnError: function(callback)
-	{
-		webSocketManager.onError = callback;
-	},
+    /**
+     * Set onError callback
+     *
+     * @param callback Reference to C# static function
+     */
+    WebSocketSetOnError: function(callback)
+    {
+        webSocketManager.onError = callback;
+    },
 
-	/**
-	 * Set onClose callback
-	 *
-	 * @param callback Reference to C# static function
-	 */
-	WebSocketSetOnClose: function(callback)
-	{
-		webSocketManager.onClose = callback;
-	},
+    /**
+     * Set onClose callback
+     *
+     * @param callback Reference to C# static function
+     */
+    WebSocketSetOnClose: function(callback)
+    {
+        webSocketManager.onClose = callback;
+    },
 
-	/**
-	 * Allocate new WebSocket instance struct
-	 *
-	 * @param url Server URL
-	 */
-	WebSocketAllocate: function(url)
-	{
-		var urlStr = UTF8ToString(url);
-		var id = ++webSocketManager.lastId;
-		webSocketManager.instances[id] = {
-			url: urlStr,
-			ws: null
-		};
-		return id;
-	},
+    /**
+     * Allocate new WebSocket instance struct
+     *
+     * @param url Server URL
+     */
+    WebSocketAllocate: function(urlPtr, binaryTypePtr)
+    {
+        var url = UTF8ToString(urlPtr);
+        var binaryType = UTF8ToString(binaryTypePtr);
+        var id = ++webSocketManager.lastId;
+        webSocketManager.instances[id] = {
+            url: url,
+            ws: null,
+            binaryType: binaryType
+        };
 
-	/**
-	 * Remove reference to WebSocket instance
-	 *
-	 * If socket is not closed function will close it but onClose event will not be emitted because
-	 * this function should be invoked by C# WebSocket destructor.
-	 *
-	 * @param instanceId Instance ID
-	 */
-	WebSocketFree: function(instanceId)
-	{
-		var instance = webSocketManager.instances[instanceId];
-		if (!instance) return 0;
+        return id;
+    },
 
-		// Close if not closed
-		if (instance.ws !== null && instance.ws.readyState < 2)
-			instance.ws.close();
+    /**
+     * Add Sub Protocol
+     *
+     * @param instanceId Instance ID
+     * @param protocol Sub Protocol
+     */
+    WebSocketAddSubProtocol: function(instanceId, protocolPtr)
+    {
+        var instance = webSocketManager.instances[instanceId];
+        if (!instance) return -1;
 
-		// Remove reference
-		delete webSocketManager.instances[instanceId];
+        var protocol = UTF8ToString(protocolPtr);
+        
+        if(instance.subProtocols == null) 
+            instance.subProtocols = []; 
 
-		return 0;
-	},
-	
-	/**
-	 * Connect WebSocket to the server
-	 *
-	 * @param instanceId Instance ID
-	 */
-	WebSocketConnect: function(instanceId)
-	{
-		var instance = webSocketManager.instances[instanceId];
-		if (!instance) return -1;
-		if (instance.ws !== null) return -2;
+        instance.subProtocols.push(protocol);
 
-		instance.ws = new WebSocket(instance.url);
+        return 0;
+    },
 
-		instance.ws.onopen = function()
-		{
-			if (webSocketManager.onOpen)
-				Module.dynCall_vi(webSocketManager.onOpen, instanceId);
-		};
+    /**
+     * Remove reference to WebSocket instance
+     *
+     * If socket is not closed function will close it but onClose event will not be emitted because
+     * this function should be invoked by C# WebSocket destructor.
+     *
+     * @param instanceId Instance ID
+     */
+    WebSocketFree: function(instanceId)
+    {
+        var instance = webSocketManager.instances[instanceId];
+        if (!instance) return 0;
 
-		instance.ws.onmessage = function(ev)
-		{
-			if (webSocketManager.onMessage === null)
-				return;
+        // Close if not closed
+        if (instance.ws !== null && instance.ws.readyState < 2)
+            instance.ws.close();
 
-			if (ev.data instanceof ArrayBuffer)
-			{
-				var dataBuffer = new Uint8Array(ev.data);
-				var buffer = _malloc(dataBuffer.length);
-				HEAPU8.set(dataBuffer, buffer);
-				try
-				{
-					Module.dynCall_viii(webSocketManager.onMessage, instanceId, buffer, dataBuffer.length);
-				}
-				finally
-				{
-					_free(buffer);
-				}
-			}
-			else if (ev.data instanceof Blob)
-			{
-				var reader = new FileReader();
-				reader.addEventListener("loadend", function()
-				{
-					var dataBuffer = new Uint8Array(reader.result);
-					var buffer = _malloc(dataBuffer.length);
-					HEAPU8.set(dataBuffer, buffer);
-					try
-					{
-						Module.dynCall_viii(webSocketManager.onMessage, instanceId, buffer, dataBuffer.length);
-					}
-					finally
-					{
-						reader = null;
-						_free(buffer);
-					}
-				});
-				reader.readAsArrayBuffer(ev.data);
-			}
-			else if(typeof ev.data == 'string')
-			{
-				var length = lengthBytesUTF8(ev.data) + 1;
-				var buffer = _malloc(length);
-				stringToUTF8(ev.data, buffer, length);
-				try
-				{
-					Module.dynCall_vii(webSocketManager.onMessageStr, instanceId, buffer);
-				}
-				finally
-				{
-					_free(buffer);
-				}
-			}
-			else
-			{
-				console.log("[JSLIB WebSocket] not support message type: ", (typeof ev.data));
-			}
-		};
+        // Remove reference
+        delete webSocketManager.instances[instanceId];
 
-		instance.ws.onerror = function(ev)
-		{
-			if (webSocketManager.onError)
-			{
-				var msg = "WebSocket error.";
-				var length = lengthBytesUTF8(msg) + 1;
-				var buffer = _malloc(length);
-				stringToUTF8(msg, buffer, length);
-				try
-				{
-					Module.dynCall_vii(webSocketManager.onError, instanceId, buffer);
-				}
-				finally
-				{
-					_free(buffer);
-				}
-			}
-		};
+        return 0;
+    },
+    
+    /**
+     * Connect WebSocket to the server
+     *
+     * @param instanceId Instance ID
+     */
+    WebSocketConnect: function(instanceId)
+    {
+        var instance = webSocketManager.instances[instanceId];
+        if (!instance) return -1;
+        if (instance.ws !== null) return -2;
 
-		instance.ws.onclose = function(ev)
-		{
-			if (webSocketManager.onClose)
-			{
-				var msg = ev.reason;
-				var length = lengthBytesUTF8(msg) + 1;
-				var buffer = _malloc(length);
-				stringToUTF8(msg, buffer, length);
-				try
-				{
-					Module.dynCall_viii(webSocketManager.onClose, instanceId, ev.code, buffer);
-				}
-				finally
-				{
-					_free(buffer);
-				}
-			}
+        if(instance.subProtocols != null)
+            instance.ws = new WebSocket(instance.url, instance.subProtocols);
+        else
+            instance.ws = new WebSocket(instance.url);
 
-			instance.ws = null;
-		};
-		return 0;
-	},
+        instance.ws.binaryType = instance.binaryType;
 
-	/**
-	 * Close WebSocket connection
-	 *
-	 * @param instanceId Instance ID
-	 * @param code Close status code
-	 * @param reasonPtr Pointer to reason string
-	 */
-	WebSocketClose: function(instanceId, code, reasonPtr)
-	{
-		var instance = webSocketManager.instances[instanceId];
-		if (!instance) return -1;
-		if (instance.ws === null) return -3;
-		if (instance.ws.readyState === 2) return -4;
-		if (instance.ws.readyState === 3) return -5;
+        instance.ws.onopen = function()
+        {
+            Module.dynCall_vi(webSocketManager.onOpen, instanceId);
+        };
 
-		var reason = ( reasonPtr ? UTF8ToString(reasonPtr) : undefined );
-		try
-		{
-			instance.ws.close(code, reason);
-		}
-		catch(err)
-		{
-			return -7;
-		}
-		return 0;
-	},
+        instance.ws.onmessage = function(ev)
+        {
+            if (ev.data instanceof ArrayBuffer)
+            {
+                var array = new Uint8Array(ev.data);
+                var buffer = _malloc(array.length);
+                writeArrayToMemory(array, buffer);
+                try
+                {
+                    Module.dynCall_viii(webSocketManager.onMessage, instanceId, buffer, array.length);
+                }
+                finally
+                {
+                    _free(buffer);
+                }
+            }
+            else if (ev.data instanceof Blob)
+            {
+                var reader = new FileReader();
+                reader.onload = function()
+                {
+                    var array = new Uint8Array(reader.result);
+                    var buffer = _malloc(array.length);
+                    writeArrayToMemory(array, buffer);
+                    try
+                    {
+                        Module.dynCall_viii(webSocketManager.onMessage, instanceId, buffer, array.length);
+                    }
+                    finally
+                    {
+                        reader = null;
+                        _free(buffer);
+                    }
+                };
+                reader.readAsArrayBuffer(ev.data);
+            }
+            else if(typeof ev.data == 'string')
+            {
+                var length = lengthBytesUTF8(ev.data) + 1;
+                var buffer = _malloc(length);
+                stringToUTF8(ev.data, buffer, length);
+                try
+                {
+                    Module.dynCall_vii(webSocketManager.onMessageStr, instanceId, buffer);
+                }
+                finally
+                {
+                    _free(buffer);
+                }
+            }
+            else
+            {
+                console.log("[JSLIB WebSocket] not support message type: ", (typeof ev.data));
+            }
+        };
 
-	/**
-	 * Send message over WebSocket
-	 *
-	 * @param instanceId Instance ID
-	 * @param bufferPtr Pointer to the message buffer
-	 * @param length Length of the message in the buffer
-	 */
-	WebSocketSend: function(instanceId, bufferPtr, length)
-	{
-		var instance = webSocketManager.instances[instanceId];
-		if (!instance) return -1;
-		if (instance.ws === null) return -3;
-		if (instance.ws.readyState !== 1) return -6;
+        instance.ws.onerror = function(ev)
+        {
+            var msg = "WebSocket error.";
+            var length = lengthBytesUTF8(msg) + 1;
+            var buffer = _malloc(length);
+            stringToUTF8(msg, buffer, length);
+            try
+            {
+                Module.dynCall_vii(webSocketManager.onError, instanceId, buffer);
+            }
+            finally
+            {
+                _free(buffer);
+            }
+        };
 
-		instance.ws.send(HEAPU8.slice(bufferPtr, bufferPtr + length));
+        instance.ws.onclose = function(ev)
+        {
+            var msg = ev.reason;
+            var length = lengthBytesUTF8(msg) + 1;
+            var buffer = _malloc(length);
+            stringToUTF8(msg, buffer, length);
+            try
+            {
+                Module.dynCall_viii(webSocketManager.onClose, instanceId, ev.code, buffer);
+            }
+            finally
+            {
+                _free(buffer);
+            }
+            instance.ws = null;
+        };
 
-		return 0;
-	},
+        return 0;
+    },
 
-	/**
-	 * Send message string over WebSocket
-	 *
-	 * @param instanceId Instance ID
-	 * @param stringPtr Pointer to the message string
-	 */
-	WebSocketSendStr: function(instanceId, stringPtr)
-	{
-		var instance = webSocketManager.instances[instanceId];
-		if (!instance) return -1;
-		if (instance.ws === null) return -3;
-		if (instance.ws.readyState !== 1) return -6;
+    /**
+     * Close WebSocket connection
+     *
+     * @param instanceId Instance ID
+     * @param code Close status code
+     * @param reasonPtr Pointer to reason string
+     */
+    WebSocketClose: function(instanceId, code, reasonPtr)
+    {
+        var instance = webSocketManager.instances[instanceId];
+        if (!instance) return -1;
+        if (instance.ws === null) return -3;
+        if (instance.ws.readyState === 2) return -4;
+        if (instance.ws.readyState === 3) return -5;
 
-		instance.ws.send(UTF8ToString(stringPtr));
+        var reason = ( reasonPtr ? UTF8ToString(reasonPtr) : undefined );
+        try
+        {
+            instance.ws.close(code, reason);
+        }
+        catch(err)
+        {
+            return -7;
+        }
 
-		return 0;
-	},
+        return 0;
+    },
 
-	/**
-	 * Return WebSocket readyState
-	 *
-	 * @param instanceId Instance ID
-	 */
-	WebSocketGetState: function(instanceId)
-	{
-		var instance = webSocketManager.instances[instanceId];
-		if (!instance) return -1;
-		if (instance.ws === null) return 3;
-		
-		return instance.ws.readyState;
-	}
+    /**
+     * Send message over WebSocket
+     *
+     * @param instanceId Instance ID
+     * @param bufferPtr Pointer to the message buffer
+     * @param length Length of the message in the buffer
+     */
+    WebSocketSend: function(instanceId, bufferPtr, length)
+    {
+        var instance = webSocketManager.instances[instanceId];
+        if (!instance) return -1;
+        if (instance.ws === null) return -3;
+        if (instance.ws.readyState !== 1) return -6;
+
+        instance.ws.send(buffer.slice(bufferPtr, bufferPtr + length));
+
+        return 0;
+    },
+
+    /**
+     * Send message string over WebSocket
+     *
+     * @param instanceId Instance ID
+     * @param stringPtr Pointer to the message string
+     */
+    WebSocketSendStr: function(instanceId, stringPtr)
+    {
+        var instance = webSocketManager.instances[instanceId];
+        if (!instance) return -1;
+        if (instance.ws === null) return -3;
+        if (instance.ws.readyState !== 1) return -6;
+
+        instance.ws.send(UTF8ToString(stringPtr));
+
+        return 0;
+    },
+
+    /**
+     * Return WebSocket readyState
+     *
+     * @param instanceId Instance ID
+     */
+    WebSocketGetState: function(instanceId)
+    {
+        var instance = webSocketManager.instances[instanceId];
+        if (!instance) return -1;
+        if (instance.ws === null) return 3; // socket null as closed
+        
+        return instance.ws.readyState;
+    }
 };
 
 autoAddDeps(WebSocketLibrary, '$webSocketManager');
