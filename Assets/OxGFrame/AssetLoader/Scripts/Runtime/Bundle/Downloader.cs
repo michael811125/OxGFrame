@@ -212,7 +212,7 @@ namespace OxGFrame.AssetLoader.Bundle
             header?.Dispose();
 
             // 從本地端讀取檔案, 並且累加該檔案大小作為下載的大小
-            this._fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            this._fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write);
             this._fileSize = this._fs.Length;
             this.dlBytes += this._fileSize;
 

@@ -478,7 +478,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 switch (this.cryptogramType)
                 {
                     case BundleConfig.CryptogramType.NONE:
-                        fs = new FileStream(GetFilePathFromStreamingAssetsOrSavePath(bundleName), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                        fs = new FileStream(GetFilePathFromStreamingAssetsOrSavePath(bundleName), FileMode.Open, FileAccess.Read, FileShare.None);
 
                         {
                             var dataBytes = new byte[fs.Length];
@@ -607,7 +607,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 switch (this.cryptogramType)
                 {
                     case BundleConfig.CryptogramType.NONE:
-                        fs = new FileStream(GetFilePathFromSavePath(bundleName), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                        fs = new FileStream(GetFilePathFromSavePath(bundleName), FileMode.Open, FileAccess.Read, FileShare.None);
 
                         {
                             var dataBytes = new byte[fs.Length];
