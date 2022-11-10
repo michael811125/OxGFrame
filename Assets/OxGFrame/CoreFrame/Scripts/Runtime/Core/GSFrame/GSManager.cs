@@ -31,10 +31,10 @@ namespace OxGFrame.CoreFrame.GSFrame
         {
             DontDestroyOnLoad(this);
 
-            // 先設置GSRoot
+            // 先設置 GSRoot
             if (this._SetupGSRoot(GSSysDefine.GS_MANAGER_NAME))
             {
-                // 建立GSNodes
+                // 建立 GSNodes
                 this._CreateAllGSNode();
             }
         }
@@ -65,10 +65,10 @@ namespace OxGFrame.CoreFrame.GSFrame
             if (nodeChecker != null) return nodeChecker;
 
             GameObject nodeGo = new GameObject(name);
-            // 設置GSNode為GSRoot的子節點
+            // 設置 GSNode 為 GSRoot 的子節點
             nodeGo.transform.SetParent(this._goRoot.transform);
 
-            // 校正Transform
+            // 校正 Transform
             nodeGo.transform.localScale = Vector3.one;
             nodeGo.transform.localPosition = Vector3.zero;
 
@@ -79,9 +79,9 @@ namespace OxGFrame.CoreFrame.GSFrame
         #region 實作Loading
         protected override GSBase Instantiate(GSBase gsBase, string bundleName, string assetName, AddIntoCache addIntoCache)
         {
-            GameObject instPref = Instantiate(gsBase.gameObject, this._goRoot.transform); // instantiate 【GS Prefab】 (先指定Instantiate Parent為GSRoot)
+            GameObject instPref = Instantiate(gsBase.gameObject, this._goRoot.transform); // instantiate 【GS Prefab】 (先指定 Instantiate Parent 為 GSRoot)
 
-            // 激活檢查, 如果主體Active為false必須打開
+            // 激活檢查, 如果主體 Active 為 false 必須打開
             if (!instPref.activeSelf) instPref.SetActive(true);
 
             instPref.name = instPref.name.Replace("(Clone)", ""); // Replace Name
@@ -91,14 +91,14 @@ namespace OxGFrame.CoreFrame.GSFrame
             addIntoCache?.Invoke(gsBase);
 
             gsBase.SetNames(bundleName, assetName);
-            gsBase.BeginInit();                          // Clone取得GSBase組件後, 也初始GSBase相關設定
-            gsBase.InitFirst();                         // Clone取得GSBase組件後, 也初始GSBase相關綁定組件設定
+            gsBase.BeginInit();                         // Clone 取得 GSBase 組件後, 也初始 GSBase 相關設定
+            gsBase.InitFirst();                         // Clone 取得 GSBase 組件後, 也初始 GSBase 相關綁定組件設定
 
-            // >>> 需在InitThis之後, 以下設定開始生效 <<<
+            // >>> 需在 InitThis 之後, 以下設定開始生效 <<<
 
-            if (!this.SetParent(gsBase)) return null;   // 透過NodeType類型, 設置Parent
+            if (!this.SetParent(gsBase)) return null;   // 透過 NodeType 類型, 設置 Parent
 
-            gsBase.gameObject.SetActive(false);         // 最後設置完畢後, 關閉GameObject的Active為false
+            gsBase.gameObject.SetActive(false);         // 最後設置完畢後, 關閉 GameObject 的 Active 為 false
 
             return gsBase;
         }
@@ -106,7 +106,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 
         #region 相關校正與設置
         /// <summary>
-        /// 依照對應的Node類型設置母節點
+        /// 依照對應的 Node 類型設置母節點
         /// </summary>
         /// <param name="gsBase"></param>
         protected override bool SetParent(GSBase gsBase)
@@ -126,9 +126,11 @@ namespace OxGFrame.CoreFrame.GSFrame
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
-            GSBase gsBase = this.GetFromAllCache(assetName);
+            // 先取出 Stack 主體
+            var stack = this.GetStackFromAllCache(assetName);
 
-            if (gsBase != null && !gsBase.allowInstantiate)
+            // 判斷非多實例直接 return
+            if (stack != null && !stack.allowInstantiate)
             {
                 if (this.CheckIsShowing(assetName))
                 {
@@ -137,9 +139,9 @@ namespace OxGFrame.CoreFrame.GSFrame
                 }
             }
 
-            await this.ShowLoading(groupId, string.Empty, loadingUIAssetName); // 開啟預顯加載UI
+            await this.ShowLoading(groupId, string.Empty, loadingUIAssetName); // 開啟預顯加載 UI
 
-            gsBase = await this.LoadIntoAllCache(string.Empty, assetName, progression, false);
+            var gsBase = await this.LoadIntoAllCache(string.Empty, assetName, progression, false);
             if (gsBase == null)
             {
                 Debug.LogWarning(string.Format("找不到相對路徑資源【GS】: {0}", assetName));
@@ -148,11 +150,11 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             gsBase.SetGroupId(groupId);
             gsBase.SetHidden(false);
-            await this.LoadAndDispay(gsBase, obj);
+            await this.LoadAndDisplay(gsBase, obj);
 
             Debug.Log(string.Format("顯示GS: 【{0}】", assetName));
 
-            this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載UI
+            this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
 
             return gsBase;
         }
@@ -161,9 +163,11 @@ namespace OxGFrame.CoreFrame.GSFrame
         {
             if (string.IsNullOrEmpty(bundleName) && string.IsNullOrEmpty(assetName)) return null;
 
-            GSBase gsBase = this.GetFromAllCache(assetName);
+            // 先取出 Stack 主體
+            var stack = this.GetStackFromAllCache(assetName);
 
-            if (gsBase != null && !gsBase.allowInstantiate)
+            // 判斷非多實例直接 return
+            if (stack != null && !stack.allowInstantiate)
             {
                 if (this.CheckIsShowing(assetName))
                 {
@@ -172,9 +176,9 @@ namespace OxGFrame.CoreFrame.GSFrame
                 }
             }
 
-            await this.ShowLoading(groupId, loadingUIBundleName, loadingUIAssetName); // 開啟預顯加載UI
+            await this.ShowLoading(groupId, loadingUIBundleName, loadingUIAssetName); // 開啟預顯加載 UI
 
-            gsBase = await this.LoadIntoAllCache(bundleName, assetName, progression, false);
+            var gsBase = await this.LoadIntoAllCache(bundleName, assetName, progression, false);
             if (gsBase == null)
             {
                 Debug.LogWarning(string.Format("找不到相對路徑資源【GS】: {0}", assetName));
@@ -183,11 +187,11 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             gsBase.SetGroupId(groupId);
             gsBase.SetHidden(false);
-            await this.LoadAndDispay(gsBase, obj);
+            await this.LoadAndDisplay(gsBase, obj);
 
             Debug.Log(string.Format("顯示GS: 【{0}】", assetName));
 
-            this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載UI
+            this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
 
             return gsBase;
         }
@@ -199,11 +203,11 @@ namespace OxGFrame.CoreFrame.GSFrame
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="disableDoSub"></param>
-        /// <param name="withDestroy"></param>
+        /// <param name="forceDestroy"></param>
         /// <param name="doAll"></param>
-        private void _Close(string assetName, bool disableDoSub, bool withDestroy, bool doAll)
+        private void _Close(string assetName, bool disableDoSub, bool forceDestroy, bool doAll)
         {
-            if (string.IsNullOrEmpty(assetName) || !this.HasInAllCache(assetName)) return;
+            if (string.IsNullOrEmpty(assetName) || !this.HasStackInAllCache(assetName)) return;
 
             if (doAll)
             {
@@ -213,20 +217,20 @@ namespace OxGFrame.CoreFrame.GSFrame
                     gsBase.SetHidden(false);
                     this.ExitAndHide(gsBase, disableDoSub);
 
-                    if (withDestroy) this.Destroy(gsBase, assetName);
+                    if (forceDestroy) this.Destroy(gsBase, assetName);
                     else if (gsBase.allowInstantiate) this.Destroy(gsBase, assetName);
                     else if (gsBase.onCloseAndDestroy) this.Destroy(gsBase, assetName);
                 }
             }
             else
             {
-                GSBase gsBase = this.GetFromAllCache(assetName);
+                GSBase gsBase = this.PeekStackFromAllCache(assetName);
                 if (gsBase == null) return;
 
                 gsBase.SetHidden(false);
                 this.ExitAndHide(gsBase, disableDoSub);
 
-                if (withDestroy) this.Destroy(gsBase, assetName);
+                if (forceDestroy) this.Destroy(gsBase, assetName);
                 else if (gsBase.allowInstantiate) this.Destroy(gsBase, assetName);
                 else if (gsBase.onCloseAndDestroy) this.Destroy(gsBase, assetName);
             }
@@ -234,14 +238,14 @@ namespace OxGFrame.CoreFrame.GSFrame
             Debug.Log(string.Format("關閉GS: 【{0}】", assetName));
         }
 
-        public override void Close(string assetName, bool disableDoSub = false, bool withDestroy = false)
+        public override void Close(string assetName, bool disableDoSub = false, bool forceDestroy = false)
         {
-            // 如果沒有強制Destroy + 不是顯示狀態則直接return
-            if (!withDestroy && !this.CheckIsShowing(assetName)) return;
-            this._Close(assetName, disableDoSub, withDestroy, false);
+            // 如果沒有強制 Destroy + 不是顯示狀態則直接 return
+            if (!forceDestroy && !this.CheckIsShowing(assetName)) return;
+            this._Close(assetName, disableDoSub, forceDestroy, false);
         }
 
-        public override void CloseAll(bool disableDoSub = false, bool withDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(bool disableDoSub = false, bool forceDestroy = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -251,7 +255,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 
                 var gsBase = stack.Peek();
 
-                // 檢查排除執行的GS
+                // 檢查排除執行的 GS
                 bool checkWithout = false;
                 if (withoutAssetNames.Length > 0)
                 {
@@ -261,20 +265,20 @@ namespace OxGFrame.CoreFrame.GSFrame
                     }
                 }
 
-                // 排除在外的GS直接略過處理
+                // 排除在外的 GS 直接略過處理
                 if (checkWithout) continue;
 
-                // 如果沒有強制Destroy + 不是顯示狀態則直接略過處理
-                if (!withDestroy && !this.CheckIsShowing(gsBase)) continue;
+                // 如果沒有強制 Destroy + 不是顯示狀態則直接略過處理
+                if (!forceDestroy && !this.CheckIsShowing(gsBase)) continue;
 
-                // 如有啟用CloseAll需跳過開關, 則不列入關閉執行
+                // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
                 if (gsBase.gsSetting.whenCloseAllToSkip) continue;
 
-                this._Close(assetName, disableDoSub, withDestroy, true);
+                this._Close(assetName, disableDoSub, forceDestroy, true);
             }
         }
 
-        public override void CloseAll(int groupId, bool disableDoSub = false, bool withDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(int groupId, bool disableDoSub = false, bool forceDestroy = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -286,7 +290,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 
                 if (gsBase.groupId != groupId) continue;
 
-                // 檢查排除執行的GS
+                // 檢查排除執行的 GS
                 bool checkWithout = false;
                 if (withoutAssetNames.Length > 0)
                 {
@@ -296,16 +300,16 @@ namespace OxGFrame.CoreFrame.GSFrame
                     }
                 }
 
-                // 排除在外的GS直接略過處理
+                // 排除在外的 GS 直接略過處理
                 if (checkWithout) continue;
 
-                // 如果沒有強制Destroy + 不是顯示狀態則直接略過處理
-                if (!withDestroy && !this.CheckIsShowing(gsBase)) continue;
+                // 如果沒有強制 Destroy + 不是顯示狀態則直接略過處理
+                if (!forceDestroy && !this.CheckIsShowing(gsBase)) continue;
 
-                // 如有啟用CloseAll需跳過開關, 則不列入關閉執行
+                // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
                 if (gsBase.gsSetting.whenCloseAllToSkip) continue;
 
-                this._Close(assetName, disableDoSub, withDestroy, true);
+                this._Close(assetName, disableDoSub, forceDestroy, true);
             }
         }
         #endregion
@@ -317,7 +321,7 @@ namespace OxGFrame.CoreFrame.GSFrame
         /// <param name="assetName"></param>
         private void _Reveal(string assetName)
         {
-            if (string.IsNullOrEmpty(assetName) || !this.HasInAllCache(assetName)) return;
+            if (string.IsNullOrEmpty(assetName) || !this.HasStackInAllCache(assetName)) return;
 
             if (this.CheckIsShowing(assetName))
             {
@@ -330,7 +334,7 @@ namespace OxGFrame.CoreFrame.GSFrame
             {
                 if (!gsBase.isHidden) return;
 
-                this.LoadAndDispay(gsBase).Forget();
+                this.LoadAndDisplay(gsBase).Forget();
 
                 Debug.Log(string.Format("解除隱藏GS: 【{0}】", assetName));
             }
@@ -383,7 +387,7 @@ namespace OxGFrame.CoreFrame.GSFrame
         /// <param name="assetName"></param>
         private void _Hide(string assetName)
         {
-            if (string.IsNullOrEmpty(assetName) || !this.HasInAllCache(assetName)) return;
+            if (string.IsNullOrEmpty(assetName) || !this.HasStackInAllCache(assetName)) return;
 
             FrameStack<GSBase> stack = this.GetStackFromAllCache(assetName);
 
@@ -413,7 +417,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 
                 var gsBase = stack.Peek();
 
-                // 檢查排除執行的GS
+                // 檢查排除執行的 GS
                 bool checkWithout = false;
                 if (withoutAssetNames.Length > 0)
                 {
@@ -423,10 +427,10 @@ namespace OxGFrame.CoreFrame.GSFrame
                     }
                 }
 
-                // 排除在外的GS直接略過處理
+                // 排除在外的 GS 直接略過處理
                 if (checkWithout) continue;
 
-                // 如有啟用HideAll需跳過開關, 則不列入關閉執行
+                // 如有啟用 HideAll 需跳過開關, 則不列入關閉執行
                 if (gsBase.gsSetting.whenHideAllToSkip) continue;
 
                 this._Hide(assetName);
@@ -445,7 +449,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 
                 if (gsBase.groupId != groupId) continue;
 
-                // 檢查排除執行的GS
+                // 檢查排除執行的 GS
                 bool checkWithout = false;
                 if (withoutAssetNames.Length > 0)
                 {
@@ -455,10 +459,10 @@ namespace OxGFrame.CoreFrame.GSFrame
                     }
                 }
 
-                // 排除在外的GS直接略過處理
+                // 排除在外的 GS 直接略過處理
                 if (checkWithout) continue;
 
-                // 如有啟用HideAll需跳過開關, 則不列入關閉執行
+                // 如有啟用 HideAll 需跳過開關, 則不列入關閉執行
                 if (gsBase.gsSetting.whenHideAllToSkip) continue;
 
                 this._Hide(assetName);
@@ -467,7 +471,7 @@ namespace OxGFrame.CoreFrame.GSFrame
         #endregion
 
         #region 顯示場景 & 關閉場景
-        protected override async UniTask LoadAndDispay(GSBase gsBase, object obj = null)
+        protected override async UniTask LoadAndDisplay(GSBase gsBase, object obj = null)
         {
             if (!gsBase.isHidden) await gsBase.PreInit();
             gsBase.Display(obj);

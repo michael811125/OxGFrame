@@ -17,7 +17,5 @@ namespace OxGFrame.AssetLoader
         void Unload(string name);
 
         void Release();
-
-        UniTask<int> GetAssetsLength(params string[] names);
     }
 }

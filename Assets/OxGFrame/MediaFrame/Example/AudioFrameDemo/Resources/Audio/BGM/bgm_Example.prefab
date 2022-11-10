@@ -143,8 +143,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ignoreTimeScale: 1
   loops: -1
-  onStopAndDestroy: 0
-  _autoEndToStop: 1
+  onStopAndDestroy: 1
+  onDestroyAndUnload: 1
+  _autoEndToStop: 0
   audioType:
     soundType: 0
     priority: 128

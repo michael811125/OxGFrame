@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
@@ -12,10 +13,22 @@ namespace OxGFrame.AssetLoader.Bundle
 
     public class VersionFileCfg
     {
+        [NonSerialized]
+        public static readonly string[] keys = new string[]
+        {
+            "PRODUCT_NAME",
+            "APP_VERSION",
+            "RES_VERSION",
+            "EXPORT_NAME",
+            "COMPRESSED",
+            "RES_FILES"
+        };
+
         public string PRODUCT_NAME;                       // 產品名稱
         public string APP_VERSION;                        // 主程式版本
         public string RES_VERSION;                        // 資源檔版本
         public string EXPORT_NAME;                        // 輸出名稱 (依照時間作為資料夾名稱)
+        public int COMPRESSED;                            // 是否壓縮, 0 = false, 1 = true
         public Dictionary<string, ResFileInfo> RES_FILES; // 此次版本的資源檔案
 
         public VersionFileCfg()
@@ -38,6 +51,16 @@ namespace OxGFrame.AssetLoader.Bundle
         public bool HasFile(string fileName)
         {
             return this.RES_FILES.ContainsKey(fileName);
+        }
+
+        ~VersionFileCfg()
+        {
+            this.PRODUCT_NAME = null;
+            this.APP_VERSION = null;
+            this.RES_VERSION = null;
+            this.EXPORT_NAME = null;
+            this.RES_FILES.Clear();
+            this.RES_FILES = null;
         }
     }
 }

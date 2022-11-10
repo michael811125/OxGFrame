@@ -2,7 +2,8 @@
     "name": "AssetLoader.Editor",
     "rootNamespace": "",
     "references": [
-        "AssetLoader.Runtime"
+        "AssetLoader.Runtime",
+        "UniTask"
     ],
     "includePlatforms": [
         "Editor"

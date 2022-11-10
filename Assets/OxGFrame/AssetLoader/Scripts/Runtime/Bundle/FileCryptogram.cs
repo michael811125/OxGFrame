@@ -17,17 +17,24 @@ namespace OxGFrame.AssetLoader.Bundle
             /// <returns></returns>
             public static bool OffsetEncryptFile(string sourceFile, int randomSeed, int dummySize = 0)
             {
-                UnityEngine.Random.InitState(randomSeed);
-
-                byte[] dataBytes = File.ReadAllBytes(sourceFile);
-                int totalLength = dataBytes.Length + dummySize;
-                byte[] offsetDatabytes = new byte[totalLength];
-                for (int i = 0; i < totalLength; i++)
+                try
                 {
-                    if (dummySize > 0 && i < dummySize) offsetDatabytes[i] = (byte)(UnityEngine.Random.Range(0, 256));
-                    else offsetDatabytes[i] = dataBytes[i - dummySize];
+                    UnityEngine.Random.InitState(randomSeed);
+
+                    byte[] dataBytes = File.ReadAllBytes(sourceFile);
+                    int totalLength = dataBytes.Length + dummySize;
+                    byte[] offsetDatabytes = new byte[totalLength];
+                    for (int i = 0; i < totalLength; i++)
+                    {
+                        if (dummySize > 0 && i < dummySize) offsetDatabytes[i] = (byte)(UnityEngine.Random.Range(0, 256));
+                        else offsetDatabytes[i] = dataBytes[i - dummySize];
+                    }
+                    File.WriteAllBytes(sourceFile, offsetDatabytes);
                 }
-                File.WriteAllBytes(sourceFile, offsetDatabytes);
+                catch
+                {
+                    return false;
+                }
 
                 return true;
             }
@@ -39,11 +46,18 @@ namespace OxGFrame.AssetLoader.Bundle
             /// <returns></returns>
             public static bool OffsetDecryptFile(string encryptFile, int dummySize = 0)
             {
-                byte[] dataBytes = File.ReadAllBytes(encryptFile);
-                int totalLength = dataBytes.Length - dummySize;
-                byte[] offsetDatabytes = new byte[totalLength];
-                Buffer.BlockCopy(dataBytes, dummySize, offsetDatabytes, 0, totalLength);
-                File.WriteAllBytes(encryptFile, offsetDatabytes);
+                try
+                {
+                    byte[] dataBytes = File.ReadAllBytes(encryptFile);
+                    int totalLength = dataBytes.Length - dummySize;
+                    byte[] offsetDatabytes = new byte[totalLength];
+                    Buffer.BlockCopy(dataBytes, dummySize, offsetDatabytes, 0, totalLength);
+                    File.WriteAllBytes(encryptFile, offsetDatabytes);
+                }
+                catch
+                {
+                    return false;
+                }
 
                 return true;
             }
@@ -55,10 +69,17 @@ namespace OxGFrame.AssetLoader.Bundle
             /// <returns></returns>
             public static bool OffsetDecryptFile(ref byte[] encryptBytes, int dummySize = 0)
             {
-                int totalLength = encryptBytes.Length - dummySize;
-                byte[] offsetDatabytes = new byte[totalLength];
-                Buffer.BlockCopy(encryptBytes, dummySize, offsetDatabytes, 0, totalLength);
-                encryptBytes = offsetDatabytes;
+                try
+                {
+                    int totalLength = encryptBytes.Length - dummySize;
+                    byte[] offsetDatabytes = new byte[totalLength];
+                    Buffer.BlockCopy(encryptBytes, dummySize, offsetDatabytes, 0, totalLength);
+                    encryptBytes = offsetDatabytes;
+                }
+                catch
+                {
+                    return false;
+                }
 
                 return true;
             }
@@ -70,19 +91,16 @@ namespace OxGFrame.AssetLoader.Bundle
             /// <returns></returns>
             public static Stream OffsetDecryptStream(string encryptFile, int dummySize = 0)
             {
-                var fsDescrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.None);
-                var dataBytes = new byte[fsDescrypt.Length - dummySize];
-                fsDescrypt.Seek(dummySize, SeekOrigin.Begin);
-                fsDescrypt.Read(dataBytes, 0, dataBytes.Length);
-                fsDescrypt.Dispose();
+                var fsDecrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.None);
+                var dataBytes = new byte[fsDecrypt.Length - dummySize];
+                fsDecrypt.Seek(dummySize, SeekOrigin.Begin);
+                fsDecrypt.Read(dataBytes, 0, dataBytes.Length);
+                fsDecrypt.Dispose();
 
-                var msDescrypt = new MemoryStream();
-                for (int i = 0; i < dataBytes.Length; i++)
-                {
-                    msDescrypt.WriteByte(dataBytes[i]);
-                }
+                var msDecrypt = new MemoryStream();
+                msDecrypt.Write(dataBytes, 0, dataBytes.Length);
 
-                return msDescrypt;
+                return msDecrypt;
             }
         }
 
@@ -95,12 +113,19 @@ namespace OxGFrame.AssetLoader.Bundle
             /// <returns></returns>
             public static bool XorEncryptFile(string sourceFile, byte key = 0)
             {
-                byte[] dataBytes = File.ReadAllBytes(sourceFile);
-                for (int i = 0; i < dataBytes.Length; i++)
+                try
                 {
-                    dataBytes[i] ^= key;
+                    byte[] dataBytes = File.ReadAllBytes(sourceFile);
+                    for (int i = 0; i < dataBytes.Length; i++)
+                    {
+                        dataBytes[i] ^= key;
+                    }
+                    File.WriteAllBytes(sourceFile, dataBytes);
                 }
-                File.WriteAllBytes(sourceFile, dataBytes);
+                catch
+                {
+                    return false;
+                }
 
                 return true;
             }
@@ -127,12 +152,19 @@ namespace OxGFrame.AssetLoader.Bundle
             /// <returns></returns>
             public static bool XorDecryptFile(string encryptFile, byte key = 0)
             {
-                byte[] dataBytes = File.ReadAllBytes(encryptFile);
-                for (int i = 0; i < dataBytes.Length; i++)
+                try
                 {
-                    dataBytes[i] ^= key;
+                    byte[] dataBytes = File.ReadAllBytes(encryptFile);
+                    for (int i = 0; i < dataBytes.Length; i++)
+                    {
+                        dataBytes[i] ^= key;
+                    }
+                    File.WriteAllBytes(encryptFile, dataBytes);
                 }
-                File.WriteAllBytes(encryptFile, dataBytes);
+                catch
+                {
+                    return false;
+                }
 
                 return true;
             }
@@ -144,19 +176,107 @@ namespace OxGFrame.AssetLoader.Bundle
             /// <returns></returns>
             public static Stream XorDecryptStream(string encryptFile, byte key = 0)
             {
-                var fsDescrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.None);
-                var dataBytes = new byte[fsDescrypt.Length];
-                fsDescrypt.Read(dataBytes, 0, dataBytes.Length);
-                fsDescrypt.Dispose();
+                var fsDecrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.None);
+                var dataBytes = new byte[fsDecrypt.Length];
+                fsDecrypt.Read(dataBytes, 0, dataBytes.Length);
+                fsDecrypt.Dispose();
 
-                var msDescrypt = new MemoryStream();
+                var msDecrypt = new MemoryStream();
                 for (int i = 0; i < dataBytes.Length; i++)
                 {
                     dataBytes[i] ^= key;
-                    msDescrypt.WriteByte(dataBytes[i]);
+                    msDecrypt.WriteByte(dataBytes[i]);
                 }
 
-                return msDescrypt;
+                return msDecrypt;
+            }
+        }
+
+        public class HTXOR
+        {
+            /// <summary>
+            /// Head-Tail XOR 加密檔案 【檢測OK】
+            /// </summary>
+            /// <param name="sourceFile"></param>
+            /// <returns></returns>
+            public static bool HTXorEncryptFile(string sourceFile, byte hKey = 0, byte tKey = 0)
+            {
+                try
+                {
+                    byte[] dataBytes = File.ReadAllBytes(sourceFile);
+                    // head encrypt
+                    dataBytes[0] ^= hKey;
+                    // tail encrypt
+                    dataBytes[dataBytes.Length - 1] ^= tKey;
+                    File.WriteAllBytes(sourceFile, dataBytes);
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            /// <summary>
+            /// Head-Tail XOR 解密檔案 【檢測OK】
+            /// </summary>
+            /// <param name="encryptBytes"></param>
+            /// <returns></returns>
+            public static bool HTXorDecryptFile(byte[] encryptBytes, byte hKey = 0, byte tKey = 0)
+            {
+                // head encrypt
+                encryptBytes[0] ^= hKey;
+                // tail encrypt
+                encryptBytes[encryptBytes.Length - 1] ^= tKey;
+
+                return true;
+            }
+
+            /// <summary>
+            /// Head-Tail XOR 解密檔案 【檢測OK】
+            /// </summary>
+            /// <param name="encryptFile"></param>
+            /// <returns></returns>
+            public static bool HTXorDecryptFile(string encryptFile, byte hKey = 0, byte tKey = 0)
+            {
+                try
+                {
+                    byte[] dataBytes = File.ReadAllBytes(encryptFile);
+                    // head encrypt
+                    dataBytes[0] ^= hKey;
+                    // tail encrypt
+                    dataBytes[dataBytes.Length - 1] ^= tKey;
+                    File.WriteAllBytes(encryptFile, dataBytes);
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            /// <summary>
+            /// 返回 Head-Tail XOR 解密 Stream 【檢測OK】
+            /// </summary>
+            /// <param name="encryptFile"></param>
+            /// <returns></returns>
+            public static Stream HTXorDecryptStream(string encryptFile, byte hKey = 0, byte tKey = 0)
+            {
+                var fsDecrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.None);
+                var dataBytes = new byte[fsDecrypt.Length];
+                fsDecrypt.Read(dataBytes, 0, dataBytes.Length);
+                fsDecrypt.Dispose();
+
+                var msDecrypt = new MemoryStream();
+                // head encrypt
+                dataBytes[0] ^= hKey;
+                // tail encrypt
+                dataBytes[dataBytes.Length - 1] ^= tKey;
+                msDecrypt.Write(dataBytes, 0, dataBytes.Length);
+
+                return msDecrypt;
             }
         }
 

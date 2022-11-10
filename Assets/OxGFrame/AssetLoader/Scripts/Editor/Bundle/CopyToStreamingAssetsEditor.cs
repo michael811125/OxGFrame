@@ -15,13 +15,15 @@ public class CopyToStreamingAssetsEditor : EditorWindow
 
     internal const string KEY_SAVE_DATA_FOR_COPY_TO_STREAMINGASSETS_EDITOR = "KEY_SAVE_DATA_FOR_COPY_TO_STREAMINGASSETS_EDITOR";
 
-    [MenuItem(BundleDistributorEditor.MenuRoot + "Copy to StreamingAssets", false, 999)]
+    private static Vector2 _windowSize = new Vector2(800f, 70f);
+
+    [MenuItem(BundleDistributorEditor.MenuRoot + "Step 4. Copy to StreamingAssets", false, 999)]
     public static void ShowWindow()
     {
         _instance = null;
         GetInstance().titleContent = new GUIContent("Copy to StreamingAssets");
         GetInstance().Show();
-        GetInstance().minSize = new Vector2(650f, 100f);
+        GetInstance().minSize = _windowSize;
     }
 
     private void OnEnable()

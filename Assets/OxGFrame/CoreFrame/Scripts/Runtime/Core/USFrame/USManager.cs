@@ -127,7 +127,7 @@ namespace OxGFrame.CoreFrame.USFrame
         public async UniTask LoadFromBundle(string bundleName, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
 #if UNITY_EDITOR
-            if (BundleConfig.bAssetDatabaseMode)
+            if (BundleConfig.assetDatabaseMode)
             {
                 var scene = CacheBundle.GetInstance().LoadEditorAsset<UnityEditor.SceneAsset>(bundleName, sceneName);
                 string scenePath = UnityEditor.AssetDatabase.GetAssetPath(scene);
@@ -147,7 +147,7 @@ namespace OxGFrame.CoreFrame.USFrame
             if (bundlePack == null)
             {
                 // 合併 Progression
-                this.totalSize += await CacheBundle.GetInstance().GetAssetsLength(bundleName);
+                this.totalSize += CacheBundle.GetInstance().GetAssetsLength(bundleName);
 
                 // 開始 bundle 預加載
                 lastSize = 0;

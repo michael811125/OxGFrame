@@ -1,5 +1,56 @@
 # CHANGELOG
 
+## [1.6.0] - 2022-11-10 (Breaking Changes)
+- Added Stop method for Utility Timer.
+- Added ButtonPlus in Utility (implements Unity Button).
+- Added OnDestroyAndUnload for MediaBase (can choose when stop and destroy to unload or not).
+- Added ForceUnload() methods for MediaFrame (AudioManager & VideoManager).
+- Added HTXOR cryptogram for AssetBundle (Head-Tail XOR).
+- Added Donwloader supports slice mode for large file (depends on limits set from BundleSetup, default is 16 MB).
+- Added RETRYING_DOWNLOAD execute status for BundleDistributor (use switch case instead).
+- Added BundleSetup for execution settings (If you use AssetBundle, it must be set in the scene first).
+- Added SharpZipLib.1.4.0 dll plugins in AssetLoader for Compressor.
+- Added Compressor for AssetLoader (supports sync and async).
+- Added zip and unzip procedure for AssetLoader (only first install will download zip pack, but depends on how do you build bundles).
+- Added ExecuteStatus.WAITING_FOR_CONFIRM_TO_DOWNLOAD for BundleDistributor (waiting for user to confirm download).
+- Added ExecuteStatus.UNZIP_PATCH for BundleDistributor (unzip step).
+- Added Bundle Compressor Editor (use async to process).
+- Added BundleUtility (using AssetLoader.Utility), move some methods to BundleUtility.
+- Added EditorCoroutine in AssetLoader.Editor for custome BuildTool.
+- Added LoadingFlags for CacheResource.
+- Added custom manifest name in BundleSetup.
+- Modified BundleDistributor Editor.
+- Modified Downloader Progression params (float progress, int dlCount, long dlBytes, int dlSpeed, ulong totalBytes), use BundleUtility converts to string.
+- Modified Repair method return true or false. Respectively means true = is clear data completed, false = clear failed, also removed params and must call check by manual.
+- Modified extract some methods to BundleUtility.
+- Modified win platform use request config from StreamingAssets (InApp).
+- Changed default name "b_cfg" to "bcfg" (b = bundle, cfg = config).
+- Changed default name "r_cfg" to "rcfg" (r = record, cfg = config).
+- Changed default name "bundle_cfg.txt" to "burlcfg.txt" (b = bundle, url = URL, cfg = config).
+- Changed default name "media_cfg.txt" to "murlcfg.txt" (m = media, url = URL, cfg = config).
+- Changed BundleDistributor.ExecuteStatus (NO_NEED_TO_UPDATE_PATCH) to BundleDistributor.ExecuteStatus (ALREADY_UP_TO_DATE).
+- Changed FrameManager HasInAllCache method name to HasStackInAllCache.
+- Changed FrameManager GetFromAllCache method name to PeekStackFromAllCache.
+- Fixed CoreFrame when use cacher to load has ref count issue (UIManager, GSManager implements from FrameManager).
+- Fixed AudioBaseEditor when press Preload button won't save issue (set dirty).
+- Fixed MediaFrame unload issue (cannot unload correctly).
+- Fixed MediaManager has release and unload issue (cannot release and unload correctly).
+- Fixed VideoBase RenderTexture mode cannot release RenderTexture correctly issue.
+- Fixed NetNode heart beat timer reset timing wrong issue.
+- Fixed NetNode changes timer pause use stop instead.
+- Fixed load manifest issue (when already up-to-date will unload manifest).
+- Fixed CacheBundle load dependency bundle name doesn't lowercase issue.
+- Fixed BundleUtility bytes to string precision (float).
+- Fixed Downloader when file size error will auto download again but has file path error issue.
+- Fixed BundleDistributor when repair has bug, because must reset configs.
+- Fixed use none cryptogram for bundle has stream issue (file sharing violation).
+- Removed default manifest name in BundleConfig (changes set by BundleSetup, default are imf (Internal Manifest) and emf (External Manifest)).
+- Optimized AssetLoader (Bundle & Resources).
+- Optimized bundle decrypt efficiency.
+- Optimized CoreFrame.
+- Optimized MediaFrame.
+- Renamed GSIFrame GStage => GameStageBase, GStageManager => GameStageManagerBase, **delete old version GSIFrame first, and then import new GISFrame and changes new class name for implements class**.
+
 ## [1.5.1] - 2022-09-05
 - Optimized MediaFrame (Audio, Video).
 - Removed ButtonPlus Component.

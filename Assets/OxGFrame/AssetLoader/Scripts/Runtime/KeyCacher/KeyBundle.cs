@@ -15,14 +15,6 @@ namespace OxGFrame.AssetLoader.KeyCahcer
             return _instance;
         }
 
-        public KeyBundle() : base() { }
-
-        /// <summary>
-        /// 【KeyBundle】資源預加載
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="bundleName"></param>
-        /// <returns></returns>
         public override async UniTask Preload(int id, string bundleName, Progression progression = null)
         {
             if (string.IsNullOrEmpty(bundleName)) return;
@@ -30,7 +22,7 @@ namespace OxGFrame.AssetLoader.KeyCahcer
             await CacheBundle.GetInstance().Preload(bundleName, progression);
             if (CacheBundle.GetInstance().HasInCache(bundleName)) this.AddIntoCache(id, bundleName);
 
-            Debug.Log("【預加載】 => 當前<< KeyBundle >>快取數量 : " + this.Count);
+            Debug.Log($"【Preload】 => Current << KeyBundle >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         public override async UniTask Preload(int id, string[] bundleNames, Progression progression = null)
@@ -44,7 +36,7 @@ namespace OxGFrame.AssetLoader.KeyCahcer
                 if (CacheBundle.GetInstance().HasInCache(bundleName)) this.AddIntoCache(id, bundleName);
             }
 
-            Debug.Log("【預加載】 => 當前<< KeyBundle >>快取數量 : " + this.Count);
+            Debug.Log($"【Preload】 => Current << KeyBundle >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         /// <summary>
@@ -64,16 +56,19 @@ namespace OxGFrame.AssetLoader.KeyCahcer
             {
                 this.AddIntoCache(id, bundleName);
                 var keyGroup = this.GetFromCache(id, bundleName);
-                if (keyGroup != null) keyGroup.AddRef();
-            }
+                if (keyGroup != null)
+                {
+                    keyGroup.AddRef();
 
-            Debug.Log("【載入】 => 當前<< KeyBundle >>快取數量 : " + this.Count);
+                    Debug.Log($"【Load】 => Current << KeyBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                }
+            }
 
             return asset;
         }
 
         /// <summary>
-        /// 【KeyBundle】資源加載並且Clone, 指定Parent, Scale
+        /// 【KeyBundle】資源加載並且 Clone
         /// </summary>
         /// <param name="id"></param>
         /// <param name="bundleName"></param>
@@ -91,19 +86,22 @@ namespace OxGFrame.AssetLoader.KeyCahcer
             {
                 this.AddIntoCache(id, bundleName);
                 var keyGroup = this.GetFromCache(id, bundleName);
-                if (keyGroup != null) keyGroup.AddRef();
+                if (keyGroup != null)
+                {
+                    keyGroup.AddRef();
+
+                    Debug.Log($"【Load And Clone】 => Current << KeyBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                }
                 instGo = GameObject.Instantiate(assetGo, parent);
                 Vector3 localScale = (scale == null) ? instGo.transform.localScale : (Vector3)scale;
                 instGo.transform.localScale = localScale;
             }
 
-            Debug.Log("【載入 + Clone】 => 當前<< KeyBundle >>快取數量 : " + this.Count);
-
             return instGo;
         }
 
         /// <summary>
-        /// 【KeyBundle】資源加載並且Clone, 指定Position, Quternion, Parent, Scale
+        /// 【KeyBundle】資源加載並且 Clone
         /// </summary>
         /// <param name="id"></param>
         /// <param name="bundleName"></param>
@@ -123,7 +121,12 @@ namespace OxGFrame.AssetLoader.KeyCahcer
             {
                 this.AddIntoCache(id, bundleName);
                 var keyGroup = this.GetFromCache(id, bundleName);
-                if (keyGroup != null) keyGroup.AddRef();
+                if (keyGroup != null)
+                {
+                    keyGroup.AddRef();
+
+                    Debug.Log($"【Load And Clone】 => Current << KeyBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                }
                 instGo = GameObject.Instantiate(assetGo, parent);
                 instGo.transform.localPosition = position;
                 instGo.transform.localRotation = rotation;
@@ -131,13 +134,11 @@ namespace OxGFrame.AssetLoader.KeyCahcer
                 instGo.transform.localScale = localScale;
             }
 
-            Debug.Log("【載入 + Clone】 => 當前<< KeyBundle >>快取數量 : " + this.Count);
-
             return instGo;
         }
 
         /// <summary>
-        /// 【釋放】索引Key快取, 並且釋放資源快取
+        /// 【釋放】索引 Key 快取, 並且釋放資源快取
         /// </summary>
         /// <param name="id"></param>
         /// <param name="bundleName"></param>
@@ -148,16 +149,21 @@ namespace OxGFrame.AssetLoader.KeyCahcer
             {
                 keyGroup.DelRef();
 
-                // 使用引用計數釋放
-                if (keyGroup.refCount <= 0) this.DelFromCache(id, keyGroup.name);
+                Debug.Log($"【Unload】 => Current << KeyBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+
+                if (keyGroup.refCount <= 0)
+                {
+                    this.DelFromCache(id, keyGroup.name);
+
+                    Debug.Log($"【Unload Completes】 => Current << KeyBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                }
+
                 CacheBundle.GetInstance().Unload(keyGroup.name);
             }
-
-            Debug.Log("【單個釋放】 => 當前<< KeyBundle >>快取數量 : " + this.Count);
         }
 
         /// <summary>
-        /// 【釋放】全部索引Key快取, 並且釋放資源快取
+        /// 【強制釋放】全部索引 Key 快取, 並且釋放資源快取
         /// </summary>
         public override void Release(int id)
         {
@@ -167,17 +173,10 @@ namespace OxGFrame.AssetLoader.KeyCahcer
                 {
                     if (keyGroup.id != id) continue;
 
-                    if (keyGroup.refCount <= 0)
+                    // 依照計數次數釋放
+                    for (int i = keyGroup.refCount; i > 0; i--)
                     {
                         CacheBundle.GetInstance().Unload(keyGroup.name);
-                    }
-                    else
-                    {
-                        // 依照計數次數釋放
-                        for (int i = 0; i < keyGroup.refCount; i++)
-                        {
-                            CacheBundle.GetInstance().Unload(keyGroup.name);
-                        }
                     }
 
                     // 完成後, 直接刪除快取
@@ -185,7 +184,7 @@ namespace OxGFrame.AssetLoader.KeyCahcer
                 }
             }
 
-            Debug.Log("【全部釋放】 => 當前<< KeyBundle >>快取數量 : " + this.Count);
+            Debug.Log($"【Release All】 => Current << KeyBundle >> Cache Count: {this.Count}");
         }
     }
 }

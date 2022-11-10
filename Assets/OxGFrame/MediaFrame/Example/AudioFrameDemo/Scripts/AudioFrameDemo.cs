@@ -10,14 +10,10 @@ public class AudioFrameDemo : MonoBehaviour
     public const string VOICES_PATH = "Audio/Voice/";
     public const string ATMOSPHERE_PATH = "Audio/Atmosphere/";
 
-    private void Start()
-    {
-        //BundleDistributor.GetInstance().Check();
-    }
-
     #region Audio 【BGM】
     public async void PlayBGM()
     {
+        // Resource
         await AudioManager.GetInstance().Play(BGM_PATH + "bgm_Example");
 
         // Bundle
@@ -26,6 +22,7 @@ public class AudioFrameDemo : MonoBehaviour
 
     public void StopBGM()
     {
+        // Resource
         AudioManager.GetInstance().Stop(BGM_PATH + "bgm_Example");
 
         // Bundle
@@ -34,6 +31,7 @@ public class AudioFrameDemo : MonoBehaviour
 
     public void StopBGMWithDestroy()
     {
+        // Resource
         AudioManager.GetInstance().Stop(BGM_PATH + "bgm_Example", false, true);
 
         // Bundle
@@ -42,6 +40,7 @@ public class AudioFrameDemo : MonoBehaviour
 
     public void PauseBGM()
     {
+        // Resource
         AudioManager.GetInstance().Pause(BGM_PATH + "bgm_Example");
 
         // Bundle
@@ -52,6 +51,7 @@ public class AudioFrameDemo : MonoBehaviour
     #region Audio 【GeneralFX】 
     public async void PlayGeneralFX()
     {
+        // Resource
         await AudioManager.GetInstance().Play(GERNERAL_SOUNDS_PATH + "general_sound_Example");
 
         // Bundle
@@ -60,6 +60,7 @@ public class AudioFrameDemo : MonoBehaviour
 
     public void StopGeneralFX()
     {
+        // Resource
         AudioManager.GetInstance().Stop(GERNERAL_SOUNDS_PATH + "general_sound_Example");
 
         // Bundle
@@ -68,6 +69,10 @@ public class AudioFrameDemo : MonoBehaviour
 
     public void StopGeneralFXWithDestroy()
     {
+        // 如果該 Audio 尚未勾選 OnDestroyAndUnload, 可以使用該方法強制關閉並且卸載 (Resources or Bundle [Overloading])
+        //AudioManager.GetInstance().ForceUnload(GERNERAL_SOUNDS_PATH + "general_sound_Example");
+
+        // Resource
         AudioManager.GetInstance().Stop(GERNERAL_SOUNDS_PATH + "general_sound_Example", false, true);
 
         // Bundle
@@ -76,6 +81,7 @@ public class AudioFrameDemo : MonoBehaviour
 
     public void PauseGeneralFX()
     {
+        // Resource
         AudioManager.GetInstance().Pause(GERNERAL_SOUNDS_PATH + "general_sound_Example");
 
         // Bundle

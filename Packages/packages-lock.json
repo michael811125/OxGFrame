@@ -17,11 +17,11 @@
       "hash": "a587ed2ede07a2b401d27089117d238b4ce7ebf7"
     },
     "com.unity.2d.animation": {
-      "version": "7.0.6",
+      "version": "7.0.8",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "6.0.3",
+        "com.unity.2d.common": "6.0.5",
         "com.unity.2d.sprite": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.uielements": "1.0.0"
@@ -29,7 +29,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.common": {
-      "version": "6.0.3",
+      "version": "6.0.5",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -61,12 +61,12 @@
       "dependencies": {}
     },
     "com.unity.2d.spriteshape": {
-      "version": "7.0.5",
+      "version": "7.0.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.mathematics": "1.1.0",
-        "com.unity.2d.common": "6.0.3",
+        "com.unity.2d.common": "6.0.4",
         "com.unity.2d.path": "5.0.2",
         "com.unity.modules.physics2d": "1.0.0"
       },
@@ -83,7 +83,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "38e6e2f61783cbdc3105d68dddaac884031e4e85"
+      "hash": "ef76ab1e2de04ceb96a5c2957564e4984a05b00e"
     },
     "com.unity.burst": {
       "version": "1.7.3",
@@ -95,14 +95,16 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.cinemachine": {
-      "version": "2.8.6",
+      "version": "2.8.9",
       "depth": 0,
       "source": "registry",
-      "dependencies": {},
+      "dependencies": {
+        "com.unity.test-framework": "1.1.31"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
-      "version": "1.17.1",
+      "version": "1.17.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -150,7 +152,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.inputsystem": {
-      "version": "1.4.1",
+      "version": "1.4.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -210,7 +212,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.core": {
-      "version": "1.4.2",
+      "version": "1.5.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {

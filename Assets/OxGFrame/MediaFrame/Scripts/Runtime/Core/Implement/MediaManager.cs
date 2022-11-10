@@ -9,7 +9,7 @@ namespace OxGFrame.MediaFrame
     {
         protected Dictionary<string, GameObject> _dictAssetCache = new Dictionary<string, GameObject>();  // 【常駐】所有資源快取
         protected HashSet<string> _loadingFlags = new HashSet<string>();                                  // 用來標記正在加載中的資源 (暫存快取)
-        protected List<T> _listAllCache = new List<T>();                                                  // 【常駐】所有進入播放的影音柱列快取 (只會在Destroy時, Remove對應的快取)
+        protected List<T> _listAllCache = new List<T>();                                                  // 【常駐】所有進入播放的影音柱列快取 (只會在 Destroy 時, Remove 對應的快取)
 
         /// <summary>
         /// 檢查是否有資源快取
@@ -41,9 +41,7 @@ namespace OxGFrame.MediaFrame
         protected GameObject GetAssetFromCache(string assetName)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
-
-            GameObject go = null;
-            if (this.HasAssetInCache(assetName)) this._dictAssetCache.TryGetValue(assetName, out go);
+            this._dictAssetCache.TryGetValue(assetName, out var go);
             return go;
         }
 
@@ -57,43 +55,13 @@ namespace OxGFrame.MediaFrame
         {
             if (string.IsNullOrEmpty(assetName) || this._listAllCache.Count == 0) return new U[] { };
 
-            List<T> founds = new List<T>();
+            List<T> filter = new List<T>();
             for (int i = 0; i < this._listAllCache.Count; i++)
             {
-                if (this._listAllCache[i].assetName == assetName) founds.Add(this._listAllCache[i]);
+                if (this._listAllCache[i].assetName == assetName) filter.Add(this._listAllCache[i]);
             }
 
-            return (U[])founds.ToArray();
-        }
-
-        public U[] FilterMediaComponents<U>(string mediaName, U[] mediaArray) where U : T
-        {
-            if (string.IsNullOrEmpty(mediaName) || mediaArray.Length == 0) return new U[] { };
-
-            List<U> founds = new List<U>();
-            for (int i = 0; i < mediaArray.Length; i++)
-            {
-                if (mediaArray[i].mediaName == mediaName) founds.Add(founds[i]);
-            }
-
-            return founds.ToArray();
-        }
-
-        /// <summary>
-        /// 返回在 List 中該對應名稱的 Indexes
-        /// </summary>
-        /// <param name="listCache"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        protected int[] GetIndexesByName(List<T> listCache, string assetName)
-        {
-            List<int> indexes = new List<int>();
-            for (int i = 0; i < listCache.Count; i++)
-            {
-                if (listCache[i].assetName == assetName) indexes.Add(i);
-            }
-
-            return indexes.ToArray();
+            return (U[])filter.ToArray();
         }
 
         /// <summary>
@@ -110,7 +78,7 @@ namespace OxGFrame.MediaFrame
             GameObject nodeGo = new GameObject(nodeName);
             nodeGo.transform.SetParent(parent);
 
-            // 校正Transform
+            // 校正 Transform
             nodeGo.transform.localScale = Vector3.one;
             nodeGo.transform.localPosition = Vector3.zero;
             nodeGo.transform.localRotation = Quaternion.identity;
@@ -119,7 +87,7 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 實際運行加載物件資源 (Resource)
+        /// 實際運行加載物件資源 (Resources)
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
@@ -183,36 +151,42 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 無資源則加載, 反之有的話就從資源快取中返回資源
+        /// 加載資源至快取, 判斷是否已有加載過, 如果有則返回該資源物件 (Resources)
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
         protected async UniTask<GameObject> LoadAssetIntoCache(string assetName)
         {
             GameObject go;
-            // 判斷不在AllCache中, 也不在LoadingFlags中, 才進行加載程序
+            // 判斷不在 AllCache 中, 也不在 LoadingFlags 中, 才進行加載程序
             if (!this.HasAssetInCache(assetName) && !this.HasInLoadingFlags(assetName))
             {
-                this._loadingFlags.Add(assetName);       // 標記LoadingFlag
+                this._loadingFlags.Add(assetName);       // 標記 LoadingFlag
                 go = await this.LoadingAsset(assetName); // 開始加載
-                this._loadingFlags.Remove(assetName);    // 移除LoadingFlag
+                this._loadingFlags.Remove(assetName);    // 移除 LoadingFlag
             }
-            else go = this.GetAssetFromCache(assetName); // 如果判斷沒有要執行加載程序, 就直接從AllCache中取得
+            else go = this.GetAssetFromCache(assetName); // 如果判斷沒有要執行加載程序, 就直接從 AllCache 中取得
 
             return go;
         }
 
+        /// <summary>
+        /// 加載資源至快取, 判斷是否已有加載過, 如果有則返回該資源物件 (AssetBundle)
+        /// </summary>
+        /// <param name="bundleName"></param>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
         protected async UniTask<GameObject> LoadAssetIntoCache(string bundleName, string assetName)
         {
             GameObject go;
-            // 判斷不在AllCache中, 也不在LoadingFlags中, 才進行加載程序
+            // 判斷不在 AllCache 中, 也不在 LoadingFlags 中, 才進行加載程序
             if (!this.HasAssetInCache(assetName) && !this.HasInLoadingFlags(assetName))
             {
-                this._loadingFlags.Add(assetName);                   // 標記LoadingFlag
+                this._loadingFlags.Add(assetName);                   // 標記 LoadingFlag
                 go = await this.LoadingAsset(bundleName, assetName); // 開始加載
-                this._loadingFlags.Remove(assetName);                // 移除LoadingFlag
+                this._loadingFlags.Remove(assetName);                // 移除 LoadingFlag
             }
-            else go = this.GetAssetFromCache(assetName);             // 如果判斷沒有要執行加載程序, 就直接從AllCache中取得
+            else go = this.GetAssetFromCache(assetName);             // 如果判斷沒有要執行加載程序, 就直接從 AllCache 中取得
 
             return go;
         }
@@ -232,7 +206,7 @@ namespace OxGFrame.MediaFrame
             U mBase = instGo.GetComponent<U>();
             if (mBase == null) return default;
 
-            // 激活檢查, 如果主體Active為false必須打開
+            // 激活檢查, 如果主體 Active 為 false 必須打開
             if (!instGo.activeSelf) instGo.SetActive(true);
 
             this._listAllCache.Add(mBase); // 先加入快取
@@ -245,7 +219,7 @@ namespace OxGFrame.MediaFrame
 
             await mBase.Init();
 
-            // >>> 需在Init之後, 以下設定開始生效 <<<
+            // >>> 需在 Init 之後, 以下設定開始生效 <<<
 
             if (mBase == null || mBase.gameObject.IsDestroyed()) return default;
 
@@ -257,8 +231,6 @@ namespace OxGFrame.MediaFrame
         public async UniTask Preload(string assetName)
         {
             if (!string.IsNullOrEmpty(assetName)) await this.LoadAssetIntoCache(assetName);
-
-            await UniTask.Yield();
         }
 
         public async UniTask Preload(string bundleName, string assetName)
@@ -267,8 +239,6 @@ namespace OxGFrame.MediaFrame
             {
                 await this.LoadAssetIntoCache(bundleName, assetName);
             }
-
-            await UniTask.Yield();
         }
 
         /// <summary>
@@ -286,8 +256,6 @@ namespace OxGFrame.MediaFrame
                     await this.LoadAssetIntoCache(assetNames[i]);
                 }
             }
-
-            await UniTask.Yield();
         }
 
         public async UniTask Preload(string[,] bundleAssetNames)
@@ -301,8 +269,6 @@ namespace OxGFrame.MediaFrame
                     await this.LoadAssetIntoCache(bundleAssetNames[row, 0], bundleAssetNames[row, 1]);
                 }
             }
-
-            await UniTask.Yield();
         }
 
         protected virtual void SetParent(T mBase) { }
@@ -314,8 +280,8 @@ namespace OxGFrame.MediaFrame
         #endregion
 
         #region Stop & Pause
-        public abstract void Stop(string assetName, bool disableEndEvent = false, bool withDestroy = false);
-        public abstract void StopAll(bool disableEndEvent = false, bool withDestroy = false);
+        public abstract void Stop(string assetName, bool disableEndEvent = false, bool forceDestroy = false);
+        public abstract void StopAll(bool disableEndEvent = false, bool forceDestroy = false);
         public abstract void Pause(string assetName);
         public abstract void PauseAll();
         #endregion
@@ -331,18 +297,101 @@ namespace OxGFrame.MediaFrame
         /// </summary>
         /// <param name="mBase"></param>
         /// <param name="assetName"></param>
-        protected virtual void Destroy(T mBase, string assetName)
+        protected virtual void Destroy(T mBase)
         {
-            if (string.IsNullOrEmpty(mBase.bundleName)) CacheResource.GetInstance().Unload(mBase.assetName);
-            else CacheBundle.GetInstance().Unload(mBase.bundleName);
+            string assetName;
+            string unloadName;
+            bool isBundle;
 
+            // 判斷是否 Bundle or Resources
+            if (string.IsNullOrEmpty(mBase.bundleName))
+            {
+                unloadName = assetName = mBase.assetName;
+                isBundle = false;
+            }
+            else
+            {
+                assetName = mBase.assetName;
+                unloadName = mBase.bundleName;
+                isBundle = true;
+            }
+
+            // 調用釋放接口
             mBase.OnRelease();
 
-            if (!mBase.gameObject.IsDestroyed()) Destroy(mBase.gameObject);              // 刪除MediaBase物件
-            this._listAllCache.Remove(mBase);                                            // 刪除MediaBase柱列快取
-            if (this.HasAssetInCache(assetName)) this._dictAssetCache.Remove(assetName); // 刪除資源快取
+            // 刪除物件
+            if (!mBase.gameObject.IsDestroyed()) Destroy(mBase.gameObject);
 
-            Debug.Log(string.Format("Destroy Media: {0}", assetName));
+            // 刪除柱列快取
+            this._listAllCache.Remove(mBase);
+
+            // 最後判斷是否要卸載
+            if (mBase.onDestroyAndUnload)
+            {
+                // 取得柱列快取中的群組數量
+                int groupCount = this.GetMediaComponents<T>(assetName).Length;
+
+                // 確保影音在卸載前, 是沒被引用的狀態
+                if (groupCount == 0)
+                {
+                    // 刪除資源快取 (皆使用 assetName 作為 key)
+                    if (this.HasAssetInCache(assetName)) this._dictAssetCache.Remove(assetName);
+
+                    // Resources (卸載)
+                    if (!isBundle) CacheResource.GetInstance().Unload(unloadName);
+                    // Bundle (卸載)
+                    else CacheBundle.GetInstance().Unload(unloadName);
+
+                    Debug.Log($"<color=#ffb6db>[MediaManager] Unload Asset: {unloadName}</color>");
+                }
+            }
+
+            Debug.Log($"<color=#ff9d55>[MediaManager] Destroy Object: {assetName}, <color=#ffdc55>All Count: {this._listAllCache.Count}</color></color>");
+        }
+
+        /// <summary>
+        /// 強制卸載源頭資源 [Resources]
+        /// </summary>
+        /// <param name="assetName"></param>
+        public virtual void ForceUnload(string assetName)
+        {
+            // 取得柱列快取中的群組數量
+            int groupCount = this.GetMediaComponents<T>(assetName).Length;
+            // 判斷群組柱列快取 > 0, 則全部強制關閉並且刪除
+            if (groupCount > 0)
+            {
+                // 刪除全部柱列快取
+                this.StopAll(false, true);
+            }
+
+            // 刪除資源快取 (皆使用 assetName 作為 key)
+            if (this.HasAssetInCache(assetName)) this._dictAssetCache.Remove(assetName);
+
+            // Resources (卸載)
+            CacheResource.GetInstance().Unload(assetName);
+        }
+
+        /// <summary>
+        /// 強制卸載源頭資源 [Bundle]
+        /// </summary>
+        /// <param name="bundleName"></param>
+        /// <param name="assetName"></param>
+        public virtual void ForceUnload(string bundleName, string assetName)
+        {
+            // 取得柱列快取中的群組數量
+            int groupCount = this.GetMediaComponents<T>(assetName).Length;
+            // 判斷群組柱列快取 > 0, 則全部強制關閉並且刪除
+            if (groupCount > 0)
+            {
+                // 刪除全部柱列快取
+                this.StopAll(false, true);
+            }
+
+            // 刪除資源快取 (皆使用 assetName 作為 key)
+            if (this.HasAssetInCache(assetName)) this._dictAssetCache.Remove(assetName);
+
+            // Bundle (卸載)
+            CacheBundle.GetInstance().Unload(bundleName);
         }
     }
 

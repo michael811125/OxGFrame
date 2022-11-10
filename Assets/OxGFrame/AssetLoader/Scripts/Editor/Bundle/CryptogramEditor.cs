@@ -9,6 +9,7 @@ public class CryptogramEditor : EditorWindow
     {
         OFFSET,
         XOR,
+        HTXOR,
         AES
     }
 
@@ -24,17 +25,19 @@ public class CryptogramEditor : EditorWindow
     [SerializeField]
     public string sourceFolder;
     [SerializeField]
-    public bool autoSave = false;
+    public bool autoSave;
 
     internal const string KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR = "KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR";
 
-    [MenuItem(BundleDistributorEditor.MenuRoot + "Bundle Cryptogram", false, 799)]
+    private static Vector2 _windowSize = new Vector2(800f, 150f);
+
+    [MenuItem(BundleDistributorEditor.MenuRoot + "Step 1. Bundle Cryptogram", false, 699)]
     public static void ShowWindow()
     {
         _instance = null;
         GetInstance().titleContent = new GUIContent("Bundle Cryptogram");
         GetInstance().Show();
-        GetInstance().minSize = new Vector2(650f, 175f);
+        GetInstance().minSize = _windowSize;
     }
 
     private void OnEnable()
@@ -47,6 +50,8 @@ public class CryptogramEditor : EditorWindow
             this.randomSeed = Convert.ToInt32(EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "randomSeed", "1"));
             this.dummySize = Convert.ToInt32(EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "dummySize", "0"));
             this.xorKey = Convert.ToInt32(EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "xorKey", "0"));
+            this.hXorKey = Convert.ToInt32(EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "hXorKey", "0"));
+            this.tXorKey = Convert.ToInt32(EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "tXorKey", "0"));
             this.aesKey = EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "aesKey", "file_key");
             this.aesIv = EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "aesIv", "file_vector");
         }
@@ -77,11 +82,15 @@ public class CryptogramEditor : EditorWindow
         EditorGUILayout.Space();
 
         EditorGUILayout.BeginHorizontal();
+
+        // cryptogram options area
         EditorGUI.BeginChangeCheck();
         this.cryptogramType = (CryptogramType)EditorGUILayout.EnumPopup("Cryptogram Type", this.cryptogramType);
         if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "cryptogramType", ((int)this.cryptogramType).ToString());
+        // auto save toggle area
         this.autoSave = GUILayout.Toggle(this.autoSave, new GUIContent("Auto Save", "If checked will save cryptogram key data."));
         EditorStorage.SaveData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "autoSave", this.autoSave.ToString());
+
         EditorGUILayout.EndHorizontal();
 
         this._CryptogramType(this.cryptogramType);
@@ -96,6 +105,9 @@ public class CryptogramEditor : EditorWindow
                 break;
             case CryptogramType.XOR:
                 this._DrawXorView();
+                break;
+            case CryptogramType.HTXOR:
+                this._DrawHTXorView();
                 break;
             case CryptogramType.AES:
                 this._DrawAesView();
@@ -113,7 +125,8 @@ public class CryptogramEditor : EditorWindow
 
         GUIStyle style = new GUIStyle();
         var bg = new Texture2D(1, 1);
-        Color[] pixels = Enumerable.Repeat(new Color(0f, 0.47f, 1f, 0.5f), Screen.width * Screen.height).ToArray();
+        ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+        Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
         bg.SetPixels(pixels);
         bg.Apply();
         style.normal.background = bg;
@@ -137,7 +150,7 @@ public class CryptogramEditor : EditorWindow
             EditorStorage.SaveData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "dummySize", this.dummySize.ToString());
         }
 
-        this._DrawOperateButtons(this.cryptogramType);
+        this._DrawOperateButtonsView(this.cryptogramType);
 
         EditorGUILayout.EndVertical();
     }
@@ -150,7 +163,8 @@ public class CryptogramEditor : EditorWindow
 
         GUIStyle style = new GUIStyle();
         var bg = new Texture2D(1, 1);
-        Color[] pixels = Enumerable.Repeat(new Color(0f, 0.47f, 1f, 0.5f), Screen.width * Screen.height).ToArray();
+        ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+        Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
         bg.SetPixels(pixels);
         bg.Apply();
         style.normal.background = bg;
@@ -168,7 +182,44 @@ public class CryptogramEditor : EditorWindow
             EditorStorage.SaveData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "xorKey", this.xorKey.ToString());
         }
 
-        this._DrawOperateButtons(this.cryptogramType);
+        this._DrawOperateButtonsView(this.cryptogramType);
+
+        EditorGUILayout.EndVertical();
+    }
+
+    [SerializeField]
+    public int hXorKey = 0;
+    public int tXorKey = 0;
+    private void _DrawHTXorView()
+    {
+        EditorGUILayout.Space();
+
+        GUIStyle style = new GUIStyle();
+        var bg = new Texture2D(1, 1);
+        ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+        Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+        bg.SetPixels(pixels);
+        bg.Apply();
+        style.normal.background = bg;
+        EditorGUILayout.BeginVertical(style);
+        var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+        centeredStyle.alignment = TextAnchor.UpperCenter;
+        GUILayout.Label(new GUIContent("Head-Tail XOR Settings"), centeredStyle);
+        EditorGUILayout.Space();
+
+        this.hXorKey = EditorGUILayout.IntField("Head XOR KEY (0 ~ 255)", this.hXorKey);
+        if (this.hXorKey < 0) this.hXorKey = 0;
+        else if (this.hXorKey > 255) this.hXorKey = 255;
+        this.tXorKey = EditorGUILayout.IntField("Tail XOR KEY (0 ~ 255)", this.tXorKey);
+        if (this.tXorKey < 0) this.tXorKey = 0;
+        else if (this.tXorKey > 255) this.tXorKey = 255;
+        if (this.autoSave)
+        {
+            EditorStorage.SaveData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "hXorKey", this.hXorKey.ToString());
+            EditorStorage.SaveData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "tXorKey", this.tXorKey.ToString());
+        }
+
+        this._DrawOperateButtonsView(this.cryptogramType);
 
         EditorGUILayout.EndVertical();
     }
@@ -183,7 +234,8 @@ public class CryptogramEditor : EditorWindow
 
         GUIStyle style = new GUIStyle();
         var bg = new Texture2D(1, 1);
-        Color[] pixels = Enumerable.Repeat(new Color(0f, 0.47f, 1f, 0.5f), Screen.width * Screen.height).ToArray();
+        ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+        Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
         bg.SetPixels(pixels);
         bg.Apply();
         style.normal.background = bg;
@@ -201,12 +253,12 @@ public class CryptogramEditor : EditorWindow
             EditorStorage.SaveData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "aesIv", this.aesIv);
         }
 
-        this._DrawOperateButtons(this.cryptogramType);
+        this._DrawOperateButtonsView(this.cryptogramType);
 
         EditorGUILayout.EndVertical();
     }
 
-    private void _DrawOperateButtons(CryptogramType cryptogramType)
+    private void _DrawOperateButtonsView(CryptogramType cryptogramType)
     {
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
@@ -223,6 +275,10 @@ public class CryptogramEditor : EditorWindow
                 case CryptogramType.XOR:
                     BundleDistributorEditor.XorDecryptBundleFiles(this.sourceFolder, (byte)this.xorKey);
                     EditorUtility.DisplayDialog("Crytogram Message", "[XOR] Decrypt Process.", "OK");
+                    break;
+                case CryptogramType.HTXOR:
+                    BundleDistributorEditor.HTXorDecryptBundleFiles(this.sourceFolder, (byte)this.hXorKey, (byte)this.tXorKey);
+                    EditorUtility.DisplayDialog("Crytogram Message", "[Head-Tail XOR] Decrypt Process.", "OK");
                     break;
                 case CryptogramType.AES:
                     if (string.IsNullOrEmpty(this.aesKey) || string.IsNullOrEmpty(this.aesIv))
@@ -251,6 +307,10 @@ public class CryptogramEditor : EditorWindow
                     BundleDistributorEditor.XorEncryptBundleFiles(this.sourceFolder, (byte)this.xorKey);
                     EditorUtility.DisplayDialog("Crytogram Message", "[XOR] Encrypt Process.", "OK");
                     break;
+                case CryptogramType.HTXOR:
+                    BundleDistributorEditor.HTXorEncryptBundleFiles(this.sourceFolder, (byte)this.hXorKey, (byte)this.tXorKey);
+                    EditorUtility.DisplayDialog("Crytogram Message", "[Head-Tail XOR] Encrypt Process.", "OK");
+                    break;
                 case CryptogramType.AES:
                     if (string.IsNullOrEmpty(this.aesKey) || string.IsNullOrEmpty(this.aesIv))
                     {
@@ -270,6 +330,8 @@ public class CryptogramEditor : EditorWindow
     {
         EditorStorage.DeleteData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "dummySize");
         EditorStorage.DeleteData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "xorKey");
+        EditorStorage.DeleteData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "hXorKey");
+        EditorStorage.DeleteData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "tXorKey");
         EditorStorage.DeleteData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "aesKey");
         EditorStorage.DeleteData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_EDITOR, "aesIv");
     }

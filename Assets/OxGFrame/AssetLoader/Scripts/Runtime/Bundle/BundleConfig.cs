@@ -1,7 +1,4 @@
-﻿#define ENABLE_BUNDLE_STREAM_MODE // 啟用文件流讀取 (內存較小)
-
-using Cysharp.Threading.Tasks;
-using System;
+﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -16,49 +13,66 @@ namespace OxGFrame.AssetLoader.Bundle
             public const string NONE = "NONE";
             public const string OFFSET = "OFFSET";
             public const string XOR = "XOR";
+            public const string HTXOR = "HTXOR";
             public const string AES = "AES";
         }
 
-        static BundleConfig()
-        {
-            bAssetDatabaseMode = GetAssetDatabaseMode();
-            //bBundleStreamMode = GetBundleStreamMode();
-        }
+        #region 執行配置
+        /// <summary>
+        /// 啟用 Editor 中的 AssetDatabase 讀取資源模式
+        /// </summary>
+        public static bool assetDatabaseMode = true;
 
-        // 啟用Editor中的AssetDatabase讀取資源模式
-        public static bool bAssetDatabaseMode = true;
-        public const string KEY_ASSET_DATABASE_MODE = "bAssetDatabaseMode";
+        /// <summary>
+        /// 啟用文件流 (較少內存)
+        /// </summary>
+        public static bool bundleStreamMode = true;
 
-#if ENABLE_BUNDLE_STREAM_MODE
-        public static bool bBundleStreamMode = true;
-#else
-        public static bool bBundleStreamMode = false;
-#endif
-        //public const string KEY_BUNDLE_STREAM_MODE = "bBundleStreamMode";
+        /// <summary>
+        /// 啟用使用 MD5 加密的包名
+        /// </summary>
+        public static bool readMd5BundleName = true;
 
-        public static void SaveAssetDatabaseMode(bool active)
-        {
-            PlayerPrefs.SetString(KEY_ASSET_DATABASE_MODE, active.ToString());
-            PlayerPrefs.Save();
-        }
+        /// <summary>
+        /// 預設最大切片大小 (16 MB)
+        /// </summary>
+        public const long defaultMaxDownloadSliceSize = 1 << 24;
+        /// <summary>
+        /// 檔案下載最大切片大小, 透過切片方式下載單個大檔, 可以避免內存佔用太大導致內存不足問題 (*不建議設置過大)
+        /// </summary>
+        public static long maxDownloadSliceSize = defaultMaxDownloadSliceSize;
 
-        public static bool GetAssetDatabaseMode()
-        {
-            return Convert.ToBoolean(PlayerPrefs.GetString(KEY_ASSET_DATABASE_MODE, "true"));
-        }
+        /// <summary>
+        /// 預設解壓縮緩存大小 (64 KB)
+        /// </summary>
+        public const int defaultUnzipBufferSize = 1 << 16;
+        /// <summary>
+        /// 解壓縮緩存大小 (緩存愈大解壓愈快)
+        /// </summary>
+        public static int unzipBufferSize = defaultUnzipBufferSize;
 
-        //public static void SaveBundleStreamMode(bool active)
-        //{
-        //    PlayerPrefs.SetString(KEY_BUNDLE_STREAM_MODE, active.ToString());
-        //    PlayerPrefs.Save();
-        //}
+        /// <summary>
+        /// 預設壓縮包名稱
+        /// </summary>
+        public const string defaultZipFileName = "abzip";
+        /// <summary>
+        /// 壓縮包名稱
+        /// </summary>
+        public static string zipFileName = defaultZipFileName;
 
-        //public static bool GetBundleStreamMode()
-        //{
-        //    return Convert.ToBoolean(PlayerPrefs.GetString(KEY_BUNDLE_STREAM_MODE, "true"));
-        //}
+        /// <summary>
+        /// 啟用 MD5 加密壓縮包名稱
+        /// </summary>
+        public static bool md5ForZipFileName = true;
 
-        // [NONE], [OFFSET, dummySize], [XOR, key], [AES, key, iv] => ex: "None" or "offset, 32" or "Xor, 123" or "Aes, key, iv"
+        /// <summary>
+        /// 解壓縮密碼
+        /// </summary>
+        public static string unzipPassword = string.Empty;
+
+        /// <summary>
+        /// 解密 Key, [NONE], [OFFSET, dummySize], [XOR, key], [HTXOR, hKey, tKey], [AES, key, iv] => ex: "None" or "offset, 12" or "xor, 23" or "htxor, 34, 45" or "aes, key, iv"
+        /// </summary>
         private static string _cryptogram;
         public static string[] cryptogramArgs
         {
@@ -77,14 +91,34 @@ namespace OxGFrame.AssetLoader.Bundle
             }
         }
 
-        // 配置檔中的KEY
+        /// <summary>
+        /// 預設內部 Manifest 檔案名稱 (imf = Internal Manifest)
+        /// </summary>
+        public const string defaultInternalManifestName = "imf";
+        /// <summary>
+        /// 預設外部 Manifest 檔案名稱 (emf = External Manifest)
+        /// </summary>
+        public const string defaultExternalManifestName = "emf";
+        /// <summary>
+        /// 內部 Manifest 檔案名稱 (imf = Internal Manifest)
+        /// </summary>
+        public static string internalManifestName = defaultInternalManifestName;
+        /// <summary>
+        /// 外部 Manifest 檔案名稱 (emf = External Manifest)
+        /// </summary>
+        public static string externalManifestName = defaultExternalManifestName;
+        #endregion
+
+        #region 常數配置
+        // 配置檔中的 KEY
         public const string APP_VERSION = "APP_VERSION";
         public const string RES_VERSION = "RES_VERSION";
 
         // 配置檔
-        public const string cfgExt = "";                 // 自行輸入(.json), 空字串表示無副檔名
-        public const string bundleCfgName = "b_cfg";     // 配置檔的名稱   
-        public const string recordCfgName = "r_cfg";     // 記錄配置檔的名稱
+        public const string cfgExtension = "";                // 自行輸入(.json), 空字串表示無副檔名
+        public const string bakCfgExtension = ".bak";         // 備份配置檔副檔名
+        public readonly static string bundleCfgName = "bcfg"; // 配置檔的名稱 
+        public readonly static string recordCfgName = "rcfg"; // 記錄配置檔的名稱
 
         /**
          * url_cfg format following
@@ -92,21 +126,22 @@ namespace OxGFrame.AssetLoader.Bundle
          * # => comment
          */
 
-        // 佈署配置檔中的KEY
+        // 佈署配置檔中的 KEY
         public const string BUNDLE_IP = "bundle_ip";
         public const string GOOGLE_STORE = "google_store";
         public const string APPLE_STORE = "apple_store";
 
         // 佈署配置檔
-        public const string cfgFullPathName = "bundle_cfg.txt";
+        public const string bundleUrlFilePathName = "burlcfg.txt";
 
-        // Bundle平台路徑
+        // Bundle 平台路徑
         public const string bundleDir = "/AssetBundles";  // Build 目錄
         public const string exportDir = "/ExportBundles"; // Export 目錄
         public const string winDir = "/win";
         public const string androidDir = "/android";
         public const string iosDir = "/ios";
         public const string h5Dir = "/h5";
+        #endregion
 
         public static void InitCryptogram(string cryptogram)
         {
@@ -115,7 +150,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public static async UniTask<string> GetValueFromUrlCfg(string key)
         {
-            string pathName = System.IO.Path.Combine(Application.streamingAssetsPath, cfgFullPathName);
+            string pathName = Path.Combine(Application.streamingAssetsPath, bundleUrlFilePathName);
             var file = await FileRequest(pathName);
             var content = file.text;
             var allWords = content.Split('\n');
@@ -146,17 +181,17 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得打包後的Bundle資源路徑
+        /// 取得打包後的 Bundle 資源路徑
         /// </summary>
         /// <returns></returns>
-        public static string GetBuildedBundlePath()
+        public static string GetBuildBundlePath()
         {
 #if UNITY_STANDALONE_WIN
             return Path.Combine(Application.dataPath, $"..{bundleDir}{winDir}");
 #endif
 
 #if UNITY_ANDROID
-            return Path.Combine(Application.dataPath , $"..{bundleDir}{androidDir}");
+            return Path.Combine(Application.dataPath, $"..{bundleDir}{androidDir}");
 #endif
 
 #if UNITY_IOS
@@ -177,7 +212,7 @@ namespace OxGFrame.AssetLoader.Bundle
 #endif
 
 #if UNITY_ANDROID
-            return Path.Combine(Application.dataPath , $"..{exportDir}{androidDir}");
+            return Path.Combine(Application.dataPath, $"..{exportDir}{androidDir}");
 #endif
 
 #if UNITY_IOS
@@ -192,15 +227,15 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得本地Bundle下載後的儲存路徑 (持久化)
+        /// 取得本地 Bundle 下載後的儲存路徑 (持久化)
         /// </summary>
         /// <returns></returns>
         public static string GetLocalDlFileSaveDirectory()
         {
             if (Application.platform == RuntimePlatform.IPhonePlayer)
             {
-                // IOS要用這個路徑，否則審核不過
-                return Application.temporaryCachePath;
+                // IOS 要用這個路徑，否則審核不過
+                return Application.temporaryCachePath + exportDir;
             }
 
             // Android、PC 可以使用這個路徑
@@ -208,21 +243,21 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得本地BundleConfig下載後的儲存路徑 (持久化)
+        /// 取得本地 BundleConfig 下載後的儲存路徑 (持久化)
         /// </summary>
         /// <returns></returns>
         public static string GetLocalDlFileSaveBundleConfigPath()
         {
-            return Path.Combine(GetLocalDlFileSaveDirectory(), $"{bundleCfgName}{cfgExt}");
+            return Path.Combine(GetLocalDlFileSaveDirectory(), $"{bundleCfgName}{cfgExtension}");
         }
 
         public static string GetStreamingAssetsBundleConfigPath()
         {
-            return Path.Combine(Application.streamingAssetsPath, $"{bundleCfgName}{cfgExt}");
+            return Path.Combine(Application.streamingAssetsPath, $"{bundleCfgName}{cfgExtension}");
         }
 
         /// <summary>
-        /// 取得資源伺服器的Bundle (URL)
+        /// 取得資源伺服器的 Bundle (URL)
         /// </summary>
         /// <returns></returns>
         public static async UniTask<string> GetServerBundleUrl()
@@ -245,26 +280,13 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得對應平台的Manifest檔名
+        /// 取得 Bundle Manifest 檔名 (判斷區分 Built-in or Patch)
         /// </summary>
         /// <returns></returns>
-        public static string GetManifestFileName()
+        public static string GetManifestFileName(bool inApp)
         {
-#if UNITY_STANDALONE_WIN
-            return winDir.Replace("/", string.Empty).Trim();
-#endif
-
-#if UNITY_ANDROID
-            return androidDir.Replace("/", string.Empty).Trim();
-#endif
-
-#if UNITY_IOS
-            return iosDir.Replace("/", string.Empty).Trim();
-#endif
-
-#if UNITY_WEBGL
-            return h5Dir.Replace("/", string.Empty).Trim();
-#endif
+            if (inApp) return internalManifestName;
+            else return externalManifestName;
         }
 
         public static async UniTask<TextAsset> FileRequest(string url)

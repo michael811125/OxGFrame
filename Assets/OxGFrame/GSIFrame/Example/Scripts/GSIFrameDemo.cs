@@ -8,37 +8,37 @@ public class GSIFrameDemo : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GSMExample.GetInstance().OnStart();
+        GameStageManagerExample.GetInstance().OnStart();
     }
 
     // Update is called once per frame
     void Update()
     {
-        GSMExample.GetInstance().OnUpdate(Time.deltaTime);
+        GameStageManagerExample.GetInstance().OnUpdate(Time.deltaTime);
 
         if (Keyboard.current.numpad1Key.wasReleasedThisFrame)
         {
-            GSMExample.GetInstance().ChangeGameStage(GSMExample.startupStage);
+            GameStageManagerExample.GetInstance().ChangeGameStage(GameStageManagerExample.startupStage);
         }
 
         if (Keyboard.current.numpad2Key.wasReleasedThisFrame)
         {
-            GSMExample.GetInstance().ChangeGameStage(GSMExample.logoStage);
+            GameStageManagerExample.GetInstance().ChangeGameStage(GameStageManagerExample.logoStage);
         }
 
         if (Keyboard.current.numpad3Key.wasReleasedThisFrame)
         {
-            GSMExample.GetInstance().ChangeGameStage(GSMExample.patchStage);
+            GameStageManagerExample.GetInstance().ChangeGameStage(GameStageManagerExample.patchStage);
         }
 
         if (Keyboard.current.numpad4Key.wasReleasedThisFrame)
         {
-            GSMExample.GetInstance().ChangeGameStage(GSMExample.loginStage);
+            GameStageManagerExample.GetInstance().ChangeGameStage(GameStageManagerExample.loginStage);
         }
 
         if (Keyboard.current.numpad5Key.wasReleasedThisFrame)
         {
-            GSMExample.GetInstance().ChangeGameStage(GSMExample.enterStage);
+            GameStageManagerExample.GetInstance().ChangeGameStage(GameStageManagerExample.enterStage);
         }
     }
 }

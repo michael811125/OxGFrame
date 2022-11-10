@@ -1,5 +1,4 @@
-﻿using OxGFrame.AssetLoader.Bundle;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -9,9 +8,9 @@ public class BundleConfigGeneratorEditor : EditorWindow
 {
     public enum OperationType
     {
-        GenerateConfigToSourceFolder,
-        ExportAndConfigFromSourceFolder,
-        GenerateConfigToSourceFolderAndOnlyExportSameConfig
+        GenerateConfigToSourceFolder = 0,
+        ExportAndConfigFromSourceFolder = 1,
+        GenerateConfigToSourceFolderAndOnlyExportSameConfig = 2
     }
 
     private static BundleConfigGeneratorEditor _instance = null;
@@ -24,69 +23,85 @@ public class BundleConfigGeneratorEditor : EditorWindow
     [SerializeField]
     public OperationType operationType;
     [SerializeField]
-    public string sourceFolder;
+    public string[] sourceFolder = new string[3];
     [SerializeField]
-    public string exportFolder;
+    public string[] exportFolder = new string[3];
     [SerializeField]
     public string productName;
+    [SerializeField]
+    public bool compressed;
 
     internal const string KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR = "KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR";
 
-    [MenuItem(BundleDistributorEditor.MenuRoot + "Bundle Config Generator", false, 899)]
+    private static Vector2 _windowSize = new Vector2(800f, 200f);
+
+    [MenuItem(BundleDistributorEditor.MenuRoot + "Step 3. Bundle Config Generator", false, 899)]
     public static void ShowWindow()
     {
         _instance = null;
         GetInstance().titleContent = new GUIContent("Bundle Config Generator");
         GetInstance().Show();
-        GetInstance().minSize = new Vector2(650f, 175f);
+        GetInstance().minSize = _windowSize;
     }
 
     private void OnEnable()
     {
+        int operationTypeCount = Enum.GetNames(typeof(OperationType)).Length;
+        for (int i = 0; i < operationTypeCount; i++)
+        {
+            this.sourceFolder[i] = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, $"sourceFolder{i}", Path.Combine($"{Application.dataPath}/", $"../AssetBundles"));
+            this.exportFolder[i] = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, $"exportFolder{i}", Path.Combine($"{Application.dataPath}/", $"../ExportBundles"));
+        }
+
         this.operationType = (OperationType)Convert.ToInt32(EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "operationType", "0"));
-        this.sourceFolder = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "sourceFolder", Path.Combine($"{Application.dataPath}/", $"../AssetBundles"));
-        this.exportFolder = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "exportFolder", Path.Combine($"{Application.dataPath}/", $"../ExportBundles"));
         this.productName = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "productName", Application.productName);
+        this.compressed = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "compressed", "false"));
     }
 
     private void OnGUI()
     {
-        EditorGUILayout.BeginHorizontal();
-        EditorGUI.BeginChangeCheck();
-        this.sourceFolder = EditorGUILayout.TextField("Source Folder", this.sourceFolder);
-        if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "sourceFolder", this.sourceFolder);
-        Color bc = GUI.backgroundColor;
-        GUI.backgroundColor = new Color32(0, 255, 128, 255);
-        if (GUILayout.Button("Open", GUILayout.MaxWidth(100f))) BundleDistributorEditor.OpenFolder(this.sourceFolder, true);
-        GUI.backgroundColor = bc;
-        bc = GUI.backgroundColor;
-        GUI.backgroundColor = new Color32(83, 152, 255, 255);
-        if (GUILayout.Button("Browse", GUILayout.MaxWidth(100f))) this._OpenSourceFolder();
-        GUI.backgroundColor = bc;
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.Space();
-
+        // operation type area
         EditorGUI.BeginChangeCheck();
         this.operationType = (OperationType)EditorGUILayout.EnumPopup("Operation Type", this.operationType);
         if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "operationType", ((int)this.operationType).ToString());
         this._OperationType(this.operationType);
     }
 
+    private OperationType _lastOperationType;
     private void _OperationType(OperationType operationType)
     {
         switch (operationType)
         {
             case OperationType.GenerateConfigToSourceFolder:
                 this._DrawGenerateConfigToSourceFolderView();
+                if (this._lastOperationType != OperationType.GenerateConfigToSourceFolder)
+                {
+                    float minHeight = _windowSize.y - 55f;
+                    GetInstance().minSize = new Vector2(_windowSize.x, minHeight);
+                    // window 由大變小需要設置 postion
+                    GetInstance().position = new Rect(GetInstance().position.position.x, GetInstance().position.position.y, _windowSize.x, minHeight);
+                }
                 break;
             case OperationType.ExportAndConfigFromSourceFolder:
                 this._DrawExportAndConfigFromSourceFolderView();
+                if (this._lastOperationType != OperationType.ExportAndConfigFromSourceFolder)
+                {
+                    GetInstance().minSize = new Vector2(_windowSize.x, _windowSize.y);
+                }
                 break;
             case OperationType.GenerateConfigToSourceFolderAndOnlyExportSameConfig:
                 this._DrawGenerateConfigToSourceFolderAndOnlyExportSameConfigView();
+                if (this._lastOperationType != OperationType.GenerateConfigToSourceFolderAndOnlyExportSameConfig)
+                {
+                    float minHeight = _windowSize.y - 25f;
+                    GetInstance().minSize = new Vector2(_windowSize.x, minHeight);
+                    // window 由大變小需要設置 postion
+                    if (this._lastOperationType != OperationType.GenerateConfigToSourceFolder) GetInstance().position = new Rect(GetInstance().position.position.x, GetInstance().position.position.y, _windowSize.x, minHeight);
+                }
                 break;
         }
+
+        this._lastOperationType = operationType;
     }
 
     private void _DrawGenerateConfigToSourceFolderView()
@@ -95,7 +110,8 @@ public class BundleConfigGeneratorEditor : EditorWindow
 
         GUIStyle style = new GUIStyle();
         var bg = new Texture2D(1, 1);
-        Color[] pixels = Enumerable.Repeat(new Color(0f, 0.47f, 1f, 0.5f), Screen.width * Screen.height).ToArray();
+        ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+        Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
         bg.SetPixels(pixels);
         bg.Apply();
         style.normal.background = bg;
@@ -105,7 +121,10 @@ public class BundleConfigGeneratorEditor : EditorWindow
         GUILayout.Label(new GUIContent("Generate Config To SourceFolder Settings"), centeredStyle);
         EditorGUILayout.Space();
 
-        this._DrawProcessButton(this.operationType);
+        // draw here
+        this._DrawSourceFolderView();
+        this._DrawProductNameTextFieldView();
+        this._DrawProcessButtonView(this.operationType);
 
         EditorGUILayout.EndVertical();
     }
@@ -116,7 +135,8 @@ public class BundleConfigGeneratorEditor : EditorWindow
 
         GUIStyle style = new GUIStyle();
         var bg = new Texture2D(1, 1);
-        Color[] pixels = Enumerable.Repeat(new Color(0f, 0.47f, 1f, 0.5f), Screen.width * Screen.height).ToArray();
+        ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+        Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
         bg.SetPixels(pixels);
         bg.Apply();
         style.normal.background = bg;
@@ -126,9 +146,12 @@ public class BundleConfigGeneratorEditor : EditorWindow
         GUILayout.Label(new GUIContent("Export And Config From SourceFolder Settings"), centeredStyle);
         EditorGUILayout.Space();
 
-        this._DrawProductNameTextField();
+        // draw here
+        this._DrawSourceFolderView();
+        this._DrawCompressedToggleView();
+        this._DrawProductNameTextFieldView();
         this._DrawExportFolderView();
-        this._DrawProcessButton(this.operationType);
+        this._DrawProcessButtonView(this.operationType);
 
         EditorGUILayout.EndVertical();
     }
@@ -139,7 +162,8 @@ public class BundleConfigGeneratorEditor : EditorWindow
 
         GUIStyle style = new GUIStyle();
         var bg = new Texture2D(1, 1);
-        Color[] pixels = Enumerable.Repeat(new Color(0f, 0.47f, 1f, 0.5f), Screen.width * Screen.height).ToArray();
+        ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+        Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
         bg.SetPixels(pixels);
         bg.Apply();
         style.normal.background = bg;
@@ -149,11 +173,33 @@ public class BundleConfigGeneratorEditor : EditorWindow
         GUILayout.Label(new GUIContent("Generate Config To SourceFolder And Only Export Same Config Settings"), centeredStyle);
         EditorGUILayout.Space();
 
-        this._DrawProductNameTextField();
+        // draw here
+        this._DrawSourceFolderView();
+        this._DrawProductNameTextFieldView();
         this._DrawExportFolderView();
-        this._DrawProcessButton(this.operationType);
+        this._DrawProcessButtonView(this.operationType);
 
         EditorGUILayout.EndVertical();
+    }
+
+    private void _DrawSourceFolderView()
+    {
+        EditorGUILayout.Space();
+
+        // source folder area
+        EditorGUILayout.BeginHorizontal();
+        EditorGUI.BeginChangeCheck();
+        this.sourceFolder[(int)this.operationType] = EditorGUILayout.TextField("Source Folder", this.sourceFolder[(int)this.operationType]);
+        if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, $"sourceFolder{(int)this.operationType}", this.sourceFolder[(int)this.operationType]);
+        Color bc = GUI.backgroundColor;
+        GUI.backgroundColor = new Color32(0, 255, 128, 255);
+        if (GUILayout.Button("Open", GUILayout.MaxWidth(100f))) BundleDistributorEditor.OpenFolder(this.sourceFolder[(int)this.operationType], true);
+        GUI.backgroundColor = bc;
+        bc = GUI.backgroundColor;
+        GUI.backgroundColor = new Color32(83, 152, 255, 255);
+        if (GUILayout.Button("Browse", GUILayout.MaxWidth(100f))) this._OpenSourceFolder();
+        GUI.backgroundColor = bc;
+        EditorGUILayout.EndHorizontal();
     }
 
     private void _DrawExportFolderView()
@@ -162,11 +208,11 @@ public class BundleConfigGeneratorEditor : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         EditorGUI.BeginChangeCheck();
-        this.exportFolder = EditorGUILayout.TextField("Export Folder", this.exportFolder);
-        if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "exportFolder", this.exportFolder);
+        this.exportFolder[(int)this.operationType] = EditorGUILayout.TextField("Export Folder", this.exportFolder[(int)this.operationType]);
+        if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, $"exportFolder{(int)this.operationType}", this.exportFolder[(int)this.operationType]);
         Color bc = GUI.backgroundColor;
         GUI.backgroundColor = new Color32(0, 255, 128, 255);
-        if (GUILayout.Button("Open", GUILayout.MaxWidth(100f))) BundleDistributorEditor.OpenFolder(this.exportFolder, true);
+        if (GUILayout.Button("Open", GUILayout.MaxWidth(100f))) BundleDistributorEditor.OpenFolder(this.exportFolder[(int)this.operationType], true);
         GUI.backgroundColor = bc;
         bc = GUI.backgroundColor;
         GUI.backgroundColor = new Color32(83, 152, 255, 255);
@@ -175,8 +221,10 @@ public class BundleConfigGeneratorEditor : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
-    private void _DrawProductNameTextField()
+    private void _DrawProductNameTextFieldView()
     {
+        EditorGUILayout.Space();
+
         EditorGUILayout.BeginHorizontal();
         EditorGUI.BeginChangeCheck();
         this.productName = EditorGUILayout.TextField("Product Name", this.productName);
@@ -184,8 +232,21 @@ public class BundleConfigGeneratorEditor : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
-    private void _DrawProcessButton(OperationType operationType)
+    private void _DrawCompressedToggleView()
     {
+
+        EditorGUILayout.Space();
+
+        EditorGUILayout.BeginHorizontal();
+        this.compressed = GUILayout.Toggle(this.compressed, new GUIContent("Bundle Is Compressed", "If checked will after download patch to unzip (must zip bundle first)."));
+        EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "compressed", this.compressed.ToString());
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void _DrawProcessButtonView(OperationType operationType)
+    {
+        EditorGUILayout.Space();
+
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
         Color bc = GUI.backgroundColor;
@@ -195,23 +256,15 @@ public class BundleConfigGeneratorEditor : EditorWindow
             switch (operationType)
             {
                 case OperationType.GenerateConfigToSourceFolder:
-                    BundleDistributorEditor.GenerateBundleCfg(this.productName, this.sourceFolder, this.sourceFolder);
+                    BundleDistributorEditor.GenerateBundleConfig(this.productName, this.sourceFolder[(int)this.operationType], this.sourceFolder[(int)this.operationType]);
                     EditorUtility.DisplayDialog("Process Message", "Generate Config To SourceFolder.", "OK");
                     break;
                 case OperationType.ExportAndConfigFromSourceFolder:
-                    BundleDistributorEditor.ExportBundleAndConfig(this.sourceFolder, this.exportFolder, this.productName);
+                    BundleDistributorEditor.ExportBundleAndConfig(this.sourceFolder[(int)this.operationType], this.exportFolder[(int)this.operationType], this.productName, Convert.ToInt32(this.compressed));
                     EditorUtility.DisplayDialog("Process Message", "Export And Config From SourceFolder.", "OK");
                     break;
                 case OperationType.GenerateConfigToSourceFolderAndOnlyExportSameConfig:
-                    BundleDistributorEditor.GenerateBundleCfg(this.productName, this.sourceFolder, this.sourceFolder);
-                    string fullExportFolder = $"{this.exportFolder}/{this.productName}";
-                    if (Directory.Exists(fullExportFolder)) Directory.Delete(fullExportFolder, true);
-                    Directory.CreateDirectory(fullExportFolder);
-                    // 來源配置檔路徑
-                    string sourceFileName = Path.Combine(this.sourceFolder, BundleConfig.bundleCfgName + BundleConfig.cfgExt);
-                    string destFileName = Path.Combine(fullExportFolder, BundleConfig.bundleCfgName + BundleConfig.cfgExt);
-                    // 最後將來源配置檔複製至輸出路徑
-                    File.Copy(sourceFileName, destFileName);
+                    BundleDistributorEditor.GenerateConfigToSourceFolderAndOnlyExportSameConfig(this.productName, this.sourceFolder[(int)this.operationType], this.exportFolder[(int)this.operationType]);
                     EditorUtility.DisplayDialog("Process Message", "Generate Config To SourceFolder And Only Export Same Config.", "OK");
                     break;
             }
@@ -222,15 +275,15 @@ public class BundleConfigGeneratorEditor : EditorWindow
 
     private void _OpenSourceFolder()
     {
-        string folderPath = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "sourceFolder", Application.dataPath);
-        this.sourceFolder = EditorUtility.OpenFolderPanel("Open Source Folder", folderPath, string.Empty);
-        if (!string.IsNullOrEmpty(this.sourceFolder)) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "sourceFolder", this.sourceFolder);
+        string folderPath = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, $"sourceFolder{(int)this.operationType}", Application.dataPath);
+        this.sourceFolder[(int)this.operationType] = EditorUtility.OpenFolderPanel("Open Source Folder", folderPath, string.Empty);
+        if (!string.IsNullOrEmpty(this.sourceFolder[(int)this.operationType])) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, $"sourceFolder{(int)this.operationType}", this.sourceFolder[(int)this.operationType]);
     }
 
     private void _OpenExportFolder()
     {
-        string folderPath = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "exportFolder", Application.dataPath);
-        this.exportFolder = EditorUtility.OpenFolderPanel("Open Export Folder", folderPath, string.Empty);
-        if (!string.IsNullOrEmpty(this.exportFolder)) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "exportFolder", this.exportFolder);
+        string folderPath = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, $"exportFolder{(int)this.operationType}", Application.dataPath);
+        this.exportFolder[(int)this.operationType] = EditorUtility.OpenFolderPanel("Open Export Folder", folderPath, string.Empty);
+        if (!string.IsNullOrEmpty(this.exportFolder[(int)this.operationType])) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, $"exportFolder{(int)this.operationType}", this.exportFolder[(int)this.operationType]);
     }
 }

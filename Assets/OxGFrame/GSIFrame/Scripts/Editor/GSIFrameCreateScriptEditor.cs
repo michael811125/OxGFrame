@@ -1,12 +1,11 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
 
 public static class GSIFrameCreateScriptEditor
 {
     // Template Game Stage Manager Path
-    private const string TPL_GSM_SCRIPT_PATH = "TplScripts/GSIFrame/TplGStageManager.cs.txt";
+    private const string TPL_GSM_SCRIPT_PATH = "TplScripts/GSIFrame/TplGameStageManager.cs.txt";
     // Template Game Stage Path
-    private const string TPL_GSTAGE_SCRIPT_PATH = "TplScripts/GSIFrame/TplGStage.cs.txt";
+    private const string TPL_GSTAGE_SCRIPT_PATH = "TplScripts/GSIFrame/TplGameStage.cs.txt";
 
     // find current file path
     private static string pathFinder
@@ -19,22 +18,22 @@ public static class GSIFrameCreateScriptEditor
     }
 
     #region GSIFrame Script Create
-    [MenuItem(itemName: "Assets/Create/OxGFrame/GSIFrame/TplScripts/TplGStage.cs (Game Stage)", isValidateFunction: false, priority: 51)]
+    [MenuItem(itemName: "Assets/Create/OxGFrame/GSIFrame/TplScripts/TplGameStage.cs (Game Stage)", isValidateFunction: false, priority: 51)]
     public static void CreateScriptTplGStage()
     {
         string currentPath = pathFinder;
         string finalPath = currentPath.Replace("GSIFrameCreateScriptEditor.cs", "") + TPL_GSTAGE_SCRIPT_PATH;
 
-        ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplGStage.cs");
+        ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplGameStage.cs");
     }
 
-    [MenuItem(itemName: "Assets/Create/OxGFrame/GSIFrame/TplScripts/TplGStageManager.cs (Game Stage Manager)", isValidateFunction: false, priority: 51)]
+    [MenuItem(itemName: "Assets/Create/OxGFrame/GSIFrame/TplScripts/TplGameStageManager.cs (Game Stage Manager)", isValidateFunction: false, priority: 51)]
     public static void CreateScriptTplGSM()
     {
         string currentPath = pathFinder;
         string finalPath = currentPath.Replace("GSIFrameCreateScriptEditor.cs", "") + TPL_GSM_SCRIPT_PATH;
 
-        ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplGSM.cs");
+        ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplGameStageManager.cs");
     }
     #endregion
 }

@@ -84,6 +84,7 @@ MonoBehaviour:
   _ignoreTimeScale: 1
   loops: 0
   onStopAndDestroy: 1
+  onDestroyAndUnload: 1
   _autoEndToStop: 1
   waitForFirstFrame: 1
   playbackSpeed: 1

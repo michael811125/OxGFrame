@@ -84,6 +84,20 @@ namespace OxGFrame.Utility.Timer
             this._playing = false;
         }
 
+        public void Stop()
+        {
+            this._playing = false;
+            this._accTime = 0.0f;
+            this._intervalTime = 0.0f;
+            this._pauseTime = 0.0f;
+            this._deltaTime = 0.0f;
+            this._timerTime = 0.0f;
+            this._triggerTime = 0.0f;
+            this._tickTime = 0.0f;
+            this._lastTickTime = 0.0f;
+            this._mark = 0.0f;
+        }
+
         public void Play()
         {
             this._intervalTime += this._accTime - this._pauseTime;

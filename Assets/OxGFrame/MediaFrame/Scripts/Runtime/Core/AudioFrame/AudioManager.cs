@@ -10,8 +10,11 @@ namespace OxGFrame.MediaFrame.AudioFrame
 {
     public class AudioManager : MediaManager<AudioBase>
     {
-        [SerializeField] private List<AudioMixer> _listMixer = new List<AudioMixer>();           // 中控混音器
-        private Dictionary<string, float> _dictMixerExpParams = new Dictionary<string, float>(); // 用於紀錄Exposed Parameters參數
+        [Header("Audio Mixer")]
+        [SerializeField, Tooltip("Setup AudioMixer in list")]
+        private List<AudioMixer> _listMixer = new List<AudioMixer>();                            // 中控混音器
+                                                                                                 // 
+        private Dictionary<string, float> _dictMixerExpParams = new Dictionary<string, float>(); // 用於記錄Exposed Parameters參數
 
         private GameObject _goRoot = null;                                                       // 根節點物件
         private Dictionary<string, GameObject> _goNodes = new Dictionary<string, GameObject>();  // 節點物件
@@ -313,7 +316,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             foreach (var audBase in this._listAllCache.ToArray())
             {
-                if (!audBase.IsPlaying()) this._Play(audBase, 0);
+                if (audBase.IsPaused()) this._Play(audBase, 0);
             }
         }
         #endregion
@@ -323,8 +326,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// 統一調用 Stop 的私有封裝
         /// </summary>
         /// <param name="audBase"></param>
-        /// <param name="withDestroy"></param>
-        private void _Stop(AudioBase audBase, bool disableEndEvent = false, bool withDestroy = false)
+        /// <param name="forceDestroy"></param>
+        private void _Stop(AudioBase audBase, bool disableEndEvent = false, bool forceDestroy = false)
         {
             if (audBase == null) return;
 
@@ -332,11 +335,11 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             Debug.Log(string.Format("停止Audio: {0}", audBase?.mediaName));
 
-            // 確保音訊都設置完畢後才進行Destroy, 避免異步處理尚未完成, 就被Destroy掉導致操作到已銷毀物件
+            // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
             if (audBase.isPrepared)
             {
-                if (withDestroy) this.Destroy(audBase, audBase.mediaName);
-                else if (audBase.onStopAndDestroy) this.Destroy(audBase, audBase.mediaName);
+                if (forceDestroy) this.Destroy(audBase);
+                else if (audBase.onStopAndDestroy) this.Destroy(audBase);
             }
         }
 
@@ -344,40 +347,40 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// 停止
         /// </summary>
         /// <param name="audBase"></param>
-        /// <param name="withDestroy"></param>
-        public void Stop(AudioBase audBase, bool disableEndEvent = false, bool withDestroy = false)
+        /// <param name="forceDestroy"></param>
+        public void Stop(AudioBase audBase, bool disableEndEvent = false, bool forceDestroy = false)
         {
-            this._Stop(audBase, disableEndEvent, withDestroy);
+            this._Stop(audBase, disableEndEvent, forceDestroy);
         }
 
         /// <summary>
         /// 停止
         /// </summary>
         /// <param name="assetName"></param>
-        /// <param name="withDestroy"></param>
-        public override void Stop(string assetName, bool disableEndEvent = false, bool withDestroy = false)
+        /// <param name="forceDestroy"></param>
+        public override void Stop(string assetName, bool disableEndEvent = false, bool forceDestroy = false)
         {
             AudioBase[] audBases = this.GetMediaComponents<AudioBase>(assetName);
             if (audBases.Length == 0) return;
 
             foreach (var audBase in audBases)
             {
-                this._Stop(audBase, disableEndEvent, withDestroy);
+                this._Stop(audBase, disableEndEvent, forceDestroy);
             }
         }
 
         /// <summary>
         /// 全部停止
         /// </summary>
-        /// <param name="withDestroy"></param>
+        /// <param name="forceDestroy"></param>
         /// <returns></returns>
-        public override void StopAll(bool disableEndEvent = false, bool withDestroy = false)
+        public override void StopAll(bool disableEndEvent = false, bool forceDestroy = false)
         {
             if (this._listAllCache.Count == 0) return;
 
             foreach (var audBase in this._listAllCache.ToArray())
             {
-                this._Stop(audBase, disableEndEvent, withDestroy);
+                this._Stop(audBase, disableEndEvent, forceDestroy);
             }
         }
         #endregion

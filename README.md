@@ -32,7 +32,9 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 - Downloader (下載器)
 - FileCryptogram (檔案加解密)
 
-【備註】AssetBundle 打包建議使用 [AssetBundle Browser Plus](https://github.com/michael811125/AssetBundles-Browser-Plus) 作為打包策略規劃。
+【備註】AssetBundle 打包建議使用 [AssetBundle Browser Plus v1.9.1 or higher](https://github.com/michael811125/AssetBundles-Browser-Plus) 作為打包策略規劃。
+
+※如有要運行 BundleDemo，找到 OxGFrame/AssetLoader/Example/BundleDemo/ExportBundles.zip 解壓後直接放到 Server，再自行更改 StreamingAssets/burlcfg 中的 IP。
 
 ### CoreFrame
 
@@ -57,8 +59,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 遊戲整合模塊，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商業Logo階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), GamingStage (遊玩階段), FightStage (戰鬥階段) 等, 以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
 
-- GStageManager (Game Stage Manager)，用於繼承實現管理層與註冊階段，管理基類已實現單例 (需建立名為 GSM 的實作 => 右鍵創建並且使用建議的名稱)
-- GStage (Game Stage)，遊戲階段基類，在透過 Update 切換當前階段自定義的狀態流程 (Enum) 時，可透過 StopUpdateStage & RunUpdateStage 方法進行開關設置，即可停止或繼續 Update 的每幀調用 (需建立實作 => 右鍵創建)
+- GameStageManagerBase，用於繼承實現管理層與註冊階段，管理基類已實現單例 (需建立名為 GameStageManager 的實作 => 右鍵創建並且使用建議的名稱)
+- GameStage，遊戲階段基類，在透過 Update 切換當前階段自定義的狀態流程 (Enum) 時，可透過 StopUpdateStage & RunUpdateStage 方法進行開關設置，即可停止或繼續 Update 的每幀調用 (需建立實作 => 右鍵創建)
 
 ※備註 : Right-Click Create/OxGFrame/GSIFrame... (Template cs)
 
@@ -95,18 +97,19 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 ### Utility
 
-各通用組件 => Adapter, Pool, Timer
+各通用組件 => Adapter, Pool, Timer, ButtonPlus
 
 - Utility 
   - Timer => DeltaTimer, RealTimer, DTUpdate, RTUpdate
   - Adapter => UISafeAreaAdapter
   - Pool => NodePool (物件池)
+  - ButtonPlus => 繼承 Unity Button，實現 Long Press 功能 + Transition Scale 功能
 
 ---
 
 ### Unity 版本
 
-建議使用 Unity 2021.3.8f1(LTS) or higher 版本 - [Unity Download](https://unity3d.com/get-unity/download/archive)
+建議使用 Unity 2021.3.5f1(LTS) or higher 版本 - [Unity Download](https://unity3d.com/get-unity/download/archive)
 
 ---
 

@@ -29,6 +29,10 @@ public class UIFrameDemo : MonoBehaviour
 
     private void Update()
     {
+        if (Keyboard.current.numpad0Key.wasReleasedThisFrame)
+        {
+            this.PreloadFirstWorldUI();
+        }
         if (Keyboard.current.numpad1Key.wasReleasedThisFrame)
         {
             this.ShowFirstWorldUI();
@@ -64,6 +68,11 @@ public class UIFrameDemo : MonoBehaviour
 
         // Bundle
         //await UIManager.GetInstance().Show(1, "coreframe/ui/Demo1UI", "Demo1UI", null, "coreframe/ui/DemoLoadingUI", "DemoLoadingUI");
+    }
+
+    public async void PreloadFirstWorldUI()
+    {
+        await UIManager.GetInstance().Preload(UIFrameDemo.WorldDemo1UI);
     }
 }
 

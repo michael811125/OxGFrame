@@ -152,7 +152,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             foreach (var vidBase in this._listAllCache.ToArray())
             {
-                if (!vidBase.IsPlaying()) this._Play(vidBase, 0);
+                if (vidBase.IsPaused()) this._Play(vidBase, 0);
             }
         }
         #endregion
@@ -162,8 +162,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// 統一調用 Stop 的私有封裝
         /// </summary>
         /// <param name="vidBase"></param>
-        /// <param name="withDestroy"></param>
-        private void _Stop(VideoBase vidBase, bool disableEndEvent = false, bool withDestroy = false)
+        /// <param name="forceDestroy"></param>
+        private void _Stop(VideoBase vidBase, bool disableEndEvent = false, bool forceDestroy = false)
         {
             if (vidBase == null) return;
 
@@ -174,8 +174,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
             // 確保音訊都設置完畢後才進行Destroy, 避免異步處理尚未完成, 就被Destroy掉導致操作到已銷毀物件
             if (vidBase.isPrepared)
             {
-                if (withDestroy) this.Destroy(vidBase, vidBase.mediaName);
-                else if (vidBase.onStopAndDestroy) this.Destroy(vidBase, vidBase.mediaName);
+                if (forceDestroy) this.Destroy(vidBase);
+                else if (vidBase.onStopAndDestroy) this.Destroy(vidBase);
             }
         }
 
@@ -183,40 +183,40 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// 停止
         /// </summary>
         /// <param name="vidBase"></param>
-        /// <param name="withDestroy"></param>
-        public void Stop(VideoBase vidBase, bool disableEndEvent = false, bool withDestroy = false)
+        /// <param name="forceDestroy"></param>
+        public void Stop(VideoBase vidBase, bool disableEndEvent = false, bool forceDestroy = false)
         {
-            this._Stop(vidBase, disableEndEvent, withDestroy);
+            this._Stop(vidBase, disableEndEvent, forceDestroy);
         }
 
         /// <summary>
         /// 停止
         /// </summary>
         /// <param name="assetName"></param>
-        /// <param name="withDestroy"></param>
-        public override void Stop(string assetName, bool disableEndEvent = false, bool withDestroy = false)
+        /// <param name="forceDestroy"></param>
+        public override void Stop(string assetName, bool disableEndEvent = false, bool forceDestroy = false)
         {
             VideoBase[] vidBases = this.GetMediaComponents<VideoBase>(assetName);
             if (vidBases.Length == 0) return;
 
             foreach (var vidBase in vidBases)
             {
-                this._Stop(vidBase, disableEndEvent, withDestroy);
+                this._Stop(vidBase, disableEndEvent, forceDestroy);
             }
         }
 
         /// <summary>
         /// 全部停止
         /// </summary>
-        /// <param name="withDestroy"></param>
+        /// <param name="forceDestroy"></param>
         /// <returns></returns>
-        public override void StopAll(bool disableEndEvent = false, bool withDestroy = false)
+        public override void StopAll(bool disableEndEvent = false, bool forceDestroy = false)
         {
             if (this._listAllCache.Count == 0) return;
 
             foreach (var vidBase in this._listAllCache.ToArray())
             {
-                this._Stop(vidBase, disableEndEvent, withDestroy);
+                this._Stop(vidBase, disableEndEvent, forceDestroy);
             }
         }
         #endregion

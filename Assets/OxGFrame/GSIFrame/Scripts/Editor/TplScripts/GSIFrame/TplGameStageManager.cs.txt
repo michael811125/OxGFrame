@@ -1,0 +1,73 @@
+﻿using OxGFrame.GSIFrame;
+
+public class #SCRIPTNAME# : GameStageManagerBase<#SCRIPTNAME#>
+{
+    /*
+    // >>> EXAMPLE <<<
+
+    public static byte none = 0;
+    public static byte startupStage = 1;
+    public static byte logoStage = 2;
+    public static byte patchStage = 3;
+    public static byte loginStage = 4;
+    public static byte enterStage = 5;
+
+    // >>> EXAMPLE <<<
+    */
+
+    public #SCRIPTNAME#()
+    {
+        /*
+        // >>> EXAMPLE <<<
+
+        GameStageBase gameStage;
+
+        // None
+        gameStage = new NoneStageExample(#SCRIPTNAME#.none);
+        this.AddGameStage(#SCRIPTNAME#.none, gameStage);
+
+        // 1. Game Startup Stage
+        gameStage = new StartupStageExample(#SCRIPTNAME#.startupStage);
+        this.AddGameStage(#SCRIPTNAME#.startupStage, gameStage);
+
+        // 2. Game Logo Show Stage
+        gameStage = new LogoStageExample(#SCRIPTNAME#.logoStage);
+        this.AddGameStage(#SCRIPTNAME#.logoStage, gameStage);
+
+        // 3. Game Patch Stage (The App in this stage is Hot-Update stage. The H5 doesn't require Hot-Update, so you can to do preload in this Stage.)
+        gameStage = new PatchStageExample(#SCRIPTNAME#.patchStage);
+        this.AddGameStage(#SCRIPTNAME#.patchStage, gameStage);
+
+        // 4. Game Login Stage
+        gameStage = new LoginStageExample(#SCRIPTNAME#.loginStage);
+        this.AddGameStage(#SCRIPTNAME#.loginStage, gameStage);
+
+        // 5. Game Enter Stage
+        gameStage = new EnterStageExample(#SCRIPTNAME#.enterStage);
+        this.AddGameStage(#SCRIPTNAME#.enterStage, gameStage);
+
+        // ※Remark: Custom create your own stage of game
+
+        // >>> EXAMPLE <<<
+        */
+    }
+
+    /// <summary>
+    /// Call by Main MonoBehaviour Start (Such as CoreSystem)
+    /// </summary>
+    public override void OnStart()
+    {
+        /* Start first game stage in here. (like this ↓)  */
+        //this.ChangeGameStage(#SCRIPTNAME#.startupStage);
+    }
+
+    /// <summary>
+    /// Call by Main MonoBehaviour Update (Such as CoreSystem)
+    /// </summary>
+    /// <param name="dt"></param>
+    public override void OnUpdate(float dt = 0.0f)
+    {
+        base.OnUpdate(dt); // Must be called
+    }
+}
+

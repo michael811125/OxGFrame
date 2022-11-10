@@ -1,7 +1,7 @@
 ﻿using OxGFrame.GSIFrame;
 using Cysharp.Threading.Tasks;
 
-public class NoneStageExample : GStage
+public class NoneStageExample : GameStageBase
 {
     public NoneStageExample(byte gstId) : base(gstId)
     {

@@ -42,7 +42,7 @@ namespace OxGFrame.CoreFrame.EPFrame
         }
 
         /// <summary>
-        /// 載入GameObject (Resource)
+        /// 載入 GameObject (Resource)
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
@@ -62,7 +62,7 @@ namespace OxGFrame.CoreFrame.EPFrame
         }
 
         /// <summary>
-        /// 載入GameObject (AssetBundle)
+        /// 載入 GameObject (AssetBundle)
         /// </summary>
         /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
@@ -125,7 +125,7 @@ namespace OxGFrame.CoreFrame.EPFrame
             if (assetNames.Length > 0)
             {
                 this.reqSize = 0;
-                this.totalSize = await CacheResource.GetInstance().GetAssetsLength(assetNames);
+                this.totalSize = CacheResource.GetInstance().GetAssetsLength(assetNames);
 
                 for (int i = 0; i < assetNames.Length; i++)
                 {
@@ -173,7 +173,7 @@ namespace OxGFrame.CoreFrame.EPFrame
                     bundleNames.Add(bundleAssetNames[row, 0]);
                 }
                 this.reqSize = 0;
-                this.totalSize = await CacheBundle.GetInstance().GetAssetsLength(bundleNames.ToArray());
+                this.totalSize = CacheBundle.GetInstance().GetAssetsLength(bundleNames.ToArray());
 
                 for (int row = 0; row < bundleAssetNames.GetLength(0); row++)
                 {
@@ -208,7 +208,7 @@ namespace OxGFrame.CoreFrame.EPFrame
 
             GameObject instGo = Instantiate(go, (parent == null) ? this._goRoot.transform : parent);
 
-            // 激活檢查, 如果主體Active為false必須打開
+            // 激活檢查, 如果主體 Active 為 false 必須打開
             bool active;
             if (!instGo.activeSelf)
             {
@@ -226,9 +226,9 @@ namespace OxGFrame.CoreFrame.EPFrame
             entityBase.SetNames(string.Empty, assetName);
             entityBase.BeginInit();
             entityBase.InitFirst();
-            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體Active為true才調用Display => OnShow
+            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
 
-            // 最後還原本身預製體的Active
+            // 最後還原本身預製體的 Active
             instGo.SetActive(active);
 
             return entityBase;
@@ -241,7 +241,7 @@ namespace OxGFrame.CoreFrame.EPFrame
 
             GameObject instGo = Instantiate(go, (parent == null) ? this._goRoot.transform : parent);
 
-            // 激活檢查, 如果主體Active為false必須打開
+            // 激活檢查, 如果主體 Active 為 false 必須打開
             bool active;
             if (!instGo.activeSelf)
             {
@@ -261,9 +261,9 @@ namespace OxGFrame.CoreFrame.EPFrame
             entityBase.SetNames(string.Empty, assetName);
             entityBase.BeginInit();
             entityBase.InitFirst();
-            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體Active為true才調用Display => OnShow
+            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
 
-            // 最後還原本身預製體的Active
+            // 最後還原本身預製體的 Active
             instGo.SetActive(active);
 
             return entityBase;
@@ -276,7 +276,7 @@ namespace OxGFrame.CoreFrame.EPFrame
 
             GameObject instGo = Instantiate(go, (parent == null) ? this._goRoot.transform : parent);
 
-            // 激活檢查, 如果主體Active為false必須打開
+            // 激活檢查, 如果主體 Active 為 false 必須打開
             bool active;
             if (!instGo.activeSelf)
             {
@@ -294,9 +294,9 @@ namespace OxGFrame.CoreFrame.EPFrame
             entityBase.SetNames(bundleName, assetName);
             entityBase.BeginInit();
             entityBase.InitFirst();
-            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體Active為true才調用Display => OnShow
+            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
 
-            // 最後還原本身預製體的Active
+            // 最後還原本身預製體的 Active
             instGo.SetActive(active);
 
             return entityBase;
@@ -309,7 +309,7 @@ namespace OxGFrame.CoreFrame.EPFrame
 
             GameObject instGo = Instantiate(go, (parent == null) ? this._goRoot.transform : parent);
 
-            // 激活檢查, 如果主體Active為false必須打開
+            // 激活檢查, 如果主體 Active 為 false 必須打開
             bool active;
             if (!instGo.activeSelf)
             {
@@ -329,9 +329,9 @@ namespace OxGFrame.CoreFrame.EPFrame
             entityBase.SetNames(bundleName, assetName);
             entityBase.BeginInit();
             entityBase.InitFirst();
-            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體Active為true才調用Display => OnShow
+            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
 
-            // 最後還原本身預製體的Active
+            // 最後還原本身預製體的 Active
             instGo.SetActive(active);
 
             return entityBase;

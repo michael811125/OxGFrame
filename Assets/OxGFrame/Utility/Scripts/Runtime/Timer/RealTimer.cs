@@ -73,9 +73,20 @@ namespace OxGFrame.Utility.Timer
         public void Pause()
         {
             if (!this._playing) return;
-
             this._pauseTime = this.GetRealTime();
             this._playing = false;
+        }
+
+        public void Stop()
+        {
+            this._playing = false;
+            this._intervalTime = 0.0f;
+            this._pauseTime = 0.0f;
+            this._timerTime = 0.0f;
+            this._triggerTime = 0.0f;
+            this._tickTime = 0.0f;
+            this._lastTickTime = 0.0f;
+            this._mark = 0.0f;
         }
 
         public void Play()

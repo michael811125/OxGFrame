@@ -15,14 +15,6 @@ namespace OxGFrame.AssetLoader.KeyChacer
             return _instance;
         }
 
-        public KeyResource() : base() { }
-
-        /// <summary>
-        /// 【KeyResource】資源預加載
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
         public override async UniTask Preload(int id, string assetName, Progression progression = null)
         {
             if (string.IsNullOrEmpty(assetName)) return;
@@ -30,7 +22,7 @@ namespace OxGFrame.AssetLoader.KeyChacer
             await CacheResource.GetInstance().Preload(assetName, progression);
             if (CacheResource.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
 
-            Debug.Log("【預加載】 => 當前<< KeyResource >>快取數量 : " + this.Count);
+            Debug.Log($"【Preload】 => Current << KeyResource >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         public override async UniTask Preload(int id, string[] assetNames, Progression progression = null)
@@ -44,11 +36,11 @@ namespace OxGFrame.AssetLoader.KeyChacer
                 if (CacheResource.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
             }
 
-            Debug.Log("【預加載】 => 當前<< KeyResource >>快取數量 : " + this.Count);
+            Debug.Log($"【Preload】 => Current << KeyResource >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         /// <summary>
-        /// [計數管理] 【KeyResource】資源加載
+        /// 【KeyResource】資源加載
         /// </summary>
         /// <param name="id"></param>
         /// <param name="assetName"></param>
@@ -63,16 +55,19 @@ namespace OxGFrame.AssetLoader.KeyChacer
             {
                 this.AddIntoCache(id, assetName);
                 var keyGroup = this.GetFromCache(id, assetName);
-                if (keyGroup != null) keyGroup.AddRef();
-            }
+                if (keyGroup != null)
+                {
+                    keyGroup.AddRef();
 
-            Debug.Log("【載入】 => 當前<< KeyResource >>快取數量 : " + this.Count);
+                    Debug.Log($"【Load】 => Current << KeyResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                }
+            }
 
             return asset;
         }
 
         /// <summary>
-        /// [計數管理] 【KeyResource】資源加載並且Clone, 指定Parent, Scale
+        /// 【KeyResource】資源加載並且 Clone
         /// </summary>
         /// <param name="id"></param>
         /// <param name="assetName"></param>
@@ -89,19 +84,22 @@ namespace OxGFrame.AssetLoader.KeyChacer
             {
                 this.AddIntoCache(id, assetName);
                 var keyGroup = this.GetFromCache(id, assetName);
-                if (keyGroup != null) keyGroup.AddRef();
+                if (keyGroup != null)
+                {
+                    keyGroup.AddRef();
+
+                    Debug.Log($"【Load And Clone】 => Current << KeyResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                }
                 instGo = GameObject.Instantiate(assetGo, parent);
                 Vector3 localScale = (scale == null) ? instGo.transform.localScale : (Vector3)scale;
                 instGo.transform.localScale = localScale;
             }
 
-            Debug.Log("【載入 + Clone】 => 當前<< KeyResource >>快取數量 : " + this.Count);
-
             return instGo;
         }
 
         /// <summary>
-        /// [計數管理] 【KeyResource】資源加載並且Clone, 指定Position, Quternion, Parent, Scale
+        /// 【KeyResource】資源加載並且 Clone
         /// </summary>
         /// <param name="id"></param>
         /// <param name="assetName"></param>
@@ -120,7 +118,12 @@ namespace OxGFrame.AssetLoader.KeyChacer
             {
                 this.AddIntoCache(id, assetName);
                 var keyGroup = this.GetFromCache(id, assetName);
-                if (keyGroup != null) keyGroup.AddRef();
+                if (keyGroup != null)
+                {
+                    keyGroup.AddRef();
+
+                    Debug.Log($"【Load And Clone】 => Current << KeyResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                }
                 instGo = GameObject.Instantiate(assetGo, parent);
                 instGo.transform.localPosition = position;
                 instGo.transform.localRotation = rotation;
@@ -128,16 +131,9 @@ namespace OxGFrame.AssetLoader.KeyChacer
                 instGo.transform.localScale = localScale;
             }
 
-            Debug.Log("【載入 + Clone】 => 當前<< KeyResource >>快取數量 : " + this.Count);
-
             return instGo;
         }
 
-        /// <summary>
-        /// [計數管理] 【釋放】索引Key快取, 並且釋放資源快取
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="assetName"></param>
         public override void Unload(int id, string assetName)
         {
             var keyGroup = this.GetFromCache(id, assetName);
@@ -145,17 +141,20 @@ namespace OxGFrame.AssetLoader.KeyChacer
             {
                 keyGroup.DelRef();
 
+                Debug.Log($"【Unload】 => Current << KeyResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+
                 // 使用引用計數釋放
-                if (keyGroup.refCount <= 0) this.DelFromCache(id, keyGroup.name);
+                if (keyGroup.refCount <= 0)
+                {
+                    this.DelFromCache(id, keyGroup.name);
+
+                    Debug.Log($"【Unload Completes】 => Current << KeyResource >> Cache Count: {this.Count}, GroupId: {id}");
+                }
+
                 CacheResource.GetInstance().Unload(keyGroup.name);
             }
-
-            Debug.Log("【單個釋放】 => 當前<< KeyResource >>快取數量 : " + this.Count);
         }
 
-        /// <summary>
-        /// [依照計數次數釋放] 【釋放】全部索引Key快取, 並且釋放資源快取
-        /// </summary>
         public override void Release(int id)
         {
             if (this._keyCacher.Count > 0)
@@ -164,17 +163,10 @@ namespace OxGFrame.AssetLoader.KeyChacer
                 {
                     if (keyGroup.id != id) continue;
 
-                    if (keyGroup.refCount <= 0)
+                    // 依照計數次數釋放
+                    for (int i = keyGroup.refCount; i > 0; i--)
                     {
                         CacheResource.GetInstance().Unload(keyGroup.name);
-                    }
-                    else
-                    {
-                        // 依照計數次數釋放
-                        for (int i = 0; i < keyGroup.refCount; i++)
-                        {
-                            CacheResource.GetInstance().Unload(keyGroup.name);
-                        }
                     }
 
                     // 完成後, 直接刪除快取
@@ -182,7 +174,7 @@ namespace OxGFrame.AssetLoader.KeyChacer
                 }
             }
 
-            Debug.Log("【全部釋放】 => 當前<< KeyResource >>快取數量 : " + this.Count);
+            Debug.Log($"【Release All】 => Current << KeyResource >> Cache Count: {this.Count}");
         }
     }
 }

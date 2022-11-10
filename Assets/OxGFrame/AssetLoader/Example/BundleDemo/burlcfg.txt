@@ -1,0 +1,7 @@
+#bundle_ip = 資源伺服器IP
+#google_store = GooglePlay主程式商店Link
+#apple_store = Apple主程式商店Link
+
+bundle_ip 192.168.1.141
+google_store market://details?id=YOUR_ID
+apple_store itms-apps://itunes.apple.com/app/idYOUR_ID

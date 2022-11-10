@@ -133,7 +133,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
         }
 
         /// <summary>
-        /// 返回取得映射的目標RenderTexture (Only RenderTexture Mode)
+        /// 返回取得映射的目標 RenderTexture (Only RenderTexture Mode)
         /// </summary>
         /// <returns></returns>
         public RenderTexture GetTargetRenderTexture()
@@ -141,16 +141,26 @@ namespace OxGFrame.MediaFrame.VideoFrame
             return this._targetRt;
         }
 
+        /// <summary>
+        /// 使用 RenderTexture.GetTemporary (避免內存膨脹) 取得 RenderTexture
+        /// </summary>
         private void _SetTargetRenderTexture()
         {
-            RenderTexture tempRt = new RenderTexture(this._renderTextureSize.x, this._renderTextureSize.y, 24, RenderTextureFormat.ARGB32);
-            tempRt.Create();
-            tempRt.name = "TempRt";
+            RenderTexture tempRt = RenderTexture.GetTemporary(this._renderTextureSize.x, this._renderTextureSize.y, 24, RenderTextureFormat.ARGB32);
 
             this._videoPlayer.renderMode = VideoRenderMode.RenderTexture;
             this._videoPlayer.targetTexture = tempRt;
 
             this._targetRt = tempRt;
+        }
+
+        /// <summary>
+        /// 使用 RenderTexture.ReleaseTemporary (避免內存膨脹) 釋放 RenderTexture
+        /// </summary>
+        private void _ReleaseTargetRenderTexture()
+        {
+            RenderTexture.ReleaseTemporary(this._targetRt);
+            this._targetRt = null;
         }
 
         private void _SetTargetCamera()
@@ -225,6 +235,9 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this.ResetLength();
             this.ResetLoops();
 
+            // RenderTexture 需要額外釋放, 避免內存膨脹
+            if (this._targetRt != null) this._ReleaseTargetRenderTexture();
+
             this._endEvent?.Invoke();
             this._endEvent = null;
 
@@ -273,6 +286,9 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         public override void OnRelease()
         {
+            // RenderTexture 需要額外釋放, 避免內存膨脹
+            if (this._targetRt != null) this._ReleaseTargetRenderTexture();
+
             this._endEvent?.Invoke();
 
             base.OnRelease();
@@ -280,7 +296,6 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this.videoClip = null;
             this.fullPathName = null;
             this.urlSet = null;
-            this._targetRt = null;
             this._targetCamera = null;
         }
     }

@@ -1,7 +1,7 @@
 ﻿using OxGFrame.GSIFrame;
 using Cysharp.Threading.Tasks;
 
-public class LoginStageExample : GStage
+public class LoginStageExample : GameStageBase
 {
     public LoginStageExample(byte gstId) : base(gstId)
     {

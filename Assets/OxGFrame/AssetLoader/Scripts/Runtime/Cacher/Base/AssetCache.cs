@@ -7,6 +7,8 @@ namespace OxGFrame.AssetLoader.Cacher
     {
         protected Dictionary<string, T> _cacher;
 
+        protected HashSet<string> _hashLoadingFlags;
+
         public float reqSize { get; protected set; }
 
         public float totalSize { get; protected set; }
@@ -25,6 +27,29 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public abstract void Release();
 
-        public abstract UniTask<int> GetAssetsLength(params string[] names);
+        public AssetCache()
+        {
+            this._cacher = new Dictionary<string, T>();
+            this._hashLoadingFlags = new HashSet<string>();
+        }
+
+        public virtual bool HasInLoadingFlags(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+            return this._hashLoadingFlags.Contains(name);
+        }
+
+        public virtual int GetAssetsLength(params string[] names)
+        {
+            return names.Length;
+        }
+
+        ~AssetCache()
+        {
+            this._cacher.Clear();
+            this._cacher = null;
+            this._hashLoadingFlags.Clear();
+            this._hashLoadingFlags = null;
+        }
     }
 }

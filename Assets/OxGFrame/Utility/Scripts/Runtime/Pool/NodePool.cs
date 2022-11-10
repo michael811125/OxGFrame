@@ -7,13 +7,13 @@ namespace OxGFrame.Utility
     [AddComponentMenu("OxGFrame/Utility/Pool/NodePool")]
     public class NodePool : MonoBehaviour
     {
-        [SerializeField, Tooltip("物件池要生成的物件")]
+        [SerializeField, Tooltip("Pool object")]
         public GameObject go = null;
-        [SerializeField, Tooltip("物件池初始大小")]
+        [SerializeField, Tooltip("Pool initial size")]
         public int initSize = 0;
-        [SerializeField, Tooltip("物件池不夠時, 是否自動新增")]
+        [SerializeField, Tooltip("if checked when pool not enough will auto create")]
         public bool autoPut = false;
-        [SerializeField, ConditionalField(nameof(autoPut)), Tooltip("每次自動新增的數量")]
+        [SerializeField, ConditionalField(nameof(autoPut)), Tooltip("Each increment count when auto create")]
         public int autoPutSize = 0;
         private Queue<GameObject> _pool;
 

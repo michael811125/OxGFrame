@@ -58,11 +58,11 @@ namespace OxGFrame.NetFrame
         private bool _isCloseForce = false;                  // 是否強制斷線
 
         protected RealTimer _hearBeatTicker = null;          // 心跳檢測計循環計時器
-        private float _heartBeatTick = 60f;                  // 心跳檢測時間, 預設 = 60秒
+        private float _heartBeatTick = 10f;                  // 心跳檢測時間, 預設 = 10秒
         protected Action _heartBeatAction = null;            // 心跳檢測 Callback
 
         protected RealTimer _outReceiveTicker = null;        // 超時檢測循環計時器
-        private float _outReceiveTick = 10f;                 // 超時檢測時間, 預設 = 10秒
+        private float _outReceiveTick = 60f;                 // 超時檢測時間, 預設 = 60秒
         protected Action _outReceiveAction = null;           // 超時檢測 Callback
 
         protected RealTimer _reconnectTicker = null;         // 斷線重連循環計時器
@@ -198,7 +198,6 @@ namespace OxGFrame.NetFrame
         private void _OnMessage(byte[] data)
         {
             this._ResetOutReceiveTicker();
-            this._ResetHeartBeatTicker();
 
             this._responseHandler?.Invoke(data);
         }
@@ -348,7 +347,7 @@ namespace OxGFrame.NetFrame
             if (this._reconnectTicker == null) this._reconnectTicker = new RealTimer();
 
             if (this._netOption != null) this._autoReconnectCount = this._netOption.autoReconnectCount;
-            this._reconnectTicker.Pause();
+            this._reconnectTicker.Stop();
         }
 
         private void _StartAutoReconnect()
@@ -387,7 +386,7 @@ namespace OxGFrame.NetFrame
             {
                 this._netStatus = NetStatus.DISCONNECTED;
                 this._NetStatusHandler();
-                this._reconnectTicker.Pause();
+                this._reconnectTicker.Stop();
             }
         }
         #endregion
@@ -397,9 +396,9 @@ namespace OxGFrame.NetFrame
         /// </summary>
         private void _StopTicker()
         {
-            if (this._hearBeatTicker != null) this._hearBeatTicker.Pause();
-            if (this._outReceiveTicker != null) this._outReceiveTicker.Pause();
-            if (this._reconnectTicker != null) this._reconnectTicker.Pause();
+            if (this._hearBeatTicker != null) this._hearBeatTicker.Stop();
+            if (this._outReceiveTicker != null) this._outReceiveTicker.Stop();
+            if (this._reconnectTicker != null) this._reconnectTicker.Stop();
         }
 
         ~NetNode()

@@ -1,4 +1,4 @@
-using OxGFrame.EventCenter;
+﻿using OxGFrame.EventCenter;
 
 public class #SCRIPTNAME# : EventCenterBase<#SCRIPTNAME#>
 {

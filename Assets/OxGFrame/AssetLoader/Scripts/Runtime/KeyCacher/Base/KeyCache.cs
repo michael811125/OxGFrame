@@ -76,12 +76,35 @@ namespace OxGFrame.AssetLoader.KeyCacher
             }
         }
 
+        /// <summary>
+        /// 資源預加載
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public abstract UniTask Preload(int id, string name, Progression progression);
 
+        /// <summary>
+        /// 資源預加載
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="names"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public abstract UniTask Preload(int id, string[] names, Progression progression);
 
+        /// <summary>
+        /// 【釋放】索引 Key 快取, 並且釋放資源快取
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
         public abstract void Unload(int id, string name);
 
+        /// <summary>
+        /// 【釋放】全部索引 Key 快取, 並且釋放資源快取 (依照計數次數釋放)
+        /// </summary>
+        /// <param name="id"></param>
         public abstract void Release(int id);
     }
 }

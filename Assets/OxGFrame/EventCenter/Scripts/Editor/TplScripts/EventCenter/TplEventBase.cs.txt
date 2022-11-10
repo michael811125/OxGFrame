@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using OxGFrame.EventCenter;
 
 public class #SCRIPTNAME# : EventBase
