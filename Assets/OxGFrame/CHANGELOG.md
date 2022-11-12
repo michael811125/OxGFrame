@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [1.6.2] - 2022-11-12
+- Fixed AudioBase if checked AutoEndToStop will hide audio length field issue.
+
 ## [1.6.1] - 2022-11-10
 - Fixed Downloader if gets rdlMd5 from PlayerPrefs is empty will download file directly, but actually file is exist leads to file index write error issue.
 

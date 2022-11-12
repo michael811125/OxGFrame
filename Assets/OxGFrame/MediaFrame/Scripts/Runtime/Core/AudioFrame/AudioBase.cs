@@ -25,7 +25,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         [SerializeField, ConditionalField(nameof(sourceType), false, SourceType.Url)]
         public UrlSet urlSet = new UrlSet();
 
-        [HideInInspector, Tooltip("Manual to set audio length or press preload button to set [Unity has a bug in WebGL, Get an audio via UnityWebRequest cannot return length value]"), ConditionalField(nameof(_autoEndToStop))]
+        [HideInInspector, Tooltip("Manual to set audio length or press preload button to set [Unity has a bug in WebGL, Get an audio via UnityWebRequest cannot return length value]")]
         public float audioLength = 0;
 
         [SerializeField]

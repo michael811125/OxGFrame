@@ -77,7 +77,7 @@ namespace OxGFrame.MediaFrame
         public bool onStopAndDestroy = true;                                               // 是否停止時銷毀
         [Tooltip("when destroy will unload asset (not recommend sound type is SoundEffect)")]
         public bool onDestroyAndUnload = false;
-        [SerializeField, Tooltip("When finished playing will auto to set stop (loop is invalid)")]
+        [SerializeField, Tooltip("When finished playing will auto to set stop (loops = -1 is invalid)")]
         protected bool _autoEndToStop = true;                                              // 是否結束時自動停止
         protected bool _isPaused = false;                                                  // 是否暫停
         protected bool _isInit = false;                                                    // 初始標記 (表示確認初始完畢)
