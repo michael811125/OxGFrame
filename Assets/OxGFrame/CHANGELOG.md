@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [1.7.0] - 2022-11-13
+- Added offline option for bundle in "BundleSetup" to set it. if checked only request config and bundle from StreamingAssets (Built-in).
+- Added "Offline_Mode.zip" and "Patch_Mode.zip" in OxGFrame/AssetLoader/Example/BundleDemo for BundleDemo to run offline or patch.
+- Added prefab template for MediaFrame (right-click Create/OxGFrame/MediaFrame.../Audio or /Video to create prefab template).
+- Modified access modifier of parameters of AudioBase and VideoBase.
+- Modified audio tracks volume of "MasterMixer" provided by AudioManager (default audio tracks = BGM, General, Fight, Voice, Atmosphere).
+
 ## [1.6.2] - 2022-11-12
 - Fixed AudioBase if checked AutoEndToStop will hide audio length field issue.
 

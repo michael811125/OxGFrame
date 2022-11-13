@@ -9,6 +9,10 @@ namespace OxGFrame.AssetLoader.Bundle
         [Tooltip("Enable AssetDatabase Mode (accelerate develop, won't load ab procedure)")]
         public bool assetDatabaseMode = true;
 
+        [Header("Patch Options")]
+        [Tooltip("Offline mode without update. only request config and bundle from StreamingAssets")]
+        public bool offlineMode = false;
+
         [Header("Load Options")]
         [Tooltip("Enable Stream Mode")]
         public bool bundleStreamMode = true;
@@ -47,6 +51,10 @@ namespace OxGFrame.AssetLoader.Bundle
 #else
             BundleConfig.assetDatabaseMode = false;
 #endif
+
+            // Patch Options
+            BundleConfig.offlineMode = this.offlineMode;
+
             // Load Options
             BundleConfig.bundleStreamMode = this.bundleStreamMode;
             BundleConfig.readMd5BundleName = this.readMd5BundleName;

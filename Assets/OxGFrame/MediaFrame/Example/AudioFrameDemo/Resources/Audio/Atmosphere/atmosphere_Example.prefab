@@ -141,11 +141,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd882a3590e84f74896548320f1701d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ignoreTimeScale: 1
+  ignoreTimeScale: 1
   loops: -1
   onStopAndDestroy: 1
   onDestroyAndUnload: 1
-  _autoEndToStop: 0
+  autoEndToStop: 1
   audioType:
     soundType: 0
     priority: 128
@@ -157,7 +157,7 @@ MonoBehaviour:
     getUrlPathFromCfg: 1
     urlCfg:
       requestType: 0
-      file: {fileID: 4900000, guid: 3387bd45985d98c40bb2c25317be0abb, type: 3}
+      file: {fileID: 4900000, guid: be06055d97fa03f428adb763efc06836, type: 3}
       fullPathName: 
     url: Atmosphere/raining.mp3
   audioLength: 36.310204

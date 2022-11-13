@@ -11,28 +11,28 @@ namespace OxGFrame.MediaFrame.VideoFrame
     public class VideoBase : MediaBase
     {
         protected VideoPlayer _videoPlayer = null;
-        [SerializeField, Tooltip("When video load finished will start.")]
+
+        [Tooltip("Wait for first frame to be ready before starting playback.")]
         public bool waitForFirstFrame = true;
-        [SerializeField, Range(0, 10)]
+        [Range(0, 10)]
         public float playbackSpeed = 1f;
-        [SerializeField]
         public SourceType sourceType = SourceType.Video;
         // SourceType => VideoClip
-        [SerializeField, Tooltip("Drag video clip. This is not supports [WebGL]"), ConditionalField(nameof(sourceType), false, SourceType.Video)]
+        [Tooltip("Drag video clip. This is not supports [WebGL]"), ConditionalField(nameof(sourceType), false, SourceType.Video)]
         public VideoClip videoClip = null;
         // SourceType => StreamingAssets
-        [SerializeField, Tooltip("Default path is [StreamingAssets]. Just set that inside path and file name, Don't forget file name must include extension, ex: Video/example.mp4"), ConditionalField(nameof(sourceType), false, SourceType.Streaming)]
+        [Tooltip("Default path is [StreamingAssets]. Just set that inside path and file name, Don't forget file name must include extension, ex: Video/example.mp4"), ConditionalField(nameof(sourceType), false, SourceType.Streaming)]
         public string fullPathName = "";
         // SourceType => Url
-        [SerializeField, ConditionalField(nameof(sourceType), false, SourceType.Url)]
+        [ConditionalField(nameof(sourceType), false, SourceType.Url)]
         public UrlSet urlSet = new UrlSet();
 
-        [SerializeField, Tooltip("Can via [VideoManager] to get ")]
-        protected RenderMode _renderMode = RenderMode.RenderTexture;
+        [Tooltip("Can via [VideoManager] to get ")]
+        public RenderMode renderMode = RenderMode.RenderTexture;
         protected RenderTexture _targetRt = null;
-        [SerializeField, ConditionalField(nameof(_renderMode), false, RenderMode.RenderTexture), Tooltip("Size of RenderTexture")]
+        [SerializeField, ConditionalField(nameof(renderMode), false, RenderMode.RenderTexture), Tooltip("Size of RenderTexture")]
         protected Vector2Int _renderTextureSize = new Vector2Int(2048, 2048);
-        [SerializeField, ConditionalField(nameof(_renderMode), false, RenderMode.Camera)]
+        [SerializeField, ConditionalField(nameof(renderMode), false, RenderMode.Camera)]
         protected TargetCamera _targetCamera = new TargetCamera();
         [SerializeField]
         protected VideoAspectRatio _aspectRatio = VideoAspectRatio.FitHorizontally;
@@ -115,7 +115,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this._videoPlayer.playbackSpeed = this.playbackSpeed;
             this._videoPlayer.aspectRatio = this._aspectRatio;
 
-            switch (this._renderMode)
+            switch (this.renderMode)
             {
                 case RenderMode.RenderTexture:
                     this._SetTargetRenderTexture();
@@ -201,7 +201,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                         if (this._loops <= 0)
                         {
                             this._currentLength = 0;
-                            if (this._autoEndToStop) this.StopSelf();
+                            if (this.autoEndToStop) this.StopSelf();
                         }
                         else this._videoPlayer.Play();
                     }

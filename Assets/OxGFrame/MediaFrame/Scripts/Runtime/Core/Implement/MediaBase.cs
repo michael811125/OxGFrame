@@ -13,11 +13,11 @@ namespace OxGFrame.MediaFrame
         [Serializable]
         public class UrlSet
         {
-            [SerializeField, Tooltip("Allow read URL_PATH from UrlCfg .txt file")]
+            [Tooltip("Allow read URL_PATH from UrlCfg .txt file")]
             public bool getUrlPathFromCfg = true;
-            [SerializeField, Tooltip("Get URL_PATH from UrlCfg .txt file"), ConditionalField(nameof(getUrlPathFromCfg))]
+            [Tooltip("Get URL_PATH from UrlCfg .txt file"), ConditionalField(nameof(getUrlPathFromCfg))]
             public UrlCfg urlCfg = new UrlCfg();
-            [SerializeField, Tooltip("If doesn't use [getUrlPathFromCfg] need to type Entire URL, ex: http://localhost/Audio/example.extension")]
+            [Tooltip("If doesn't use [getUrlPathFromCfg] need to type Entire URL, ex: http://localhost/Audio/example.extension")]
             public string url = "";
 
             ~UrlSet()
@@ -36,11 +36,10 @@ namespace OxGFrame.MediaFrame
                 StreamingAssets
             }
 
-            [SerializeField]
             public RequestType requestType = RequestType.Assign;
-            [SerializeField, Tooltip("Get URL_PATH from UrlCfg .txt file (Assign a file, This is not supports [WebGL])"), ConditionalField(nameof(requestType), false, RequestType.Assign)]
+            [Tooltip("Get URL_PATH from UrlCfg .txt file (Assign a file, This is not supports [WebGL])"), ConditionalField(nameof(requestType), false, RequestType.Assign)]
             public TextAsset file = null;
-            [SerializeField, Tooltip("Get URL_PATH from UrlCfg .txt file (StreamingAssets Request)"), ConditionalField(nameof(requestType), false, RequestType.StreamingAssets)]
+            [Tooltip("Get URL_PATH from UrlCfg .txt file (StreamingAssets Request)"), ConditionalField(nameof(requestType), false, RequestType.StreamingAssets)]
             public string fullPathName = string.Empty;
 
             public async UniTask<string> GetFileText()
@@ -68,8 +67,9 @@ namespace OxGFrame.MediaFrame
         [HideInInspector] public string mediaName { get; protected set; } = string.Empty;  // 影音名稱
         [HideInInspector] public string bundleName { get; protected set; } = string.Empty; // BundleName
         [HideInInspector] public string assetName { get; protected set; } = string.Empty;  // (Bundle) AssetName = (Resouce) PathName
-        [SerializeField, Tooltip("Not affected by TimeScale")]
-        protected bool _ignoreTimeScale = true;                                            // 不受TimeScale影響
+
+        [Tooltip("Not affected by TimeScale")]
+        public bool ignoreTimeScale = true;                                                // 不受TimeScale影響
         [Tooltip("Repeat times 0 (equal to 1). But -1 = loop (Infinitely)")]
         public int loops = 0;                                                              // 循環次數
         protected int _loops = 0;                                                          // 當前循環次數
@@ -77,8 +77,9 @@ namespace OxGFrame.MediaFrame
         public bool onStopAndDestroy = true;                                               // 是否停止時銷毀
         [Tooltip("when destroy will unload asset (not recommend sound type is SoundEffect)")]
         public bool onDestroyAndUnload = false;
-        [SerializeField, Tooltip("When finished playing will auto to set stop (loops = -1 is invalid)")]
-        protected bool _autoEndToStop = true;                                              // 是否結束時自動停止
+        [Tooltip("When finished playing will auto to set stop (loops = -1 is invalid)")]
+        public bool autoEndToStop = true;                                                  // 是否結束時自動停止
+
         protected bool _isPaused = false;                                                  // 是否暫停
         protected bool _isInit = false;                                                    // 初始標記 (表示確認初始完畢)
         protected float _mediaLength = 0f;                                                 // 影音長度
@@ -90,7 +91,7 @@ namespace OxGFrame.MediaFrame
         {
             if (!this._isInit) return;
 
-            if (!this._ignoreTimeScale) this.OnFixedUpdate(Time.fixedDeltaTime);
+            if (!this.ignoreTimeScale) this.OnFixedUpdate(Time.fixedDeltaTime);
             else this.OnFixedUpdate(Time.fixedUnscaledDeltaTime);
         }
 

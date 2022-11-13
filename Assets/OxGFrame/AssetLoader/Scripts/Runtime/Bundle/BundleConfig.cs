@@ -24,6 +24,11 @@ namespace OxGFrame.AssetLoader.Bundle
         public static bool assetDatabaseMode = true;
 
         /// <summary>
+        /// 離線模式 Bundle (僅讀取 StreamingAssets 中的資源與配置檔)
+        /// </summary>
+        public static bool offlineMode = false;
+
+        /// <summary>
         /// 啟用文件流 (較少內存)
         /// </summary>
         public static bool bundleStreamMode = true;
@@ -95,14 +100,17 @@ namespace OxGFrame.AssetLoader.Bundle
         /// 預設內部 Manifest 檔案名稱 (imf = Internal Manifest)
         /// </summary>
         public const string defaultInternalManifestName = "imf";
+
         /// <summary>
         /// 預設外部 Manifest 檔案名稱 (emf = External Manifest)
         /// </summary>
         public const string defaultExternalManifestName = "emf";
+
         /// <summary>
         /// 內部 Manifest 檔案名稱 (imf = Internal Manifest)
         /// </summary>
         public static string internalManifestName = defaultInternalManifestName;
+
         /// <summary>
         /// 外部 Manifest 檔案名稱 (emf = External Manifest)
         /// </summary>

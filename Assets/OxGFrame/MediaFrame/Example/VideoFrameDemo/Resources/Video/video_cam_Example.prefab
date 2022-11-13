@@ -81,11 +81,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2866477d9da3ae3488619523c098fb78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ignoreTimeScale: 1
+  ignoreTimeScale: 1
   loops: 0
   onStopAndDestroy: 1
   onDestroyAndUnload: 1
-  _autoEndToStop: 1
+  autoEndToStop: 1
   waitForFirstFrame: 1
   playbackSpeed: 1
   sourceType: 0
@@ -95,10 +95,10 @@ MonoBehaviour:
     getUrlPathFromCfg: 1
     urlCfg:
       requestType: 0
-      file: {fileID: 4900000, guid: 3387bd45985d98c40bb2c25317be0abb, type: 3}
+      file: {fileID: 4900000, guid: be06055d97fa03f428adb763efc06836, type: 3}
       fullPathName: 
     url: lager_logo.mp4
-  _renderMode: 1
+  renderMode: 1
   _renderTextureSize: {x: 2048, y: 2048}
   _targetCamera:
     camera: {fileID: 4296297024643240201}

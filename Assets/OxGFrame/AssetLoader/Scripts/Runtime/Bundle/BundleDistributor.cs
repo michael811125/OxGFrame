@@ -4,10 +4,8 @@ using Cysharp.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -391,7 +389,13 @@ namespace OxGFrame.AssetLoader.Bundle
 
             // 取得 Server 端配置檔的 URL
             this._serverCfg = new VersionFileCfg();
-            string url = await BundleConfig.GetServerBundleUrl() + $@"/{streamingCfg.PRODUCT_NAME}/{BundleConfig.bundleCfgName}{BundleConfig.cfgExtension}";
+
+            string url;
+
+            // 判斷是否離線版, 如果是離線版則請求 StreamingAssets 中的 Cfg
+            if (BundleConfig.offlineMode) url = streamingAssetsCfgPath;
+            // 反之, 請求 Server 的 Cfg
+            else url = await BundleConfig.GetServerBundleUrl() + $@"/{streamingCfg.PRODUCT_NAME}/{BundleConfig.bundleCfgName}{BundleConfig.cfgExtension}";
 
             // 請求 Server 的配置檔
             try

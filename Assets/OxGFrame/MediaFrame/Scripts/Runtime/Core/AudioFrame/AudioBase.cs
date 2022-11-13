@@ -9,20 +9,18 @@ namespace OxGFrame.MediaFrame.AudioFrame
     public class AudioBase : MediaBase
     {
         protected AudioSource _audioSource = null;
-        [SerializeField]
+
         public AudioType audioType = new AudioType();
-        [SerializeField]
         public UnityEngine.AudioType audioFileType = UnityEngine.AudioType.MPEG;
-        [SerializeField]
         public SourceType sourceType = SourceType.Audio;
         // SourceType => AudioClip
-        [SerializeField, Tooltip("Drag audio clip. This is not supports [WebGL]"), ConditionalField(nameof(sourceType), false, SourceType.Audio)]
+        [Tooltip("Drag audio clip. This is not supports [WebGL]"), ConditionalField(nameof(sourceType), false, SourceType.Audio)]
         public AudioClip audioClip = null;
         // SourceType => StreamingAssets
-        [SerializeField, Tooltip("Default path is [StreamingAssets]. Just set that inside path and file name, Don't forget file name must include extension, ex: Audio/example.mp3"), ConditionalField(nameof(sourceType), false, SourceType.Streaming)]
+        [Tooltip("Default path is [StreamingAssets]. Just set that inside path and file name, Don't forget file name must include extension, ex: Audio/example.mp3"), ConditionalField(nameof(sourceType), false, SourceType.Streaming)]
         public string fullPathName = "";
         // SourceType => Url
-        [SerializeField, ConditionalField(nameof(sourceType), false, SourceType.Url)]
+        [ConditionalField(nameof(sourceType), false, SourceType.Url)]
         public UrlSet urlSet = new UrlSet();
 
         [HideInInspector, Tooltip("Manual to set audio length or press preload button to set [Unity has a bug in WebGL, Get an audio via UnityWebRequest cannot return length value]")]
@@ -130,7 +128,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                         if (this._loops <= 0)
                         {
                             this._currentLength = 0;
-                            if (this._autoEndToStop) this.StopSelf();
+                            if (this.autoEndToStop) this.StopSelf();
                         }
                         else this._audioSource.Play();
                     }

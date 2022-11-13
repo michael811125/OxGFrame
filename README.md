@@ -44,7 +44,26 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 【備註】AssetBundle 打包建議使用 [AssetBundle Browser Plus v1.9.1 or higher](https://github.com/michael811125/AssetBundles-Browser-Plus) 作為打包策略規劃。
 
-※如果有要運行 BundleDemo，找到 OxGFrame/AssetLoader/Example/BundleDemo/ExportBundles.zip 解壓後直接放到 Server，再自行更改 StreamingAssets/burlcfg 中的 IP。
+※如果有要運行 BundleDemo 方法如下
+- 1. [Offline Mode] 找到 OxGFrame/AssetLoader/Example/BundleDemo/Offline_Mode.zip，解壓後閱讀 README.txt 說明配置，勾選 BundleSetup 中的 offline 選項。 (實際上 Offline 只是請求 StreamingAssets 中的 bcfg 進行比對而已)
+- 2. [Patch Mode] 找到 OxGFrame/AssetLoader/Example/BundleDemo/Patch_Mode.zip，解壓後閱讀 README.txt 說明配置，取消勾選 BundleSetup 中的 offline 選項。
+
+**Bundle [burlcfg] (Bundle URL Config) 格式**
+
+**\>\> 加載 burlcfg.txt 方式 \<\<**
+- 將 burlcfg.txt 放至 StreamingAssets 根目錄中 (StreamingAssets/burlcfg.txt)。
+
+建立一個名為 burlcfg.txt 的 txt 檔案，複製以下格式更改你的需求。
+
+```
+#bundle_ip = Server IP
+#google_store = GooglePlay Store Link
+#apple_store = Apple Store Link
+
+bundle_ip 127.0.0.1
+google_store market://details?id=YOUR_ID
+apple_store itms-apps://itunes.apple.com/app/idYOUR_ID
+```
 
 ### CoreFrame
 
@@ -64,6 +83,26 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 - AudioFrame : 使用 AudioManager 管理掛載 AudioBase 的 Prefab，且採用 Unity Mixer 進行各音軌控制 **(需先將 AudioManager 預置體拖至場景)**
 - VideoFrame : 使用 VideoManager 管理掛載 VideoBase 的 Prefab，且支援 RenderTexture, Camera
+
+**Media [murlcfg] (Media URL Config) 格式**
+
+**\>\> 加載 murlcfg.txt 方式 \<\<**
+- 1. 選擇 Url Cfg Request Type = Assign 的方式指定 murlcfg.txt 至 prefab 中。
+- 2. 選擇 Url Cfg Request Type = Streaming Assets 的方式請求 murlcfg.txt，將 murlcfg.txt 放至 StreamingAssets 根目錄中 (StreamingAssets/murlcfg.txt)。
+
+如果音訊跟影片來源存放於 Server，可以使用 URL 的方式進行檔案請求，相對往後會有更改 URL 的需求，建議建立一個名為 murlcfg.txt 的 txt 檔案，進行 URL 相關的維護，複製以下格式更改你的需求 **(如果不透過 murlcfg.txt 指定 URL 的話，也可以輸入完整資源 URL 至 Prefab 中，不過缺點就是對於未來更動 URL 後，要進行更改維護就會非常麻煩)**。
+
+**額外說明**：如果透過 URL 方式請求音訊或影片資源，建議於 WebGL 平台上使用，因為 WebGL 不支援 AssetBundle 事先指定 AudioClip 或 VideoClip (Assign 方式) 至 Prefab 中，所以提供 URL 的方式進行影音檔請求。
+
+```
+#audio_urlset = Audio Source Url
+#video_urlset = Video Source Url
+
+audio_urlset http://127.0.0.1/audio_dev/Audio/
+video_urlset http://127.0.0.1/video_dev/Video/
+```
+
+※備註 : Right-Click Create/OxGFrame/MediaFrame... (Template prefab)
 
 ### GSIFrame (Game System Integration)
 

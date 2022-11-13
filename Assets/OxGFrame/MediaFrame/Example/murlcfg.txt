@@ -1,5 +1,5 @@
-#audio_urlset = 音訊資源網址
-#video_urlset = 影片資源網址
+#audio_urlset = Audio Source Url
+#video_urlset = Video Source Url
 
-audio_urlset http://192.168.1.142/audio_dev/Audio/
-video_urlset http://192.168.1.142/video_dev/Video/
+audio_urlset http://127.0.0.1/audio_dev/Audio/
+video_urlset http://127.0.0.1/video_dev/Video/
