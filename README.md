@@ -54,7 +54,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
     - [Compression] 建議選擇 [Chunk Based Compression (LZ4)] (自己決定為主)
     - [Bundle Name] 選擇 [Md5 For Bundle Name] (取決於 BundleSetup 的 Load Options 是否有勾選 [Read Md5 Bundle Name]，預設為 true)
     - 勾選 [Without Manifest] (non-use)
-2. 完成 AssetBundle 的打包後，選擇 Unity 上列 BundleDistributor 中的 [Step 1. Bundle Cryptogram] (取決於你的 AssetBundle 是否要加密)
+2. 完成 AssetBundle 的打包後，選擇 Unity 上列 BundleDistributor 中的 [Step 1. Bundle Cryptogram] (取決於你的 AssetBundle 是否要加密)。
 3. 完成後，開啟 [Step 3. Bundle Config Generator] 選擇 Operation Type 為 [Generate Config To Source Folder] (製作 Built-in 的配置檔)，瀏覽選擇剛剛完成打包 AssetBundle 的來源路徑資料夾。
 4. 最後，開啟 [Step 4. Copy to StreamingAssets] 選擇剛剛完成輸出 bcfg 跟 AssetBundles 的 SourceFolder，將其複製到 StreamingAssets 路徑 (記得要保留 StreamingAssets 中的 burlcfg.txt)。
 
