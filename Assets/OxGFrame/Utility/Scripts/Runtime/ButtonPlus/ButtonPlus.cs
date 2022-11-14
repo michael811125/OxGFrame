@@ -14,7 +14,7 @@ public class ButtonPlus : Button
     [Serializable]
     public class TransScale
     {
-        [HideInInspector] public float _originSize;
+        [HideInInspector] public float originSize;
         [SerializeField, Tooltip("Button scale size")]
         public float size = 0.9f;
     }
@@ -40,7 +40,7 @@ public class ButtonPlus : Button
 
     protected override void Awake()
     {
-        this.transScale._originSize = this.transform.localScale.x;
+        this.transScale.originSize = this.transform.localScale.x;
     }
 
     public override void OnPointerDown(PointerEventData eventData)
@@ -55,8 +55,8 @@ public class ButtonPlus : Button
         {
             // 啟用 Scale 縮放
             case ExtdTransition.Scale:
-                float size_s = this.transScale._originSize * this.transScale.size;
-                this.transform.localScale = new Vector3(size_s, size_s, size_s);
+                float size = this.transScale.originSize * this.transScale.size;
+                this.transform.localScale = new Vector3(size, size, size);
                 break;
             default:
                 break;
@@ -98,7 +98,7 @@ public class ButtonPlus : Button
             switch (this.extdTransition)
             {
                 case ExtdTransition.Scale:
-                    this.transform.localScale = new Vector3(this.transScale._originSize, this.transScale._originSize, this.transScale._originSize);
+                    this.transform.localScale = new Vector3(this.transScale.originSize, this.transScale.originSize, this.transScale.originSize);
                     break;
                 default:
                     break;
