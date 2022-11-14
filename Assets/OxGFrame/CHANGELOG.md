@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [1.7.1] - 2022-11-14
+- Fixed BundleDistributor offline mode bug issue. When local bcfg already exists will copy bcfg from built-in to override it without update.
+
 ## [1.7.0] - 2022-11-13
 - Added offline option for bundle in "BundleSetup" to set it. if checked only request config and bundle from StreamingAssets (Built-in).
 - Added "Offline_Mode.zip" and "Patch_Mode.zip" in OxGFrame/AssetLoader/Example/BundleDemo for BundleDemo to run offline or patch.

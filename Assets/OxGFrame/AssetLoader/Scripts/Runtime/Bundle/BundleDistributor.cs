@@ -491,22 +491,36 @@ namespace OxGFrame.AssetLoader.Bundle
                 string localCfgJson = File.ReadAllText(localCfgPath);
                 var localCfg = JsonConvert.DeserializeObject<VersionFileCfg>(localCfgJson);
 
-                // 如果主程式版本不一致表示有更新 App, 則將本地配置檔的主程式版本寫入成 StreamingAssets 配置檔中的 APP_VERSION
-                if (streamingAssetsCfg.APP_VERSION != localCfg.APP_VERSION)
+                // 如果是離線模式, Local Config = StreamingAssets Config
+                if (BundleConfig.offlineMode)
                 {
-                    localCfg.APP_VERSION = streamingAssetsCfg.APP_VERSION;
+                    localCfg = streamingAssetsCfg;
+                    // 寫入儲存本地配置檔
                     localCfgJson = JsonConvert.SerializeObject(localCfg);
-                    File.WriteAllText(localCfgPath, localCfgJson); // 進行寫入存儲
+                    // 進行寫入存儲
+                    File.WriteAllText(localCfgPath, localCfgJson);
                 }
-
-                // 檢查壓縮模式下, 是否還有壓縮檔案存在, 如果存在表示繼上次的壓縮包尚未下載完成與解壓縮, 則必須標記 FistInstall = true
-                if (this._isCompressed)
+                else
                 {
-                    string zipFilePath = Path.Combine(BundleConfig.GetLocalDlFileSaveDirectory(), zipName);
-                    if (File.Exists(zipFilePath))
+                    // 如果主程式版本不一致表示有更新 App, 則將本地配置檔的主程式版本寫入成 StreamingAssets 配置檔中的 APP_VERSION
+                    if (streamingAssetsCfg.APP_VERSION != localCfg.APP_VERSION)
                     {
-                        this._isFirstInstall = true;
-                        Debug.Log($"<color=#00ff92>【Compression Mode】Check has zip file in local, Continue first install (Path: {zipFilePath})</color>");
+                        localCfg.APP_VERSION = streamingAssetsCfg.APP_VERSION;
+                        // 寫入儲存本地配置檔
+                        localCfgJson = JsonConvert.SerializeObject(localCfg);
+                        // 進行寫入存儲
+                        File.WriteAllText(localCfgPath, localCfgJson);
+                    }
+
+                    // 檢查壓縮模式下, 是否還有壓縮檔案存在, 如果存在表示繼上次的壓縮包尚未下載完成與解壓縮, 則必須標記 FistInstall = true
+                    if (this._isCompressed)
+                    {
+                        string zipFilePath = Path.Combine(BundleConfig.GetLocalDlFileSaveDirectory(), zipName);
+                        if (File.Exists(zipFilePath))
+                        {
+                            this._isFirstInstall = true;
+                            Debug.Log($"<color=#00ff92>【Compression Mode】Check has zip file in local, Continue first install (Path: {zipFilePath})</color>");
+                        }
                     }
                 }
             }
