@@ -192,24 +192,17 @@ namespace OxGFrame.AssetLoader.Bundle
         {
 #if UNITY_STANDALONE_WIN
             return Path.Combine(Application.dataPath, $"..{bundleDir}{winDir}");
-#endif
-
-#if UNITY_STANDALONE_OSX
+#elif UNITY_STANDALONE_OSX
             return Path.Combine(Application.dataPath, $"..{bundleDir}{osxDir}");
-#endif
-
-#if UNITY_ANDROID
+#elif UNITY_ANDROID
             return Path.Combine(Application.dataPath, $"..{bundleDir}{androidDir}");
-#endif
-
-#if UNITY_IOS
+#elif UNITY_IOS
             return Path.Combine(Application.dataPath , $"..{bundleDir}{iosDir}");
-#endif
-
-#if UNITY_WEBGL
+#elif UNITY_WEBGL
             return Path.Combine(Application.dataPath, $"..{bundleDir}{h5Dir}");
+#else
+            return string.Empty;
 #endif
-
             throw new System.Exception("ERROR Bundle PATH !!!");
         }
 
@@ -280,7 +273,6 @@ namespace OxGFrame.AssetLoader.Bundle
 #else
             return string.Empty;
 #endif
-
             throw new System.Exception("ERROR Server URL !!!");
         }
 
