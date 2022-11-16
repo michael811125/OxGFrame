@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.8.0] - 2022-11-16
+- Added MacOSX preprocessor tag in BundleConfig and CacheBundle (test passed).
+- Modified burlcfg.txt store key name => unified key name is "store_link".
+
 ## [1.7.1] - 2022-11-14
 - Fixed BundleDistributor offline mode bug issue. When local bcfg already exists will copy bcfg from built-in to override it without update.
 

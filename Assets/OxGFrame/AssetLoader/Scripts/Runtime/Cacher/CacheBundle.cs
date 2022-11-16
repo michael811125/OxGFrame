@@ -599,7 +599,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
 #endif
 
-#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+#if UNITY_STANDALONE_OSX || UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
             // 使用[文件流]加載方式, 只能存在於Persistent的路徑 (因為 StreamingAssets 只使用 UnityWebRequest 方式請求)
             if (BundleConfig.bundleStreamMode && !HasInStreamingAssets(bundleName))
             {

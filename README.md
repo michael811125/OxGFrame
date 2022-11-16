@@ -6,7 +6,7 @@
 
 ## 基本介紹
 
-OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EPFrame)、影音 (MediaFrame)、遊戲整合 (GSIFrame)、網路 (NetFrame)、事件註冊 (EventCenter)、API註冊 (APICenter)、Http.Acax (仿 Ajax 概念)等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、Android、iOS，WebGL。
+OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EPFrame)、影音 (MediaFrame)、遊戲整合 (GSIFrame)、網路 (NetFrame)、事件註冊 (EventCenter)、API註冊 (APICenter)、Http.Acax (仿 Ajax 概念)等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
 
 ---
 
@@ -65,10 +65,11 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
     - [Bundle Name] 選擇 [Md5 For Bundle Name] (取決於 BundleSetup 的 Load Options 是否有勾選 [Read Md5 Bundle Name]，預設為 true)
 	- 勾選 [Without Manifest] (non-use)
 2. 完成 AssetBundle 的打包後，選擇 Unity 上列 BundleDistributor 中的 [Step 3. Bundle Config Generator] 選擇 Operation Type 為 [Export And Config From Source Folder] (製作 Patch 的配置檔)，瀏覽選擇剛剛完成打包 AssetBundle 的來源路徑資料夾，再選擇要輸出的路徑。
-3. 完成後，先至 Server 創建 ExportBundles 的資料夾，裡面依照平台創建 win, android, ios, h5，準備好 Server 的資料夾後，再將剛剛輸出帶有 ProductName 的資料夾直接依照平台歸納上傳就好。
+3. 完成後，先至 Server 創建 ExportBundles 的資料夾，裡面依照平台創建 win, osx, android, ios, h5，準備好 Server 的資料夾後，再將剛剛輸出帶有 ProductName 的資料夾直接依照平台歸納上傳就好。
 
 **注意 Server 路徑名稱**
 - ExportBundles/win/productName
+- ExportBundles/osx/productName
 - ExportBundles/android/productName
 - ExportBundles/ios/productName
 - ExportBundles/h5/productName
@@ -90,16 +91,14 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 #### Bundle [burlcfg] (Bundle URL Config) 格式
 
-建立一個名為 burlcfg.txt 的 txt 檔案，複製以下格式更改你的需求。
+建立一個名為 burlcfg.txt 的 txt 檔案，複製以下格式更改你的需求。 **(store_link 針對非 Android, iOS 平台的，可以設置主程式下載的 link)**
 
 ```
 #bundle_ip = Server IP
-#google_store = GooglePlay Store Link
-#apple_store = Apple Store Link
+#store_link = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID) or Apple Store Link (itms-apps://itunes.apple.com/app/idYOUR_ID)
 
 bundle_ip 127.0.0.1
-google_store market://details?id=YOUR_ID
-apple_store itms-apps://itunes.apple.com/app/idYOUR_ID
+store_link https://play.google.com/store/apps/details?id=YOUR_ID
 ```
 
 **\>\> 加載 burlcfg.txt 方式 \<\<**
@@ -130,7 +129,7 @@ apple_store itms-apps://itunes.apple.com/app/idYOUR_ID
 
 #### Media [murlcfg] (Media URL Config) 格式
 
-如果音訊跟影片來源存放於 Server，可以使用 URL 的方式進行檔案請求，建立一個名為 murlcfg.txt 的 txt 檔案，進行 URL 的維護，複製以下格式更改你的需求。 **(如果不透過 murlcfg.txt 指定 URL 的話，也可以輸入完整資源 URL 至 Prefab 中，不過缺點就是對於未來更動 URL，要進行更改維護就會非常麻煩)**。
+如果音訊跟影片來源存放於 Server，可以使用 URL 的方式進行檔案請求，建立一個名為 murlcfg.txt 的 txt 檔案，進行 URL 的維護，複製以下格式更改你的需求。 **(如果不透過 murlcfg.txt 指定 URL 的話，也可以輸入完整資源 URL 至 Prefab 中，不過缺點就是對於未來更動 URL，要進行更改維護就會非常麻煩)**
 
 ```
 #audio_urlset = Audio Source Url
@@ -175,7 +174,7 @@ video_urlset http://127.0.0.1/video_dev/Video/
 
 ### EventCenter
 
-事件整合模塊，透過 FuncId (0x0000 + 1, 0x0000 + 2...) 進行 Event 註冊，可以自定義每個 Event 的格式進行派送。
+事件整合模塊，透過 FuncId (xBASE + 1, xBASE + 2...) 進行 Event 註冊，可以自定義每個 Event 的格式進行派送。
 
 - EventCenter : 事件註冊調度管理，管理基類已實現單例
   - EventBase，單個 Event 基類，需建立實作 => 右鍵創建
@@ -187,7 +186,7 @@ video_urlset http://127.0.0.1/video_dev/Video/
 
 ### APICenter
 
-API 整合模塊，透過 FuncId (0x0000 + 1, 0x0000 + 2...) 進行 API 註冊，可以自定義每個 API 的格式進行短連接請求。
+API 整合模塊，透過 FuncId (xBASE + 1, xBASE + 2...) 進行 API 註冊，可以自定義每個 API 的格式進行短連接請求。
 
 - Acax (類似 Ajax 方式，請求 API)
 - APICenter : Http API 註冊管理，管理基類已實現單例
@@ -205,8 +204,8 @@ API 整合模塊，透過 FuncId (0x0000 + 1, 0x0000 + 2...) 進行 API 註冊�
 - Utility 
   - Timer => DeltaTimer, RealTimer, DTUpdate, RTUpdate
   - Adapter => UISafeAreaAdapter
-  - Pool => NodePool (物件池)
-  - ButtonPlus => 繼承 Unity Button，實現 Long Press 功能 + Transition Scale 功能
+  - Pool => NodePool (GameObject Pool)
+  - ButtonPlus => Inherited by Unity Button. extend Long Press and Transition Scale
 
 ---
 

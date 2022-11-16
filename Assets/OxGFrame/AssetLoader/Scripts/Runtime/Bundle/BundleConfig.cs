@@ -130,14 +130,14 @@ namespace OxGFrame.AssetLoader.Bundle
 
         /**
          * url_cfg format following
-         * bundle_ip 127.0.0.1
+         * bundle_ip <IP>
+         * store_link <URL>
          * # => comment
          */
 
         // 佈署配置檔中的 KEY
         public const string BUNDLE_IP = "bundle_ip";
-        public const string GOOGLE_STORE = "google_store";
-        public const string APPLE_STORE = "apple_store";
+        public const string STORE_LINE = "store_link";
 
         // 佈署配置檔
         public const string bundleUrlFilePathName = "burlcfg.txt";
@@ -145,10 +145,11 @@ namespace OxGFrame.AssetLoader.Bundle
         // Bundle 平台路徑
         public const string bundleDir = "/AssetBundles";  // Build 目錄
         public const string exportDir = "/ExportBundles"; // Export 目錄
-        public const string winDir = "/win";
-        public const string androidDir = "/android";
-        public const string iosDir = "/ios";
-        public const string h5Dir = "/h5";
+        public const string winDir = "/win";              // Windows
+        public const string osxDir = "/osx";              // Mac OSX
+        public const string androidDir = "/android";      // Android
+        public const string iosDir = "/ios";              // iOS
+        public const string h5Dir = "/h5";                // WebGL
         #endregion
 
         public static void InitCryptogram(string cryptogram)
@@ -180,12 +181,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public static async UniTask<string> GetAppStoreLink()
         {
-#if UNITY_ANDROID
-            return await GetValueFromUrlCfg(GOOGLE_STORE);
-#elif UNITY_IPHONE
-            return await GetValueFromUrlCfg(APPLE_STORE);
-#endif
-            return string.Empty;
+            return await GetValueFromUrlCfg(STORE_LINE);
         }
 
         /// <summary>
@@ -196,6 +192,10 @@ namespace OxGFrame.AssetLoader.Bundle
         {
 #if UNITY_STANDALONE_WIN
             return Path.Combine(Application.dataPath, $"..{bundleDir}{winDir}");
+#endif
+
+#if UNITY_STANDALONE_OSX
+            return Path.Combine(Application.dataPath, $"..{bundleDir}{osxDir}");
 #endif
 
 #if UNITY_ANDROID
@@ -217,20 +217,17 @@ namespace OxGFrame.AssetLoader.Bundle
         {
 #if UNITY_STANDALONE_WIN
             return Path.Combine(Application.dataPath, $"..{exportDir}{winDir}");
-#endif
-
-#if UNITY_ANDROID
+#elif UNITY_STANDALONE_OSX
+            return Path.Combine(Application.dataPath, $"..{exportDir}{osxDir}");
+#elif UNITY_ANDROID
             return Path.Combine(Application.dataPath, $"..{exportDir}{androidDir}");
-#endif
-
-#if UNITY_IOS
+#elif UNITY_IOS
             return Path.Combine(Application.dataPath , $"..{exportDir}{iosDir}");
-#endif
-
-#if UNITY_WEBGL
+#elif UNITY_WEBGL
             return Path.Combine(Application.dataPath, $"..{exportDir}{h5Dir}");
+#else
+            return string.Empty;
 #endif
-
             throw new System.Exception("ERROR Export PATH !!!");
         }
 
@@ -272,19 +269,19 @@ namespace OxGFrame.AssetLoader.Bundle
         {
 #if UNITY_STANDALONE_WIN
             return await GetValueFromUrlCfg(BUNDLE_IP) + $"{exportDir}{winDir}";
-#endif
-
-#if UNITY_ANDROID
+#elif UNITY_STANDALONE_OSX
+            return await GetValueFromUrlCfg(BUNDLE_IP) + $"{exportDir}{osxDir}";
+#elif UNITY_ANDROID
             return await GetValueFromUrlCfg(BUNDLE_IP) + $"{exportDir}{androidDir}";
-#endif
-
-#if UNITY_IOS
+#elif UNITY_IOS
             return await GetValueFromUrlCfg(BUNDLE_IP) + $"{exportDir}{iosDir}";
+#elif UNITY_WEBGL
+            return await GetValueFromUrlCfg(BUNDLE_IP) + $"{exportDir}{h5Dir}";
+#else
+            return string.Empty;
 #endif
 
-#if UNITY_WEBGL
-            return await GetValueFromUrlCfg(BUNDLE_IP) + $"{exportDir}{h5Dir}";
-#endif
+            throw new System.Exception("ERROR Server URL !!!");
         }
 
         /// <summary>
