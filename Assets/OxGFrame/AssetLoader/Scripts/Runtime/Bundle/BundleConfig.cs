@@ -137,7 +137,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         // 佈署配置檔中的 KEY
         public const string BUNDLE_IP = "bundle_ip";
-        public const string STORE_LINE = "store_link";
+        public const string SOTRE_LINK = "store_link";
 
         // 佈署配置檔
         public const string bundleUrlFilePathName = "burlcfg.txt";
@@ -181,7 +181,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public static async UniTask<string> GetAppStoreLink()
         {
-            return await GetValueFromUrlCfg(STORE_LINE);
+            return await GetValueFromUrlCfg(SOTRE_LINK);
         }
 
         /// <summary>
