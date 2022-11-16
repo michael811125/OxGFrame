@@ -26,7 +26,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 實現資源動態加載 (Dynamic Loading)，採用計數管理方式進行資源管控 (支援 Resource 與 AssetBundle)，一定要成對呼叫 Load & Unload (如果沒有成對呼叫，會導致計數不正確) 。 其中 AssetBundle 則採用自帶的配置檔進行主程式與資源版本比對，實現資源熱更新流程，並且下載器支援斷點續傳，也對於 AssetBundle 打包出來的資源，提供現有加密方式 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密，還有針對加速 AssetBundle 開發方案提供在 Unity Editor 編輯器下能夠切換 AssetDatabase Mode 提高在 Unity Editor 編輯器中的開發效率。
 
-**選擇使用 Bundle 開發時，需要先將 BundleSetup 拖曳置場景中，才能驅動 BundleDistributor。**
+**選擇使用 Bundle 開發時，需要先將 BundleSetup 拖曳至場景中，才能驅動 BundleDistributor。**
 
 - Cacher【CacheResource, CacheBundle】(資源主要加載器)
   - 如果沒有群組化需求，可以直接使用 Cacher 進行資源 Load & Unload (成對式)
@@ -75,7 +75,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 ---
 
-**※如果有要運行 BundleDemo 方法則一**
+**※如果有要運行 BundleDemo 方法則一 (Demo 提供的資源為 win 平台)**
 - 1. 離線版 [Offline Mode] 找到 OxGFrame/AssetLoader/Example/BundleDemo/Offline_Mode.zip，解壓後閱讀 README.txt 說明配置，勾選 BundleSetup 中的 offline 選項。 (實際上 Offline 只是請求 StreamingAssets 中的 bcfg 進行比對而已)
 - 2. 更新版 [Patch Mode] 找到 OxGFrame/AssetLoader/Example/BundleDemo/Patch_Mode.zip，解壓後閱讀 README.txt 說明配置，取消勾選 BundleSetup 中的 offline 選項。
 
