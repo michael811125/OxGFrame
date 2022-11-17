@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f945b6b9257b14549bdeab3606da5cf4, type: 3}
   m_Name: Bundle01
   m_EditorClassIdentifier: 
-  allowCustomBuild: 0
   sourceName: BundleDemo
   providerName: Test
+  allowCustomBuild: 0
   customBuildMaps: []
+  enableBundleSync: 0
+  bundleSyncMaps: []
   _dictBuildBundleInfo:
     list:
     - Key: Assets/OxGFrame/AssetLoader/Example/Prefabs/model_01.prefab
@@ -43,14 +45,14 @@ MonoBehaviour:
         assetPath: Assets/OxGFrame/AssetLoader/Example/Model/Materials/nideer_sm.mat
         assetBundleName: models/model_01_depend
         assetBundleVariant: 
-    - Key: Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.dds
-      Value:
-        assetPath: Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.dds
-        assetBundleName: models/model_01_depend
-        assetBundleVariant: 
     - Key: Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.tga
       Value:
         assetPath: Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.tga
+        assetBundleName: models/model_01_depend
+        assetBundleVariant: 
+    - Key: Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.png
+      Value:
+        assetPath: Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.png
         assetBundleName: models/model_01_depend
         assetBundleVariant: 
     keyCollision: 0
