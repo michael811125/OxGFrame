@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [1.8.1] - 2022-11-17
+- Fixed request StreamingAssets path failed issue on MacOSX (because missing file://).
+  - Run bundle mode on MacOSX (test passed)
+  - Run audio request from StreamingAssets on MacOSX (test passed).
+
 ## [1.8.0] - 2022-11-16
 - Added MacOSX preprocessor tag in BundleConfig and CacheBundle (test passed).
 - Modified burlcfg.txt store key name => unified key name is "store_link".

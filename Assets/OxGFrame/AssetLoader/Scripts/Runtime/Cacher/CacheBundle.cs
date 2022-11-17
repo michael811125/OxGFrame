@@ -87,7 +87,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
 
             // 先設置加載進度
-            this.reqSize = 0;                                  // 會由 LoadBundlePack 累加, 所以需歸0
+            this.reqSize = 0;                                  // 會由 LoadBundlePack 累加, 所以需歸 0
             this.totalSize = this.GetAssetsLength(bundleName); // 返回當前要預加載的總大小
 
             // Loading 標記
@@ -150,7 +150,7 @@ namespace OxGFrame.AssetLoader.Cacher
             if (bundleNames == null || bundleNames.Length == 0) return;
 
             // 先設置加載進度
-            this.reqSize = 0;                                   // 會由 LoadBundlePack 累加, 所以需歸0
+            this.reqSize = 0;                                   // 會由 LoadBundlePack 累加, 所以需歸 0
             this.totalSize = this.GetAssetsLength(bundleNames); // 返回當前要預加載的總大小
 
             for (int i = 0; i < bundleNames.Length; i++)
@@ -471,7 +471,7 @@ namespace OxGFrame.AssetLoader.Cacher
             BundlePack bundlePack = new BundlePack();
             bundlePack.bundleName = bundleName;
 
-#if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
             if (BundleConfig.bundleStreamMode)
             {
                 Stream fs;
@@ -599,7 +599,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
 #endif
 
-#if UNITY_STANDALONE_OSX || UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
             // 使用[文件流]加載方式, 只能存在於Persistent的路徑 (因為 StreamingAssets 只使用 UnityWebRequest 方式請求)
             if (BundleConfig.bundleStreamMode && !HasInStreamingAssets(bundleName))
             {

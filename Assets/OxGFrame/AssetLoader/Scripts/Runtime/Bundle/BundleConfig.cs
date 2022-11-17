@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using AssetLoader.Utility;
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -152,16 +153,24 @@ namespace OxGFrame.AssetLoader.Bundle
         public const string h5Dir = "/h5";                // WebGL
         #endregion
 
+        /// <summary>
+        /// 初始 Bundle 解密參數
+        /// </summary>
+        /// <param name="cryptogram"></param>
         public static void InitCryptogram(string cryptogram)
         {
             _cryptogram = cryptogram;
         }
 
+        /// <summary>
+        /// 取得 burlcfg.txt 佈署配置檔的數據
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static async UniTask<string> GetValueFromUrlCfg(string key)
         {
-            string pathName = Path.Combine(Application.streamingAssetsPath, bundleUrlFilePathName);
-            var file = await FileRequest(pathName);
-            var content = file.text;
+            string pathName = Path.Combine(GetRequestStreamingAssetsPath(), bundleUrlFilePathName);
+            var content = await BundleUtility.FileRequestString(pathName);
             var allWords = content.Split('\n');
             var lines = new List<string>(allWords);
             var fileMap = new Dictionary<string, string>();
@@ -179,13 +188,17 @@ namespace OxGFrame.AssetLoader.Bundle
             return value;
         }
 
+        /// <summary>
+        /// 從設定檔中取得 StoreLink
+        /// </summary>
+        /// <returns></returns>
         public static async UniTask<string> GetAppStoreLink()
         {
             return await GetValueFromUrlCfg(STORE_LINK);
         }
 
         /// <summary>
-        /// 取得打包後的 Bundle 資源路徑
+        /// 取得打包路徑
         /// </summary>
         /// <returns></returns>
         public static string GetBuildBundlePath()
@@ -206,6 +219,11 @@ namespace OxGFrame.AssetLoader.Bundle
             throw new System.Exception("ERROR Bundle PATH !!!");
         }
 
+        /// <summary>
+        /// 取得輸出路徑
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="System.Exception"></exception>
         public static string GetExportBundlePath()
         {
 #if UNITY_STANDALONE_WIN
@@ -225,7 +243,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得本地 Bundle 下載後的儲存路徑 (持久化)
+        /// 取得本地持久化路徑 (下載的儲存路徑)
         /// </summary>
         /// <returns></returns>
         public static string GetLocalDlFileSaveDirectory()
@@ -241,7 +259,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得本地 BundleConfig 下載後的儲存路徑 (持久化)
+        /// 取得本地持久化路徑中的 BundleConfig 路徑 (下載的儲存路徑)
         /// </summary>
         /// <returns></returns>
         public static string GetLocalDlFileSaveBundleConfigPath()
@@ -249,9 +267,26 @@ namespace OxGFrame.AssetLoader.Bundle
             return Path.Combine(GetLocalDlFileSaveDirectory(), $"{bundleCfgName}{cfgExtension}");
         }
 
+        /// <summary>
+        /// 取得 StreamingAssets 中的 BundleConfig 路徑
+        /// </summary>
+        /// <returns></returns>
         public static string GetStreamingAssetsBundleConfigPath()
         {
-            return Path.Combine(Application.streamingAssetsPath, $"{bundleCfgName}{cfgExtension}");
+            return Path.Combine(GetRequestStreamingAssetsPath(), $"{bundleCfgName}{cfgExtension}");
+        }
+
+        /// <summary>
+        /// 取得 UnityWebRequest StreamingAssets 路徑 (OSX 需要 + file://)
+        /// </summary>
+        /// <returns></returns>
+        public static string GetRequestStreamingAssetsPath()
+        {
+#if UNITY_STANDALONE_OSX
+            return $"file://{Application.streamingAssetsPath}";
+#else
+            return Application.streamingAssetsPath;
+#endif
         }
 
         /// <summary>
@@ -284,34 +319,6 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             if (inApp) return internalManifestName;
             else return externalManifestName;
-        }
-
-        public static async UniTask<TextAsset> FileRequest(string url)
-        {
-            try
-            {
-                var request = UnityWebRequest.Get(url);
-                await request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
-                {
-                    Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                    request.Dispose();
-
-                    return null;
-                }
-
-                string txt = request.downloadHandler.text;
-                TextAsset file = new TextAsset(txt);
-                request.Dispose();
-
-                return file;
-            }
-            catch
-            {
-                Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                return null;
-            }
         }
     }
 }

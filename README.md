@@ -12,9 +12,9 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 ## 第三方庫依賴 (需先安裝)
 
-- [UnitTask Version 2.3.1 or higher](https://github.com/Cysharp/UniTask)
-- [MyBox version 1.7.0 or higher](https://github.com/Deadcows/MyBox)
-- [UnityWebSocket Version 2.6.6 or higher](https://github.com/psygames/UnityWebSocket)
+- 必要 [UnitTask Version 2.3.1 or higher](https://github.com/Cysharp/UniTask)
+- 必要 [MyBox version 1.7.0 or higher](https://github.com/Deadcows/MyBox)
+- 非必要，取決於是否使用 NetFrame 模塊 [UnityWebSocket Version 2.6.6 or higher](https://github.com/psygames/UnityWebSocket)
 
 【備註】Unity 2021.3.4f1 以下的額外需安裝 [com.unity.nuget.newtonsoft-json](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/wiki/Install-official-via-UPM)，對於 [jillejr.newtonsoft.json-for-unity](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/issues/145) 附加作者額外說明 (Unity 2021.3.4f1 以上的版本此庫可以不用安裝)。
 
@@ -35,6 +35,9 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 - BundleDistributor (資源熱更核心)
 - Downloader (下載器)
   - 支援 Slice Mode (針對大檔進行切割式下載)
+- Compressor (壓縮器)
+  - 支援 sync & async 壓縮跟解壓
+  - Bundle 支援壓縮方案，只針對**初次安裝**的 APP 會進行壓縮包下載 (如果要執行首次壓縮包下載流程，取決於打包 Bundle 流程是否有製作壓縮包與勾選配置 Bundle Is Compressed)
 - FileCryptogram (檔案加解密)
   - **Bundle 加密推薦 HTXOR**
   - 運算效率 HTXOR ~= OFFSET > XOR > AES
@@ -170,6 +173,8 @@ video_urlset http://127.0.0.1/video_dev/Video/
 - Websock (Websocket)
 - INetTips (網路狀態提示接口)
 
+**如果沒有要使用 NetFrame 網路模塊的，可以直接刪除整個 NetFrame，並且無需安裝匯入 UnityWebSocket 插件。**
+
 ---
 
 ### EventCenter
@@ -192,6 +197,8 @@ API 整合模塊，透過 FuncId (xBASE + 1, xBASE + 2...) 進行 API 註冊，�
 - APICenter : Http API 註冊管理，管理基類已實現單例
   - APIBase，單個 API 基類，需建立實作 => 右鍵創建
   - APICenterBase，APICenter 管理基類 (建議名稱為 APICenter 的實作 => 右鍵創建)
+
+**如果沒有要使用 APICenter 短連接請求模塊的，可以直接刪除整個 APICenter。**
 
 ※備註 : Right-Click Create/OxGFrame/APICenter... (Template cs)
 

@@ -93,7 +93,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         public async UniTask<AudioClip> GetAudioFromStreamingAssets()
         {
-            string pathName = System.IO.Path.Combine(Application.streamingAssetsPath, this.fullPathName);
+            string pathName = System.IO.Path.Combine(GetRequestStreamingAssetsPath(), this.fullPathName);
             var audioClip = await AudioManager.AudioRequest(pathName, this.audioFileType);
             return audioClip;
         }
