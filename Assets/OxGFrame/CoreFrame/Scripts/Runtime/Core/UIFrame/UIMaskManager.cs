@@ -6,10 +6,10 @@ namespace OxGFrame.CoreFrame.UIFrame
 {
     public class UIMaskManager
     {
-        #region MaskNodePool, MaskUI物件池
+        #region MaskNodePool, MaskUI 物件池
         public class MaskNodePool
         {
-            private List<UIMask> _uiMaskPool = new List<UIMask>();  // uiMask物件池
+            private List<UIMask> _uiMaskPool = new List<UIMask>();  // 物件池
             private int _initNum = 5;                               // 物件池初始數量
             private UIMaskManager _uiMaskManager = null;
 
@@ -56,7 +56,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 GameObject uiMaskNode = parent.Find(nodeName).gameObject;
                 if (uiMaskNode == null || !uiMaskNode.GetComponent<UIMask>())
                 {
-                    Debug.Log(string.Format("未找到對應的 {0}, 不需回收!", nodeName));
+                    Debug.Log(string.Format("No matching object found: {0}, doesn't need to recycle!", nodeName));
                     return false;
                 }
 
@@ -78,7 +78,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
         #endregion
 
-        #region UIMaskManager, UIMask相關控制
+        #region UIMaskManager, UIMask 相關控制
         public const string nodeName = "_UIMaskNode";
         public Transform uiMaskRoot { get; private set; } = null;
         public int layer { get; private set; } = 0;
@@ -95,7 +95,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 新增MaskUI
+        /// 新增 Mask UI
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="maskClickEvent"></param>
@@ -115,7 +115,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 移除MaskUI
+        /// 移除 Mask UI
         /// </summary>
         /// <param name="parent"></param>
         public void RemoveMask(Transform parent)

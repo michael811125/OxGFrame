@@ -48,7 +48,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.LoadAndPlay(vidBase, loops);
 
-            Debug.Log(string.Format("播放Video: {0}", vidBase?.mediaName));
+            Debug.Log(string.Format("Play Video: {0}", vidBase?.mediaName));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 VideoBase main = vidBases[0];
                 if (main.IsPlaying())
                 {
-                    Debug.LogWarning(string.Format("【Video】{0} 已經播放了!!!", assetName));
+                    Debug.LogWarning(string.Format("【Video】{0} already played!!!", assetName));
                     return vidBases;
                 }
 
@@ -81,7 +81,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 VideoBase vidBase = await this.CloneAsset<VideoBase>(string.Empty, assetName, go, this._goRoot.transform);
                 if (vidBase == null)
                 {
-                    Debug.LogWarning(string.Format("找不到相對路徑資源【Video】: {0}", assetName));
+                    Debug.LogWarning(string.Format("Asset not found at this path!!!【Video】: {0}", assetName));
                     return new VideoBase[] { };
                 }
 
@@ -110,7 +110,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 VideoBase main = vidBases[0];
                 if (main.IsPlaying())
                 {
-                    Debug.LogWarning(string.Format("【Video】{0} 已經播放了!!!", assetName));
+                    Debug.LogWarning(string.Format("【Video】{0} already played!!!", assetName));
                     return vidBases;
                 }
 
@@ -123,7 +123,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 VideoBase vidBase = await this.CloneAsset<VideoBase>(bundleName, assetName, go, this._goRoot.transform);
                 if (vidBase == null)
                 {
-                    Debug.LogWarning(string.Format("找不到相對路徑資源【Video】: {0}", assetName));
+                    Debug.LogWarning(string.Format("Asset not found at this path!!!【Video】: {0}", assetName));
                     return new VideoBase[] { };
                 }
 
@@ -169,9 +169,9 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.ExitAndStop(vidBase, false, disableEndEvent);
 
-            Debug.Log(string.Format("停止Video: {0}", vidBase?.mediaName));
+            Debug.Log(string.Format("Stop Video: {0}", vidBase?.mediaName));
 
-            // 確保音訊都設置完畢後才進行Destroy, 避免異步處理尚未完成, 就被Destroy掉導致操作到已銷毀物件
+            // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
             if (vidBase.isPrepared)
             {
                 if (forceDestroy) this.Destroy(vidBase);
@@ -232,7 +232,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.ExitAndStop(vidBase, true, false);
 
-            Debug.Log(string.Format("暫停Video: {0}, 當前長度: {1} 秒", vidBase?.mediaName, vidBase?.CurrentLength()));
+            Debug.Log(string.Format("Pause Video: {0}, Current Length: {1} (s)", vidBase?.mediaName, vidBase?.CurrentLength()));
         }
 
         /// <summary>

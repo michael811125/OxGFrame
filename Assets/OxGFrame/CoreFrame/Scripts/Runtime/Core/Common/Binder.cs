@@ -22,7 +22,7 @@ namespace OxGFrame.CoreFrame
         {
             if (fBase.collector.checkName == go.name)
             {
-                Debug.LogWarning("重複綁定: " + go.name);
+                Debug.LogWarning("Bind repeat (skipped): " + go.name);
                 return;
             }
 
@@ -112,7 +112,7 @@ namespace OxGFrame.CoreFrame
             // 再去判斷取得後的字串陣列是否綁定格式資格
             if (names == null || names.Length < 2 || !FrameSysDefine.BIND_COMPONENTS.ContainsKey(bindType))
             {
-                Debug.Log($"{name} => 命名格式錯誤, 請依照: _Node@BindName 的方式命名");
+                Debug.Log($"{name} => Naming format error. Please check the bind name.");
                 return;
             }
 

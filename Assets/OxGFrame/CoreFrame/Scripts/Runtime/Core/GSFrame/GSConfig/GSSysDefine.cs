@@ -15,11 +15,11 @@ namespace OxGFrame.CoreFrame.GSFrame
     [Serializable]
     public class GSSetting
     {
-        [Tooltip("節點分類")]
+        [Tooltip("Node layer type")]
         public NodeType nodeType = NodeType.None;
-        [Tooltip("當執行CloseAll時, 是否跳過處理")]
+        [Tooltip("If checked when call CloseAll method will auto skip process")]
         public bool whenCloseAllToSkip = false;
-        [Tooltip("當執行HideAll時, 是否跳過處理")]
+        [Tooltip("If checked when call HideAll method will auto skip process")]
         public bool whenHideAllToSkip = false;
     }
 

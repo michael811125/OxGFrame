@@ -6,10 +6,10 @@ namespace OxGFrame.CoreFrame.UIFrame
 {
     public class UIFreezeManager
     {
-        #region FreezeNodePool, FreezeUI物件池
+        #region FreezeNodePool, FreezeUI 物件池
         public class FreezeNodePool
         {
-            private List<UIFreeze> _uiFreezePool = new List<UIFreeze>();    // uiFreeze物件池
+            private List<UIFreeze> _uiFreezePool = new List<UIFreeze>();    // 物件池
             private int _initNum = 5;                                       // 物件池初始數量
             private UIFreezeManager _uiFreezeManager = null;
 
@@ -56,7 +56,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 GameObject uiFreezeNode = parent.Find(nodeName).gameObject;
                 if (uiFreezeNode == null || !uiFreezeNode.GetComponent<UIFreeze>())
                 {
-                    Debug.Log(string.Format("未找到對應的 {0}, 不需回收!", nodeName));
+                    Debug.Log(string.Format("No matching object found: {0}, doesn't need to recycle!", nodeName));
                     return false;
                 }
 
@@ -78,7 +78,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
         #endregion
 
-        #region UIFreezeManager, UIFreeze相關控制
+        #region UIFreezeManager, UIFreeze 相關控制
         public const string nodeName = "_UIFreezeNode";
         public Transform uiFreezeRoot { get; private set; } = null;
         public int layer { get; private set; } = 0;
@@ -93,7 +93,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 新增凍結UI
+        /// 新增 Freeze UI
         /// </summary>
         /// <param name="parent"></param>
         public void AddFreeze(Transform parent)
@@ -104,7 +104,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 移除凍結UI
+        /// 移除 Freeze UI
         /// </summary>
         /// <param name="parent"></param>
         public void RemoveFreeze(Transform parent)

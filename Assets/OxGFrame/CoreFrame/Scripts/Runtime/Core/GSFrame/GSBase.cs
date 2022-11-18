@@ -5,7 +5,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 {
     public class GSBase : FrameBase
     {
-        [Tooltip("GameScene相關設置")]
+        [Tooltip("GameScene Settings")]
         public GSSetting gsSetting = new GSSetting();
 
         public override void BeginInit() { }

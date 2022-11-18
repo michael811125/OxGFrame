@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace OxGFrame.EventCenter
 {
     public class EventCenterBase<T> where T : EventCenterBase<T>, new()
     {
-        public const int EVENT_xBASE = 0x0000;
+        public const int xBASE = 0x0000;
 
         private Dictionary<int, EventBase> _dictEvents = new Dictionary<int, EventBase>();
 

@@ -204,7 +204,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.LoadAndPlay(audBase, loops);
 
-            Debug.Log(string.Format("播放Audio: {0}, 當前長度: {1} 秒", audBase?.mediaName, audBase?.CurrentLength()));
+            Debug.Log(string.Format("Play Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                     switch (main.audioType.soundType)
                     {
                         case SoundType.Sole:
-                            Debug.LogWarning(string.Format("【Audio => SoundType: {0}】{1} 已經播放了!!!", main.audioType.soundType, assetName));
+                            Debug.LogWarning(string.Format("【Audio => SoundType: {0}】{1} already played!!!", main.audioType.soundType, assetName));
                             return audBases;
                     }
                 }
@@ -241,7 +241,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 AudioBase audBase = await this.CloneAsset<AudioBase>(string.Empty, assetName, go, this._goRoot.transform);
                 if (audBase == null)
                 {
-                    Debug.LogWarning(string.Format("找不到相對路徑資源【Audio】: {0}", assetName));
+                    Debug.LogWarning(string.Format("Asset not found at this path!!!【Audio】: {0}", assetName));
                     return new AudioBase[] { };
                 }
 
@@ -273,7 +273,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                     switch (main.audioType.soundType)
                     {
                         case SoundType.Sole:
-                            Debug.LogWarning(string.Format("【Audio => SoundType: {0}】{1} 已經播放了!!!", main.audioType.soundType, assetName));
+                            Debug.LogWarning(string.Format("【Audio => SoundType: {0}】{1} already played!!!", main.audioType.soundType, assetName));
                             return audBases;
                     }
                 }
@@ -287,7 +287,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 AudioBase audBase = await this.CloneAsset<AudioBase>(bundleName, assetName, go, this._goRoot.transform);
                 if (audBase == null)
                 {
-                    Debug.LogWarning(string.Format("找不到相對路徑資源【Audio】: {0}", assetName));
+                    Debug.LogWarning(string.Format("Asset not found at this path!!!【Audio】: {0}", assetName));
                     return new AudioBase[] { };
                 }
 
@@ -333,7 +333,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.ExitAndStop(audBase, false, disableEndEvent);
 
-            Debug.Log(string.Format("停止Audio: {0}", audBase?.mediaName));
+            Debug.Log(string.Format("Stop Audio: {0}", audBase?.mediaName));
 
             // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
             if (audBase.isPrepared)
@@ -396,7 +396,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.ExitAndStop(audBase, true, false);
 
-            Debug.Log(string.Format("暫停Audio: {0}, 當前長度: {1} 秒", audBase?.mediaName, audBase?.CurrentLength()));
+            Debug.Log(string.Format("Pause Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));
         }
 
         /// <summary>

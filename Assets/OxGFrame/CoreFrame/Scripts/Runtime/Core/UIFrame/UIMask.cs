@@ -10,11 +10,11 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         public void InitMask(Sprite maskSprite)
         {
-            // 建立一個Image當作遮罩 & MaskButton Raycast
+            // 建立一個 Image 當作遮罩 & MaskButton Raycast
             this._maskImage = this.gameObject.AddComponent<Image>();
             this._maskImage.sprite = maskSprite;
 
-            // 建立Mask事件
+            // 建立 Mask 事件
             Button maskBtn = this.gameObject.AddComponent<Button>();
             maskBtn.transition = Selectable.Transition.None;
             maskBtn.onClick.AddListener(() =>
@@ -24,7 +24,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 重新使用Mask時, 再指定一次uiName
+        /// 重新使用 Mask 時, 再指定一次 uiName
         /// </summary>
         /// <param name="uiName"></param>
         public void ReUse()
@@ -33,7 +33,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 回收至MaskPool時, 會需要釋放相關參數
+        /// 回收至 MaskPool 時, 會需要釋放相關參數
         /// </summary>
         public void UnUse()
         {
@@ -43,7 +43,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 交由UIMaskManager調用顯示Mask Alpha
+        /// 交由 UIMaskManager 調用顯示 Mask Alpha
         /// </summary>
         /// <param name="opacityType"></param>
         public void SetMaskColor(Color color)
@@ -52,7 +52,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 取得當前Mask Alpha Color
+        /// 取得當前 Mask Alpha Color
         /// </summary>
         /// <returns></returns>
         public Color GetMaskAlpha()
@@ -61,7 +61,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 設置LocalScale
+        /// 設置 LocalScale
         /// </summary>
         /// <param name="scale"></param>
         public void SetLocalScale(Vector3 scale)
@@ -70,7 +70,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 設置Rectransform成延展模式
+        /// 設置 Rectransform 成延展模式
         /// </summary>
         public void SetStretch()
         {
@@ -82,7 +82,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 設置Mask事件
+        /// 設置 Mask 事件
         /// </summary>
         /// <param name="maskEventFunc"></param>
         public void SetMaskClickEvent(MaskEventFunc maskEventFunc)

@@ -65,8 +65,6 @@ namespace OxGFrame.NetFrame
 
         private void _ConnectedAction(IAsyncResult ar)
         {
-            Debug.Log("_ConnectedAction");
-
             try
             {
                 if (this._tcp != null)
@@ -86,7 +84,6 @@ namespace OxGFrame.NetFrame
                 }
             }
 
-            Debug.Log("_ConnectedAction - Connected!!!");
             this.OnOpen(this, EventArgs.Empty);
 
             NetworkStream ns = this._tcp.GetStream();
@@ -123,7 +120,7 @@ namespace OxGFrame.NetFrame
 
             this._readBufferOffset += readBytes;
 
-            // socket裡如果還有資料可以讀取的話就繼續讀取
+            // socket 裡如果還有資料可以讀取的話就繼續讀取
             if (ns.DataAvailable)
             {
                 try
@@ -205,7 +202,7 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 設置等待讀取封包Callback
+        /// 設置等待讀取封包 Callback
         /// </summary>
         /// <param name="wrnp"></param>
         public void SetWaitReadNetPacket(WaitReadNetPacket wrnp)

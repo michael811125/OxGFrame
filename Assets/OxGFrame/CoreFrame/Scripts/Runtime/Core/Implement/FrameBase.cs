@@ -8,7 +8,7 @@ namespace OxGFrame.CoreFrame
 {
     /// <summary>
     /// <para>
-    /// Init Order: Awake(Once) > BeginInit(Once) > InitOnceComponents(Once) > InitOnceEvents(Once) > PreInit(EveryOpen) > OpenSub(EveryOpen) > OnShow(EveryOpen)
+    /// Init Order: Awake (Once) > BeginInit (Once) > InitOnceComponents (Once) > InitOnceEvents (Once) > PreInit (EveryOpen) > OpenSub (EveryOpen) > OnShow (EveryOpen)
     /// </para>
     /// </summary>
     [DisallowMultipleComponent]
@@ -17,7 +17,7 @@ namespace OxGFrame.CoreFrame
         #region 綁定物件的收集器
         public class Collector
         {
-            public string checkName = "";                                                          // 用於存放Prefab Name, 會用於判斷是否同物件執行重複綁定
+            public string checkName = "";                                                          // 用於存放 Prefab Name, 會用於判斷是否同物件執行重複綁定
 
             #region 依照綁定類型建立快取容器
             private Dictionary<string, GameObject> _nodes = new Dictionary<string, GameObject>();  // 用於存放綁定物件的快取 (GameObject)
@@ -60,12 +60,12 @@ namespace OxGFrame.CoreFrame
         [HideInInspector] public string bundleName { get; protected set; } = string.Empty;    // BundleName
         [HideInInspector] public string assetName { get; protected set; } = string.Empty;     // (Bundle) AssetName = (Resouce) PathName
         [HideInInspector] public int groupId { get; protected set; } = 0;                     // 群組id
-        [HideInInspector] public bool isHidden { get; protected set; } = false;               // 檢查是否隱藏 (主要區分Close & Hide行為)
+        [HideInInspector] public bool isHidden { get; protected set; } = false;               // 檢查是否隱藏 (主要區分 Close & Hide 行為)
 
-        [Tooltip("是否允許多實例, 採用堆疊式管理 (會在Close時, 直接銷毀)")]
+        [Tooltip("Allow instantiate when close will destroy directly")]
         public bool allowInstantiate = false;                                                 // 是否允許多實例            
-        [Tooltip("是否在Close時, 進行銷毀"), ConditionalField(nameof(allowInstantiate), true)]
-        public bool onCloseAndDestroy = false;                                                // 是否關閉時就DestroyUI
+        [Tooltip("If checked will destroy on close"), ConditionalField(nameof(allowInstantiate), true)]
+        public bool onCloseAndDestroy = false;                                                // 是否關閉時就 DestroyUI
 
         private void Update()
         {
@@ -154,7 +154,7 @@ namespace OxGFrame.CoreFrame
         protected virtual void OnReveal() { }
 
         /// <summary>
-        /// 會由Protocol接收到封包時, 被調用
+        /// 會由 Protocol 接收到封包時, 被調用
         /// </summary>
         /// <param name="funcId"></param>
         public abstract void OnUpdateOnceAfterProtocol(int funcId = 0);
@@ -176,7 +176,7 @@ namespace OxGFrame.CoreFrame
         protected virtual void OnHide() { }
 
         /// <summary>
-        /// Destroy時會被呼叫
+        /// Destroy 時會被呼叫
         /// </summary>
         public virtual void OnRelease() { }
 
@@ -197,7 +197,7 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 設置群組Id
+        /// 設置群組 Id
         /// </summary>
         /// <param name="groupId"></param>
         public void SetGroupId(int groupId)

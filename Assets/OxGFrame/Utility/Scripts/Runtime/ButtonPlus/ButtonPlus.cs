@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
 
+[AddComponentMenu("OxGFrame/Utility/ButtonPlus/ButtonPlus")]
 public class ButtonPlus : Button
 {
     public enum ExtdTransition

@@ -1,7 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,12 +12,12 @@ namespace OxGFrame.CoreFrame.UIFrame
         [HideInInspector] public Canvas canvas;
         [HideInInspector] public GraphicRaycaster graphicRaycaster;
 
-        [Tooltip("UI相關設置")]
-        public UISetting uiSetting = new UISetting();       // 定義UI類型, 用於取決於要新增至UIRoot中哪個對應的節點
-        [Tooltip("是否自動生成Mask")]
-        public bool autoMask = false;                       // 是否自動生成Mask
-        [ConditionalField(nameof(autoMask)), Tooltip("Mask相關設置")]
-        public MaskSetting maskSetting = new MaskSetting(); // 定義Mask類型 (Popup系列)
+        [Tooltip("UI Settings")]
+        public UISetting uiSetting = new UISetting();       // 定義UI類型, 用於取決於要新增至 UIRoot 中哪個對應的節點
+        [Tooltip("If checked will auto create a mask")]
+        public bool autoMask = false;                       // 是否自動生成 Mask
+        [ConditionalField(nameof(autoMask)), Tooltip("Mask Settings")]
+        public MaskSetting maskSetting = new MaskSetting(); // 定義Mask類型 (Popup 系列)
 
         private void Awake()
         {
@@ -28,12 +26,12 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 僅執行一次, 只交由UIManager加載資源時呼叫初始參數
+        /// 僅執行一次, 只交由 UIManager 加載資源時呼叫初始參數
         /// </summary>
         public override void BeginInit() { }
 
         /// <summary>
-        /// 僅執行一次, 只交由UIManager加載資源時呼叫初始相關綁定組件
+        /// 僅執行一次, 只交由 UIManager 加載資源時呼叫初始相關綁定組件
         /// </summary>
         public sealed override void InitFirst()
         {
@@ -48,23 +46,23 @@ namespace OxGFrame.CoreFrame.UIFrame
         protected override void CloseSub() { }
 
         /// <summary>
-        /// UI初始相關UI組件, 僅初始一次
+        /// UI 初始相關 UI 組件, 僅初始一次
         /// </summary>
         protected override void InitOnceComponents() { }
 
         /// <summary>
-        /// UI初始相關註冊按鈕事件等等, 僅初始一次
+        /// UI 初始相關註冊按鈕事件等等, 僅初始一次
         /// </summary>
         protected override void InitOnceEvents() { }
 
         /// <summary>
-        /// 每次開啟UI時都會被執行, 子類override
+        /// 每次開啟 UI 時都會被執行, 子類 override
         /// </summary>
         /// <param name="obj"></param>
         protected override void OnShow(object obj) { }
 
         /// <summary>
-        /// 接收封包後調用控制, 收到封包後的一個刷新點, 可以由FuncId去判斷欲刷新的Protocol (需自行委派 Delegate)
+        /// 接收封包後調用控制, 收到封包後的一個刷新點, 可以由 FuncId 去判斷欲刷新的 Protocol (需自行委派 Delegate)
         /// </summary>
         /// <param name="funcId"></param>
         public override void OnUpdateOnceAfterProtocol(int funcId = 0) { }
@@ -72,7 +70,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         protected override void OnUpdate(float dt) { }
 
         /// <summary>
-        /// UIManager控制調用Display
+        /// UIManager 控制調用 Display
         /// </summary>
         public sealed override void Display(object obj)
         {
@@ -81,7 +79,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             // 非隱藏才正規處理
             if (!this.isHidden)
             {
-                // 進行顯示初始動作【子類OnShow】
+                // 進行顯示初始動作【子類 OnShow】
                 this.OnShow(obj);
                 // 啟用Mask
                 if (this.autoMask) this._AddMask();
@@ -96,7 +94,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        ///  UIManager控制調用Hide
+        ///  UIManager 控制調用 Hide
         /// </summary>
         public sealed override void Hide(bool disableDoSub = false)
         {
@@ -110,7 +108,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                     // 非隱藏才正規處理
                     if (!this.isHidden)
                 {
-                        // 如果有啟用Mask, 則需要回收Mask
+                        // 如果有啟用 Mask, 則需要回收 Mask
                         if (this.autoMask) this._RemoveMask();
                     if (!disableDoSub) this.CloseSub();
                     this.OnClose();
@@ -122,7 +120,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 專屬Popup才有的Mask (增加)
+        /// 創建 Mask UI
         /// </summary>
         private void _AddMask()
         {
@@ -130,7 +128,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 專屬Popup才有的Mask (移除)
+        /// 移除 Mask UI
         /// </summary>
         private void _RemoveMask()
         {
@@ -138,7 +136,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// Popup系列會由UIManager控制調用Freeze, 其餘類型的會由Display() or Hide()
+        /// 創建 Freeze UI
         /// </summary>
         public void Freeze()
         {
@@ -146,7 +144,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// Popup系列會由UIManager控制調用, 其餘類型的會由Display() or Hide()
+        /// 移除 Freeze UI
         /// </summary>
         public void UnFreeze()
         {

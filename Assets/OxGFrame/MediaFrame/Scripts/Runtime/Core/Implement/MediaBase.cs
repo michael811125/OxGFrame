@@ -152,7 +152,7 @@ namespace OxGFrame.MediaFrame
         public abstract float CurrentLength();
 
         /// <summary>
-        /// 設置停止播放時的事件Callback
+        /// 設置停止播放時的事件 Callback
         /// </summary>
         /// <param name="endEvent"></param>
         public virtual void SetEndEvent(Action endEvent)
@@ -161,7 +161,7 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// Destroy時會被呼叫
+        /// Destroy 時會被呼叫
         /// </summary>
         public virtual void OnRelease()
         {
@@ -235,12 +235,12 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 取得 UnityWebRequest StreamingAssets 路徑 (OSX 需要 + file://)
+        /// 取得 UnityWebRequest StreamingAssets 路徑 (OSX and iOS 需要 + file://)
         /// </summary>
         /// <returns></returns>
         public static string GetRequestStreamingAssetsPath()
         {
-#if UNITY_STANDALONE_OSX
+#if UNITY_STANDALONE_OSX || UNITY_IOS
             return $"file://{Application.streamingAssetsPath}";
 #else
             return Application.streamingAssetsPath;

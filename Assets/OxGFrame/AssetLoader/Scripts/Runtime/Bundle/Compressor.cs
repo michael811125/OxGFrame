@@ -21,7 +21,7 @@ namespace AssetLoader.Zip
             /// 壓縮單個文件或文件夾前執行的回調
             /// </summary>
             /// <param name="zEntry"></param>
-            /// <returns>如果返回true，則壓縮文件或文件夾，反之則不壓縮文件或文件夾</returns>
+            /// <returns>如果返回 true，則壓縮文件或文件夾，反之則不壓縮文件或文件夾</returns>
             public virtual bool OnPreZip(ZipEntry zEntry)
             {
                 return true;
@@ -36,7 +36,7 @@ namespace AssetLoader.Zip
             /// <summary>
             /// 壓縮執行完畢後的回調
             /// </summary>
-            /// <param name="result">true表示壓縮成功，false表示壓縮失敗</param>
+            /// <param name="result">true 表示壓縮成功，false 表示壓縮失敗</param>
             public virtual void OnFinished(bool result) { }
         }
         #endregion
@@ -48,7 +48,7 @@ namespace AssetLoader.Zip
             /// 解壓單個文件或文件夾前執行的回調
             /// </summary>
             /// <param name="zEntry"></param>
-            /// <returns>如果返回true，則壓縮文件或文件夾，反之則不壓縮文件或文件夾</returns>
+            /// <returns>如果返回 true，則壓縮文件或文件夾，反之則不壓縮文件或文件夾</returns>
             public virtual bool OnPreUnzip(ZipEntry zEntry)
             {
                 return true;
@@ -63,7 +63,7 @@ namespace AssetLoader.Zip
             /// <summary>
             /// 解壓執行完畢後的回調
             /// </summary>
-            /// <param name="result">true表示解壓成功，false表示解壓失敗</param>
+            /// <param name="result">true 表示解壓成功，false 表示解壓失敗</param>
             public virtual void OnFinished(bool result) { }
         }
         #endregion

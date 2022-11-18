@@ -2,8 +2,8 @@
 
 public class EventCenterExample : EventCenterBase<EventCenterExample>
 {
-    #region declaration and definition EVENT_xBASE
-    public const int EEventTest = EVENT_xBASE + 1;
+    #region declaration and definition xBASE
+    public const int EEventTest = xBASE + 1;
     #endregion
 
     public EventCenterExample()

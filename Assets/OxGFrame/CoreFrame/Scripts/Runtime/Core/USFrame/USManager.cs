@@ -169,7 +169,7 @@ namespace OxGFrame.CoreFrame.USFrame
                 var scene = this.GetSceneByName(sceneName);
                 if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
                 {
-                    Debug.LogWarning(string.Format("【US】{0}已經存在了!!!", sceneName));
+                    Debug.LogWarning(string.Format("【US】{0} already exists!!!", sceneName));
                     return;
                 }
 
@@ -227,7 +227,7 @@ namespace OxGFrame.CoreFrame.USFrame
             var scene = this.GetSceneByName(sceneName);
             if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
             {
-                Debug.LogWarning(string.Format("【US】{0}已經存在了!!!", sceneName));
+                Debug.LogWarning(string.Format("【US】{0} already exists!!!", sceneName));
                 return;
             }
 
@@ -266,7 +266,7 @@ namespace OxGFrame.CoreFrame.USFrame
             var scene = this.GetSceneByBuildIndex(buildIndex);
             if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
             {
-                Debug.LogWarning(string.Format("【US】{0}已經存在了!!!", scene.name));
+                Debug.LogWarning(string.Format("【US】{0} already exists!!!", scene.name));
                 return;
             }
 

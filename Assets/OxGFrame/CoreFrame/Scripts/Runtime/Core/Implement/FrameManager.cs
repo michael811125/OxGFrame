@@ -317,7 +317,7 @@ namespace OxGFrame.CoreFrame
                     // 如果允許多實例 & 預加載模式, 則直接返回 (主要是 Cacher 已經有加載資源了)
                     if (stack.allowInstantiate && isPreloadMode)
                     {
-                        Debug.Log($"<color=#FF9149>{stack.assetName} => 【允許多實例 + 預加載模式】不先行處理快取</color>");
+                        Debug.Log($"<color=#FF9149>{stack.assetName} => 【Allow Instantiate + Preload Mode】skip cache process.</color>");
                         return null;
                     }
                     // 允所多實例時, 需要重覆加載 (確保 ref 正確, 不過會多 1 次, 需要額外減去)

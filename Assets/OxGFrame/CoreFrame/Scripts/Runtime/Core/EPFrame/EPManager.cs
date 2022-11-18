@@ -54,7 +54,7 @@ namespace OxGFrame.CoreFrame.EPFrame
             GameObject obj = await CacheResource.GetInstance().Load<GameObject>(assetName, progression);
             if (obj == null)
             {
-                Debug.LogWarning(string.Format("【 path: {0} 】此路徑找不到所屬資源!!!", assetName));
+                Debug.LogWarning(string.Format("【 path: {0} 】asset not found at this path!!!", assetName));
                 return null;
             }
 
@@ -75,7 +75,7 @@ namespace OxGFrame.CoreFrame.EPFrame
             GameObject obj = await CacheBundle.GetInstance().Load<GameObject>(bundleName, assetName, true, progression);
             if (obj == null)
             {
-                Debug.LogWarning(string.Format("【 ab: {0}, asset: {1} 】此路徑找不到所屬資源!!!", bundleName, assetName));
+                Debug.LogWarning(string.Format("【 ab: {0}, asset: {1} 】not found at this path!!!", bundleName, assetName));
                 return null;
             }
 

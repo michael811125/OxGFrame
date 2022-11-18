@@ -9,22 +9,22 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         public void InitFreeze()
         {
-            // 建立一個Image當作FreezeButton Raycast用 (BlockEvent)
+            // 建立一個 Image 當作 FreezeButton Raycast 用 (BlockEvent)
             this._freezeImage = this.gameObject.AddComponent<Image>();
             this._freezeImage.color = new Color(0, 0, 0, 0);
 
-            // 建立Freeze事件
+            // 建立 Freeze 事件
             Button freezeBtn = this.gameObject.AddComponent<Button>();
             freezeBtn.transition = Selectable.Transition.None;
             freezeBtn.onClick.AddListener(() =>
             {
-                Debug.LogWarning("<color=#42BBFF>UI被凍結了</color>");
+                Debug.LogWarning("<color=#42BBFF>UI has been frozen</color>");
             });
         }
 
         /**
         <summary>
-        重新使用UIFreeze
+        重新使用 UIFreeze
         </summary>
          */
         public void ReUse()
@@ -34,7 +34,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         /**
         <summary>
-        回收至FreezePool的相關釋放
+        回收至 FreezePool 的相關釋放
         </summary>
          */
         public void UnUse()
@@ -43,7 +43,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 設置LocalScale
+        /// 設置 LocalScale
         /// </summary>
         /// <param name="scale"></param>
         public void SetLocalScale(Vector3 scale)
@@ -52,7 +52,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 設置Rectransform成延展模式
+        /// 設置 Rectransform 成延展模式
         /// </summary>
         public void SetStretch()
         {

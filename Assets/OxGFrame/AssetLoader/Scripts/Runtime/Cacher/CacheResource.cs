@@ -132,7 +132,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // 如果有在快取中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
-                    // 在快取中請求進度大小需累加當前資源的總size (因為迴圈)
+                    // 在快取中請求進度大小需累加當前資源的總 size (因為迴圈)
                     this.reqSize += this.GetAssetsLength(assetName);
                     // 處理進度回調
                     progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);

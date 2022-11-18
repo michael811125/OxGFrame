@@ -67,7 +67,7 @@ namespace OxGFrame.NetFrame
 
         protected RealTimer _reconnectTicker = null;         // 斷線重連循環計時器
         private float _reconnectTick = 5f;                   // 斷線重連時間, 預設 = 5秒
-        private int _autoReconnectCount = 0;                 // 自動連線次數 (由NetOption帶入)
+        private int _autoReconnectCount = 0;                 // 自動連線次數 (由 NetOption 帶入)
         protected Action _reconnectAction = null;            // 斷線重連 Callback
 
         protected ResponseHandler _responseHandler = null;   // 接收的回調
@@ -136,13 +136,13 @@ namespace OxGFrame.NetFrame
 
             if (this._netStatus == NetStatus.DISCONNECTED || this._netStatus == NetStatus.RECONNECTING)
             {
-                this._netStatus = NetStatus.CONNECTING; // 目前處於CONNECTING狀態
+                this._netStatus = NetStatus.CONNECTING; // 目前處於 CONNECTING 狀態
                 this._NetStatusHandler();
 
                 this._firstSendHandler?.Invoke();       // 重連時重新初始第一次封包
 
-                this._netOption = netOption;            // 設置NetOption (連線配置)
-                this._socket.CreateConnect(netOption);  // 最後再建立Socket連線 (TCP/IP: 需先InitNetSocket註冊後才能Handle, Websocket: 透過原先EventHandler再進行註冊)  
+                this._netOption = netOption;            // 設置 NetOption (連線配置)
+                this._socket.CreateConnect(netOption);  // 最後再建立 Socket 連線 (TCP/IP => 需先 InitNetSocket 註冊後才能 Handle, Websocket => 透過原先 EventHandler 再進行註冊)  
             }
         }
 
@@ -221,7 +221,7 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 傳送Binary Data至Server
+        /// 傳送 Binary Data 至 Server
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
@@ -231,7 +231,7 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 關閉Socket
+        /// 關閉 Socket
         /// </summary>
         public void CloseSocket()
         {
@@ -250,7 +250,7 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 設置接收的Handler
+        /// 設置接收的 Handler
         /// </summary>
         /// <param name="rh"></param>
         public void SetResponseHandler(ResponseHandler rh)
@@ -259,7 +259,7 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 設置第一次初始寄送封包的Handler
+        /// 設置第一次初始寄送封包的 Handler
         /// </summary>
         /// <param name="fsh"></param>
         public void SetFirstSendHandler(FirstSendHandler fsh)
@@ -267,7 +267,7 @@ namespace OxGFrame.NetFrame
             this._firstSendHandler = fsh;
         }
 
-        #region 超時Ticker處理
+        #region 超時 Ticker 處理
         public void SetOutReciveAction(Action outReciveAction)
         {
             this._outReceiveAction = outReciveAction;
@@ -294,12 +294,12 @@ namespace OxGFrame.NetFrame
             {
                 this._outReceiveAction?.Invoke();
 
-                Debug.Log("<color=#FFC100>NetNode 超時處理...</color>");
+                Debug.Log("<color=#FFC100>NetNode timeout processing...</color>");
             }
         }
         #endregion
 
-        #region 心跳檢測Ticker處理
+        #region 心跳檢測 Ticker 處理
         public void SetHeartBeatAction(Action heartBeatAction)
         {
             this._heartBeatAction = heartBeatAction;
@@ -326,12 +326,12 @@ namespace OxGFrame.NetFrame
             {
                 this._heartBeatAction?.Invoke();
 
-                Debug.Log("<color=#8EFF00>NetNode 心跳檢測...</color>");
+                Debug.Log("<color=#8EFF00>NetNode check heartbeat...</color>");
             }
         }
         #endregion
 
-        #region 斷線重連Ticker處理
+        #region 斷線重連 Ticker 處理
         public void SetReconnectAction(Action reconnectAction)
         {
             this._reconnectAction = reconnectAction;
@@ -379,7 +379,7 @@ namespace OxGFrame.NetFrame
 
                     this._reconnectAction?.Invoke();
 
-                    Debug.Log("<color=#FF0000>NetNode 嘗試重新連接...</color>");
+                    Debug.Log("<color=#FF0000>NetNode try to reconnecting...</color>");
                 }
             }
             else

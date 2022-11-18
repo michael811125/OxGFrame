@@ -28,7 +28,7 @@ namespace OxGFrame.Utility.Timer
         public float fixedDeltaTime { get; protected set; }
         protected CancellationTokenSource _updateCts = null;
 
-        protected const float FIXED_FRAME = 60;                   // 固定幀數 (固定1秒刷新60次, 毫秒單位 => 1000 ms / 60 = 16 ms, 秒數單位 => 1 s / 60 = 0.016 s)
+        protected const float FIXED_FRAME = 60;                   // 固定幀數 (固定 1 秒刷新 60 次, 毫秒單位 => 1000 ms / 60 = 16 ms, 秒數單位 => 1 s / 60 = 0.016 s)
         protected const float MAX_TIMESCALE = 10;
 
         public void StartUpdate()
@@ -53,14 +53,14 @@ namespace OxGFrame.Utility.Timer
 
             // 幀數率
             float frameRate = FIXED_FRAME * this.timeScale;
-            // 計算fixedDeltaTime
+            // 計算 fixedDeltaTime
             this.fixedDeltaTime = 1 / frameRate;
 
             await UniTask.Delay(TimeSpan.FromSeconds(this.fixedDeltaTime), true, PlayerLoopTiming.Update, (cts == null) ? default : cts.Token);
 
             this.onFixedUpdate?.Invoke(this.fixedDeltaTime);
 
-            // 計算deltaTime
+            // 計算 deltaTime
             this.deltaTime = this.realtimeSinceStartup - this.timeAtLastFrame;
             this.timeAtLastFrame = this.realtimeSinceStartup;
 

@@ -134,7 +134,7 @@ namespace OxGFrame.CoreFrame.GSFrame
             {
                 if (this.CheckIsShowing(assetName))
                 {
-                    Debug.LogWarning(string.Format("【GS】{0}已經存在了!!!", assetName));
+                    Debug.LogWarning(string.Format("【GS】{0} already exists!!!", assetName));
                     return null;
                 }
             }
@@ -144,7 +144,7 @@ namespace OxGFrame.CoreFrame.GSFrame
             var gsBase = await this.LoadIntoAllCache(string.Empty, assetName, progression, false);
             if (gsBase == null)
             {
-                Debug.LogWarning(string.Format("找不到相對路徑資源【GS】: {0}", assetName));
+                Debug.LogWarning(string.Format("Asset not found at this path!!!【GS】: {0}", assetName));
                 return null;
             }
 
@@ -152,7 +152,7 @@ namespace OxGFrame.CoreFrame.GSFrame
             gsBase.SetHidden(false);
             await this.LoadAndDisplay(gsBase, obj);
 
-            Debug.Log(string.Format("顯示GS: 【{0}】", assetName));
+            Debug.Log(string.Format("Show GS: 【{0}】", assetName));
 
             this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
 
@@ -171,7 +171,7 @@ namespace OxGFrame.CoreFrame.GSFrame
             {
                 if (this.CheckIsShowing(assetName))
                 {
-                    Debug.LogWarning(string.Format("【GS】{0}已經存在了!!!", assetName));
+                    Debug.LogWarning(string.Format("【GS】{0} already exists!!!", assetName));
                     return null;
                 }
             }
@@ -181,7 +181,7 @@ namespace OxGFrame.CoreFrame.GSFrame
             var gsBase = await this.LoadIntoAllCache(bundleName, assetName, progression, false);
             if (gsBase == null)
             {
-                Debug.LogWarning(string.Format("找不到相對路徑資源【GS】: {0}", assetName));
+                Debug.LogWarning(string.Format("Asset not found at this path!!!【GS】: {0}", assetName));
                 return null;
             }
 
@@ -189,7 +189,7 @@ namespace OxGFrame.CoreFrame.GSFrame
             gsBase.SetHidden(false);
             await this.LoadAndDisplay(gsBase, obj);
 
-            Debug.Log(string.Format("顯示GS: 【{0}】", assetName));
+            Debug.Log(string.Format("Show GS: 【{0}】", assetName));
 
             this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
 
@@ -235,7 +235,7 @@ namespace OxGFrame.CoreFrame.GSFrame
                 else if (gsBase.onCloseAndDestroy) this.Destroy(gsBase, assetName);
             }
 
-            Debug.Log(string.Format("關閉GS: 【{0}】", assetName));
+            Debug.Log(string.Format("Close GS: 【{0}】", assetName));
         }
 
         public override void Close(string assetName, bool disableDoSub = false, bool forceDestroy = false)
@@ -325,7 +325,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             if (this.CheckIsShowing(assetName))
             {
-                Debug.LogWarning(string.Format("【GS】{0}已經解除隱藏了!!!", assetName));
+                Debug.LogWarning(string.Format("【GS】{0} Already Reveal!!!", assetName));
                 return;
             }
 
@@ -336,7 +336,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 
                 this.LoadAndDisplay(gsBase).Forget();
 
-                Debug.Log(string.Format("解除隱藏GS: 【{0}】", assetName));
+                Debug.Log(string.Format("Reveal GS: 【{0}】", assetName));
             }
         }
 
@@ -399,7 +399,7 @@ namespace OxGFrame.CoreFrame.GSFrame
                 this.ExitAndHide(gsBase);
             }
 
-            Debug.Log(string.Format("隱藏GS: 【{0}】", assetName));
+            Debug.Log(string.Format("Hide GS: 【{0}】", assetName));
         }
 
         public override void Hide(string assetName)

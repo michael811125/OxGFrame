@@ -71,7 +71,7 @@ namespace AssetLoader.Utility
         }
 
         /// <summary>
-        /// Bytes傳輸速率轉換
+        /// 轉換 Bytes 傳輸速率
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
@@ -92,7 +92,7 @@ namespace AssetLoader.Utility
         }
 
         /// <summary>
-        /// 轉換Bytes為大小字串 (KB, MB, GB)
+        /// 轉換 Bytes 為大小字串 (KB, MB, GB)
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>

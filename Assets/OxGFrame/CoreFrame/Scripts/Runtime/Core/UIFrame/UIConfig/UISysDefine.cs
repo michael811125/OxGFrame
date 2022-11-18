@@ -1,5 +1,5 @@
-﻿#define ENABLE_FIND_ALL_CANVASES           // 啟用FindAll查找是否有相符CanvasType定義名稱的物件 (會在初始時耗時)
-#define ENABLE_AUTO_SET_LAYER_RECURSIVELY  // 啟用自動設置UI繼承主Canvas的LayerMask (在每第一次加載資源會耗時設置, 後續快取後如果不進行刪除則不影響)
+﻿#define ENABLE_FIND_ALL_CANVASES           // 啟用 FindAll 查找是否有相符 CanvasType 定義名稱的物件 (會在初始時耗時)
+#define ENABLE_AUTO_SET_LAYER_RECURSIVELY  // 啟用自動設置 UI 繼承主 Canvas 的 LayerMask (在每第一次加載資源會耗時設置, 後續快取後如果不進行刪除則不影響)
 
 using UnityEngine;
 using System;
@@ -11,7 +11,7 @@ namespace OxGFrame.CoreFrame.UIFrame
     public delegate void MaskEventFunc();
 
     /// <summary>
-    /// Canvas歸類 (※重要: 自行定義時, 必須跟場景上的Canvas命名一樣)
+    /// Canvas 歸類 (※重要: 自行定義時, 必須跟場景上的 Canvas 命名一樣)
     /// </summary>
     public enum CanvasType
     {
@@ -38,26 +38,26 @@ namespace OxGFrame.CoreFrame.UIFrame
     [Serializable]
     public class UISetting
     {
-        [Tooltip("Canvas分類 (會透過name進行查找場景上的同名Canvas)")]
+        [Tooltip("Canvas render type (will find same name of canvas on the scene)")]
         public CanvasType canvasType = CanvasType.CanvasOverlay;
-        [Tooltip("節點分類")]
+        [Tooltip("Node layer type")]
         public NodeType nodeType = NodeType.Normal;
-        [Tooltip("啟用堆疊式管理 (會自行控制階層)")]
+        [Tooltip("Stack mode (will auto controll order in layer)")]
         public bool stack = false;
-        [ConditionalField(nameof(stack), inverse: true), Tooltip("設定固定渲染順序 (非堆疊式)"), Range(0, UISysDefine.ORDER_DIFFERENCE)]
+        [ConditionalField(nameof(stack), inverse: true), Tooltip("Fixed rendering order without stack mode"), Range(0, UISysDefine.ORDER_DIFFERENCE)]
         public int order = 0;
-        [Tooltip("當執行CloseAll時, 是否跳過處理")]
+        [Tooltip("If checked when call CloseAll method will auto skip process")]
         public bool whenCloseAllToSkip = false;
-        [Tooltip("當執行HideAll時, 是否跳過處理")]
+        [Tooltip("If checked when call HideAll method will auto skip process")]
         public bool whenHideAllToSkip = false;
     }
 
     [Serializable]
     public class MaskSetting
     {
-        [Tooltip("Mask顏色")]
+        [Tooltip("Mask color")]
         public Color color = new Color32(0, 0, 0, 192);
-        [Tooltip("是否點擊Mask進行CloseSelf事件")]
+        [Tooltip("If checked when click mask will close self")]
         public bool isClickMaskToClose = true;
     }
 
@@ -81,7 +81,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         public static readonly string UI_MASK_NAME = "UIMaskPool";
         public static readonly string UI_FREEZE_NAME = "UIFreezePool";
 
-        /* 節點常量, 可自行定義NodeType後, 並且在此新增 【NodeType + Order, 排序小(後層) -> 大(前層)】 */
+        /* 節點常量, 可自行定義 NodeType 後, 並且在此新增 【NodeType + Order, 排序小 (後層) -> 大 (前層)】 */
         public static readonly Dictionary<NodeType, int> UI_NODES = new Dictionary<NodeType, int>()
             {
                 { NodeType.Normal, 0},

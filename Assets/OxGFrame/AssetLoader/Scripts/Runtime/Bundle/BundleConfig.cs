@@ -277,12 +277,12 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得 UnityWebRequest StreamingAssets 路徑 (OSX 需要 + file://)
+        /// 取得 UnityWebRequest StreamingAssets 路徑 (OSX and iOS 需要 + file://)
         /// </summary>
         /// <returns></returns>
         public static string GetRequestStreamingAssetsPath()
         {
-#if UNITY_STANDALONE_OSX
+#if UNITY_STANDALONE_OSX || UNITY_IOS
             return $"file://{Application.streamingAssetsPath}";
 #else
             return Application.streamingAssetsPath;

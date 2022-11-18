@@ -201,7 +201,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             return null;
         }
 
-        #region 實作Loading
+        #region 實作 Loading
         protected override UIBase Instantiate(UIBase uiBase, string bundleName, string assetName, AddIntoCache addIntoCache)
         {
             // 先從來源物件中取得 UIBase, 需先取得 UICanvas 環境, 後續 Instantiate 時才能取得正常比例
@@ -378,7 +378,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             {
                 if (this.CheckIsShowing(assetName))
                 {
-                    Debug.LogWarning(string.Format("【UI】{0}已經存在了!!!", assetName));
+                    Debug.LogWarning(string.Format("【UI】{0} already exists!!!", assetName));
                     return null;
                 }
             }
@@ -388,7 +388,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             var uiBase = await this.LoadIntoAllCache(string.Empty, assetName, progression, false);
             if (uiBase == null)
             {
-                Debug.LogWarning(string.Format("找不到相對路徑資源【UI】: {0}", assetName));
+                Debug.LogWarning(string.Format("Asset not found at this path!!!【UI】: {0}", assetName));
                 return null;
             }
 
@@ -396,7 +396,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             uiBase.SetHidden(false);
             await this.LoadAndDisplay(uiBase, obj);
 
-            Debug.Log(string.Format("顯示UI: 【{0}】", assetName));
+            Debug.Log(string.Format("Show UI: 【{0}】", assetName));
 
             this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
 
@@ -415,7 +415,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             {
                 if (this.CheckIsShowing(assetName))
                 {
-                    Debug.LogWarning(string.Format("【UI】{0}已經存在了!!!", assetName));
+                    Debug.LogWarning(string.Format("【UI】{0} already exists!!!", assetName));
                     return null;
                 }
             }
@@ -425,7 +425,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             var uiBase = await this.LoadIntoAllCache(bundleName, assetName, progression, false);
             if (uiBase == null)
             {
-                Debug.LogWarning(string.Format("找不到相對路徑資源【UI】: {0}", assetName));
+                Debug.LogWarning(string.Format("Asset not found at this path!!!【UI】: {0}", assetName));
                 return null;
             }
 
@@ -433,7 +433,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             uiBase.SetHidden(false);
             await this.LoadAndDisplay(uiBase, obj);
 
-            Debug.Log(string.Format("顯示UI: 【{0}】", assetName));
+            Debug.Log(string.Format("Show UI: 【{0}】", assetName));
 
             this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
 
@@ -479,7 +479,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 else if (uiBase.onCloseAndDestroy) this.Destroy(uiBase, assetName);
             }
 
-            Debug.Log(string.Format("關閉UI: 【{0}】", assetName));
+            Debug.Log(string.Format("Close UI: 【{0}】", assetName));
         }
 
         public override void Close(string assetName, bool disableDoSub = false, bool forceDestroy = false)
@@ -569,7 +569,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             if (this.CheckIsShowing(assetName))
             {
-                Debug.LogWarning(string.Format("【UI】{0}已經解除隱藏了!!!", assetName));
+                Debug.LogWarning(string.Format("【UI】{0} Already Reveal!!!", assetName));
                 return;
             }
 
@@ -580,7 +580,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
                 this.LoadAndDisplay(uiBase).Forget();
 
-                Debug.Log(string.Format("解除隱藏UI: 【{0}】", assetName));
+                Debug.Log(string.Format("Reveal UI: 【{0}】", assetName));
             }
         }
 
@@ -643,7 +643,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 this.ExitAndHide(uiBase);
             }
 
-            Debug.Log(string.Format("隱藏UI: 【{0}】", assetName));
+            Debug.Log(string.Format("Hide UI: 【{0}】", assetName));
         }
 
         public override void Hide(string assetName)

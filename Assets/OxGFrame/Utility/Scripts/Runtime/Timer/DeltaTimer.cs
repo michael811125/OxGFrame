@@ -126,7 +126,7 @@ namespace OxGFrame.Utility.Timer
         }
 
         /// <summary>
-        /// 計算觸發時間倒數計時, 如果超過設置的觸發時間將直接返回0
+        /// 計算觸發時間倒數計時, 如果超過設置的觸發時間將直接返回 0
         /// </summary>
         /// <returns></returns>
         public float TimerCountdown()
@@ -147,7 +147,7 @@ namespace OxGFrame.Utility.Timer
         }
 
         /// <summary>
-        /// 取得Timer倒數計時的時間比率 1 遞減至 0, 0 = 時間到
+        /// 取得 Timer 倒數計時的時間比率 1 遞減至 0, 0 = 時間到
         /// </summary>
         /// <returns></returns>
         public float GetTimerCountdownRatio()
@@ -159,9 +159,9 @@ namespace OxGFrame.Utility.Timer
         }
         #endregion
 
-        #region Tick, 持續依照Set的時間Tick
+        #region Tick, 持續依照 Set 的時間 Tick
         /// <summary>
-        /// 設置Tick時間, 當TickTimeout時還會持續循環Tick
+        /// 設置 Tick 時間, 當 TickTimeout 時還會持續循環 Tick
         /// </summary>
         /// <param name="tick"></param>
         public void SetTick(float tick)
@@ -171,7 +171,7 @@ namespace OxGFrame.Utility.Timer
         }
 
         /// <summary>
-        /// 取得設置的Tick的時間
+        /// 取得設置的 Tick 的時間
         /// </summary>
         /// <returns></returns>
         public float GetTick()
@@ -180,7 +180,7 @@ namespace OxGFrame.Utility.Timer
         }
 
         /// <summary>
-        /// Tick觸發時間倒數, 如果超過設置的觸發時間將直接返回0
+        /// Tick 觸發時間倒數, 如果超過設置的觸發時間將直接返回 0
         /// </summary>
         /// <returns></returns>
         public float TickCountdown()
@@ -191,7 +191,7 @@ namespace OxGFrame.Utility.Timer
         }
 
         /// <summary>
-        /// 返回Tick時間是否已經到了
+        /// 返回 Tick 時間是否已經到了
         /// </summary>
         /// <returns></returns>
         public bool IsTickTimeout()
@@ -203,7 +203,7 @@ namespace OxGFrame.Utility.Timer
         }
 
         /// <summary>
-        /// 取得Tick倒數計時的時間比率 1 遞減至 0, 0 = 時間到
+        /// 取得 Tick 倒數計時的時間比率 1 遞減至 0, 0 = 時間到
         /// </summary>
         /// <returns></returns>
         public float GetTickCountdownRatio()
