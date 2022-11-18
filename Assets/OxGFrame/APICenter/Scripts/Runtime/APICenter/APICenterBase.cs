@@ -6,7 +6,7 @@ namespace OxGFrame.APICenter
 {
     public class APICenterBase<T> where T : APICenterBase<T>, new()
     {
-        public const int API_xBASE = 0x0000;
+        public const int xBASE = 0x0000;
 
         private Dictionary<int, APIBase> _dictAPIs = new Dictionary<int, APIBase>();
 

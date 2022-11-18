@@ -119,6 +119,20 @@ store_link https://play.google.com/store/apps/details?id=YOUR_ID
 - EPFrame (Entity Prefab) : 使用 EPManager 管理掛載 EPBase 的 Prefab (使用 ~Node@XXX 進行綁定)
 - UMT (Unity Main Thread)
 
+#### 常用方法說明
+
+初始順序 Init Order: Awake (Once) > BeginInit (Once) > InitOnceComponents (Once) > InitOnceEvents (Once) > PreInit (EveryOpen) > OpenSub (EveryOpen) > OnShow (EveryOpen)
+
+- InitOnceComponents，在此方法內初始組件。
+- InitOnceEvents，在此方法內初始事件。
+- OpenSub，當有異步處理或者附屬物件控制時，可以在此處理。例如 : TopUI 附屬連動開啟 LeftUI & RightUI，那麼就可以在 TopUI 中的 OpenSub 方法實現 Show LeftUI & RightUI。
+
+#### 物件綁定說明
+
+- 透過 collector.GetNode("BindName") 返回取得 GameObject (需注意綁定名稱)
+  - UIBase & GSBase 使用 _Node@XXX
+  - EPBase 使用 ~Node@XXX
+
 ※備註 : Right-Click Create/OxGFrame/CoreFrame... (Template cs and prefab)
 
 ---
@@ -129,6 +143,14 @@ store_link https://play.google.com/store/apps/details?id=YOUR_ID
 
 - AudioFrame : 使用 AudioManager 管理掛載 AudioBase 的 Prefab，且採用 Unity Mixer 進行各音軌控制 **(需先將 AudioManager 預置體拖至場景)**
 - VideoFrame : 使用 VideoManager 管理掛載 VideoBase 的 Prefab，且支援 RenderTexture, Camera
+
+#### Audio Sound Type 說明
+- Sole，唯一性 (不能重複播放)，建議 BGM (背景音樂), Voice (配音)
+- SoundEffect，多實例 (可以重複播放)，建議 Fight Sound (戰鬥音效), General Sound (一般音效)
+
+#### Video Render Mode 說明
+- RenderTexture，將 Video 映射至 RenderTexture 再透過 UGUI 的 RawImage 進行渲染 (VideoBase 使用 RenderTexture.GetTemporary 跟 RenderTexture.ReleaseTemporary 創建與釋放，確保內存正確釋放 RenderTexture)
+- Camera，透過 Camera 進行渲染。
 
 #### Media [murlcfg] (Media URL Config) 格式
 

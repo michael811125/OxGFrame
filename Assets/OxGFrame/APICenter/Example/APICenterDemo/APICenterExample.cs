@@ -2,8 +2,8 @@
 
 public class APICenterExample : APICenterBase<APICenterExample>
 {
-    #region declaration and definition API_xBASE
-    public const int APIQueryTest = API_xBASE + 1;
+    #region declaration and definition xBASE
+    public const int APIQueryTest = xBASE + 1;
     #endregion
 
     public APICenterExample()
