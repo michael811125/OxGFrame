@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.9.0] - 2022-12-12
+- Added file verification for Downloader (when downloaded file md5 compare with server file md5 is inconsistent will redownload again) to ensure file integrity.
+- Added force unload param for Unload method withou ref count (CacheBundle & CacheResource).
+- Added GetAssetAsync (LoadAssetAsync) method for BundlePack class.
+- Optimized CacheBundle (Load AssetBundle from Memory and Stream).
+
 ## [1.8.2] - 2022-11-18
 - Fixed request StreamingAssets path failed issue on iOS (because missing file://).
   - Run bundle mode on iOS (test passed)

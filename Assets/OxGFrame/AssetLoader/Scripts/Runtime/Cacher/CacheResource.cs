@@ -273,7 +273,7 @@ namespace OxGFrame.AssetLoader.Cacher
         /// [使用計數管理] 從快取【釋放】單個資源 (釋放快取, 並且釋放資源記憶體)
         /// </summary>
         /// <param name="assetName"></param>
-        public override void Unload(string assetName)
+        public override void Unload(string assetName, bool forceUnload = false)
         {
             if (string.IsNullOrEmpty(assetName)) return;
 
@@ -290,7 +290,15 @@ namespace OxGFrame.AssetLoader.Cacher
 
                 Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload</color>】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
 
-                if (this._cacher[assetName].refCount <= 0)
+                if (forceUnload)
+                {
+                    this._cacher[assetName] = null;
+                    this._cacher.Remove(assetName);
+                    Resources.UnloadUnusedAssets();
+
+                    Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Force Unload Completes</color>】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                }
+                else if (this._cacher[assetName].refCount <= 0)
                 {
                     this._cacher[assetName] = null;
                     this._cacher.Remove(assetName);

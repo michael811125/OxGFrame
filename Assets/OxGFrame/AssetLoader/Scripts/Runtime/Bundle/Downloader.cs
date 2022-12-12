@@ -295,11 +295,40 @@ namespace OxGFrame.AssetLoader.Bundle
 
             if (this._retryDownload) return;
 
-            Debug.Log($"<color=#37ff46>FileDownload Completed. FileName: {dlFullName}</color>");
-            this.dlCount += 1;
+            // 檔案驗證 (確保檔案 MD5 一致性)
+            if (File.Exists(filePath))
+            {
+                // 讀取本地端檔案內容的 Md5
+                var localMd5 = BundleUtility.MakeMd5ForFile(filePath);
+                
+                // 判斷檔案 MD5 是否一致, 如果一致才開始下載下一個檔案
+                if (localMd5 == dlFile.md5)
+                {
+                    Debug.Log($"<color=#37ff46>[Verification] FileDownload Completed. FileName: {dlFullName}, Verify MD5: {true}</color>");
+                    this.dlCount += 1;
+                    this.NextFileDownload().Forget();
 
-            // 執行下一個檔案的下載
-            this.NextFileDownload().Forget();
+                    return;
+                }
+                // 反之, 如果不一致則重新下載
+                else
+                {
+                    Debug.Log($"<color=#FF00A0>[Verification] File size abnormal, Auto delete and download again. FileName: {fileName}, Verify MD5: {false}</color>");
+
+                    // 先執行 fileStream 的釋放 (主要這樣才能進行 File.Delete)
+                    if (this._fs != null) this._fs.Dispose();
+                    this._fs = null;
+
+                    // 檔案異常進行刪除檔案, 並且將上次本地端檔案大小累加至 dlBytes 從中扣除
+                    File.Delete(filePath);
+                    this.dlBytes -= this._fileSize;
+
+                    // 最後再嘗試下載一次 (重新下載)
+                    this.DownloadFile(file, fileName).Forget();
+
+                    return;
+                }
+            }
         }
 
         /// <summary>

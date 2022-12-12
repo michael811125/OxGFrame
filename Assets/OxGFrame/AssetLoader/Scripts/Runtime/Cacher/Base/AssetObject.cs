@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace OxGFrame.AssetLoader.Cacher
 {
@@ -42,6 +43,11 @@ namespace OxGFrame.AssetLoader.Cacher
         public T GetAsset<T>(string assetName) where T : Object
         {
             return this.assetBundle.LoadAsset<T>(assetName);
+        }
+
+        public async UniTask<T> GetAssetAsync<T>(string assetName) where T : Object
+        {
+            return await this.assetBundle.LoadAssetAsync<T>(assetName) as T;
         }
 
         ~BundlePack()

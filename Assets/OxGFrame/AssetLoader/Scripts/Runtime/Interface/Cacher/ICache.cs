@@ -14,7 +14,7 @@ namespace OxGFrame.AssetLoader
 
         UniTask Preload(string[] names, Progression progression);
 
-        void Unload(string name);
+        void Unload(string name, bool forceUnload);
 
         void Release();
     }

@@ -23,7 +23,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public abstract UniTask Preload(string[] names, Progression progression);
 
-        public abstract void Unload(string name);
+        public abstract void Unload(string name, bool forceUnload);
 
         public abstract void Release();
 

@@ -302,7 +302,7 @@ namespace OxGFrame.AssetLoader.Cacher
             if (bundlePack == null)
             {
                 bundlePack = await this.LoadBundlePack(bundleName, progression);
-                asset = bundlePack?.GetAsset<T>(assetName);
+                asset = await bundlePack.GetAssetAsync<T>(assetName);
 
                 if (bundlePack != null && asset != null)
                 {
@@ -317,7 +317,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // 處理進度回調
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
                 // 直接取得 Bundle 中的資源
-                asset = bundlePack.GetAsset<T>(assetName);
+                asset = await bundlePack.GetAssetAsync<T>(assetName);
             }
 
             if (asset != null)
@@ -337,7 +337,7 @@ namespace OxGFrame.AssetLoader.Cacher
         /// [使用計數管理] 從快取【釋放】單個 Bundle (釋放 Bundle 記憶體, 連動銷毀實例對象也會 Missing 場景上有引用的對象)
         /// </summary>
         /// <param name="bundleName"></param>
-        public override void Unload(string bundleName)
+        public override void Unload(string bundleName, bool forceUnload = false)
         {
 #if UNITY_EDITOR
             if (BundleConfig.assetDatabaseMode) return;
@@ -361,7 +361,15 @@ namespace OxGFrame.AssetLoader.Cacher
 
                 { Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload Main</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {bundleName}, ref: {this._cacher.TryGetValue(bundleName, out var v)} {v?.refCount}</color>"); }
 
-                if (this._cacher[bundleName].refCount <= 0)
+                if (forceUnload)
+                {
+                    this._cacher[bundleName].assetBundle.Unload(true);
+                    this._cacher[bundleName] = null;
+                    this._cacher.Remove(bundleName);
+
+                    Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Force Unload Main Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {bundleName}</color>");
+                }
+                else if (this._cacher[bundleName].refCount <= 0)
                 {
                     this._cacher[bundleName].assetBundle.Unload(true);
                     this._cacher[bundleName] = null;
@@ -385,7 +393,15 @@ namespace OxGFrame.AssetLoader.Cacher
 
                             { Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload Dependency</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {dependencies[i]}, ref: {this._cacher.TryGetValue(dependencies[i], out var v)} {v?.refCount}</color>"); }
 
-                            if (this._cacher[dependName].refCount <= 0)
+                            if (forceUnload)
+                            {
+                                this._cacher[dependName].assetBundle.Unload(true);
+                                this._cacher[dependName] = null;
+                                this._cacher.Remove(dependName);
+
+                                Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Force Unload Dependency Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {dependencies[i]}</color>");
+                            }
+                            else if (this._cacher[dependName].refCount <= 0)
                             {
                                 this._cacher[dependName].assetBundle.Unload(true);
                                 this._cacher[dependName] = null;
@@ -805,9 +821,9 @@ namespace OxGFrame.AssetLoader.Cacher
             AssetBundle ab = null;
             var req = AssetBundle.LoadFromStreamAsync(stream);
 
-            float lastSize = 0;
-            while (req != null)
+            if (req != null)
             {
+                float lastSize = 0;
                 if (progression != null)
                 {
                     req.completed += (AsyncOperation ao) =>
@@ -819,13 +835,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     };
                 }
 
-                if (req.isDone)
-                {
-                    ab = req.assetBundle;
-                    break;
-                }
-
-                await UniTask.Yield();
+                await UniTask.WaitUntil(() => req.isDone);
+                ab = req.assetBundle;
             }
 
             return ab;
@@ -836,9 +847,9 @@ namespace OxGFrame.AssetLoader.Cacher
             AssetBundle ab = null;
             var req = AssetBundle.LoadFromMemoryAsync(bytes);
 
-            float lastSize = 0;
-            while (req != null)
+            if (req != null)
             {
+                float lastSize = 0;
                 if (progression != null)
                 {
                     req.completed += (AsyncOperation ao) =>
@@ -850,14 +861,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     };
                 }
 
-                if (req.isDone)
-                {
-                    ab = req.assetBundle;
-                    bytes = null;
-                    break;
-                }
-
-                await UniTask.Yield();
+                await UniTask.WaitUntil(() => req.isDone);
+                ab = req.assetBundle;
             }
 
             return ab;
