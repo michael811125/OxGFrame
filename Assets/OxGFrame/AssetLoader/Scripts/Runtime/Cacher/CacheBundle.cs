@@ -302,7 +302,7 @@ namespace OxGFrame.AssetLoader.Cacher
             if (bundlePack == null)
             {
                 bundlePack = await this.LoadBundlePack(bundleName, progression);
-                asset = await bundlePack.GetAssetAsync<T>(assetName);
+                asset = bundlePack?.GetAsset<T>(assetName);
 
                 if (bundlePack != null && asset != null)
                 {
@@ -317,7 +317,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // 處理進度回調
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
                 // 直接取得 Bundle 中的資源
-                asset = await bundlePack.GetAssetAsync<T>(assetName);
+                asset = bundlePack.GetAsset<T>(assetName);
             }
 
             if (asset != null)

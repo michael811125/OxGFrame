@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [1.9.1] - 2022-12-23
+- Modified CacheBundle use GetAsset to load asset from AB.
+
 ## [1.9.0] - 2022-12-12
 - Added file verification for Downloader (when downloaded file md5 compare with server file md5 is inconsistent will redownload again) to ensure file integrity.
 - Added force unload param for Unload method withou ref count (CacheBundle & CacheResource).
