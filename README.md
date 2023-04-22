@@ -31,6 +31,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 - 使用 [UnityWebSocket](https://github.com/psygames/UnityWebSocket) (最佳 Websocket 解決方案)
 - 使用 [YooAsset](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案)
+- 使用部分 [UniFramework](https://github.com/gmhevinci/UniFramework) (輕量級框架)
 - TODO [HybirdCLR](https://github.com/focus-creative-games/hybridclr) (高效的程式熱更新方案)
 
 ---
