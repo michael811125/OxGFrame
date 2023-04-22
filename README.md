@@ -192,7 +192,7 @@ video_urlset 127.0.0.1/video/
 - Websock (Websocket)
 - INetTips (網路狀態提示接口)
 
-**如果沒有要使用 NetFrame 網路模塊的，可以直接刪除整個 NetFrame，並且無需安裝匯入 UnityWebSocket 插件。**
+**如果沒有要使用 NetFrame 網路模塊，可以直接刪除整個 NetFrame。**
 
 ---
 
