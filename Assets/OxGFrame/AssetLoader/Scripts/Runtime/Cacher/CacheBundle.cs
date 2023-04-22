@@ -1,29 +1,24 @@
-﻿using AssetLoader.Utility;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Bundle;
-using System;
-using System.IO;
+using OxGFrame.AssetLoader.Utility;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using YooAsset;
 
 namespace OxGFrame.AssetLoader.Cacher
 {
-    public class CacheBundle : AssetCache<BundlePack>, IBundle
+    internal class CacheBundle : AssetCache<BundlePack>
     {
-        /// <summary>
-        /// Manifest 區分內部與外部 (Built-in, Patch)
-        /// </summary>
-        public enum Manifest
+        private Dictionary<string, BundlePack> _sceneCache; // 快取 Scene BundlePack
+        private Dictionary<string, int> _sceneCounter;      // 子場景堆疊式計數快取
+
+        public CacheBundle() : base()
         {
-            BUILTIN = 0,
-            PATCH = 1
+            this._sceneCache = new Dictionary<string, BundlePack>();
+            this._sceneCounter = new Dictionary<string, int>();
         }
-
-        protected BundlePack[] _manifestBundlePack;
-        protected AssetBundleManifest[] _manifest;
-
-        protected string[] cryptogramArgs;
-        protected string cryptogramType;
 
         private static CacheBundle _instance = null;
         public static CacheBundle GetInstance()
@@ -32,282 +27,285 @@ namespace OxGFrame.AssetLoader.Cacher
             return _instance;
         }
 
-        public CacheBundle()
+        public override bool HasInCache(string assetName)
         {
-            // 解密參數
-            this.cryptogramArgs = BundleConfig.cryptogramArgs;
-            // 解密方式
-            this.cryptogramType = this.cryptogramArgs[0].ToUpper();
-
-            int manifestLength = Enum.GetNames(typeof(Manifest)).Length;
-            this._manifestBundlePack = new BundlePack[manifestLength];
-            this._manifest = new AssetBundleManifest[manifestLength];
+            return this._cacher.ContainsKey(assetName);
         }
 
-        public override bool HasInCache(string bundleName)
+        public override BundlePack GetFromCache(string assetName)
         {
-            bundleName = bundleName.ToLower();
-
-            return this._cacher.ContainsKey(bundleName);
-        }
-
-        public override BundlePack GetFromCache(string bundleName)
-        {
-            bundleName = bundleName.ToLower();
-
-            if (this.HasInCache(bundleName))
+            if (this.HasInCache(assetName))
             {
-                if (this._cacher.TryGetValue(bundleName, out BundlePack bundlePack)) return bundlePack;
+                if (this._cacher.TryGetValue(assetName, out BundlePack pack)) return pack;
             }
 
             return null;
         }
 
+        #region RawFile
         /// <summary>
-        /// 預加載 Bundle 至快取中
+        /// 預加載資源至快取中
         /// </summary>
-        /// <param name="bundleName"></param>
+        /// <param name="assetName"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public override async UniTask Preload(string bundleName, Progression progression = null)
+        public async UniTask PreloadRawFileAsync(string assetName, Progression progression = null)
         {
-#if UNITY_EDITOR
-            if (BundleConfig.assetDatabaseMode) return;
-#endif
-
-            if (string.IsNullOrEmpty(bundleName)) return;
-
-            bundleName = bundleName.ToLower();
-
-            // 如果有進行 Loading 標記後, 直接 return
-            if (this.HasInLoadingFlags(bundleName))
-            {
-                Debug.Log($"<color=#FFDC8A>ab: {bundleName} Loading...</color>");
-                return;
-            }
-
-            // 先設置加載進度
-            this.reqSize = 0;                                  // 會由 LoadBundlePack 累加, 所以需歸 0
-            this.totalSize = this.GetAssetsLength(bundleName); // 返回當前要預加載的總大小
-
-            // Loading 標記
-            this._hashLoadingFlags.Add(bundleName);
-
-            // 取得主要的 Menifest 中的 AssetBundleManifest (因為記錄著所有資源的依賴性)
-            var manifest = await this.GetManifestAsync(bundleName);
-
-            // 預加載依賴資源
-            if (manifest != null)
-            {
-                string[] dependencies = manifest.GetAllDependencies(bundleName);
-                for (int i = 0; i < dependencies.Length; i++)
-                {
-                    string dependName = dependencies[i].ToLower();
-
-                    if (this.HasInCache(dependName)) continue;
-
-                    BundlePack dependBundlePack = await this.LoadBundlePack(dependName, null);
-                    if (dependBundlePack != null)
-                    {
-                        // skipping duplicate keys
-                        if (!this.HasInCache(dependName)) this._cacher.Add(dependName, dependBundlePack);
-
-                        Debug.Log($"<color=#ff9600>【Preload Dependency】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {dependName}</color>");
-                    }
-                }
-            }
-
-            // 如果有在快取中就不進行預加載
-            if (this.HasInCache(bundleName))
-            {
-                // 在快取中請求大小就直接指定為資源總大小 (單個)
-                this.reqSize = this.totalSize;
-                // 處理進度回調
-                progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                // 移除標記
-                this._hashLoadingFlags.Remove(bundleName);
-                return;
-            }
-
-            var bundlePack = await this.LoadBundlePack(bundleName, progression);
-            if (bundlePack != null)
-            {
-                if (!this.HasInCache(bundleName)) this._cacher.Add(bundleName, bundlePack);
-            }
-
-            // 移除標記
-            this._hashLoadingFlags.Remove(bundleName);
-
-            Debug.Log($"<color=#ff9600>【Preload Main】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {bundleName}</color>");
+            await this.PreloadRawFileAsync(new string[] { assetName }, progression);
         }
 
-        public override async UniTask Preload(string[] bundleNames, Progression progression = null)
+        public async UniTask PreloadRawFileAsync(string[] assetNames, Progression progression = null)
         {
-#if UNITY_EDITOR
-            if (BundleConfig.assetDatabaseMode) return;
-#endif
+            if (assetNames == null || assetNames.Length == 0) return;
 
-            if (bundleNames == null || bundleNames.Length == 0) return;
+            // 先初始加載進度
+            this.reqSize = 0;
+            this.totalSize = BundleUtility.GetAssetsLength(assetNames);
 
-            // 先設置加載進度
-            this.reqSize = 0;                                   // 會由 LoadBundlePack 累加, 所以需歸 0
-            this.totalSize = this.GetAssetsLength(bundleNames); // 返回當前要預加載的總大小
-
-            for (int i = 0; i < bundleNames.Length; i++)
+            for (int i = 0; i < assetNames.Length; i++)
             {
-                if (string.IsNullOrEmpty(bundleNames[i])) continue;
+                var assetName = assetNames[i];
 
-                string bundleName = bundleNames[i].ToLower();
+                if (string.IsNullOrEmpty(assetName)) continue;
 
                 // 如果有進行 Loading 標記後, 直接 return
-                if (this.HasInLoadingFlags(bundleName))
+                if (this.HasInLoadingFlags(assetName))
                 {
-                    Debug.Log($"<color=#FFDC8A>ab: {bundleName} Loading...</color>");
-                    continue;
+                    Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                    return;
                 }
 
                 // Loading 標記
-                this._hashLoadingFlags.Add(bundleName);
+                this._hashLoadingFlags.Add(assetName);
 
-                // 取得主要的 Menifest 中的 AssetBundleManifest (因為記錄著所有資源的依賴性)
-                var manifest = await this.GetManifestAsync(bundleName);
-
-                // 預加載依賴資源
-                if (manifest != null)
+                // 如果有在快取中就不進行預加載
+                if (this.HasInCache(assetName))
                 {
-                    string[] dependencies = manifest.GetAllDependencies(bundleName);
-                    for (int j = 0; j < dependencies.Length; j++)
+                    BundlePack pack = this.GetFromCache(assetName);
+                    if (pack.IsValid())
                     {
-                        string dependName = dependencies[j].ToLower();
-
-                        if (this.HasInCache(dependName)) continue;
-
-                        BundlePack dependBundlePack = await this.LoadBundlePack(dependName, null);
-                        if (dependBundlePack != null)
-                        {
-                            // skipping duplicate keys
-                            if (!this.HasInCache(dependName)) this._cacher.Add(dependName, dependBundlePack);
-
-                            Debug.Log($"<color=#ff9600>【Preload Dependency】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {dependName}</color>");
-                        }
+                        // 在快取中請求進度大小需累加當前資源的總 size (因為迴圈)
+                        this.reqSize += BundleUtility.GetAssetsLength(assetName);
+                        // 處理進度回調
+                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                        // 移除標記
+                        this._hashLoadingFlags.Remove(assetName);
+                        continue;
+                    }
+                    else
+                    {
+                        if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                        this.UnloadAsset(assetName, true);
+                        await this.PreloadRawFileAsync(assetName, progression);
+                        continue;
                     }
                 }
 
-                // 如果有在快取中就不進行預加載
-                if (this.HasInCache(bundleName))
                 {
-                    // 在快取中請求進度大小需累加當前資源的總 size (因為迴圈)
-                    this.reqSize += this.GetAssetsLength(bundleName);
-                    // 處理進度回調
-                    progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                    // 移除標記
-                    this._hashLoadingFlags.Remove(bundleName);
-                    continue;
-                }
+                    BundlePack pack = new BundlePack();
 
-                // 開始進行預加載
-                var bundlePack = await this.LoadBundlePack(bundleName, progression);
-                if (bundlePack != null)
-                {
-                    if (!this.HasInCache(bundleName)) this._cacher.Add(bundleName, bundlePack);
+                    var package = PackageManager.GetDefaultPackage();
+                    var req = package.LoadRawFileAsync(assetName);
+
+                    float lastSize = 0;
+                    if (req != null)
+                    {
+                        if (progression != null)
+                        {
+                            req.Completed += (RawFileOperationHandle oh) =>
+                            {
+                                this.reqSize += (oh.Progress - lastSize);
+                                lastSize = oh.Progress;
+
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            };
+                        }
+
+                        do
+                        {
+                            if (req.IsDone)
+                            {
+                                pack.assetName = assetName;
+                                pack.operationHandle = req;
+                                break;
+                            }
+                            await UniTask.Yield();
+                        } while (true);
+                    }
+
+                    if (pack != null)
+                    {
+                        // skipping duplicate keys
+                        if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
+                    }
                 }
 
                 // 移除標記
-                this._hashLoadingFlags.Remove(bundleName);
+                this._hashLoadingFlags.Remove(assetName);
 
-                Debug.Log($"<color=#ff9600>【Preload Main】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {bundleName}</color>");
+                Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+            }
+        }
+
+        public void PreloadRawFile(string assetName, Progression progression = null)
+        {
+            this.PreloadRawFile(new string[] { assetName }, progression);
+        }
+
+        public void PreloadRawFile(string[] assetNames, Progression progression = null)
+        {
+            if (assetNames == null || assetNames.Length == 0) return;
+
+            // 先初始加載進度
+            this.reqSize = 0;
+            this.totalSize = BundleUtility.GetAssetsLength(assetNames);
+
+            for (int i = 0; i < assetNames.Length; i++)
+            {
+                var assetName = assetNames[i];
+
+                if (string.IsNullOrEmpty(assetName)) continue;
+
+                // 如果有進行 Loading 標記後, 直接 return
+                if (this.HasInLoadingFlags(assetName))
+                {
+                    Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                    return;
+                }
+
+                // Loading 標記
+                this._hashLoadingFlags.Add(assetName);
+
+                // 如果有在快取中就不進行預加載
+                if (this.HasInCache(assetName))
+                {
+                    BundlePack pack = this.GetFromCache(assetName);
+                    if (pack.IsValid())
+                    {
+                        // 在快取中請求進度大小需累加當前資源的總 size (因為迴圈)
+                        this.reqSize += BundleUtility.GetAssetsLength(assetName);
+                        // 處理進度回調
+                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                        // 移除標記
+                        this._hashLoadingFlags.Remove(assetName);
+                        continue;
+                    }
+                    else
+                    {
+                        if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                        this.UnloadAsset(assetName, true);
+                        this.PreloadRawFile(assetName, progression);
+                        continue;
+                    }
+                }
+
+                {
+                    BundlePack pack = new BundlePack();
+
+                    var package = PackageManager.GetDefaultPackage();
+                    var req = package.LoadRawFileSync(assetName);
+
+                    float lastSize = 0;
+                    if (req != null)
+                    {
+                        if (progression != null)
+                        {
+                            req.Completed += (RawFileOperationHandle oh) =>
+                            {
+                                this.reqSize += (oh.Progress - lastSize);
+                                lastSize = oh.Progress;
+
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            };
+                        }
+
+                        if (req.IsDone)
+                        {
+                            pack.assetName = assetName;
+                            pack.operationHandle = req;
+                        }
+                    }
+
+                    if (pack != null)
+                    {
+                        // skipping duplicate keys
+                        if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
+                    }
+                }
+
+                // 移除標記
+                this._hashLoadingFlags.Remove(assetName);
+
+                Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
             }
         }
 
         /// <summary>
-        /// [使用計數管理] 載入 Bundle => 會優先從快取中取得 Bundle, 如果快取中沒有才進行 Bundle 加載
+        /// [使用計數管理] 載入資源 => 會優先從快取中取得資源, 如果快取中沒有才進行資源加載
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
-        /// <param name="dependency"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public async UniTask<T> Load<T>(string bundleName, string assetName, bool dependency = true, Progression progression = null) where T : UnityEngine.Object
+        public async UniTask<T> LoadRawFileAsync<T>(string assetName, Progression progression = null)
         {
-            if (string.IsNullOrEmpty(bundleName)) return null;
-
-            bundleName = bundleName.ToLower();
-
-            BundlePack bundlePack = null;
-            BundlePack dependBundlePack = null;
-            T asset;
-
-#if UNITY_EDITOR
-            if (BundleConfig.assetDatabaseMode)
-            {
-                asset = this.LoadEditorAsset<T>(bundleName, assetName);
-                return asset;
-            }
-#endif
+            if (string.IsNullOrEmpty(assetName)) return default;
 
             // 如果有進行 Loading 標記後, 直接 return
-            if (this.HasInLoadingFlags(bundleName))
+            if (this.HasInLoadingFlags(assetName))
             {
-                Debug.Log($"<color=#FFDC8A>ab: {bundleName} Loading...</color>");
-                return null;
+                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                return default;
             }
 
-            // 先設置加載進度
+            // 初始加載進度
             this.reqSize = 0;
-            this.totalSize = this.GetAssetsLength(bundleName);
+            this.totalSize = BundleUtility.GetAssetsLength(assetName);
 
             // Loading 標記
-            this._hashLoadingFlags.Add(bundleName);
+            this._hashLoadingFlags.Add(assetName);
 
-            // 判斷是否加載依賴資源 (要先確定有找到 Bundle 包內的資源才進行)
-            if (dependency)
+            // 先從快取拿
+            BundlePack pack = this.GetFromCache(assetName);
+
+            if (pack == null)
             {
-                var manifest = await this.GetManifestAsync(bundleName);
-
-                // 取得主要的 Menifest 中的 AssetBundleManifest (因為記錄著所有資源的依賴性)
-                if (manifest != null)
+                pack = new BundlePack();
                 {
-                    string[] dependencies = manifest.GetAllDependencies(bundleName);
-                    for (int i = 0; i < dependencies.Length; i++)
+                    var package = PackageManager.GetDefaultPackage();
+                    var req = package.LoadRawFileAsync(assetName);
+
+                    float lastSize = 0;
+                    if (req != null)
                     {
-                        string dependName = dependencies[i].ToLower();
-
-                        dependBundlePack = this.GetFromCache(dependName);
-                        if (dependBundlePack == null)
+                        if (progression != null)
                         {
-                            dependBundlePack = await this.LoadBundlePack(dependName, null);
-                            if (dependBundlePack != null)
+                            req.Completed += (RawFileOperationHandle oh) =>
                             {
-                                // skipping duplicate keys
-                                if (!this.HasInCache(dependName)) this._cacher.Add(dependName, dependBundlePack);
-                            }
+                                this.reqSize += (oh.Progress - lastSize);
+                                lastSize = oh.Progress;
+
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            };
                         }
 
-                        if (dependBundlePack != null)
+                        do
                         {
-                            // 依賴資源引用計數++
-                            dependBundlePack.AddRef();
-
-                            Debug.Log($"<color=#90FF71>【Load Dependency】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {dependName}, ref: {dependBundlePack.refCount}</color>");
-                        }
+                            if (req.IsDone)
+                            {
+                                pack.assetName = assetName;
+                                pack.operationHandle = req;
+                                break;
+                            }
+                            await UniTask.Yield();
+                        } while (true);
                     }
                 }
-            }
 
-            // 先從快取拿, 以下判斷沒有才執行加載
-            bundlePack = this.GetFromCache(bundleName);
-
-            // 加載 Bundle 包中的資源
-            if (bundlePack == null)
-            {
-                bundlePack = await this.LoadBundlePack(bundleName, progression);
-                asset = bundlePack?.GetAsset<T>(assetName);
-
-                if (bundlePack != null && asset != null)
+                if (pack != null)
                 {
                     // skipping duplicate keys
-                    if (!this.HasInCache(bundleName)) this._cacher.Add(bundleName, bundlePack);
+                    if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
                 }
             }
             else
@@ -316,836 +314,846 @@ namespace OxGFrame.AssetLoader.Cacher
                 this.reqSize = this.totalSize;
                 // 處理進度回調
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                // 直接取得 Bundle 中的資源
-                asset = bundlePack.GetAsset<T>(assetName);
             }
 
-            if (asset != null)
+            if (pack.IsValid())
             {
-                // 主資源引用計數++
-                bundlePack.AddRef();
+                // 引用計數++
+                pack.AddRef();
+            }
+            else
+            {
+                if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                this.UnloadAsset(assetName, true);
+                return await this.LoadRawFileAsync<T>(assetName, progression);
             }
 
-            this._hashLoadingFlags.Remove(bundleName);
+            this._hashLoadingFlags.Remove(assetName);
 
-            Debug.Log($"<color=#90FF71>【Load Main】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {bundleName}, ref: {bundlePack.refCount}</color>");
+            Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
 
-            return asset;
+            if (typeof(T) == typeof(string))
+            {
+                return (T)(object)pack.GetRawFileText();
+            }
+            else if (typeof(T) == typeof(byte[]))
+            {
+                return (T)(object)pack.GetRawFileData();
+            }
+            else return default;
+        }
+
+        public T LoadRawFile<T>(string assetName, Progression progression = null)
+        {
+            if (string.IsNullOrEmpty(assetName)) return default;
+
+            // 如果有進行 Loading 標記後, 直接 return
+            if (this.HasInLoadingFlags(assetName))
+            {
+                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                return default;
+            }
+
+            // 初始加載進度
+            this.reqSize = 0;
+            this.totalSize = BundleUtility.GetAssetsLength(assetName);
+
+            // Loading 標記
+            this._hashLoadingFlags.Add(assetName);
+
+            // 先從快取拿
+            BundlePack pack = this.GetFromCache(assetName);
+
+            if (pack == null)
+            {
+                pack = new BundlePack();
+                {
+                    var package = PackageManager.GetDefaultPackage();
+                    var req = package.LoadRawFileSync(assetName);
+
+                    float lastSize = 0;
+                    if (req != null)
+                    {
+                        if (progression != null)
+                        {
+                            req.Completed += (RawFileOperationHandle oh) =>
+                            {
+                                this.reqSize += (oh.Progress - lastSize);
+                                lastSize = oh.Progress;
+
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            };
+                        }
+
+                        if (req.IsDone)
+                        {
+                            pack.assetName = assetName;
+                            pack.operationHandle = req;
+                        }
+                    }
+                }
+
+                if (pack != null)
+                {
+                    // skipping duplicate keys
+                    if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
+                }
+            }
+            else
+            {
+                // 直接更新進度
+                this.reqSize = this.totalSize;
+                // 處理進度回調
+                progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+            }
+
+            if (pack.IsValid())
+            {
+                // 引用計數++
+                pack.AddRef();
+            }
+            else
+            {
+                if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                this.UnloadAsset(assetName, true);
+                return this.LoadRawFile<T>(assetName, progression);
+            }
+
+            this._hashLoadingFlags.Remove(assetName);
+
+            Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
+
+            if (typeof(T) == typeof(string))
+            {
+                return (T)(object)pack.GetRawFileText();
+            }
+            else if (typeof(T) == typeof(byte[]))
+            {
+                return (T)(object)pack.GetRawFileData();
+            }
+            else return default;
         }
 
         /// <summary>
-        /// [使用計數管理] 從快取【釋放】單個 Bundle (釋放 Bundle 記憶體, 連動銷毀實例對象也會 Missing 場景上有引用的對象)
+        /// [使用計數管理] 從快取【釋放】單個資源 (釋放快取, 並且釋放資源記憶體)
         /// </summary>
-        /// <param name="bundleName"></param>
-        public override void Unload(string bundleName, bool forceUnload = false)
+        /// <param name="assetName"></param>
+        public void UnloadRawFile(string assetName, bool forceUnload = false)
         {
-#if UNITY_EDITOR
-            if (BundleConfig.assetDatabaseMode) return;
-#endif
+            if (string.IsNullOrEmpty(assetName)) return;
 
-            if (string.IsNullOrEmpty(bundleName)) return;
-
-            bundleName = bundleName.ToLower();
-
-            if (this.HasInLoadingFlags(bundleName))
+            if (this.HasInLoadingFlags(assetName))
             {
-                Debug.Log($"<color=#FFDC8A>ab: {bundleName} Loading...</color>");
+                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                 return;
             }
 
-            // 主資源
-            if (this.HasInCache(bundleName))
+            if (this.HasInCache(assetName))
             {
-                // 主資源引用計數--
-                this._cacher[bundleName].DelRef();
+                BundlePack pack = this.GetFromCache(assetName);
 
-                { Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload Main</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {bundleName}, ref: {this._cacher.TryGetValue(bundleName, out var v)} {v?.refCount}</color>"); }
-
-                if (forceUnload)
+                if (pack.IsRawFileOperationHandle())
                 {
-                    this._cacher[bundleName].assetBundle.Unload(true);
-                    this._cacher[bundleName] = null;
-                    this._cacher.Remove(bundleName);
+                    // 引用計數--
+                    pack.DelRef();
 
-                    Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Force Unload Main Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {bundleName}</color>");
-                }
-                else if (this._cacher[bundleName].refCount <= 0)
-                {
-                    this._cacher[bundleName].assetBundle.Unload(true);
-                    this._cacher[bundleName] = null;
-                    this._cacher.Remove(bundleName);
+                    Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
 
-                    Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Main Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {bundleName}</color>");
-                }
-
-                // 依賴資源
-                string[] dependencies = this.GetManifest(bundleName)?.GetAllDependencies(bundleName);
-                if (dependencies != null)
-                {
-                    for (int i = 0; i < dependencies.Length; i++)
+                    if (forceUnload)
                     {
-                        string dependName = dependencies[i].ToLower();
+                        pack.UnloadRawFile();
+                        this._cacher[assetName] = null;
+                        this._cacher.Remove(assetName);
 
-                        if (this.HasInCache(dependName))
-                        {
-                            // 依賴資源引用計數--
-                            this._cacher[dependName].DelRef();
+                        Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Force Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                    }
+                    else if (this._cacher[assetName].refCount <= 0)
+                    {
+                        pack.UnloadRawFile();
+                        this._cacher[assetName] = null;
+                        this._cacher.Remove(assetName);
 
-                            { Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload Dependency</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {dependencies[i]}, ref: {this._cacher.TryGetValue(dependencies[i], out var v)} {v?.refCount}</color>"); }
-
-                            if (forceUnload)
-                            {
-                                this._cacher[dependName].assetBundle.Unload(true);
-                                this._cacher[dependName] = null;
-                                this._cacher.Remove(dependName);
-
-                                Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Force Unload Dependency Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {dependencies[i]}</color>");
-                            }
-                            else if (this._cacher[dependName].refCount <= 0)
-                            {
-                                this._cacher[dependName].assetBundle.Unload(true);
-                                this._cacher[dependName] = null;
-                                this._cacher.Remove(dependName);
-
-                                Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Dependency Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, ab: {dependencies[i]}</color>");
-                            }
-                        }
+                        Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
                 }
+                else Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload Type Error</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
             }
         }
 
         /// <summary>
-        /// [強制釋放] 從快取中【釋放】全部 Bundle (釋放 Bundle 記憶體, 連動銷毀實例對象也會 Missing 場景上有引用的對象)
+        /// [強制釋放] 從快取中【釋放】全部資源 (釋放快取, 並且釋放資源記憶體)
         /// </summary>
-        public override void Release()
+        public void ReleaseRawFiles()
         {
-#if UNITY_EDITOR
-            if (BundleConfig.assetDatabaseMode) return;
-#endif
-
             if (this.Count == 0) return;
 
-            // 強制釋放全部快取與資源
-            foreach (var bundleName in this._cacher.Keys.ToArray())
+            // 強制釋放快取與資源
+            foreach (var assetName in this._cacher.Keys.ToArray())
             {
-                if (this.HasInLoadingFlags(bundleName))
+                if (this.HasInCache(assetName))
                 {
-                    Debug.Log($"<color=#FFDC8A>ab: {bundleName} Loading...</color>");
-                    continue;
-                }
-
-                // 主資源
-                if (this.HasInCache(bundleName))
-                {
-                    this._cacher[bundleName].assetBundle.Unload(true);
-                    this._cacher[bundleName] = null;
-                    this._cacher.Remove(bundleName);
-
-                    // 依賴資源
-                    string[] dependencies = this.GetManifest(bundleName)?.GetAllDependencies(bundleName);
-                    if (dependencies != null)
-                    {
-                        for (int i = 0; i < dependencies.Length; i++)
-                        {
-                            string dependName = dependencies[i].ToLower();
-
-                            if (this.HasInCache(dependName))
-                            {
-                                this._cacher[dependName].assetBundle.Unload(true);
-                                this._cacher[dependName] = null;
-                                this._cacher.Remove(dependName);
-                            }
-                        }
-                    }
+                    BundlePack pack = this.GetFromCache(assetName);
+                    if (pack.IsRawFileOperationHandle()) this.UnloadRawFile(assetName, true);
                 }
             }
 
-            // 最後執行
-            this._cacher.Clear();
-            // 卸載 Manifest
-            this.UnloadManifest();
-            // 卸載全部 Bundles
-            AssetBundle.UnloadAllAssetBundles(true);
+            var package = PackageManager.GetDefaultPackage();
+            package.UnloadUnusedAssets();
 
-            Debug.Log($"<color=#ff71b7>【Release All】 => Current << CacheBundle >> Cache Count: {this.Count}</color>");
+            Debug.Log($"<color=#ff71b7>【Release All RawFiles】 => Current << CacheBundle >> Cache Count: {this.Count}</color>");
         }
+        #endregion
 
-        public async UniTask<BundlePack> LoadBundlePack(string bundleName, Progression progression, bool forceNoMd5 = false)
+        #region Scene
+        public async UniTask<BundlePack> LoadSceneAsync(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, int priority = 100, Progression progression = null)
         {
-            if (string.IsNullOrEmpty(bundleName))
+            if (string.IsNullOrEmpty(assetName)) return null;
+
+            // 如果有進行 Loading 標記後, 直接 return
+            if (this.HasInLoadingFlags(assetName))
             {
-                Debug.Log("<color=#FF0000>Load BundlePack failed. BundleName cannot be null or empty.</color>");
+                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                 return null;
             }
 
-            bundleName = bundleName.ToLower();
+            // 初始加載進度
+            this.reqSize = 0;
+            this.totalSize = BundleUtility.GetAssetsLength(assetName);
 
-            // 會判斷是否進行 BundleName & Md5 替換
-            if (!forceNoMd5) bundleName = BundleNameToMd5(bundleName, BundleConfig.readMd5BundleName);
+            // Loading 標記
+            this._hashLoadingFlags.Add(assetName);
 
-            BundlePack bundlePack = new BundlePack();
-            bundlePack.bundleName = bundleName;
+            var package = PackageManager.GetDefaultPackage();
+            var req = package.LoadSceneAsync(assetName, loadSceneMode, activateOnLoad, priority);
 
-#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
-            if (BundleConfig.bundleStreamMode)
+            var pack = new BundlePack();
+
+            float lastSize = 0;
+
+            if (req != null)
             {
-                Stream fs;
-                switch (this.cryptogramType)
+                if (progression != null)
                 {
-                    case BundleConfig.CryptogramType.NONE:
-                        fs = new FileStream(GetFilePathFromStreamingAssetsOrSavePath(bundleName), FileMode.Open, FileAccess.Read, FileShare.None);
-
-                        {
-                            var dataBytes = new byte[fs.Length];
-                            fs.Read(dataBytes, 0, dataBytes.Length);
-                            fs.Dispose();
-
-                            var ms = new MemoryStream();
-                            ms.Write(dataBytes, 0, dataBytes.Length);
-
-                            bundlePack.assetBundle = await this._LoadFromStreamAsync(ms, progression);
-                        }
-                        break;
-                    case BundleConfig.CryptogramType.OFFSET:
-                        fs = FileCryptogram.Offset.OffsetDecryptStream
-                        (
-                            GetFilePathFromStreamingAssetsOrSavePath(bundleName),
-                            System.Convert.ToInt32(this.cryptogramArgs[1])
-                        );
-
-                        {
-                            bundlePack.assetBundle = await this._LoadFromStreamAsync(fs, progression);
-                        }
-                        break;
-                    case BundleConfig.CryptogramType.XOR:
-                        fs = FileCryptogram.XOR.XorDecryptStream
-                        (
-                            GetFilePathFromStreamingAssetsOrSavePath(bundleName),
-                            System.Convert.ToByte(this.cryptogramArgs[1])
-                        );
-
-                        {
-                            bundlePack.assetBundle = await this._LoadFromStreamAsync(fs, progression);
-                        }
-                        break;
-                    case BundleConfig.CryptogramType.HTXOR:
-                        fs = FileCryptogram.HTXOR.HTXorDecryptStream
-                        (
-                            GetFilePathFromStreamingAssetsOrSavePath(bundleName),
-                            System.Convert.ToByte(this.cryptogramArgs[1]),
-                            System.Convert.ToByte(this.cryptogramArgs[2])
-                        );
-
-                        {
-                            bundlePack.assetBundle = await this._LoadFromStreamAsync(fs, progression);
-                        }
-                        break;
-                    case BundleConfig.CryptogramType.AES:
-                        fs = FileCryptogram.AES.AesDecryptStream
-                        (
-                            GetFilePathFromStreamingAssetsOrSavePath(bundleName),
-                            this.cryptogramArgs[1],
-                            this.cryptogramArgs[2]
-                        );
-
-                        {
-                            bundlePack.assetBundle = await this._LoadFromStreamAsync(fs, progression);
-                        }
-                        break;
-                }
-            }
-            else
-            {
-                byte[] bytes = File.ReadAllBytes(GetFilePathFromStreamingAssetsOrSavePath(bundleName));
-                switch (this.cryptogramType)
-                {
-                    case BundleConfig.CryptogramType.NONE:
-                        {
-                            bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
-                        }
-                        break;
-                    case BundleConfig.CryptogramType.OFFSET:
-                        FileCryptogram.Offset.OffsetDecryptFile
-                        (
-                            ref bytes,
-                            System.Convert.ToInt32(this.cryptogramArgs[1])
-                        );
-
-                        {
-                            bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
-                        }
-                        break;
-                    case BundleConfig.CryptogramType.XOR:
-                        FileCryptogram.XOR.XorDecryptFile
-                        (
-                            bytes,
-                            System.Convert.ToByte(this.cryptogramArgs[1])
-                        );
-
-                        {
-                            bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
-                        }
-                        break;
-                    case BundleConfig.CryptogramType.HTXOR:
-                        FileCryptogram.HTXOR.HTXorDecryptFile
-                        (
-                            bytes,
-                            System.Convert.ToByte(this.cryptogramArgs[1]),
-                            System.Convert.ToByte(this.cryptogramArgs[2])
-                        );
-
-                        {
-                            bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
-                        }
-                        break;
-                    case BundleConfig.CryptogramType.AES:
-                        FileCryptogram.AES.AesDecryptFile
-                        (
-                            bytes,
-                            this.cryptogramArgs[1],
-                            this.cryptogramArgs[2]
-                        );
-
-                        {
-                            bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
-                        }
-                        break;
-                }
-            }
-#endif
-
-#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
-            // 使用 [文件流] 加載方式, 只能存在於 Persistent 的路徑 (因為 StreamingAssets 只使用 UnityWebRequest 方式請求)
-            if (BundleConfig.bundleStreamMode && !HasInStreamingAssets(bundleName))
-            {
-                Stream fs;
-                switch (this.cryptogramType)
-                {
-                    case BundleConfig.CryptogramType.NONE:
-                        fs = new FileStream(GetFilePathFromSavePath(bundleName), FileMode.Open, FileAccess.Read, FileShare.None);
-
-                        {
-                            var dataBytes = new byte[fs.Length];
-                            fs.Read(dataBytes, 0, dataBytes.Length);
-                            fs.Dispose();
-
-                            var ms = new MemoryStream();
-                            ms.Write(dataBytes, 0, dataBytes.Length);
-
-                            bundlePack.assetBundle = await this._LoadFromStreamAsync(ms, progression);
-                        }
-                        break;
-                    case BundleConfig.CryptogramType.OFFSET:
-                        fs = FileCryptogram.Offset.OffsetDecryptStream
-                        (
-                            GetFilePathFromSavePath(bundleName),
-                            System.Convert.ToInt32(this.cryptogramArgs[1])
-                        );
-
-                        {
-                            bundlePack.assetBundle = await this._LoadFromStreamAsync(fs, progression);
-                        }
-                        break;
-                    case BundleConfig.CryptogramType.XOR:
-                        fs = FileCryptogram.XOR.XorDecryptStream
-                        (
-                            GetFilePathFromSavePath(bundleName),
-                            System.Convert.ToByte(this.cryptogramArgs[1])
-                        );
-
-                        {
-                            bundlePack.assetBundle = await this._LoadFromStreamAsync(fs, progression);
-                        }
-                        break;
-                    case BundleConfig.CryptogramType.HTXOR:
-                        fs = FileCryptogram.HTXOR.HTXorDecryptStream
-                        (
-                            GetFilePathFromSavePath(bundleName),
-                            System.Convert.ToByte(this.cryptogramArgs[1]),
-                            System.Convert.ToByte(this.cryptogramArgs[2])
-                        );
-
-                        {
-                            bundlePack.assetBundle = await this._LoadFromStreamAsync(fs, progression);
-                        }
-                        break;
-                    case BundleConfig.CryptogramType.AES:
-                        fs = FileCryptogram.AES.AesDecryptStream
-                        (
-                            GetFilePathFromSavePath(bundleName),
-                            this.cryptogramArgs[1],
-                            this.cryptogramArgs[2]
-                        );
-
-                        {
-                            bundlePack.assetBundle = await this._LoadFromStreamAsync(fs, progression);
-                        }
-                        break;
-                }
-            }
-            // 使用 [內存] 加載方式, 會判斷資源如果不在 StreamingAssets 中就從 Persistent 中加載
-            else
-            {
-                if (!HasInStreamingAssets(bundleName))
-                {
-                    byte[] bytes = File.ReadAllBytes(GetFilePathFromSavePath(bundleName));
-                    switch (this.cryptogramType)
+                    req.Completed += (SceneOperationHandle oh) =>
                     {
-                        case BundleConfig.CryptogramType.NONE:
-                            {
-                                bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
-                            }
-                            break;
-                        case BundleConfig.CryptogramType.OFFSET:
-                            FileCryptogram.Offset.OffsetDecryptFile
-                            (
-                                ref bytes,
-                                System.Convert.ToInt32(this.cryptogramArgs[1])
-                            );
+                        this.reqSize += (oh.Progress - lastSize);
+                        lastSize = oh.Progress;
 
-                            {
-                                bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
-                            }
-                            break;
-                        case BundleConfig.CryptogramType.XOR:
-                            FileCryptogram.XOR.XorDecryptFile
-                            (
-                                bytes,
-                                System.Convert.ToByte(this.cryptogramArgs[1])
-                            );
+                        progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                    };
+                }
 
-                            {
-                                bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
-                            }
-                            break;
-                        case BundleConfig.CryptogramType.HTXOR:
-                            FileCryptogram.HTXOR.HTXorDecryptFile
-                            (
-                                bytes,
-                                System.Convert.ToByte(this.cryptogramArgs[1]),
-                                System.Convert.ToByte(this.cryptogramArgs[2])
-                            );
+                do
+                {
+                    if (req.IsDone)
+                    {
+                        switch (loadSceneMode)
+                        {
+                            case LoadSceneMode.Single:
+                                {
+                                    pack.assetName = assetName;
+                                    pack.operationHandle = req;
 
-                            {
-                                bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
-                            }
-                            break;
-                        case BundleConfig.CryptogramType.AES:
-                            FileCryptogram.AES.AesDecryptFile
-                            (
-                                bytes,
-                                this.cryptogramArgs[1],
-                                this.cryptogramArgs[2]
-                            );
+                                    // 清除 Addtive 計數快取 (主場景無需快取, 因為會自動釋放子場景)
+                                    this._sceneCache.Clear();
+                                    this._sceneCounter.Clear();
+                                }
+                                break;
+                            case LoadSceneMode.Additive:
+                                {
+                                    pack.assetName = assetName;
+                                    pack.operationHandle = req;
 
-                            {
-                                bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
-                            }
-                            break;
+                                    // 加載場景的計數快取 (Addtive 需要進行計數, 要手動卸載子場景)
+                                    if (!this._sceneCounter.ContainsKey(assetName))
+                                    {
+                                        this._sceneCounter.Add(assetName, 1);
+                                        var count = this._sceneCounter[assetName];
+                                        string key = $"{assetName}#{count}";
+                                        this._sceneCache.Add(key, pack);
+                                        Debug.Log($"<color=#90FF71>【Load Scene Addtive】 => << CacheBundle >> scene: {key}</color>");
+                                    }
+                                    else
+                                    {
+                                        var count = ++this._sceneCounter[assetName];
+                                        string key = $"{assetName}#{count}";
+                                        this._sceneCache.Add(key, pack);
+                                        Debug.Log($"<color=#90FF71>【Load Scene Addtive】 => << CacheBundle >> scene: {key}</color>");
+                                    }
+                                }
+                                break;
+                        }
+                        break;
                     }
+                    await UniTask.Yield();
+                } while (true);
+            }
+
+            this._hashLoadingFlags.Remove(assetName);
+
+            return pack;
+        }
+
+        public void UnloadScene(string assetName, bool recursively = false)
+        {
+            if (this._sceneCounter.ContainsKey(assetName))
+            {
+                if (recursively)
+                {
+                    for (int topCount = this._sceneCounter[assetName]; topCount >= 1; --topCount)
+                    {
+                        string key = $"{assetName}#{topCount}";
+                        if (this._sceneCache.ContainsKey(key))
+                        {
+                            var pack = this._sceneCache[key];
+                            if (pack.IsSceneOperationHandle())
+                            {
+                                pack.UnloadScene();
+                                this._sceneCache[key] = null;
+                                this._sceneCache.Remove(key);
+
+                                Debug.Log($"<color=#00e5ff>【Unload Addtive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
+                            }
+                        }
+                    }
+
+                    // 遞迴完, 移除計數快取
+                    this._sceneCounter.Remove(assetName);
+
+                    Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Addtive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
                 }
                 else
                 {
-                    byte[] bytes = await BundleUtility.FileRequestByte(GetFilePathFromStreamingAssets(bundleName));
-                    switch (this.cryptogramType)
+                    bool saftyChecker = false;
+
+                    // 安全檢測無效場景卸載 (有可能被 Build 方法卸載掉)
+                    for (int topCount = this._sceneCounter[assetName]; topCount >= 1; --topCount)
                     {
-                        case BundleConfig.CryptogramType.NONE:
+                        string key = $"{assetName}#{topCount}";
+                        var pack = this._sceneCache[key];
+                        if (pack.IsSceneOperationHandle())
+                        {
+                            if (!pack.GetScene().isLoaded)
                             {
-                                bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
+                                saftyChecker = true;
+                                break;
                             }
-                            break;
-                        case BundleConfig.CryptogramType.OFFSET:
-                            FileCryptogram.Offset.OffsetDecryptFile
-                            (
-                                ref bytes,
-                                System.Convert.ToInt32(this.cryptogramArgs[1])
-                            );
+                        }
+                    }
 
+                    // 啟用安全檢測卸載方法 (直接遞迴強制全部卸載)
+                    if (saftyChecker)
+                    {
+                        for (int topCount = this._sceneCounter[assetName]; topCount >= 1; --topCount)
+                        {
+                            string key = $"{assetName}#{topCount}";
+                            if (this._sceneCache.ContainsKey(key))
                             {
-                                bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
-                            }
-                            break;
-                        case BundleConfig.CryptogramType.XOR:
-                            FileCryptogram.XOR.XorDecryptFile
-                            (
-                                bytes,
-                                System.Convert.ToByte(this.cryptogramArgs[1])
-                            );
+                                var pack = this._sceneCache[key];
+                                if (pack.IsSceneOperationHandle())
+                                {
+                                    pack.UnloadScene();
+                                    this._sceneCache[key] = null;
+                                    this._sceneCache.Remove(key);
 
-                            {
-                                bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
+                                    Debug.Log($"<color=#00e5ff>【<color=#97ff3e>Safty</color> Unload Addtive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
+                                }
                             }
-                            break;
-                        case BundleConfig.CryptogramType.HTXOR:
-                            FileCryptogram.HTXOR.HTXorDecryptFile
-                            (
-                                bytes,
-                                System.Convert.ToByte(this.cryptogramArgs[1]),
-                                System.Convert.ToByte(this.cryptogramArgs[2])
-                            );
+                        }
 
-                            {
-                                bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
-                            }
-                            break;
-                        case BundleConfig.CryptogramType.AES:
-                            FileCryptogram.AES.AesDecryptFile
-                            (
-                                bytes,
-                                this.cryptogramArgs[1],
-                                this.cryptogramArgs[2]
-                            );
+                        // 遞迴完, 移除計數快取
+                        this._sceneCounter.Remove(assetName);
 
+                        Debug.Log($"<color=#00e5ff>【<color=#ff92ef><color=#97ff3e>Safty</color> Unload Addtive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
+                    }
+                    else
+                    {
+                        int topCount = this._sceneCounter[assetName];
+                        string key = $"{assetName}#{topCount}";
+                        var pack = this._sceneCache[key];
+                        if (pack.IsSceneOperationHandle())
+                        {
+                            pack.UnloadScene();
+                            this._sceneCache[key] = null;
+                            this._sceneCache.Remove(key);
+
+                            Debug.Log($"<color=#00e5ff>【Unload Addtive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
+
+                            topCount = --this._sceneCounter[assetName];
+
+                            // 移除計數快取
+                            if (topCount <= 0)
                             {
-                                bundlePack.assetBundle = await this._LoadFromMemoryAsync(bytes, progression);
+                                this._sceneCounter.Remove(assetName);
+                                Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Addtive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
                             }
-                            break;
+                        }
                     }
                 }
             }
-#endif
+            else Debug.Log($"<color=#00e5ff>【<color=#ff4a8d>Unload Scene Invalid</color>】 => << CacheBundle >> sceneName: {assetName} maybe not <color=#ffb33e>Addtive</color> or is <color=#ffb33e>Single</color></color>");
+        }
+        #endregion
 
-            if (!string.IsNullOrEmpty(bundlePack.bundleName) && bundlePack.assetBundle != null)
-            {
-                Debug.Log($@"<color=#B7FCFF>Load AssetBundle. bundleName: {bundlePack.bundleName}</color>");
-                return bundlePack;
-            }
-
-            bundlePack = null;
-            return bundlePack;
+        #region Asset
+        /// <summary>
+        /// 預加載資源至快取中
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
+        public async UniTask PreloadAssetAsync(string assetName, Progression progression = null)
+        {
+            await this.PreloadAssetAsync(new string[] { assetName }, progression);
         }
 
-        private async UniTask<AssetBundle> _LoadFromStreamAsync(Stream stream, Progression progression)
+        public async UniTask PreloadAssetAsync(string[] assetNames, Progression progression = null)
         {
-            AssetBundle ab = null;
-            var req = AssetBundle.LoadFromStreamAsync(stream);
+            if (assetNames == null || assetNames.Length == 0) return;
 
-            if (req != null)
+            // 先初始加載進度
+            this.reqSize = 0;
+            this.totalSize = BundleUtility.GetAssetsLength(assetNames);
+
+            for (int i = 0; i < assetNames.Length; i++)
             {
-                float lastSize = 0;
-                if (progression != null)
-                {
-                    req.completed += (AsyncOperation ao) =>
-                    {
-                        this.reqSize += (ao.progress - lastSize);
-                        lastSize = ao.progress;
+                var assetName = assetNames[i];
 
-                        progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                    };
+                if (string.IsNullOrEmpty(assetName)) continue;
+
+                // 如果有進行 Loading 標記後, 直接 return
+                if (this.HasInLoadingFlags(assetName))
+                {
+                    Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                    return;
                 }
 
-                await UniTask.WaitUntil(() => req.isDone);
-                ab = req.assetBundle;
-            }
+                // Loading 標記
+                this._hashLoadingFlags.Add(assetName);
 
-            return ab;
+                // 如果有在快取中就不進行預加載
+                if (this.HasInCache(assetName))
+                {
+                    BundlePack pack = this.GetFromCache(assetName);
+                    if (pack.IsValid())
+                    {
+                        // 在快取中請求進度大小需累加當前資源的總 size (因為迴圈)
+                        this.reqSize += BundleUtility.GetAssetsLength(assetName);
+                        // 處理進度回調
+                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                        // 移除標記
+                        this._hashLoadingFlags.Remove(assetName);
+                        continue;
+                    }
+                    else
+                    {
+                        if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                        this.UnloadAsset(assetName, true);
+                        await this.PreloadAssetAsync(assetName, progression);
+                        continue;
+                    }
+                }
+
+                {
+                    BundlePack pack = new BundlePack();
+
+                    var package = PackageManager.GetDefaultPackage();
+                    var req = package.LoadAssetAsync<Object>(assetName);
+
+                    float lastSize = 0;
+                    if (req != null)
+                    {
+                        if (progression != null)
+                        {
+                            req.Completed += (AssetOperationHandle oh) =>
+                            {
+                                this.reqSize += (oh.Progress - lastSize);
+                                lastSize = oh.Progress;
+
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            };
+                        }
+
+                        do
+                        {
+                            if (req.IsDone)
+                            {
+                                pack.assetName = assetName;
+                                pack.operationHandle = req;
+                                break;
+                            }
+                            await UniTask.Yield();
+                        } while (true);
+                    }
+
+                    if (pack != null)
+                    {
+                        // skipping duplicate keys
+                        if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
+                    }
+                }
+
+                // 移除標記
+                this._hashLoadingFlags.Remove(assetName);
+
+                Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+            }
         }
 
-        private async UniTask<AssetBundle> _LoadFromMemoryAsync(byte[] bytes, Progression progression)
+        public void PreloadAsset(string assetName, Progression progression = null)
         {
-            AssetBundle ab = null;
-            var req = AssetBundle.LoadFromMemoryAsync(bytes);
+            this.PreloadAsset(new string[] { assetName }, progression);
+        }
 
-            if (req != null)
+        public void PreloadAsset(string[] assetNames, Progression progression = null)
+        {
+            if (assetNames == null || assetNames.Length == 0) return;
+
+            // 先初始加載進度
+            this.reqSize = 0;
+            this.totalSize = BundleUtility.GetAssetsLength(assetNames);
+
+            for (int i = 0; i < assetNames.Length; i++)
             {
-                float lastSize = 0;
-                if (progression != null)
-                {
-                    req.completed += (AsyncOperation ao) =>
-                    {
-                        this.reqSize += (ao.progress - lastSize);
-                        lastSize = ao.progress;
+                var assetName = assetNames[i];
 
-                        progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                    };
+                if (string.IsNullOrEmpty(assetName)) continue;
+
+                // 如果有進行 Loading 標記後, 直接 return
+                if (this.HasInLoadingFlags(assetName))
+                {
+                    Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                    return;
                 }
 
-                await UniTask.WaitUntil(() => req.isDone);
-                ab = req.assetBundle;
-            }
+                // Loading 標記
+                this._hashLoadingFlags.Add(assetName);
 
-            return ab;
+                // 如果有在快取中就不進行預加載
+                if (this.HasInCache(assetName))
+                {
+                    BundlePack pack = this.GetFromCache(assetName);
+                    if (pack.IsValid())
+                    {
+                        // 在快取中請求進度大小需累加當前資源的總 size (因為迴圈)
+                        this.reqSize += BundleUtility.GetAssetsLength(assetName);
+                        // 處理進度回調
+                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                        // 移除標記
+                        this._hashLoadingFlags.Remove(assetName);
+                        continue;
+                    }
+                    else
+                    {
+                        if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                        this.UnloadAsset(assetName, true);
+                        this.PreloadAsset(assetName, progression);
+                        continue;
+                    }
+                }
+
+                {
+                    BundlePack pack = new BundlePack();
+
+                    var package = PackageManager.GetDefaultPackage();
+                    var req = package.LoadAssetSync<Object>(assetName);
+
+                    float lastSize = 0;
+                    if (req != null)
+                    {
+                        if (progression != null)
+                        {
+                            req.Completed += (AssetOperationHandle oh) =>
+                            {
+                                this.reqSize += (oh.Progress - lastSize);
+                                lastSize = oh.Progress;
+
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            };
+                        }
+
+                        if (req.IsDone)
+                        {
+                            pack.assetName = assetName;
+                            pack.operationHandle = req;
+                        }
+                    }
+
+                    if (pack != null)
+                    {
+                        // skipping duplicate keys
+                        if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
+                    }
+                }
+
+                // 移除標記
+                this._hashLoadingFlags.Remove(assetName);
+
+                Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+            }
         }
 
         /// <summary>
-        /// 載入 Manifest, 僅讀取 StreamingAssets 中的 Manifest (用於引用依賴資源)
+        /// [使用計數管理] 載入資源 => 會優先從快取中取得資源, 如果快取中沒有才進行資源加載
         /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
         /// <returns></returns>
-        public async UniTask<BundlePack> LoadManifest(string manifestName)
+        public async UniTask<T> LoadAssetAsync<T>(string assetName, Progression progression = null) where T : Object
         {
-            if (this.HasInLoadingFlags(manifestName))
+            if (string.IsNullOrEmpty(assetName)) return null;
+
+            // 如果有進行 Loading 標記後, 直接 return
+            if (this.HasInLoadingFlags(assetName))
             {
-                Debug.Log($"<color=#FFDC8A>ab: {manifestName} Loading...</color>");
+                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                 return null;
             }
 
+            // 初始加載進度
+            this.reqSize = 0;
+            this.totalSize = BundleUtility.GetAssetsLength(assetName);
+
             // Loading 標記
-            this._hashLoadingFlags.Add(manifestName);
+            this._hashLoadingFlags.Add(assetName);
 
-            BundlePack bundlePack = await this.LoadBundlePack(manifestName, null, true);
+            // 先從快取拿
+            BundlePack pack = this.GetFromCache(assetName);
 
-            // 移除 Loading 標記
-            this._hashLoadingFlags.Remove(manifestName);
-
-            return bundlePack;
-        }
-
-        /// <summary>
-        /// 取得對應的 Manifest, 包含加載過程 (for Load)
-        /// </summary>
-        /// <returns></returns>
-        public async UniTask<AssetBundleManifest> GetManifestAsync(string bundleName)
-        {
-            if (string.IsNullOrEmpty(bundleName)) return null;
-
-            bundleName = bundleName.ToLower();
-
-            // 會判斷是否進行 BundleName & Md5 替換
-            bundleName = BundleNameToMd5(bundleName, BundleConfig.readMd5BundleName);
-
-            int index;
-            bool inApp = HasInStreamingAssets(bundleName);
-
-            // 取得 manifeset 名稱 (判斷選擇使用 Builtin or Patch 的 manifest)
-            string manifestName = BundleConfig.GetManifestFileName(inApp);
-
-            // 透過 Bundle 檢查, 屬於 Built-in 資源 or Patch 資源 (會依照判斷讀取不同的 manifest)
-            switch (inApp)
+            if (pack == null)
             {
-                case true:
-                    index = (int)Manifest.BUILTIN;
-                    break;
-
-                case false:
-                    index = (int)Manifest.PATCH;
-                    break;
-            }
-
-            // 加載 manifest 文本數據
-            if (this._manifest[index] == null)
-            {
-                // 加載 manifest bundle pack
-                if (this._manifestBundlePack[index] == null)
+                pack = new BundlePack();
                 {
-                    this.UnloadManifest();
-                    this._manifestBundlePack[index] = await this.LoadManifest(manifestName);
+                    var package = PackageManager.GetDefaultPackage();
+                    var req = package.LoadAssetAsync<Object>(assetName);
+
+                    float lastSize = 0;
+                    if (req != null)
+                    {
+                        if (progression != null)
+                        {
+                            req.Completed += (AssetOperationHandle oh) =>
+                            {
+                                this.reqSize += (oh.Progress - lastSize);
+                                lastSize = oh.Progress;
+
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            };
+                        }
+
+                        do
+                        {
+                            if (req.IsDone)
+                            {
+                                pack.assetName = assetName;
+                                pack.operationHandle = req;
+                                break;
+                            }
+                            await UniTask.Yield();
+                        } while (true);
+                    }
                 }
 
-                // 加載 manifest 數據
-                if (this._manifestBundlePack[index] != null)
+                if (pack != null)
                 {
-                    this._manifest[index] = this._manifestBundlePack[index].GetAsset<AssetBundleManifest>("AssetBundleManifest");
+                    // skipping duplicate keys
+                    if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
                 }
             }
-
-            if (this._manifest[index] != null)
+            else
             {
-                Debug.Log($"<color=#f1d088>Load Manifest Index: {index}</color>");
-                return this._manifest[index];
+                // 直接更新進度
+                this.reqSize = this.totalSize;
+                // 處理進度回調
+                progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
             }
 
-            Debug.Log("<color=#FF0000>Load Manifest failed</color>");
-
-            return null;
-        }
-
-        /// <summary>
-        /// 取得對應的 Manifest (for Unload)
-        /// </summary>
-        /// <param name="bundleName"></param>
-        /// <returns></returns>
-        public AssetBundleManifest GetManifest(string bundleName)
-        {
-            if (string.IsNullOrEmpty(bundleName)) return null;
-
-            bundleName = bundleName.ToLower();
-
-            // 會判斷是否進行 BundleName & Md5 替換
-            bundleName = BundleNameToMd5(bundleName, BundleConfig.readMd5BundleName);
-
-            int index;
-            bool inApp = HasInStreamingAssets(bundleName);
-
-            // 透過 Bundle 檢查, 屬於 Built-in 資源 or Patch 資源 (會依照判斷讀取不同的 manifest)
-            switch (inApp)
+            if (pack.IsValid())
             {
-                case true:
-                    index = (int)Manifest.BUILTIN;
-                    break;
-
-                case false:
-                    index = (int)Manifest.PATCH;
-                    break;
+                // 引用計數++
+                pack.AddRef();
+            }
+            else
+            {
+                if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                this.UnloadAsset(assetName, true);
+                return await this.LoadAssetAsync<T>(assetName, progression);
             }
 
-            if (this._manifest[index] != null)
-            {
-                Debug.Log($"<color=#f1d088>Get Manifest Index: {index}</color>");
-                return this._manifest[index];
-            }
+            this._hashLoadingFlags.Remove(assetName);
 
-            return null;
+            Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
+
+            return pack.GetAsset<T>();
         }
 
         /// <summary>
-        /// 卸載 Manifest (透過 Bundle 區別判斷)
-        /// </summary>
-        public void UnloadManifest(string bundleName)
-        {
-            if (string.IsNullOrEmpty(bundleName)) return;
-
-            bundleName = bundleName.ToLower();
-
-            // 會判斷是否進行 BundleName & Md5 替換
-            bundleName = BundleNameToMd5(bundleName, BundleConfig.readMd5BundleName);
-
-            int index;
-            bool inApp = HasInStreamingAssets(bundleName);
-
-            // 透過 Bundle 檢查, 屬於 Built-in 資源 or Patch 資源 (會依照判斷讀取不同的 manifest)
-            switch (inApp)
-            {
-                case true:
-                    index = (int)Manifest.BUILTIN;
-                    break;
-
-                case false:
-                    index = (int)Manifest.PATCH;
-                    break;
-            }
-
-            if (this._manifestBundlePack[index] != null) this._manifestBundlePack[index].assetBundle.Unload(true);
-            this._manifestBundlePack[index] = null;
-            this._manifest[index] = null;
-
-            Debug.Log($"<color=#f1d088>Unload Manifest Index: {index}</color>");
-        }
-
-        /// <summary>
-        /// 強制卸載 All Manifest
-        /// </summary>
-        public void UnloadManifest()
-        {
-            int manifestLength = Enum.GetNames(typeof(Manifest)).Length;
-            for (int i = 0; i < manifestLength; i++)
-            {
-                if (this._manifestBundlePack[i] != null) this._manifestBundlePack[i].assetBundle.Unload(true);
-                this._manifestBundlePack[i] = null;
-                this._manifest[i] = null;
-            }
-
-            Debug.Log("<color=#f1d088>Unload All Manifests</color>");
-        }
-
-        /// <summary>
-        /// 自動判斷返回 PersistentData or StreamingAssets 中的資源路徑
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        public static string GetFilePathFromStreamingAssetsOrSavePath(string fileName)
-        {
-            fileName = fileName.ToLower();
-
-            if (!HasInStreamingAssets(fileName)) return GetFilePathFromSavePath(fileName);
-            else return GetFilePathFromStreamingAssets(fileName);
-        }
-
-        /// <summary>
-        /// 取得位於 StreamingAssets 中的資源路徑
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        public static string GetFilePathFromStreamingAssets(string fileName)
-        {
-            fileName = fileName.ToLower();
-            // 透過配置檔取得完整檔案目錄名稱 (StreamingAssets 中的配置檔)
-            string fullPathName = Path.Combine(BundleConfig.GetRequestStreamingAssetsPath(), fileName);
-            return fullPathName;
-        }
-
-        /// <summary>
-        /// 取得位於 PersistentData 中的資源路徑
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        public static string GetFilePathFromSavePath(string fileName)
-        {
-            fileName = fileName.ToLower();
-            // 透過配置檔取得完整檔案目錄名稱 (Local 中的記錄配置黨)
-            string fullPathName = Path.Combine(BundleConfig.GetLocalDlFileSaveDirectory(), fileName);
-            return fullPathName;
-        }
-
-        /// <summary>
-        /// 透過配置檔返回是否有資源位於 StreamingAssets
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        public static bool HasInStreamingAssets(string fileName)
-        {
-            fileName = fileName.ToLower();
-
-            if (BundleDistributor.GetInstance().GetRecordCfg() != null)
-            {
-                if (BundleDistributor.GetInstance().GetRecordCfg().HasFile(fileName)) return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// 透過 BundleName 加密成 MD5 進行替換
-        /// </summary>
-        /// <param name="manifest"></param>
-        /// <param name="bundleName"></param>
-        /// <param name="swap"></param>
-        /// <returns></returns>
-        public static string BundleNameToMd5(string bundleName, bool swap)
-        {
-            if (swap)
-            {
-                // 取得 Bundle 檔案名稱
-                bundleName = bundleName.Replace("\\", "/");
-                string[] pathArgs = bundleName.Split('/');
-                string originFileName = pathArgs[pathArgs.Length - 1];
-                // 將路徑中的 Bundle 名稱替換成 Md5
-                bundleName = bundleName.Replace(originFileName, BundleUtility.MakeMd5ForString(originFileName));
-
-                return bundleName;
-            }
-
-            return bundleName;
-        }
-
-#if UNITY_EDITOR
-        /// <summary>
-        /// 直接讀取 AssetDatabase 拿取資源, 為了加快開發效率, 無需每次經過打包 (Editor Only)
+        /// [使用計數管理] 載入資源 => 會優先從快取中取得資源, 如果快取中沒有才進行資源加載
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
+        /// <param name="progression"></param>
         /// <returns></returns>
-        /// <exception cref="System.Exception"></exception>
-        public T LoadEditorAsset<T>(string bundleName, string assetName) where T : UnityEngine.Object
+        public T LoadAsset<T>(string assetName, Progression progression = null) where T : Object
         {
-            bundleName = bundleName.ToLower();
+            if (string.IsNullOrEmpty(assetName)) return null;
 
-            // 取得資源位於 AssetDatabase 中的路徑
-            var assetPaths = UnityEditor.AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(bundleName, assetName);
-            if (assetPaths.Length <= 0)
+            // 如果有進行 Loading 標記後, 直接 return
+            if (this.HasInLoadingFlags(assetName))
             {
-                throw new System.Exception($@"Cannot found an asset path from Editor AssetDatabase => bundleName: {bundleName}, assetName: {assetName}");
+                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                return null;
             }
-            string assetPath = assetPaths[0];
 
-            // 從路徑中取得資源
-            T resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetPath);
+            // 初始加載進度
+            this.reqSize = 0;
+            this.totalSize = BundleUtility.GetAssetsLength(assetName);
 
-            Debug.Log($@"<color=#A5FFA5>Load asset from Editor AssetDatabase => bundleName: {bundleName}, assetName: {assetName}</color>");
+            // Loading 標記
+            this._hashLoadingFlags.Add(assetName);
 
-            return resObj;
+            // 先從快取拿
+            BundlePack pack = this.GetFromCache(assetName);
+
+            if (pack == null)
+            {
+                pack = new BundlePack();
+                {
+                    var package = PackageManager.GetDefaultPackage();
+                    var req = package.LoadAssetSync<Object>(assetName);
+
+                    float lastSize = 0;
+                    if (req != null)
+                    {
+                        if (progression != null)
+                        {
+                            req.Completed += (AssetOperationHandle oh) =>
+                            {
+                                this.reqSize += (oh.Progress - lastSize);
+                                lastSize = oh.Progress;
+
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            };
+                        }
+
+                        if (req.IsDone)
+                        {
+                            pack.assetName = assetName;
+                            pack.operationHandle = req;
+                        }
+                    }
+                }
+
+                if (pack != null)
+                {
+                    // skipping duplicate keys
+                    if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
+                }
+            }
+            else
+            {
+                // 直接更新進度
+                this.reqSize = this.totalSize;
+                // 處理進度回調
+                progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+            }
+
+            if (pack.IsValid())
+            {
+                // 引用計數++
+                pack.AddRef();
+            }
+            else
+            {
+                if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                this.UnloadAsset(assetName, true);
+                return this.LoadAsset<T>(assetName, progression);
+            }
+
+            this._hashLoadingFlags.Remove(assetName);
+
+            Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
+
+            return pack.GetAsset<T>();
         }
-#endif
+
+        /// <summary>
+        /// [使用計數管理] 從快取【釋放】單個資源 (釋放快取, 並且釋放資源記憶體)
+        /// </summary>
+        /// <param name="assetName"></param>
+        public void UnloadAsset(string assetName, bool forceUnload = false)
+        {
+            if (string.IsNullOrEmpty(assetName)) return;
+
+            if (this.HasInLoadingFlags(assetName))
+            {
+                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                return;
+            }
+
+            if (this.HasInCache(assetName))
+            {
+                BundlePack pack = this.GetFromCache(assetName);
+
+                if (pack.IsAssetOperationHandle())
+                {
+                    // 引用計數--
+                    pack.DelRef();
+
+                    Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
+
+                    if (forceUnload)
+                    {
+                        pack.UnloadAsset();
+                        this._cacher[assetName] = null;
+                        this._cacher.Remove(assetName);
+
+                        Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Force Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                    }
+                    else if (this._cacher[assetName].refCount <= 0)
+                    {
+                        pack.UnloadAsset();
+                        this._cacher[assetName] = null;
+                        this._cacher.Remove(assetName);
+
+                        Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                    }
+                }
+                else Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload Type Error</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
+            }
+        }
+
+        /// <summary>
+        /// [強制釋放] 從快取中【釋放】全部資源 (釋放快取, 並且釋放資源記憶體)
+        /// </summary>
+        public void ReleaseAssets()
+        {
+            if (this.Count == 0) return;
+
+            // 強制釋放快取與資源
+            foreach (var assetName in this._cacher.Keys.ToArray())
+            {
+                if (this.HasInCache(assetName))
+                {
+                    BundlePack pack = this.GetFromCache(assetName);
+                    if (pack.IsAssetOperationHandle()) this.UnloadAsset(assetName, true);
+                }
+            }
+
+            var package = PackageManager.GetDefaultPackage();
+            package.UnloadUnusedAssets();
+
+            Debug.Log($"<color=#ff71b7>【Release All Assets】 => Current << CacheBundle >> Cache Count: {this.Count}</color>");
+        }
+        #endregion
+
+        ~CacheBundle()
+        {
+            this._sceneCache.Clear();
+            this._sceneCache = null;
+            this._sceneCounter.Clear();
+            this._sceneCounter = null;
+        }
     }
 }

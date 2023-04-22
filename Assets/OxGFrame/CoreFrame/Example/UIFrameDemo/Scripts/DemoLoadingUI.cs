@@ -5,8 +5,6 @@ public class DemoLoadingUI : UIBase
 {
     public override void BeginInit()
     {
-        //this.uiType = new UINode(NodeType.Independent);
-        //this.isCloseAndDestroy = false;
     }
 
     protected override async UniTask OpenSub()

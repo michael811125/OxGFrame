@@ -1,6 +1,4 @@
 ﻿using OxGFrame.CoreFrame.EPFrame;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DemoEntity2 : EPBase

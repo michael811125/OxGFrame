@@ -1,5 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace OxGFrame.AssetLoader.Cacher
 {
@@ -15,17 +14,9 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public int Count { get { return this._cacher.Count; } }
 
-        public abstract bool HasInCache(string name);
+        public abstract bool HasInCache(string assetName);
 
-        public abstract T GetFromCache(string name);
-
-        public abstract UniTask Preload(string name, Progression progression);
-
-        public abstract UniTask Preload(string[] names, Progression progression);
-
-        public abstract void Unload(string name, bool forceUnload);
-
-        public abstract void Release();
+        public abstract T GetFromCache(string assetName);
 
         public AssetCache()
         {
@@ -33,15 +24,10 @@ namespace OxGFrame.AssetLoader.Cacher
             this._hashLoadingFlags = new HashSet<string>();
         }
 
-        public virtual bool HasInLoadingFlags(string name)
+        public virtual bool HasInLoadingFlags(string assetName)
         {
-            if (string.IsNullOrEmpty(name)) return false;
-            return this._hashLoadingFlags.Contains(name);
-        }
-
-        public virtual int GetAssetsLength(params string[] names)
-        {
-            return names.Length;
+            if (string.IsNullOrEmpty(assetName)) return false;
+            return this._hashLoadingFlags.Contains(assetName);
         }
 
         ~AssetCache()

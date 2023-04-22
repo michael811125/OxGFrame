@@ -1,10 +1,10 @@
 ﻿using OxGFrame.NetFrame;
 using UnityEngine;
 
-public class NetworkExample : MonoBehaviour
+public class NetworkExample
 {
     /// <summary>
-    /// 初始網路節點 (還未開始連接)
+    /// Init net node
     /// </summary>
     public static void InitNetNode()
     {
@@ -12,59 +12,59 @@ public class NetworkExample : MonoBehaviour
 
         #region Websocket Example
         NetNode wsNetNode = new NetNode(new WebSock(), netTips);
-        // 設置接收回調
+        // Set data receive callback
         wsNetNode.SetResponseHandler(ProcessRecvData);
-        // 設置第一次初始封包回調
+        // Set first send callback (verification)
         wsNetNode.SetFirstSendHandler(ProcessFirstSend);
-        // 設置心跳檢測回調
+        // Set heart beat callback
         wsNetNode.SetHeartBeatAction(() =>
         {
             /* Process Heart Beat */
         });
-        // 設置超時處理回調
+        // Set out receive callback
         wsNetNode.SetOutReciveAction(() =>
         {
             /* Process Out Of Recive */
         });
-        // 設置重連處理回調
+        // Set reconnect callback
         wsNetNode.SetReconnectAction(() =>
         {
             /* Process Reconnect */
         });
 
-        // 加入節點至 NetManager
+        // Add net node (register)
         NetManager.GetInstance().AddNetNode(wsNetNode, 0);
         #endregion
 
         #region TCP/IP Example
         NetNode tcpNetNode = new NetNode(new TcpSocket(), netTips);
-        // 設置接收回調
+        // Set data receive callback
         tcpNetNode.SetResponseHandler(ProcessRecvData);
-        // 設置第一次初始封包回調
+        // Set first send callback (verification)
         tcpNetNode.SetFirstSendHandler(ProcessFirstSend);
-        // 設置心跳檢測回調
+        // Set heart beat callback
         tcpNetNode.SetHeartBeatAction(() =>
         {
             /* Process Heart Beat */
         });
-        // 設置超時處理回調
+        // Set out receive callback
         tcpNetNode.SetOutReciveAction(() =>
         {
             /* Process Out Of Recive */
         });
-        // 設置重連處理回調
+        // Set reconnect callback
         tcpNetNode.SetReconnectAction(() =>
         {
             /* Process Reconnect */
         });
 
-        // 加入節點至 NetManager
+        // Add net node (register)
         NetManager.GetInstance().AddNetNode(tcpNetNode, 1);
         #endregion
     }
 
     /// <summary>
-    /// 數據接收回調
+    /// Data receive callback
     /// </summary>
     /// <param name="recvData"></param>
     public static void ProcessRecvData(byte[] recvData)
@@ -73,7 +73,7 @@ public class NetworkExample : MonoBehaviour
     }
 
     /// <summary>
-    /// 封包初始回調
+    /// Protocol first send verification
     /// </summary>
     public static void ProcessFirstSend()
     {
@@ -81,7 +81,7 @@ public class NetworkExample : MonoBehaviour
     }
 
     /// <summary>
-    /// 調用建立連線
+    /// Create connection
     /// </summary>
     /// <param name="netOption"></param>
     public static void OpenConnection(NetOption netOption, byte nnid = 0)
@@ -91,7 +91,7 @@ public class NetworkExample : MonoBehaviour
     }
 
     /// <summary>
-    /// 調用關閉連線
+    /// Close connection
     /// </summary>
     public static void CloseConnection(byte nnid = 0)
     {
@@ -99,7 +99,7 @@ public class NetworkExample : MonoBehaviour
     }
 
     /// <summary>
-    /// 返回連線狀態
+    /// Return connection status
     /// </summary>
     /// <returns></returns>
     public static bool IsConnected(byte nnid = 0)
@@ -108,7 +108,7 @@ public class NetworkExample : MonoBehaviour
     }
 
     /// <summary>
-    /// 傳送 Binary 資料至 Server
+    /// Send binary data
     /// </summary>
     /// <param name="buffer"></param>
     /// <returns></returns>

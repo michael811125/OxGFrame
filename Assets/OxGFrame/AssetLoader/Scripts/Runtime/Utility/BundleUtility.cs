@@ -1,5 +1,4 @@
-
-using OxGFrame.AssetLoader.Bundle;
+﻿
 using System.IO;
 using System.Text;
 using System;
@@ -9,67 +8,11 @@ using UnityEngine;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace AssetLoader.Utility
+namespace OxGFrame.AssetLoader.Utility
 {
     public static class BundleUtility
     {
-        /// <summary>
-        /// 取得配置檔中的資源檔總大小 (Bytes)
-        /// </summary>
-        /// <param name="cfg"></param>
-        /// <returns></returns>
-        public static ulong GetUpdateSizeBytes(VersionFileCfg cfg)
-        {
-            ulong size = 0;
-            foreach (var file in cfg.RES_FILES)
-            {
-                size += (ulong)file.Value.size;
-            }
-
-            return size;
-        }
-
-        /// <summary>
-        /// 取得配置檔中的資源數
-        /// </summary>
-        /// <param name="cfg"></param>
-        /// <returns></returns>
-        public static int GetUpdateCount(VersionFileCfg cfg)
-        {
-            if (cfg == null) return 0;
-
-            return cfg.RES_FILES.Count;
-        }
-
-        /// <summary>
-        /// 取得配置檔中的資源檔總大小
-        /// </summary>
-        /// <param name="cfg"></param>
-        /// <returns></returns>
-        public static string GetUpdateTotalSizeToString(VersionFileCfg cfg)
-        {
-            if (cfg == null) return "";
-
-            float size = 0;
-            foreach (var file in cfg.RES_FILES)
-            {
-                size += file.Value.size;
-            }
-
-            if (size < (1024 * 1024 * 1f))
-            {
-                return (size / 1024f).ToString("f2") + "KB";
-            }
-            else if (size >= (1024 * 1024 * 1f) && size < (1024 * 1024 * 1024 * 1f))
-            {
-                return (size / (1024 * 1024 * 1f)).ToString("f2") + "MB";
-            }
-            else
-            {
-                return (size / (1024 * 1024 * 1024 * 1f)).ToString("f2") + "GB";
-            }
-        }
-
+        #region ToString
         /// <summary>
         /// 轉換 Bytes 傳輸速率
         /// </summary>
@@ -111,7 +54,9 @@ namespace AssetLoader.Utility
                 return (bytes / (1024 * 1024 * 1024 * 1f)).ToString("f2") + "GB";
             }
         }
+        #endregion
 
+        #region MD5
         /// <summary>
         /// 【FilePath】生成檔案的 MD5 碼
         /// </summary>
@@ -187,7 +132,111 @@ namespace AssetLoader.Utility
                 return md5;
             }
         }
+        #endregion
 
+        #region File Request
+        /// <summary>
+        /// 檔案請求 (byte)
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static async UniTask<byte[]> FileRequestByte(string url, Action errorAction = null, CancellationTokenSource cts = null)
+        {
+            UnityWebRequest request = null;
+            try
+            {
+                request = UnityWebRequest.Get(url);
+
+                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
+                else await request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+                {
+                    request.Dispose();
+                    errorAction?.Invoke();
+                    Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
+                    return new byte[] { };
+                }
+
+                byte[] bytes = request.downloadHandler.data;
+                request.Dispose();
+
+                return bytes;
+            }
+            catch
+            {
+                request?.Dispose();
+                errorAction?.Invoke();
+                Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
+                return new byte[] { };
+            }
+        }
+
+        /// <summary>
+        /// 檔案請求 (string)
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static async UniTask<string> FileRequestString(string url, Action errorAction = null, CancellationTokenSource cts = null)
+        {
+            UnityWebRequest request = null;
+            try
+            {
+                request = UnityWebRequest.Get(url);
+
+                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
+                else await request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+                {
+                    request.Dispose();
+                    errorAction?.Invoke();
+                    Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
+                    return null;
+                }
+
+                string text = request.downloadHandler.text;
+                request.Dispose();
+
+                return text;
+            }
+            catch
+            {
+                request?.Dispose();
+                errorAction?.Invoke();
+                Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 從 StreamingAssets 中複製檔案 (for Android, iOS, WebGL)
+        /// </summary>
+        /// <param name="sourceFile"></param>
+        /// <param name="destFile"></param>
+        /// <returns></returns>
+        public static async UniTask RequestAndCopyFileFromStreamingAssets(string sourceFile, string destFile, CancellationTokenSource cts = null)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Get(sourceFile))
+            {
+                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
+                else await request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+                {
+                    Debug.Log("<color=#FF0000>Request failed. Cannot found file in StreamingAssets.</color>");
+                    Debug.Log(request.error);
+                }
+                else
+                {
+                    string json = request.downloadHandler.text;
+                    File.WriteAllText(destFile, json);
+                }
+            }
+        }
+        #endregion
+
+        #region File
         /// <summary>
         /// 刪除目錄 (包含底下所有的檔案與資料夾)
         /// </summary>
@@ -242,101 +291,50 @@ namespace AssetLoader.Utility
         }
 
         /// <summary>
-        /// 檔案請求 (byte)
+        /// 複製來源路徑至輸出路徑
         /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public static async UniTask<byte[]> FileRequestByte(string url, CancellationTokenSource cts = null)
+        /// <param name="inputPath"></param>
+        /// <param name="outputPath"></param>
+        public static void CopyFolderRecursively(string inputPath, string outputPath)
         {
-            UnityWebRequest request = null;
-            try
+            if (!Directory.Exists(outputPath)) Directory.CreateDirectory(outputPath);
+
+            // Now Create all of the directories
+            foreach (string dirPath in Directory.GetDirectories(inputPath, "*", SearchOption.AllDirectories))
             {
-                request = UnityWebRequest.Get(url);
-
-                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
-                else await request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
-                {
-                    Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                    request.Dispose();
-
-                    return new byte[] { };
-                }
-
-                byte[] bytes = request.downloadHandler.data;
-                request.Dispose();
-
-                return bytes;
+                Directory.CreateDirectory(dirPath.Replace(inputPath, outputPath));
             }
-            catch
+
+            // Copy all the files & Replaces any files with the same name
+            foreach (string newPath in Directory.GetFiles(inputPath, "*.*", SearchOption.AllDirectories))
             {
-                request?.Dispose();
-                Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                return new byte[] { };
+                File.Copy(newPath, newPath.Replace(inputPath, outputPath), true);
             }
         }
 
         /// <summary>
-        /// 檔案請求 (string)
+        /// 開啟路徑目錄
         /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        public static async UniTask<string> FileRequestString(string url, CancellationTokenSource cts = null)
+        /// <param name="dir"></param>
+        /// <param name="autoCreateFolder"></param>
+        public static void OpenFolder(string dir, bool autoCreateFolder = false)
         {
-            UnityWebRequest request = null;
-            try
+            if (autoCreateFolder)
             {
-                request = UnityWebRequest.Get(url);
-
-                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
-                else await request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+                if (!Directory.Exists(dir))
                 {
-                    Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                    request.Dispose();
-
-                    return null;
+                    Directory.CreateDirectory(dir);
                 }
-
-                string text = request.downloadHandler.text;
-                request.Dispose();
-
-                return text;
             }
-            catch
-            {
-                request?.Dispose();
-                Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                return null;
-            }
+            System.Diagnostics.Process.Start(dir);
         }
+        #endregion
 
-        /// <summary>
-        /// 從 StreamingAssets 中複製檔案 (for Android, iOS, WebGL)
-        /// </summary>
-        /// <param name="sourceFile"></param>
-        /// <param name="destFile"></param>
-        /// <returns></returns>
-        public static async UniTask RequestAndCopyFileFromStreamingAssets(string sourceFile, string destFile, CancellationTokenSource cts = null)
+        #region Other
+        public static int GetAssetsLength(params string[] names)
         {
-            using (UnityWebRequest request = UnityWebRequest.Get(sourceFile))
-            {
-                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
-                else await request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
-                {
-                    Debug.Log("<color=#FF0000>Request failed. Cannot found file in StreamingAssets.</color>");
-                    Debug.Log(request.error);
-                }
-                else
-                {
-                    string json = request.downloadHandler.text;
-                    File.WriteAllText(destFile, json);
-                }
-            }
+            return names.Length;
         }
+        #endregion
     }
 }

@@ -2,7 +2,7 @@
 using UnityEngine;
 using MyBox;
 
-namespace OxGFrame.Utility
+namespace OxGFrame.Utility.Pool
 {
     [AddComponentMenu("OxGFrame/Utility/Pool/NodePool")]
     public class NodePool : MonoBehaviour
@@ -59,10 +59,7 @@ namespace OxGFrame.Utility
         /// </summary>
         public void Clear()
         {
-            this._pool.ForEach(go =>
-            {
-                Destroy(go);
-            });
+            this._pool.ForEach(go => Destroy(go));
             this._pool.Clear();
         }
 

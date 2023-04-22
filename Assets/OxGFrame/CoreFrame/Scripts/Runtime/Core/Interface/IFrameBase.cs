@@ -16,7 +16,7 @@ namespace OxGFrame.CoreFrame
 
         void OnRelease();
 
-        void SetNames(string bundleName, string assetName);
+        void SetNames(string assetName);
 
         void SetGroupId(int id);
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using OxGFrame.AssetLoader;
 using Cysharp.Threading.Tasks;
@@ -9,19 +8,16 @@ namespace OxGFrame.CoreFrame.GSFrame
 {
     public class GSManager : FrameManager<GSBase>
     {
-        private GameObject _goRoot = null;                                                      // 根節點物件
-        private Dictionary<string, GameObject> _goNodes = new Dictionary<string, GameObject>(); // 節點物件
-
         private static readonly object _locker = new object();
         private static GSManager _instance = null;
-        public static GSManager GetInstance()
+        internal static GSManager GetInstance()
         {
             if (_instance == null)
             {
                 lock (_locker)
                 {
                     _instance = FindObjectOfType(typeof(GSManager)) as GSManager;
-                    if (_instance == null) _instance = new GameObject(GSSysDefine.GS_MANAGER_NAME).AddComponent<GSManager>();
+                    if (_instance == null) _instance = new GameObject(nameof(GSManager)).AddComponent<GSManager>();
                 }
             }
             return _instance;
@@ -29,76 +25,39 @@ namespace OxGFrame.CoreFrame.GSFrame
 
         private void Awake()
         {
+            this.gameObject.name = $"[{nameof(GSManager)}]";
             DontDestroyOnLoad(this);
-
-            // 先設置 GSRoot
-            if (this._SetupGSRoot(GSSysDefine.GS_MANAGER_NAME))
-            {
-                // 建立 GSNodes
-                this._CreateAllGSNode();
-            }
         }
 
-        #region 初始建立Node相關方法
-        private bool _SetupGSRoot(string name)
+        #region 實作 Loading
+        protected override GSBase Instantiate(GSBase gsBase, string assetName, AddIntoCache addIntoCache, Transform parent)
         {
-            this._goRoot = GameObject.Find(name);
-            if (this._goRoot == null) return false;
-            return true;
-        }
-
-        private void _CreateAllGSNode()
-        {
-            foreach (var nodeName in Enum.GetNames(typeof(NodeType)))
-            {
-                if (!this._goNodes.ContainsKey(nodeName))
-                {
-                    this._goNodes.Add(nodeName, this._CreateGSNode(nodeName));
-                }
-            }
-        }
-
-        private GameObject _CreateGSNode(string name)
-        {
-            // 檢查是否已經有先被創立了
-            GameObject nodeChecker = this._goRoot.transform.Find(name)?.gameObject;
-            if (nodeChecker != null) return nodeChecker;
-
-            GameObject nodeGo = new GameObject(name);
-            // 設置 GSNode 為 GSRoot 的子節點
-            nodeGo.transform.SetParent(this._goRoot.transform);
-
-            // 校正 Transform
-            nodeGo.transform.localScale = Vector3.one;
-            nodeGo.transform.localPosition = Vector3.zero;
-
-            return nodeGo;
-        }
-        #endregion
-
-        #region 實作Loading
-        protected override GSBase Instantiate(GSBase gsBase, string bundleName, string assetName, AddIntoCache addIntoCache)
-        {
-            GameObject instPref = Instantiate(gsBase.gameObject, this._goRoot.transform); // instantiate 【GS Prefab】 (先指定 Instantiate Parent 為 GSRoot)
+            // instantiate 【GS Prefab】 (先指定 Instantiate Parent 為 GSRoot)
+            GameObject instPref = Instantiate(gsBase.gameObject, (parent != null) ? parent : this.transform);
 
             // 激活檢查, 如果主體 Active 為 false 必須打開
             if (!instPref.activeSelf) instPref.SetActive(true);
 
-            instPref.name = instPref.name.Replace("(Clone)", ""); // Replace Name
+            // Replace Name
+            instPref.name = instPref.name.Replace("(Clone)", "");
             gsBase = instPref.GetComponent<GSBase>();
             if (gsBase == null) return null;
 
             addIntoCache?.Invoke(gsBase);
 
-            gsBase.SetNames(bundleName, assetName);
-            gsBase.BeginInit();                         // Clone 取得 GSBase 組件後, 也初始 GSBase 相關設定
-            gsBase.InitFirst();                         // Clone 取得 GSBase 組件後, 也初始 GSBase 相關綁定組件設定
+            gsBase.SetNames(assetName);
+            // Clone 取得 GSBase 組件後, 也初始 GSBase 相關設定
+            gsBase.BeginInit();
+            // Clone 取得 GSBase 組件後, 也初始 GSBase 相關綁定組件設定
+            gsBase.InitFirst();
 
             // >>> 需在 InitThis 之後, 以下設定開始生效 <<<
 
-            if (!this.SetParent(gsBase)) return null;   // 透過 NodeType 類型, 設置 Parent
+            // 透過 NodeName 設置 Parent
+            this.SetParent(gsBase, parent);
 
-            gsBase.gameObject.SetActive(false);         // 最後設置完畢後, 關閉 GameObject 的 Active 為 false
+            // 最後設置完畢後, 關閉 GameObject 的 Active 為 false
+            gsBase.gameObject.SetActive(false);
 
             return gsBase;
         }
@@ -109,20 +68,24 @@ namespace OxGFrame.CoreFrame.GSFrame
         /// 依照對應的 Node 類型設置母節點
         /// </summary>
         /// <param name="gsBase"></param>
-        protected override bool SetParent(GSBase gsBase)
+        protected override bool SetParent(GSBase gsBase, Transform parent)
         {
-            if (this._goNodes.TryGetValue(gsBase.gsSetting.nodeType.ToString(), out GameObject goNode))
+            if (parent != null)
             {
-                gsBase.gameObject.transform.SetParent(goNode.transform);
+                if (parent.gameObject.GetComponent<GSParent>() == null) parent.gameObject.AddComponent<GSParent>();
+                gsBase.gameObject.transform.SetParent(parent);
                 return true;
             }
-
-            return false;
+            else
+            {
+                gsBase.gameObject.transform.SetParent(this.gameObject.transform);
+                return true;
+            }
         }
         #endregion
 
         #region Show
-        public override async UniTask<GSBase> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null)
+        public override async UniTask<GSBase> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
@@ -139,9 +102,9 @@ namespace OxGFrame.CoreFrame.GSFrame
                 }
             }
 
-            await this.ShowLoading(groupId, string.Empty, loadingUIAssetName); // 開啟預顯加載 UI
+            await this.ShowLoading(groupId, loadingUIAssetName); // 開啟預顯加載 UI
 
-            var gsBase = await this.LoadIntoAllCache(string.Empty, assetName, progression, false);
+            var gsBase = await this.LoadIntoAllCache(assetName, progression, false, parent);
             if (gsBase == null)
             {
                 Debug.LogWarning(string.Format("Asset not found at this path!!!【GS】: {0}", assetName));
@@ -159,42 +122,42 @@ namespace OxGFrame.CoreFrame.GSFrame
             return gsBase;
         }
 
-        public override async UniTask<GSBase> Show(int groupId, string bundleName, string assetName, object obj = null, string loadingUIBundleName = null, string loadingUIAssetName = null, Progression progression = null)
-        {
-            if (string.IsNullOrEmpty(bundleName) && string.IsNullOrEmpty(assetName)) return null;
+        //public override async UniTask<GSBase> Show(int groupId, string bundleName, string assetName, object obj = null, string loadingUIBundleName = null, string loadingUIAssetName = null, Progression progression = null)
+        //{
+        //    if (string.IsNullOrEmpty(bundleName) && string.IsNullOrEmpty(assetName)) return null;
 
-            // 先取出 Stack 主體
-            var stack = this.GetStackFromAllCache(assetName);
+        //    // 先取出 Stack 主體
+        //    var stack = this.GetStackFromAllCache(assetName);
 
-            // 判斷非多實例直接 return
-            if (stack != null && !stack.allowInstantiate)
-            {
-                if (this.CheckIsShowing(assetName))
-                {
-                    Debug.LogWarning(string.Format("【GS】{0} already exists!!!", assetName));
-                    return null;
-                }
-            }
+        //    // 判斷非多實例直接 return
+        //    if (stack != null && !stack.allowInstantiate)
+        //    {
+        //        if (this.CheckIsShowing(assetName))
+        //        {
+        //            Debug.LogWarning(string.Format("【GS】{0} already exists!!!", assetName));
+        //            return null;
+        //        }
+        //    }
 
-            await this.ShowLoading(groupId, loadingUIBundleName, loadingUIAssetName); // 開啟預顯加載 UI
+        //    await this.ShowLoading(groupId, loadingUIBundleName, loadingUIAssetName); // 開啟預顯加載 UI
 
-            var gsBase = await this.LoadIntoAllCache(bundleName, assetName, progression, false);
-            if (gsBase == null)
-            {
-                Debug.LogWarning(string.Format("Asset not found at this path!!!【GS】: {0}", assetName));
-                return null;
-            }
+        //    var gsBase = await this.LoadIntoAllCache(bundleName, assetName, progression, false);
+        //    if (gsBase == null)
+        //    {
+        //        Debug.LogWarning(string.Format("Asset not found at this path!!!【GS】: {0}", assetName));
+        //        return null;
+        //    }
 
-            gsBase.SetGroupId(groupId);
-            gsBase.SetHidden(false);
-            await this.LoadAndDisplay(gsBase, obj);
+        //    gsBase.SetGroupId(groupId);
+        //    gsBase.SetHidden(false);
+        //    await this.LoadAndDisplay(gsBase, obj);
 
-            Debug.Log(string.Format("Show GS: 【{0}】", assetName));
+        //    Debug.Log(string.Format("Show GS: 【{0}】", assetName));
 
-            this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
+        //    this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
 
-            return gsBase;
-        }
+        //    return gsBase;
+        //}
         #endregion
 
         #region Close
@@ -251,6 +214,9 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             foreach (FrameStack<GSBase> stack in this._dictAllCache.Values.ToArray())
             {
+                // prevent preload mode
+                if (stack.Count() == 0) continue;
+
                 string assetName = stack.assetName;
 
                 var gsBase = stack.Peek();
@@ -284,6 +250,9 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             foreach (FrameStack<GSBase> stack in this._dictAllCache.Values.ToArray())
             {
+                // prevent preload mode
+                if (stack.Count() == 0) continue;
+
                 string assetName = stack.assetName;
 
                 var gsBase = stack.Peek();
@@ -351,6 +320,9 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             foreach (FrameStack<GSBase> stack in this._dictAllCache.Values.ToArray())
             {
+                // prevent preload mode
+                if (stack.Count() == 0) continue;
+
                 string assetName = stack.assetName;
 
                 var gsBase = stack.Peek();
@@ -367,6 +339,9 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             foreach (FrameStack<GSBase> stack in this._dictAllCache.Values.ToArray())
             {
+                // prevent preload mode
+                if (stack.Count() == 0) continue;
+
                 string assetName = stack.assetName;
 
                 var gsBase = stack.Peek();
@@ -413,6 +388,9 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             foreach (FrameStack<GSBase> stack in this._dictAllCache.Values.ToArray())
             {
+                // prevent preload mode
+                if (stack.Count() == 0) continue;
+
                 string assetName = stack.assetName;
 
                 var gsBase = stack.Peek();
@@ -443,6 +421,9 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             foreach (FrameStack<GSBase> stack in this._dictAllCache.Values.ToArray())
             {
+                // prevent preload mode
+                if (stack.Count() == 0) continue;
+
                 string assetName = stack.assetName;
 
                 var gsBase = stack.Peek();

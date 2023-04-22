@@ -17,11 +17,11 @@ namespace OxGFrame.CoreFrame.UIFrame
         [Tooltip("If checked will auto create a mask")]
         public bool autoMask = false;                       // 是否自動生成 Mask
         [ConditionalField(nameof(autoMask)), Tooltip("Mask Settings")]
-        public MaskSetting maskSetting = new MaskSetting(); // 定義Mask類型 (Popup 系列)
+        public MaskSetting maskSetting = new MaskSetting(); // Mask 設定
 
         private void Awake()
         {
-            this.canvas = GetComponent<Canvas>();
+            this.canvas = this.GetComponent<Canvas>();
             this.graphicRaycaster = this.GetComponent<GraphicRaycaster>();
         }
 
@@ -62,10 +62,10 @@ namespace OxGFrame.CoreFrame.UIFrame
         protected override void OnShow(object obj) { }
 
         /// <summary>
-        /// 接收封包後調用控制, 收到封包後的一個刷新點, 可以由 FuncId 去判斷欲刷新的 Protocol (需自行委派 Delegate)
+        /// 接收封包後調用控制, 收到封包後的一個刷新點
         /// </summary>
-        /// <param name="funcId"></param>
-        public override void OnUpdateOnceAfterProtocol(int funcId = 0) { }
+        /// <param name="obj"></param>
+        public override void OnReceiveAndRefresh(object obj = null) { }
 
         protected override void OnUpdate(float dt) { }
 
@@ -81,7 +81,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             {
                 // 進行顯示初始動作【子類 OnShow】
                 this.OnShow(obj);
-                // 啟用Mask
+                // 啟用 Mask
                 if (this.autoMask) this._AddMask();
             }
             else this.OnReveal();
@@ -105,11 +105,11 @@ namespace OxGFrame.CoreFrame.UIFrame
             {
                 this.UnFreeze();
 
-                    // 非隱藏才正規處理
-                    if (!this.isHidden)
+                // 非隱藏才正規處理
+                if (!this.isHidden)
                 {
-                        // 如果有啟用 Mask, 則需要回收 Mask
-                        if (this.autoMask) this._RemoveMask();
+                    // 如果有啟用 Mask, 則需要回收 Mask
+                    if (this.autoMask) this._RemoveMask();
                     if (!disableDoSub) this.CloseSub();
                     this.OnClose();
                 }
@@ -124,7 +124,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         private void _AddMask()
         {
-            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasType).uiMaskManager.AddMask(this.transform, this.maskSetting.color, this.MaskEvent);
+            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasName).uiMaskManager.AddMask(this.transform, this.maskSetting.color, this.MaskEvent);
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         private void _RemoveMask()
         {
-            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasType).uiMaskManager.RemoveMask(this.transform);
+            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasName).uiMaskManager.RemoveMask(this.transform);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         public void Freeze()
         {
-            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasType).uiFreezeManager.AddFreeze(this.transform);
+            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasName).uiFreezeManager.AddFreeze(this.transform);
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         public void UnFreeze()
         {
-            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasType).uiFreezeManager.RemoveFreeze(this.transform);
+            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasName).uiFreezeManager.RemoveFreeze(this.transform);
         }
 
         /// <summary>

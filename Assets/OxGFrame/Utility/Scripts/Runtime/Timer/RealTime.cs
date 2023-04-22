@@ -8,6 +8,10 @@ namespace OxGFrame.Utility.Timer
         private static bool _firstInitStartupTime = false;                  // 是否首次初始啟動時間                            
         public static DateTime? startupTime { get; private set; } = null;   // 啟動時間, 建議由主程序調用初始 (將會是遊戲啟動時間)
 
+        /// <summary>
+        /// Call by Main Monobehaviour Awake
+        /// </summary>
+        /// <returns></returns>
         public static void InitStartupTime()
         {
             if (_firstInitStartupTime) return;

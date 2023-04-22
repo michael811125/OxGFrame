@@ -1,5 +1,0 @@
-#audio_urlset = Audio Source Url
-#video_urlset = Video Source Url
-
-audio_urlset http://127.0.0.1/audio_dev/Audio/
-video_urlset http://127.0.0.1/video_dev/Video/

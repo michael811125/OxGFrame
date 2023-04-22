@@ -65,7 +65,7 @@ namespace OxGFrame.MediaFrame
         }
 
         [HideInInspector] public string mediaName { get; protected set; } = string.Empty;  // 影音名稱
-        [HideInInspector] public string bundleName { get; protected set; } = string.Empty; // BundleName
+        //[HideInInspector] public string bundleName { get; protected set; } = string.Empty; // BundleName
         [HideInInspector] public string assetName { get; protected set; } = string.Empty;  // (Bundle) AssetName = (Resouce) PathName
 
         [Tooltip("Not affected by TimeScale")]
@@ -166,7 +166,7 @@ namespace OxGFrame.MediaFrame
         public virtual void OnRelease()
         {
             this.mediaName = null;
-            this.bundleName = null;
+            //this.bundleName = null;
             this.assetName = null;
             this._mediaLength = 0f;
             this._currentLength = 0f;
@@ -200,9 +200,16 @@ namespace OxGFrame.MediaFrame
         /// </summary>
         /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
-        public void SetNames(string bundleName, string assetName, string mediaName)
+        //public void SetNames(string bundleName, string assetName, string mediaName)
+        //{
+        //    this.bundleName = bundleName;
+        //    this.assetName = assetName;
+        //    this.mediaName = mediaName;
+        //}      
+
+        public void SetNames(string assetName, string mediaName)
         {
-            this.bundleName = bundleName;
+            //this.bundleName = bundleName;
             this.assetName = assetName;
             this.mediaName = mediaName;
         }

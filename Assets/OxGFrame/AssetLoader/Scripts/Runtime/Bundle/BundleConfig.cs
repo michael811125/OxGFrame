@@ -1,14 +1,22 @@
-﻿using AssetLoader.Utility;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
+using OxGFrame.AssetLoader.Utility;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Networking;
+using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
     public static class BundleConfig
     {
+        public enum PlayMode
+        {
+            EditorSimulateMode,
+            OfflineMode,
+            HostMode
+        }
+
         public class CryptogramType
         {
             public const string NONE = "NONE";
@@ -20,61 +28,29 @@ namespace OxGFrame.AssetLoader.Bundle
 
         #region 執行配置
         /// <summary>
-        /// 啟用 Editor 中的 AssetDatabase 讀取資源模式
+        /// Patch 執行模式
         /// </summary>
-        public static bool assetDatabaseMode = true;
+        public static PlayMode playMode = PlayMode.EditorSimulateMode;
+
+        public static List<string> listPackage;
 
         /// <summary>
-        /// 離線模式 Bundle (僅讀取 StreamingAssets 中的資源與配置檔)
+        /// 預設同時併發下載數量
         /// </summary>
-        public static bool offlineMode = false;
+        public const int defaultMaxConcurrencyDownloadCount = 10;
+        /// <summary>
+        /// 同時併發下載數量
+        /// </summary>
+        public static int maxConcurrencyDownloadCount = defaultMaxConcurrencyDownloadCount;
 
         /// <summary>
-        /// 啟用文件流 (較少內存)
+        /// 預設下載失敗重新嘗試次數
         /// </summary>
-        public static bool bundleStreamMode = true;
-
+        public const int defaultFailedRetryCount = 3;
         /// <summary>
-        /// 啟用使用 MD5 加密的包名
+        /// 下載失敗重新嘗試次數
         /// </summary>
-        public static bool readMd5BundleName = true;
-
-        /// <summary>
-        /// 預設最大切片大小 (16 MB)
-        /// </summary>
-        public const long defaultMaxDownloadSliceSize = 1 << 24;
-        /// <summary>
-        /// 檔案下載最大切片大小, 透過切片方式下載單個大檔, 可以避免內存佔用太大導致內存不足問題 (*不建議設置過大)
-        /// </summary>
-        public static long maxDownloadSliceSize = defaultMaxDownloadSliceSize;
-
-        /// <summary>
-        /// 預設解壓縮緩存大小 (64 KB)
-        /// </summary>
-        public const int defaultUnzipBufferSize = 1 << 16;
-        /// <summary>
-        /// 解壓縮緩存大小 (緩存愈大解壓愈快)
-        /// </summary>
-        public static int unzipBufferSize = defaultUnzipBufferSize;
-
-        /// <summary>
-        /// 預設壓縮包名稱
-        /// </summary>
-        public const string defaultZipFileName = "abzip";
-        /// <summary>
-        /// 壓縮包名稱
-        /// </summary>
-        public static string zipFileName = defaultZipFileName;
-
-        /// <summary>
-        /// 啟用 MD5 加密壓縮包名稱
-        /// </summary>
-        public static bool md5ForZipFileName = true;
-
-        /// <summary>
-        /// 解壓縮密碼
-        /// </summary>
-        public static string unzipPassword = string.Empty;
+        public static int failedRetryCount = defaultFailedRetryCount;
 
         /// <summary>
         /// 解密 Key, [NONE], [OFFSET, dummySize], [XOR, key], [HTXOR, hKey, tKey], [AES, key, iv] => ex: "None" or "offset, 12" or "xor, 23" or "htxor, 34, 45" or "aes, key, iv"
@@ -97,70 +73,34 @@ namespace OxGFrame.AssetLoader.Bundle
             }
         }
 
-        /// <summary>
-        /// 預設內部 Manifest 檔案名稱 (imf = Internal Manifest)
-        /// </summary>
-        public const string defaultInternalManifestName = "imf";
-
-        /// <summary>
-        /// 預設外部 Manifest 檔案名稱 (emf = External Manifest)
-        /// </summary>
-        public const string defaultExternalManifestName = "emf";
-
-        /// <summary>
-        /// 內部 Manifest 檔案名稱 (imf = Internal Manifest)
-        /// </summary>
-        public static string internalManifestName = defaultInternalManifestName;
-
-        /// <summary>
-        /// 外部 Manifest 檔案名稱 (emf = External Manifest)
-        /// </summary>
-        public static string externalManifestName = defaultExternalManifestName;
-        #endregion
-
-        #region 常數配置
-        // 配置檔中的 KEY
-        public const string APP_VERSION = "APP_VERSION";
-        public const string RES_VERSION = "RES_VERSION";
-
-        // 配置檔
-        public const string cfgExtension = "";                // 自行輸入(.json), 空字串表示無副檔名
-        public const string bakCfgExtension = ".bak";         // 備份配置檔副檔名
-        public readonly static string bundleCfgName = "bcfg"; // 配置檔的名稱 
-        public readonly static string recordCfgName = "rcfg"; // 記錄配置檔的名稱
-
-        /**
-         * url_cfg format following
-         * bundle_ip <IP>
-         * store_link <URL>
-         * # => comment
-         */
-
-        // 佈署配置檔中的 KEY
-        public const string BUNDLE_IP = "bundle_ip";
-        public const string STORE_LINK = "store_link";
-
-        // 佈署配置檔
-        public const string bundleUrlFilePathName = "burlcfg.txt";
-
-        // Bundle 平台路徑
-        public const string bundleDir = "/AssetBundles";  // Build 目錄
-        public const string exportDir = "/ExportBundles"; // Export 目錄
-        public const string winDir = "/win";              // Windows
-        public const string osxDir = "/osx";              // Mac OSX
-        public const string androidDir = "/android";      // Android
-        public const string iosDir = "/ios";              // iOS
-        public const string h5Dir = "/h5";                // WebGL
-        #endregion
-
-        /// <summary>
-        /// 初始 Bundle 解密參數
-        /// </summary>
-        /// <param name="cryptogram"></param>
         public static void InitCryptogram(string cryptogram)
         {
             _cryptogram = cryptogram;
         }
+        #endregion
+
+        #region 常數配置
+        // AppConfig 配置檔
+        public const string appCfgBakExtension = ".bak";            // 主程式配置檔副檔名 (Backup)
+        public const string appCfgExtension = ".json";              // 主程式配置檔副檔名
+        public readonly static string appCfgName = "appconfig";     // 主程式配置檔的名稱 
+
+        // PatchConfig 配置檔
+        public const string patchCfgBakExtension = ".bak";          // 補丁配置檔副檔名 (Backup)
+        public const string patchCfgExtension = ".json";            // 補丁配置檔副檔名
+        public readonly static string patchCfgName = "patchconfig"; // 補丁配置檔的名稱 
+
+        // 佈署配置檔中的 KEY
+        public const string BUNDLE_IP = "bundle_ip";
+        public const string BUNDLE_FALLBACK_IP = "bundle_fallback_ip";
+        public const string STORE_LINK = "store_link";
+
+        // 佈署配置檔
+        public const string bundleUrlFileName = "burlconfig";
+
+        // Bundle 平台路徑
+        public const string rootDir = "/CDN"; // root dir
+        #endregion
 
         /// <summary>
         /// 取得 burlcfg.txt 佈署配置檔的數據
@@ -169,7 +109,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetValueFromUrlCfg(string key)
         {
-            string pathName = Path.Combine(GetRequestStreamingAssetsPath(), bundleUrlFilePathName);
+            string pathName = Path.Combine(GetRequestStreamingAssetsPath(), bundleUrlFileName);
             var content = await BundleUtility.FileRequestString(pathName);
             var allWords = content.Split('\n');
             var lines = new List<string>(allWords);
@@ -189,7 +129,53 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 從設定檔中取得 StoreLink
+        /// 從 StreamingAssets 中取得 AppConfig
+        /// </summary>
+        /// <returns></returns>
+        public static async UniTask<AppConfig> GetAppConfigFromStreamingAssets()
+        {
+            string cfgJson = await BundleUtility.FileRequestString(GetStreamingAssetsAppConfigPath());
+            if (!string.IsNullOrEmpty(cfgJson)) return JsonConvert.DeserializeObject<AppConfig>(cfgJson);
+
+            return null;
+        }
+
+        /// <summary>
+        /// 取得 StreamingAssets 中的 Bundle URL
+        /// </summary>
+        /// <returns></returns>
+        public static async UniTask<string> GetHostServerUrl()
+        {
+            var appConfig = await GetAppConfigFromStreamingAssets();
+            string host = await GetValueFromUrlCfg(BUNDLE_IP);
+            string productName = appConfig.PRODUCT_NAME;
+            string platform = appConfig.PLATFORM;
+            string appVersion = appConfig.APP_VERSION;
+            string refineAppVersion = $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
+            string packageName = PackageManager.GetDefaultPackageName();
+
+            return $"{host}{rootDir}/{productName}/{platform}/{refineAppVersion}/{packageName}";
+        }
+
+        /// <summary>
+        /// 取得 StreamingAssets 中的 Bundle URL (Fallback)
+        /// </summary>
+        /// <returns></returns>
+        public static async UniTask<string> GetFallbackHostServerUrl()
+        {
+            var appConfig = await GetAppConfigFromStreamingAssets();
+            string host = await GetValueFromUrlCfg(BUNDLE_FALLBACK_IP);
+            string productName = appConfig.PRODUCT_NAME;
+            string platform = appConfig.PLATFORM;
+            string appVersion = appConfig.APP_VERSION;
+            string refineAppVersion = $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
+            string packageName = PackageManager.GetDefaultPackageName();
+
+            return $"{host}{rootDir}/{productName}/{platform}/{refineAppVersion}/{packageName}";
+        }
+
+        /// <summary>
+        /// 取得主程式商店連結
         /// </summary>
         /// <returns></returns>
         public static async UniTask<string> GetAppStoreLink()
@@ -198,82 +184,67 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得打包路徑
+        /// 前往主程式商店
         /// </summary>
-        /// <returns></returns>
-        public static string GetBuildBundlePath()
+        public static async UniTaskVoid GoToAppStore()
         {
-#if UNITY_STANDALONE_WIN
-            return Path.Combine(Application.dataPath, $"..{bundleDir}{winDir}");
-#elif UNITY_STANDALONE_OSX
-            return Path.Combine(Application.dataPath, $"..{bundleDir}{osxDir}");
-#elif UNITY_ANDROID
-            return Path.Combine(Application.dataPath, $"..{bundleDir}{androidDir}");
-#elif UNITY_IOS
-            return Path.Combine(Application.dataPath , $"..{bundleDir}{iosDir}");
-#elif UNITY_WEBGL
-            return Path.Combine(Application.dataPath, $"..{bundleDir}{h5Dir}");
-#else
-            return string.Empty;
-#endif
-            throw new System.Exception("ERROR Bundle PATH !!!");
-        }
-
-        /// <summary>
-        /// 取得輸出路徑
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="System.Exception"></exception>
-        public static string GetExportBundlePath()
-        {
-#if UNITY_STANDALONE_WIN
-            return Path.Combine(Application.dataPath, $"..{exportDir}{winDir}");
-#elif UNITY_STANDALONE_OSX
-            return Path.Combine(Application.dataPath, $"..{exportDir}{osxDir}");
-#elif UNITY_ANDROID
-            return Path.Combine(Application.dataPath, $"..{exportDir}{androidDir}");
-#elif UNITY_IOS
-            return Path.Combine(Application.dataPath , $"..{exportDir}{iosDir}");
-#elif UNITY_WEBGL
-            return Path.Combine(Application.dataPath, $"..{exportDir}{h5Dir}");
-#else
-            return string.Empty;
-#endif
-            throw new System.Exception("ERROR Export PATH !!!");
+            string storeLink = await GetAppStoreLink();
+            Application.OpenURL(storeLink);
         }
 
         /// <summary>
         /// 取得本地持久化路徑 (下載的儲存路徑)
         /// </summary>
         /// <returns></returns>
-        public static string GetLocalDlFileSaveDirectory()
+        public static string GetLocalSandboxPath()
         {
-            if (Application.platform == RuntimePlatform.IPhonePlayer)
-            {
-                // IOS 要用這個路徑，否則審核不過
-                return Application.temporaryCachePath + exportDir;
-            }
-
-            // Android、PC 可以使用這個路徑
-            return Application.persistentDataPath + exportDir;
+            return YooAssets.GetSandboxRoot();
         }
 
         /// <summary>
-        /// 取得本地持久化路徑中的 BundleConfig 路徑 (下載的儲存路徑)
+        /// 取得本地持久化路徑中的 AppConfig 路徑 (下載的儲存路徑)
         /// </summary>
         /// <returns></returns>
-        public static string GetLocalDlFileSaveBundleConfigPath()
+        public static string GetLocalSandboxAppConfigPath()
         {
-            return Path.Combine(GetLocalDlFileSaveDirectory(), $"{bundleCfgName}{cfgExtension}");
+            return Path.Combine(YooAssets.GetSandboxRoot(), $"{appCfgName}{appCfgExtension}");
         }
 
         /// <summary>
-        /// 取得 StreamingAssets 中的 BundleConfig 路徑
+        /// 取得 StreamingAssets 中的 AppConfig 路徑
         /// </summary>
         /// <returns></returns>
-        public static string GetStreamingAssetsBundleConfigPath()
+        public static string GetStreamingAssetsAppConfigPath()
         {
-            return Path.Combine(GetRequestStreamingAssetsPath(), $"{bundleCfgName}{cfgExtension}");
+            return Path.Combine(GetRequestStreamingAssetsPath(), $"{appCfgName}{appCfgExtension}");
+        }
+
+        /// <summary>
+        /// 取得資源伺服器的 AppConfig (URL)
+        /// </summary>
+        /// <returns></returns>
+        public static async UniTask<string> GetHostServerAppConfigPath()
+        {
+            var appConfig = await GetAppConfigFromStreamingAssets();
+            string host = await GetValueFromUrlCfg(BUNDLE_IP);
+            string productName = appConfig.PRODUCT_NAME;
+            string platform = appConfig.PLATFORM;
+
+            return Path.Combine($"{host}{rootDir}/{productName}/{platform}", $"{appCfgName}{appCfgExtension}");
+        }
+
+        /// <summary>
+        /// 取得資源伺服器的 PatchConfig (URL)
+        /// </summary>
+        /// <returns></returns>
+        public static async UniTask<string> GetHostServerPatchConfigPath()
+        {
+            var appConfig = await GetAppConfigFromStreamingAssets();
+            string host = await GetValueFromUrlCfg(BUNDLE_IP);
+            string productName = appConfig.PRODUCT_NAME;
+            string platform = appConfig.PLATFORM;
+
+            return Path.Combine($"{host}{rootDir}/{productName}/{platform}", $"{patchCfgName}{patchCfgExtension}");
         }
 
         /// <summary>
@@ -283,42 +254,10 @@ namespace OxGFrame.AssetLoader.Bundle
         public static string GetRequestStreamingAssetsPath()
         {
 #if UNITY_STANDALONE_OSX || UNITY_IOS
-            return $"file://{Application.streamingAssetsPath}";
+                    return $"file://{Application.streamingAssetsPath}";
 #else
             return Application.streamingAssetsPath;
 #endif
-        }
-
-        /// <summary>
-        /// 取得資源伺服器的 Bundle (URL)
-        /// </summary>
-        /// <returns></returns>
-        public static async UniTask<string> GetServerBundleUrl()
-        {
-#if UNITY_STANDALONE_WIN
-            return await GetValueFromUrlCfg(BUNDLE_IP) + $"{exportDir}{winDir}";
-#elif UNITY_STANDALONE_OSX
-            return await GetValueFromUrlCfg(BUNDLE_IP) + $"{exportDir}{osxDir}";
-#elif UNITY_ANDROID
-            return await GetValueFromUrlCfg(BUNDLE_IP) + $"{exportDir}{androidDir}";
-#elif UNITY_IOS
-            return await GetValueFromUrlCfg(BUNDLE_IP) + $"{exportDir}{iosDir}";
-#elif UNITY_WEBGL
-            return await GetValueFromUrlCfg(BUNDLE_IP) + $"{exportDir}{h5Dir}";
-#else
-            return string.Empty;
-#endif
-            throw new System.Exception("ERROR Server URL !!!");
-        }
-
-        /// <summary>
-        /// 取得 Bundle Manifest 檔名 (判斷區分 Built-in or Patch)
-        /// </summary>
-        /// <returns></returns>
-        public static string GetManifestFileName(bool inApp)
-        {
-            if (inApp) return internalManifestName;
-            else return externalManifestName;
         }
     }
 }

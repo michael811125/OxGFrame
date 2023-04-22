@@ -1,0 +1,69 @@
+﻿using Cysharp.Threading.Tasks;
+using OxGFrame.APICenter;
+
+public class #SCRIPTNAME# : APIBase
+{
+    /* Declare Your Delegate (Callback) */
+	
+    public void Req(/* Custom Your Parameters */)
+    {
+        Http.Acax(
+             "url",
+             // Method
+             "POST",
+             // Header
+             new string[,] {
+                 { "Content-Type", "application/json"}
+             },
+             // Body
+             new object[,] {
+                 // { "key", "value"},
+             },
+             // Response
+             (json) =>
+             {
+                 // Response Json Example: 
+                 // {   
+                 //     "status": true,
+                 //     "message": "success",
+                 //     "data": []
+                 // }
+
+                 /*
+				 Do Data Callback
+				 */				 
+             }
+        );
+    }
+	
+	public async UniTask ReqAsync(/* Custom Your Parameters */)
+    {
+        await Http.AcaxAsync(
+             "url",
+             // Method
+             "POST",
+             // Header
+             new string[,] {
+                 { "Content-Type", "application/json"}
+             },
+             // Body
+             new object[,] {
+                 // { "key", "value"},
+             },
+             // Response
+             (json) =>
+             {
+                 // Response Json Example: 
+                 // {   
+                 //     "status": true,
+                 //     "message": "success",
+                 //     "data": []
+                 // }
+
+                 /*
+				 Do Data Callback
+				 */
+             }
+        );
+    }
+}

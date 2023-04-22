@@ -5,18 +5,16 @@ namespace OxGFrame.MediaFrame.VideoFrame
 {
     public class VideoManager : MediaManager<VideoBase>
     {
-        private GameObject _goRoot = null; // 根節點物件
-
         private static readonly object _locker = new object();
         private static VideoManager _instance = null;
-        public static VideoManager GetInstance()
+        internal static VideoManager GetInstance()
         {
             if (_instance == null)
             {
                 lock (_locker)
                 {
                     _instance = FindObjectOfType<VideoManager>();
-                    if (_instance == null) _instance = new GameObject(VideoSysDefine.VIDEO_MANAGER_NAME).AddComponent<VideoManager>();
+                    if (_instance == null) _instance = new GameObject(nameof(VideoManager)).AddComponent<VideoManager>();
                 }
             }
             return _instance;
@@ -24,15 +22,14 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         private void Awake()
         {
+            this.gameObject.name = $"[{nameof(VideoManager)}]";
             DontDestroyOnLoad(this);
-
-            this._goRoot = GameObject.Find(VideoSysDefine.VIDEO_MANAGER_NAME);
-            if (this._goRoot == null) return;
         }
 
-        protected override void SetParent(VideoBase vidBase)
+        protected override void SetParent(VideoBase vidBase, Transform parent)
         {
-            vidBase.gameObject.transform.SetParent(this._goRoot.transform);
+            if (parent != null) vidBase.gameObject.transform.SetParent(parent);
+            else vidBase.gameObject.transform.SetParent(this.gameObject.transform);
         }
 
         #region 播放 Play
@@ -55,9 +52,10 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// 播放
         /// </summary>
         /// <param name="assetName"></param>
+        /// <param name="parent"></param>
         /// <param name="loops"></param>
         /// <returns></returns>
-        public override async UniTask<VideoBase[]> Play(string assetName, int loops = 0)
+        public override async UniTask<VideoBase[]> Play(string assetName, Transform parent = null, int loops = 0)
         {
             if (string.IsNullOrEmpty(assetName)) return new VideoBase[] { };
 
@@ -78,49 +76,9 @@ namespace OxGFrame.MediaFrame.VideoFrame
             if (!isResume)
             {
                 GameObject go = await this.LoadAssetIntoCache(assetName);
-                VideoBase vidBase = await this.CloneAsset<VideoBase>(string.Empty, assetName, go, this._goRoot.transform);
-                if (vidBase == null)
-                {
-                    Debug.LogWarning(string.Format("Asset not found at this path!!!【Video】: {0}", assetName));
-                    return new VideoBase[] { };
-                }
-
-                this._Play(vidBase, loops);
-
-                return new VideoBase[] { vidBase };
-            }
-            else
-            {
-                for (int i = 0; i < vidBases.Length; i++)
-                {
-                    if (!vidBases[i].IsPlaying()) this._Play(vidBases[i], 0);
-                }
-
-                return vidBases;
-            }
-        }
-        public override async UniTask<VideoBase[]> Play(string bundleName, string assetName, int loops = 0)
-        {
-            if (string.IsNullOrEmpty(bundleName) && string.IsNullOrEmpty(assetName)) return new VideoBase[] { };
-
-            VideoBase[] vidBases = this.GetMediaComponents<VideoBase>(assetName);
-            bool isResume = false;
-            if (vidBases.Length > 0)
-            {
-                VideoBase main = vidBases[0];
-                if (main.IsPlaying())
-                {
-                    Debug.LogWarning(string.Format("【Video】{0} already played!!!", assetName));
-                    return vidBases;
-                }
-
-                if (!main.IsPlaying() || main.IsPaused()) isResume = true;
-            }
-
-            if (!isResume)
-            {
-                GameObject go = await this.LoadAssetIntoCache(bundleName, assetName);
-                VideoBase vidBase = await this.CloneAsset<VideoBase>(bundleName, assetName, go, this._goRoot.transform);
+                Transform spawnParent = null;
+                if (parent == null) spawnParent = this.gameObject.transform;
+                VideoBase vidBase = await this.CloneAsset<VideoBase>(assetName, go, parent, spawnParent);
                 if (vidBase == null)
                 {
                     Debug.LogWarning(string.Format("Asset not found at this path!!!【Video】: {0}", assetName));

@@ -12,16 +12,13 @@ namespace OxGFrame.MediaFrame.AudioFrame
     {
         [Header("Audio Mixer")]
         [SerializeField, Tooltip("Setup AudioMixer in list")]
-        private List<AudioMixer> _listMixer = new List<AudioMixer>();                            // 中控混音器
-                                                                                                 // 
-        private Dictionary<string, float> _dictMixerExpParams = new Dictionary<string, float>(); // 用於記錄Exposed Parameters參數
-
-        private GameObject _goRoot = null;                                                       // 根節點物件
-        private Dictionary<string, GameObject> _goNodes = new Dictionary<string, GameObject>();  // 節點物件
+        private List<AudioMixer> _listMixer = new List<AudioMixer>();                             // 中控混音器
+        private Dictionary<string, float> _dictMixerExpParams = new Dictionary<string, float>();  // 用於記錄 Exposed Parameters 參數
+        private Dictionary<string, GameObject> _dictNodes = new Dictionary<string, GameObject>(); // 節點物件
 
         private static readonly object _locker = new object();
         private static AudioManager _instance = null;
-        public static AudioManager GetInstance()
+        internal static AudioManager GetInstance()
         {
             if (_instance == null)
             {
@@ -36,23 +33,22 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         private void Awake()
         {
+            this.gameObject.name = $"[{nameof(AudioManager)}]";
             DontDestroyOnLoad(this);
-
-            this._goRoot = GameObject.Find(AudioSysDefine.AUDIO_MANAGER_NAME);
-            if (this._goRoot == null) return;
 
             foreach (var nodeName in Enum.GetNames(typeof(SoundType)))
             {
-                if (!this._goNodes.ContainsKey(nodeName))
+                if (!this._dictNodes.ContainsKey(nodeName))
                 {
-                    this._goNodes.Add(nodeName, this.CreateNode(nodeName, this._goRoot.transform));
+                    this._dictNodes.Add(nodeName, this.CreateNode(nodeName, this.transform));
                 }
             }
         }
 
-        protected override void SetParent(AudioBase audBase)
+        protected override void SetParent(AudioBase audBase, Transform parent)
         {
-            if (this._goNodes.TryGetValue(audBase.audioType.soundType.ToString(), out GameObject goNode))
+            if (parent != null) audBase.gameObject.transform.SetParent(parent);
+            else if (this._dictNodes.TryGetValue(audBase.audioType.soundType.ToString(), out GameObject goNode))
             {
                 audBase.gameObject.transform.SetParent(goNode.transform);
             }
@@ -60,7 +56,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         #region 中控 Mixer
         /// <summary>
-        /// 依照Mixer的名稱與其中的ExposedParam合併成雙key, 執行自動記錄
+        /// 依照 Mixer 的名稱與其中的 ExposedParam 合併成雙 key, 執行自動記錄
         /// </summary>
         /// <param name="mixerName"></param>
         /// <param name="expParam"></param>
@@ -76,7 +72,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         }
 
         /// <summary>
-        /// 設置指定該Mixer中的Exposed參數
+        /// 設置指定該 Mixer 中的 Exposed 參數
         /// </summary>
         /// <param name="mixer"></param>
         /// <param name="expParam"></param>
@@ -90,7 +86,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         }
 
         /// <summary>
-        /// 清除指定該Mixer中的Exposed參數
+        /// 清除指定該 Mixer 中的 Exposed 參數
         /// </summary>
         /// <param name="mixer"></param>
         /// <param name="expParam"></param>
@@ -100,7 +96,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         }
 
         /// <summary>
-        /// 自動清除該Mixer的Exposed參數
+        /// 自動清除該 Mixer 的 Exposed 參數
         /// </summary>
         /// <param name="mixer"></param>
         public void AutoClearMixerExposedParams(AudioMixer mixer)
@@ -115,7 +111,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         }
 
         /// <summary>
-        /// 自動復原該Mixer的Exposed參數
+        /// 自動復原該 Mixer 的 Exposed 參數
         /// </summary>
         /// <param name="mixer"></param>
         public void AutoRestoreMixerExposedParams(AudioMixer mixer)
@@ -130,7 +126,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         }
 
         /// <summary>
-        /// 設置切換Mixer的Snapshot
+        /// 設置切換 Mixer 的 Snapshot
         /// </summary>
         /// <param name="mixer"></param>
         /// <param name="snapshotName"></param>
@@ -143,7 +139,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         }
 
         /// <summary>
-        /// 設置Mixer與Snapshot的混和過度
+        /// 設置 Mixer 與 Snapshot 的混和過度
         /// </summary>
         /// <param name="mixer"></param>
         /// <param name="snapshots"></param>
@@ -162,7 +158,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         }
 
         /// <summary>
-        /// 取得該Mixer中的Snapshot
+        /// 取得該 Mixer 中的 Snapshot
         /// </summary>
         /// <param name="mixer"></param>
         /// <param name="snapshotName"></param>
@@ -174,7 +170,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         }
 
         /// <summary>
-        /// 從List中透過Mixer的名稱返回該對應的Mixer
+        /// 從 List 中透過 Mixer 的名稱返回該對應的 Mixer
         /// </summary>
         /// <param name="mixerName"></param>
         /// <returns></returns>
@@ -211,9 +207,10 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// 播放
         /// </summary>
         /// <param name="assetName"></param>
+        /// <param name="parent"></param>
         /// <param name="loops"></param>
         /// <returns></returns>
-        public override async UniTask<AudioBase[]> Play(string assetName, int loops = 0)
+        public override async UniTask<AudioBase[]> Play(string assetName, Transform parent = null, int loops = 0)
         {
             if (string.IsNullOrEmpty(assetName)) return new AudioBase[] { };
 
@@ -238,53 +235,9 @@ namespace OxGFrame.MediaFrame.AudioFrame
             if (!isResume)
             {
                 GameObject go = await this.LoadAssetIntoCache(assetName);
-                AudioBase audBase = await this.CloneAsset<AudioBase>(string.Empty, assetName, go, this._goRoot.transform);
-                if (audBase == null)
-                {
-                    Debug.LogWarning(string.Format("Asset not found at this path!!!【Audio】: {0}", assetName));
-                    return new AudioBase[] { };
-                }
-
-                this._Play(audBase, loops);
-
-                return new AudioBase[] { audBase };
-            }
-            else
-            {
-                for (int i = 0; i < audBases.Length; i++)
-                {
-                    if (!audBases[i].IsPlaying()) this._Play(audBases[i], 0);
-                }
-
-                return audBases;
-            }
-        }
-        public override async UniTask<AudioBase[]> Play(string bundleName, string assetName, int loops = 0)
-        {
-            if (string.IsNullOrEmpty(bundleName) && string.IsNullOrEmpty(assetName)) return new AudioBase[] { };
-
-            AudioBase[] audBases = this.GetMediaComponents<AudioBase>(assetName);
-            bool isResume = false;
-            if (audBases.Length > 0)
-            {
-                AudioBase main = audBases[0];
-                if (main.IsPlaying())
-                {
-                    switch (main.audioType.soundType)
-                    {
-                        case SoundType.Sole:
-                            Debug.LogWarning(string.Format("【Audio => SoundType: {0}】{1} already played!!!", main.audioType.soundType, assetName));
-                            return audBases;
-                    }
-                }
-
-                if (!main.IsPlaying() || main.IsPaused()) isResume = true;
-            }
-
-            if (!isResume)
-            {
-                GameObject go = await this.LoadAssetIntoCache(bundleName, assetName);
-                AudioBase audBase = await this.CloneAsset<AudioBase>(bundleName, assetName, go, this._goRoot.transform);
+                Transform spawnParent = null;
+                if (parent == null) spawnParent = this.transform;
+                AudioBase audBase = await this.CloneAsset<AudioBase>(assetName, go, parent, spawnParent);
                 if (audBase == null)
                 {
                     Debug.LogWarning(string.Format("Asset not found at this path!!!【Audio】: {0}", assetName));

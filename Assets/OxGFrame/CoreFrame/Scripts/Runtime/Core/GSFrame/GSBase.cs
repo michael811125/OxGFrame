@@ -28,7 +28,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 
         protected override void OnShow(object obj) { }
 
-        public override void OnUpdateOnceAfterProtocol(int funcId = 0) { }
+        public override void OnReceiveAndRefresh(object obj = null) { }
 
         protected override void OnUpdate(float dt) { }
 

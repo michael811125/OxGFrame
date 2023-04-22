@@ -1,23 +1,21 @@
 {
   "dependencies": {
-    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.domybest.mybox": "https://github.com/Deadcows/MyBox.git",
-    "com.unity.2d.animation": "7.0.8",
-    "com.unity.2d.pixel-perfect": "5.0.1",
+    "com.unity.2d.animation": "7.0.10",
+    "com.unity.2d.pixel-perfect": "5.0.3",
     "com.unity.2d.sprite": "1.0.0",
-    "com.unity.2d.spriteshape": "7.0.6",
+    "com.unity.2d.spriteshape": "7.0.7",
     "com.unity.2d.tilemap": "1.0.0",
-    "com.unity.assetbundlebrowser.plus": "https://github.com/michael811125/AssetBundles-Browser-Plus.git",
     "com.unity.cinemachine": "2.8.9",
-    "com.unity.collab-proxy": "1.17.6",
-    "com.unity.ide.rider": "3.0.15",
-    "com.unity.ide.visualstudio": "2.0.16",
+    "com.unity.ide.rider": "3.0.21",
+    "com.unity.ide.visualstudio": "2.0.18",
     "com.unity.ide.vscode": "1.2.5",
-    "com.unity.inputsystem": "1.4.3",
+    "com.unity.inputsystem": "1.5.1",
     "com.unity.memoryprofiler": "0.7.1-preview.1",
-    "com.unity.nuget.newtonsoft-json": "3.0.2",
-    "com.unity.render-pipelines.universal": "12.1.7",
-    "com.unity.test-framework": "1.1.31",
+    "com.unity.nuget.newtonsoft-json": "3.1.0",
+    "com.unity.render-pipelines.universal": "12.1.11",
+    "com.unity.scriptablebuildpipeline": "1.20.2",
+    "com.unity.test-framework": "1.1.33",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.6.4",
     "com.unity.ugui": "1.0.0",
@@ -52,5 +50,14 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  }
+  },
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.cn",
+      "url": "https://package.openupm.cn",
+      "scopes": [
+        "com.tuyoogame.yooasset"
+      ]
+    }
+  ]
 }

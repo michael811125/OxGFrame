@@ -91,9 +91,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d859482a2c03044c8b9db7987fc52e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowInstantiate: 0
   onCloseAndDestroy: 0
+  canvas: {fileID: 0}
+  graphicRaycaster: {fileID: 0}
   uiSetting:
-    canvasType: 1
+    canvasName: CanvasCamera
     nodeType: 7
     stack: 0
     order: 1000

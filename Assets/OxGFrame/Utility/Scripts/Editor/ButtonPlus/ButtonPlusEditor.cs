@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using OxGFrame.Utility.Btn;
+using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;
 
@@ -16,10 +17,10 @@ public class ButtonPlusEditor : ButtonEditor
 
     public override void OnInspectorGUI()
     {
-        // 查找 ButtonPlus 目標
+        // set ButtonPlus target
         this._target = (ButtonPlus)target;
 
-        // 顯示長按區塊
+        // draw LongClick setting
         EditorGUI.BeginChangeCheck();
         serializedObject.Update();
         this._target.isLongPress = EditorGUILayout.Toggle(new GUIContent("IsLongPress", "To enable Long Press"), this._target.isLongPress);
@@ -30,13 +31,13 @@ public class ButtonPlusEditor : ButtonEditor
             serializedObject.ApplyModifiedProperties();
         }
 
-        // 顯示 ExtdTransition 區塊
+        // draw ExtdTransition
         this._ShowExtdTransition(this._target, this._target.extdTransition);
 
-        // 顯示 ButtonEditor 區塊
+        // draw ButtonEditor
         base.OnInspectorGUI();
 
-        // 顯示 LongClick 事件區塊
+        // draw LongClick event
         if (this._target.isLongPress) this._ShowLongClickEvent(this._target);
     }
 
@@ -45,10 +46,10 @@ public class ButtonPlusEditor : ButtonEditor
         EditorGUI.BeginChangeCheck();
         serializedObject.Update();
 
-        EditorGUI.indentLevel++; // 縮排變動
+        EditorGUI.indentLevel++;
         target.holdTime = EditorGUILayout.FloatField(new GUIContent("HoldTime", "Set Long Press time to invoke event"), target.holdTime);
         target.cdTime = EditorGUILayout.FloatField(new GUIContent("CdTime", "Block when you Long Press continue time"), target.cdTime);
-        EditorGUI.indentLevel--; // 復原縮排
+        EditorGUI.indentLevel--;
 
         if (EditorGUI.EndChangeCheck())
         {
@@ -84,9 +85,9 @@ public class ButtonPlusEditor : ButtonEditor
                 break;
 
             case ButtonPlus.ExtdTransition.Scale:
-                EditorGUI.indentLevel++; // 縮排變動
+                EditorGUI.indentLevel++;
                 target.transScale.size = EditorGUILayout.FloatField(new GUIContent("Size", "While click button will be set scale size"), target.transScale.size);
-                EditorGUI.indentLevel--; // 復原縮排
+                EditorGUI.indentLevel--;
                 break;
         }
 

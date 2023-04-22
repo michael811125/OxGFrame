@@ -1,6 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
-
-namespace OxGFrame.AssetLoader
+﻿namespace OxGFrame.AssetLoader
 {
     public delegate void Progression(float progress, float reqSize, float totalSize);
 
@@ -9,13 +7,5 @@ namespace OxGFrame.AssetLoader
         bool HasInCache(string name);
 
         T GetFromCache(string name);
-
-        UniTask Preload(string name, Progression progression);
-
-        UniTask Preload(string[] names, Progression progression);
-
-        void Unload(string name, bool forceUnload);
-
-        void Release();
     }
 }

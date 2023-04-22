@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -15,14 +14,14 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         private static readonly object _locker = new object();
         private static UIManager _instance = null;
-        public static UIManager GetInstance()
+        internal static UIManager GetInstance()
         {
             if (_instance == null)
             {
                 lock (_locker)
                 {
                     _instance = FindObjectOfType(typeof(UIManager)) as UIManager;
-                    if (_instance == null) _instance = new GameObject(UISysDefine.UI_MANAGER_NAME).AddComponent<UIManager>();
+                    if (_instance == null) _instance = new GameObject(nameof(UIManager)).AddComponent<UIManager>();
                 }
             }
             return _instance;
@@ -30,25 +29,11 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         private void Awake()
         {
+            this.gameObject.name = $"[{nameof(UIManager)}]";
             DontDestroyOnLoad(this);
-
-            // 初始會進行設置 UICanvas 環境 (如果尚未配置, 在 UI 加載時也會進行檢測)
-            this._SetupAllUICanvas();
         }
 
-        #region 初始建立Node相關方法
-        /// <summary>
-        /// 設置全部可以匹配的 UICanvas 環境
-        /// </summary>
-        private void _SetupAllUICanvas()
-        {
-            // 以下迴圈查找能夠設置的 UICanvas
-            foreach (var canvasName in Enum.GetNames(typeof(CanvasType)))
-            {
-                if (this._SetupAndCheckUICanvas(canvasName)) continue;
-            }
-        }
-
+        #region 初始建立 Node 相關方法
         /// <summary>
         /// 透過對應名稱查找物件, 並且設置與檢查是否有匹配的 UICanvas 環境
         /// </summary>
@@ -57,9 +42,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         {
             if (this._dictUICanvas.ContainsKey(canvasName)) return true;
 
-            // 查找與 CanvasType 定義名稱一樣的 Canvas 物件
+            // 查找與 CanvasName 定義名稱一樣的 Canvas 物件
             GameObject goCanvas = null;
-            if (UISysDefine.bFindAllCanvases)
+            if (UIConfig.findAllCanvases)
             {
                 foreach (var canvas in FindObjectsOfType(typeof(Canvas)) as Canvas[])
                 {
@@ -74,33 +59,30 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             if (goCanvas != null)
             {
-                if (!this._dictUICanvas.ContainsKey(canvasName))
+                // 取得或建立 UICanvas
+                UICanvas uiCanvas = goCanvas.GetComponent<UICanvas>();
+                if (uiCanvas == null) uiCanvas = goCanvas.AddComponent<UICanvas>();
+
+                // 設置 UIRoot (parent = Canvas)
+                var goUIRoot = this._CreateUIRoot(uiCanvas, UIConfig.UI_ROOT_NAME, goCanvas.transform);
+                uiCanvas.uiRoot = goUIRoot;
+
+                // 設置 UINode (parent = UIRoot)
+                foreach (var nodeType in UIConfig.UI_NODES.Keys.ToArray())
                 {
-                    // 取得或建立 UICanvas
-                    UICanvas uiCanvas = goCanvas.GetComponent<UICanvas>();
-                    if (uiCanvas == null) uiCanvas = goCanvas.AddComponent<UICanvas>();
-
-                    // 設置 UIRoot (parent = Canvas)
-                    var goUIRoot = this._CreateUIRoot(uiCanvas, UISysDefine.UI_ROOT_NAME, goCanvas.transform);
-                    uiCanvas.goRoot = goUIRoot;
-
-                    // 設置 UINode (parent = UIRoot)
-                    foreach (var nodeType in UISysDefine.UI_NODES.Keys.ToArray())
+                    if (!uiCanvas.uiNodes.ContainsKey(nodeType.ToString()))
                     {
-                        if (!uiCanvas.goNodes.ContainsKey(nodeType.ToString()))
-                        {
-                            uiCanvas.goNodes.Add(nodeType.ToString(), this._CreateUINode(uiCanvas, nodeType, goUIRoot.transform));
-                        }
+                        uiCanvas.uiNodes.Add(nodeType.ToString(), this._CreateUINode(uiCanvas, nodeType, goUIRoot.transform));
                     }
-
-                    // 建立 UIMask & UIFreeze 容器 (parent = UIRoot)
-                    GameObject uiMaskGo = this._CreateUIContainer(uiCanvas, UISysDefine.UI_MASK_NAME, goUIRoot.transform);
-                    GameObject uiFreezeGo = this._CreateUIContainer(uiCanvas, UISysDefine.UI_FREEZE_NAME, goUIRoot.transform);
-                    uiCanvas.uiMaskManager = new UIMaskManager(uiCanvas.gameObject.layer, uiMaskGo.transform);
-                    uiCanvas.uiFreezeManager = new UIFreezeManager(uiCanvas.gameObject.layer, uiFreezeGo.transform);
-
-                    this._dictUICanvas.Add(canvasName, uiCanvas);
                 }
+
+                // 建立 UIMask & UIFreeze 容器 (parent = UIRoot)
+                GameObject uiMaskGo = this._CreateUIContainer(uiCanvas, UIConfig.UI_MASK_NAME, goUIRoot.transform);
+                GameObject uiFreezeGo = this._CreateUIContainer(uiCanvas, UIConfig.UI_FREEZE_NAME, goUIRoot.transform);
+                uiCanvas.uiMaskManager = new UIMaskManager(uiCanvas.gameObject.layer, uiMaskGo.transform);
+                uiCanvas.uiFreezeManager = new UIFreezeManager(uiCanvas.gameObject.layer, uiFreezeGo.transform);
+
+                this._dictUICanvas.Add(canvasName, uiCanvas);
             }
             else
             {
@@ -117,7 +99,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             GameObject uiRootChecker = parent.Find(name)?.gameObject;
             if (uiRootChecker != null) return uiRootChecker;
 
-            GameObject uiRootGo = new GameObject(UISysDefine.UI_ROOT_NAME, typeof(RectTransform));
+            GameObject uiRootGo = new GameObject(UIConfig.UI_ROOT_NAME, typeof(RectTransform));
             // 設置繼承主 Canvas 的 Layer
             uiRootGo.layer = uiCanvas.gameObject.layer;
             // 設置 uiRoot 為 Canvas 的子節點
@@ -161,7 +143,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             uiNodeCanvas.pixelPerfect = true;
             uiNodeCanvas.overrideSorting = true;
             uiNodeCanvas.sortingLayerName = mainCanvas.sortingLayerName;
-            uiNodeCanvas.sortingOrder = UISysDefine.UI_NODES[nodeType];
+            uiNodeCanvas.sortingOrder = UIConfig.UI_NODES[nodeType];
             uiNodeCanvas.additionalShaderChannels = mainCanvas.additionalShaderChannels;
 
             return uiNodeGo;
@@ -190,66 +172,75 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         /// 透過 CanvasType 取得對應的 UICanvas
         /// </summary>
-        /// <param name="canvasType"></param>
+        /// <param name="canvasName"></param>
         /// <returns></returns>
-        public UICanvas GetUICanvas(CanvasType canvasType)
+        public UICanvas GetUICanvas(string canvasName)
         {
             if (this._dictUICanvas.Count == 0) return null;
 
-            if (this._dictUICanvas.TryGetValue(canvasType.ToString(), out var uiCanvas)) return uiCanvas;
+            if (this._dictUICanvas.TryGetValue(canvasName.ToString(), out var uiCanvas)) return uiCanvas;
 
             return null;
         }
 
         #region 實作 Loading
-        protected override UIBase Instantiate(UIBase uiBase, string bundleName, string assetName, AddIntoCache addIntoCache)
+        protected override UIBase Instantiate(UIBase uiBase, string assetName, AddIntoCache addIntoCache, Transform parent)
         {
             // 先從來源物件中取得 UIBase, 需先取得 UICanvas 環境, 後續 Instantiate 時才能取得正常比例
             UICanvas uiCanvas = null;
             if (uiBase != null)
             {
                 // 先檢查與設置 UICanvas 環境
-                if (this._SetupAndCheckUICanvas(uiBase.uiSetting.canvasType.ToString()))
+                if (this._SetupAndCheckUICanvas(uiBase.uiSetting.canvasName))
                 {
-                    uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasType);
+                    uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasName);
                 }
             }
 
             if (uiCanvas == null)
             {
-                Debug.Log($"<color=#FFD600>【Loading Failed】Not found UICanvas:</color> <color=#FF6ECB>{uiBase.uiSetting.canvasType}</color>");
+                Debug.Log($"<color=#FFD600>【Loading Failed】Not found UICanvas:</color> <color=#FF6ECB>{uiBase.uiSetting.canvasName}</color>");
                 return null;
             }
 
             // 透過 RenderMode 區分預設父層級
-            Transform parent;
-            if (uiCanvas.canvas.renderMode == RenderMode.WorldSpace) parent = uiCanvas.transform;
-            else parent = uiCanvas.goRoot.transform;
+            Transform rootParent;
+            if (uiCanvas.canvas.renderMode == RenderMode.WorldSpace) rootParent = uiCanvas.transform;
+            else rootParent = uiCanvas.uiRoot.transform;
             // instantiate 【UI Prefab】 (需先指定 Instantiate Parent 為 UIRoot 不然 Canvas 初始會跑掉)
-            GameObject instPref = Instantiate(uiBase.gameObject, parent);
+            GameObject instPref = Instantiate(uiBase.gameObject, (parent != null) ? parent : rootParent);
 
             // 激活檢查, 如果主體 Active 為 false 必須打開
             if (!instPref.activeSelf) instPref.SetActive(true);
 
-            instPref.name = instPref.name.Replace("(Clone)", ""); // Replace Name
-            uiBase = instPref.GetComponent<UIBase>();             // 取得 UIBase 組件
+            // Replace Name
+            instPref.name = instPref.name.Replace("(Clone)", "");
+            // 取得 UIBase 組件
+            uiBase = instPref.GetComponent<UIBase>();
             if (uiBase == null) return null;
 
             addIntoCache?.Invoke(uiBase);
 
-            this._AdjustCanvas(uiCanvas, uiBase);       // 調整 Canvas 相關組件參數
+            // 調整 Canvas 相關組件參數
+            this._AdjustCanvas(uiCanvas, uiBase);
 
-            uiBase.SetNames(bundleName, assetName);
-            uiBase.BeginInit();                         // Clone 取得 UIBase 組件後, 也需要初始 UI 相關配置, 不然後面無法正常運作
-            uiBase.InitFirst();                         // Clone 取得 UIBase 組件後, 也需要初始 UI 相關綁定組件設定
+            uiBase.SetNames(assetName);
+            // Clone 取得 UIBase 組件後, 也需要初始 UI 相關配置, 不然後面無法正常運作
+            uiBase.BeginInit();
+            // Clone 取得 UIBase 組件後, 也需要初始 UI 相關綁定組件設定
+            uiBase.InitFirst();
 
             // >>> 需在 InitThis 之後, 以下設定開始生效 <<<
 
-            if (!this.SetParent(uiBase)) return null;   // 透過 UIFormType 類型, 設置 Parent
-            this._SetSortingOrder(uiBase);              // SortingOrder 設置需在 SetActive(false) 之前就設置, 基於 UIFormType 的階層去設置排序
-            this._SetRendererOrder(uiBase);             // 設置 UI 物件底下的 Renderer 組件為 UI 層, 使得 Renderer 為正確的 UI 階層與渲染順序
+            // 透過 UIFormType 類型, 設置 Parent
+            if (!this.SetParent(uiBase, parent)) return null;
+            // SortingOrder 設置需在 SetActive(false) 之前就設置, 基於 UIFormType 的階層去設置排序
+            this._SetSortingOrder(uiBase);
+            // 設置 UI 物件底下的 Renderer 組件為 UI 層, 使得 Renderer 為正確的 UI 階層與渲染順序
+            this._SetRendererOrder(uiBase);
 
-            uiBase.gameObject.SetActive(false);         // 最後設置完畢後, 關閉 GameObject 的 Active 為 false
+            // 最後設置完畢後, 關閉 GameObject 的 Active 為 false
+            uiBase.gameObject.SetActive(false);
 
             return uiBase;
         }
@@ -260,20 +251,30 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// 依照對應的 Node 類型設置母節點
         /// </summary>
         /// <param name="uiBase"></param>
-        protected override bool SetParent(UIBase uiBase)
+        protected override bool SetParent(UIBase uiBase, Transform parent)
         {
-            var uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasType);
-            if (uiCanvas == null)
+            if (parent != null)
             {
-                Debug.Log($"<color=#FF0068>When UI <color=#FF9000>[{uiBase.assetName}]</color> to set parent failed. Not found UICanvas:</color> <color=#FF9000>[{uiBase.uiSetting.canvasType}]</color>");
-                return false;
-            }
-
-            var goNode = uiCanvas.GetUINode(uiBase.uiSetting.nodeType);
-            if (goNode != null)
-            {
-                uiBase.gameObject.transform.SetParent(goNode.transform);
+                if (parent.gameObject.GetComponent<UIParent>() == null) parent.gameObject.AddComponent<UIParent>();
+                uiBase.gameObject.transform.SetParent(parent);
                 return true;
+            }
+            else
+            {
+                var uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasName);
+                if (uiCanvas == null)
+                {
+                    Debug.Log($"<color=#FF0068>When UI <color=#FF9000>[{uiBase.assetName}]</color> to set parent failed. Not found UICanvas:</color> <color=#FF9000>[{uiBase.uiSetting.canvasName}]</color>");
+                    return false;
+                }
+
+                var goNode = uiCanvas.GetUINode(uiBase.uiSetting.nodeType);
+                if (goNode != null)
+                {
+                    if (goNode.GetComponent<UIParent>() == null) goNode.AddComponent<UIParent>();
+                    uiBase.gameObject.transform.SetParent(goNode.transform);
+                    return true;
+                }
             }
 
             return false;
@@ -302,7 +303,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             uiBaseGraphicRaycaster.blockingMask = mainGraphicRaycaster.blockingMask;
 
             // 是否自動遞迴設置 LayerMask
-            if (UISysDefine.bAutoSetLayerRecursively) this._SetLayerRecursively(uiBase.gameObject, uiCanvas.gameObject.layer);
+            if (UIConfig.autoSetLayerRecursively) this._SetLayerRecursively(uiBase.gameObject, uiCanvas.gameObject.layer);
         }
 
         /// <summary>
@@ -331,8 +332,8 @@ namespace OxGFrame.CoreFrame.UIFrame
             // 設置 sortingOrder (UIBase 中設置的 order 需要再 -=1, 保留給 Renderer)
             if ((uiBase.uiSetting.order -= 1) < 0) uiBase.uiSetting.order = 0;
             // ORDER_DIFFERENCE - 2 => 1 保留給下一個UI階層, 另外一個 1 保留給 Renderer
-            int uiOrder = (uiBase.uiSetting.order >= (UISysDefine.ORDER_DIFFERENCE - 2)) ? (UISysDefine.ORDER_DIFFERENCE - 2) : uiBase.uiSetting.order;
-            int uiNodeOrder = UISysDefine.UI_NODES[uiBase.uiSetting.nodeType];
+            int uiOrder = (uiBase.uiSetting.order >= (UIConfig.ORDER_DIFFERENCE - 2)) ? (UIConfig.ORDER_DIFFERENCE - 2) : uiBase.uiSetting.order;
+            int uiNodeOrder = UIConfig.UI_NODES[uiBase.uiSetting.nodeType];
             // 判斷非 Stack, 則進行設置累加, 反之則不進行
             if (!uiBase.uiSetting.stack) uiBaseCanvas.sortingOrder = uiNodeOrder + uiOrder;
             else uiBaseCanvas.sortingOrder = uiNodeOrder;
@@ -366,7 +367,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         #endregion
 
         #region Show
-        public override async UniTask<UIBase> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null)
+        public override async UniTask<UIBase> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
@@ -383,46 +384,9 @@ namespace OxGFrame.CoreFrame.UIFrame
                 }
             }
 
-            await this.ShowLoading(groupId, string.Empty, loadingUIAssetName); // 開啟預顯加載 UI
+            await this.ShowLoading(groupId, loadingUIAssetName); // 開啟預顯加載 UI
 
-            var uiBase = await this.LoadIntoAllCache(string.Empty, assetName, progression, false);
-            if (uiBase == null)
-            {
-                Debug.LogWarning(string.Format("Asset not found at this path!!!【UI】: {0}", assetName));
-                return null;
-            }
-
-            uiBase.SetGroupId(groupId);
-            uiBase.SetHidden(false);
-            await this.LoadAndDisplay(uiBase, obj);
-
-            Debug.Log(string.Format("Show UI: 【{0}】", assetName));
-
-            this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
-
-            return uiBase;
-        }
-
-        public override async UniTask<UIBase> Show(int groupId, string bundleName, string assetName, object obj = null, string loadingUIBundleName = null, string loadingUIAssetName = null, Progression progression = null)
-        {
-            if (string.IsNullOrEmpty(bundleName) && string.IsNullOrEmpty(assetName)) return null;
-
-            // 先取出 Stack 主體
-            var stack = this.GetStackFromAllCache(assetName);
-
-            // 判斷非多實例直接 return
-            if (stack != null && !stack.allowInstantiate)
-            {
-                if (this.CheckIsShowing(assetName))
-                {
-                    Debug.LogWarning(string.Format("【UI】{0} already exists!!!", assetName));
-                    return null;
-                }
-            }
-
-            await this.ShowLoading(groupId, loadingUIBundleName, loadingUIAssetName); // 開啟預顯加載UI
-
-            var uiBase = await this.LoadIntoAllCache(bundleName, assetName, progression, false);
+            var uiBase = await this.LoadIntoAllCache(assetName, progression, false);
             if (uiBase == null)
             {
                 Debug.LogWarning(string.Format("Asset not found at this path!!!【UI】: {0}", assetName));
@@ -495,6 +459,9 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
+                // prevent preload mode
+                if (stack.Count() == 0) continue;
+
                 string assetName = stack.assetName;
 
                 var uiBase = stack.Peek();
@@ -528,6 +495,9 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
+                // prevent preload mode
+                if (stack.Count() == 0) continue;
+
                 string assetName = stack.assetName;
 
                 var uiBase = stack.Peek();
@@ -595,6 +565,9 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
+                // prevent preload mode
+                if (stack.Count() == 0) continue;
+
                 string assetName = stack.assetName;
 
                 var uiBase = stack.Peek();
@@ -611,6 +584,9 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
+                // prevent preload mode
+                if (stack.Count() == 0) continue;
+
                 string assetName = stack.assetName;
 
                 var uiBase = stack.Peek();
@@ -658,6 +634,9 @@ namespace OxGFrame.CoreFrame.UIFrame
             // 需要注意快取需要 temp 出來, 因為如果迴圈裡有功能直接對快取進行操作會出錯
             foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
+                // prevent preload mode
+                if (stack.Count() == 0) continue;
+
                 string assetName = stack.assetName;
 
                 var uiBase = stack.Peek();
@@ -689,6 +668,9 @@ namespace OxGFrame.CoreFrame.UIFrame
             // 需要注意快取需要 temp 出來, 因為如果迴圈裡有功能直接對快取進行操作會出錯
             foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
+                // prevent preload mode
+                if (stack.Count() == 0) continue;
+
                 string assetName = stack.assetName;
 
                 var uiBase = stack.Peek();
@@ -727,13 +709,13 @@ namespace OxGFrame.CoreFrame.UIFrame
             if (uiBase.uiSetting.stack && !uiBase.isHidden)
             {
                 // canvasType + nodeType (進行歸類處理, 同屬一個 canvas 並且在同一個 node)
-                string key = $"{uiBase.uiSetting.canvasType}{uiBase.uiSetting.nodeType}";
+                string key = $"{uiBase.uiSetting.canvasName}{uiBase.uiSetting.nodeType}";
                 NodeType nodeType = uiBase.uiSetting.nodeType;
 
                 if (!this._dictStackCounter.ContainsKey(key)) this._dictStackCounter.Add(key, 0);
 
                 // 確保在節點中的第一個 UI 物件, 堆疊層數是從 0 開始
-                var uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasType);
+                var uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasName);
                 var goNode = uiCanvas?.GetUINode(uiBase.uiSetting.nodeType);
                 if (goNode != null)
                 {
@@ -742,16 +724,16 @@ namespace OxGFrame.CoreFrame.UIFrame
 
                 // 堆疊層數++
                 this._dictStackCounter[key]++;
-                if (this._dictStackCounter[key] >= (UISysDefine.ORDER_DIFFERENCE - 2))
+                if (this._dictStackCounter[key] >= (UIConfig.ORDER_DIFFERENCE - 2))
                 {
-                    this._dictStackCounter[key] = UISysDefine.ORDER_DIFFERENCE - 2;
+                    this._dictStackCounter[key] = UIConfig.ORDER_DIFFERENCE - 2;
                 }
 
                 Canvas uiBaseCanvas = uiBase?.canvas;
                 if (uiBaseCanvas != null)
                 {
                     // 需先還原原階層順序, 以下再進行堆疊層數計數的計算 (-1 是要後續保留給 Renderer +1 用)
-                    uiBaseCanvas.sortingOrder = UISysDefine.UI_NODES[nodeType];
+                    uiBaseCanvas.sortingOrder = UIConfig.UI_NODES[nodeType];
                     uiBaseCanvas.sortingOrder += this._dictStackCounter[key] - 1;
                     this._SetRendererOrder(uiBase);
                 }
@@ -765,10 +747,10 @@ namespace OxGFrame.CoreFrame.UIFrame
             uiBase.Hide(disableDoSub);
 
             // 堆疊式管理 (只有非隱藏才進行堆疊計數管理)
-            if (uiBase.uiSetting.stack && !uiBase.isHidden)
+            if (uiBase.uiSetting.stack && !uiBase.isHidden && this.CheckIsShowing(uiBase))
             {
                 // canvasType + nodeType (進行歸類處理, 同屬一個 canvas 並且在同一個 node)
-                string key = $"{uiBase.uiSetting.canvasType}{uiBase.uiSetting.nodeType}";
+                string key = $"{uiBase.uiSetting.canvasName}{uiBase.uiSetting.nodeType}";
 
                 if (this._dictStackCounter.ContainsKey(key))
                 {

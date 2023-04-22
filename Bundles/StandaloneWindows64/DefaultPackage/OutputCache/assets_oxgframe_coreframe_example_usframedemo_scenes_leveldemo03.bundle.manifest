@@ -1,0 +1,43 @@
+ManifestFileVersion: 0
+CRC: 1072352210
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 6840acbe826b0fae0b82b5e78d13a858
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 23566497e5f2099d14eb34485d77832f
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 20
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 104
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 136
+  Script: {instanceID: 0}
+- Class: 157
+  Script: {instanceID: 0}
+- Class: 196
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo03.unity
+Dependencies: []

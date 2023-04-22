@@ -1,5 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
-using OxGFrame.AssetLoader.Cacher;
+using OxGFrame.AssetLoader;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -87,7 +87,7 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 實際運行加載物件資源 (Resources)
+        /// 實際運行加載物件資源
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
@@ -95,30 +95,11 @@ namespace OxGFrame.MediaFrame
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
-            GameObject obj = await CacheResource.GetInstance().Load<GameObject>(assetName);
+            GameObject obj = await AssetLoaders.LoadAssetAsync<GameObject>(assetName);
+
             if (obj == null)
             {
                 Debug.LogWarning(string.Format("【 path: {0} 】asset not found at this path!!!", assetName));
-                return null;
-            }
-
-            return obj;
-        }
-
-        /// <summary>
-        /// 實際運行加載物件資源 (AssetBundle)
-        /// </summary>
-        /// <param name="bundleName"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        protected virtual async UniTask<GameObject> LoadGameObject(string bundleName, string assetName)
-        {
-            if (string.IsNullOrEmpty(bundleName) && string.IsNullOrEmpty(assetName)) return null;
-
-            GameObject obj = await CacheBundle.GetInstance().Load<GameObject>(bundleName, assetName);
-            if (obj == null)
-            {
-                Debug.LogWarning(string.Format("【 ab: {0}, asset: {1} 】not found at this path!!!", bundleName, assetName));
                 return null;
             }
 
@@ -140,18 +121,8 @@ namespace OxGFrame.MediaFrame
             return go;
         }
 
-        protected virtual async UniTask<GameObject> LoadingAsset(string bundleName, string assetName)
-        {
-            GameObject go = await this.LoadGameObject(bundleName, assetName);
-            if (go == null) return null;
-
-            this._dictAssetCache.Add(assetName, go);
-
-            return go;
-        }
-
         /// <summary>
-        /// 加載資源至快取, 判斷是否已有加載過, 如果有則返回該資源物件 (Resources)
+        /// 加載資源至快取, 判斷是否已有加載過, 如果有則返回該資源物件
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
@@ -171,37 +142,16 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 加載資源至快取, 判斷是否已有加載過, 如果有則返回該資源物件 (AssetBundle)
-        /// </summary>
-        /// <param name="bundleName"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        protected async UniTask<GameObject> LoadAssetIntoCache(string bundleName, string assetName)
-        {
-            GameObject go;
-            // 判斷不在 AllCache 中, 也不在 LoadingFlags 中, 才進行加載程序
-            if (!this.HasAssetInCache(assetName) && !this.HasInLoadingFlags(assetName))
-            {
-                this._loadingFlags.Add(assetName);                   // 標記 LoadingFlag
-                go = await this.LoadingAsset(bundleName, assetName); // 開始加載
-                this._loadingFlags.Remove(assetName);                // 移除 LoadingFlag
-            }
-            else go = this.GetAssetFromCache(assetName);             // 如果判斷沒有要執行加載程序, 就直接從 AllCache 中取得
-
-            return go;
-        }
-
-        /// <summary>
         /// 實例化媒體組件
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="go"></param>
         /// <returns></returns>
-        protected async virtual UniTask<U> CloneAsset<U>(string bundleName, string assetName, GameObject go, Transform parent) where U : T
+        protected async virtual UniTask<U> CloneAsset<U>(string assetName, GameObject go, Transform parent, Transform spwanParent) where U : T
         {
             if (go == null) return default;
 
-            GameObject instGo = Instantiate(go, parent);
+            GameObject instGo = Instantiate(go, (parent != null) ? parent : spwanParent);
             instGo.name = instGo.name.Replace("(Clone)", "");
             U mBase = instGo.GetComponent<U>();
             if (mBase == null) return default;
@@ -210,12 +160,12 @@ namespace OxGFrame.MediaFrame
             if (!instGo.activeSelf) instGo.SetActive(true);
 
             this._listAllCache.Add(mBase); // 先加入快取
-            this.SetParent(mBase);
+            this.SetParent(mBase, parent);
 
             // 設置管理名稱
             string mediaName = assetName;
             mediaName = (mediaName.IndexOf('/') != -1) ? mediaName.Substring(mediaName.LastIndexOf('/')).Replace("/", string.Empty) : mediaName;
-            mBase.SetNames(bundleName, assetName, mediaName);
+            mBase.SetNames(assetName, mediaName);
 
             await mBase.Init();
 
@@ -231,14 +181,6 @@ namespace OxGFrame.MediaFrame
         public async UniTask Preload(string assetName)
         {
             if (!string.IsNullOrEmpty(assetName)) await this.LoadAssetIntoCache(assetName);
-        }
-
-        public async UniTask Preload(string bundleName, string assetName)
-        {
-            if (!string.IsNullOrEmpty(bundleName) && !string.IsNullOrEmpty(assetName))
-            {
-                await this.LoadAssetIntoCache(bundleName, assetName);
-            }
         }
 
         /// <summary>
@@ -258,24 +200,10 @@ namespace OxGFrame.MediaFrame
             }
         }
 
-        public async UniTask Preload(string[,] bundleAssetNames)
-        {
-            if (bundleAssetNames.Length > 0)
-            {
-                for (int row = 0; row < bundleAssetNames.GetLength(0); row++)
-                {
-                    if (bundleAssetNames.GetLength(1) != 2) continue;
-                    else if (string.IsNullOrEmpty(bundleAssetNames[row, 0]) || string.IsNullOrEmpty(bundleAssetNames[row, 1])) continue;
-                    await this.LoadAssetIntoCache(bundleAssetNames[row, 0], bundleAssetNames[row, 1]);
-                }
-            }
-        }
-
-        protected virtual void SetParent(T mBase) { }
+        protected virtual void SetParent(T mBase, Transform parent) { }
 
         #region Play
-        public abstract UniTask<T[]> Play(string assetName, int loops = 0);
-        public abstract UniTask<T[]> Play(string bundleName, string assetName, int loops = 0);
+        public abstract UniTask<T[]> Play(string assetName, Transform parent = null, int loops = 0);
         public abstract void ResumeAll();
         #endregion
 
@@ -299,22 +227,7 @@ namespace OxGFrame.MediaFrame
         /// <param name="assetName"></param>
         protected virtual void Destroy(T mBase)
         {
-            string assetName;
-            string unloadName;
-            bool isBundle;
-
-            // 判斷是否 Bundle or Resources
-            if (string.IsNullOrEmpty(mBase.bundleName))
-            {
-                unloadName = assetName = mBase.assetName;
-                isBundle = false;
-            }
-            else
-            {
-                assetName = mBase.assetName;
-                unloadName = mBase.bundleName;
-                isBundle = true;
-            }
+            string assetName = mBase.assetName;
 
             // 調用釋放接口
             mBase.OnRelease();
@@ -337,12 +250,10 @@ namespace OxGFrame.MediaFrame
                     // 刪除資源快取 (皆使用 assetName 作為 key)
                     if (this.HasAssetInCache(assetName)) this._dictAssetCache.Remove(assetName);
 
-                    // Resources (卸載)
-                    if (!isBundle) CacheResource.GetInstance().Unload(unloadName);
-                    // Bundle (卸載)
-                    else CacheBundle.GetInstance().Unload(unloadName);
+                    // 卸載
+                    AssetLoaders.UnloadAsset(assetName);
 
-                    Debug.Log($"<color=#ffb6db>[MediaManager] Unload Asset: {unloadName}</color>");
+                    Debug.Log($"<color=#ffb6db>[MediaManager] Unload Asset: {assetName}</color>");
                 }
             }
 
@@ -350,13 +261,14 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 強制卸載源頭資源 [Resources]
+        /// 強制卸載源頭資源
         /// </summary>
         /// <param name="assetName"></param>
         public virtual void ForceUnload(string assetName)
         {
             // 取得柱列快取中的群組數量
             int groupCount = this.GetMediaComponents<T>(assetName).Length;
+
             // 判斷群組柱列快取 > 0, 則全部強制關閉並且刪除
             if (groupCount > 0)
             {
@@ -367,31 +279,8 @@ namespace OxGFrame.MediaFrame
             // 刪除資源快取 (皆使用 assetName 作為 key)
             if (this.HasAssetInCache(assetName)) this._dictAssetCache.Remove(assetName);
 
-            // Resources (卸載)
-            CacheResource.GetInstance().Unload(assetName);
-        }
-
-        /// <summary>
-        /// 強制卸載源頭資源 [Bundle]
-        /// </summary>
-        /// <param name="bundleName"></param>
-        /// <param name="assetName"></param>
-        public virtual void ForceUnload(string bundleName, string assetName)
-        {
-            // 取得柱列快取中的群組數量
-            int groupCount = this.GetMediaComponents<T>(assetName).Length;
-            // 判斷群組柱列快取 > 0, 則全部強制關閉並且刪除
-            if (groupCount > 0)
-            {
-                // 刪除全部柱列快取
-                this.StopAll(false, true);
-            }
-
-            // 刪除資源快取 (皆使用 assetName 作為 key)
-            if (this.HasAssetInCache(assetName)) this._dictAssetCache.Remove(assetName);
-
-            // Bundle (卸載)
-            CacheBundle.GetInstance().Unload(bundleName);
+            // 卸載
+            AssetLoaders.UnloadAsset(assetName);
         }
     }
 

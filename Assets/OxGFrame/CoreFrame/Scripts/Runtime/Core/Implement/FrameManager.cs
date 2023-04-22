@@ -1,6 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
-using OxGFrame.AssetLoader.Cacher;
+using OxGFrame.AssetLoader.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,12 +74,14 @@ namespace OxGFrame.CoreFrame
 
             public U Peek()
             {
-                return this.cache.Peek();
+                this.cache.TryPeek(out U result);
+                return result;
             }
 
             public U Pop()
             {
-                return this.cache.Pop();
+                this.cache.TryPop(out U result);
+                return result;
             }
 
             ~FrameStack()
@@ -250,37 +252,16 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 載入 GameObject (AssetBundle, Resources)
+        /// 載入 GameObject
         /// </summary>
         /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        protected virtual async UniTask<GameObject> LoadGameObject(string bundleName, string assetName, Progression progression)
+        protected virtual async UniTask<GameObject> LoadGameObject(string assetName, Progression progression)
         {
-            bool isBundle;
-
-            // 先透過 BundleName 區分加載方式
-            if (string.IsNullOrEmpty(bundleName)) isBundle = false;
-            else isBundle = true;
-
-            GameObject asset;
-            if (!isBundle)
-            {
-                // 如果使用 Resources 方式, 判斷 assetName 為空則返回 null
-                if (string.IsNullOrEmpty(assetName)) return null;
-
-                asset = await CacheResource.GetInstance().Load<GameObject>(assetName, progression);
-            }
-            else
-            {
-                // 如果使用 Bundle 方式, 判斷 bundleName or assetName 為空則返回 null
-                if (string.IsNullOrEmpty(bundleName) || string.IsNullOrEmpty(assetName)) return null;
-
-                asset = await CacheBundle.GetInstance().Load<GameObject>(bundleName, assetName, true, progression);
-            }
-
-            return asset;
+            GameObject obj = await AssetLoaders.LoadAssetAsync<GameObject>(assetName, progression);
+            return obj;
         }
 
         /// <summary>
@@ -290,17 +271,17 @@ namespace OxGFrame.CoreFrame
         /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        protected abstract T Instantiate(T fBase, string bundleName, string assetName, AddIntoCache addIntoCache);
+        protected abstract T Instantiate(T fBase, string assetName, AddIntoCache addIntoCache, Transform parent);
 
         /// <summary>
-        /// 加載資源至快取 (AssetBundle, Resources)
+        /// 加載資源至快取
         /// </summary>
         /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
         /// <param name="isPreloadMode"></param>
         /// <returns></returns>
-        protected async UniTask<T> LoadIntoAllCache(string bundleName, string assetName, Progression progression, bool isPreloadMode)
+        protected async UniTask<T> LoadIntoAllCache(string assetName, Progression progression, bool isPreloadMode, Transform parent = null)
         {
             if (this.HasInLoadingFlags(assetName)) return null;
 
@@ -326,7 +307,7 @@ namespace OxGFrame.CoreFrame
                         // 標記加載中
                         this._loadingFlags.Add(assetName);
 
-                        asset = await this.LoadGameObject(bundleName, assetName, progression);
+                        asset = await this.LoadGameObject(assetName, progression);
 
                         if (asset == null)
                         {
@@ -344,7 +325,7 @@ namespace OxGFrame.CoreFrame
                         }
 
                         // 開始進行多實例
-                        fBase = this.Instantiate(fBase, bundleName, assetName, (fBaseNew) => { stack.Push(fBaseNew); });
+                        fBase = this.Instantiate(fBase, assetName, (fBaseNew) => { stack.Push(fBaseNew); }, parent);
                     }
                     // 不允許多實例, 則返回取得物件
                     else fBase = this.PeekStackFromAllCache(assetName);
@@ -356,7 +337,7 @@ namespace OxGFrame.CoreFrame
                 // 標記加載中
                 this._loadingFlags.Add(assetName);
 
-                asset = await this.LoadGameObject(bundleName, assetName, progression);
+                asset = await this.LoadGameObject(assetName, progression);
 
                 if (asset == null)
                 {
@@ -373,22 +354,23 @@ namespace OxGFrame.CoreFrame
                     return null;
                 }
 
-                // 實例並且加入 Stack 至 AllCache 中
-                fBase = this.Instantiate(fBase, bundleName, assetName, (fBaseNew) =>
+                // 創建 Stack 空間
+                FrameStack<T> stack = new FrameStack<T>(assetName, fBase.allowInstantiate, isPreloadMode);
+
+                // 如果允許多實例 & 預加載模式, 只加入 Stack 至 AllCache (但是會有額外 1 次針對 Cacher 的加載, 需要再 Unload 時校正)
+                if (stack.allowInstantiate && stack.isPreloadMode)
                 {
-                    FrameStack<T> stack = new FrameStack<T>(assetName, fBase.allowInstantiate, isPreloadMode);
-                    // 如果允許多實例 & 預加載模式, 只加入 Stack 至 AllCache (但是會有額外 1 次針對 Cacher 的加載, 需要再 Unload 時校正)
-                    if (stack.allowInstantiate && stack.isPreloadMode)
-                    {
-                        this._dictAllCache.Add(assetName, stack);
-                    }
-                    // 反之, 則需要 Push 實例至 Stack 並且加入 Stack 至 AllCache
-                    else
+                    this._dictAllCache.Add(assetName, stack);
+                }
+                // 反之, 則需要 Push 實例至 Stack 並且加入 Stack 至 AllCache
+                else
+                {
+                    fBase = this.Instantiate(fBase, assetName, (fBaseNew) =>
                     {
                         stack.Push(fBaseNew);
                         this._dictAllCache.Add(assetName, stack);
-                    }
-                });
+                    }, parent);
+                }
             }
 
             // 移除加載標記
@@ -398,7 +380,7 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 【Resouces】單個預加載
+        /// 單個預加載
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
@@ -406,26 +388,12 @@ namespace OxGFrame.CoreFrame
         {
             if (!string.IsNullOrEmpty(assetName))
             {
-                await this.LoadIntoAllCache(string.Empty, assetName, progression, true);
+                await this.LoadIntoAllCache(assetName, progression, true);
             }
         }
 
         /// <summary>
-        /// 【Bundle】單個預加載
-        /// </summary>
-        /// <param name="bundleName"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public async UniTask Preload(string bundleName, string assetName, Progression progression = null)
-        {
-            if (!string.IsNullOrEmpty(bundleName) && !string.IsNullOrEmpty(assetName))
-            {
-                await this.LoadIntoAllCache(bundleName, assetName, progression, true);
-            }
-        }
-
-        /// <summary>
-        /// 【Resouces】一次多個預加載
+        /// 多個預加載
         /// </summary>
         /// <param name="assetNames"></param>
         /// <returns></returns>
@@ -434,7 +402,7 @@ namespace OxGFrame.CoreFrame
             if (assetNames.Length > 0)
             {
                 this.reqSize = 0;
-                this.totalSize = CacheResource.GetInstance().GetAssetsLength(assetNames);
+                this.totalSize = BundleUtility.GetAssetsLength(assetNames);
 
                 for (int i = 0; i < assetNames.Length; i++)
                 {
@@ -444,56 +412,7 @@ namespace OxGFrame.CoreFrame
                     }
 
                     float lastSize = 0;
-                    await this.LoadIntoAllCache(string.Empty, assetNames[i], (float progress, float reqSize, float totalSize) =>
-                    {
-                        this.reqSize += reqSize - lastSize;
-                        lastSize = reqSize;
-
-                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                    }, true);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 【Bundle】一次多個預加載
-        /// </summary>
-        /// <param name="bundleAssetNames"></param>
-        /// <returns></returns>
-        public async UniTask Preload(string[,] bundleAssetNames, Progression progression = null)
-        {
-            if (bundleAssetNames.Length > 0)
-            {
-                List<string> bundleNames = new List<string>();
-                for (int row = 0; row < bundleAssetNames.GetLength(0); row++)
-                {
-                    if (bundleAssetNames.GetLength(1) != 2)
-                    {
-                        continue;
-                    }
-                    else if (string.IsNullOrEmpty(bundleAssetNames[row, 0]) || string.IsNullOrEmpty(bundleAssetNames[row, 1]))
-                    {
-                        continue;
-                    }
-
-                    bundleNames.Add(bundleAssetNames[row, 0]);
-                }
-                this.reqSize = 0;
-                this.totalSize = CacheBundle.GetInstance().GetAssetsLength(bundleNames.ToArray());
-
-                for (int row = 0; row < bundleAssetNames.GetLength(0); row++)
-                {
-                    if (bundleAssetNames.GetLength(1) != 2)
-                    {
-                        continue;
-                    }
-                    else if (string.IsNullOrEmpty(bundleAssetNames[row, 0]) || string.IsNullOrEmpty(bundleAssetNames[row, 1]))
-                    {
-                        continue;
-                    }
-
-                    float lastSize = 0;
-                    await this.LoadIntoAllCache(bundleAssetNames[row, 0], bundleAssetNames[row, 1], (float progress, float reqSize, float totalSize) =>
+                    await this.LoadIntoAllCache(assetNames[i], (float progress, float reqSize, float totalSize) =>
                     {
                         this.reqSize += reqSize - lastSize;
                         lastSize = reqSize;
@@ -508,7 +427,7 @@ namespace OxGFrame.CoreFrame
         /// 依照對應的 Node 類型設置母節點 (子類實作)
         /// </summary>
         /// <param name="fBase"></param>
-        protected virtual bool SetParent(T fBase) { return true; }
+        protected virtual bool SetParent(T fBase, Transform parent) { return true; }
 
         /// <summary>
         /// 開啟預顯加載 UI
@@ -517,10 +436,9 @@ namespace OxGFrame.CoreFrame
         /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        protected async virtual UniTask ShowLoading(int groupId, string bundleName, string assetName)
+        protected async virtual UniTask ShowLoading(int groupId, string assetName)
         {
-            if (string.IsNullOrEmpty(bundleName)) await UIFrame.UIManager.GetInstance().Show(groupId, assetName);
-            else await UIFrame.UIManager.GetInstance().Show(groupId, bundleName, assetName);
+            await UIFrame.UIManager.GetInstance().Show(groupId, assetName);
         }
 
         /// <summary>
@@ -533,7 +451,7 @@ namespace OxGFrame.CoreFrame
 
         #region Show
         /// <summary>
-        /// 【Resource】顯示, 可透過 id 進行群組分類
+        /// 顯示, 可透過 id 進行群組分類
         /// </summary>
         /// <param name="groupId"></param>
         /// <param name="assetName"></param>
@@ -541,27 +459,9 @@ namespace OxGFrame.CoreFrame
         /// <param name="loadingUIAssetName"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public async virtual UniTask<T> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null)
+        public async virtual UniTask<T> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
         {
-            await this.ShowLoading(groupId, string.Empty, loadingUIAssetName);
-
-            return default;
-        }
-
-        /// <summary>
-        /// 【Bundle】顯示, 可透過 id 進行群組分類
-        /// </summary>
-        /// <param name="groupId"></param>
-        /// <param name="bundleName"></param>
-        /// <param name="assetName"></param>
-        /// <param name="obj"></param>
-        /// <param name="loadingUIBundleName"></param>
-        /// <param name="loadingUIAssetName"></param>
-        /// <param name="progression"></param>
-        /// <returns></returns>
-        public async virtual UniTask<T> Show(int groupId, string bundleName, string assetName, object obj = null, string loadingUIBundleName = null, string loadingUIAssetName = null, Progression progression = null)
-        {
-            await this.ShowLoading(groupId, loadingUIBundleName, loadingUIAssetName);
+            await this.ShowLoading(groupId, loadingUIAssetName);
 
             return default;
         }
@@ -646,21 +546,6 @@ namespace OxGFrame.CoreFrame
         /// <param name="assetName"></param>
         protected virtual void Destroy(T fBase, string assetName)
         {
-            string unloadName;
-            bool isBundle;
-
-            // 判斷是否 Bundle or Resources
-            if (string.IsNullOrEmpty(fBase.bundleName))
-            {
-                unloadName = fBase.assetName;
-                isBundle = false;
-            }
-            else
-            {
-                unloadName = fBase.bundleName;
-                isBundle = true;
-            }
-
             // 調用釋放接口
             fBase.OnRelease();
 
@@ -674,33 +559,29 @@ namespace OxGFrame.CoreFrame
             // 允許多實例 & 預加載模式, 需要再額外 Unload 1 次 (因為預加載額外進行多 1 次的 Cacher 加載, 所以需要校正 Cacher Ref Count)
             if (stack.allowInstantiate && stack.isPreloadMode && stack.Count() == 0)
             {
-                // Resources (額外卸載)
-                if (!isBundle) CacheResource.GetInstance().Unload(unloadName);
-                // Bundle(額外卸載)
-                else CacheBundle.GetInstance().Unload(unloadName);
+                // 額外卸載
+                AssetLoaders.UnloadAsset(assetName);
 
-                Debug.Log($"<color=#ffa2a3>[FrameManager] Extra Unload Asset: {unloadName}</color>");
+                Debug.Log($"<color=#ffa2a3>[FrameManager] Extra Unload Asset: {assetName}</color>");
             }
 
             // 柱列為空, 則刪除資源快取
             if (stack.Count() == 0) this._dictAllCache.Remove(assetName);
 
-            // Resources (卸載)
-            if (!isBundle) CacheResource.GetInstance().Unload(unloadName);
-            // Bundle(卸載)
-            else CacheBundle.GetInstance().Unload(unloadName);
+            // 卸載
+            AssetLoaders.UnloadAsset(assetName);
 
-            Debug.Log($"<color=#ffb6db>[FrameManager] Unload Asset: {unloadName}</color>");
+            Debug.Log($"<color=#ffb6db>[FrameManager] Unload Asset: {assetName}</color>");
 
             Debug.Log($"<color=#ff9d55>[FrameManager] Destroy Object: {assetName}</color>");
         }
         #endregion
 
         /// <summary>
-        /// 【特殊方法】交由 Protocol 委託 Handle (主要用於 Server 傳送封包給 Client 後, 進行一次性刷新)
+        /// 【特殊方法】可交由 Protocol 委託 Handle (主要用於 Server 傳送封包給 Client 後, 進行一次性刷新)
         /// </summary>
-        /// <param name="funcId"></param>
-        public void UpdateByProtocol(int funcId)
+        /// <param name="obj"></param>
+        public void SendRefreshData(object obj)
         {
             foreach (FrameStack<T> stack in this._dictAllCache.Values.ToArray())
             {
@@ -708,7 +589,7 @@ namespace OxGFrame.CoreFrame
                 {
                     foreach (var fBase in stack.cache.ToArray())
                     {
-                        fBase.OnUpdateOnceAfterProtocol(funcId);
+                        fBase.OnReceiveAndRefresh(obj);
                     }
                 }
             }

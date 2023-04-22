@@ -1,5 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
-using OxGFrame.AssetLoader.Cacher;
+using OxGFrame.AssetLoader;
 using UnityEngine;
 
 namespace OxGFrame.CoreFrame.EPFrame
@@ -22,8 +22,8 @@ namespace OxGFrame.CoreFrame.EPFrame
         private void OnDestroy()
         {
             this.OnRelease();
-            if (string.IsNullOrEmpty(this.bundleName)) CacheResource.GetInstance().Unload(this.assetName);
-            else CacheBundle.GetInstance().Unload(this.bundleName);
+
+            AssetLoaders.UnloadAsset(this.assetName);
         }
 
         public override void BeginInit() { }
@@ -91,7 +91,7 @@ namespace OxGFrame.CoreFrame.EPFrame
         protected override void CloseSub() { }
 
         [System.Obsolete("This is not supported in this class.")]
-        public override void OnUpdateOnceAfterProtocol(int funcId = 0) { }
+        public override void OnReceiveAndRefresh(object obj = null) { }
 
         [System.Obsolete("This is not supported in this class.")]
         public sealed override void Hide(bool disableDoSub = false) { }

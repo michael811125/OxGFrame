@@ -1,29 +1,28 @@
 ﻿using OxGFrame.CoreFrame.EPFrame;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class #SCRIPTNAME# : EPBase
 {
+    // Use ~Node@XXX to Bind
+
     public override void BeginInit()
     {
         /**
-         * Initial before binding (Init 1)
+         * Do Somthing Init Once In Here
          */
     }
 
     protected override void InitOnceComponents()
     {
         /**
-         * Initial after binding (Init 2)
+         * Do Somthing Init Once In Here (For Components)
          */
     }
 
     protected override void InitOnceEvents()
     {
         /**
-          * Initial after binding (Init 3)
-          */
+         * Do Somthing Init Once In Here (For Events)
+         */
     }
 
     protected override void OnShow(object obj)
@@ -50,7 +49,7 @@ public class #SCRIPTNAME# : EPBase
     protected override void OnUpdate(float dt)
     {
         /*
-         * Update
+         * OnUpdate
          */
     }
 }

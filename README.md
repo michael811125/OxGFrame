@@ -4,21 +4,49 @@
 
 ---
 
+## 新版 OxGFrame 安裝
+將舊版的 OxGFrame 全部移除，並且重新串接新版的接口。
+
+---
+
 ## 基本介紹
 
-OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EPFrame)、影音 (MediaFrame)、遊戲整合 (GSIFrame)、網路 (NetFrame)、事件註冊 (EventCenter)、API註冊 (APICenter)、Http.Acax (仿 Ajax 概念)等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
+OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EPFrame)、影音 (MediaFrame)、遊戲整合 (GSIFrame)、網路 (NetFrame)、集中式事件註冊 (EventCenter)、集中式 API 註冊 (APICenter)、Http.Acax (仿 Ajax 概念)等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
 
 [Roadmap wiki](https://github.com/michael811125/OxGFrame/wiki/Roadmap)
 
 ---
 
-## 第三方庫依賴 (需先安裝)
+## 需先安裝 (Install via git)
+- Install from Package Manager [MyBox version 1.7.0 or higher](https://github.com/Deadcows/MyBox)
 
-- 必要 [UnitTask Version 2.3.1 or higher](https://github.com/Cysharp/UniTask)
-- 必要 [MyBox version 1.7.0 or higher](https://github.com/Deadcows/MyBox)
-- 非必要，取決於是否使用 NetFrame 模塊 [UnityWebSocket Version 2.6.6 or higher](https://github.com/psygames/UnityWebSocket)
+---
 
-【備註】Unity 2021.3.4f1 以下的額外需安裝 [com.unity.nuget.newtonsoft-json](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/wiki/Install-official-via-UPM)，對於 [jillejr.newtonsoft.json-for-unity](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/issues/145) 附加作者額外說明 (Unity 2021.3.4f1 以上的版本此庫可以不用安裝)。
+## 第三方庫 (內建)
+- 使用 [UnitTask](https://github.com/Cysharp/UniTask) (最佳異步處理方案)
+
+---
+
+## 特別推薦 (內建)
+
+- 使用 [UnityWebSocket](https://github.com/psygames/UnityWebSocket) (最佳 Websocket 解決方案)
+- 使用 [YooAsset](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案)
+- TODO [HybirdCLR](https://github.com/focus-creative-games/hybridclr) (高效的程式熱更新方案)
+
+---
+
+### Unity 低版本如果有遇到 Newtonsoft 問題
+- 請自行安裝 [com.unity.nuget.newtonsoft-json](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/wiki/Install-official-via-UPM)
+
+---
+
+## 框架 API
+- AssetLoaders (using OxGFrame.AssetLoader)
+- AssetPatcher (using OxGFrame.AssetLoader)
+- CoreFrames (using OxGFrame.CoreFrame)
+- MediaFrames (using OxGFrame.MediaFrame)
+
+※備註 : 建議詳看各模塊的 Example。
 
 ---
 
@@ -26,100 +54,64 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架, 並且使�
 
 ### AssetLoader
 
-實現資源動態加載 (Dynamic Loading)，採用計數管理方式進行資源管控 (支援 Resource 與 AssetBundle)，一定要成對呼叫 Load & Unload (如果沒有成對呼叫，會導致計數不正確) 。 其中 AssetBundle 則採用自帶的配置檔進行主程式與資源版本比對，實現資源熱更新流程，並且下載器支援斷點續傳，也對於 AssetBundle 打包出來的資源，提供現有加密方式 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密，還有針對加速 AssetBundle 開發方案提供在 Unity Editor 編輯器下能夠切換 AssetDatabase Mode 提高在 Unity Editor 編輯器中的開發效率。
+實現資源動態 Async 或 Sync 加載 (Dynamic Loading)，採用計數管理方式進行資源管控 (支援 Resource 與 AssetBundle)，一定要成對呼叫 Load & Unload (如果沒有成對呼叫，會導致計數不正確)。
+其中集成【YooAsset】實現資源熱更新方案，並且實現【YooAsset】提供的加密接口，實現加解密方式有 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密。
 
-**選擇使用 Bundle 開發時，需要先將 BundleSetup 拖曳至場景中，才能驅動 BundleDistributor。**
+※備註 : Use "res#" will load from Resources else load from Bundle
 
-- Cacher【CacheResource, CacheBundle】(資源主要加載器)
-  - 如果沒有群組化需求，可以直接使用 Cacher 進行資源 Load & Unload (成對式)
-- KeyCacher【KeyResource, KeyBundle】(Link Cacher 進行 Key 索引，用於分類資源群組快取操作)
-  - 如果有群組化需求，使用 KeyCacher 指定 GroupId 進行 Load 時，則相對需要使用 KeyCacher 進行 Unload (成對式)
-- BundleDistributor (資源熱更核心)
-- Downloader (下載器)
-  - 支援 Slice Mode (針對大檔進行切割式下載)
-- Compressor (壓縮器)
-  - 支援 sync & async 壓縮跟解壓
-  - Bundle 支援壓縮方案，只針對**初次安裝**的 APP 會進行壓縮包下載 (如果要執行首次壓縮包下載流程，取決於打包 Bundle 流程是否有製作壓縮包與勾選配置 Bundle Is Compressed)
+**選擇使用 Bundle 開發時，需要先將 PatchLauncher 拖曳至場景中，才能驅動相關配置。**
+
 - FileCryptogram (檔案加解密)
-  - **Bundle 加密推薦 HTXOR**
   - 運算效率 HTXOR ~= OFFSET > XOR > AES
   - 內存占用 OFFSET > AES > HTXOR = XOR 
   - AB 包體積增加 OFFSET > AES > HTXOR = XOR
   - 破解難度 AES > HTXOR > XOR > OFFSET
 
-【備註】AssetBundle 打包建議使用 [AssetBundle Browser Plus v1.9.1 or higher](https://github.com/michael811125/AssetBundles-Browser-Plus) 作為打包策略規劃。
+### 資源熱更新方案 (YooAsset)
+
+使用【YooAsset】的 Collector 進行資源收集 (可以使用 ActiveRule 決定哪些群組需要打包，進行 Built-in 跟 Patch 資源的區分)，再使用【YooAsset】的 Builder 進行打包 (不需手動更改資源日期版號)，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
+
+再使用 OxGFrame/AssetLoader/Bundle Config Generator 進行配置檔建立。
+
+1. 先進行 Export App Config To StreamingAssets 建立 appconfig.json 至 StreamingAssets 中 (主要用於 App Version 比對)。
+2. 再選擇 Export App Config And Bundles for CDN 輸出上傳資源，Source Folder 選擇剛剛使用【YooAsset】輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行更新包的區分，輸出後將 CDN 直接上傳至 Server。
+   
+- 群組分包舉例
+  - 最小運行包
+  - 標準運行包
+  - 全部運行包 (預設 #all)
 
 ---
 
-### Build AssetBundle Step Flow
+#### Bundle [burlconfig] (Bundle URL Config) 格式
 
-**Built-in (內置資源)**
-1. 使用 [AssetBundle Browser Plus](https://github.com/michael811125/AssetBundles-Browser-Plus) 進行打包
-    - 勾選 [Rename Manifest File] 命名 "imf" (取決於你是使用預設名稱，還是自定義名稱)
-    - [Compression] 建議選擇 [Chunk Based Compression (LZ4)] (自己決定為主)
-    - [Bundle Name] 選擇 [Md5 For Bundle Name] (取決於 BundleSetup 的 Load Options 是否有勾選 [Read Md5 Bundle Name]，預設為 true)
-    - 勾選 [Without Manifest] (non-use)
-2. 完成 AssetBundle 的打包後，選擇 Unity 上列 BundleDistributor 中的 [Step 1. Bundle Cryptogram] (取決於你的 AssetBundle 是否要加密)。
-3. 完成後，開啟 [Step 3. Bundle Config Generator] 選擇 Operation Type 為 [Generate Config To Source Folder] (製作 Built-in 的配置檔)，瀏覽選擇剛剛完成打包 AssetBundle 的來源路徑資料夾。
-4. 最後，開啟 [Step 4. Copy to StreamingAssets] 選擇剛剛完成輸出 bcfg 跟 AssetBundles 的 SourceFolder，將其複製到 StreamingAssets 路徑 (記得要保留 StreamingAssets 中的 burlcfg.txt)。
-
-**Patch (更新資源)**
-1. 使用 [AssetBundle Browser Plus](https://github.com/michael811125/AssetBundles-Browser-Plus) 進行打包
-    - 勾選 [Rename Manifest File] 命名 "emf" (取決於你是使用預設名稱，還是自定義名稱)
-    - [Compression] 建議選擇 [Chunk Based Compression (LZ4)] (自己決定為主)
-    - [Bundle Name] 選擇 [Md5 For Bundle Name] (取決於 BundleSetup 的 Load Options 是否有勾選 [Read Md5 Bundle Name]，預設為 true)
-	- 勾選 [Without Manifest] (non-use)
-2. 完成 AssetBundle 的打包後，選擇 Unity 上列 BundleDistributor 中的 [Step 3. Bundle Config Generator] 選擇 Operation Type 為 [Export And Config From Source Folder] (製作 Patch 的配置檔)，瀏覽選擇剛剛完成打包 AssetBundle 的來源路徑資料夾，再選擇要輸出的路徑。
-3. 完成後，先至 Server 創建 ExportBundles 的資料夾，裡面依照平台創建 win, osx, android, ios, h5，準備好 Server 的資料夾後，再將剛剛輸出帶有 ProductName 的資料夾直接依照平台歸納上傳就好。
-
-**注意 Server 路徑名稱**
-- ExportBundles/win/productName
-- ExportBundles/osx/productName
-- ExportBundles/android/productName
-- ExportBundles/ios/productName
-- ExportBundles/h5/productName
-
----
-
-**※如果有要運行 BundleDemo 方法則一 (Demo 提供的資源為 win 平台)**
-- 1. 離線版 [Offline Mode] 找到 OxGFrame/AssetLoader/Example/BundleDemo/Offline_Mode.zip，解壓後閱讀 README.txt 說明配置，勾選 BundleSetup 中的 offline 選項。 (實際上 Offline 只是請求 StreamingAssets 中的 bcfg 進行比對而已)
-- 2. 更新版 [Patch Mode] 找到 OxGFrame/AssetLoader/Example/BundleDemo/Patch_Mode.zip，解壓後閱讀 README.txt 說明配置，取消勾選 BundleSetup 中的 offline 選項。
-
-#### AssetBundle Config 名稱 (可以自行至 BundleConfig 更改命名，參數為常數配置 Const)
-- bcfg (Bundle Config)，當前版本的 AssetBundle 訊息
-- rcfg (Record Config)，記錄歷代版本下載更新過的 AssetBundle 訊息
-- burlcfg (Bundle URL Config)，維護資源伺服器 IP & 商店 Link URL (Google or Apple)
-
-#### AssetBundle Manifest 區分 (可以自行至 BundleSetup 更改命名，參數為執行配置 Runtime)
-- imf (Internal Manifest File)，Builtin 資源的 Manifest
-- emf (External Manifest File)，Patch 資源的 Manifest
-
-#### Bundle [burlcfg] (Bundle URL Config) 格式
-
-建立一個名為 burlcfg.txt 的 txt 檔案，複製以下格式更改你的需求。 **(store_link 針對非 Android, iOS 平台的，可以設置主程式下載的 link)**
+格式如下 **(store_link 針對非 Android, iOS 平台的，可以設置主程式下載的 link)**
 
 ```
-#bundle_ip = Server IP
-#store_link = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID) or Apple Store Link (itms-apps://itunes.apple.com/app/idYOUR_ID)
+# bundle_ip = First CDN Server IP (Plan A)
+# bundle_fallback_ip = Second CDN Server IP (Plan B)
+# store_link = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID) or Apple Store Link (itms-apps://itunes.apple.com/app/idYOUR_ID)
 
 bundle_ip 127.0.0.1
-store_link https://play.google.com/store/apps/details?id=YOUR_ID
+bundle_fallback_ip 127.0.0.1
+store_link http://
+
 ```
 
-**\>\> 加載 burlcfg.txt 方式 \<\<**
-- 將 burlcfg.txt 放至 StreamingAssets 根目錄中 (StreamingAssets/burlcfg.txt)。
+**\>\> 建立 burlconfig 方式 \<\<**
+- 使用 OxGFrame/AssetLoader/Bundle Url Config Generator 創建 burlconfig (StreamingAssets/burlconfig)。
 
 ---
 
 ### CoreFrame
 
-此模塊包含用於製作 UI, Game Scene, Entity Prefab, Unity Scene，針對製作對應使用 UI Prefab => UIFrame、Game Scene Prefab => GSFrame、Other Prefab => EPFrame、Unity Scene => USFrame 皆實現 Singleton Manager 進行控管與動態調度。支援 Resources 與 AssetBundle 加載方式 (多載)，並且實現物件命名綁定功能 (UIBase and GSBase = _Node@XXX, EPBase = ~Node@XXX, 類型均為 GameObject)。
+此模塊包含用於製作 UI, Game Scene, Entity Prefab, Unity Scene，針對製作對應使用 UI Prefab => UIFrame、Game Scene Prefab => GSFrame、Other Prefab => EPFrame、Unity Scene => USFrame。支援 Resources 與 AssetBundle 加載方式，並且實現物件命名綁定功能 (UIBase and GSBase = _Node@XXX, EPBase = ~Node@XXX, 類型均為 GameObject)。
 
 - UIFrame (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab，另外 UI 的 MaskEvent 可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)
 - GSFrame (Game Scene) : 使用 GSManager 管理掛載 GSBase 的 Prefab (使用 _Node@XXX 進行物件綁定)
 - USFrame (Unity Scene) : 使用 USManager 管理 Unity 場景 (支援 AssetBundle)
+  - ※備註 : Use "build#" will load from Build else load from Bundle
 - EPFrame (Entity Prefab) : 使用 EPManager 管理掛載 EPBase 的 Prefab (使用 ~Node@XXX 進行綁定)
-- UMT (Unity Main Thread)
 
 #### 常用方法說明
 
@@ -154,21 +146,24 @@ store_link https://play.google.com/store/apps/details?id=YOUR_ID
 - RenderTexture，將 Video 映射至 RenderTexture 再透過 UGUI 的 RawImage 進行渲染 (VideoBase 使用 RenderTexture.GetTemporary 跟 RenderTexture.ReleaseTemporary 創建與釋放，確保內存正確釋放 RenderTexture)
 - Camera，透過 Camera 進行渲染。
 
-#### Media [murlcfg] (Media URL Config) 格式
+#### Media [murlconfig] (Media URL Config) 格式
 
-如果音訊跟影片來源存放於 Server，可以使用 URL 的方式進行檔案請求，建立一個名為 murlcfg.txt 的 txt 檔案，進行 URL 的維護，複製以下格式更改你的需求。 **(如果不透過 murlcfg.txt 指定 URL 的話，也可以輸入完整資源 URL 至 Prefab 中，不過缺點就是對於未來更動 URL，要進行更改維護就會非常麻煩)**
+如果音訊跟影片來源存放於 Server，可以使用 URL 的方式進行檔案請求，格式如下 **(如果不透過 murlconfig.txt 指定 URL 的話，也可以輸入完整資源 URL 至 Prefab 中，不過缺點就是對於未來更動 URL，要進行更改維護就會非常麻煩)**
 
 ```
-#audio_urlset = Audio Source Url
-#video_urlset = Video Source Url
+# audio_urlset = Audio Source Url Path
+# video_urlset = Video Source Url Path
 
-audio_urlset http://127.0.0.1/audio_dev/Audio/
-video_urlset http://127.0.0.1/video_dev/Video/
+audio_urlset 127.0.0.1/audio/
+video_urlset 127.0.0.1/video/
 ```
 
-**\>\> 加載 murlcfg.txt 方式 \<\<**
-- 1. 選擇 Url Cfg Request Type = Assign 的方式指定 murlcfg.txt 至 prefab 中。
-- 2. 選擇 Url Cfg Request Type = Streaming Assets 的方式請求 murlcfg.txt，將 murlcfg.txt 放至 StreamingAssets 根目錄中 (StreamingAssets/murlcfg.txt)。
+**\>\> 建立 murlconfig.txt 方式 \<\<**
+- 使用 OxGFrame/MediaFrame/Media Url Config Generator 創建 murlconfig.txt (StreamingAssets/murlconfig.txt)。
+
+**\>\> 加載 murlconfig.txt 方式 \<\<**
+- 1. 如果選擇 Url Cfg Request Type = Assign 的方式指定 murlconfig.txt 至 prefab 中。
+- 2. 如果選擇 Url Cfg Request Type = Streaming Assets 的方式請求 murlconfig.txt，將 murlconfig.txt 放至 StreamingAssets 根目錄中 (StreamingAssets/murlconfig.txt)。
 
 **額外說明**：如果透過 URL 方式請求音訊或影片資源，建議於 WebGL 平台上使用，因為 WebGL 不支援 AssetBundle 事先指定 AudioClip 或 VideoClip (Assign 方式) 至 Prefab 中，所以提供 URL 的方式進行影音檔請求。
 
@@ -176,12 +171,12 @@ video_urlset http://127.0.0.1/video_dev/Video/
 
 ---
 
-### GSIFrame (Game System Integration)
+### GSIFrame (Game Stage Integration)
 
-遊戲整合模塊，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商業Logo階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), GamingStage (遊玩階段), FightStage (戰鬥階段) 等, 以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
+遊戲整合模塊 (FSM 概念)，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商業Logo階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), GamingStage (遊玩階段), FightStage (戰鬥階段) 等, 以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
 
-- GameStageBase，遊戲階段基類，在透過 Update 切換當前階段自定義的狀態流程 (Enum) 時，可透過 StopUpdateStage & RunUpdateStage 方法進行開關設置，即可停止或繼續 Update 的每幀調用 (需建立實作 => 右鍵創建)
-- GameStageManagerBase，用於繼承實現管理層與註冊階段，管理基類已實現單例 (建議名稱為 GameStageManager 的實作 => 右鍵創建)
+- GSIBase，遊戲階段基類，在透過 Update 切換當前階段自定義的狀態流程 (Enum) 時，可透過 StopUpdate & RunUpdate 方法進行開關設置，即可停止或繼續 Update 的每幀調用，需建立實作 => 右鍵創建
+- GSIManagerBase，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
 
 ※備註 : Right-Click Create/OxGFrame/GSIFrame... (Template cs)
 
@@ -203,11 +198,11 @@ video_urlset http://127.0.0.1/video_dev/Video/
 
 ### EventCenter
 
-事件整合模塊，透過 FuncId (xBASE + 1, xBASE + 2...) 進行 Event 註冊，可以自定義每個 Event 的格式進行派送。
+集中式 Event 整合模塊，可以自定義每個 Event 的格式進行派送。
 
 - EventCenter : 事件註冊調度管理，管理基類已實現單例
   - EventBase，單個 Event 基類，需建立實作 => 右鍵創建
-  - EventCenterBase，EventCenter 管理基類 (建議名稱為 EventCenter 的實作 => 右鍵創建)
+  - EventCenterBase，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
   
 ※備註 : Right-Click Create/OxGFrame/EventCenter... (Template cs)
 
@@ -215,12 +210,12 @@ video_urlset http://127.0.0.1/video_dev/Video/
 
 ### APICenter
 
-API 整合模塊，透過 FuncId (xBASE + 1, xBASE + 2...) 進行 API 註冊，可以自定義每個 API 的格式進行短連接請求。
+集中式 API 整合模塊，可以自定義每個 API 的格式進行短連接請求。
 
-- Acax (類似 Ajax 方式，請求 API)
+- Acax (類似 Ajax 方式，請求 API)，支援 Async & Sync
 - APICenter : Http API 註冊管理，管理基類已實現單例
   - APIBase，單個 API 基類，需建立實作 => 右鍵創建
-  - APICenterBase，APICenter 管理基類 (建議名稱為 APICenter 的實作 => 右鍵創建)
+  - APICenterBase，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
 
 **如果沒有要使用 APICenter 短連接請求模塊的，可以直接刪除整個 APICenter。**
 
@@ -237,12 +232,13 @@ API 整合模塊，透過 FuncId (xBASE + 1, xBASE + 2...) 進行 API 註冊，�
   - Adapter => UISafeAreaAdapter
   - Pool => NodePool (GameObject Pool)
   - ButtonPlus => Inherited by Unity Button. extend Long Press and Transition Scale
+  - UMT => Unity Main Thread.
 
 ---
 
 ### Unity 版本
 
-建議使用 Unity 2021.3.13f1(LTS) or higher 版本 - [Unity Download](https://unity3d.com/get-unity/download/archive)
+建議使用 Unity 2021.3.23f1(LTS) or higher 版本 - [Unity Download](https://unity3d.com/get-unity/download/archive)
 
 ---
 

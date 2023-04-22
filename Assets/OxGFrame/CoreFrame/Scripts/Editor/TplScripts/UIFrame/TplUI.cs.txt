@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using OxGFrame.CoreFrame.UIFrame;
+﻿using OxGFrame.CoreFrame.UIFrame;
 using Cysharp.Threading.Tasks;
 
 public class #SCRIPTNAME# : UIBase
 {
+    // Use _Node@XXX to Bind
+
     public override void BeginInit()
     {
         /**
@@ -16,15 +15,15 @@ public class #SCRIPTNAME# : UIBase
     protected override async UniTask OpenSub()
     {
         /**
-        * Open Sub With Async
-        */
+         * Open Sub With Async
+         */
     }
 
     protected override void CloseSub()
     {
         /**
-        * Close Sub
-        */
+         * Close Sub
+         */
     }
 
     protected override void InitOnceComponents()
@@ -37,8 +36,8 @@ public class #SCRIPTNAME# : UIBase
     protected override void InitOnceEvents()
     {
         /**
-          * Do Somthing Init Once In Here (For Events)
-          */
+         * Do Somthing Init Once In Here (For Events)
+         */
     }
 
     protected override void OnShow(object obj)
@@ -52,6 +51,13 @@ public class #SCRIPTNAME# : UIBase
     {
         /**
          * Do Update Per FrameRate
+         */
+    }
+
+    public override void OnReceiveAndRefresh(object obj = null)
+    {
+        /**
+         * Do Refresh Once After Data Receive
          */
     }
 

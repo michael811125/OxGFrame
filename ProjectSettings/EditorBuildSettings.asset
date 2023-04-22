@@ -14,7 +14,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/OxGFrame/MediaFrame/Example/AudioFrameDemo/AudioFrameDemo.unity
     guid: 11ee897e214632f43a9e8978e6927bc7
-  - enabled: 0
+  - enabled: 1
     path: Assets/OxGFrame/AssetLoader/Example/BundleDemo/BundleDemo.unity
     guid: 5648aa95b7111a54198733f86df587a8
   - enabled: 1
@@ -27,7 +27,7 @@ EditorBuildSettings:
     path: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo03.unity
     guid: 42b42b7f9b5995748ba85a54431669b3
   m_configObjects:
-    com.unity.addressableassets: {fileID: 11400000, guid: 7ecaaa30ec3ccf0449e2847c981066ff,
+    com.unity.addressableassets: {fileID: 11400000, guid: 846103b260185f14fa06320b884c5bd6,
       type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: e5de5598d6dc5bf4e9f516934d1fe2eb,
       type: 2}

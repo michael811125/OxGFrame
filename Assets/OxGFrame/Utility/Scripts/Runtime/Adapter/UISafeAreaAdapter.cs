@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace OxGFrame.Utility
+namespace OxGFrame.Utility.Adapter
 {
     [DisallowMultipleComponent]
     [AddComponentMenu("OxGFrame/Utility/Adapter/UISafeAreaAdapter")]

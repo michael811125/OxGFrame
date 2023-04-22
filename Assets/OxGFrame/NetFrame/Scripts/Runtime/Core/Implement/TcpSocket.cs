@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.IO;
 using UnityEngine;
 using System.Threading;
 
@@ -49,9 +48,10 @@ namespace OxGFrame.NetFrame
 
                 if (!iAsyncResult.IsCompleted)
                 {
-                    Debug.Log("!iAsyncResult.IsCompleted");
                     if (this._tcp != null) this._tcp.Close();
                     this.OnClose(this, 0);
+
+                    Debug.Log("!iAsyncResult.IsCompleted");
                 }
             }
             catch (Exception ex)
@@ -75,6 +75,7 @@ namespace OxGFrame.NetFrame
             catch (Exception ex)
             {
                 Debug.LogError("End Connect Failed" + ex.Message);
+
                 Interlocked.Increment(ref this._failedConnectionCount);
 
                 if (this._failedConnectionCount >= this._netOption.host.Length)
@@ -110,7 +111,6 @@ namespace OxGFrame.NetFrame
             {
                 this.Close();
                 Debug.LogError(string.Format("EndRead Error {0}, The Connection Has Been Closed. {1}, bytes: {2}", ex.Message, ar, readBytes));
-
                 this.OnError(this, string.Format("{0}", ex));
 
                 return;

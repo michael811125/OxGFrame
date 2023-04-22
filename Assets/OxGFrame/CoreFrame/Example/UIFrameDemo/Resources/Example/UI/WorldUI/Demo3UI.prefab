@@ -5264,9 +5264,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f6973ac574ae2e47902c8ecf6b947ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowInstantiate: 0
   onCloseAndDestroy: 0
+  canvas: {fileID: 0}
+  graphicRaycaster: {fileID: 0}
   uiSetting:
-    canvasType: 2
+    canvasName: CanvasWorld
     nodeType: 2
     stack: 1
     order: 1000

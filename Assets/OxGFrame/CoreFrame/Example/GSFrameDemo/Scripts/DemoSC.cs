@@ -50,7 +50,7 @@ public class DemoSC : GSBase
          */
     }
 
-    public override void OnUpdateOnceAfterProtocol(int funcId = 0)
+    public override void OnReceiveAndRefresh(object obj = null)
     {
         /**
         * Do Update Once After Protocol Handle

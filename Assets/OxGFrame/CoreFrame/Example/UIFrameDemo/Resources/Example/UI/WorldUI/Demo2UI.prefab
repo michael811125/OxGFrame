@@ -5144,8 +5144,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowInstantiate: 1
   onCloseAndDestroy: 0
+  canvas: {fileID: 0}
+  graphicRaycaster: {fileID: 0}
   uiSetting:
-    canvasType: 2
+    canvasName: CanvasWorld
     nodeType: 2
     stack: 1
     order: 0

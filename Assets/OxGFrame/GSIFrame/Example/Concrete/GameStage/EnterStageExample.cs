@@ -1,29 +1,25 @@
 ﻿using OxGFrame.GSIFrame;
 using Cysharp.Threading.Tasks;
 
-public class EnterStageExample : GameStageBase
+public class EnterStageExample : GSIBase
 {
-    public EnterStageExample(byte gstId) : base(gstId)
+    public async override UniTask OnInit()
     {
+        /* Do Somthing OnInit once in here */
     }
 
-    public override void ResetStage()
+    public async override UniTask OnEnter()
     {
-        /* Do Somthing Reset in here */
+        /* Do Somthing OnEnter in here */
     }
 
-    public async override UniTask InitStage()
+    public override void OnUpdate(float dt = 0.0f)
     {
-        /* Do Somthing Init in here */
+        /* Do Somthing OnUpdate in here */
     }
 
-    public override void UpdateStage(float dt = 0.0f)
+    public override void OnExit()
     {
-        /* Do Somthing Update in here */
-    }
-
-    public override void ReleaseStage()
-    {
-        /* Do Somthing Release in here */
+        /* Do Somthing OnExit in here */
     }
 }

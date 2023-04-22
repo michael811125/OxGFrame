@@ -2,14 +2,17 @@
 
 public class EventCenterExample : EventCenterBase<EventCenterExample>
 {
-    #region declaration and definition xBASE
-    public const int EEventTest = xBASE + 1;
-    #endregion
-
     public EventCenterExample()
     {
-        #region Register Event
-        this.Register(new EEventTest(EEventTest));
-        #endregion
+        // easy
+        this.Register<EventMsgTest>();
+
+        // or
+
+        //this.Register<EventMsgTest>(0x01);
+
+        // or
+
+        //this.Register(0x01, new EventMsgTest());
     }
 }

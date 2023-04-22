@@ -1,6 +1,4 @@
 ﻿using OxGFrame.CoreFrame.EPFrame;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DemoEntity1 : EPBase
@@ -13,8 +11,16 @@ public class DemoEntity1 : EPBase
     protected override void InitOnceComponents()
     {
         Debug.Log($"<color=#FFA720>InitOnceComponents:</color> {this.gameObject.name}");
+
+        // Single Bind
         Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {this.collector.GetNode("B1").name}");
-        Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {this.collector.GetNode("B2").name}");
+
+        // Multi Bind (Same Name)
+        Debug.Log($"<color=#FFA720>Found Array Binds:</color> {this.gameObject.name} => {this.collector.GetNodes("B2").Length}");
+        foreach (var node in this.collector.GetNodes("B2"))
+        {
+            Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {node.name}");
+        }
     }
 
     protected override void InitOnceEvents()

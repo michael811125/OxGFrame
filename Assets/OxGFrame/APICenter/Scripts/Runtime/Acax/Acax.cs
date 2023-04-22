@@ -5,10 +5,10 @@ using UnityEngine.Networking;
 
 namespace OxGFrame.APICenter
 {
-    public delegate void ResponseHandle(string response);
-
     public static class Http
     {
+        public delegate void ResponseHandle(string response);
+
         /// <summary>
         /// Asynchronous C# and Xml = Acax
         /// </summary>
@@ -22,6 +22,22 @@ namespace OxGFrame.APICenter
         {
             method = method.ToUpper();
             _Request(url, method, headers, body, success, error).Forget();
+        }
+
+        /// <summary>
+        /// Asynchronous C# and Xml = Acax
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="method"></param>
+        /// <param name="headers"></param>
+        /// <param name="body"></param>
+        /// <param name="success"></param>
+        /// <param name="error"></param>
+        /// <returns></returns>
+        public async static UniTask AcaxAsync(string url, string method, string[,] headers, object[,] body, ResponseHandle success = null, ResponseHandle error = null)
+        {
+            method = method.ToUpper();
+            await _Request(url, method, headers, body, success, error);
         }
 
         private static async UniTask _Request(string url, string method, string[,] headers, object[,] body, ResponseHandle success, ResponseHandle error)

@@ -12,14 +12,14 @@ namespace OxGFrame.CoreFrame.UIFrame
         [HideInInspector] public Canvas canvas;
         [HideInInspector] public CanvasScaler canvasScaler;
         [HideInInspector] public GraphicRaycaster graphicRaycaster;
-        [HideInInspector] public GameObject goRoot;    // UI 根節點物件
-        public Dictionary<string, GameObject> goNodes; // UI 節點物件
+        [HideInInspector] public GameObject uiRoot;    // UI 根節點物件
+        public Dictionary<string, GameObject> uiNodes; // UI 節點物件
         public UIMaskManager uiMaskManager = null;     // UIMaskMgr, 由 UIManager 進行單例管控
         public UIFreezeManager uiFreezeManager = null; // UIFreezeMgr, 由 UIManager 進行單例管控
 
         public UICanvas()
         {
-            this.goNodes = new Dictionary<string, GameObject>();
+            this.uiNodes = new Dictionary<string, GameObject>();
         }
 
         private void Awake()
@@ -31,7 +31,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         public GameObject GetUINode(NodeType nodeType)
         {
-            this.goNodes.TryGetValue(nodeType.ToString(), out GameObject goNode);
+            this.uiNodes.TryGetValue(nodeType.ToString(), out GameObject goNode);
             return goNode;
         }
 
@@ -41,7 +41,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             try
             {
-                // 如果 UICavas 在轉換場景被 Destroy 時, 需要進行連動釋放, 確保 UIManager 下次運作正常
+                // 如果 UICavas Destroy 時, 需要進行連動釋放, 確保 UIManager 快取操作正常
                 UIBase[] uiBases = this.gameObject.GetComponentsInChildren<UIBase>(true);
                 foreach (var uiBase in uiBases)
                 {
@@ -53,14 +53,14 @@ namespace OxGFrame.CoreFrame.UIFrame
             }
             catch
             {
-                /* Not to do */
+                /* Nothing to do */
             }
         }
 
         ~UICanvas()
         {
-            this.goRoot = null;
-            this.goNodes = null;
+            this.uiRoot = null;
+            this.uiNodes = null;
             this.uiMaskManager = null;
             this.uiFreezeManager = null;
         }

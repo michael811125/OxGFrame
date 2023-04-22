@@ -1,6 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,10 +16,9 @@ namespace OxGFrame.CoreFrame
         #region 綁定物件的收集器
         public class Collector
         {
-            public string checkName = "";                                                          // 用於存放 Prefab Name, 會用於判斷是否同物件執行重複綁定
-
             #region 依照綁定類型建立快取容器
-            private Dictionary<string, GameObject> _nodes = new Dictionary<string, GameObject>();  // 用於存放綁定物件的快取 (GameObject)
+            // 用於存放綁定物件的快取 (GameObject)
+            private Dictionary<string, List<GameObject>> _nodes = new Dictionary<string, List<GameObject>>();
             #endregion
 
             #region 依照綁定類型建立相關方法
@@ -31,8 +29,12 @@ namespace OxGFrame.CoreFrame
             /// <param name="go"></param>
             public void AddNode(string key, GameObject go)
             {
-                if (!this._nodes.ContainsKey(key)) this._nodes.Add(key, go);
-                else this._nodes[key] = go;
+                if (!this._nodes.ContainsKey(key))
+                {
+                    this._nodes[key] = new List<GameObject>();
+                    this._nodes[key].Add(go);
+                }
+                else this._nodes[key].Add(go);
             }
 
             /// <summary>
@@ -44,7 +46,22 @@ namespace OxGFrame.CoreFrame
             {
                 if (this._nodes.ContainsKey(key))
                 {
-                    return this._nodes[key];
+                    return this._nodes[key][0];
+                }
+
+                return null;
+            }
+
+            /// <summary>
+            /// 取得綁定節點 (GameObjects)
+            /// </summary>
+            /// <param name="key"></param>
+            /// <returns></returns>
+            public GameObject[] GetNodes(string key)
+            {
+                if (this._nodes.ContainsKey(key))
+                {
+                    return this._nodes[key].ToArray();
                 }
 
                 return null;
@@ -54,13 +71,12 @@ namespace OxGFrame.CoreFrame
         #endregion
 
         [HideInInspector] public Collector collector { get; private set; } = new Collector(); // 綁定物件收集器
-        [HideInInspector] protected bool _isBinded { get; private set; } = false;             // 檢查是否綁定的開關
-        [HideInInspector] protected bool _isInitFirst { get; private set; } = false;          // 是否初次初始
-
-        [HideInInspector] public string bundleName { get; protected set; } = string.Empty;    // BundleName
         [HideInInspector] public string assetName { get; protected set; } = string.Empty;     // (Bundle) AssetName = (Resouce) PathName
         [HideInInspector] public int groupId { get; protected set; } = 0;                     // 群組id
         [HideInInspector] public bool isHidden { get; protected set; } = false;               // 檢查是否隱藏 (主要區分 Close & Hide 行為)
+
+        [HideInInspector] protected bool _isBinded { get; private set; } = false;             // 檢查是否綁定的開關
+        [HideInInspector] protected bool _isInitFirst { get; private set; } = false;          // 是否初次初始
 
         [Tooltip("Allow instantiate when close will destroy directly")]
         public bool allowInstantiate = false;                                                 // 是否允許多實例            
@@ -156,8 +172,8 @@ namespace OxGFrame.CoreFrame
         /// <summary>
         /// 會由 Protocol 接收到封包時, 被調用
         /// </summary>
-        /// <param name="funcId"></param>
-        public abstract void OnUpdateOnceAfterProtocol(int funcId = 0);
+        /// <param name="obj"></param>
+        public abstract void OnReceiveAndRefresh(object obj = null);
 
         /// <summary>
         /// 每幀被調用
@@ -190,9 +206,9 @@ namespace OxGFrame.CoreFrame
         /// </summary>
         /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
-        public void SetNames(string bundleName, string assetName)
+        public void SetNames(string assetName)
         {
-            this.bundleName = bundleName;
+            //this.bundleName = bundleName;
             this.assetName = assetName;
         }
 

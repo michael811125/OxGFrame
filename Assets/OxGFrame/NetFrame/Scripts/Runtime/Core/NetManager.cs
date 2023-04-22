@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -7,7 +6,7 @@ namespace OxGFrame.NetFrame
 {
     public class NetManager
     {
-        private Dictionary<byte, NetNode> _dictNetNode = null; // NetNode快取
+        private Dictionary<byte, NetNode> _dictNetNode = null; // NetNode 快取
 
         private static NetManager _instance = null;
         public static NetManager GetInstance()
@@ -33,7 +32,7 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 透過NetNodeID方式註冊新增NetNode
+        /// 透過 NetNodeID 方式註冊新增 NetNode
         /// </summary>
         /// <param name="netNode"></param>
         /// <param name="nnId">預設 = 0</param>
@@ -44,7 +43,7 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 透過NetNodeID移除NetNode
+        /// 透過 NetNodeID 移除 NetNode
         /// </summary>
         /// <param name="nnId">預設 = 0</param>
         public void RemoveNetNode(byte nnId = 0)
@@ -53,7 +52,7 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 透過NetNodeID取得NetNode
+        /// 透過 NetNodeID 取得 NetNode
         /// </summary>
         /// <param name="nnId">預設 = 0</param>
         /// <returns></returns>
@@ -64,7 +63,7 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 設置NetOption並且透過NetNodeID指定NetNode進行連接
+        /// 設置 NetOption 並且透過 NetNodeID 指定 NetNode 進行連接
         /// </summary>
         /// <param name="netOption"></param>
         /// <param name="nnId">預設 = 0</param>
@@ -78,7 +77,7 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 透過NetNodeID取得NetNode的連線狀態
+        /// 透過 NetNodeID 取得 NetNode 的連線狀態
         /// </summary>
         /// <param name="nnId">預設 = 0</param>
         /// <returns></returns>
@@ -93,7 +92,7 @@ namespace OxGFrame.NetFrame
             return false;
         }
         /// <summary>
-        /// 透過NetNodeID指定NetNode傳送資料至Server
+        /// 透過 NetNodeID 指定 NetNode 傳送資料至 Server
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="nnId">預設 = 0</param>
@@ -112,7 +111,7 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 透過NetNodeID選擇要關閉的NetNode
+        /// 透過 NetNodeID 選擇要關閉的 NetNode
         /// </summary>
         /// <param name="nnId">預設 = 0</param>
         public void CloseSocket(byte nnId = 0)

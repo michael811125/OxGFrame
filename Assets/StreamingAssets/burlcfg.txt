@@ -1,5 +1,0 @@
-#bundle_ip = Server IP
-#store_link = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID) or Apple Store Link (itms-apps://itunes.apple.com/app/idYOUR_ID)
-
-bundle_ip 192.168.1.141
-store_link https://play.google.com/store/apps/details?id=YOUR_ID

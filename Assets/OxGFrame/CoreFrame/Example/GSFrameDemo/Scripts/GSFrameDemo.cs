@@ -1,99 +1,108 @@
-﻿using OxGFrame.CoreFrame.GSFrame;
+﻿using OxGFrame.CoreFrame;
 using UnityEngine;
 
 public class GSFrameDemo : MonoBehaviour
 {
-    public static string DemoSC = "Example/Scene/DemoSC";
-    public static string DemoRS = "Example/Res/DemoRS";
+    // if use prefix "res#" will load from resource else will from bundle
+    public static string DemoSC = "res#Example/Scene/DemoSC";
+    public static string DemoRS = "res#Example/Res/DemoRS";
 
     public static int scId = 1;
     public static int rsId = 2;
 
+    public Transform parent;
+
     #region Scene
     public async void PreloadDemoSC()
     {
-        await GSManager.GetInstance().Preload(GSFrameDemo.DemoSC);
+        await CoreFrames.GSFrame.Preload(GSFrameDemo.DemoSC);
     }
 
     public async void ShowDemoSC()
     {
-        await GSManager.GetInstance().Show(scId, GSFrameDemo.DemoSC);
+        await CoreFrames.GSFrame.Show(scId, GSFrameDemo.DemoSC);
     }
+
+    public async void ShowDemoSCAndSetParent()
+    {
+        await CoreFrames.GSFrame.Show(scId, GSFrameDemo.DemoSC, null, null, null, this.parent);
+    }
+
 
     public void HideDemoSC()
     {
-        GSManager.GetInstance().Hide(GSFrameDemo.DemoSC);
+        CoreFrames.GSFrame.Hide(GSFrameDemo.DemoSC);
     }
 
     public void RevealDemoSC()
     {
-        GSManager.GetInstance().Reveal(GSFrameDemo.DemoSC);
+        CoreFrames.GSFrame.Reveal(GSFrameDemo.DemoSC);
     }
 
     public void CloseDemoSC()
     {
-        GSManager.GetInstance().Close(GSFrameDemo.DemoSC);
+        CoreFrames.GSFrame.Close(GSFrameDemo.DemoSC);
     }
 
     public void CloseWithDestroyDemoSC()
     {
-        GSManager.GetInstance().Close(GSFrameDemo.DemoSC, false, true);
+        CoreFrames.GSFrame.Close(GSFrameDemo.DemoSC, false, true);
     }
     #endregion
 
     #region Res
     public async void PreloadDemoRS()
     {
-        await GSManager.GetInstance().Preload(GSFrameDemo.DemoRS);
+        await CoreFrames.GSFrame.Preload(GSFrameDemo.DemoRS);
     }
 
     public async void ShowDemoRS()
     {
-        await GSManager.GetInstance().Show(rsId, GSFrameDemo.DemoRS);
+        await CoreFrames.GSFrame.Show(rsId, GSFrameDemo.DemoRS);
     }
 
     public void HideDemoRS()
     {
-        GSManager.GetInstance().Hide(GSFrameDemo.DemoRS);
+        CoreFrames.GSFrame.Hide(GSFrameDemo.DemoRS);
     }
 
     public void RevealDemoRS()
     {
-        GSManager.GetInstance().Reveal(GSFrameDemo.DemoRS);
+        CoreFrames.GSFrame.Reveal(GSFrameDemo.DemoRS);
     }
 
     public void CloseDemoRS()
     {
-        GSManager.GetInstance().Close(GSFrameDemo.DemoRS);
+        CoreFrames.GSFrame.Close(GSFrameDemo.DemoRS);
     }
 
     public void CloseWithDestroyDemoRS()
     {
-        GSManager.GetInstance().Close(GSFrameDemo.DemoRS, false, true);
+        CoreFrames.GSFrame.Close(GSFrameDemo.DemoRS, false, true);
     }
     #endregion
 
     public void HideAll()
     {
-        GSManager.GetInstance().HideAll(scId);
-        GSManager.GetInstance().HideAll(rsId);
+        CoreFrames.GSFrame.HideAll(scId);
+        CoreFrames.GSFrame.HideAll(rsId);
     }
 
     public void ReveaAll()
     {
-        GSManager.GetInstance().RevealAll(scId);
-        GSManager.GetInstance().RevealAll(rsId);
+        CoreFrames.GSFrame.RevealAll(scId);
+        CoreFrames.GSFrame.RevealAll(rsId);
     }
 
     public void CloseAll()
     {
-        GSManager.GetInstance().CloseAll(scId);
-        GSManager.GetInstance().CloseAll(rsId);
+        CoreFrames.GSFrame.CloseAll(scId);
+        CoreFrames.GSFrame.CloseAll(rsId);
     }
 
     public void CloseAllWithDestroy()
     {
-        GSManager.GetInstance().CloseAll(scId, false, true);
-        GSManager.GetInstance().CloseAll(rsId, false, true);
+        CoreFrames.GSFrame.CloseAll(scId, false, true);
+        CoreFrames.GSFrame.CloseAll(rsId, false, true);
     }
 }

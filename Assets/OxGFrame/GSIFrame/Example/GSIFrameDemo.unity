@@ -337,6 +337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cff90756e6bf8d4ea8ab43dc843b5ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  forceMode: 0
 --- !u!4 &1026211650
 Transform:
   m_ObjectHideFlags: 0
@@ -500,13 +501,17 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 5
     m_MaxSize: 50
-    m_Alignment: 0
+    m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Press Numpad 1, 2, 3, 4, 5
+  m_Text: 'Press Numpad 0 to switch ForceMode
+
+
+    Press Numpad 1, 2, 3, 4, 5 to
+    change Stage'
 --- !u!222 &2062527281
 CanvasRenderer:
   m_ObjectHideFlags: 0

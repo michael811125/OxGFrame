@@ -1,0 +1,51 @@
+﻿using OxGFrame.GSIFrame;
+
+public class #SCRIPTNAME# : GSIManagerBase<#SCRIPTNAME#>
+{
+    public #SCRIPTNAME#()
+    {
+        /*
+        // >>> EXAMPLE <<<
+
+        // 1. Game Startup Stage
+        this.AddGameStage<GSIBase>();
+
+        // 2. Game Logo Stage
+        this.AddGameStage<GSIBase>();
+
+        // 3. Game Patch Stage
+        this.AddGameStage<GSIBase>();
+
+        // 4. Game Login Stage
+        this.AddGameStage<GSIBase>();
+
+        // 5. Game Enter Stage
+        this.AddGameStage<GSIBase>();
+
+        // Note: Custom create your own stage of game
+
+        // >>> EXAMPLE <<<
+        */
+    }
+
+    /// <summary>
+    /// Call by Main MonoBehaviour Start
+    /// </summary>
+    public override void OnStart()
+    {
+        /* 
+		Start first game stage in here (like below)
+        this.ChangeGameStage<GSIBase>();
+		*/
+    }
+
+    /// <summary>
+    /// Call by Main MonoBehaviour Update
+    /// </summary>
+    /// <param name="dt"></param>
+    public override void OnUpdate(float dt = 0.0f)
+    {
+        base.OnUpdate(dt); // Must be called
+    }
+}
+

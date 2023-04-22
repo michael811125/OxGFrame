@@ -3,7 +3,9 @@
     "rootNamespace": "",
     "references": [
         "AssetLoader.Runtime",
-        "UniTask"
+        "UniTask",
+        "YooAsset",
+        "YooAsset.Editor"
     ],
     "includePlatforms": [
         "Editor"

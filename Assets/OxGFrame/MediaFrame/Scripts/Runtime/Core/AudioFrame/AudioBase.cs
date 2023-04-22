@@ -221,17 +221,25 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             base.OnRelease();
             this._audioSource = null;
+            this._mixerGroup = null;
             this.audioClip = null;
             this.audioType = null;
-            this._mixerGroup = null;
             this.fullPathName = null;
             this.urlSet = null;
         }
 
-        public void SetNames(string bundleName, string assetName)
+        private void OnDestroy()
         {
-            this.bundleName = bundleName;
-            this.assetName = assetName;
+            if (Time.frameCount == 0 || !Application.isPlaying) return;
+
+            try
+            {
+                AudioManager.GetInstance().Stop(this, true, true);
+            }
+            catch
+            {
+                /* Nothing to do */
+            }
         }
     }
 }

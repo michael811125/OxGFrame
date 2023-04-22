@@ -2,24 +2,14 @@
 
 public class #SCRIPTNAME# : EventCenterBase<#SCRIPTNAME#>
 {
-    /*
-    // >>> EXAMPLE <<<
-
-    #region declaration and definition EVENT_xBASE
-    public const int EEventTest = EVENT_xBASE + 1;
-    #endregion
-
-    // >>> EXAMPLE <<<
-    */
-
     public #SCRIPTNAME#()
     {
         /*
         // >>> EXAMPLE <<<
 
-        #region Register Event
-        this.Register(new EEventTest(EEventTest));
-        #endregion
+        this.Register<EventBase>();
+        this.Register<EventBase>(0x01);
+        this.Register(0x01, new EventBase());
 
         // >>> EXAMPLE <<<
         */

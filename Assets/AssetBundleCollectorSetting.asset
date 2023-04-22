@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 185f6993d5150494d98da50e26cb1c25, type: 3}
+  m_Name: AssetBundleCollectorSetting
+  m_EditorClassIdentifier: 
+  ShowPackageView: 1
+  EnableAddressable: 1
+  UniqueBundleName: 0
+  ShowEditorAlias: 0
+  Packages:
+  - PackageName: DefaultPackage
+    PackageDesc: 
+    Groups:
+    - GroupName: ModelGroup
+      GroupDesc: 
+      AssetTags: models
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/OxGFrame/AssetLoader/Example/Prefabs/model_01.prefab
+        CollectorGUID: b4ea3356cddbd8b41926c28adefdfbc5
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+    - GroupName: SceneGroup
+      GroupDesc: 
+      AssetTags: scenes
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo01.unity
+        CollectorGUID: 97102f27cdcc74846bb0909829b431cd
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo02.unity
+        CollectorGUID: 9f25400e0da4e034294d5e153b0533ab
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo03.unity
+        CollectorGUID: 42b42b7f9b5995748ba85a54431669b3
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 

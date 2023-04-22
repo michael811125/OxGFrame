@@ -298,5 +298,19 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this.urlSet = null;
             this._targetCamera = null;
         }
+
+        private void OnDestroy()
+        {
+            if (Time.frameCount == 0 || !Application.isPlaying) return;
+
+            try
+            {
+                VideoManager.GetInstance().Stop(this, true, true);
+            }
+            catch
+            {
+                /* Nothing to do */
+            }
+        }
     }
 }

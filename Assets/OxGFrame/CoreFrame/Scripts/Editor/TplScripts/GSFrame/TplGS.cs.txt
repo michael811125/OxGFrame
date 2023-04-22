@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using OxGFrame.CoreFrame.GSFrame;
 
 public class #SCRIPTNAME# : GSBase
 {
+    // Use _Node@XXX to Bind
+
     public override void BeginInit()
     {
         /**
@@ -16,15 +15,15 @@ public class #SCRIPTNAME# : GSBase
     protected override async UniTask OpenSub()
     {
         /**
-        * Open Sub With Async
-        */
+         * Open Sub With Async
+         */
     }
 
     protected override void CloseSub()
     {
         /**
-        * Close Sub
-        */
+         * Close Sub
+         */
     }
 
     protected override void InitOnceComponents()
@@ -37,8 +36,8 @@ public class #SCRIPTNAME# : GSBase
     protected override void InitOnceEvents()
     {
         /**
-          * Do Somthing Init Once In Here (For Events)
-          */
+         * Do Somthing Init Once In Here (For Events)
+         */
     }
 
     protected override void OnShow(object obj)
@@ -55,11 +54,11 @@ public class #SCRIPTNAME# : GSBase
          */
     }
 
-    public override void OnUpdateOnceAfterProtocol(int funcId = 0)
+    public override void OnReceiveAndRefresh(object obj = null)
     {
         /**
-        * Do Update Once After Protocol Handle
-        */
+         * Do Refresh Once After Data Receive
+         */
     }
 
     protected override void OnClose()

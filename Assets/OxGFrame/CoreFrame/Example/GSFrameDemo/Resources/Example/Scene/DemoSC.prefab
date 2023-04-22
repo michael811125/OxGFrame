@@ -242,10 +242,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdf282d4880532341a043c96f4a5b018, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allowInstantiate: 0
+  allowInstantiate: 1
   onCloseAndDestroy: 0
   gsSetting:
-    nodeType: 1
+    nodeName: Scenes
     whenCloseAllToSkip: 0
     whenHideAllToSkip: 0
 --- !u!1 &7655318841875574380

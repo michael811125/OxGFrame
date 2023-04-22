@@ -1,0 +1,157 @@
+{
+    "Summary": {
+        "YooVersion": "",
+        "UnityVersion": "2021.3.23f1",
+        "BuildDate": "2023/4/22 上午 06:31:57",
+        "BuildSeconds": 10,
+        "BuildTarget": 19,
+        "BuildPipeline": 0,
+        "BuildMode": 0,
+        "BuildPackageName": "DefaultPackage",
+        "BuildPackageVersion": "2023-04-22-391",
+        "EnableAddressable": true,
+        "UniqueBundleName": false,
+        "EncryptionServicesClassName": "XorEncryption",
+        "OutputNameStyle": 1,
+        "CompressOption": 2,
+        "DisableWriteTypeTree": false,
+        "IgnoreTypeTreeChanges": true,
+        "AssetFileTotalCount": 10,
+        "MainAssetTotalCount": 4,
+        "AllBundleTotalCount": 4,
+        "AllBundleTotalSize": 618809,
+        "EncryptedBundleTotalCount": 4,
+        "EncryptedBundleTotalSize": 618809,
+        "RawBundleTotalCount": 0,
+        "RawBundleTotalSize": 0
+    },
+    "AssetInfos": [
+        {
+            "Address": "model_01",
+            "AssetPath": "Assets/OxGFrame/AssetLoader/Example/Prefabs/model_01.prefab",
+            "AssetGUID": "b4ea3356cddbd8b41926c28adefdfbc5",
+            "AssetTags": [
+                "models"
+            ],
+            "MainBundleName": "assets_oxgframe_assetloader_example_prefabs_model_01.bundle",
+            "MainBundleSize": 468804,
+            "DependBundles": [],
+            "DependAssets": [
+                "Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.png",
+                "Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.tga",
+                "Assets/OxGFrame/AssetLoader/Example/Model/Materials/nideer_sm.mat",
+                "Assets/OxGFrame/AssetLoader/Example/Model/ice_devil.FBX",
+                "Assets/OxGFrame/AssetLoader/Example/Model/IceDevil_AnimatorController.controller",
+                "Assets/OxGFrame/AssetLoader/Example/Model/Materials/nideer.mat"
+            ]
+        },
+        {
+            "Address": "LevelDemo01",
+            "AssetPath": "Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo01.unity",
+            "AssetGUID": "97102f27cdcc74846bb0909829b431cd",
+            "AssetTags": [
+                "scenes"
+            ],
+            "MainBundleName": "assets_oxgframe_coreframe_example_usframedemo_scenes_leveldemo01.bundle",
+            "MainBundleSize": 50016,
+            "DependBundles": [],
+            "DependAssets": []
+        },
+        {
+            "Address": "LevelDemo02",
+            "AssetPath": "Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo02.unity",
+            "AssetGUID": "9f25400e0da4e034294d5e153b0533ab",
+            "AssetTags": [
+                "scenes"
+            ],
+            "MainBundleName": "assets_oxgframe_coreframe_example_usframedemo_scenes_leveldemo02.bundle",
+            "MainBundleSize": 49979,
+            "DependBundles": [],
+            "DependAssets": []
+        },
+        {
+            "Address": "LevelDemo03",
+            "AssetPath": "Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo03.unity",
+            "AssetGUID": "42b42b7f9b5995748ba85a54431669b3",
+            "AssetTags": [
+                "scenes"
+            ],
+            "MainBundleName": "assets_oxgframe_coreframe_example_usframedemo_scenes_leveldemo03.bundle",
+            "MainBundleSize": 50010,
+            "DependBundles": [],
+            "DependAssets": []
+        }
+    ],
+    "BundleInfos": [
+        {
+            "BundleName": "assets_oxgframe_assetloader_example_prefabs_model_01.bundle",
+            "FileName": "fa56e3586b3fbe02e638a78fbc015ce4.bundle",
+            "FileHash": "fa56e3586b3fbe02e638a78fbc015ce4",
+            "FileCRC": "5a3521d8",
+            "FileSize": 468804,
+            "IsRawFile": false,
+            "LoadMethod": 3,
+            "Tags": [
+                "models"
+            ],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/OxGFrame/AssetLoader/Example/Prefabs/model_01.prefab",
+                "Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.png",
+                "Assets/OxGFrame/AssetLoader/Example/Model/shuijingciuv.tga",
+                "Assets/OxGFrame/AssetLoader/Example/Model/Materials/nideer_sm.mat",
+                "Assets/OxGFrame/AssetLoader/Example/Model/ice_devil.FBX",
+                "Assets/OxGFrame/AssetLoader/Example/Model/IceDevil_AnimatorController.controller",
+                "Assets/OxGFrame/AssetLoader/Example/Model/Materials/nideer.mat"
+            ]
+        },
+        {
+            "BundleName": "assets_oxgframe_coreframe_example_usframedemo_scenes_leveldemo01.bundle",
+            "FileName": "39e5c055da4ea98e8db2a429539ea23f.bundle",
+            "FileHash": "39e5c055da4ea98e8db2a429539ea23f",
+            "FileCRC": "a8932d3f",
+            "FileSize": 50016,
+            "IsRawFile": false,
+            "LoadMethod": 3,
+            "Tags": [
+                "scenes"
+            ],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo01.unity"
+            ]
+        },
+        {
+            "BundleName": "assets_oxgframe_coreframe_example_usframedemo_scenes_leveldemo02.bundle",
+            "FileName": "a4808b5814a3db4585f8f5d72a68695f.bundle",
+            "FileHash": "a4808b5814a3db4585f8f5d72a68695f",
+            "FileCRC": "4f71a077",
+            "FileSize": 49979,
+            "IsRawFile": false,
+            "LoadMethod": 3,
+            "Tags": [
+                "scenes"
+            ],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo02.unity"
+            ]
+        },
+        {
+            "BundleName": "assets_oxgframe_coreframe_example_usframedemo_scenes_leveldemo03.bundle",
+            "FileName": "83d71c3c7b0173afdeeef1a5498c43d4.bundle",
+            "FileHash": "83d71c3c7b0173afdeeef1a5498c43d4",
+            "FileCRC": "c5c79b50",
+            "FileSize": 50010,
+            "IsRawFile": false,
+            "LoadMethod": 3,
+            "Tags": [
+                "scenes"
+            ],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo03.unity"
+            ]
+        }
+    ]
+}

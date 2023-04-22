@@ -1,44 +1,55 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class GSIFrameDemo : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public bool forceMode = false;
+
     void Start()
     {
-        GameStageManagerExample.GetInstance().OnStart();
+        GSIManagerExample.GetInstance().OnStart();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        GameStageManagerExample.GetInstance().OnUpdate(Time.deltaTime);
+        GSIManagerExample.GetInstance().OnUpdate(Time.deltaTime);
+
+        if (Keyboard.current.numpad0Key.wasReleasedThisFrame)
+        {
+            this.forceMode = !this.forceMode;
+
+            if (this.forceMode) Debug.Log("Enable ForceMode");
+            else Debug.Log("Disable ForceMode");
+        }
 
         if (Keyboard.current.numpad1Key.wasReleasedThisFrame)
         {
-            GameStageManagerExample.GetInstance().ChangeGameStage(GameStageManagerExample.startupStage);
+            if (this.forceMode) GSIManagerExample.GetInstance().ChangeGameStageForce<StartupStageExample>();
+            else GSIManagerExample.GetInstance().ChangeGameStage<StartupStageExample>();
         }
 
         if (Keyboard.current.numpad2Key.wasReleasedThisFrame)
         {
-            GameStageManagerExample.GetInstance().ChangeGameStage(GameStageManagerExample.logoStage);
+            if (this.forceMode) GSIManagerExample.GetInstance().ChangeGameStageForce<LogoStageExample>();
+            else GSIManagerExample.GetInstance().ChangeGameStage<LogoStageExample>();
         }
 
         if (Keyboard.current.numpad3Key.wasReleasedThisFrame)
         {
-            GameStageManagerExample.GetInstance().ChangeGameStage(GameStageManagerExample.patchStage);
+            if (this.forceMode) GSIManagerExample.GetInstance().ChangeGameStageForce<PatchStageExample>();
+            else GSIManagerExample.GetInstance().ChangeGameStage<PatchStageExample>();
         }
 
         if (Keyboard.current.numpad4Key.wasReleasedThisFrame)
         {
-            GameStageManagerExample.GetInstance().ChangeGameStage(GameStageManagerExample.loginStage);
+            if (this.forceMode) GSIManagerExample.GetInstance().ChangeGameStageForce<LoginStageExample>();
+            else GSIManagerExample.GetInstance().ChangeGameStage<LoginStageExample>();
         }
 
         if (Keyboard.current.numpad5Key.wasReleasedThisFrame)
         {
-            GameStageManagerExample.GetInstance().ChangeGameStage(GameStageManagerExample.enterStage);
+            if (this.forceMode) GSIManagerExample.GetInstance().ChangeGameStageForce<EnterStageExample>();
+            else GSIManagerExample.GetInstance().ChangeGameStage<EnterStageExample>();
         }
     }
 }

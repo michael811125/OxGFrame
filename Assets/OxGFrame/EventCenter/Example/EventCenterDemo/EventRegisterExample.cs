@@ -2,12 +2,10 @@
 using OxGFrame.EventCenter;
 using UnityEngine;
 
-public class EEventTest : EventBase
+public class EventMsgTest : EventBase
 {
     private int e_valueInt;
     private string e_valueString;
-
-    public EEventTest(int funcId) : base(funcId) { }
 
     public void Emit(int valueInt, string valueString)
     {
@@ -19,7 +17,7 @@ public class EEventTest : EventBase
 
     public async override UniTaskVoid HandleEvent()
     {
-        Debug.Log(string.Format("<color=#FFC078>【Handle Event】 -> FuncId: 0x{0}</color>", this.GetFuncId().ToString("X")));
+        Debug.Log(string.Format("<color=#FFC078>【Handle Event】 -> {0}</color>", nameof(EventMsgTest)));
 
         int getValueInt = this.e_valueInt;
         string getValueString = this.e_valueString;

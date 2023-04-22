@@ -1,0 +1,16 @@
+ManifestFileVersion: 0
+CRC: 4040671070
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: assets_oxgframe_assetloader_example_prefabs_model_01.bundle
+      Dependencies: {}
+    Info_1:
+      Name: assets_oxgframe_coreframe_example_usframedemo_scenes_leveldemo01.bundle
+      Dependencies: {}
+    Info_2:
+      Name: assets_oxgframe_coreframe_example_usframedemo_scenes_leveldemo02.bundle
+      Dependencies: {}
+    Info_3:
+      Name: assets_oxgframe_coreframe_example_usframedemo_scenes_leveldemo03.bundle
+      Dependencies: {}
