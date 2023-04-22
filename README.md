@@ -96,7 +96,6 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 bundle_ip 127.0.0.1
 bundle_fallback_ip 127.0.0.1
 store_link http://
-
 ```
 
 **\>\> 建立 burlconfig 方式 \<\<**
