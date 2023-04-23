@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace OxGFrame.CoreFrame.UIFrame
 {
-    public delegate void AnimEndCb();
+    public delegate void AnimeEndCb();
 
     public class UIBase : FrameBase
     {
@@ -87,7 +87,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             else this.OnReveal();
 
             this.Freeze();
-            this.ShowAnim(() =>
+            this.ShowAnime(() =>
             {
                 this.UnFreeze();
             });
@@ -101,7 +101,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             if (!this.gameObject.activeSelf) return;
 
             this.Freeze();
-            this.HideAnim(() =>
+            this.HideAnime(() =>
             {
                 this.UnFreeze();
 
@@ -165,14 +165,14 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         #region UI動畫過度
-        protected virtual void ShowAnim(AnimEndCb animEndCb)
+        protected virtual void ShowAnime(AnimeEndCb animeEndCb)
         {
-            animEndCb();
+            animeEndCb();
         }
 
-        protected virtual void HideAnim(AnimEndCb animEndCb)
+        protected virtual void HideAnime(AnimeEndCb animeEndCb)
         {
-            animEndCb();
+            animeEndCb();
         }
         #endregion
     }

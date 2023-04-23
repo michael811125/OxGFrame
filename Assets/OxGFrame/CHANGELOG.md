@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2.0.2] - 2023-04-24
+- Renamed method ShowAnim => ShowAnime.
+- Renamed method HideAnim => HideAnime.
+- Renamed delegate AnimEndCb => AnimeEndCb.
+- Fixed WebSock file.
+
 ## [2.0.1] - 2023-04-23
 - Renamed TcpSocket => TcpSock.
 - Renamed Websock => WebSock.

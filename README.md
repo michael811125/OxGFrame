@@ -11,7 +11,7 @@
 
 ## 基本介紹
 
-OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EPFrame)、影音 (MediaFrame)、遊戲整合 (GSIFrame)、網路 (NetFrame)、集中式 Event 註冊 (EventCenter)、集中式 API 註冊 (APICenter)、Http.Acax (仿 Ajax 概念) 等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
+OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EPFrame)、影音 (MediaFrame)、遊戲階段整合 (GSIFrame)、網路 (NetFrame)、集中式 Event 註冊 (EventCenter)、集中式 API 註冊 (APICenter)、Http.Acax (仿 Ajax 概念) 等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
 
 [Roadmap wiki](https://github.com/michael811125/OxGFrame/wiki/Roadmap)
 
@@ -47,7 +47,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 - CoreFrames (using OxGFrame.CoreFrame)
 - MediaFrames (using OxGFrame.MediaFrame)
 
-※備註 : 建議詳看各模塊的 Example (注意 "res#" 跟 "build#" 的使用)。
+※備註 : 建議詳看各模塊的 Example (注意 "res#" 跟 "build#" 的使用規則)。
 
 ---
 
@@ -55,7 +55,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 ### AssetLoader
 
-實現資源動態 Async 或 Sync 加載 (Dynamic Loading)，採用計數管理方式進行資源管控 (支援 Resource 與 AssetBundle)，一定要成對呼叫 Load & Unload (如果沒有成對呼叫，會導致計數不正確)。
+資源加載器模塊，實現動態 Async 或 Sync 加載 (Dynamic Loading)，採用計數管理方式進行資源管控 (支援 Resources 與 AssetBundle)，一定要成對呼叫 Load & Unload (如果沒有成對呼叫，會導致計數不正確)。
 其中集成【YooAsset】實現資源熱更新方案，並且實現【YooAsset】提供的加密接口，實現加解密方式有 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密。
 
 ※備註 : Use "res#" will load from Resources else load from Bundle
@@ -75,7 +75,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 再使用 OxGFrame/AssetLoader/Bundle Config Generator 進行配置檔建立。
 
 1. 先進行 Export App Config To StreamingAssets 建立 appconfig.json 至 StreamingAssets 中 (主要用於 App Version 比對)。
-2. 再選擇 Export App Config And Bundles for CDN 輸出上傳資源，Source Folder 選擇剛剛使用【YooAsset】輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行更新包的區分，輸出後將 CDN 直接上傳至 Server。
+2. 再選擇 Export App Config And Bundles for CDN 輸出上傳資源，Source Folder 選擇剛剛使用【YooAsset】輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行更新包的區分，輸出後將 CDN 資料夾直接上傳至 Server。
    
 - 群組分包舉例
   - 最小運行包
@@ -84,8 +84,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 **將 PatchLauncher 拖曳至場景中後，可以設置 PlayMode。**
 - Editor Simulate Mode (模擬模式 [加快開發])，需先配置 YooAsset Collector。
-- Offline Mode (單機模式)，需將 AB 打包至 Built-in，並且產出相關配置，需注意 PatchLauncher 的解密。
-- Host Mode (聯機模式)，需將 AB 打包區分 Built-in 跟 Patch，並且產出相關配置，需注意 PatchLauncher 的解密。
+- Offline Mode (單機模式)，需將 AB 打包至 Built-in，並且產出相關配置，需注意 PatchLauncher 的解密設定。
+- Host Mode (聯機模式)，需將 AB 打包區分 Built-in 跟 Patch，並且產出相關配置，需注意 PatchLauncher 的解密設定。
 
 ---
 
@@ -108,26 +108,28 @@ store_link http://
 
 ---
 
-### CoreFrame
+### CoreFrame (dependence AssetLoader)
 
-此模塊包含用於製作 UI, Game Scene, Entity Prefab, Unity Scene，針對製作對應使用 UI Prefab => UIFrame、Game Scene Prefab => GSFrame、Other Prefab => EPFrame、Unity Scene => USFrame。支援 Resources 與 AssetBundle 加載方式，並且實現物件命名綁定功能 (UIBase and GSBase = _Node@XXX, EPBase = ~Node@XXX, 類型均為 GameObject)。
+核心模塊，包含用於製作 UI, Game Scene, Entity Prefab, Unity Scene，針對製作對應使用 UI Prefab => UIFrame、Game Scene Prefab => GSFrame、Other Prefab => EPFrame、Unity Scene => USFrame。支援 Resources 與 AssetBundle 加載方式，並且實現物件命名綁定功能 (UIBase and GSBase = _Node@XXX, EPBase = ~Node@XXX, 類型均為 GameObject)。
 
-- UIFrame (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab，另外 UI 的 MaskEvent 可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)
+- UIFrame (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab，有凍結 UI 功能，避免 UI 動畫尚未完成期間，能夠觸發事件，需要進行 ShowAnime 跟 HideAnime override，並且需要正確保留 callback，另外 UI 的 MaskEvent 可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)
 - GSFrame (Game Scene) : 使用 GSManager 管理掛載 GSBase 的 Prefab (使用 _Node@XXX 進行物件綁定)
 - USFrame (Unity Scene) : 使用 USManager 管理 Unity 場景 (支援 AssetBundle)
   - ※備註 : Use "build#" will load scene from Build else load scene from Bundle
 - EPFrame (Entity Prefab) : 使用 EPManager 管理掛載 EPBase 的 Prefab (使用 ~Node@XXX 進行綁定)
 
 #### 常用方法說明
+- InitOnceComponents : 在此方法內初始組件。
+- InitOnceEvents : 在此方法內初始事件。
+- OpenSub : 當有異步處理或者附屬物件控制時，可以在此處理。例如 : TopUI 附屬連動開啟 LeftUI & RightUI，那麼就可以在 TopUI 中的 OpenSub 方法實現 Show LeftUI & RightUI。
+- OnShow : 調用 Show 時，此方法會被激活，並且可以透過帶入的 object 進行數據傳送。
+- OnClose : 調用 Close 時，此方法會被激活。
+- OnRelease : 當物件 Close And Destroy 時，此方法會被激活。
 
-初始順序 Init Order: Awake (Once) > BeginInit (Once) > InitOnceComponents (Once) > InitOnceEvents (Once) > PreInit (EveryOpen) > OpenSub (EveryOpen) > OnShow (EveryOpen)
-
-- InitOnceComponents，在此方法內初始組件。
-- InitOnceEvents，在此方法內初始事件。
-- OpenSub，當有異步處理或者附屬物件控制時，可以在此處理。例如 : TopUI 附屬連動開啟 LeftUI & RightUI，那麼就可以在 TopUI 中的 OpenSub 方法實現 Show LeftUI & RightUI。
+#### 初始順序說明
+Init Order : Awake (Once) > BeginInit (Once) > InitOnceComponents (Once) > InitOnceEvents (Once) > PreInit (EveryOpen) > OpenSub (EveryOpen) > OnShow (EveryOpen)
 
 #### 物件綁定說明
-
 - 透過 collector.GetNode("BindName") 返回取得綁定 GameObject (單一名綁定)
   - UIBase & GSBase 使用 _Node@XXX
   - EPBase 使用 ~Node@XXX
@@ -139,9 +141,9 @@ store_link http://
 
 ---
 
-### MediaFrame
+### MediaFrame (dependence AssetLoader)
 
-影音模塊包含用於製作 Audio (2D/3D), Video 遊戲影音，支援多平台加載方式 (Local, StreamingAssets, URL)，主要也對於 WebGL 有進行細節校正，因為 WebGL 對於 Audio 請求部分是無法取得正確長度 (官方放棄修正)，導致音訊控制會有部分缺陷，所以支援預置體製作時，可進行 Preload 請求 Clip 長度進行預設置。
+影音模塊，包含用於製作 Audio (2D/3D), Video 遊戲影音，支援多平台加載方式 (Local, StreamingAssets, URL)，主要也對於 WebGL 有進行細節校正，因為 WebGL 對於 Audio 請求部分是無法取得正確長度 (官方放棄修正)，導致音訊控制會有部分缺陷，所以支援預置體製作時，可進行 Preload 請求 Clip 長度進行預設置。
 
 - AudioFrame : 使用 AudioManager 管理掛載 AudioBase 的 Prefab，且採用 Unity Mixer 進行各音軌控制 **(需先將 AudioManager 預置體拖至場景)**
 - VideoFrame : 使用 VideoManager 管理掛載 VideoBase 的 Prefab，且支援 RenderTexture, Camera
@@ -151,8 +153,8 @@ store_link http://
 - SoundEffect，多實例 (可以重複播放)，建議 Fight Sound (戰鬥音效), General Sound (一般音效)
 
 #### Video Render Mode 說明
-- RenderTexture，將 Video 映射至 RenderTexture 再透過 UGUI 的 RawImage 進行渲染 (VideoBase 使用 RenderTexture.GetTemporary 跟 RenderTexture.ReleaseTemporary 創建與釋放，確保內存正確釋放 RenderTexture)
-- Camera，透過 Camera 進行渲染。
+- RenderTexture : 將 Video 映射至 RenderTexture 再透過 UGUI 的 RawImage 進行渲染 (VideoBase 使用 RenderTexture.GetTemporary 跟 RenderTexture.ReleaseTemporary 創建與釋放，確保內存正確釋放 RenderTexture)
+- Camera : 直接透過 Camera 進行渲染。
 
 #### Media [murlconfig] (Media URL Config) 格式
 
@@ -181,7 +183,7 @@ video_urlset 127.0.0.1/video/
 
 ### GSIFrame (Game Stage Integration)
 
-遊戲整合模塊 (FSM 概念)，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商業Logo階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), GamingStage (遊玩階段), FightStage (戰鬥階段) 等, 以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
+遊戲階段整合模塊 (FSM 概念)，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商業Logo階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), GamingStage (遊玩階段), FightStage (戰鬥階段) 等, 以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
 
 - GSIBase，遊戲階段基類，在透過 Update 切換當前階段自定義的狀態流程 (Enum) 時，可透過 StopUpdate & RunUpdate 方法進行開關設置，即可停止或繼續 Update 的每幀調用，需建立實作 => 右鍵創建
 - GSIManagerBase，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
@@ -222,7 +224,7 @@ video_urlset 127.0.0.1/video/
 
 ### APICenter
 
-集中式 API 整合模塊，可以自定義每個 API 的格式進行短連接請求。
+集中式 API 整合模塊，可以自定義每個 API 的格式進行短連接請求，能夠有效的集中管理各型式的 API 格式，。
 
 - Acax (類似 Ajax 方式，請求 API)，支援 Async & Sync
 - APICenter : Http API 註冊管理，管理基類已實現單例
@@ -243,7 +245,7 @@ video_urlset 127.0.0.1/video/
   - Timer => DeltaTimer, RealTimer, DTUpdate, RTUpdate
     - ※備註 : RealTimer 啟用條件需要由 Main Monobehaviour Awake 調用 RealTime.InitStartupTime() 進行初始。
   - Adapter => UISafeAreaAdapter
-    - ※備註 : 在 Canvas 下預創建 UIRoot 並掛載 UISafeAreaAdapter 在 UIRoot 上 (也可使用自己的自適應方案)。
+    - ※備註 : 在 Canvas 下預創建 UIRoot 並掛載 UISafeAreaAdapter 在 UIRoot 上 (也可使用自己的 UI 自適應方案)。
   - Pool => NodePool (GameObject Pool)
   - ButtonPlus => Inherited by Unity Button. extend Long Press and Transition Scale
   - UMT => Unity Main Thread
