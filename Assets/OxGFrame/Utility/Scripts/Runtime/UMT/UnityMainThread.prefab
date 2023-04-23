@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4676940301216121117}
   - component: {fileID: 4676940301216121118}
   m_Layer: 0
-  m_Name: UMT
+  m_Name: UnityMainThread
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

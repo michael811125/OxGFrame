@@ -37,7 +37,7 @@ public class NetworkExample
         #endregion
 
         #region TCP/IP Example
-        NetNode tcpNetNode = new NetNode(new TcpSocket(), netTips);
+        NetNode tcpNetNode = new NetNode(new TcpSock(), netTips);
         // Set data receive callback
         tcpNetNode.SetResponseHandler(ProcessRecvData);
         // Set first send callback (verification)

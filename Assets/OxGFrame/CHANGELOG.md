@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.0.1] - 2023-04-23
+- Renamed TcpSocket => TcpSock.
+- Renamed Websock => WebSock.
+
 # NEW
 
 ## [2.0.0] - 2023-04-22 (Breaking Changes)

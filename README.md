@@ -11,7 +11,7 @@
 
 ## 基本介紹
 
-OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EPFrame)、影音 (MediaFrame)、遊戲整合 (GSIFrame)、網路 (NetFrame)、集中式事件註冊 (EventCenter)、集中式 API 註冊 (APICenter)、Http.Acax (仿 Ajax 概念)等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
+OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EPFrame)、影音 (MediaFrame)、遊戲整合 (GSIFrame)、網路 (NetFrame)、集中式 Event 註冊 (EventCenter)、集中式 API 註冊 (APICenter)、Http.Acax (仿 Ajax 概念) 等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
 
 [Roadmap wiki](https://github.com/michael811125/OxGFrame/wiki/Roadmap)
 
@@ -29,10 +29,10 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 ## 特別推薦 (內建)
 
-- 使用 [UnityWebSocket](https://github.com/psygames/UnityWebSocket) (最佳 Websocket 解決方案)
+- 使用 [UnityWebSocket](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案)
 - 使用 [YooAsset](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案)
 - 使用部分 [UniFramework](https://github.com/gmhevinci/UniFramework) (輕量級框架)
-- TODO [HybirdCLR](https://github.com/focus-creative-games/hybridclr) (高效的程式熱更新方案)
+- TODO (待整合) [HybirdCLR](https://github.com/focus-creative-games/hybridclr) (革命性的程式熱更新方案)
 
 ---
 
@@ -47,7 +47,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 - CoreFrames (using OxGFrame.CoreFrame)
 - MediaFrames (using OxGFrame.MediaFrame)
 
-※備註 : 建議詳看各模塊的 Example。
+※備註 : 建議詳看各模塊的 Example (注意 "res#" 跟 "build#" 的使用)。
 
 ---
 
@@ -82,6 +82,11 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
   - 標準運行包
   - 全部運行包 (預設 #all)
 
+**將 PatchLauncher 拖曳至場景中後，可以設置 PlayMode。**
+- Editor Simulate Mode (模擬模式 [加快開發])，需先配置 YooAsset Collector。
+- Offline Mode (單機模式)，需將 AB 打包至 Built-in，並且產出相關配置，需注意 PatchLauncher 的解密。
+- Host Mode (聯機模式)，需將 AB 打包區分 Built-in 跟 Patch，並且產出相關配置，需注意 PatchLauncher 的解密。
+
 ---
 
 #### Bundle [burlconfig] (Bundle URL Config) 格式
@@ -110,7 +115,7 @@ store_link http://
 - UIFrame (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab，另外 UI 的 MaskEvent 可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)
 - GSFrame (Game Scene) : 使用 GSManager 管理掛載 GSBase 的 Prefab (使用 _Node@XXX 進行物件綁定)
 - USFrame (Unity Scene) : 使用 USManager 管理 Unity 場景 (支援 AssetBundle)
-  - ※備註 : Use "build#" will load from Build else load from Bundle
+  - ※備註 : Use "build#" will load scene from Build else load scene from Bundle
 - EPFrame (Entity Prefab) : 使用 EPManager 管理掛載 EPBase 的 Prefab (使用 ~Node@XXX 進行綁定)
 
 #### 常用方法說明
@@ -123,7 +128,10 @@ store_link http://
 
 #### 物件綁定說明
 
-- 透過 collector.GetNode("BindName") 返回取得 GameObject (需注意綁定名稱)
+- 透過 collector.GetNode("BindName") 返回取得綁定 GameObject (單一名綁定)
+  - UIBase & GSBase 使用 _Node@XXX
+  - EPBase 使用 ~Node@XXX
+- 透過 collector.GetNodes("BindName") 返回取得綁定 GameObject[] (同名多綁定，物件順序由上至下)
   - UIBase & GSBase 使用 _Node@XXX
   - EPBase 使用 ~Node@XXX
 
@@ -133,7 +141,7 @@ store_link http://
 
 ### MediaFrame
 
-此模塊包含用於製作 Audio, Video 遊戲影音，支援多平台加載方式 (Local, StreamingAssets, URL)，主要也對於 WebGL 有進行細節校正，因為 WebGL 對於 Audio 請求部分是無法取得正確長度 (官方放棄修正)，導致音訊控制會有部分缺陷，所以支援預置體製作時，可進行 Preload 請求 Clip 長度進行預設置。
+影音模塊包含用於製作 Audio (2D/3D), Video 遊戲影音，支援多平台加載方式 (Local, StreamingAssets, URL)，主要也對於 WebGL 有進行細節校正，因為 WebGL 對於 Audio 請求部分是無法取得正確長度 (官方放棄修正)，導致音訊控制會有部分缺陷，所以支援預置體製作時，可進行 Preload 請求 Clip 長度進行預設置。
 
 - AudioFrame : 使用 AudioManager 管理掛載 AudioBase 的 Prefab，且採用 Unity Mixer 進行各音軌控制 **(需先將 AudioManager 預置體拖至場景)**
 - VideoFrame : 使用 VideoManager 管理掛載 VideoBase 的 Prefab，且支援 RenderTexture, Camera
@@ -178,6 +186,8 @@ video_urlset 127.0.0.1/video/
 - GSIBase，遊戲階段基類，在透過 Update 切換當前階段自定義的狀態流程 (Enum) 時，可透過 StopUpdate & RunUpdate 方法進行開關設置，即可停止或繼續 Update 的每幀調用，需建立實作 => 右鍵創建
 - GSIManagerBase，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
 
+**如果沒有要使用 GSIFrame 遊戲整合模塊，可以直接刪除整個 GSIFrame。**
+
 ※備註 : Right-Click Create/OxGFrame/GSIFrame... (Template cs)
 
 ---
@@ -188,8 +198,8 @@ video_urlset 127.0.0.1/video/
 
 - NetManager (網路節點管理器)
 - NetNode (網路節點)
-- TcpSocket (TCP/IP)
-- Websock (Websocket)
+- TcpSock (TCP/IP)
+- WebSock (WebSocket)
 - INetTips (網路狀態提示接口)
 
 **如果沒有要使用 NetFrame 網路模塊，可以直接刪除整個 NetFrame。**
@@ -198,11 +208,13 @@ video_urlset 127.0.0.1/video/
 
 ### EventCenter
 
-集中式 Event 整合模塊，可以自定義每個 Event 的格式進行派送。
+集中式 Event 整合模塊 (非多監聽式)，可以自定義每個 Event 的格式進行派送。
 
 - EventCenter : 事件註冊調度管理，管理基類已實現單例
   - EventBase，單個 Event 基類，需建立實作 => 右鍵創建
   - EventCenterBase，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
+  
+**如果沒有要使用 EventCenter 事件模塊，可以直接刪除整個 EventCenter。**
   
 ※備註 : Right-Click Create/OxGFrame/EventCenter... (Template cs)
 
@@ -217,7 +229,7 @@ video_urlset 127.0.0.1/video/
   - APIBase，單個 API 基類，需建立實作 => 右鍵創建
   - APICenterBase，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
 
-**如果沒有要使用 APICenter 短連接請求模塊的，可以直接刪除整個 APICenter。**
+**如果沒有要使用 APICenter 短連接請求模塊，可以直接刪除整個 APICenter。**
 
 ※備註 : Right-Click Create/OxGFrame/APICenter... (Template cs)
 
@@ -225,14 +237,17 @@ video_urlset 127.0.0.1/video/
 
 ### Utility
 
-各通用組件 => Adapter, Pool, Timer, ButtonPlus
+各通用組件
 
 - Utility 
   - Timer => DeltaTimer, RealTimer, DTUpdate, RTUpdate
+    - ※備註 : RealTimer 啟用條件需要由 Main Monobehaviour Awake 調用 RealTime.InitStartupTime() 進行初始。
   - Adapter => UISafeAreaAdapter
+    - ※備註 : 在 Canvas 下預創建 UIRoot 並掛載 UISafeAreaAdapter 在 UIRoot 上 (也可使用自己的自適應方案)。
   - Pool => NodePool (GameObject Pool)
   - ButtonPlus => Inherited by Unity Button. extend Long Press and Transition Scale
-  - UMT => Unity Main Thread.
+  - UMT => Unity Main Thread
+    - ※備註 : 需先拖曳 UnityMainThread Prefab 至場景上 (由 Monobehaviour 主線程驅動)。
 
 ---
 

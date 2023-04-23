@@ -8,7 +8,7 @@ namespace OxGFrame.NetFrame
 {
     public delegate void WaitReadNetPacket();
 
-    public class TcpSocket : ISocket
+    public class TcpSock : ISocket
     {
         public const int CONNECTING_TIMEOUT_MSEC = 10000;
         private const int MAX_BUFFER_SIZE = 65536;
@@ -44,7 +44,7 @@ namespace OxGFrame.NetFrame
                 Debug.Log(netOption.port);
                 IPAddress ipa = IPAddress.Parse(netOption.host);
                 IAsyncResult iAsyncResult = this._tcp.BeginConnect(ipa, netOption.port, this._ConnectedAction, null);
-                iAsyncResult.AsyncWaitHandle.WaitOne(TcpSocket.CONNECTING_TIMEOUT_MSEC);
+                iAsyncResult.AsyncWaitHandle.WaitOne(CONNECTING_TIMEOUT_MSEC);
 
                 if (!iAsyncResult.IsCompleted)
                 {
@@ -175,7 +175,7 @@ namespace OxGFrame.NetFrame
                 {
                     NetworkStream ns = this._tcp.GetStream();
                     ns.BeginWrite(buffer, 0, buffer.Length, new AsyncCallback(this._WriteAction), ns);
-                    Debug.Log(string.Format("<color=#C9FF49>TcpSocket - SentSize: {0} bytes</color>", buffer.Length));
+                    Debug.Log(string.Format("<color=#C9FF49>TcpSock - SentSize: {0} bytes</color>", buffer.Length));
                     return true;
                 }
                 catch (Exception ex)
