@@ -36,6 +36,15 @@ namespace OxGFrame.AssetLoader
 
         #region Patch Status
         /// <summary>
+        /// Return patch mode initialized
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsInitialized()
+        {
+            return PatchLauncher.isInitialized;
+        }
+
+        /// <summary>
         /// Return patch check state
         /// </summary>
         /// <returns></returns>

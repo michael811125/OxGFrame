@@ -62,6 +62,12 @@ namespace OxGFrame.CoreFrame
             #endregion
 
             #region Preload
+            /// <summary>
+            /// If use prefix "res#" will load from resources else will load from bundle
+            /// </summary>
+            /// <param name="assetName"></param>
+            /// <param name="progression"></param>
+            /// <returns></returns>
             public static async UniTask Preload(string assetName, Progression progression = null)
             {
                 await UIManager.GetInstance().Preload(assetName, progression);
@@ -74,6 +80,15 @@ namespace OxGFrame.CoreFrame
             #endregion
 
             #region Show
+            /// <summary>
+            /// If use prefix "res#" will load from resources else will load from bundle
+            /// </summary>
+            /// <param name="assetName"></param>
+            /// <param name="obj"></param>
+            /// <param name="loadingUIAssetName"></param>
+            /// <param name="progression"></param>
+            /// <param name="parent"></param>
+            /// <returns></returns>
             public static async UniTask<UIBase> Show(string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
                 return await UIManager.GetInstance().Show(0, assetName, obj, loadingUIAssetName, progression, parent);
@@ -82,6 +97,16 @@ namespace OxGFrame.CoreFrame
             public static async UniTask<UIBase> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
                 return await UIManager.GetInstance().Show(groupId, assetName, obj, loadingUIAssetName, progression, parent);
+            }
+
+            public static async UniTask<T> Show<T>(string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
+            {
+                return await UIManager.GetInstance().Show(0, assetName, obj, loadingUIAssetName, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
+            {
+                return await UIManager.GetInstance().Show(groupId, assetName, obj, loadingUIAssetName, progression, parent) as T;
             }
             #endregion
 
@@ -187,6 +212,12 @@ namespace OxGFrame.CoreFrame
             #endregion
 
             #region Preload
+            /// <summary>
+            /// If use prefix "res#" will load from resources else will load from bundle
+            /// </summary>
+            /// <param name="assetName"></param>
+            /// <param name="progression"></param>
+            /// <returns></returns>
             public static async UniTask Preload(string assetName, Progression progression = null)
             {
                 await GSManager.GetInstance().Preload(assetName, progression);
@@ -199,6 +230,15 @@ namespace OxGFrame.CoreFrame
             #endregion
 
             #region Show
+            /// <summary>
+            /// If use prefix "res#" will load from resources else will load from bundle
+            /// </summary>
+            /// <param name="assetName"></param>
+            /// <param name="obj"></param>
+            /// <param name="loadingUIAssetName"></param>
+            /// <param name="progression"></param>
+            /// <param name="parent"></param>
+            /// <returns></returns>
             public static async UniTask<GSBase> Show(string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
                 return await GSManager.GetInstance().Show(0, assetName, obj, loadingUIAssetName, progression, parent);
@@ -207,6 +247,16 @@ namespace OxGFrame.CoreFrame
             public static async UniTask<GSBase> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
                 return await GSManager.GetInstance().Show(groupId, assetName, obj, loadingUIAssetName, progression, parent);
+            }
+
+            public static async UniTask<T> Show<T>(string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
+            {
+                return await GSManager.GetInstance().Show(0, assetName, obj, loadingUIAssetName, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
+            {
+                return await GSManager.GetInstance().Show(groupId, assetName, obj, loadingUIAssetName, progression, parent) as T;
             }
             #endregion
 
@@ -295,7 +345,7 @@ namespace OxGFrame.CoreFrame
             }
 
             /// <summary>
-            /// if use prefix "build#" will load from build and return null else will load from bundle and return BundlePack
+            /// If use prefix "build#" will load from build and return null else will load from bundle and return BundlePack
             /// </summary>
             /// <param name="sceneName"></param>
             /// <param name="loadSceneMode"></param>
@@ -312,7 +362,7 @@ namespace OxGFrame.CoreFrame
             }
 
             /// <summary>
-            /// if use prefix "build#" will load from build and return null else will load from bundle and return BundlePack
+            /// If use prefix "build#" will load from build and return null else will load from bundle and return BundlePack
             /// </summary>
             /// <param name="sceneName"></param>
             /// <param name="loadSceneMode"></param>
@@ -341,7 +391,7 @@ namespace OxGFrame.CoreFrame
             }
 
             /// <summary>
-            /// if use prefix "build#" will unload from build else will unload from bundle
+            /// If use prefix "build#" will unload from build else will unload from bundle
             /// </summary>
             /// <param name="recursively"></param>
             /// <param name="sceneNames"></param>
@@ -381,6 +431,12 @@ namespace OxGFrame.CoreFrame
 
         public static class EPFrame
         {
+            /// <summary>
+            /// If use prefix "res#" will load from resources else will load from bundle
+            /// </summary>
+            /// <param name="assetName"></param>
+            /// <param name="progression"></param>
+            /// <returns></returns>
             public static async UniTask PreloadAsync(string assetName, Progression progression = null)
             {
                 await EPManager.GetInstance().PreloadAsync(assetName, progression);
@@ -391,6 +447,11 @@ namespace OxGFrame.CoreFrame
                 await EPManager.GetInstance().PreloadAsync(assetNames, progression);
             }
 
+            /// <summary>
+            /// If use prefix "res#" will load from resources else will load from bundle
+            /// </summary>
+            /// <param name="assetName"></param>
+            /// <param name="progression"></param>
             public static void Preload(string assetName, Progression progression = null)
             {
                 EPManager.GetInstance().Preload(assetName, progression);
@@ -401,6 +462,14 @@ namespace OxGFrame.CoreFrame
                 EPManager.GetInstance().Preload(assetNames, progression);
             }
 
+            /// <summary>
+            /// If use prefix "res#" will load from resources else will load from bundle
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <param name="assetName"></param>
+            /// <param name="parent"></param>
+            /// <param name="progression"></param>
+            /// <returns></returns>
             public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Transform parent = null, Progression progression = null) where T : EPBase, new()
             {
                 return await EPManager.GetInstance().LoadWithCloneAsync<T>(assetName, parent, progression);
@@ -416,6 +485,14 @@ namespace OxGFrame.CoreFrame
                 return await EPManager.GetInstance().LoadWithCloneAsync<T>(assetName, position, rotation, parent, scale, progression);
             }
 
+            /// <summary>
+            /// If use prefix "res#" will load from resources else will load from bundle
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <param name="assetName"></param>
+            /// <param name="parent"></param>
+            /// <param name="progression"></param>
+            /// <returns></returns>
             public static T LoadWithClone<T>(string assetName, Transform parent = null, Progression progression = null) where T : EPBase, new()
             {
                 return EPManager.GetInstance().LoadWithClone<T>(assetName, parent, progression);

@@ -100,15 +100,6 @@ namespace OxGFrame.CoreFrame.USFrame
         }
 
         #region Bundle
-        /// <summary>
-        /// 【Bundle】從 Bundle 中加載場景
-        /// </summary>
-        /// <param name="sceneName"></param>
-        /// <param name="loadSceneMode"></param>
-        /// <param name="activateOnLoad"></param>
-        /// <param name="priority"></param>
-        /// <param name="progression"></param>
-        /// <returns></returns>
         public async UniTask<BundlePack> LoadFromBundleAsync(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, int priority = 100, Progression progression = null)
         {
             var scene = this.GetSceneByName(sceneName);
@@ -138,18 +129,10 @@ namespace OxGFrame.CoreFrame.USFrame
         #endregion
 
         #region Build
-        /// <summary>
-        /// 【Build Settings】從 Build 設置中加載場景
-        /// </summary>
-        /// <param name="sceneName"></param>
-        /// <param name="loadSceneMode"></param>
-        /// <param name="progression"></param>
-        /// <returns></returns>
         public async UniTask LoadFromBuildAsync(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
             this._reqSize = 0;
             this._totalSize = 1; // 初始 1 = 必有一場景
-            float lastSize = 0;
 
             var scene = this.GetSceneByName(sceneName);
             if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
@@ -163,22 +146,17 @@ namespace OxGFrame.CoreFrame.USFrame
             {
                 req.allowSceneActivation = false;
 
-                if (progression != null)
-                {
-                    lastSize = 0;
-                    req.completed += (AsyncOperation ao) =>
-                    {
-                        this._reqSize += (ao.progress - lastSize);
-                        lastSize = ao.progress;
-
-                        progression.Invoke(this._reqSize / this._totalSize, this._reqSize, this._totalSize);
-                    };
-                }
-
+                float lastSize = 0;
                 while (!req.isDone)
                 {
+                    if (progression != null)
+                    {
+                        this._reqSize += (req.progress - lastSize);
+                        lastSize = req.progress;
+                        if (req.progress >= 0.9f) this._reqSize = 1f;
+                        progression.Invoke(this._reqSize / this._totalSize, this._reqSize, this._totalSize);
+                    }
                     if (req.progress >= 0.9f) req.allowSceneActivation = true;
-
                     await UniTask.Yield();
                 }
 
@@ -190,7 +168,6 @@ namespace OxGFrame.CoreFrame.USFrame
         {
             this._reqSize = 0;
             this._totalSize = 1; // 初始 1 = 必有一場景
-            float lastSize = 0;
 
             var scene = this.GetSceneByBuildIndex(buildIndex);
             if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
@@ -204,22 +181,17 @@ namespace OxGFrame.CoreFrame.USFrame
             {
                 req.allowSceneActivation = false;
 
-                if (progression != null)
-                {
-                    lastSize = 0;
-                    req.completed += (AsyncOperation ao) =>
-                    {
-                        this._reqSize += (ao.progress - lastSize);
-                        lastSize = ao.progress;
-
-                        progression.Invoke(this._reqSize / this._totalSize, this._reqSize, this._totalSize);
-                    };
-                }
-
+                float lastSize = 0;
                 while (!req.isDone)
                 {
+                    if (progression != null)
+                    {
+                        this._reqSize += (req.progress - lastSize);
+                        lastSize = req.progress;
+                        if (req.progress >= 0.9f) this._reqSize = 1f;
+                        progression.Invoke(this._reqSize / this._totalSize, this._reqSize, this._totalSize);
+                    }
                     if (req.progress >= 0.9f) req.allowSceneActivation = true;
-
                     await UniTask.Yield();
                 }
 

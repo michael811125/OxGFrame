@@ -1,11 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Bundle;
-using OxGFrame.AssetLoader.Utility;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using YooAsset;
 
 namespace OxGFrame.AssetLoader.Cacher
 {
@@ -43,12 +41,6 @@ namespace OxGFrame.AssetLoader.Cacher
         }
 
         #region RawFile
-        /// <summary>
-        /// 預加載資源至快取中
-        /// </summary>
-        /// <param name="assetName"></param>
-        /// <param name="progression"></param>
-        /// <returns></returns>
         public async UniTask PreloadRawFileAsync(string assetName, Progression progression = null)
         {
             await this.PreloadRawFileAsync(new string[] { assetName }, progression);
@@ -60,7 +52,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             // 先初始加載進度
             this.reqSize = 0;
-            this.totalSize = BundleUtility.GetAssetsLength(assetNames);
+            this.totalSize = assetNames.Length;
 
             for (int i = 0; i < assetNames.Length; i++)
             {
@@ -84,11 +76,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     if (pack.IsValid())
                     {
-                        // 在快取中請求進度大小需累加當前資源的總 size (因為迴圈)
-                        this.reqSize += BundleUtility.GetAssetsLength(assetName);
-                        // 處理進度回調
+                        this.reqSize++;
                         progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                        // 移除標記
                         this._hashLoadingFlags.Remove(assetName);
                         continue;
                     }
@@ -107,22 +96,18 @@ namespace OxGFrame.AssetLoader.Cacher
                     var package = PackageManager.GetDefaultPackage();
                     var req = package.LoadRawFileAsync(assetName);
 
-                    float lastSize = 0;
                     if (req != null)
                     {
-                        if (progression != null)
-                        {
-                            req.Completed += (RawFileOperationHandle oh) =>
-                            {
-                                this.reqSize += (oh.Progress - lastSize);
-                                lastSize = oh.Progress;
-
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                            };
-                        }
-
+                        float lastSize = 0;
                         do
                         {
+                            if (progression != null)
+                            {
+                                this.reqSize += (req.Progress - lastSize);
+                                lastSize = req.Progress;
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            }
+
                             if (req.IsDone)
                             {
                                 pack.assetName = assetName;
@@ -158,7 +143,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             // 先初始加載進度
             this.reqSize = 0;
-            this.totalSize = BundleUtility.GetAssetsLength(assetNames);
+            this.totalSize = assetNames.Length;
 
             for (int i = 0; i < assetNames.Length; i++)
             {
@@ -182,11 +167,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     if (pack.IsValid())
                     {
-                        // 在快取中請求進度大小需累加當前資源的總 size (因為迴圈)
-                        this.reqSize += BundleUtility.GetAssetsLength(assetName);
-                        // 處理進度回調
+                        this.reqSize++;
                         progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                        // 移除標記
                         this._hashLoadingFlags.Remove(assetName);
                         continue;
                     }
@@ -205,22 +187,16 @@ namespace OxGFrame.AssetLoader.Cacher
                     var package = PackageManager.GetDefaultPackage();
                     var req = package.LoadRawFileSync(assetName);
 
-                    float lastSize = 0;
                     if (req != null)
                     {
-                        if (progression != null)
-                        {
-                            req.Completed += (RawFileOperationHandle oh) =>
-                            {
-                                this.reqSize += (oh.Progress - lastSize);
-                                lastSize = oh.Progress;
-
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                            };
-                        }
-
                         if (req.IsDone)
                         {
+                            if (progression != null)
+                            {
+                                this.reqSize++;
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            }
+
                             pack.assetName = assetName;
                             pack.operationHandle = req;
                         }
@@ -240,13 +216,6 @@ namespace OxGFrame.AssetLoader.Cacher
             }
         }
 
-        /// <summary>
-        /// [使用計數管理] 載入資源 => 會優先從快取中取得資源, 如果快取中沒有才進行資源加載
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetName"></param>
-        /// <param name="progression"></param>
-        /// <returns></returns>
         public async UniTask<T> LoadRawFileAsync<T>(string assetName, Progression progression = null)
         {
             if (string.IsNullOrEmpty(assetName)) return default;
@@ -260,7 +229,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             // 初始加載進度
             this.reqSize = 0;
-            this.totalSize = BundleUtility.GetAssetsLength(assetName);
+            this.totalSize = 1;
 
             // Loading 標記
             this._hashLoadingFlags.Add(assetName);
@@ -275,22 +244,18 @@ namespace OxGFrame.AssetLoader.Cacher
                     var package = PackageManager.GetDefaultPackage();
                     var req = package.LoadRawFileAsync(assetName);
 
-                    float lastSize = 0;
                     if (req != null)
                     {
-                        if (progression != null)
-                        {
-                            req.Completed += (RawFileOperationHandle oh) =>
-                            {
-                                this.reqSize += (oh.Progress - lastSize);
-                                lastSize = oh.Progress;
-
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                            };
-                        }
-
+                        float lastSize = 0;
                         do
                         {
+                            if (progression != null)
+                            {
+                                this.reqSize += (req.Progress - lastSize);
+                                lastSize = req.Progress;
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            }
+
                             if (req.IsDone)
                             {
                                 pack.assetName = assetName;
@@ -310,9 +275,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                // 直接更新進度
                 this.reqSize = this.totalSize;
-                // 處理進度回調
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
             }
 
@@ -356,7 +319,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             // 初始加載進度
             this.reqSize = 0;
-            this.totalSize = BundleUtility.GetAssetsLength(assetName);
+            this.totalSize = 1;
 
             // Loading 標記
             this._hashLoadingFlags.Add(assetName);
@@ -371,22 +334,16 @@ namespace OxGFrame.AssetLoader.Cacher
                     var package = PackageManager.GetDefaultPackage();
                     var req = package.LoadRawFileSync(assetName);
 
-                    float lastSize = 0;
                     if (req != null)
                     {
-                        if (progression != null)
-                        {
-                            req.Completed += (RawFileOperationHandle oh) =>
-                            {
-                                this.reqSize += (oh.Progress - lastSize);
-                                lastSize = oh.Progress;
-
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                            };
-                        }
-
                         if (req.IsDone)
                         {
+                            if (progression != null)
+                            {
+                                this.reqSize++;
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            }
+
                             pack.assetName = assetName;
                             pack.operationHandle = req;
                         }
@@ -401,9 +358,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                // 直接更新進度
                 this.reqSize = this.totalSize;
-                // 處理進度回調
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
             }
 
@@ -434,10 +389,6 @@ namespace OxGFrame.AssetLoader.Cacher
             else return default;
         }
 
-        /// <summary>
-        /// [使用計數管理] 從快取【釋放】單個資源 (釋放快取, 並且釋放資源記憶體)
-        /// </summary>
-        /// <param name="assetName"></param>
         public void UnloadRawFile(string assetName, bool forceUnload = false)
         {
             if (string.IsNullOrEmpty(assetName)) return;
@@ -465,6 +416,9 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._cacher[assetName] = null;
                         this._cacher.Remove(assetName);
 
+                        var package = PackageManager.GetDefaultPackage();
+                        package.UnloadUnusedAssets();
+
                         Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Force Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
                     else if (this._cacher[assetName].refCount <= 0)
@@ -473,6 +427,9 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._cacher[assetName] = null;
                         this._cacher.Remove(assetName);
 
+                        var package = PackageManager.GetDefaultPackage();
+                        package.UnloadUnusedAssets();
+
                         Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
                 }
@@ -480,9 +437,6 @@ namespace OxGFrame.AssetLoader.Cacher
             }
         }
 
-        /// <summary>
-        /// [強制釋放] 從快取中【釋放】全部資源 (釋放快取, 並且釋放資源記憶體)
-        /// </summary>
         public void ReleaseRawFiles()
         {
             if (this.Count == 0) return;
@@ -518,7 +472,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             // 初始加載進度
             this.reqSize = 0;
-            this.totalSize = BundleUtility.GetAssetsLength(assetName);
+            this.totalSize = 1;
 
             // Loading 標記
             this._hashLoadingFlags.Add(assetName);
@@ -528,23 +482,18 @@ namespace OxGFrame.AssetLoader.Cacher
 
             var pack = new BundlePack();
 
-            float lastSize = 0;
-
             if (req != null)
             {
-                if (progression != null)
-                {
-                    req.Completed += (SceneOperationHandle oh) =>
-                    {
-                        this.reqSize += (oh.Progress - lastSize);
-                        lastSize = oh.Progress;
-
-                        progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                    };
-                }
-
+                float lastSize = 0;
                 do
                 {
+                    if (progression != null)
+                    {
+                        this.reqSize += (req.Progress - lastSize);
+                        lastSize = req.Progress;
+                        progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                    }
+
                     if (req.IsDone)
                     {
                         switch (loadSceneMode)
@@ -696,12 +645,6 @@ namespace OxGFrame.AssetLoader.Cacher
         #endregion
 
         #region Asset
-        /// <summary>
-        /// 預加載資源至快取中
-        /// </summary>
-        /// <param name="assetName"></param>
-        /// <param name="progression"></param>
-        /// <returns></returns>
         public async UniTask PreloadAssetAsync(string assetName, Progression progression = null)
         {
             await this.PreloadAssetAsync(new string[] { assetName }, progression);
@@ -713,7 +656,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             // 先初始加載進度
             this.reqSize = 0;
-            this.totalSize = BundleUtility.GetAssetsLength(assetNames);
+            this.totalSize = assetNames.Length;
 
             for (int i = 0; i < assetNames.Length; i++)
             {
@@ -737,11 +680,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     if (pack.IsValid())
                     {
-                        // 在快取中請求進度大小需累加當前資源的總 size (因為迴圈)
-                        this.reqSize += BundleUtility.GetAssetsLength(assetName);
-                        // 處理進度回調
+                        this.reqSize++;
                         progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                        // 移除標記
                         this._hashLoadingFlags.Remove(assetName);
                         continue;
                     }
@@ -760,22 +700,18 @@ namespace OxGFrame.AssetLoader.Cacher
                     var package = PackageManager.GetDefaultPackage();
                     var req = package.LoadAssetAsync<Object>(assetName);
 
-                    float lastSize = 0;
                     if (req != null)
                     {
-                        if (progression != null)
-                        {
-                            req.Completed += (AssetOperationHandle oh) =>
-                            {
-                                this.reqSize += (oh.Progress - lastSize);
-                                lastSize = oh.Progress;
-
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                            };
-                        }
-
+                        float lastSize = 0;
                         do
                         {
+                            if (progression != null)
+                            {
+                                this.reqSize += (req.Progress - lastSize);
+                                lastSize = req.Progress;
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            }
+
                             if (req.IsDone)
                             {
                                 pack.assetName = assetName;
@@ -811,7 +747,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             // 先初始加載進度
             this.reqSize = 0;
-            this.totalSize = BundleUtility.GetAssetsLength(assetNames);
+            this.totalSize = assetNames.Length;
 
             for (int i = 0; i < assetNames.Length; i++)
             {
@@ -835,11 +771,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     if (pack.IsValid())
                     {
-                        // 在快取中請求進度大小需累加當前資源的總 size (因為迴圈)
-                        this.reqSize += BundleUtility.GetAssetsLength(assetName);
-                        // 處理進度回調
+                        this.reqSize++;
                         progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                        // 移除標記
                         this._hashLoadingFlags.Remove(assetName);
                         continue;
                     }
@@ -858,22 +791,16 @@ namespace OxGFrame.AssetLoader.Cacher
                     var package = PackageManager.GetDefaultPackage();
                     var req = package.LoadAssetSync<Object>(assetName);
 
-                    float lastSize = 0;
                     if (req != null)
                     {
-                        if (progression != null)
-                        {
-                            req.Completed += (AssetOperationHandle oh) =>
-                            {
-                                this.reqSize += (oh.Progress - lastSize);
-                                lastSize = oh.Progress;
-
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                            };
-                        }
-
                         if (req.IsDone)
                         {
+                            if (progression != null)
+                            {
+                                this.reqSize++;
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            }
+
                             pack.assetName = assetName;
                             pack.operationHandle = req;
                         }
@@ -893,13 +820,6 @@ namespace OxGFrame.AssetLoader.Cacher
             }
         }
 
-        /// <summary>
-        /// [使用計數管理] 載入資源 => 會優先從快取中取得資源, 如果快取中沒有才進行資源加載
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetName"></param>
-        /// <param name="progression"></param>
-        /// <returns></returns>
         public async UniTask<T> LoadAssetAsync<T>(string assetName, Progression progression = null) where T : Object
         {
             if (string.IsNullOrEmpty(assetName)) return null;
@@ -913,7 +833,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             // 初始加載進度
             this.reqSize = 0;
-            this.totalSize = BundleUtility.GetAssetsLength(assetName);
+            this.totalSize = 1;
 
             // Loading 標記
             this._hashLoadingFlags.Add(assetName);
@@ -928,22 +848,18 @@ namespace OxGFrame.AssetLoader.Cacher
                     var package = PackageManager.GetDefaultPackage();
                     var req = package.LoadAssetAsync<Object>(assetName);
 
-                    float lastSize = 0;
                     if (req != null)
                     {
-                        if (progression != null)
-                        {
-                            req.Completed += (AssetOperationHandle oh) =>
-                            {
-                                this.reqSize += (oh.Progress - lastSize);
-                                lastSize = oh.Progress;
-
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                            };
-                        }
-
+                        float lastSize = 0;
                         do
                         {
+                            if (progression != null)
+                            {
+                                this.reqSize += (req.Progress - lastSize);
+                                lastSize = req.Progress;
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            }
+
                             if (req.IsDone)
                             {
                                 pack.assetName = assetName;
@@ -963,9 +879,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                // 直接更新進度
                 this.reqSize = this.totalSize;
-                // 處理進度回調
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
             }
 
@@ -988,13 +902,6 @@ namespace OxGFrame.AssetLoader.Cacher
             return pack.GetAsset<T>();
         }
 
-        /// <summary>
-        /// [使用計數管理] 載入資源 => 會優先從快取中取得資源, 如果快取中沒有才進行資源加載
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetName"></param>
-        /// <param name="progression"></param>
-        /// <returns></returns>
         public T LoadAsset<T>(string assetName, Progression progression = null) where T : Object
         {
             if (string.IsNullOrEmpty(assetName)) return null;
@@ -1008,7 +915,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             // 初始加載進度
             this.reqSize = 0;
-            this.totalSize = BundleUtility.GetAssetsLength(assetName);
+            this.totalSize = 1;
 
             // Loading 標記
             this._hashLoadingFlags.Add(assetName);
@@ -1023,22 +930,16 @@ namespace OxGFrame.AssetLoader.Cacher
                     var package = PackageManager.GetDefaultPackage();
                     var req = package.LoadAssetSync<Object>(assetName);
 
-                    float lastSize = 0;
                     if (req != null)
                     {
-                        if (progression != null)
-                        {
-                            req.Completed += (AssetOperationHandle oh) =>
-                            {
-                                this.reqSize += (oh.Progress - lastSize);
-                                lastSize = oh.Progress;
-
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                            };
-                        }
-
                         if (req.IsDone)
                         {
+                            if (progression != null)
+                            {
+                                this.reqSize++;
+                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                            }
+
                             pack.assetName = assetName;
                             pack.operationHandle = req;
                         }
@@ -1053,9 +954,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                // 直接更新進度
                 this.reqSize = this.totalSize;
-                // 處理進度回調
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
             }
 
@@ -1078,10 +977,6 @@ namespace OxGFrame.AssetLoader.Cacher
             return pack.GetAsset<T>();
         }
 
-        /// <summary>
-        /// [使用計數管理] 從快取【釋放】單個資源 (釋放快取, 並且釋放資源記憶體)
-        /// </summary>
-        /// <param name="assetName"></param>
         public void UnloadAsset(string assetName, bool forceUnload = false)
         {
             if (string.IsNullOrEmpty(assetName)) return;
@@ -1109,6 +1004,9 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._cacher[assetName] = null;
                         this._cacher.Remove(assetName);
 
+                        var package = PackageManager.GetDefaultPackage();
+                        package.UnloadUnusedAssets();
+
                         Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Force Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
                     else if (this._cacher[assetName].refCount <= 0)
@@ -1117,6 +1015,9 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._cacher[assetName] = null;
                         this._cacher.Remove(assetName);
 
+                        var package = PackageManager.GetDefaultPackage();
+                        package.UnloadUnusedAssets();
+
                         Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
                 }
@@ -1124,9 +1025,6 @@ namespace OxGFrame.AssetLoader.Cacher
             }
         }
 
-        /// <summary>
-        /// [強制釋放] 從快取中【釋放】全部資源 (釋放快取, 並且釋放資源記憶體)
-        /// </summary>
         public void ReleaseAssets()
         {
             if (this.Count == 0) return;

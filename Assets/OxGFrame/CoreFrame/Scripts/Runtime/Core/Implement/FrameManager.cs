@@ -402,7 +402,7 @@ namespace OxGFrame.CoreFrame
             if (assetNames.Length > 0)
             {
                 this.reqSize = 0;
-                this.totalSize = BundleUtility.GetAssetsLength(assetNames);
+                this.totalSize = assetNames.Length;
 
                 for (int i = 0; i < assetNames.Length; i++)
                 {
@@ -416,7 +416,6 @@ namespace OxGFrame.CoreFrame
                     {
                         this.reqSize += reqSize - lastSize;
                         lastSize = reqSize;
-
                         progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
                     }, true);
                 }

@@ -11,21 +11,51 @@ namespace OxGFrame.AssetLoader
     public static class AssetLoaders
     {
         #region Scene
+        /// <summary>
+        /// Only load scene from bundle
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="loadSceneMode"></param>
+        /// <param name="activateOnLoad"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<BundlePack> LoadSceneAsync(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, int priority = 100, Progression progression = null)
         {
             return await CacheBundle.GetInstance().LoadSceneAsync(assetName, loadSceneMode, activateOnLoad, priority, progression);
         }
 
+        /// <summary>
+        /// Only load scene from bundle
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="activateOnLoad"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<BundlePack> LoadSingleSceneAsync(string assetName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
         {
             return await CacheBundle.GetInstance().LoadSceneAsync(assetName, LoadSceneMode.Single, activateOnLoad, priority, progression);
         }
 
+        /// <summary>
+        /// Only load scene from bundle
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="activateOnLoad"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<BundlePack> LoadAddtiveSceneAsync(string assetName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
         {
             return await CacheBundle.GetInstance().LoadSceneAsync(assetName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
         }
 
+        /// <summary>
+        /// Only unload scene from bundle
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="recursively"></param>
         public static void UnloadScene(string assetName, bool recursively = false)
         {
             CacheBundle.GetInstance().UnloadScene(assetName, recursively);
@@ -37,7 +67,6 @@ namespace OxGFrame.AssetLoader
         {
             if (RefineResourcesPath(ref assetName)) return CacheResource.GetInstance().HasInCache(assetName);
             else return CacheBundle.GetInstance().HasInCache(assetName);
-
         }
 
         public static T GetFromCache<T>(string assetName) where T : AssetObject
@@ -95,6 +124,13 @@ namespace OxGFrame.AssetLoader
             else CacheBundle.GetInstance().PreloadRawFile(assetNames, progression);
         }
 
+        /// <summary>
+        /// Only load string type and byte[] type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<T> LoadRawFileAsync<T>(string assetName, Progression progression = null)
         {
             if (RefineResourcesPath(ref assetName))
@@ -102,10 +138,16 @@ namespace OxGFrame.AssetLoader
                 Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
-            else return await CacheBundle.GetInstance().LoadRawFileAsync<T>(assetName, progression);
-
+            return await CacheBundle.GetInstance().LoadRawFileAsync<T>(assetName, progression);
         }
 
+        /// <summary>
+        /// Only load string type and byte[] type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static T LoadRawFile<T>(string assetName, Progression progression = null)
         {
             if (RefineResourcesPath(ref assetName))
@@ -113,8 +155,7 @@ namespace OxGFrame.AssetLoader
                 Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
-            else return CacheBundle.GetInstance().LoadRawFile<T>(assetName, progression);
-
+            return CacheBundle.GetInstance().LoadRawFile<T>(assetName, progression);
         }
 
         public static void UnloadRawFile(string assetName, bool forceUnload = false)
@@ -130,6 +171,12 @@ namespace OxGFrame.AssetLoader
         #endregion
 
         #region Asset
+        /// <summary>
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask PreloadAssetAsync(string assetName, Progression progression = null)
         {
             if (RefineResourcesPath(ref assetName)) await CacheResource.GetInstance().PreloadAssetAsync(assetName, progression);
@@ -154,6 +201,11 @@ namespace OxGFrame.AssetLoader
             else await CacheBundle.GetInstance().PreloadAssetAsync(assetNames, progression);
         }
 
+        /// <summary>
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
         public static void PreloadAsset(string assetName, Progression progression = null)
         {
             if (RefineResourcesPath(ref assetName)) CacheResource.GetInstance().PreloadAsset(assetName, progression);
@@ -178,18 +230,39 @@ namespace OxGFrame.AssetLoader
             else CacheBundle.GetInstance().PreloadAsset(assetNames, progression);
         }
 
+        /// <summary>
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<T> LoadAssetAsync<T>(string assetName, Progression progression = null) where T : Object
         {
             if (RefineResourcesPath(ref assetName)) return await CacheResource.GetInstance().LoadAssetAsync<T>(assetName, progression);
             else return await CacheBundle.GetInstance().LoadAssetAsync<T>(assetName, progression);
         }
 
+        /// <summary>
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static T LoadAsset<T>(string assetName, Progression progression = null) where T : Object
         {
             if (RefineResourcesPath(ref assetName)) return CacheResource.GetInstance().LoadAsset<T>(assetName, progression);
             else return CacheBundle.GetInstance().LoadAsset<T>(assetName, progression);
         }
 
+        /// <summary>
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Progression progression = null) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
@@ -270,6 +343,13 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(string assetName, Progression progression = null) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
@@ -424,6 +504,14 @@ namespace OxGFrame.AssetLoader
             else GroupBundle.GetInstance().PreloadRawFile(groupId, assetNames, progression);
         }
 
+        /// <summary>
+        /// Only load string type and byte[] type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<T> LoadRawFileAsync<T>(int groupId, string assetName, Progression progression = null)
         {
             if (RefineResourcesPath(ref assetName))
@@ -434,6 +522,14 @@ namespace OxGFrame.AssetLoader
             else return await GroupBundle.GetInstance().LoadRawFileAsync<T>(groupId, assetName, progression);
         }
 
+        /// <summary>
+        /// Only load string type and byte[] type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static T LoadRawFile<T>(int groupId, string assetName, Progression progression = null)
         {
             if (RefineResourcesPath(ref assetName))
@@ -457,6 +553,13 @@ namespace OxGFrame.AssetLoader
         #endregion
 
         #region Asset
+        /// <summary>
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask PreloadAssetAsync(int groupId, string assetName, Progression progression = null)
         {
             if (RefineResourcesPath(ref assetName)) await GroupResource.GetInstance().PreloadAssetAsync(groupId, assetName, progression);
@@ -481,6 +584,12 @@ namespace OxGFrame.AssetLoader
             else await GroupBundle.GetInstance().PreloadAssetAsync(groupId, assetNames, progression);
         }
 
+        /// <summary>
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
         public static void PreloadAsset(int groupId, string assetName, Progression progression = null)
         {
             if (RefineResourcesPath(ref assetName)) GroupResource.GetInstance().PreloadAsset(groupId, assetName, progression);
@@ -505,18 +614,42 @@ namespace OxGFrame.AssetLoader
             else GroupBundle.GetInstance().PreloadAsset(groupId, assetNames, progression);
         }
 
+        /// <summary>
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<T> LoadAssetAsync<T>(int groupId, string assetName, Progression progression = null) where T : Object
         {
             if (RefineResourcesPath(ref assetName)) return await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression);
             else return await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression);
         }
 
+        /// <summary>
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static T LoadAsset<T>(int groupId, string assetName, Progression progression = null) where T : Object
         {
             if (RefineResourcesPath(ref assetName)) return GroupResource.GetInstance().LoadAsset<T>(groupId, assetName, progression);
             else return GroupBundle.GetInstance().LoadAsset<T>(groupId, assetName, progression);
         }
 
+        /// <summary>
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupdId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Progression progression = null) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
@@ -597,6 +730,14 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupdId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(int groupdId, string assetName, Progression progression = null) where T : Object
         {
             if (RefineResourcesPath(ref assetName))

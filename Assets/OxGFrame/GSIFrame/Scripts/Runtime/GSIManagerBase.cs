@@ -115,6 +115,7 @@ namespace OxGFrame.GSIFrame
                 return;
             }
 
+            gameStage.SetId(id);
             this._dictGameStage.Add(id, gameStage);
         }
 

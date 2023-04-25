@@ -55,8 +55,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 ### AssetLoader
 
-資源加載器模塊，實現動態 Async 或 Sync 加載 (Dynamic Loading)，採用計數管理方式進行資源管控 (支援 Resources 與 AssetBundle)，一定要成對呼叫 Load & Unload (如果沒有成對呼叫，會導致計數不正確)。
-其中集成【YooAsset】實現資源熱更新方案，並且實現【YooAsset】提供的加密接口，實現加解密方式有 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密。
+資源加載器模塊，支援動態 Async 或 Sync 加載 (Dynamic Loading)，採用計數管理方式進行資源管控 (支援 Resources 與 AssetBundle)，一定要成對呼叫 Load & Unload (如果沒有成對呼叫，會導致計數不正確)。
+其中 AssetBundle 集成【[YooAsset](https://github.com/tuyoogame/YooAsset)】實現資源熱更新方案，並且實現【[YooAsset](https://github.com/tuyoogame/YooAsset)】提供的加密接口，實現加解密方式有 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密。
 
 ※備註 : Use "res#" will load from Resources else load from Bundle
 
@@ -68,24 +68,33 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
   - AB 包體積增加 OFFSET > AES > HTXOR = XOR
   - 破解難度 AES > HTXOR > XOR > OFFSET
 
-### 資源熱更新方案 (YooAsset)
+### 資源熱更新方案 ([YooAsset](https://github.com/tuyoogame/YooAsset))
 
-使用【YooAsset】的 Collector 進行資源收集 (可以使用 ActiveRule 決定哪些群組需要打包，進行 Built-in 跟 Patch 資源的區分)，再使用【YooAsset】的 Builder 進行打包 (不需手動更改資源日期版號)，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
+使用【[YooAsset](https://github.com/tuyoogame/YooAsset)】的 Collector 進行資源收集 (可以使用 ActiveRule 決定哪些群組需要打包，進行 Built-in 跟 Patch 資源的區分)，再使用【[YooAsset](https://github.com/tuyoogame/YooAsset)】的 Builder 進行打包 (不需手動更改資源日期版號)，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
 
 再使用 OxGFrame/AssetLoader/Bundle Config Generator 進行配置檔建立。
 
 1. 先進行 Export App Config To StreamingAssets 建立 appconfig.json 至 StreamingAssets 中 (主要用於 App Version 比對)。
-2. 再選擇 Export App Config And Bundles for CDN 輸出上傳資源，Source Folder 選擇剛剛使用【YooAsset】輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行更新包的區分，輸出後將 CDN 資料夾直接上傳至 Server。
+2. 再選擇 Export App Config And Bundles for CDN 輸出上傳資源，Source Folder 選擇剛剛使用【[YooAsset](https://github.com/tuyoogame/YooAsset)】輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行更新包的區分，輸出後將 CDN 資料夾直接上傳至 Server。
    
 - 群組分包舉例
   - 最小運行包
   - 標準運行包
   - 全部運行包 (預設 #all)
 
-**將 PatchLauncher 拖曳至場景中後，可以設置 PlayMode。**
+**將 PatchLauncher 拖曳至場景中後，可以設置 PlayMode**
 - Editor Simulate Mode (模擬模式 [加快開發])，需先配置 YooAsset Collector。
 - Offline Mode (單機模式)，需將 AB 打包至 Built-in，並且產出相關配置，需注意 PatchLauncher 的解密設定。
 - Host Mode (聯機模式)，需將 AB 打包區分 Built-in 跟 Patch，並且產出相關配置，需注意 PatchLauncher 的解密設定。
+
+**檢查 PlayMode 是否初始完成**
+- 判斷檢查 AssetPatcher.IsInitialized() 是否初始完成，因為初始完成後，才能開始進行 Bundle 加載。
+  - 備註 : 區分 Built-in 跟 Patch (視情況自行訂定運作流程)
+    1. 需自己拆分 Patch 更新前用到的資源 (例如 : LogoUI, PatchUI 等...)，需要先打包至 Built-in 作為內置資源。
+	2. 後續執行 AssetPatcher.Check() 檢查 Patch 更新完成後，就可以讀取更新資源了。
+	
+**檢查 Patch 是否更新完成**
+- 判斷檢查 AssetPatcher.IsDone() 是否更新完成。
 
 ---
 
@@ -149,8 +158,8 @@ Init Order : Awake (Once) > BeginInit (Once) > InitOnceComponents (Once) > InitO
 - VideoFrame : 使用 VideoManager 管理掛載 VideoBase 的 Prefab，且支援 RenderTexture, Camera
 
 #### Audio Sound Type 說明
-- Sole，唯一性 (不能重複播放)，建議 BGM (背景音樂), Voice (配音)
-- SoundEffect，多實例 (可以重複播放)，建議 Fight Sound (戰鬥音效), General Sound (一般音效)
+- Sole : 唯一性 (不能重複播放)，建議 BGM (背景音樂), Voice (配音)
+- SoundEffect : 多實例 (可以重複播放)，建議 Fight Sound (戰鬥音效), General Sound (一般音效)
 
 #### Video Render Mode 說明
 - RenderTexture : 將 Video 映射至 RenderTexture 再透過 UGUI 的 RawImage 進行渲染 (VideoBase 使用 RenderTexture.GetTemporary 跟 RenderTexture.ReleaseTemporary 創建與釋放，確保內存正確釋放 RenderTexture)
@@ -172,8 +181,8 @@ video_urlset 127.0.0.1/video/
 - 使用 OxGFrame/MediaFrame/Media Url Config Generator 創建 murlconfig.txt (StreamingAssets/murlconfig.txt)。
 
 **\>\> 加載 murlconfig.txt 方式 \<\<**
-- 1. 如果選擇 Url Cfg Request Type = Assign 的方式指定 murlconfig.txt 至 prefab 中。
-- 2. 如果選擇 Url Cfg Request Type = Streaming Assets 的方式請求 murlconfig.txt，將 murlconfig.txt 放至 StreamingAssets 根目錄中 (StreamingAssets/murlconfig.txt)。
+1. 如果選擇 Url Cfg Request Type = Assign 的方式指定 murlconfig.txt 至 prefab 中。
+2. 如果選擇 Url Cfg Request Type = Streaming Assets 的方式請求 murlconfig.txt，將 murlconfig.txt 放至 StreamingAssets 根目錄中 (StreamingAssets/murlconfig.txt)。
 
 **額外說明**：如果透過 URL 方式請求音訊或影片資源，建議於 WebGL 平台上使用，因為 WebGL 不支援 AssetBundle 事先指定 AudioClip 或 VideoClip (Assign 方式) 至 Prefab 中，所以提供 URL 的方式進行影音檔請求。
 

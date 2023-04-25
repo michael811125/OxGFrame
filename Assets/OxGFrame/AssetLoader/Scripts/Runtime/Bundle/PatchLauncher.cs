@@ -4,8 +4,10 @@ using UnityEngine;
 namespace OxGFrame.AssetLoader.Bundle
 {
     [DisallowMultipleComponent]
-    public class PatchLauncher : MonoBehaviour
+    internal class PatchLauncher : MonoBehaviour
     {
+        public static bool isInitialized { get; private set; } = false;
+
         [Header("Patch Options")]
         public BundleConfig.PlayMode playMode = BundleConfig.PlayMode.EditorSimulateMode;
 
@@ -21,7 +23,7 @@ namespace OxGFrame.AssetLoader.Bundle
         [Tooltip("AssetBundle decrypt key. \n[NONE], \n[OFFSET, dummySize], \n[XOR, key], \n[HTXOR, headKey, tailKey], \n[AES, key, iv] \nex: \n\"None\" \n\"offset, 12\" \n\"xor, 23\" \n\"htxor, 34, 45\" \n\"aes, key, iv\"")]
         public string decryptArgs = BundleConfig.CryptogramType.NONE;
 
-        private void Awake()
+        private async void Awake()
         {
             this.gameObject.name = $"[{nameof(PatchLauncher)}]";
             DontDestroyOnLoad(this);
@@ -42,12 +44,21 @@ namespace OxGFrame.AssetLoader.Bundle
             // Init Settings
             PackageManager.InitSetup();
 
+            // Init Patch Mode
+            await PackageManager.InitPatchMode();
+
+            Debug.Log($"<color=#32ff94>(Powered by YooAsset) Initialized Play Mode: {BundleConfig.playMode}</color>");
+
+            isInitialized = true;
+
             Debug.Log("<color=#b5ff00>(Powered by YooAsset) PatchLauncher Setup Completes.</color>");
         }
 
         private void OnApplicationQuit()
         {
             PackageManager.Release();
+
+            Debug.Log("<color=#ff84d1>(Powered by YooAsset) Release Packages Completes.</color>");
         }
     }
 }

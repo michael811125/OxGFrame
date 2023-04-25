@@ -379,7 +379,7 @@ public class BundleDemo : MonoBehaviour
 
     public async void PreloadBundle()
     {
-        // if assetName prefix "res#" will use Resources to load
+        // if assetName has prefix "res#" will use Resources to load
         await AssetLoaders.PreloadAssetAsync(this.assetName);
     }
 
@@ -388,37 +388,38 @@ public class BundleDemo : MonoBehaviour
         // Async LoadAsset
         GameObject go = await AssetLoaders.LoadAssetAsync<GameObject>(this.assetName, (p, r, t) =>
         {
-            Debug.Log($"{p}, {r}, {t}");
+            Debug.Log($"Load: {p}, {r}, {t}");
         });
         if (go != null) Instantiate(go, this.container.transform);
 
         // Sync LoadAsset
         //GameObject go = AssetLoaders.LoadAsset<GameObject>(this.assetName, (p, r, t) =>
         //{
-        //    Debug.Log($"{p}, {r}, {t}");
+        //    Debug.Log($"Load: {p}, {r}, {t}");
         //});
         //if (go != null) Instantiate(go, this.container.transform);
 
         // Async InstantiateAsset
         //await AssetLoaders.InstantiateAssetAsync<GameObject>(this.assetName, this.container.transform, (p, r, t) =>
         //{
-        //    Debug.Log($"{p}, {r}, {t}");
+        //    Debug.Log($"Load: {p}, {r}, {t}");
         //});
 
         // Sync InstantiateAsset
         //AssetLoaders.InstantiateAsset<GameObject>(this.assetName, this.container.transform, (p, r, t) =>
         //{
-        //    Debug.Log($"{p}, {r}, {t}");
+        //    Debug.Log($"Load: {p}, {r}, {t}");
         //});
     }
 
     public void UnloadBundle()
     {
-        // Destroy adn Unload (must call pair)
+        // Destroy and Unload (must call pair)
         foreach (Transform t in this.container.transform)
         {
-            // pair Destroy and Unload
+            // Destroy
             Destroy(t.gameObject);
+            // Unload
             AssetLoaders.UnloadAsset(this.assetName);
         }
     }

@@ -329,12 +329,5 @@ namespace OxGFrame.AssetLoader.Utility
             System.Diagnostics.Process.Start(dir);
         }
         #endregion
-
-        #region Other
-        public static int GetAssetsLength(params string[] names)
-        {
-            return names.Length;
-        }
-        #endregion
     }
 }

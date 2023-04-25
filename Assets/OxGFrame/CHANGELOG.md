@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [2.0.3] - 2023-04-25
+- Fixed unload issue (When ref is zero will call package.UnloadUnusedAssets()).
+- Fixed progression calculate bug.
+- Fixed play mode init procedure bug.
+- Fixed cannot get GSIBase id issue.
+- Extended CoreFrames.UIFrame.Show<T>.
+- Extended CoreFrames.GSFrame.Show<T>.
+
 ## [2.0.2] - 2023-04-24
 - Renamed method ShowAnim => ShowAnime.
 - Renamed method HideAnim => HideAnime.

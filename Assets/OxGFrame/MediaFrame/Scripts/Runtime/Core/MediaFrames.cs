@@ -1,4 +1,4 @@
-
+﻿
 using Cysharp.Threading.Tasks;
 using OxGFrame.MediaFrame.AudioFrame;
 using OxGFrame.MediaFrame.VideoFrame;
@@ -67,6 +67,11 @@ namespace OxGFrame.MediaFrame
             #endregion
 
             #region Audio
+            /// <summary>
+            /// If use prefix "res#" will load from resources else will load from bundle
+            /// </summary>
+            /// <param name="assetName"></param>
+            /// <returns></returns>
             public static async UniTask Preload(string assetName)
             {
                 await AudioManager.GetInstance().Preload(assetName);
@@ -77,6 +82,13 @@ namespace OxGFrame.MediaFrame
                 await AudioManager.GetInstance().Preload(assetNames);
             }
 
+            /// <summary>
+            /// If use prefix "res#" will load from resources else will load from bundle
+            /// </summary>
+            /// <param name="assetName"></param>
+            /// <param name="parent"></param>
+            /// <param name="loops"></param>
+            /// <returns></returns>
             public static async UniTask<AudioBase[]> Play(string assetName, Transform parent = null, int loops = 0)
             {
                 return await AudioManager.GetInstance().Play(assetName, parent, loops);
@@ -130,6 +142,11 @@ namespace OxGFrame.MediaFrame
             }
 
             #region Video
+            /// <summary>
+            /// If use prefix "res#" will load from resources else will load from bundle
+            /// </summary>
+            /// <param name="assetName"></param>
+            /// <returns></returns>
             public static async UniTask Preload(string assetName)
             {
                 await VideoManager.GetInstance().Preload(assetName);
@@ -140,6 +157,13 @@ namespace OxGFrame.MediaFrame
                 await VideoManager.GetInstance().Preload(assetNames);
             }
 
+            /// <summary>
+            /// If use prefix "res#" will load from resources else will load from bundle
+            /// </summary>
+            /// <param name="assetName"></param>
+            /// <param name="parent"></param>
+            /// <param name="loops"></param>
+            /// <returns></returns>
             public static async UniTask<VideoBase[]> Play(string assetName, Transform parent = null, int loops = 0)
             {
                 return await VideoManager.GetInstance().Play(assetName, parent, loops);

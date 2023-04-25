@@ -12,14 +12,11 @@ public class USFrameDemo : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
-    private void Start()
-    {
-        // if use bundle to load must check first and drag [PatchLauncher] in scene
-        AssetPatcher.Check();
-    }
-
     private void Update()
     {
+        // Make sure play mode is initialized
+        if (!AssetPatcher.IsInitialized()) return;
+
         #region From Build
         if (Keyboard.current.numpad1Key.wasReleasedThisFrame)
         {

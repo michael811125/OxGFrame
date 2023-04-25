@@ -261,7 +261,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
         }
 
         /// <summary>
-        /// 4. 初始 Patch Mode
+        /// 3. 初始 Patch Mode
         /// </summary>
         public class FsmInitPatchMode : IStateNode
         {
@@ -309,8 +309,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 }
                 else if (PackageManager.GetDefaultPackage().InitializeStatus == EOperationStatus.Succeed)
                 {
-                    this._machine.ChangeState<FsmClearCache>();
-                    Debug.Log("<color=#ffcf67>(Check) Already Init Patch</color>");
+                    this._machine.ChangeState<FsmPatchVersionUpdate>();
+                    Debug.Log("<color=#ffcf67>(Check) Check Patch</color>");
                     return;
                 }
 
@@ -318,7 +318,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 if (operation.Status == EOperationStatus.Succeed)
                 {
                     this._machine.ChangeState<FsmPatchVersionUpdate>();
-                    Debug.Log("<color=#ffcf67>(Check) Start Init Patch</color>");
+                    Debug.Log("<color=#ffcf67>(Init) Init Patch</color>");
                 }
                 else
                 {
@@ -328,7 +328,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
         }
 
         /// <summary>
-        /// 5. 更新 Patch Version
+        /// 4. 更新 Patch Version
         /// </summary>
         public class FsmPatchVersionUpdate : IStateNode
         {
@@ -376,7 +376,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
         }
 
         /// <summary>
-        /// 6. 更新 Patch Manifest
+        /// 5. 更新 Patch Manifest
         /// </summary>
         public class FsmPatchManifestUpdate : IStateNode
         {
@@ -424,7 +424,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
         }
 
         /// <summary>
-        /// 7. 創建資源下載器
+        /// 6. 創建資源下載器
         /// </summary>
         public class FsmCreateDownloader : IStateNode
         {
@@ -543,7 +543,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
         }
 
         /// <summary>
-        /// 8. 下載資源檔案
+        /// 7. 下載資源檔案
         /// </summary>
         public class FsmBeginDownload : IStateNode
         {
@@ -597,7 +597,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
         }
 
         /// <summary>
-        /// 9. 資源下載完成
+        /// 8. 資源下載完成
         /// </summary>
         public class FsmDownloadOver : IStateNode
         {
@@ -625,7 +625,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
         }
 
         /// <summary>
-        /// 10. 清理未使用的緩存文件
+        /// 9. 清理未使用的緩存文件
         /// </summary>
         public class FsmClearCache : IStateNode
         {
@@ -662,7 +662,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
         }
 
         /// <summary>
-        /// 11. 更新完畢
+        /// 10. 更新完畢
         /// </summary>
         public class FsmPatchDone : IStateNode
         {

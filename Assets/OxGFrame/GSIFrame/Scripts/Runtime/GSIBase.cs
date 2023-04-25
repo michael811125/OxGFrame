@@ -4,8 +4,19 @@ namespace OxGFrame.GSIFrame
 {
     public abstract class GSIBase
     {
-        private bool _isInitialized = false;        // init flag
+        public int id { get; private set; }
         public bool runUpdate { get; private set; } // 是否運行 Update 的開關
+
+        private bool _isInitialized = false;        // init flag
+
+        /// <summary>
+        /// 設置 Id
+        /// </summary>
+        /// <param name="id"></param>
+        public void SetId(int id)
+        {
+            this.id = id;
+        }
 
         /// <summary>
         /// 開始進行初始流程
