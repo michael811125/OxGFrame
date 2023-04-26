@@ -11,7 +11,7 @@
 
 ## 基本介紹
 
-OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、遊戲物件 (EPFrame)、影音 (MediaFrame)、遊戲階段整合 (GSIFrame)、網路 (NetFrame)、集中式 Event 註冊 (EventCenter)、集中式 API 註冊 (APICenter)、Http.Acax (仿 Ajax 概念) 等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
+OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity場景 (USFrame)、模板物件 (EPFrame)、音樂音效 (AudioFrame)、影片 (VideoFrame)、遊戲階段整合 (GSIFrame)、網路 (NetFrame)、集中式 Event 註冊 (EventCenter)、集中式 API 註冊 (APICenter)、Http.Acax (仿 Ajax 概念) 等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
 
 [Roadmap wiki](https://github.com/michael811125/OxGFrame/wiki/Roadmap)
 
@@ -115,6 +115,8 @@ store_link http://
 **\>\> 建立 burlconfig 方式 \<\<**
 - 使用 OxGFrame/AssetLoader/Bundle Url Config Generator 創建 burlconfig (StreamingAssets/burlconfig)。
 
+**如果沒有要使用 AssetLoader 資源加載模塊，可以直接刪除整個 AssetLoader (注意有模塊依賴引用)。**
+
 ---
 
 ### CoreFrame (dependence AssetLoader)
@@ -128,7 +130,7 @@ store_link http://
 - EPFrame (Entity Prefab) : 使用 EPManager 管理掛載 EPBase 的 Prefab (使用 ~Node@XXX 進行綁定)
 
 #### 常用方法說明
-- OnInit : 建構式概念，初始 Memeber Params，另外如果採用拖曳式指定組件，也可以直接在此初始 (不過不建議，建議還是在 OnBind 執行)。
+- OnInit : 初始 Member Params (建構式概念)，另外如果採用拖曳式指定組件，也可以直接在此初始 (不過不建議，建議還是在 OnBind 執行)。
 - OnBind : 初始綁定組件與事件 (After Bind)。
 - OpenSub : 當有異步處理或者附屬物件控制時，可以在此處理。例如 : TopUI 附屬連動開啟 LeftUI & RightUI，那麼就可以在 TopUI 中的 OpenSub 方法實現 Show LeftUI & RightUI。
 - OnShow : 調用 Show 時，此方法會被激活，並且可以透過帶入的 object 進行數據傳送。
@@ -145,6 +147,8 @@ Init Order : Awake (Once) > OnInit (Once) > OnBind (Once) > PreInit (EveryOpen) 
 - 透過 collector.GetNodes("BindName") 返回取得綁定 GameObject[] (同名多綁定，物件順序由上至下)
   - UIBase & GSBase 使用 _Node@XXX
   - EPBase 使用 ~Node@XXX
+
+**如果沒有要使用 CoreFrame 核心製作模塊，可以直接刪除整個 CoreFrame。**
 
 ※備註 : Right-Click Create/OxGFrame/CoreFrame... (Template cs and prefab)
 
@@ -186,6 +190,8 @@ video_urlset 127.0.0.1/video/
 
 **額外說明**：如果透過 URL 方式請求音訊或影片資源，建議於 WebGL 平台上使用，因為 WebGL 不支援 AssetBundle 事先指定 AudioClip 或 VideoClip (Assign 方式) 至 Prefab 中，所以提供 URL 的方式進行影音檔請求。
 
+**如果沒有要使用 MediaFrame 影音模塊，可以直接刪除整個 MediaFrame。**
+
 ※備註 : Right-Click Create/OxGFrame/MediaFrame... (Template prefab)
 
 ---
@@ -203,9 +209,9 @@ video_urlset 127.0.0.1/video/
 
 ---
 
-### NetFrame (Websocket, TCP/IP)
+### NetFrame (dependence Utility)
 
-網路模塊，實現統一接口，依照 Websocket 狀態概念進行接口設計 (ISocket)，狀態分為 OnOpen, OnMessage, OnError, OnClose，進行事件註冊後就可以針對網路狀態進行監控，也實現多網路節點 (NetNode)，可以自行建立 Websocket NetNode 或是 TCP/IP NetNode，再由 NetManager 進行網路節點註冊進行管理操作，另外可以設置心跳檢測回調、超時處理回調、重新連接回調的各處理，並且也能實現 INetTips 接口網路訊息介面的實作。
+網路模塊，實現 WebSocket 跟 TCP/IP 統一接口，依照 WebSocket 狀態概念進行接口設計 (ISocket)，狀態分為 OnOpen, OnMessage, OnError, OnClose，進行事件註冊後就可以針對網路狀態進行監控，也實現多網路節點 (NetNode)，可以自行建立 WebSocket NetNode 或是 TCP/IP NetNode，再由 NetManager 進行網路節點註冊進行管理操作，另外可以設置心跳檢測回調、超時處理回調、重新連接回調的各處理，並且也能實現 INetTips 接口網路訊息介面的實作。
 
 - NetManager (網路節點管理器)
 - NetNode (網路節點)
@@ -259,6 +265,8 @@ video_urlset 127.0.0.1/video/
   - ButtonPlus => Inherited by Unity Button. extend Long Press and Transition Scale
   - UMT => Unity Main Thread
     - ※備註 : 需先拖曳 UnityMainThread Prefab 至場景上 (由 Monobehaviour 主線程驅動)。
+
+**如果沒有要使用 Utility 通用組件，可以直接刪除整個 Utility (注意有模塊依賴引用)。**
 
 ---
 
