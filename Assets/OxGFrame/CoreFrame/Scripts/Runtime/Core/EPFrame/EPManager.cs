@@ -108,7 +108,7 @@ namespace OxGFrame.CoreFrame.EPFrame
             if (entityBase == null) return null;
 
             entityBase.SetNames(assetName);
-            entityBase.BeginInit();
+            entityBase.OnInit();
             entityBase.InitFirst();
             if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
 
@@ -138,7 +138,7 @@ namespace OxGFrame.CoreFrame.EPFrame
             if (entityBase == null) return null;
 
             entityBase.SetNames(assetName);
-            entityBase.BeginInit();
+            entityBase.OnInit();
             entityBase.InitFirst();
             if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
 
@@ -171,7 +171,7 @@ namespace OxGFrame.CoreFrame.EPFrame
             if (entityBase == null) return null;
 
             entityBase.SetNames(assetName);
-            entityBase.BeginInit();
+            entityBase.OnInit();
             entityBase.InitFirst();
             if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
 
@@ -201,7 +201,7 @@ namespace OxGFrame.CoreFrame.EPFrame
             if (entityBase == null) return null;
 
             entityBase.SetNames(assetName);
-            entityBase.BeginInit();
+            entityBase.OnInit();
             entityBase.InitFirst();
             if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
 
@@ -231,7 +231,7 @@ namespace OxGFrame.CoreFrame.EPFrame
             if (entityBase == null) return null;
 
             entityBase.SetNames(assetName);
-            entityBase.BeginInit();
+            entityBase.OnInit();
             entityBase.InitFirst();
             if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
 
@@ -264,7 +264,7 @@ namespace OxGFrame.CoreFrame.EPFrame
             if (entityBase == null) return null;
 
             entityBase.SetNames(assetName);
-            entityBase.BeginInit();
+            entityBase.OnInit();
             entityBase.InitFirst();
             if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
 

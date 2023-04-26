@@ -28,7 +28,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         /// 僅執行一次, 只交由 UIManager 加載資源時呼叫初始參數
         /// </summary>
-        public override void BeginInit() { }
+        public override void OnInit() { }
 
         /// <summary>
         /// 僅執行一次, 只交由 UIManager 加載資源時呼叫初始相關綁定組件
@@ -46,14 +46,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         protected override void CloseSub() { }
 
         /// <summary>
-        /// UI 初始相關 UI 組件, 僅初始一次
+        /// UI 初始相關 UI 綁定組件與註冊事件等 (僅初始一次)
         /// </summary>
-        protected override void InitOnceComponents() { }
-
-        /// <summary>
-        /// UI 初始相關註冊按鈕事件等等, 僅初始一次
-        /// </summary>
-        protected override void InitOnceEvents() { }
+        protected override void OnBind() { }
 
         /// <summary>
         /// 每次開啟 UI 時都會被執行, 子類 override

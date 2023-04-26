@@ -7,7 +7,7 @@ namespace OxGFrame.CoreFrame
 {
     /// <summary>
     /// <para>
-    /// Init Order: Awake (Once) > BeginInit (Once) > InitOnceComponents (Once) > InitOnceEvents (Once) > PreInit (EveryOpen) > OpenSub (EveryOpen) > OnShow (EveryOpen)
+    /// Init Order: Awake (Once) > OnInit (Once) > OnBind (Once) > PreInit (EveryOpen) > OpenSub (EveryOpen) > OnShow (EveryOpen)
     /// </para>
     /// </summary>
     [DisallowMultipleComponent]
@@ -91,9 +91,9 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 起始初始
+        /// 起始初始 (僅執行一次)
         /// </summary>
-        public abstract void BeginInit();
+        public abstract void OnInit();
 
         /// <summary>
         /// 綁定與初次初始
@@ -107,11 +107,10 @@ namespace OxGFrame.CoreFrame
                 this._isBinded = true;
             }
 
-            // 初次初始相關組件與事件
+            // 初次初始相關綁定組件與事件
             if (!this._isInitFirst)
             {
-                this.InitOnceComponents();
-                this.InitOnceEvents();
+                this.OnBind();
                 this._isInitFirst = true;
             }
         }
@@ -138,14 +137,9 @@ namespace OxGFrame.CoreFrame
         protected abstract void CloseSub();
 
         /// <summary>
-        /// 初始相關組件 (僅執行一次)
+        /// 初始相關綁定組件與事件 (僅執行一次)
         /// </summary>
-        protected abstract void InitOnceComponents();
-
-        /// <summary>
-        /// 初始相關事件 (僅執行一次)
-        /// </summary>
-        protected abstract void InitOnceEvents();
+        protected abstract void OnBind();
 
         /// <summary>
         /// 顯示相關流程

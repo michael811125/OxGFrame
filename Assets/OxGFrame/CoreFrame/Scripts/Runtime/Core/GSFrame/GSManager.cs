@@ -47,7 +47,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             gsBase.SetNames(assetName);
             // Clone 取得 GSBase 組件後, 也初始 GSBase 相關設定
-            gsBase.BeginInit();
+            gsBase.OnInit();
             // Clone 取得 GSBase 組件後, 也初始 GSBase 相關綁定組件設定
             gsBase.InitFirst();
 

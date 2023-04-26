@@ -128,17 +128,17 @@ store_link http://
 - EPFrame (Entity Prefab) : 使用 EPManager 管理掛載 EPBase 的 Prefab (使用 ~Node@XXX 進行綁定)
 
 #### 常用方法說明
-- InitOnceComponents : 在此方法內初始組件。
-- InitOnceEvents : 在此方法內初始事件。
+- OnInit : 建構式概念，初始 Memeber Params，另外如果採用拖曳式指定組件，也可以直接在此初始 (不過不建議，建議還是在 OnBind 執行)。
+- OnBind : 初始綁定組件與事件 (After Bind)。
 - OpenSub : 當有異步處理或者附屬物件控制時，可以在此處理。例如 : TopUI 附屬連動開啟 LeftUI & RightUI，那麼就可以在 TopUI 中的 OpenSub 方法實現 Show LeftUI & RightUI。
 - OnShow : 調用 Show 時，此方法會被激活，並且可以透過帶入的 object 進行數據傳送。
 - OnClose : 調用 Close 時，此方法會被激活。
 - OnRelease : 當物件 Close And Destroy 時，此方法會被激活。
 
 #### 初始順序說明
-Init Order : Awake (Once) > BeginInit (Once) > InitOnceComponents (Once) > InitOnceEvents (Once) > PreInit (EveryOpen) > OpenSub (EveryOpen) > OnShow (EveryOpen)
+Init Order : Awake (Once) > OnInit (Once) > OnBind (Once) > PreInit (EveryOpen) > OpenSub (EveryOpen) > OnShow (EveryOpen)
 
-#### 物件綁定說明
+#### 物件綁定說明 (OnBind)
 - 透過 collector.GetNode("BindName") 返回取得綁定 GameObject (單一名綁定)
   - UIBase & GSBase 使用 _Node@XXX
   - EPBase 使用 ~Node@XXX

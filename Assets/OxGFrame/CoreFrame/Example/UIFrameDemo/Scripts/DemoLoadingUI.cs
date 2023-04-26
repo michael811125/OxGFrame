@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 
 public class DemoLoadingUI : UIBase
 {
-    public override void BeginInit()
+    public override void OnInit()
     {
     }
 
@@ -21,18 +21,11 @@ public class DemoLoadingUI : UIBase
         */
     }
 
-    protected override void InitOnceComponents()
+    protected override void OnBind()
     {
         /**
-         * Do Somthing Init Once In Here (For Components)
+         * Do Somthing Init Once Components and Events In Here
          */
-    }
-
-    protected override void InitOnceEvents()
-    {
-        /**
-          * Do Somthing Init Once In Here (For Events)
-          */
     }
 
     protected override void OnShow(object obj)

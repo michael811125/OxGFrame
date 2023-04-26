@@ -5,7 +5,7 @@ public class #SCRIPTNAME# : UIBase
 {
     // Use _Node@XXX to Bind
 
-    public override void BeginInit()
+    public override void OnInit()
     {
         /**
          * Do Somthing Init Once In Here
@@ -26,17 +26,10 @@ public class #SCRIPTNAME# : UIBase
          */
     }
 
-    protected override void InitOnceComponents()
+    protected override void OnBind()
     {
         /**
-         * Do Somthing Init Once In Here (For Components)
-         */
-    }
-
-    protected override void InitOnceEvents()
-    {
-        /**
-         * Do Somthing Init Once In Here (For Events)
+         * Do Somthing Init Once Components and Events In Here (For Bind)
          */
     }
 
@@ -73,11 +66,15 @@ public class #SCRIPTNAME# : UIBase
 
     protected override void OnClose()
     {
-
+        /**
+         * Do Something on close (Close)
+         */
     }
 
     public override void OnRelease()
     {
-
+        /**
+         * Do Something on release (CloseAndDestroy)
+         */
     }
 }

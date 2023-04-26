@@ -6,7 +6,7 @@ using OxGFrame.CoreFrame.GSFrame;
 
 public class DemoRS : GSBase
 {
-    public override void BeginInit()
+    public override void OnInit()
     {
 
     }
@@ -30,18 +30,11 @@ public class DemoRS : GSBase
         Debug.Log("DemoRS OnShow");
     }
 
-    protected override void InitOnceComponents()
+    protected override void OnBind()
     {
         /**
-         * Do Somthing Init Once In Here (For Components)
+         * Do Somthing Init Once Components and Events In Here
          */
-    }
-
-    protected override void InitOnceEvents()
-    {
-        /**
-          * Do Somthing Init Once In Here (For Events)
-          */
     }
 
     protected override void OnUpdate(float dt)

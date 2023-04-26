@@ -226,7 +226,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             uiBase.SetNames(assetName);
             // Clone 取得 UIBase 組件後, 也需要初始 UI 相關配置, 不然後面無法正常運作
-            uiBase.BeginInit();
+            uiBase.OnInit();
             // Clone 取得 UIBase 組件後, 也需要初始 UI 相關綁定組件設定
             uiBase.InitFirst();
 

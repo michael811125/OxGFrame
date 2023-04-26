@@ -9,7 +9,7 @@ public class Demo2UI : UIBase
     private Image myImage;
     private Button oepnBtn;
 
-    public override void BeginInit()
+    public override void OnInit()
     {
     }
 
@@ -32,17 +32,14 @@ public class Demo2UI : UIBase
         Debug.Log(string.Format("{0} - Do Something OnShow.", this.gameObject.name));
     }
 
-    protected override void InitOnceComponents()
+    protected override void OnBind()
     {
         this.myImage = this.collector.GetNode("Image2")?.GetComponent<Image>();
         if (this.myImage != null) Debug.Log(string.Format("Binded GameObject: {0}", this.myImage.name));
 
         this.oepnBtn = this.collector.GetNode("OpenBtn")?.GetComponent<Button>();
         if (this.oepnBtn != null) Debug.Log(string.Format("Binded GameObject: {0}", this.oepnBtn.name));
-    }
 
-    protected override void InitOnceEvents()
-    {
         this.oepnBtn.onClick.AddListener(this._ShowDemoPopup3UI);
     }
 

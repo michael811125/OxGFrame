@@ -8,7 +8,7 @@ namespace OxGFrame.CoreFrame.GSFrame
         [Tooltip("GameScene Settings")]
         public GSSetting gsSetting = new GSSetting();
 
-        public override void BeginInit() { }
+        public override void OnInit() { }
 
         public sealed override void InitFirst()
         {
@@ -22,9 +22,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 
         protected override void CloseSub() { }
 
-        protected override void InitOnceComponents() { }
-
-        protected override void InitOnceEvents() { }
+        protected override void OnBind() { }
 
         protected override void OnShow(object obj) { }
 

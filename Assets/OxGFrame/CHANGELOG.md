@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2.0.4] - 2023-04-26
+- Renamed BeginInit be OnInit.
+- Combined InitOnceComponents and InitOnceEvents be OnBind (after bind will call this method) method.
+- Removed InitOnceComponents method.
+- Removed InitOnceEvents method.
+
 ## [2.0.3] - 2023-04-25
 - Fixed unload issue (When ref is zero will call package.UnloadUnusedAssets()).
 - Fixed progression calculate bug.

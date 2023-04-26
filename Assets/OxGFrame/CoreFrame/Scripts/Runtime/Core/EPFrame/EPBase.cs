@@ -26,16 +26,14 @@ namespace OxGFrame.CoreFrame.EPFrame
             AssetLoaders.UnloadAsset(this.assetName);
         }
 
-        public override void BeginInit() { }
+        public override void OnInit() { }
 
         public sealed override void InitFirst()
         {
             base.InitFirst();
         }
 
-        protected override void InitOnceComponents() { }
-
-        protected override void InitOnceEvents() { }
+        protected override void OnBind() { }
 
         protected override void OnShow(object obj) { }
 

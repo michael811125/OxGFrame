@@ -3,21 +3,15 @@ using UnityEngine;
 
 public class DemoEntity2 : EPBase
 {
-    public override void BeginInit()
+    public override void OnInit()
     {
         Debug.Log($"<color=#FF2A20>InitThis:</color> {this.gameObject.name}");
     }
 
-    protected override void InitOnceComponents()
+    protected override void OnBind()
     {
-        Debug.Log($"<color=#FFA720>InitOnceComponents:</color> {this.gameObject.name}");
         Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {this.collector.GetNode("B1").name}");
         Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {this.collector.GetNode("B2").name}");
-    }
-
-    protected override void InitOnceEvents()
-    {
-        Debug.Log($"<color=#FFE920>InitOnceEvents:</color> {this.gameObject.name}");
     }
 
     protected override void OnShow(object obj)
