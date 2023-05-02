@@ -100,7 +100,7 @@ namespace OxGFrame.CoreFrame.USFrame
         }
 
         #region Bundle
-        public async UniTask<BundlePack> LoadFromBundleAsync(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+        public async UniTask<BundlePack> LoadFromBundleAsync(string packageName, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, int priority = 100, Progression progression = null)
         {
             var scene = this.GetSceneByName(sceneName);
             if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
@@ -109,7 +109,7 @@ namespace OxGFrame.CoreFrame.USFrame
                 return null;
             }
 
-            var pack = await AssetLoaders.LoadSceneAsync(sceneName, loadSceneMode, activateOnLoad, priority, progression);
+            var pack = await AssetLoaders.LoadSceneAsync(packageName, sceneName, loadSceneMode, activateOnLoad, priority, progression);
 
             Debug.Log($"<color=#4affc2>Load Scene From <color=#ffc04a>Bundle</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
 

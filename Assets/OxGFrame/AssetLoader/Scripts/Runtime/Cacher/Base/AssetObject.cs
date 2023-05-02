@@ -7,7 +7,7 @@ namespace OxGFrame.AssetLoader.Cacher
     #region Base
     public class AssetObject
     {
-        public string assetName = string.Empty;
+        public string assetName { get; protected set; }
         public int refCount { get; protected set; }
 
         public void AddRef()
@@ -27,6 +27,17 @@ namespace OxGFrame.AssetLoader.Cacher
     {
         public Object asset;
 
+        /// <summary>
+        /// Set pack info
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="asset"></param>
+        public void SetPack(string assetName, Object asset)
+        {
+            this.assetName = assetName;
+            this.asset = asset;
+        }
+
         public T GetAsset<T>() where T : Object
         {
             return this.asset as T;
@@ -43,7 +54,20 @@ namespace OxGFrame.AssetLoader.Cacher
     #region Bundle
     public class BundlePack : AssetObject
     {
-        public OperationHandleBase operationHandle;
+        public string packageName { get; protected set; }
+        public OperationHandleBase operationHandle { get; protected set; }
+
+        /// <summary>
+        /// Set pack info
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="operationHandle"></param>
+        public void SetPack(string packageName, string assetName, OperationHandleBase operationHandle)
+        {
+            this.packageName = packageName;
+            this.assetName = assetName;
+            this.operationHandle = operationHandle;
+        }
 
         #region Checker
         public bool IsRawFileOperationHandle()

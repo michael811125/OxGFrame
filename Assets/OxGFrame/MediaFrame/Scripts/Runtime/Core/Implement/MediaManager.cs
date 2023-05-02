@@ -89,13 +89,14 @@ namespace OxGFrame.MediaFrame
         /// <summary>
         /// 實際運行加載物件資源
         /// </summary>
+        /// <param name="packageName"></param>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        protected virtual async UniTask<GameObject> LoadGameObject(string assetName)
+        protected virtual async UniTask<GameObject> LoadGameObject(string packageName, string assetName)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
-            GameObject obj = await AssetLoaders.LoadAssetAsync<GameObject>(assetName);
+            GameObject obj = await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName);
 
             if (obj == null)
             {
@@ -109,11 +110,12 @@ namespace OxGFrame.MediaFrame
         /// <summary>
         /// 加載資源至資源快取中
         /// </summary>
+        /// <param name="packageName"></param>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        protected virtual async UniTask<GameObject> LoadingAsset(string assetName)
+        protected virtual async UniTask<GameObject> LoadingAsset(string packageName, string assetName)
         {
-            GameObject go = await this.LoadGameObject(assetName);
+            GameObject go = await this.LoadGameObject(packageName, assetName);
             if (go == null) return null;
 
             this._dictAssetCache.Add(assetName, go);
@@ -126,15 +128,15 @@ namespace OxGFrame.MediaFrame
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        protected async UniTask<GameObject> LoadAssetIntoCache(string assetName)
+        protected async UniTask<GameObject> LoadAssetIntoCache(string packageName, string assetName)
         {
             GameObject go;
             // 判斷不在 AllCache 中, 也不在 LoadingFlags 中, 才進行加載程序
             if (!this.HasAssetInCache(assetName) && !this.HasInLoadingFlags(assetName))
             {
-                this._loadingFlags.Add(assetName);       // 標記 LoadingFlag
-                go = await this.LoadingAsset(assetName); // 開始加載
-                this._loadingFlags.Remove(assetName);    // 移除 LoadingFlag
+                this._loadingFlags.Add(assetName);                    // 標記 LoadingFlag
+                go = await this.LoadingAsset(packageName, assetName); // 開始加載
+                this._loadingFlags.Remove(assetName);                 // 移除 LoadingFlag
             }
             else go = this.GetAssetFromCache(assetName); // 如果判斷沒有要執行加載程序, 就直接從 AllCache 中取得
 
@@ -178,24 +180,20 @@ namespace OxGFrame.MediaFrame
             return mBase;
         }
 
-        public async UniTask Preload(string assetName)
-        {
-            if (!string.IsNullOrEmpty(assetName)) await this.LoadAssetIntoCache(assetName);
-        }
-
         /// <summary>
         /// 資源預加載
         /// </summary>
+        /// <param name="packageName"></param>
         /// <param name="assetNames"></param>
         /// <returns></returns>
-        public async UniTask Preload(string[] assetNames)
+        public async UniTask Preload(string packageName, string[] assetNames)
         {
             if (assetNames.Length > 0)
             {
                 for (int i = 0; i < assetNames.Length; i++)
                 {
                     if (string.IsNullOrEmpty(assetNames[i])) continue;
-                    await this.LoadAssetIntoCache(assetNames[i]);
+                    await this.LoadAssetIntoCache(packageName, assetNames[i]);
                 }
             }
         }
@@ -203,7 +201,7 @@ namespace OxGFrame.MediaFrame
         protected virtual void SetParent(T mBase, Transform parent) { }
 
         #region Play
-        public abstract UniTask<T[]> Play(string assetName, Transform parent = null, int loops = 0);
+        public abstract UniTask<T[]> Play(string packageName, string assetName, Transform parent = null, int loops = 0);
         public abstract void ResumeAll();
         #endregion
 

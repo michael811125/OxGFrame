@@ -126,7 +126,53 @@ namespace OxGFrame.AssetLoader
 
         #region Package Operation
         /// <summary>
-        /// Set default pacakge. If is not exist will auto register and set it be default
+        /// Init package by package name
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="autoUpdate"></param>
+        /// <param name="hostServer"></param>
+        /// <param name="fallbackHostServer"></param>
+        /// <returns></returns>
+        public static async UniTask<InitializationOperation> InitPackage(string packageName, bool autoUpdate = false, string hostServer = null, string fallbackHostServer = null)
+        {
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer);
+        }
+
+        /// <summary>
+        /// Init package by package list idx
+        /// </summary>
+        /// <param name="idx"></param>
+        /// <param name="autoUpdate"></param>
+        /// <param name="hostServer"></param>
+        /// <param name="fallbackHostServer"></param>
+        /// <returns></returns>
+        public static async UniTask<InitializationOperation> InitPackage(int idx, bool autoUpdate = false, string hostServer = null, string fallbackHostServer = null)
+        {
+            return await PackageManager.InitPackage(idx, autoUpdate, hostServer, fallbackHostServer);
+        }
+
+        /// <summary>
+        /// Update package manifest by package name
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <returns></returns>
+        public static async UniTask UpdatePackage(string packageName)
+        {
+            await PackageManager.UpdatePackage(packageName);
+        }
+
+        /// <summary>
+        ///  Update package manifest by package list idx
+        /// </summary>
+        /// <param name="idx"></param>
+        /// <returns></returns>
+        public static async UniTask UpdatePackage(int idx)
+        {
+            await PackageManager.UpdatePackage(idx);
+        }
+
+        /// <summary>
+        /// Set default package. If is not exist will auto register and set it be default
         /// </summary>
         /// <param name="packageName"></param>
         public static void SetDefaultPackage(string packageName)
@@ -192,6 +238,15 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Retrun package name list
+        /// </summary>
+        /// <returns></returns>
+        public static string[] GetPackageNames()
+        {
+            return PackageManager.GetPackageNames();
+        }
+
+        /// <summary>
         /// Get package name by idx
         /// </summary>
         /// <param name="idx"></param>
@@ -204,12 +259,12 @@ namespace OxGFrame.AssetLoader
         /// <summary>
         /// Get downloader from package with tags
         /// </summary>
-        /// <param name="pacakge"></param>
+        /// <param name="package"></param>
         /// <param name="tags"></param>
         /// <returns></returns>
-        public static ResourceDownloaderOperation GetPacakgeDownloaderByTags(ResourcePackage pacakge, params string[] tags)
+        public static ResourceDownloaderOperation GetPackageDownloader(ResourcePackage package, params string[] tags)
         {
-            return PackageManager.GetPacakgeDownloaderByTags(pacakge, tags);
+            return PackageManager.GetPackageDownloader(package, tags);
         }
         #endregion
     }

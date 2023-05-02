@@ -314,7 +314,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     return;
                 }
 
-                var operation = await PackageManager.InitPatchMode();
+                var operation = await PackageManager.InitDefaultPackage();
                 if (operation.Status == EOperationStatus.Succeed)
                 {
                     this._machine.ChangeState<FsmPatchVersionUpdate>();

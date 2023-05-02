@@ -1,4 +1,5 @@
-﻿using OxGFrame.AssetLoader;
+﻿using Cysharp.Threading.Tasks;
+using OxGFrame.AssetLoader;
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.PatchEvent;
 using OxGFrame.AssetLoader.PatchFsm;
@@ -7,6 +8,7 @@ using System.Text;
 using UniFramework.Event;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.ReloadAttribute;
 
 public class BundleDemo : MonoBehaviour
 {
@@ -376,6 +378,18 @@ public class BundleDemo : MonoBehaviour
     [Header("BundleInfo")]
     public string assetName = "";
     public GameObject container = null;
+
+    /*
+     * [Load asset and download from specific package]
+     * 
+     * var packageName = "OtherPackage";
+     * await AssetPatcher.InitPackage(packageName, true, "127.0.0.1/package", "127.0.0.1/package");
+     * var package = AssetPatcher.GetPackage(packageName);
+     * var downloader = AssetPatcher.GetPackageDownloader(package);
+     * Debug.Log($"Patch Size: {BundleUtility.GetBytesToString((ulong) downloader.TotalDownloadBytes)}");
+     * await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName);
+     * 
+     */
 
     public async void PreloadBundle()
     {

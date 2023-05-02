@@ -35,17 +35,17 @@ public class VideoFrameDemo : MonoBehaviour
     #region Video cast to 【RenderTexture】
     public async void PlayVideoRenderTexture()
     {
-        var videos = await MediaFrames.VideoFrame.Play(VIDEO_PATH + "video_rt_Example");
+        var video = await MediaFrames.VideoFrame.Play(VIDEO_PATH + "video_rt_Example");
 
-        // Get first idx
-        if (videos[0] != null)
+        // Get Video
+        if (video != null)
         {
             // Make sure rawImage is enabled
             this.rawImage.enabled = true;
             // GetTargetRenderTexture and assign to rawImage.texture
-            this.rawImage.texture = videos[0].GetTargetRenderTexture();
+            this.rawImage.texture = video.GetTargetRenderTexture();
             // Set EndEvent handler (if video play end can clear rawImage.texture)
-            videos[0].SetEndEvent(() =>
+            video.SetEndEvent(() =>
             {
                 this.rawImage.texture = null;
                 this.rawImage.enabled = false;

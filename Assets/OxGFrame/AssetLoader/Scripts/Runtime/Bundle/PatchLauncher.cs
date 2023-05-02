@@ -12,7 +12,7 @@ namespace OxGFrame.AssetLoader.Bundle
         public BundleConfig.PlayMode playMode = BundleConfig.PlayMode.EditorSimulateMode;
 
         [Header("Package List")]
-        [Tooltip("First will be DefaultPackge")]
+        [Tooltip("First will be default package")]
         public List<string> listPackage = new List<string>() { "DefaultPackage" };
 
         [Header("Download Options")]
@@ -44,8 +44,8 @@ namespace OxGFrame.AssetLoader.Bundle
             // Init Settings
             PackageManager.InitSetup();
 
-            // Init Patch Mode
-            await PackageManager.InitPatchMode();
+            // Init Default Package
+            await PackageManager.InitDefaultPackage();
 
             Debug.Log($"<color=#32ff94>(Powered by YooAsset) Initialized Play Mode: {BundleConfig.playMode}</color>");
 

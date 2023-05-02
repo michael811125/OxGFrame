@@ -210,7 +210,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <param name="parent"></param>
         /// <param name="loops"></param>
         /// <returns></returns>
-        public override async UniTask<AudioBase[]> Play(string assetName, Transform parent = null, int loops = 0)
+        public override async UniTask<AudioBase[]> Play(string packageName, string assetName, Transform parent = null, int loops = 0)
         {
             if (string.IsNullOrEmpty(assetName)) return new AudioBase[] { };
 
@@ -234,7 +234,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             if (!isResume)
             {
-                GameObject go = await this.LoadAssetIntoCache(assetName);
+                GameObject go = await this.LoadAssetIntoCache(packageName, assetName);
                 Transform spawnParent = null;
                 if (parent == null) spawnParent = this.transform;
                 AudioBase audBase = await this.CloneAsset<AudioBase>(assetName, go, parent, spawnParent);

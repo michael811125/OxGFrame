@@ -23,7 +23,7 @@ public class USFrameDemo : MonoBehaviour
             Action asyncHandler = async () =>
             {
                 // if use prefix "build#" will load from build else will from bundle
-                await CoreFrames.USFrame.LoadSceneAsync("build#LevelDemo01", LoadSceneMode.Single, (float progress, float reqSize, float totalSize) =>
+                await CoreFrames.USFrame.LoadSceneAsync("build#LevelDemo01", LoadSceneMode.Single, true, 100, (float progress, float reqSize, float totalSize) =>
                 {
                     Debug.Log($"Progress: {progress}, ReqSize: {reqSize}, TotalSize: {totalSize}");
                 });
@@ -36,7 +36,7 @@ public class USFrameDemo : MonoBehaviour
             Action asyncHandler = async () =>
             {
                 // if use prefix "build#" will load from build else will from bundle
-                await CoreFrames.USFrame.LoadSceneAsync("build#LevelDemo02", LoadSceneMode.Single, (float progress, float reqSize, float totalSize) =>
+                await CoreFrames.USFrame.LoadSceneAsync("build#LevelDemo02", LoadSceneMode.Single, true, 100, (float progress, float reqSize, float totalSize) =>
                 {
                     Debug.Log($"Progress: {progress}, ReqSize: {reqSize}, TotalSize: {totalSize}");
                 });
@@ -49,7 +49,7 @@ public class USFrameDemo : MonoBehaviour
             Action asyncHandler = async () =>
             {
                 // if use prefix "build#" will load from build else will from bundle
-                await CoreFrames.USFrame.LoadSceneAsync("build#LevelDemo03", LoadSceneMode.Additive, (float progress, float reqSize, float totalSize) =>
+                await CoreFrames.USFrame.LoadSceneAsync("build#LevelDemo03", LoadSceneMode.Additive, true, 100, (float progress, float reqSize, float totalSize) =>
                 {
                     Debug.Log($"Progress: {progress}, ReqSize: {reqSize}, TotalSize: {totalSize}");
                 });

@@ -1,4 +1,6 @@
-﻿using OxGFrame.AssetLoader.Bundle;
+﻿using Cysharp.Threading.Tasks;
+using OxGFrame.AssetLoader.Bundle;
+using System;
 using UniFramework.Event;
 using UniFramework.Machine;
 
@@ -56,7 +58,7 @@ namespace OxGFrame.AssetLoader.PatchEvent
         }
 
         /// <summary>
-        /// Patch init patch mode failed
+        /// Patch init default package failed
         /// </summary>
         public class PatchInitPatchModeFailed : IEventMessage
         {
@@ -120,7 +122,7 @@ namespace OxGFrame.AssetLoader.PatchEvent
 
             private static long _lastDownloadSizeBytes;
 
-            public static void SendEventMessage(int totalDownloadCount, int currentDownloadCount, long totalDownloadSizeBytes, long currentDownloadSizeBytes)
+            public static async void SendEventMessage(int totalDownloadCount, int currentDownloadCount, long totalDownloadSizeBytes, long currentDownloadSizeBytes)
             {
                 var msg = new PatchDownloadProgression();
                 msg.totalDownloadCount = totalDownloadCount;
@@ -130,6 +132,7 @@ namespace OxGFrame.AssetLoader.PatchEvent
                 msg.downloadSpeedSizeBytes = msg.currentDownloadSizeBytes - _lastDownloadSizeBytes;
                 _lastDownloadSizeBytes = msg.currentDownloadSizeBytes;
                 msg.progress = currentDownloadSizeBytes * 1f / totalDownloadSizeBytes * 1f;
+                await UniTask.Delay(TimeSpan.FromSeconds(1f));
                 UniEvent.SendMessage(msg);
             }
         }

@@ -23,16 +23,11 @@ namespace OxGFrame.CoreFrame.EPFrame
             return _instance;
         }
 
-        /// <summary>
-        /// 載入 GameObject
-        /// </summary>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        protected async UniTask<GameObject> LoadGameObjectAsync(string assetName, Progression progression)
+        protected async UniTask<GameObject> LoadGameObjectAsync(string packageName, string assetName, Progression progression)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
-            GameObject obj = await AssetLoaders.LoadAssetAsync<GameObject>(assetName, progression);
+            GameObject obj = await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName, progression);
 
             if (obj == null)
             {
@@ -43,11 +38,11 @@ namespace OxGFrame.CoreFrame.EPFrame
             return obj;
         }
 
-        protected GameObject LoadGameObject(string assetName, Progression progression)
+        protected GameObject LoadGameObject(string packageName, string assetName, Progression progression)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
-            GameObject obj = AssetLoaders.LoadAsset<GameObject>(assetName, progression);
+            GameObject obj = AssetLoaders.LoadAsset<GameObject>(packageName, assetName, progression);
 
             if (obj == null)
             {
@@ -58,39 +53,19 @@ namespace OxGFrame.CoreFrame.EPFrame
             return obj;
         }
 
-        /// <summary>
-        /// 預加載
-        /// </summary>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public async UniTask PreloadAsync(string assetName, Progression progression = null)
+        public async UniTask PreloadAsync(string packageName, string[] assetNames, Progression progression = null)
         {
-            await AssetLoaders.PreloadAssetAsync(assetName, progression);
+            await AssetLoaders.PreloadAssetAsync(packageName, assetNames, progression);
         }
 
-        /// <summary>
-        /// 預加載
-        /// </summary>
-        /// <param name="assetNames"></param>
-        /// <returns></returns>
-        public async UniTask PreloadAsync(string[] assetNames, Progression progression = null)
+        public void Preload(string packageName, string[] assetNames, Progression progression = null)
         {
-            await AssetLoaders.PreloadAssetAsync(assetNames, progression);
+            AssetLoaders.PreloadAsset(packageName, assetNames, progression);
         }
 
-        public void Preload(string assetName, Progression progression = null)
+        public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent = null, Progression progression = null) where T : EPBase, new()
         {
-            AssetLoaders.PreloadAsset(assetName, progression);
-        }
-
-        public void Preload(string[] assetNames, Progression progression = null)
-        {
-            AssetLoaders.PreloadAsset(assetNames, progression);
-        }
-
-        public async UniTask<T> LoadWithCloneAsync<T>(string assetName, Transform parent = null, Progression progression = null) where T : EPBase, new()
-        {
-            GameObject go = await this.LoadGameObjectAsync(assetName, progression);
+            GameObject go = await this.LoadGameObjectAsync(packageName, assetName, progression);
             if (go == null) return null;
 
             GameObject instGo = GameObject.Instantiate(go, parent);
@@ -118,9 +93,9 @@ namespace OxGFrame.CoreFrame.EPFrame
             return entityBase;
         }
 
-        public async UniTask<T> LoadWithCloneAsync<T>(string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : EPBase, new()
+        public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : EPBase, new()
         {
-            GameObject go = await this.LoadGameObjectAsync(assetName, progression);
+            GameObject go = await this.LoadGameObjectAsync(packageName, assetName, progression);
             if (go == null) return null;
 
             GameObject instGo = GameObject.Instantiate(go, parent, worldPositionStays);
@@ -148,9 +123,9 @@ namespace OxGFrame.CoreFrame.EPFrame
             return entityBase;
         }
 
-        public async UniTask<T> LoadWithCloneAsync<T>(string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : EPBase, new()
+        public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : EPBase, new()
         {
-            GameObject go = await this.LoadGameObjectAsync(assetName, progression);
+            GameObject go = await this.LoadGameObjectAsync(packageName, assetName, progression);
             if (go == null) return null;
 
             GameObject instGo = GameObject.Instantiate(go, position, rotation, parent);
@@ -181,9 +156,9 @@ namespace OxGFrame.CoreFrame.EPFrame
             return entityBase;
         }
 
-        public T LoadWithClone<T>(string assetName, Transform parent = null, Progression progression = null) where T : EPBase, new()
+        public T LoadWithClone<T>(string packageName, string assetName, Transform parent = null, Progression progression = null) where T : EPBase, new()
         {
-            GameObject go = this.LoadGameObject(assetName, progression);
+            GameObject go = this.LoadGameObject(packageName, assetName, progression);
             if (go == null) return null;
 
             GameObject instGo = GameObject.Instantiate(go, parent);
@@ -211,9 +186,9 @@ namespace OxGFrame.CoreFrame.EPFrame
             return entityBase;
         }
 
-        public T LoadWithClone<T>(string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : EPBase, new()
+        public T LoadWithClone<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : EPBase, new()
         {
-            GameObject go = this.LoadGameObject(assetName, progression);
+            GameObject go = this.LoadGameObject(packageName, assetName, progression);
             if (go == null) return null;
 
             GameObject instGo = GameObject.Instantiate(go, parent, worldPositionStays);
@@ -241,9 +216,9 @@ namespace OxGFrame.CoreFrame.EPFrame
             return entityBase;
         }
 
-        public T LoadWithClone<T>(string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : EPBase, new()
+        public T LoadWithClone<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : EPBase, new()
         {
-            GameObject go = this.LoadGameObject(assetName, progression);
+            GameObject go = this.LoadGameObject(packageName, assetName, progression);
             if (go == null) return null;
 
             GameObject instGo = GameObject.Instantiate(go, position, rotation, parent);

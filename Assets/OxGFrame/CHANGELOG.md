@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## [2.0.5] - 2023-05-02
+- Renamed AssetPatcher.GetPackageDownloaderByTags to AssetPatcher.GetPackageDownloader.
+- Extended CoreFrames.USFrame methods (LoadSingleSceneAsync and LoadAdditiveSceneAsync).
+- Extended load asset and download from specific package.
+- Optimized code.
+```
+// [Load asset and download from specific package]
+var packageName = "OtherPackage";
+await AssetPatcher.InitPackage(packageName, true, "127.0.0.1/package", "127.0.0.1/package");
+var package = AssetPatcher.GetPackage(packageName);
+var downloader = AssetPatcher.GetPackageDownloader(package);
+Debug.Log($"Patch Size: {BundleUtility.GetBytesToString((ulong) downloader.TotalDownloadBytes)}");
+await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName);
+```
+
 ## [2.0.4] - 2023-04-26
 - Renamed BeginInit be OnInit.
 - Combined InitOnceComponents and InitOnceEvents be OnBind (after bind will call this method) method.

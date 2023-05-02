@@ -16,21 +16,11 @@ namespace OxGFrame.AssetLoader.GroupCahcer
         }
 
         #region RawFile
-        public async UniTask PreloadRawFileAsync(int id, string assetName, Progression progression = null)
-        {
-            if (string.IsNullOrEmpty(assetName)) return;
-
-            await CacheBundle.GetInstance().PreloadRawFileAsync(assetName, progression);
-            if (CacheBundle.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
-
-            Debug.Log($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
-        }
-
-        public async UniTask PreloadRawFileAsync(int id, string[] assetNames, Progression progression = null)
+        public async UniTask PreloadRawFileAsync(int id, string packageName, string[] assetNames, Progression progression = null)
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
-            await CacheBundle.GetInstance().PreloadRawFileAsync(assetNames, progression);
+            await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, progression);
             foreach (string assetName in assetNames)
             {
                 if (string.IsNullOrEmpty(assetName)) continue;
@@ -40,21 +30,11 @@ namespace OxGFrame.AssetLoader.GroupCahcer
             Debug.Log($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
-        public void PreloadRawFile(int id, string assetName, Progression progression = null)
-        {
-            if (string.IsNullOrEmpty(assetName)) return;
-
-            CacheBundle.GetInstance().PreloadRawFile(assetName, progression);
-            if (CacheBundle.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
-
-            Debug.Log($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
-        }
-
-        public void PreloadRawFile(int id, string[] assetNames, Progression progression = null)
+        public void PreloadRawFile(int id, string packageName, string[] assetNames, Progression progression = null)
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
-            CacheBundle.GetInstance().PreloadRawFile(assetNames, progression);
+            CacheBundle.GetInstance().PreloadRawFile(packageName, assetNames, progression);
             foreach (string assetName in assetNames)
             {
                 if (string.IsNullOrEmpty(assetName)) continue;
@@ -70,11 +50,11 @@ namespace OxGFrame.AssetLoader.GroupCahcer
         /// <param name="id"></param>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        public async UniTask<T> LoadRawFileAsync<T>(int id, string assetName, Progression progression = null)
+        public async UniTask<T> LoadRawFileAsync<T>(int id, string packageName, string assetName, Progression progression = null)
         {
             T asset = default;
 
-            asset = await CacheBundle.GetInstance().LoadRawFileAsync<T>(assetName, progression);
+            asset = await CacheBundle.GetInstance().LoadRawFileAsync<T>(packageName, assetName, progression);
 
             if (asset != null)
             {
@@ -91,11 +71,11 @@ namespace OxGFrame.AssetLoader.GroupCahcer
             return asset;
         }
 
-        public T LoadRawFile<T>(int id, string assetName, Progression progression = null)
+        public T LoadRawFile<T>(int id, string packageName, string assetName, Progression progression = null)
         {
             T asset = default;
 
-            asset = CacheBundle.GetInstance().LoadRawFile<T>(assetName, progression);
+            asset = CacheBundle.GetInstance().LoadRawFile<T>(packageName, assetName, progression);
 
             if (asset != null)
             {
@@ -164,21 +144,11 @@ namespace OxGFrame.AssetLoader.GroupCahcer
         #endregion
 
         #region Asset
-        public async UniTask PreloadAssetAsync(int id, string assetName, Progression progression = null)
-        {
-            if (string.IsNullOrEmpty(assetName)) return;
-
-            await CacheBundle.GetInstance().PreloadAssetAsync(assetName, progression);
-            if (CacheBundle.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
-
-            Debug.Log($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
-        }
-
-        public async UniTask PreloadAssetAsync(int id, string[] assetNames, Progression progression = null)
+        public async UniTask PreloadAssetAsync(int id, string packageName, string[] assetNames, Progression progression = null)
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
-            await CacheBundle.GetInstance().PreloadAssetAsync(assetNames, progression);
+            await CacheBundle.GetInstance().PreloadAssetAsync(packageName, assetNames, progression);
             foreach (string assetName in assetNames)
             {
                 if (string.IsNullOrEmpty(assetName)) continue;
@@ -188,21 +158,11 @@ namespace OxGFrame.AssetLoader.GroupCahcer
             Debug.Log($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
-        public void PreloadAsset(int id, string assetName, Progression progression = null)
-        {
-            if (string.IsNullOrEmpty(assetName)) return;
-
-            CacheBundle.GetInstance().PreloadAsset(assetName, progression);
-            if (CacheBundle.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
-
-            Debug.Log($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
-        }
-
-        public void PreloadAsset(int id, string[] assetNames, Progression progression = null)
+        public void PreloadAsset(int id, string packageName, string[] assetNames, Progression progression = null)
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
-            CacheBundle.GetInstance().PreloadAsset(assetNames, progression);
+            CacheBundle.GetInstance().PreloadAsset(packageName, assetNames, progression);
             foreach (string assetName in assetNames)
             {
                 if (string.IsNullOrEmpty(assetName)) continue;
@@ -218,11 +178,11 @@ namespace OxGFrame.AssetLoader.GroupCahcer
         /// <param name="id"></param>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        public async UniTask<T> LoadAssetAsync<T>(int id, string assetName, Progression progression = null) where T : Object
+        public async UniTask<T> LoadAssetAsync<T>(int id, string packageName, string assetName, Progression progression = null) where T : Object
         {
             T asset = null;
 
-            asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(assetName, progression);
+            asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression);
 
             if (asset != null)
             {
@@ -239,11 +199,11 @@ namespace OxGFrame.AssetLoader.GroupCahcer
             return asset;
         }
 
-        public T LoadAsset<T>(int id, string assetName, Progression progression = null) where T : Object
+        public T LoadAsset<T>(int id, string packageName, string assetName, Progression progression = null) where T : Object
         {
             T asset = null;
 
-            asset = CacheBundle.GetInstance().LoadAsset<T>(assetName, progression);
+            asset = CacheBundle.GetInstance().LoadAsset<T>(packageName, assetName, progression);
 
             if (asset != null)
             {

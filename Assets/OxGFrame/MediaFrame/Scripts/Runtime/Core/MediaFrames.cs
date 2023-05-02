@@ -1,5 +1,6 @@
 ﻿
 using Cysharp.Threading.Tasks;
+using OxGFrame.AssetLoader;
 using OxGFrame.MediaFrame.AudioFrame;
 using OxGFrame.MediaFrame.VideoFrame;
 using UnityEngine;
@@ -74,12 +75,24 @@ namespace OxGFrame.MediaFrame
             /// <returns></returns>
             public static async UniTask Preload(string assetName)
             {
-                await AudioManager.GetInstance().Preload(assetName);
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                await AudioManager.GetInstance().Preload(packageName, new string[] { assetName });
+            }
+
+            public static async UniTask Preload(string packageName, string assetName)
+            {
+                await AudioManager.GetInstance().Preload(packageName, new string[] { assetName });
             }
 
             public static async UniTask Preload(string[] assetNames)
             {
-                await AudioManager.GetInstance().Preload(assetNames);
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                await AudioManager.GetInstance().Preload(packageName, assetNames);
+            }
+
+            public static async UniTask Preload(string packageName, string[] assetNames)
+            {
+                await AudioManager.GetInstance().Preload(packageName, assetNames);
             }
 
             /// <summary>
@@ -89,9 +102,17 @@ namespace OxGFrame.MediaFrame
             /// <param name="parent"></param>
             /// <param name="loops"></param>
             /// <returns></returns>
-            public static async UniTask<AudioBase[]> Play(string assetName, Transform parent = null, int loops = 0)
+            public static async UniTask<AudioBase> Play(string assetName, Transform parent = null, int loops = 0)
             {
-                return await AudioManager.GetInstance().Play(assetName, parent, loops);
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                var media = await AudioManager.GetInstance().Play(packageName, assetName, parent, loops);
+                return media[0];
+            }
+
+            public static async UniTask<AudioBase> Play(string packageName, string assetName, Transform parent = null, int loops = 0)
+            {
+                var media = await AudioManager.GetInstance().Play(packageName, assetName, parent, loops);
+                return media[0];
             }
 
             public static void ResumeAll()
@@ -149,12 +170,24 @@ namespace OxGFrame.MediaFrame
             /// <returns></returns>
             public static async UniTask Preload(string assetName)
             {
-                await VideoManager.GetInstance().Preload(assetName);
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                await VideoManager.GetInstance().Preload(packageName, new string[] { assetName });
+            }
+
+            public static async UniTask Preload(string packageName, string assetName)
+            {
+                await VideoManager.GetInstance().Preload(packageName, new string[] { assetName });
             }
 
             public static async UniTask Preload(string[] assetNames)
             {
-                await VideoManager.GetInstance().Preload(assetNames);
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                await VideoManager.GetInstance().Preload(packageName, assetNames);
+            }
+
+            public static async UniTask Preload(string packageName, string[] assetNames)
+            {
+                await VideoManager.GetInstance().Preload(packageName, assetNames);
             }
 
             /// <summary>
@@ -164,9 +197,17 @@ namespace OxGFrame.MediaFrame
             /// <param name="parent"></param>
             /// <param name="loops"></param>
             /// <returns></returns>
-            public static async UniTask<VideoBase[]> Play(string assetName, Transform parent = null, int loops = 0)
+            public static async UniTask<VideoBase> Play(string assetName, Transform parent = null, int loops = 0)
             {
-                return await VideoManager.GetInstance().Play(assetName, parent, loops);
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                var media = await VideoManager.GetInstance().Play(packageName, assetName, parent, loops);
+                return media[0];
+            }
+
+            public static async UniTask<VideoBase> Play(string packageName, string assetName, Transform parent = null, int loops = 0)
+            {
+                var media = await VideoManager.GetInstance().Play(packageName, assetName, parent, loops);
+                return media[0];
             }
 
             public static void ResumeAll()

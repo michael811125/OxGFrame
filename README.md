@@ -96,6 +96,17 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 **檢查 Patch 是否更新完成**
 - 判斷檢查 AssetPatcher.IsDone() 是否更新完成。
 
+**指定特定的 Package 進行資源加載**
+- 需先手動進行 AssetPatcher.InitPackage 的初始 (如果 autoUpdate = false，則需要自行另外調用 AssetPatcher.UpdatePackage 進行 Manifest 的更新)。
+```
+// [Load asset and download from specific package]
+var packageName = "OtherPackage";
+await AssetPatcher.InitPackage(packageName, true, "127.0.0.1/package", "127.0.0.1/package");
+var package = AssetPatcher.GetPackage(packageName);
+var downloader = AssetPatcher.GetPackageDownloader(package);
+Debug.Log($"Patch Size: {BundleUtility.GetBytesToString((ulong) downloader.TotalDownloadBytes)}");
+await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName);
+```
 ---
 
 #### Bundle [burlconfig] (Bundle URL Config) 格式

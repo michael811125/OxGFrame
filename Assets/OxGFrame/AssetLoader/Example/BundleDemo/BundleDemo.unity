@@ -1588,6 +1588,16 @@ PrefabInstance:
       propertyPath: decryptArgs
       value: xor,1
       objectReference: {fileID: 0}
+    - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
+        type: 3}
+      propertyPath: listPackage.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
+        type: 3}
+      propertyPath: listPackage.Array.data[1]
+      value: OtherPackage
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 992bffa5c79679749861326baa5441c6, type: 3}
 --- !u!1 &571322897

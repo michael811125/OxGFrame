@@ -86,8 +86,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                             if (req.isDone)
                             {
-                                pack.assetName = assetName;
-                                pack.asset = req.asset;
+                                pack.SetPack(assetName, req.asset);
                                 break;
                             }
                             await UniTask.Yield();
@@ -148,13 +147,12 @@ namespace OxGFrame.AssetLoader.Cacher
 
                 ResourcePack pack = new ResourcePack();
                 {
-                    var req = Resources.Load<Object>(assetName);
+                    var asset = Resources.Load<Object>(assetName);
 
                     this.reqSize++;
                     progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
 
-                    pack.assetName = assetName;
-                    pack.asset = req;
+                    pack.SetPack(assetName, asset);
                 }
 
                 if (pack != null)
@@ -211,8 +209,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                             if (req.isDone)
                             {
-                                pack.assetName = assetName;
-                                pack.asset = req.asset;
+                                pack.SetPack(assetName, req.asset);
                                 break;
                             }
                             await UniTask.Yield();
@@ -270,13 +267,12 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 pack = new ResourcePack();
                 {
-                    var req = Resources.Load<Object>(assetName);
+                    var asset = Resources.Load<Object>(assetName);
 
                     this.reqSize = this.totalSize;
                     progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
 
-                    pack.assetName = assetName;
-                    pack.asset = req as T;
+                    pack.SetPack(assetName, asset);
                 }
 
                 if (pack != null)

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using OxGFrame.AssetLoader;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -85,7 +84,7 @@ namespace OxGFrame.CoreFrame.GSFrame
         #endregion
 
         #region Show
-        public override async UniTask<GSBase> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
+        public override async UniTask<GSBase> Show(int groupId, string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
@@ -102,9 +101,9 @@ namespace OxGFrame.CoreFrame.GSFrame
                 }
             }
 
-            await this.ShowLoading(groupId, loadingUIAssetName); // 開啟預顯加載 UI
+            await this.ShowLoading(groupId, packageName, loadingUIAssetName); // 開啟預顯加載 UI
 
-            var gsBase = await this.LoadIntoAllCache(assetName, progression, false, parent);
+            var gsBase = await this.LoadIntoAllCache(packageName, assetName, progression, false, parent);
             if (gsBase == null)
             {
                 Debug.LogWarning(string.Format("Asset not found at this path!!!【GS】: {0}", assetName));
@@ -121,43 +120,6 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             return gsBase;
         }
-
-        //public override async UniTask<GSBase> Show(int groupId, string bundleName, string assetName, object obj = null, string loadingUIBundleName = null, string loadingUIAssetName = null, Progression progression = null)
-        //{
-        //    if (string.IsNullOrEmpty(bundleName) && string.IsNullOrEmpty(assetName)) return null;
-
-        //    // 先取出 Stack 主體
-        //    var stack = this.GetStackFromAllCache(assetName);
-
-        //    // 判斷非多實例直接 return
-        //    if (stack != null && !stack.allowInstantiate)
-        //    {
-        //        if (this.CheckIsShowing(assetName))
-        //        {
-        //            Debug.LogWarning(string.Format("【GS】{0} already exists!!!", assetName));
-        //            return null;
-        //        }
-        //    }
-
-        //    await this.ShowLoading(groupId, loadingUIBundleName, loadingUIAssetName); // 開啟預顯加載 UI
-
-        //    var gsBase = await this.LoadIntoAllCache(bundleName, assetName, progression, false);
-        //    if (gsBase == null)
-        //    {
-        //        Debug.LogWarning(string.Format("Asset not found at this path!!!【GS】: {0}", assetName));
-        //        return null;
-        //    }
-
-        //    gsBase.SetGroupId(groupId);
-        //    gsBase.SetHidden(false);
-        //    await this.LoadAndDisplay(gsBase, obj);
-
-        //    Debug.Log(string.Format("Show GS: 【{0}】", assetName));
-
-        //    this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
-
-        //    return gsBase;
-        //}
         #endregion
 
         #region Close

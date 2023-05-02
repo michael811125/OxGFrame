@@ -103,7 +103,7 @@ namespace OxGFrame.AssetLoader.Bundle
         #endregion
 
         /// <summary>
-        /// 取得 burlcfg.txt 佈署配置檔的數據
+        /// 取得 burlconfig 佈署配置檔的數據
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -144,7 +144,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// 取得 StreamingAssets 中的 Bundle URL
         /// </summary>
         /// <returns></returns>
-        public static async UniTask<string> GetHostServerUrl()
+        public static async UniTask<string> GetHostServerUrl(string packageName)
         {
             var appConfig = await GetAppConfigFromStreamingAssets();
             string host = await GetValueFromUrlCfg(BUNDLE_IP);
@@ -152,7 +152,6 @@ namespace OxGFrame.AssetLoader.Bundle
             string platform = appConfig.PLATFORM;
             string appVersion = appConfig.APP_VERSION;
             string refineAppVersion = $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
-            string packageName = PackageManager.GetDefaultPackageName();
 
             return $"{host}{rootDir}/{productName}/{platform}/{refineAppVersion}/{packageName}";
         }
@@ -161,7 +160,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// 取得 StreamingAssets 中的 Bundle URL (Fallback)
         /// </summary>
         /// <returns></returns>
-        public static async UniTask<string> GetFallbackHostServerUrl()
+        public static async UniTask<string> GetFallbackHostServerUrl(string packageName)
         {
             var appConfig = await GetAppConfigFromStreamingAssets();
             string host = await GetValueFromUrlCfg(BUNDLE_FALLBACK_IP);
@@ -169,7 +168,6 @@ namespace OxGFrame.AssetLoader.Bundle
             string platform = appConfig.PLATFORM;
             string appVersion = appConfig.APP_VERSION;
             string refineAppVersion = $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
-            string packageName = PackageManager.GetDefaultPackageName();
 
             return $"{host}{rootDir}/{productName}/{platform}/{refineAppVersion}/{packageName}";
         }

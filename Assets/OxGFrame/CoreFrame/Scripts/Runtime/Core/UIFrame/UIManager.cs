@@ -367,7 +367,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         #endregion
 
         #region Show
-        public override async UniTask<UIBase> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
+        public override async UniTask<UIBase> Show(int groupId, string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
@@ -384,9 +384,9 @@ namespace OxGFrame.CoreFrame.UIFrame
                 }
             }
 
-            await this.ShowLoading(groupId, loadingUIAssetName); // 開啟預顯加載 UI
+            await this.ShowLoading(groupId, packageName, loadingUIAssetName); // 開啟預顯加載 UI
 
-            var uiBase = await this.LoadIntoAllCache(assetName, progression, false);
+            var uiBase = await this.LoadIntoAllCache(packageName, assetName, progression, false);
             if (uiBase == null)
             {
                 Debug.LogWarning(string.Format("Asset not found at this path!!!【UI】: {0}", assetName));

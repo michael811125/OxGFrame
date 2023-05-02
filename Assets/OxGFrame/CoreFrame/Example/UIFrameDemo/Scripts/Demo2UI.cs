@@ -80,8 +80,8 @@ public class Demo2UI : UIBase
     private async void _ShowDemoPopup3UI()
     {
         if (this.uiSetting.canvasName == UIFrameDemo.canvasCamera)
-            await CoreFrames.UIFrame.Show(UIFrameDemo.screenId, UIFrameDemo.ScreenDemo3UI, null, UIFrameDemo.ScreenDemoLoadingUI, null);
+            await CoreFrames.UIFrame.Show(UIFrameDemo.screenId, UIFrameDemo.ScreenDemo3UI, null, UIFrameDemo.ScreenDemoLoadingUI, null, null);
         else if (this.uiSetting.canvasName == UIFrameDemo.canvasWorld)
-            await CoreFrames.UIFrame.Show(UIFrameDemo.worldId, UIFrameDemo.WorldDemo3UI, null, UIFrameDemo.WorldDemoLoadingUI, null);
+            await CoreFrames.UIFrame.Show(UIFrameDemo.worldId, UIFrameDemo.WorldDemo3UI, null, UIFrameDemo.WorldDemoLoadingUI, null, null);
     }
 }

@@ -55,7 +55,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <param name="parent"></param>
         /// <param name="loops"></param>
         /// <returns></returns>
-        public override async UniTask<VideoBase[]> Play(string assetName, Transform parent = null, int loops = 0)
+        public override async UniTask<VideoBase[]> Play(string packageName, string assetName, Transform parent = null, int loops = 0)
         {
             if (string.IsNullOrEmpty(assetName)) return new VideoBase[] { };
 
@@ -75,7 +75,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             if (!isResume)
             {
-                GameObject go = await this.LoadAssetIntoCache(assetName);
+                GameObject go = await this.LoadAssetIntoCache(packageName, assetName);
                 Transform spawnParent = null;
                 if (parent == null) spawnParent = this.gameObject.transform;
                 VideoBase vidBase = await this.CloneAsset<VideoBase>(assetName, go, parent, spawnParent);

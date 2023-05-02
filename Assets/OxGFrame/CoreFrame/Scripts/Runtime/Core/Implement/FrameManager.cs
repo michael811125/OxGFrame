@@ -258,9 +258,9 @@ namespace OxGFrame.CoreFrame
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        protected virtual async UniTask<GameObject> LoadGameObject(string assetName, Progression progression)
+        protected virtual async UniTask<GameObject> LoadGameObject(string packageName, string assetName, Progression progression)
         {
-            GameObject obj = await AssetLoaders.LoadAssetAsync<GameObject>(assetName, progression);
+            GameObject obj = await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName, progression);
             return obj;
         }
 
@@ -281,7 +281,7 @@ namespace OxGFrame.CoreFrame
         /// <param name="progression"></param>
         /// <param name="isPreloadMode"></param>
         /// <returns></returns>
-        protected async UniTask<T> LoadIntoAllCache(string assetName, Progression progression, bool isPreloadMode, Transform parent = null)
+        protected async UniTask<T> LoadIntoAllCache(string packageName, string assetName, Progression progression, bool isPreloadMode, Transform parent = null)
         {
             if (this.HasInLoadingFlags(assetName)) return null;
 
@@ -307,7 +307,7 @@ namespace OxGFrame.CoreFrame
                         // 標記加載中
                         this._loadingFlags.Add(assetName);
 
-                        asset = await this.LoadGameObject(assetName, progression);
+                        asset = await this.LoadGameObject(packageName, assetName, progression);
 
                         if (asset == null)
                         {
@@ -337,7 +337,7 @@ namespace OxGFrame.CoreFrame
                 // 標記加載中
                 this._loadingFlags.Add(assetName);
 
-                asset = await this.LoadGameObject(assetName, progression);
+                asset = await this.LoadGameObject(packageName, assetName, progression);
 
                 if (asset == null)
                 {
@@ -380,24 +380,13 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 單個預加載
+        /// 預加載
         /// </summary>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public async UniTask Preload(string assetName, Progression progression = null)
-        {
-            if (!string.IsNullOrEmpty(assetName))
-            {
-                await this.LoadIntoAllCache(assetName, progression, true);
-            }
-        }
-
-        /// <summary>
-        /// 多個預加載
-        /// </summary>
+        /// <param name="packageName"></param>
         /// <param name="assetNames"></param>
+        /// <param name="progression"></param>
         /// <returns></returns>
-        public async UniTask Preload(string[] assetNames, Progression progression = null)
+        public async UniTask Preload(string packageName, string[] assetNames, Progression progression = null)
         {
             if (assetNames.Length > 0)
             {
@@ -412,7 +401,7 @@ namespace OxGFrame.CoreFrame
                     }
 
                     float lastSize = 0;
-                    await this.LoadIntoAllCache(assetNames[i], (float progress, float reqSize, float totalSize) =>
+                    await this.LoadIntoAllCache(packageName, assetNames[i], (float progress, float reqSize, float totalSize) =>
                     {
                         this.reqSize += reqSize - lastSize;
                         lastSize = reqSize;
@@ -435,9 +424,9 @@ namespace OxGFrame.CoreFrame
         /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        protected async virtual UniTask ShowLoading(int groupId, string assetName)
+        protected async virtual UniTask ShowLoading(int groupId, string packageName, string assetName)
         {
-            await UIFrame.UIManager.GetInstance().Show(groupId, assetName);
+            await UIFrame.UIManager.GetInstance().Show(groupId, packageName, assetName);
         }
 
         /// <summary>
@@ -458,9 +447,9 @@ namespace OxGFrame.CoreFrame
         /// <param name="loadingUIAssetName"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public async virtual UniTask<T> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
+        public async virtual UniTask<T> Show(int groupId, string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
         {
-            await this.ShowLoading(groupId, loadingUIAssetName);
+            await this.ShowLoading(groupId, packageName, loadingUIAssetName);
 
             return default;
         }

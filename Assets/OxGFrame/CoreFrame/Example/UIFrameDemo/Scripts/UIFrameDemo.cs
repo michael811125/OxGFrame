@@ -55,12 +55,12 @@ public class UIFrameDemo : MonoBehaviour
 
     public async void ShowFirstScreenUI()
     {
-        await CoreFrames.UIFrame.Show(UIFrameDemo.screenId, UIFrameDemo.ScreenDemo1UI, null, UIFrameDemo.ScreenDemoLoadingUI, null);
+        await CoreFrames.UIFrame.Show(UIFrameDemo.screenId, UIFrameDemo.ScreenDemo1UI, null, UIFrameDemo.ScreenDemoLoadingUI, null, null);
     }
 
     public async void ShowFirstWorldUI()
     {
-        await CoreFrames.UIFrame.Show(UIFrameDemo.worldId, UIFrameDemo.WorldDemo1UI, null, UIFrameDemo.WorldDemoLoadingUI, null);
+        await CoreFrames.UIFrame.Show(UIFrameDemo.worldId, UIFrameDemo.WorldDemo1UI, null, UIFrameDemo.WorldDemoLoadingUI, null, null);
     }
 
     public async void PreloadFirstWorldUI()
