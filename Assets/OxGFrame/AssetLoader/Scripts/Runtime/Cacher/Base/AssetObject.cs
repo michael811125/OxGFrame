@@ -25,7 +25,7 @@ namespace OxGFrame.AssetLoader.Cacher
     #region Resource
     public class ResourcePack : AssetObject
     {
-        public Object asset;
+        public Object asset { get; protected set; }
 
         /// <summary>
         /// Set pack info

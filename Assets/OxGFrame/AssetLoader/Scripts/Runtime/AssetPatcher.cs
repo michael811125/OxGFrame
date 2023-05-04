@@ -32,6 +32,24 @@ namespace OxGFrame.AssetLoader
         {
             BundleConfig.GoToAppStore().Forget();
         }
+
+        /// <summary>
+        /// Get local save persistent path
+        /// </summary>
+        /// <returns></returns>
+        public static string GetLocalSandboxPath()
+        {
+            return BundleConfig.GetLocalSandboxPath();
+        }
+
+        /// <summary>
+        /// Get request streaming assets path
+        /// </summary>
+        /// <returns></returns>
+        public static string GetRequestStreamingAssetsPath()
+        {
+            return BundleConfig.GetRequestStreamingAssetsPath();
+        }
         #endregion
 
         #region Patch Status
@@ -74,7 +92,7 @@ namespace OxGFrame.AssetLoader
 
         #region Patch Operation
         /// <summary>
-        /// Start to check patch update
+        /// Start patch update
         /// </summary>
         public static void Check()
         {
@@ -82,7 +100,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Start to run patch repair
+        /// Start patch repair
         /// </summary>
         public static void Repair()
         {
@@ -103,6 +121,14 @@ namespace OxGFrame.AssetLoader
         public static void Resume()
         {
             PatchManager.GetInstance().Resume();
+        }
+
+        /// <summary>
+        /// Cancel main downloader
+        /// </summary>
+        public static void Cancel()
+        {
+            PatchManager.GetInstance().Cancel();
         }
 
         /// <summary>
@@ -257,15 +283,121 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get downloader from package with tags
+        /// Get specific package assetInfos (Tags)
         /// </summary>
         /// <param name="package"></param>
         /// <param name="tags"></param>
         /// <returns></returns>
-        public static ResourceDownloaderOperation GetPackageDownloader(ResourcePackage package, params string[] tags)
+        public static AssetInfo[] GetPackageAssetInfosByTags(ResourcePackage package, params string[] tags)
         {
-            return PackageManager.GetPackageDownloader(package, tags);
+            return PackageManager.GetPackageAssetInfosByTags(package, tags);
         }
-        #endregion
+
+        /// <summary>
+        /// Get specific package assetInfos (AssetNames)
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="assetNames"></param>
+        /// <returns></returns>
+        public static AssetInfo[] GetPackageAssetInfosByAssetNames(ResourcePackage package, params string[] assetNames)
+        {
+            return PackageManager.GetPackageAssetInfosByAssetNames(package, assetNames);
+        }
+
+        /// <summary>
+        /// Get specific package downloader
+        /// </summary>
+        /// <param name="package"></param>
+        /// <returns></returns>
+        public static ResourceDownloaderOperation GetPackageDownloader(ResourcePackage package)
+        {
+            return PackageManager.GetPackageDownloader(package, -1, -1);
+        }
+
+        /// <summary>
+        /// Get specific package downloader
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <returns></returns>
+        public static ResourceDownloaderOperation GetPackageDownloader(ResourcePackage package, int maxConcurrencyDownloadCount, int failedRetryCount)
+        {
+            return PackageManager.GetPackageDownloader(package, maxConcurrencyDownloadCount, failedRetryCount);
+        }
+
+        /// <summary>
+        /// Get specific package downloader (Tags)
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="tags"></param>
+        /// <returns></returns>
+        public static ResourceDownloaderOperation GetPackageDownloaderByTags(ResourcePackage package, params string[] tags)
+        {
+            return PackageManager.GetPackageDownloaderByTags(package, -1, -1, tags);
+        }
+
+        /// <summary>
+        /// Get specific package downloader (Tags)
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="tags"></param>
+        /// <returns></returns>
+        public static ResourceDownloaderOperation GetPackageDownloaderByTags(ResourcePackage package, int maxConcurrencyDownloadCount, int failedRetryCount, params string[] tags)
+        {
+            return PackageManager.GetPackageDownloaderByTags(package, maxConcurrencyDownloadCount, failedRetryCount, tags);
+        }
+
+        /// <summary>
+        /// Get specific package downloader (AssetNames)
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="assetNames"></param>
+        /// <returns></returns>
+        public static ResourceDownloaderOperation GetPackageDownloaderByAssetNames(ResourcePackage package, params string[] assetNames)
+        {
+            return PackageManager.GetPackageDownloaderByAssetNames(package, -1, -1, assetNames);
+        }
+
+        /// <summary>
+        /// Get specific package downloader (AssetNames)
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="assetNames"></param>
+        /// <returns></returns>
+        public static ResourceDownloaderOperation GetPackageDownloaderByAssetNames(ResourcePackage package, int maxConcurrencyDownloadCount, int failedRetryCount, params string[] assetNames)
+        {
+            return PackageManager.GetPackageDownloaderByAssetNames(package, maxConcurrencyDownloadCount, failedRetryCount, assetNames);
+        }
+
+        /// <summary>
+        /// Get specific package downloader (AssetInfos)
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="assetInfos"></param>
+        /// <returns></returns>
+        public static ResourceDownloaderOperation GetPackageDownloaderByAssetInfos(ResourcePackage package, params AssetInfo[] assetInfos)
+        {
+            return PackageManager.GetPackageDownloaderByAssetInfos(package, -1, -1, assetInfos);
+        }
+
+        /// <summary>
+        /// Get specific package downloader (AssetInfos)
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="assetInfos"></param>
+        /// <returns></returns>
+        public static ResourceDownloaderOperation GetPackageDownloaderByAssetInfos(ResourcePackage package, int maxConcurrencyDownloadCount, int failedRetryCount, params AssetInfo[] assetInfos)
+        {
+            return PackageManager.GetPackageDownloaderByAssetInfos(package, maxConcurrencyDownloadCount, failedRetryCount, assetInfos);
+        }
     }
+    #endregion
+
 }

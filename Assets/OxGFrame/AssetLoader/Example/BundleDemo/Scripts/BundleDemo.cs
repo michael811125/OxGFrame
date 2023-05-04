@@ -8,7 +8,6 @@ using System.Text;
 using UniFramework.Event;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.ReloadAttribute;
 
 public class BundleDemo : MonoBehaviour
 {
@@ -259,6 +258,12 @@ public class BundleDemo : MonoBehaviour
     {
         // puase main downloader
         AssetPatcher.Pause();
+    }
+
+    public void CancelDownload()
+    {
+        // cancel main downloader
+        AssetPatcher.Cancel();
     }
 
     public void StartDownload()

@@ -60,7 +60,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 // 判斷檢查目錄是否為空 (表示數據已完成清除)
                 if (BundleUtility.GetFilesRecursively(dir).Length <= 0)
                 {
-                    this._machine.ChangeState<FsmInitPatchMode>();
+                    this._machine.ChangeState<FsmPatchPrepare>();
                 }
             }
         }
@@ -412,8 +412,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 if (operation.Status == EOperationStatus.Succeed)
                 {
-                    operation.SavePackageVersion();
-                    this._machine.ChangeState<FsmCreateDownloader>();
+                    if (BundleConfig.skipPatchDownloadStep) this._machine.ChangeState<FsmDownloadOver>();
+                    else this._machine.ChangeState<FsmCreateDownloader>();
                 }
                 else
                 {

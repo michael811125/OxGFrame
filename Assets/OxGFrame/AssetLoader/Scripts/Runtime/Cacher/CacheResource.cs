@@ -1,8 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
-using OxGFrame.AssetLoader.Utility;
 using System.Linq;
 using UnityEngine;
-using YooAsset;
 
 namespace OxGFrame.AssetLoader.Cacher
 {

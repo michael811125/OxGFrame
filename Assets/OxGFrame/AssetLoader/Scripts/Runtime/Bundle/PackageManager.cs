@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using YooAsset;
 
@@ -81,8 +82,9 @@ namespace OxGFrame.AssetLoader.Bundle
             var package = RegisterPackage(packageName);
             if (package.InitializeStatus == EOperationStatus.Succeed)
             {
+                if (autoUpdate) await UpdatePackage(packageName, errorHandler);
                 Debug.Log($"<color=#ff9441>[return null] Package: {packageName} is already initialized, Status: {package.InitializeStatus}.</color>");
-                return null;
+                return default;
             }
 
             // Simulate Mode
@@ -137,7 +139,7 @@ namespace OxGFrame.AssetLoader.Bundle
         public static async UniTask<InitializationOperation> InitPackage(int idx, bool autoUpdate = false, string hostServer = null, string fallbackHostServer = null, Action<string> errorHandler = null)
         {
             string packageName = GetPackageNameByIdx(idx);
-            return await InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer);
+            return await InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, errorHandler);
         }
 
         /// <summary>
@@ -326,18 +328,136 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// Get specific package downloader
+        /// Get specific package assetInfos (Tags)
         /// </summary>
         /// <param name="package"></param>
         /// <param name="tags"></param>
         /// <returns></returns>
-        public static ResourceDownloaderOperation GetPackageDownloader(ResourcePackage package, params string[] tags)
+        public static AssetInfo[] GetPackageAssetInfosByTags(ResourcePackage package, params string[] tags)
+        {
+            if (tags == null || tags.Length == 0) return default;
+
+            return package.GetAssetInfos(tags);
+        }
+
+        /// <summary>
+        /// Get specific package assetInfos (AssetNames)
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="assetNames"></param>
+        /// <returns></returns>
+        public static AssetInfo[] GetPackageAssetInfosByAssetNames(ResourcePackage package, params string[] assetNames)
+        {
+            if (assetNames == null || assetNames.Length == 0) return default;
+
+            var assetInfos = new List<AssetInfo>();
+            foreach (string assetName in assetNames)
+            {
+                var assetInfo = package.GetAssetInfo(assetName);
+                if (assetInfo != null) assetInfos.Add(assetInfo);
+            }
+
+            return assetInfos.ToArray();
+        }
+
+        /// <summary>
+        /// Get specific package downloader
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <returns></returns>
+        public static ResourceDownloaderOperation GetPackageDownloader(ResourcePackage package, int maxConcurrencyDownloadCount, int failedRetryCount)
+        {
+            // create all
+            ResourceDownloaderOperation downloader = package.CreateResourceDownloader(maxConcurrencyDownloadCount, failedRetryCount);
+
+            return downloader;
+        }
+
+        /// <summary>
+        /// Get specific package downloader (Tags)
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="tags"></param>
+        /// <returns></returns>
+        public static ResourceDownloaderOperation GetPackageDownloaderByTags(ResourcePackage package, int maxConcurrencyDownloadCount, int failedRetryCount, params string[] tags)
         {
             ResourceDownloaderOperation downloader;
+
+            // if <= -1 will set be default values
+            if (maxConcurrencyDownloadCount <= -1) maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
+            if (failedRetryCount <= -1) failedRetryCount = BundleConfig.failedRetryCount;
+
             // create all
-            if (tags == null || tags.Length == 0) downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+            if (tags == null || tags.Length == 0)
+            {
+                downloader = package.CreateResourceDownloader(maxConcurrencyDownloadCount, failedRetryCount);
+                return downloader;
+            }
+
             // create by tags
-            else downloader = package.CreateResourceDownloader(tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+            downloader = package.CreateResourceDownloader(tags, maxConcurrencyDownloadCount, failedRetryCount);
+
+            return downloader;
+        }
+
+        /// <summary>
+        /// Get specific package downloader (AssetNames)
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="assetNames"></param>
+        /// <returns></returns>
+        public static ResourceDownloaderOperation GetPackageDownloaderByAssetNames(ResourcePackage package, int maxConcurrencyDownloadCount, int failedRetryCount, params string[] assetNames)
+        {
+            ResourceDownloaderOperation downloader;
+
+            // if <= -1 will set be default values
+            if (maxConcurrencyDownloadCount <= -1) maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
+            if (failedRetryCount <= -1) failedRetryCount = BundleConfig.failedRetryCount;
+
+            // create all
+            if (assetNames == null || assetNames.Length == 0)
+            {
+                downloader = package.CreateResourceDownloader(maxConcurrencyDownloadCount, failedRetryCount);
+                return downloader;
+            }
+
+            // create by assetNames
+            downloader = package.CreateBundleDownloader(assetNames, maxConcurrencyDownloadCount, failedRetryCount);
+
+            return downloader;
+        }
+
+        /// <summary>
+        /// Get specific package downloader (AssetInfos)
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="assetInfos"></param>
+        /// <returns></returns>
+        public static ResourceDownloaderOperation GetPackageDownloaderByAssetInfos(ResourcePackage package, int maxConcurrencyDownloadCount, int failedRetryCount, params AssetInfo[] assetInfos)
+        {
+            ResourceDownloaderOperation downloader;
+
+            // if <= -1 will set be default values
+            if (maxConcurrencyDownloadCount <= -1) maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
+            if (failedRetryCount <= -1) failedRetryCount = BundleConfig.failedRetryCount;
+
+            // create all
+            if (assetInfos == null || assetInfos.Length == 0)
+            {
+                downloader = package.CreateResourceDownloader(maxConcurrencyDownloadCount, failedRetryCount);
+                return downloader;
+            }
+
+            // create by assetInfos
+            downloader = package.CreateBundleDownloader(assetInfos, maxConcurrencyDownloadCount, failedRetryCount);
 
             return downloader;
         }

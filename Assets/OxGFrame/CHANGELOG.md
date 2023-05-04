@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2.0.6] - 2023-05-04
+- Added HostMode can skip download step (force download while playing).
+- Extended AssetPatcher methods.
+- Modified patch repair procedure.
+- Fixed patch download progress handler bug (removed test code).
+
 ## [2.0.5] - 2023-05-02
 - Renamed AssetPatcher.GetPackageDownloaderByTags to AssetPatcher.GetPackageDownloader.
 - Extended CoreFrames.USFrame methods (LoadSingleSceneAsync and LoadAdditiveSceneAsync).

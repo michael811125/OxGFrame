@@ -32,6 +32,14 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         public static PlayMode playMode = PlayMode.EditorSimulateMode;
 
+        /// <summary>
+        /// 跳過 Patch 檢查下載階段 (強制啟用邊玩邊下載) 
+        /// </summary>
+        public static bool skipPatchDownloadStep = false;
+
+        /// <summary>
+        /// Package 設置清單
+        /// </summary>
         public static List<string> listPackage;
 
         /// <summary>
@@ -252,7 +260,7 @@ namespace OxGFrame.AssetLoader.Bundle
         public static string GetRequestStreamingAssetsPath()
         {
 #if UNITY_STANDALONE_OSX || UNITY_IOS
-                    return $"file://{Application.streamingAssetsPath}";
+            return $"file://{Application.streamingAssetsPath}";
 #else
             return Application.streamingAssetsPath;
 #endif

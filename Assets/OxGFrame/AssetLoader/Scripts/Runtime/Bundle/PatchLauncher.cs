@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MyBox;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace OxGFrame.AssetLoader.Bundle
@@ -10,9 +11,11 @@ namespace OxGFrame.AssetLoader.Bundle
 
         [Header("Patch Options")]
         public BundleConfig.PlayMode playMode = BundleConfig.PlayMode.EditorSimulateMode;
+        [Tooltip("If checked will skip patch download step (force download while playing)"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
+        public bool skipPatchDownloadStep = false;
 
         [Header("Package List")]
-        [Tooltip("First will be default package")]
+        [Tooltip("The first element will be default package")]
         public List<string> listPackage = new List<string>() { "DefaultPackage" };
 
         [Header("Download Options")]
@@ -30,6 +33,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
             // Patch Options
             BundleConfig.playMode = this.playMode;
+            BundleConfig.skipPatchDownloadStep = this.skipPatchDownloadStep;
 
             // Package List
             BundleConfig.listPackage = this.listPackage;

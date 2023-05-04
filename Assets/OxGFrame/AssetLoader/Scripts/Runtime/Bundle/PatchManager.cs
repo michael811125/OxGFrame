@@ -12,11 +12,11 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         #region Last Group Info
         internal const string DEFAULT_GROUP_TAG = "#all";
-        internal const string LAST_GROUP_NAME_KEY = "LAST_GROUP_NAME_KEY";
+        internal const string LAST_GROUP_INFO_KEY = "LAST_GROUP_INFO_KEY";
 
         internal static GroupInfo GetLastGroupInfo()
         {
-            string json = PlayerPrefs.GetString(LAST_GROUP_NAME_KEY, string.Empty);
+            string json = PlayerPrefs.GetString(LAST_GROUP_INFO_KEY, string.Empty);
             if (!string.IsNullOrEmpty(json)) return JsonConvert.DeserializeObject<GroupInfo>(json);
             return null;
         }
@@ -26,13 +26,13 @@ namespace OxGFrame.AssetLoader.Bundle
             if (groupInfo != null)
             {
                 string json = JsonConvert.SerializeObject(groupInfo);
-                PlayerPrefs.SetString(LAST_GROUP_NAME_KEY, json);
+                PlayerPrefs.SetString(LAST_GROUP_INFO_KEY, json);
             }
         }
 
         public static void DelLastGroupInfo()
         {
-            PlayerPrefs.DeleteKey(LAST_GROUP_NAME_KEY);
+            PlayerPrefs.DeleteKey(LAST_GROUP_INFO_KEY);
         }
         #endregion
 
@@ -171,6 +171,14 @@ namespace OxGFrame.AssetLoader.Bundle
         public void Resume()
         {
             this.mainDownloader?.ResumeDownload();
+        }
+
+        /// <summary>
+        /// 取消下載
+        /// </summary>
+        public void Cancel()
+        {
+            this.mainDownloader?.CancelDownload();
         }
         #endregion
 
