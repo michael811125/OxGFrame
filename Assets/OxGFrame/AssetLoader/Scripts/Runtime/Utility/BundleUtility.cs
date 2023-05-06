@@ -1,5 +1,4 @@
-﻿
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System;
 using Cysharp.Threading.Tasks;
@@ -327,6 +326,57 @@ namespace OxGFrame.AssetLoader.Utility
                 }
             }
             System.Diagnostics.Process.Start(dir);
+        }
+        #endregion
+
+        #region Version
+        /// <summary>
+        /// Get version hash
+        /// </summary>
+        /// <param name="separator"></param>
+        /// <param name="seed"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static string GetVersionHash(string separator, string seed, int length)
+        {
+            if (string.IsNullOrEmpty(seed)) return seed;
+
+            byte[] bytes = Encoding.UTF8.GetBytes(seed);
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                byte[] hash = md5.ComputeHash(bytes);
+                string version = BitConverter.ToString(hash).Replace(separator, "");
+                version = version.Substring(0, length);
+                return version;
+            }
+        }
+
+        /// <summary>
+        /// Get version number
+        /// </summary>
+        /// <param name="seed"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static string GetVersionNumber(string seed, int length)
+        {
+            if (string.IsNullOrEmpty(seed)) return seed;
+
+            byte[] bytes = Encoding.UTF8.GetBytes(seed);
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                byte[] hash = md5.ComputeHash(bytes);
+                ulong version = BitConverter.ToUInt64(hash, 0);
+                string versionString = version.ToString();
+                if (versionString.Length < length)
+                {
+                    versionString = versionString.PadRight(length, '0');
+                }
+                else if (versionString.Length > length)
+                {
+                    versionString = versionString.Substring(0, length);
+                }
+                return versionString;
+            }
         }
         #endregion
     }

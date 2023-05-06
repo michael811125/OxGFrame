@@ -1,5 +1,8 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Bundle;
+using OxGFrame.AssetLoader.Utility;
+using System;
+using System.IO;
 using YooAsset;
 
 namespace OxGFrame.AssetLoader
@@ -141,40 +144,127 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get patch version
+        /// Get patch version (Recommend use encode to display)
         /// </summary>
         /// <returns></returns>
-        public static string GetPatchVersion()
+        public static string GetPatchVersion(bool encode = false, int encodeLength = 6, string separator = "-")
         {
-            return PatchManager.patchVersion;
+            string patchVersion = PatchManager.patchVersion;
+
+            if (encode)
+            {
+                string versionHash = BundleUtility.GetVersionHash(separator, patchVersion, 1 << 5);
+                string versionNumber = BundleUtility.GetVersionNumber(versionHash, encodeLength);
+                return versionNumber;
+            }
+
+            return patchVersion;
         }
         #endregion
 
         #region Package Operation
         /// <summary>
-        /// Init package by package name
+        /// Unload package and clear package files from sandbox (will change until next YooAsset version is release)
         /// </summary>
         /// <param name="packageName"></param>
-        /// <param name="autoUpdate"></param>
-        /// <param name="hostServer"></param>
-        /// <param name="fallbackHostServer"></param>
-        /// <returns></returns>
-        public static async UniTask<InitializationOperation> InitPackage(string packageName, bool autoUpdate = false, string hostServer = null, string fallbackHostServer = null)
+        public static void UnloadPackageAndClearCacheFiles(string packageName)
         {
-            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer);
+            PackageManager.UnloadPackageAndClearCacheFiles(packageName);
         }
 
         /// <summary>
-        /// Init package by package list idx
+        /// Init package by package name (If PlayMode is HostMode will request from default host path)
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="autoUpdate"></param>
+        /// <returns></returns>
+        public static async UniTask<bool> InitPackage(string packageName, bool autoUpdate = false)
+        {
+            var hostServer = await BundleConfig.GetHostServerUrl(packageName);
+            var fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
+            var queryService = new RequestBuiltinQuery();
+
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
+        }
+
+        /// <summary>
+        /// Init package by package list idx (If PlayMode is HostMode will request from default host path)
         /// </summary>
         /// <param name="idx"></param>
         /// <param name="autoUpdate"></param>
+        /// <returns></returns>
+        public static async UniTask<bool> InitPackage(int idx, bool autoUpdate = false)
+        {
+            string packageName = GetPackageNameByIdx(idx);
+            var hostServer = await BundleConfig.GetHostServerUrl(packageName);
+            var fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
+            var queryService = new RequestBuiltinQuery();
+
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
+        }
+
+        /// <summary>
+        /// Init dlc package (If PlayMode is HostMode will request from default host dlc path)
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="dlcVersion"></param>
+        /// <param name="autoUpdate"></param>
+        /// <returns></returns>
+        public static async UniTask<bool> InitDlcPackage(string packageName, string dlcVersion, bool autoUpdate = false)
+        {
+            var hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
+            var fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
+            var queryService = new RequestSandboxQuery(packageName);
+
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
+        }
+
+        /// <summary>
+        /// Init dlc package (If PlayMode is HostMode will request from default host dlc path)
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="dlcVersion"></param>
+        /// <param name="autoUpdate"></param>
+        /// <param name="queryService"></param>
+        /// <returns></returns>
+        public static async UniTask<bool> InitDlcPackage(string packageName, string dlcVersion, bool autoUpdate = false, IQueryServices queryService = null)
+        {
+            var hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
+            var fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
+            queryService = (queryService == null) ? new RequestSandboxQuery(packageName) : queryService;
+
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
+        }
+
+        /// <summary>
+        /// Init package by package name (Custom your host path and query service)
+        /// </summary>
+        /// <param name="packageName"></param>
         /// <param name="hostServer"></param>
         /// <param name="fallbackHostServer"></param>
+        /// <param name="autoUpdate"></param>
+        /// <param name="queryService"></param>
         /// <returns></returns>
-        public static async UniTask<InitializationOperation> InitPackage(int idx, bool autoUpdate = false, string hostServer = null, string fallbackHostServer = null)
+        public static async UniTask<bool> InitCustomPackage(string packageName, string hostServer, string fallbackHostServer, bool autoUpdate = false, IQueryServices queryService = null)
         {
-            return await PackageManager.InitPackage(idx, autoUpdate, hostServer, fallbackHostServer);
+            queryService = (queryService == null) ? new RequestBuiltinQuery() : queryService;
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
+        }
+
+        /// <summary>
+        /// Init package by package list idx (Custom your host path and query service)
+        /// </summary>
+        /// <param name="idx"></param>
+        /// <param name="hostServer"></param>
+        /// <param name="fallbackHostServer"></param>
+        /// <param name="autoUpdate"></param>
+        /// <param name="queryService"></param>
+        /// <returns></returns>
+        public static async UniTask<bool> InitCustomPackage(int idx, string hostServer, string fallbackHostServer, bool autoUpdate = false, IQueryServices queryService = null)
+        {
+            string packageName = GetPackageNameByIdx(idx);
+            queryService = (queryService == null) ? new RequestBuiltinQuery() : queryService;
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
         }
 
         /// <summary>
@@ -182,19 +272,20 @@ namespace OxGFrame.AssetLoader
         /// </summary>
         /// <param name="packageName"></param>
         /// <returns></returns>
-        public static async UniTask UpdatePackage(string packageName)
+        public static async UniTask<bool> UpdatePackage(string packageName)
         {
-            await PackageManager.UpdatePackage(packageName);
+            return await PackageManager.UpdatePackage(packageName);
         }
 
         /// <summary>
-        ///  Update package manifest by package list idx
+        /// Update package manifest by package list idx
         /// </summary>
         /// <param name="idx"></param>
         /// <returns></returns>
-        public static async UniTask UpdatePackage(int idx)
+        public static async UniTask<bool> UpdatePackage(int idx)
         {
-            await PackageManager.UpdatePackage(idx);
+            string packageName = GetPackageNameByIdx(idx);
+            return await PackageManager.UpdatePackage(packageName);
         }
 
         /// <summary>
@@ -399,5 +490,4 @@ namespace OxGFrame.AssetLoader
         }
     }
     #endregion
-
 }

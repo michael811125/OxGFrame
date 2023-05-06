@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuildPipeline: 1
   BuildMode: 1
-  BuildPackage: DefaultPackage
+  BuildPackage: DlcPackage
   CompressOption: 2
   OutputNameStyle: 1
   CopyBuildinFileOption: 0

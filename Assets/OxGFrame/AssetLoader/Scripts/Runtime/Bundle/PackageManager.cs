@@ -1,6 +1,8 @@
 ﻿using Cysharp.Threading.Tasks;
+using OxGFrame.AssetLoader.Utility;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using YooAsset;
 
@@ -64,9 +66,13 @@ namespace OxGFrame.AssetLoader.Bundle
         /// Init package by default package name
         /// </summary>
         /// <returns></returns>
-        public static async UniTask<InitializationOperation> InitDefaultPackage()
+        public static async UniTask<bool> InitDefaultPackage()
         {
-            return await InitPackage(_currentPackageName);
+            var hostServer = await BundleConfig.GetHostServerUrl(_currentPackageName);
+            var fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(_currentPackageName);
+            var queryService = new RequestBuiltinQuery();
+
+            return await InitPackage(_currentPackageName, false, hostServer, fallbackHostServer, queryService);
         }
 
         /// <summary>
@@ -76,15 +82,16 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <param name="autoUpdate"></param>
         /// <param name="hostServer"></param>
         /// <param name="fallbackHostServer"></param>
+        /// <param name="queryService"></param>
         /// <returns></returns>
-        public static async UniTask<InitializationOperation> InitPackage(string packageName, bool autoUpdate = false, string hostServer = null, string fallbackHostServer = null, Action<string> errorHandler = null)
+        public static async UniTask<bool> InitPackage(string packageName, bool autoUpdate, string hostServer, string fallbackHostServer, IQueryServices queryService)
         {
             var package = RegisterPackage(packageName);
             if (package.InitializeStatus == EOperationStatus.Succeed)
             {
-                if (autoUpdate) await UpdatePackage(packageName, errorHandler);
-                Debug.Log($"<color=#ff9441>[return null] Package: {packageName} is already initialized, Status: {package.InitializeStatus}.</color>");
-                return default;
+                if (autoUpdate) await UpdatePackage(packageName);
+                Debug.Log($"<color=#e2ec00>Package: {packageName} is initialized. Status: {package.InitializeStatus}.</color>");
+                return true;
             }
 
             // Simulate Mode
@@ -107,13 +114,9 @@ namespace OxGFrame.AssetLoader.Bundle
             // Host Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
             {
-                // if hostServer and fallbackHostServer are null will set from default config
-                if (hostServer == null) hostServer = await BundleConfig.GetHostServerUrl(packageName);
-                if (fallbackHostServer == null) fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
-
                 var createParameters = new HostPlayModeParameters();
                 createParameters.DecryptionServices = _decryption;
-                createParameters.QueryServices = new RequestQuery();
+                createParameters.QueryServices = queryService;
                 createParameters.DefaultHostServer = hostServer;
                 createParameters.FallbackHostServer = fallbackHostServer;
                 initializationOperation = package.InitializeAsync(createParameters);
@@ -121,25 +124,17 @@ namespace OxGFrame.AssetLoader.Bundle
 
             await initializationOperation;
 
-            if (initializationOperation.Status != EOperationStatus.Succeed) errorHandler?.Invoke($"{packageName} is init failed.");
-
-            if (autoUpdate) await UpdatePackage(packageName, errorHandler);
-
-            return initializationOperation;
-        }
-
-        /// <summary>
-        /// Init package by package list idx
-        /// </summary>
-        /// <param name="idx"></param>
-        /// <param name="autoUpdate"></param>
-        /// <param name="hostServer"></param>
-        /// <param name="fallbackHostServer"></param>
-        /// <returns></returns>
-        public static async UniTask<InitializationOperation> InitPackage(int idx, bool autoUpdate = false, string hostServer = null, string fallbackHostServer = null, Action<string> errorHandler = null)
-        {
-            string packageName = GetPackageNameByIdx(idx);
-            return await InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, errorHandler);
+            if (initializationOperation.Status == EOperationStatus.Succeed)
+            {
+                if (autoUpdate) await UpdatePackage(packageName);
+                Debug.Log($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Init</color> completed successfully.</color>");
+                return true;
+            }
+            else
+            {
+                Debug.Log($"<color=#ff3696>Package: {packageName} init failed.</color>");
+                return false;
+            }
         }
 
         /// <summary>
@@ -147,10 +142,9 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         /// <param name="packageName"></param>
         /// <returns></returns>
-        public static async UniTask UpdatePackage(string packageName, Action<string> errorHandler = null)
+        public static async UniTask<bool> UpdatePackage(string packageName)
         {
             var package = GetPackage(packageName);
-
             var versionOperation = package.UpdatePackageVersionAsync();
             await versionOperation;
             if (versionOperation.Status == EOperationStatus.Succeed)
@@ -159,20 +153,37 @@ namespace OxGFrame.AssetLoader.Bundle
 
                 var manifestOperation = package.UpdatePackageManifestAsync(version);
                 await manifestOperation;
-                if (manifestOperation.Status != EOperationStatus.Succeed) errorHandler?.Invoke($"{packageName} is update manifest failed.");
+                if (manifestOperation.Status == EOperationStatus.Succeed)
+                {
+                    Debug.Log($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Update</color> completed successfully.</color>");
+                    return true;
+                }
+                else
+                {
+                    Debug.Log($"<color=#ff3696>Package: {packageName} update manifest failed.</color>");
+                    return false;
+                }
             }
-            else errorHandler?.Invoke($"{packageName} is update version failed.");
+            else
+            {
+                Debug.Log($"<color=#ff3696>Package: {packageName} update version failed.</color>");
+                return false;
+            }
         }
 
         /// <summary>
-        /// Update package manifest by package list idx
+        /// Unload package and clear package files from sandbox
         /// </summary>
-        /// <param name="idx"></param>
-        /// <returns></returns>
-        public static async UniTask UpdatePackage(int idx, Action<string> errorHandler = null)
+        /// <param name="packageName"></param>
+        public static void UnloadPackageAndClearCacheFiles(string packageName)
         {
-            var packageName = GetPackageNameByIdx(idx);
-            await UpdatePackage(packageName, errorHandler);
+            var package = GetPackage(packageName);
+            if (package == null) return;
+
+            var sandboxPath = BundleConfig.GetLocalSandboxPath();
+            string packagePath = Path.Combine(sandboxPath, BundleConfig.yooCacheFolderName, packageName);
+            BundleUtility.DeleteFolder(packagePath);
+            YooAssets.DestroyPackage(packageName);
         }
 
         /// <summary>

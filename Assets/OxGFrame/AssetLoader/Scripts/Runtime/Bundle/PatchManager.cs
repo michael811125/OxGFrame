@@ -36,8 +36,8 @@ namespace OxGFrame.AssetLoader.Bundle
         }
         #endregion
 
-        internal static string appVersion;
-        internal static string patchVersion;
+        internal static string appVersion = string.Empty;
+        internal static string patchVersion = string.Empty;
 
         private bool _isCheck = false;
         private bool _isRepair = false;

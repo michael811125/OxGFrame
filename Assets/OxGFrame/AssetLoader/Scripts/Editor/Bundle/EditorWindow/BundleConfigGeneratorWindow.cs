@@ -14,7 +14,8 @@ public class BundleConfigGeneratorWindow : EditorWindow
     public enum OperationType
     {
         ExportAppConfigToStreamingAssets = 0,
-        ExportAppConfigAndBundlesForCDN = 1
+        ExportConfigsAndAppBundlesForCDN = 1,
+        ExportIndividualDLCBundlesForCDN = 2
     }
 
     private static BundleConfigGeneratorWindow _instance = null;
@@ -39,6 +40,10 @@ public class BundleConfigGeneratorWindow : EditorWindow
     [SerializeField]
     public string appVersion;
     [SerializeField]
+    public List<string> exportAppPackages = new List<string>() { "DefaultPackage" };
+    [SerializeField]
+    public List<DlcInfo> exportIndividualPackages = new List<DlcInfo>();
+    [SerializeField]
     public string groupInfoArgs;
     [SerializeField]
     public List<GroupInfo> groupInfos;
@@ -49,10 +54,12 @@ public class BundleConfigGeneratorWindow : EditorWindow
 
     private SerializedObject _serObj;
     private SerializedProperty _groupInfosPty;
+    private SerializedProperty _exportAppPackagesPty;
+    private SerializedProperty _exportIndividualPackagesPty;
 
     internal const string KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR = "KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR";
 
-    private static Vector2 _windowSize = new Vector2(800f, 325f);
+    private static Vector2 _windowSize = new Vector2(800f, 400f);
 
     [MenuItem(BundleHelper.MenuRoot + "Bundle Config Generator", false, 899)]
     public static void ShowWindow()
@@ -67,6 +74,8 @@ public class BundleConfigGeneratorWindow : EditorWindow
     {
         this._serObj = new SerializedObject(this);
         this._groupInfosPty = this._serObj.FindProperty("groupInfos");
+        this._exportAppPackagesPty = this._serObj.FindProperty("exportAppPackages");
+        this._exportIndividualPackagesPty = this._serObj.FindProperty("exportIndividualPackages");
 
         int operationTypeCount = Enum.GetNames(typeof(OperationType)).Length;
         for (int i = 0; i < operationTypeCount; i++)
@@ -78,6 +87,10 @@ public class BundleConfigGeneratorWindow : EditorWindow
         this.operationType = (OperationType)Convert.ToInt32(EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "operationType", "0"));
         this.productName = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "productName", Application.productName);
         this.appVersion = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "appVersion", Application.version);
+        string jsonExportAppPackages = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "exportAppPackages", string.Empty);
+        if (!string.IsNullOrEmpty(jsonExportAppPackages)) this.exportAppPackages = JsonConvert.DeserializeObject<List<string>>(jsonExportAppPackages);
+        string jsonExportIndividualPackages = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "exportIndividualPackages", string.Empty);
+        if (!string.IsNullOrEmpty(jsonExportIndividualPackages)) this.exportIndividualPackages = JsonConvert.DeserializeObject<List<DlcInfo>>(jsonExportIndividualPackages);
         this.groupInfoArgs = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "groupInfoArgs", string.Empty);
         string jsonGroupInfos = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "groupInfos", string.Empty);
         if (!string.IsNullOrEmpty(jsonGroupInfos)) this.groupInfos = JsonConvert.DeserializeObject<List<GroupInfo>>(jsonGroupInfos);
@@ -112,9 +125,16 @@ public class BundleConfigGeneratorWindow : EditorWindow
                     GetInstance().position = new Rect(GetInstance().position.position.x, GetInstance().position.position.y, _windowSize.x, minHeight);
                 }
                 break;
-            case OperationType.ExportAppConfigAndBundlesForCDN:
-                this._DrawExportConfigsAndBundlesForCDNView();
-                if (this._lastOperationType != OperationType.ExportAppConfigAndBundlesForCDN)
+            case OperationType.ExportConfigsAndAppBundlesForCDN:
+                this._DrawExportConfigsAndAppBundlesForCDNView();
+                if (this._lastOperationType != OperationType.ExportConfigsAndAppBundlesForCDN)
+                {
+                    GetInstance().minSize = new Vector2(_windowSize.x, _windowSize.y);
+                }
+                break;
+            case OperationType.ExportIndividualDLCBundlesForCDN:
+                this._DrawExportIndividualDlcBundlesForCDNView();
+                if (this._lastOperationType != OperationType.ExportConfigsAndAppBundlesForCDN)
                 {
                     GetInstance().minSize = new Vector2(_windowSize.x, _windowSize.y);
                 }
@@ -150,7 +170,7 @@ public class BundleConfigGeneratorWindow : EditorWindow
         EditorGUILayout.EndVertical();
     }
 
-    private void _DrawExportConfigsAndBundlesForCDNView()
+    private void _DrawExportConfigsAndAppBundlesForCDNView()
     {
         this._scrollview = EditorGUILayout.BeginScrollView(this._scrollview, true, true);
 
@@ -166,7 +186,7 @@ public class BundleConfigGeneratorWindow : EditorWindow
         EditorGUILayout.BeginVertical(style);
         var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
         centeredStyle.alignment = TextAnchor.UpperCenter;
-        GUILayout.Label(new GUIContent("Export AppConfig And Bundles For CDN"), centeredStyle);
+        GUILayout.Label(new GUIContent("Export Configs And App Bundles For CDN"), centeredStyle);
         EditorGUILayout.Space();
 
         // draw here
@@ -175,7 +195,40 @@ public class BundleConfigGeneratorWindow : EditorWindow
         this._DrawProductNameTextFieldView();
         this._DrawAppVersionTextFieldView();
         this._DrawExportFolderView();
+        this._DrawExportAppPackagesView();
         this._DrawGroupInfosView();
+        this._DrawProcessButtonView(this.operationType);
+
+        EditorGUILayout.EndVertical();
+
+        EditorGUILayout.EndScrollView();
+    }
+
+    private void _DrawExportIndividualDlcBundlesForCDNView()
+    {
+        this._scrollview = EditorGUILayout.BeginScrollView(this._scrollview, true, true);
+
+        EditorGUILayout.Space();
+
+        GUIStyle style = new GUIStyle();
+        var bg = new Texture2D(1, 1);
+        ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+        Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+        bg.SetPixels(pixels);
+        bg.Apply();
+        style.normal.background = bg;
+        EditorGUILayout.BeginVertical(style);
+        var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+        centeredStyle.alignment = TextAnchor.UpperCenter;
+        GUILayout.Label(new GUIContent("Export Individual DLC Bundles For CDN"), centeredStyle);
+        EditorGUILayout.Space();
+
+        // draw here
+        this._DrawBuildTargetView();
+        this._DrawSourceFolderView();
+        this._DrawProductNameTextFieldView();
+        this._DrawExportFolderView();
+        this._DrawExportIndividualPackagesView();
         this._DrawProcessButtonView(this.operationType);
 
         EditorGUILayout.EndVertical();
@@ -265,6 +318,74 @@ public class BundleConfigGeneratorWindow : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+    private void _DrawExportAppPackagesView()
+    {
+        EditorGUILayout.Space();
+
+        var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+        centeredStyle.alignment = TextAnchor.UpperCenter;
+        GUILayout.Label(new GUIContent("Export App Packages"), centeredStyle);
+        EditorGUILayout.Space();
+
+        EditorGUILayout.BeginVertical();
+
+        EditorGUILayout.BeginHorizontal();
+        this._serObj.Update();
+        EditorGUI.BeginChangeCheck();
+        EditorGUILayout.PropertyField(this._exportAppPackagesPty, true);
+        if (EditorGUI.EndChangeCheck())
+        {
+            this._serObj.ApplyModifiedProperties();
+            string json = JsonConvert.SerializeObject(this.exportAppPackages);
+            EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "exportAppPackages", json);
+        }
+
+        Color bc = GUI.backgroundColor;
+        GUI.backgroundColor = new Color32(255, 151, 240, 255);
+        if (GUILayout.Button("Reset", GUILayout.MaxWidth(100f)))
+        {
+            this.exportAppPackages = new List<string>() { "DefaultPackage" };
+        }
+        GUI.backgroundColor = bc;
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.EndVertical();
+    }
+
+    private void _DrawExportIndividualPackagesView()
+    {
+        EditorGUILayout.Space();
+
+        var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+        centeredStyle.alignment = TextAnchor.UpperCenter;
+        GUILayout.Label(new GUIContent("Export Individual DLC Packages"), centeredStyle);
+        EditorGUILayout.Space();
+
+        EditorGUILayout.BeginVertical();
+
+        EditorGUILayout.BeginHorizontal();
+        this._serObj.Update();
+        EditorGUI.BeginChangeCheck();
+        EditorGUILayout.PropertyField(this._exportIndividualPackagesPty, true);
+        if (EditorGUI.EndChangeCheck())
+        {
+            this._serObj.ApplyModifiedProperties();
+            string json = JsonConvert.SerializeObject(this.exportIndividualPackages);
+            EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_CONFIG_EDITOR, "exportIndividualPackages", json);
+        }
+
+        Color bc = GUI.backgroundColor;
+        GUI.backgroundColor = new Color32(255, 80, 106, 255);
+        if (GUILayout.Button("Clear", GUILayout.MaxWidth(100f)))
+        {
+            this.exportIndividualPackages = new List<DlcInfo>();
+        }
+        GUI.backgroundColor = bc;
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.EndVertical();
+    }
+
     private bool _isParsingDirty = false;
     private bool _isConvertDirty = false;
     private void _DrawGroupInfosView()
@@ -273,7 +394,7 @@ public class BundleConfigGeneratorWindow : EditorWindow
 
         var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
         centeredStyle.alignment = TextAnchor.UpperCenter;
-        GUILayout.Label(new GUIContent("Group Tags"), centeredStyle);
+        GUILayout.Label(new GUIContent("Group Tags For Default Package"), centeredStyle);
         EditorGUILayout.Space();
 
         EditorGUILayout.BeginVertical();
@@ -379,11 +500,18 @@ public class BundleConfigGeneratorWindow : EditorWindow
                     AssetDatabase.Refresh();
                     if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{BundleConfig.appCfgName}{BundleConfig.appCfgExtension}");
                     break;
-                case OperationType.ExportAppConfigAndBundlesForCDN:
+                case OperationType.ExportConfigsAndAppBundlesForCDN:
                     inputPath = this.sourceFolder[(int)this.operationType];
-                    outputPath = $"{this.exportFolder[(int)this.operationType]}{BundleConfig.rootDir}";
-                    BundleHelper.ExportConfigsAndBundles(inputPath, outputPath, this.productName, this.appVersion, this.groupInfos, this.activeBuildTarget, this.buildTarget);
-                    EditorUtility.DisplayDialog("Process Message", "Export Bundles And AppConfig For CDN.", "OK");
+                    outputPath = $"{this.exportFolder[(int)this.operationType]}/{BundleConfig.rootFolderName}";
+                    BundleHelper.ExportConfigsAndAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.groupInfos, this.exportAppPackages.ToArray(), this.activeBuildTarget, this.buildTarget);
+                    EditorUtility.DisplayDialog("Process Message", "Export Configs And App Bundles For CDN.", "OK");
+                    if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
+                    break;
+                case OperationType.ExportIndividualDLCBundlesForCDN:
+                    inputPath = this.sourceFolder[(int)this.operationType];
+                    outputPath = $"{this.exportFolder[(int)this.operationType]}/{BundleConfig.rootFolderName}";
+                    BundleHelper.ExportIndividualDlcBundles(inputPath, outputPath, this.productName, this.exportIndividualPackages, this.activeBuildTarget, this.buildTarget);
+                    EditorUtility.DisplayDialog("Process Message", "Export Individual DLC Bundles For CDN.", "OK");
                     if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
                     break;
             }

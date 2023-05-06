@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [2.1.0] - 2023-05-06
+- Added version encode methods in BundleUtility.
+- Added semantic version check rule (supported compare rule is X.Y.Z or X.Y).
+- Added export individual DLC package option in Bundle Config Generator (allow export specific DLC package version and download by specific DLC package version).
+  - Specific DLC Version: CDN/productName/platform/DLC/DlcPackage/v1.0...v1.1 (InitDlcPackage assign dlcVersion is "v1.0" or "v1.1")
+  - Newest DLC Version: CDN/productName/platform/DLC/DlcPackage/newest (InitDlcPackage assign fixed dlcVersion is "newest")
+- Added DLC request default path rule (CDN/productName/platform/DLC/packageName).
+- Added unload package and clear cache files method (can unload specific DLC package and clear files from Sandbox).
+- Added local sandbox query service for DLC.
+- Modified InitPackage and UpdatePackage methods return value are bool to make sure init or update status.
+- Extended GetPatchVersion has (encode, encodeLength, separator) params.
+- Fixed OfflineMode patch version is null or empty issue.
+- Fixed HostMode local app config won't update to write issue.
+
 ## [2.0.6] - 2023-05-04
 - Added HostMode can skip download step (force download while playing).
 - Extended AssetPatcher methods.

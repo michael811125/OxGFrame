@@ -11,8 +11,10 @@ namespace OxGFrame.AssetLoader.Bundle
 
         [Header("Patch Options")]
         public BundleConfig.PlayMode playMode = BundleConfig.PlayMode.EditorSimulateMode;
-        [Tooltip("If checked will skip patch download step (force download while playing)"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
-        public bool skipPatchDownloadStep = false;
+        [Tooltip("If checker patch field will compare whole version"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
+        public BundleConfig.SemanticRule semanticRule = new BundleConfig.SemanticRule();
+        [Tooltip("If checked will skip default package download step of patch (force download while playing)"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
+        public bool skipCreateMainDownloder = false;
 
         [Header("Package List")]
         [Tooltip("The first element will be default package")]
@@ -33,7 +35,11 @@ namespace OxGFrame.AssetLoader.Bundle
 
             // Patch Options
             BundleConfig.playMode = this.playMode;
-            BundleConfig.skipPatchDownloadStep = this.skipPatchDownloadStep;
+            if (this.playMode == BundleConfig.PlayMode.HostMode)
+            {
+                BundleConfig.semanticRule = this.semanticRule;
+                BundleConfig.skipCreateMainDownloder = this.skipCreateMainDownloder;
+            }
 
             // Package List
             BundleConfig.listPackage = this.listPackage;

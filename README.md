@@ -25,6 +25,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ## 第三方庫 (內建)
 - 使用 [UnitTask](https://github.com/Cysharp/UniTask) (最佳異步處理方案)
 
+※備註 : 會持續更新內建第三方庫。
+
 ---
 
 ## 特別推薦 (內建)
@@ -33,6 +35,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 - 使用 [YooAsset](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案)
 - 使用部分 [UniFramework](https://github.com/gmhevinci/UniFramework) (輕量級框架)
 - TODO (待整合) [HybirdCLR](https://github.com/focus-creative-games/hybridclr) (革命性的程式熱更新方案)
+
+※備註 : 會持續更新內建第三方庫。
 
 ---
 
@@ -82,10 +86,16 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
   - 標準運行包
   - 全部運行包 (預設 #all)
 
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_1.png)
+
+---
+
 **將 PatchLauncher 拖曳至場景中後，可以設置 PlayMode**
 - Editor Simulate Mode (模擬模式 [加快開發])，需先配置 YooAsset Collector。
 - Offline Mode (單機模式)，需將 AB 打包至 Built-in，並且產出相關配置，需注意 PatchLauncher 的解密設定。
 - Host Mode (聯機模式)，需將 AB 打包區分 Built-in 跟 Patch，並且產出相關配置，需注意 PatchLauncher 的解密設定。
+  - 允許選擇 Semantic Version 版號檢查規則 (比對完整版號 X.Y.Z 或比對大小版號 X.Y)。
+  - 允許跳過 Default Package 主下載器的下載階段 (強制邊玩邊下載)。
 
 **檢查 PlayMode 是否初始完成**
 - 判斷檢查 AssetPatcher.IsInitialized() 是否初始完成，因為初始完成後，才能開始進行 Bundle 加載。
@@ -98,15 +108,35 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 **指定特定的 Package 進行資源加載**
 - 需先手動進行 AssetPatcher.InitPackage 的初始 (如果 autoUpdate = false，則需要自行另外調用 AssetPatcher.UpdatePackage 進行 Manifest 的更新)。
+- 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion，變成只要 DLC 有更新就可以使用固定路徑進行更新。
 ```
-// [Load asset and download from specific package]
+// [Load asset and download from specific package (Export App Bundles for CDN)]
+
 var packageName = "OtherPackage";
-await AssetPatcher.InitPackage(packageName, true, "127.0.0.1/package", "127.0.0.1/package");
-var package = AssetPatcher.GetPackage(packageName);
-var downloader = AssetPatcher.GetPackageDownloader(package);
-Debug.Log($"Patch Size: {BundleUtility.GetBytesToString((ulong) downloader.TotalDownloadBytes)}");
-await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName);
+bool isInitialized = await AssetPatcher.InitPackage(packageName, true);
+if (isInitialized)
+{
+    var package = AssetPatcher.GetPackage(packageName);
+    var downloader = AssetPatcher.GetPackageDownloader(package);
+    Debug.Log($"Has In Local: {downloader.TotalDownloadCount == 0}, Patch Count: {downloader.TotalDownloadCount}, Patch Size: {BundleUtility.GetBytesToString((ulong)downloader.TotalDownloadBytes)}");
+    await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName);
+}
 ```
+
+```
+// [Load asset and download from specific package (Export Individual DLC Bundles for CDN)]
+
+var packageName = "DlcPackage";
+bool isInitialized = await AssetPatcher.InitDlcPackage(packageName, "dlcVersion", true);
+if (isInitialized)
+{
+    var package = AssetPatcher.GetPackage(packageName);
+    var downloader = AssetPatcher.GetPackageDownloader(package);
+    Debug.Log($"Has In Local: {downloader.TotalDownloadCount == 0}, Patch Count: {downloader.TotalDownloadCount}, Patch Size: {BundleUtility.GetBytesToString((ulong)downloader.TotalDownloadBytes)}");
+    await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName);
+}
+```
+
 ---
 
 #### Bundle [burlconfig] (Bundle URL Config) 格式
@@ -123,8 +153,8 @@ bundle_fallback_ip 127.0.0.1
 store_link http://
 ```
 
-**\>\> 建立 burlconfig 方式 \<\<**
-- 使用 OxGFrame/AssetLoader/Bundle Url Config Generator 創建 burlconfig (StreamingAssets/burlconfig)。
+**\>\> 建立 burlconfig.conf 方式 \<\<**
+- 使用 OxGFrame/AssetLoader/Bundle Url Config Generator 創建 burlconfig.conf (StreamingAssets/burlconfig.conf)。
 
 **如果沒有要使用 AssetLoader 資源加載模塊，可以直接刪除整個 AssetLoader (注意有模塊依賴引用)。**
 

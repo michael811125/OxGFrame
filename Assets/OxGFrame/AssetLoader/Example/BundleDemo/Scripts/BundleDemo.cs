@@ -8,6 +8,7 @@ using System.Text;
 using UniFramework.Event;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.ReloadAttribute;
 
 public class BundleDemo : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class BundleDemo : MonoBehaviour
     public Scrollbar progress = null;
     public Text percentage = null;
     public Text info = null;
+    public Text versionTxt = null;
 
     public GameObject controlBtns = null;
     public GameObject downloadBtns = null;
@@ -40,6 +42,7 @@ public class BundleDemo : MonoBehaviour
         this.downloadBtns.SetActive(false);
         this.progressGroup.SetActive(false);
         this.bundleBtns.SetActive(false);
+        this.versionTxt.gameObject.SetActive(false);
 
         // Init Patch Events
         this._InitPatchEvents();
@@ -90,6 +93,7 @@ public class BundleDemo : MonoBehaviour
                     if (this.downloadBtns.activeSelf) this.downloadBtns.SetActive(false);
                     if (this.progressGroup.activeSelf) this.progressGroup.SetActive(false);
                     if (this.bundleBtns.activeSelf) this.bundleBtns.SetActive(false);
+                    if (this.versionTxt.gameObject.activeSelf) this.versionTxt.gameObject.SetActive(false);
                     break;
                 case PatchFsmStates.FsmAppVersionUpdate:
                     this.msg.text = "App Version Update";
@@ -120,9 +124,19 @@ public class BundleDemo : MonoBehaviour
                     break;
                 case PatchFsmStates.FsmPatchDone:
                     this.msg.text = "Patch Done";
+                    // get app version to display
+                    string appVersion = AssetPatcher.GetAppVersion();
+                    if (!string.IsNullOrEmpty(appVersion)) appVersion = $"v{appVersion}";
+                    // get encoded patch version to display (recommend)
+                    string encodePatchVersion = AssetPatcher.GetPatchVersion(true);
+                    // get original patch version to display
+                    string patchVersion = AssetPatcher.GetPatchVersion();
+                    // show version text
+                    this.versionTxt.text = $"app_version: {appVersion}\npatch_version (encoded): {encodePatchVersion}\npatch_version: {patchVersion}";
                     if (!this.controlBtns.activeSelf) this.controlBtns.SetActive(true);
                     if (!this.bundleBtns.activeSelf) this.bundleBtns.SetActive(true);
                     if (this.progressGroup.activeSelf) this.progressGroup.SetActive(false);
+                    if (!this.versionTxt.gameObject.activeSelf) this.versionTxt.gameObject.SetActive(true);
                     break;
             }
             #endregion
@@ -385,15 +399,31 @@ public class BundleDemo : MonoBehaviour
     public GameObject container = null;
 
     /*
-     * [Load asset and download from specific package]
+     * [Load asset and download from specific package (Export App Bundles for CDN)]
      * 
      * var packageName = "OtherPackage";
-     * await AssetPatcher.InitPackage(packageName, true, "127.0.0.1/package", "127.0.0.1/package");
-     * var package = AssetPatcher.GetPackage(packageName);
-     * var downloader = AssetPatcher.GetPackageDownloader(package);
-     * Debug.Log($"Patch Size: {BundleUtility.GetBytesToString((ulong) downloader.TotalDownloadBytes)}");
-     * await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName);
+     * bool isInitialized = await AssetPatcher.InitPackage(packageName, true);
+     * if (isInitialized)
+     * {
+     *     var package = AssetPatcher.GetPackage(packageName);
+     *     var downloader = AssetPatcher.GetPackageDownloader(package);
+     *     Debug.Log($"Has In Local: {downloader.TotalDownloadCount == 0}, Patch Count: {downloader.TotalDownloadCount}, Patch Size: {BundleUtility.GetBytesToString((ulong)downloader.TotalDownloadBytes)}");
+     *     await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName);
+     * }
      * 
+     * ------------------------------------------------------------------------------------------------------
+     * 
+     * [Load asset and download from specific package (Export Individual DLC Bundles for CDN)]
+     * 
+     * var packageName = "DlcPackage";
+     * bool isInitialized = await AssetPatcher.InitDlcPackage(packageName, "dlcVersion", true);
+     * if (isInitialized)
+     * {
+     *     var package = AssetPatcher.GetPackage(packageName);
+     *     var downloader = AssetPatcher.GetPackageDownloader(package);
+     *     Debug.Log($"Has In Local: {downloader.TotalDownloadCount == 0}, Patch Count: {downloader.TotalDownloadCount}, Patch Size: {BundleUtility.GetBytesToString((ulong)downloader.TotalDownloadBytes)}");
+     *     await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName);
+     * }
      */
 
     public async void PreloadBundle()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
@@ -13,6 +14,14 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public string groupName;
         public string[] tags;
+    }
+
+    [Serializable]
+    public class DlcInfo
+    {
+        public string packageName;
+        [Tooltip("If version is null or empty will auto set newset package version by date")]
+        public string dlcVersion;
     }
 
     public class PackageInfo

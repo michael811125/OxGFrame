@@ -197,65 +197,115 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     // 如果是離線模式, Local Config = StreamingAssets Config
                     if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode)
                     {
-                        localCfg = saCfg;
-                        // 寫入儲存本地配置檔
-                        localCfgJson = JsonConvert.SerializeObject(localCfg);
-                        // 進行寫入存儲
-                        File.WriteAllText(localCfgPath, localCfgJson);
+                        // 寫入 StreamingAssets 的配置檔至 Local
+                        File.WriteAllText(localCfgPath, JsonConvert.SerializeObject(saCfg));
                     }
                     else
                     {
-                        // 如果主程式版本不一致表示有更新 App, 則將本地配置檔的主程式版本寫入成 StreamingAssets 配置檔中的 APP_VERSION
-                        if (saCfg.APP_VERSION != localCfg.APP_VERSION)
+                        if (BundleConfig.semanticRule.patch)
                         {
-                            localCfg.APP_VERSION = saCfg.APP_VERSION;
-                            // 寫入儲存本地配置檔
-                            localCfgJson = JsonConvert.SerializeObject(localCfg);
-                            // 進行寫入存儲
-                            File.WriteAllText(localCfgPath, localCfgJson);
+                            // 比對完整版號
+                            if (saCfg.APP_VERSION != localCfg.APP_VERSION)
+                            {
+                                // 寫入 StreamingAssets 的配置檔至 Local
+                                File.WriteAllText(localCfgPath, JsonConvert.SerializeObject(saCfg));
+                            }
+                        }
+                        else
+                        {
+                            // 比對大小版號
+                            string[] saAppVersionArgs = saCfg.APP_VERSION.Split('.');
+                            string[] localAppVersionArgs = localCfg.APP_VERSION.Split('.');
+
+                            string saVersion = $"{saAppVersionArgs[0]}.{saAppVersionArgs[1]}";
+                            string localVersion = $"{localAppVersionArgs[0]}.{localAppVersionArgs[1]}";
+
+                            // 如果 StreamingAssets 中的 App 大小版號與 Local 大小版號不一致表示有更新 App, 則會重新寫入 AppConfig 至 Local
+                            if (saVersion != localVersion)
+                            {
+                                // 寫入 StreamingAssets 的配置檔至 Local
+                                File.WriteAllText(localCfgPath, JsonConvert.SerializeObject(saCfg));
+                            }
                         }
                     }
                 }
 
-                try
                 {
-                    // 從本地端讀取配置檔
-                    string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
-                    string localCfgJson = File.ReadAllText(localCfgPath);
-                    localCfg = JsonConvert.DeserializeObject<AppConfig>(localCfgJson);
-                }
-                catch
-                {
-                    Debug.Log("<color=#FF0000>Read Local Save BundleConfig.json failed.</color>");
-                }
+                    try
+                    {
+                        // 重新讀取本地端配置檔
+                        string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
+                        string localCfgJson = File.ReadAllText(localCfgPath);
+                        localCfg = JsonConvert.DeserializeObject<AppConfig>(localCfgJson);
+                    }
+                    catch
+                    {
+                        Debug.Log("<color=#FF0000>Read Local Config failed.</color>");
+                    }
 
-                // 比對大版號
-                string[] localAppVersionArgs = localCfg.APP_VERSION.Split('.');
-                string[] hostAppVersionArgs = hostCfg.APP_VERSION.Split('.');
+                    if (BundleConfig.semanticRule.patch)
+                    {
+                        // 比對 Local 與 Host 的主程式完整版號
+                        if (localCfg.APP_VERSION != hostCfg.APP_VERSION)
+                        {
+                            // Do GoToAppStore
 
-                string localVersion = $"{localAppVersionArgs[0]}.{localAppVersionArgs[1]}";
-                string hostVersion = $"{hostAppVersionArgs[0]}.{hostAppVersionArgs[1]}";
+                            // emit go to app store event
+                            PatchEvents.PatchGoToAppStore.SendEventMessage();
+                            // remove last group name
+                            PatchManager.DelLastGroupInfo();
 
-                // 比對主程式版本
-                if (localVersion != hostVersion)
-                {
-                    // Do GoToAppStore
+                            Debug.Log("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
+                            Debug.Log($"<color=#ff8c00>【App Version Unpassed (X.Y.Z)】LOCAL APP_VER: v{localCfg.APP_VERSION} != SERVER APP_VER: v{hostCfg.APP_VERSION}</color>");
+                            return;
+                        }
+                        else
+                        {
+                            PatchManager.appVersion = hostCfg.APP_VERSION;
+                            this._machine.ChangeState<FsmInitPatchMode>();
 
-                    // emit go to app store event
-                    PatchEvents.PatchGoToAppStore.SendEventMessage();
-                    // remove last group name
-                    PatchManager.DelLastGroupInfo();
+                            Debug.Log($"<color=#00ff00>【App Version Passed (X.Y.Z)】LOCAL APP_VER: v{localCfg.APP_VERSION} == SERVER APP_VER: v{hostCfg.APP_VERSION}</color>");
+                        }
+                    }
+                    else
+                    {
+                        // 比對大小版號
+                        string[] localAppVersionArgs = localCfg.APP_VERSION.Split('.');
+                        string[] hostAppVersionArgs = hostCfg.APP_VERSION.Split('.');
 
-                    Debug.Log("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
-                    Debug.Log($"<color=#ff8c00>【App Version Unpassed (Only Major and Minor)】LOCAL APP_VER: v{localVersion} ({localCfg.APP_VERSION}) != SERVER APP_VER: v{hostVersion} ({hostCfg.APP_VERSION})</color>");
-                    return;
-                }
-                else
-                {
-                    Debug.Log($"<color=#00ff00>【App Version Passed (Only Major and Minor)】LOCAL APP_VER: v{localVersion} ({localCfg.APP_VERSION}) == SERVER APP_VER: v{hostVersion} ({hostCfg.APP_VERSION})</color>");
+                        string localVersion = $"{localAppVersionArgs[0]}.{localAppVersionArgs[1]}";
+                        string hostVersion = $"{hostAppVersionArgs[0]}.{hostAppVersionArgs[1]}";
 
-                    PatchManager.appVersion = hostCfg.APP_VERSION;
-                    this._machine.ChangeState<FsmInitPatchMode>();
+                        // 比對 Local 與 Host 的主程式大小版號
+                        if (localVersion != hostVersion)
+                        {
+                            // Do GoToAppStore
+
+                            // emit go to app store event
+                            PatchEvents.PatchGoToAppStore.SendEventMessage();
+                            // remove last group name
+                            PatchManager.DelLastGroupInfo();
+
+                            Debug.Log("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
+                            Debug.Log($"<color=#ff8c00>【App Version Unpassed (X.Y)】LOCAL APP_VER: v{localVersion} ({localCfg.APP_VERSION}) != SERVER APP_VER: v{hostVersion} ({hostCfg.APP_VERSION})</color>");
+                            return;
+                        }
+                        else
+                        {
+                            // 寫入完整版號至 Local
+                            if (localCfg.APP_VERSION != hostCfg.APP_VERSION)
+                            {
+                                // 寫入 Host 的配置檔至 Local
+                                string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
+                                File.WriteAllText(localCfgPath, JsonConvert.SerializeObject(hostCfg));
+                            }
+
+                            PatchManager.appVersion = hostCfg.APP_VERSION;
+                            this._machine.ChangeState<FsmInitPatchMode>();
+
+                            Debug.Log($"<color=#00ff00>【App Version Passed (X.Y)】LOCAL APP_VER: v{localVersion} ({localCfg.APP_VERSION}) == SERVER APP_VER: v{hostVersion} ({hostCfg.APP_VERSION})</color>");
+                        }
+                    }
                 }
             }
         }
@@ -294,6 +344,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 if (PatchManager.GetInstance().IsRepair() &&
                     PackageManager.GetDefaultPackage().InitializeStatus == EOperationStatus.Succeed)
                 {
+                    // SimulateMode and OfflineMode doesn't need to update patch version and manifest
                     if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
                         BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode)
                     {
@@ -301,7 +352,14 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         return;
                     }
 
-                    // Add static method in YooAssets and call CacheSystem.ClearAll()
+                    /*
+                     * [1. Add static method in static class YooAssets]
+                     * 
+                     * public static void ResetCacheSystem()
+                     * {
+                     *     CacheSystem.ClearAll();
+                     * }
+                     */
                     YooAssets.ResetCacheSystem();
                     this._machine.ChangeState<FsmPatchVersionUpdate>();
                     Debug.Log("<color=#ffcf67>(Repair) Repair Patch</color>");
@@ -314,8 +372,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     return;
                 }
 
-                var operation = await PackageManager.InitDefaultPackage();
-                if (operation.Status == EOperationStatus.Succeed)
+                bool isInitialized = await PackageManager.InitDefaultPackage();
+                if (isInitialized)
                 {
                     this._machine.ChangeState<FsmPatchVersionUpdate>();
                     Debug.Log("<color=#ffcf67>(Init) Init Patch</color>");
@@ -365,6 +423,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 if (operation.Status == EOperationStatus.Succeed)
                 {
                     PatchManager.patchVersion = operation.PackageVersion;
+                    if (string.IsNullOrEmpty(PatchManager.patchVersion))
+                    {
+                        PatchManager.patchVersion = package.GetPackageVersion();
+                    }
                     this._machine.ChangeState<FsmPatchManifestUpdate>();
                 }
                 else
@@ -412,7 +474,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 if (operation.Status == EOperationStatus.Succeed)
                 {
-                    if (BundleConfig.skipPatchDownloadStep) this._machine.ChangeState<FsmDownloadOver>();
+                    operation.SavePackageVersion();
+                    if (BundleConfig.skipCreateMainDownloder) this._machine.ChangeState<FsmDownloadOver>();
                     else this._machine.ChangeState<FsmCreateDownloader>();
                 }
                 else

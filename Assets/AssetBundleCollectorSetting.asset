@@ -107,3 +107,19 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
+  - PackageName: DlcPackage
+    PackageDesc: 
+    Groups:
+    - GroupName: ModelGroup
+      GroupDesc: 
+      AssetTags: models
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/OxGFrame/AssetLoader/Example/Prefabs/model_01.prefab
+        CollectorGUID: b4ea3356cddbd8b41926c28adefdfbc5
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 

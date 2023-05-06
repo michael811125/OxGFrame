@@ -1,6 +1,8 @@
 ﻿using Cysharp.Threading.Tasks;
+using MyBox;
 using Newtonsoft.Json;
 using OxGFrame.AssetLoader.Utility;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -10,6 +12,18 @@ namespace OxGFrame.AssetLoader.Bundle
 {
     public static class BundleConfig
     {
+        [Serializable]
+        public class SemanticRule
+        {
+            [ReadOnly]
+            public bool major = true;
+            [ReadOnly]
+            public bool minor = true;
+            [SerializeField]
+            private bool _patch = false;
+            public bool patch { get { return this._patch; } }
+        }
+
         public enum PlayMode
         {
             EditorSimulateMode,
@@ -33,9 +47,14 @@ namespace OxGFrame.AssetLoader.Bundle
         public static PlayMode playMode = PlayMode.EditorSimulateMode;
 
         /// <summary>
-        /// 跳過 Patch 檢查下載階段 (強制啟用邊玩邊下載) 
+        /// Semantic 規則設定
         /// </summary>
-        public static bool skipPatchDownloadStep = false;
+        public static SemanticRule semanticRule = new SemanticRule();
+
+        /// <summary>
+        /// 跳過 Patch 創建主要下載器階段 (強制邊玩邊下載) 
+        /// </summary>
+        public static bool skipCreateMainDownloder = false;
 
         /// <summary>
         /// Package 設置清單
@@ -104,10 +123,16 @@ namespace OxGFrame.AssetLoader.Bundle
         public const string STORE_LINK = "store_link";
 
         // 佈署配置檔
-        public const string bundleUrlFileName = "burlconfig";
+        public const string bundleUrlFileName = "burlconfig.conf";
 
-        // Bundle 平台路徑
-        public const string rootDir = "/CDN"; // root dir
+        // Bundle 輸出歸類名稱
+        public const string rootFolderName = "CDN"; // Root 資料夾名稱
+        public const string dlcFolderName = "DLC";  // DLC 資料夾名稱
+
+        // YooAsset 歸類名稱
+        public const string yooCacheFolderName = "CacheFiles";
+        public const string yooBundleFolderName = "BundleFiles";
+        public const string yooBundleFileName = "__data";
         #endregion
 
         /// <summary>
@@ -161,11 +186,12 @@ namespace OxGFrame.AssetLoader.Bundle
             string appVersion = appConfig.APP_VERSION;
             string refineAppVersion = $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
 
-            return $"{host}{rootDir}/{productName}/{platform}/{refineAppVersion}/{packageName}";
+            // 預設組合路徑
+            return $"{host}/{rootFolderName}/{productName}/{platform}/{refineAppVersion}/{packageName}";
         }
 
         /// <summary>
-        /// 取得 StreamingAssets 中的 Bundle URL (Fallback)
+        /// 取得 StreamingAssets 中的 Bundle Fallback URL
         /// </summary>
         /// <returns></returns>
         public static async UniTask<string> GetFallbackHostServerUrl(string packageName)
@@ -177,7 +203,40 @@ namespace OxGFrame.AssetLoader.Bundle
             string appVersion = appConfig.APP_VERSION;
             string refineAppVersion = $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
 
-            return $"{host}{rootDir}/{productName}/{platform}/{refineAppVersion}/{packageName}";
+            // 預設組合路徑
+            return $"{host}/{rootFolderName}/{productName}/{platform}/{refineAppVersion}/{packageName}";
+        }
+
+        /// <summary>
+        /// 取得 StreamingAssets 中的 Bundle URL (DLC)
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="dlcVersion"></param>
+        /// <returns></returns>
+        public static async UniTask<string> GetDlcHostServerUrl(string packageName, string dlcVersion)
+        {
+            var appConfig = await GetAppConfigFromStreamingAssets();
+            string host = await GetValueFromUrlCfg(BUNDLE_IP);
+            string productName = appConfig.PRODUCT_NAME;
+            string platform = appConfig.PLATFORM;
+
+            // 預設 DLC 組合路徑
+            return $"{host}/{rootFolderName}/{productName}/{platform}/{dlcFolderName}/{packageName}/{dlcVersion}";
+        }
+
+        /// <summary>
+        /// 取得 StreamingAssets 中的 Bundle Fallback URL (DLC)
+        /// </summary>
+        /// <returns></returns>
+        public static async UniTask<string> GetDlcFallbackHostServerUrl(string packageName, string dlcVersion)
+        {
+            var appConfig = await GetAppConfigFromStreamingAssets();
+            string host = await GetValueFromUrlCfg(BUNDLE_FALLBACK_IP);
+            string productName = appConfig.PRODUCT_NAME;
+            string platform = appConfig.PLATFORM;
+
+            // 預設 DLC 組合路徑
+            return $"{host}/{rootFolderName}/{productName}/{platform}/{dlcFolderName}/{packageName}/{dlcVersion}";
         }
 
         /// <summary>
@@ -236,7 +295,7 @@ namespace OxGFrame.AssetLoader.Bundle
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
 
-            return Path.Combine($"{host}{rootDir}/{productName}/{platform}", $"{appCfgName}{appCfgExtension}");
+            return Path.Combine($"{host}/{rootFolderName}/{productName}/{platform}", $"{appCfgName}{appCfgExtension}");
         }
 
         /// <summary>
@@ -250,7 +309,7 @@ namespace OxGFrame.AssetLoader.Bundle
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
 
-            return Path.Combine($"{host}{rootDir}/{productName}/{platform}", $"{patchCfgName}{patchCfgExtension}");
+            return Path.Combine($"{host}/{rootFolderName}/{productName}/{platform}", $"{patchCfgName}{patchCfgExtension}");
         }
 
         /// <summary>
