@@ -5,7 +5,7 @@
 ---
 
 ## 新版 OxGFrame 安裝
-將舊版的 OxGFrame 全部移除，並且重新串接新版的接口。
+將舊版 2.0.0 以下的 OxGFrame 全部移除，並且重新串接新版的接口。
 
 ---
 
@@ -60,7 +60,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ### AssetLoader
 
 資源加載器模塊，支援動態 Async 或 Sync 加載 (Dynamic Loading)，採用計數管理方式進行資源管控 (支援 Resources 與 AssetBundle)，如果直接使用 AssetLoaders API 進行 Load 跟 Instantiate，則在 Destroy 物件時，需要連帶調用 Unload (成對呼叫 Load & Unload)。
-其中 AssetBundle 集成【[YooAsset](https://github.com/tuyoogame/YooAsset)】實現資源熱更新方案，並且實現【[YooAsset](https://github.com/tuyoogame/YooAsset)】提供的加密接口，實現加解密方式有 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密。
+其中 AssetBundle 集成【[YooAsset](https://github.com/tuyoogame/YooAsset)】實現資源熱更新方案，並且實現【[YooAsset](https://github.com/tuyoogame/YooAsset)】提供的加密介面，其中實現加解密方式有 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密。
 
 ※備註 : Use "res#" will load from Resources else load from Bundle
 
@@ -72,14 +72,14 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
   - AB 包體積增加 OFFSET > AES > HTXOR = XOR
   - 破解難度 AES > HTXOR > XOR > OFFSET
 
-### 資源熱更新方案 ([YooAsset](https://github.com/tuyoogame/YooAsset))
+### 資源熱更新方案【[YooAsset](https://github.com/tuyoogame/YooAsset)】
 
-使用【[YooAsset](https://github.com/tuyoogame/YooAsset)】的 Collector 進行資源收集 (可以使用 ActiveRule 決定哪些群組需要打包，進行 Built-in 跟 Patch 資源的區分)，再使用【[YooAsset](https://github.com/tuyoogame/YooAsset)】的 Builder 進行打包 (不需手動更改資源日期版號)，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
+使用 YooAsset Collector 進行資源收集 (可以使用 ActiveRule 決定哪些群組需要打包，進行 Built-in 跟 Patch 資源的區分)，再使用 YooAsset Builder 進行打包 **(不需手動更改資源日期版號)**，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
 
 再使用 OxGFrame/AssetLoader/Bundle Config Generator 進行配置檔建立。
 
 1. 先進行 Export App Config To StreamingAssets 建立 appconfig.json 至 StreamingAssets 中 (主要用於 App Version 比對)。
-2. 再選擇 Export App Config And Bundles for CDN 輸出上傳資源，Source Folder 選擇剛剛使用【[YooAsset](https://github.com/tuyoogame/YooAsset)】輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行更新包的區分，輸出後將 CDN 資料夾直接上傳至 Server。
+2. 再選擇 Export Configs And App Bundles for CDN 輸出上傳資源，Source Folder 選擇剛剛使用 YooAsset 輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行預設包的群組分包，輸出後將 CDN 資料夾直接上傳至 Server。
    
 - 群組分包舉例
   - 最小運行包
