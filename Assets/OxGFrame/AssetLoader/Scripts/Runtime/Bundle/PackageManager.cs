@@ -387,6 +387,10 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static ResourceDownloaderOperation GetPackageDownloader(ResourcePackage package, int maxConcurrencyDownloadCount, int failedRetryCount)
         {
+            // if <= -1 will set be default values
+            if (maxConcurrencyDownloadCount <= -1) maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
+            if (failedRetryCount <= -1) failedRetryCount = BundleConfig.failedRetryCount;
+
             // create all
             ResourceDownloaderOperation downloader = package.CreateResourceDownloader(maxConcurrencyDownloadCount, failedRetryCount);
 
