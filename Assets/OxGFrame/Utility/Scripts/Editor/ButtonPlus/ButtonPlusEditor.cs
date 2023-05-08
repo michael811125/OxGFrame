@@ -1,100 +1,102 @@
-﻿using OxGFrame.Utility.Btn;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;
 
-[CustomEditor(typeof(ButtonPlus))]
-public class ButtonPlusEditor : ButtonEditor
+namespace OxGFrame.Utility.Btn.Editor
 {
-    SerializedProperty _onLongClickProperty;
-    private ButtonPlus _target = null;
-
-    protected override void OnEnable()
+    [CustomEditor(typeof(ButtonPlus))]
+    public class ButtonPlusEditor : ButtonEditor
     {
-        base.OnEnable();
-        this._onLongClickProperty = serializedObject.FindProperty("_onLongClick");
-    }
+        SerializedProperty _onLongClickProperty;
+        private ButtonPlus _target = null;
 
-    public override void OnInspectorGUI()
-    {
-        // set ButtonPlus target
-        this._target = (ButtonPlus)target;
-
-        // draw LongClick setting
-        EditorGUI.BeginChangeCheck();
-        serializedObject.Update();
-        this._target.isLongPress = EditorGUILayout.Toggle(new GUIContent("IsLongPress", "To enable Long Press"), this._target.isLongPress);
-        if (this._target.isLongPress) this._ShowLongPress(this._target);
-        if (EditorGUI.EndChangeCheck())
+        protected override void OnEnable()
         {
-            EditorUtility.SetDirty(target);
-            serializedObject.ApplyModifiedProperties();
+            base.OnEnable();
+            this._onLongClickProperty = serializedObject.FindProperty("_onLongClick");
         }
 
-        // draw ExtdTransition
-        this._ShowExtdTransition(this._target, this._target.extdTransition);
-
-        // draw ButtonEditor
-        base.OnInspectorGUI();
-
-        // draw LongClick event
-        if (this._target.isLongPress) this._ShowLongClickEvent(this._target);
-    }
-
-    private void _ShowLongPress(ButtonPlus target)
-    {
-        EditorGUI.BeginChangeCheck();
-        serializedObject.Update();
-
-        EditorGUI.indentLevel++;
-        target.holdTime = EditorGUILayout.FloatField(new GUIContent("HoldTime", "Set Long Press time to invoke event"), target.holdTime);
-        target.cdTime = EditorGUILayout.FloatField(new GUIContent("CdTime", "Block when you Long Press continue time"), target.cdTime);
-        EditorGUI.indentLevel--;
-
-        if (EditorGUI.EndChangeCheck())
+        public override void OnInspectorGUI()
         {
-            EditorUtility.SetDirty(target);
-            serializedObject.ApplyModifiedProperties();
-        }
-    }
+            // set ButtonPlus target
+            this._target = (ButtonPlus)target;
 
-    private void _ShowLongClickEvent(ButtonPlus target)
-    {
-        EditorGUI.BeginChangeCheck();
-        serializedObject.Update();
+            // draw LongClick setting
+            EditorGUI.BeginChangeCheck();
+            serializedObject.Update();
+            this._target.isLongPress = EditorGUILayout.Toggle(new GUIContent("IsLongPress", "To enable Long Press"), this._target.isLongPress);
+            if (this._target.isLongPress) this._ShowLongPress(this._target);
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(target);
+                serializedObject.ApplyModifiedProperties();
+            }
 
-        EditorGUILayout.PropertyField(this._onLongClickProperty);
+            // draw ExtdTransition
+            this._ShowExtdTransition(this._target, this._target.extdTransition);
 
-        if (EditorGUI.EndChangeCheck())
-        {
-            EditorUtility.SetDirty(target);
-            serializedObject.ApplyModifiedProperties();
-        }
-    }
+            // draw ButtonEditor
+            base.OnInspectorGUI();
 
-    private void _ShowExtdTransition(ButtonPlus target, ButtonPlus.ExtdTransition option)
-    {
-        EditorGUI.BeginChangeCheck();
-        serializedObject.Update();
-
-        target.extdTransition = (ButtonPlus.ExtdTransition)EditorGUILayout.EnumPopup("ExtdTransition", target.extdTransition);
-
-        switch (option)
-        {
-            case ButtonPlus.ExtdTransition.None:
-                break;
-
-            case ButtonPlus.ExtdTransition.Scale:
-                EditorGUI.indentLevel++;
-                target.transScale.size = EditorGUILayout.FloatField(new GUIContent("Size", "While click button will be set scale size"), target.transScale.size);
-                EditorGUI.indentLevel--;
-                break;
+            // draw LongClick event
+            if (this._target.isLongPress) this._ShowLongClickEvent(this._target);
         }
 
-        if (EditorGUI.EndChangeCheck())
+        private void _ShowLongPress(ButtonPlus target)
         {
-            EditorUtility.SetDirty(target);
-            serializedObject.ApplyModifiedProperties();
+            EditorGUI.BeginChangeCheck();
+            serializedObject.Update();
+
+            EditorGUI.indentLevel++;
+            target.holdTime = EditorGUILayout.FloatField(new GUIContent("HoldTime", "Set Long Press time to invoke event"), target.holdTime);
+            target.cdTime = EditorGUILayout.FloatField(new GUIContent("CdTime", "Block when you Long Press continue time"), target.cdTime);
+            EditorGUI.indentLevel--;
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(target);
+                serializedObject.ApplyModifiedProperties();
+            }
+        }
+
+        private void _ShowLongClickEvent(ButtonPlus target)
+        {
+            EditorGUI.BeginChangeCheck();
+            serializedObject.Update();
+
+            EditorGUILayout.PropertyField(this._onLongClickProperty);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(target);
+                serializedObject.ApplyModifiedProperties();
+            }
+        }
+
+        private void _ShowExtdTransition(ButtonPlus target, ButtonPlus.ExtdTransition option)
+        {
+            EditorGUI.BeginChangeCheck();
+            serializedObject.Update();
+
+            target.extdTransition = (ButtonPlus.ExtdTransition)EditorGUILayout.EnumPopup("ExtdTransition", target.extdTransition);
+
+            switch (option)
+            {
+                case ButtonPlus.ExtdTransition.None:
+                    break;
+
+                case ButtonPlus.ExtdTransition.Scale:
+                    EditorGUI.indentLevel++;
+                    target.transScale.size = EditorGUILayout.FloatField(new GUIContent("Size", "While click button will be set scale size"), target.transScale.size);
+                    EditorGUI.indentLevel--;
+                    break;
+            }
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(target);
+                serializedObject.ApplyModifiedProperties();
+            }
         }
     }
 }

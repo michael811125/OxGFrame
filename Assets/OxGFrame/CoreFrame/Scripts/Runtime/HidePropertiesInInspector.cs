@@ -1,14 +1,17 @@
-﻿public class HidePropertiesInInspector : System.Attribute
+﻿namespace OxGFrame.CoreFrame
 {
-    private string[] _props;
-
-    public HidePropertiesInInspector(params string[] props)
+    public class HidePropertiesInInspector : System.Attribute
     {
-        _props = props;
-    }
+        private string[] _props;
 
-    public string[] hiddenProperties
-    {
-        get { return _props; }
+        public HidePropertiesInInspector(params string[] props)
+        {
+            _props = props;
+        }
+
+        public string[] hiddenProperties
+        {
+            get { return _props; }
+        }
     }
 }

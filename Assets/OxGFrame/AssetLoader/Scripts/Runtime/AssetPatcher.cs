@@ -1,8 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.Utility;
-using System;
-using System.IO;
 using YooAsset;
 
 namespace OxGFrame.AssetLoader
@@ -10,6 +8,14 @@ namespace OxGFrame.AssetLoader
     public static class AssetPatcher
     {
         #region Other
+        /// <summary>
+        /// Clear user's last selected group info
+        /// </summary>
+        public static void ClearLastGroupInfo()
+        {
+            PatchManager.DelLastGroupInfo();
+        }
+
         /// <summary>
         /// Get default group tag (#all)
         /// </summary>
@@ -180,9 +186,17 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static async UniTask<bool> InitPackage(string packageName, bool autoUpdate = false)
         {
-            var hostServer = await BundleConfig.GetHostServerUrl(packageName);
-            var fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
-            var queryService = new RequestBuiltinQuery();
+            string hostServer = null;
+            string fallbackHostServer = null;
+            IQueryServices queryService = null;
+
+            // Only Host Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
+            {
+                hostServer = await BundleConfig.GetHostServerUrl(packageName);
+                fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
+                queryService = new RequestBuiltinQuery();
+            }
 
             return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
         }
@@ -196,9 +210,18 @@ namespace OxGFrame.AssetLoader
         public static async UniTask<bool> InitPackage(int idx, bool autoUpdate = false)
         {
             string packageName = GetPackageNameByIdx(idx);
-            var hostServer = await BundleConfig.GetHostServerUrl(packageName);
-            var fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
-            var queryService = new RequestBuiltinQuery();
+
+            string hostServer = null;
+            string fallbackHostServer = null;
+            IQueryServices queryService = null;
+
+            // Only Host Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
+            {
+                hostServer = await BundleConfig.GetHostServerUrl(packageName);
+                fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
+                queryService = new RequestBuiltinQuery();
+            }
 
             return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
         }
@@ -212,9 +235,17 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static async UniTask<bool> InitDlcPackage(string packageName, string dlcVersion, bool autoUpdate = false)
         {
-            var hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
-            var fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
-            var queryService = new RequestSandboxQuery(packageName);
+            string hostServer = null;
+            string fallbackHostServer = null;
+            IQueryServices queryService = null;
+
+            // Only Host Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
+            {
+                hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
+                fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
+                queryService = new RequestSandboxQuery(packageName);
+            }
 
             return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
         }
@@ -229,9 +260,16 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static async UniTask<bool> InitDlcPackage(string packageName, string dlcVersion, bool autoUpdate = false, IQueryServices queryService = null)
         {
-            var hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
-            var fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
-            queryService = (queryService == null) ? new RequestSandboxQuery(packageName) : queryService;
+            string hostServer = null;
+            string fallbackHostServer = null;
+
+            // Only Host Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
+            {
+                hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
+                fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
+                queryService = (queryService == null) ? new RequestSandboxQuery(packageName) : queryService;
+            }
 
             return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
         }
@@ -245,9 +283,8 @@ namespace OxGFrame.AssetLoader
         /// <param name="autoUpdate"></param>
         /// <param name="queryService"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitCustomPackage(string packageName, string hostServer, string fallbackHostServer, bool autoUpdate = false, IQueryServices queryService = null)
+        public static async UniTask<bool> InitCustomPackage(string packageName, string hostServer, string fallbackHostServer, IQueryServices queryService, bool autoUpdate = false)
         {
-            queryService = (queryService == null) ? new RequestBuiltinQuery() : queryService;
             return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
         }
 
@@ -260,10 +297,9 @@ namespace OxGFrame.AssetLoader
         /// <param name="autoUpdate"></param>
         /// <param name="queryService"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitCustomPackage(int idx, string hostServer, string fallbackHostServer, bool autoUpdate = false, IQueryServices queryService = null)
+        public static async UniTask<bool> InitCustomPackage(int idx, string hostServer, string fallbackHostServer, IQueryServices queryService, bool autoUpdate = false)
         {
             string packageName = GetPackageNameByIdx(idx);
-            queryService = (queryService == null) ? new RequestBuiltinQuery() : queryService;
             return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
         }
 

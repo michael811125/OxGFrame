@@ -2,60 +2,62 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(MonoBehaviour), true)]
-[CanEditMultipleObjects()]
-public class HidePropertiesInInspectorEditor : Editor
+namespace OxGFrame.CoreFrame.Editor
 {
-    private HashSet<string> _hiddenProperties;
-
-    protected virtual void OnEnable()
+    [CustomEditor(typeof(MonoBehaviour), true)]
+    [CanEditMultipleObjects()]
+    public class HidePropertiesInInspectorEditor : UnityEditor.Editor
     {
-        var targetType = this.target.GetType();
-        var attrs = targetType.GetCustomAttributes(typeof(HidePropertiesInInspector), true) as HidePropertiesInInspector[];
-        if (attrs != null && attrs.Length > 0)
+        private HashSet<string> _hiddenProperties;
+
+        protected virtual void OnEnable()
         {
-            this._hiddenProperties = new HashSet<string>();
-            foreach (var attr in attrs)
+            var targetType = this.target.GetType();
+            var attrs = targetType.GetCustomAttributes(typeof(HidePropertiesInInspector), true) as HidePropertiesInInspector[];
+            if (attrs != null && attrs.Length > 0)
             {
-                foreach (var property in attr.hiddenProperties)
+                this._hiddenProperties = new HashSet<string>();
+                foreach (var attr in attrs)
                 {
-                    this._hiddenProperties.Add(property);
+                    foreach (var property in attr.hiddenProperties)
+                    {
+                        this._hiddenProperties.Add(property);
+                    }
                 }
             }
         }
-    }
 
-    public override void OnInspectorGUI()
-    {
-        this.DrawDefaultInspector();
-    }
-
-    public new bool DrawDefaultInspector()
-    {
-        //draw properties
-        this.serializedObject.Update();
-        var result = DrawDefaultInspectorExcept(this.serializedObject, this._hiddenProperties);
-        this.serializedObject.ApplyModifiedProperties();
-
-        return result;
-    }
-
-    #region Static Interface
-    public static bool DrawDefaultInspectorExcept(SerializedObject serializedObject, HashSet<string> propsNotToDraw)
-    {
-        if (serializedObject == null) throw new System.ArgumentNullException("serializedObject");
-
-        EditorGUI.BeginChangeCheck();
-        var iterator = serializedObject.GetIterator();
-        for (bool enterChildren = true; iterator.NextVisible(enterChildren); enterChildren = false)
+        public override void OnInspectorGUI()
         {
-            if (propsNotToDraw == null || !propsNotToDraw.Contains(iterator.name))
-            {
-                EditorGUILayout.PropertyField(iterator, true);
-            }
+            this.DrawDefaultInspector();
         }
-        return EditorGUI.EndChangeCheck();
-    }
-    #endregion
 
+        public new bool DrawDefaultInspector()
+        {
+            //draw properties
+            this.serializedObject.Update();
+            var result = DrawDefaultInspectorExcept(this.serializedObject, this._hiddenProperties);
+            this.serializedObject.ApplyModifiedProperties();
+
+            return result;
+        }
+
+        #region Static Interface
+        public static bool DrawDefaultInspectorExcept(SerializedObject serializedObject, HashSet<string> propsNotToDraw)
+        {
+            if (serializedObject == null) throw new System.ArgumentNullException("serializedObject");
+
+            EditorGUI.BeginChangeCheck();
+            var iterator = serializedObject.GetIterator();
+            for (bool enterChildren = true; iterator.NextVisible(enterChildren); enterChildren = false)
+            {
+                if (propsNotToDraw == null || !propsNotToDraw.Contains(iterator.name))
+                {
+                    EditorGUILayout.PropertyField(iterator, true);
+                }
+            }
+            return EditorGUI.EndChangeCheck();
+        }
+        #endregion
+    }
 }

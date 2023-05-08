@@ -1,11 +1,13 @@
+﻿using YooAsset.Editor;
 
-using YooAsset.Editor;
-
-[DisplayName("定位地址: 自定義名稱")]
-public class AddressByCustomName : IAddressRule
+namespace OxGFrame.AssetLoader.Editor
 {
-    string IAddressRule.GetAssetAddress(AddressRuleData data)
+    [DisplayName("定位地址: 自定義名稱")]
+    public class AddressByCustomName : IAddressRule
     {
-        return data.UserData;
+        string IAddressRule.GetAssetAddress(AddressRuleData data)
+        {
+            return data.UserData;
+        }
     }
 }

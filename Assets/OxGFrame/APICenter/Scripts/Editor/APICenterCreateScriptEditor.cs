@@ -1,37 +1,40 @@
 ﻿using UnityEditor;
 
-public static class APICenterCreateScriptEditor
+namespace OxGFrame.APICenter.Editor
 {
-    private const string TPL_API_CENTER_SCRIPT_PATH = "TplScripts/APICenter/TplAPICenter.cs.txt";
-    private const string TPL_API_BASE_SCRIPT_PATH = "TplScripts/APICenter/TplAPI.cs.txt";
-
-    // find current file path
-    private static string pathFinder
+    public static class APICenterCreateScriptEditor
     {
-        get
+        private const string TPL_API_CENTER_SCRIPT_PATH = "TplScripts/APICenter/TplAPICenter.cs.txt";
+        private const string TPL_API_BASE_SCRIPT_PATH = "TplScripts/APICenter/TplAPI.cs.txt";
+
+        // find current file path
+        private static string pathFinder
         {
-            var g = AssetDatabase.FindAssets("t:Script APICenterCreateScriptEditor");
-            return AssetDatabase.GUIDToAssetPath(g[0]);
+            get
+            {
+                var g = AssetDatabase.FindAssets("t:Script APICenterCreateScriptEditor");
+                return AssetDatabase.GUIDToAssetPath(g[0]);
+            }
         }
+
+        #region APICenter Script Create
+        [MenuItem(itemName: "Assets/Create/OxGFrame/APICenter/TplScripts/TplAPI.cs (API)", isValidateFunction: false, priority: 51)]
+        public static void CreateScriptTplAPIBase()
+        {
+            string currentPath = pathFinder;
+            string finalPath = currentPath.Replace("APICenterCreateScriptEditor.cs", "") + TPL_API_BASE_SCRIPT_PATH;
+
+            ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplAPI.cs");
+        }
+
+        [MenuItem(itemName: "Assets/Create/OxGFrame/APICenter/TplScripts/TplAPICenter.cs (API Center Manager)", isValidateFunction: false, priority: 51)]
+        public static void CreateScriptTplAPICenter()
+        {
+            string currentPath = pathFinder;
+            string finalPath = currentPath.Replace("APICenterCreateScriptEditor.cs", "") + TPL_API_CENTER_SCRIPT_PATH;
+
+            ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplAPICenter.cs");
+        }
+        #endregion
     }
-
-    #region APICenter Script Create
-    [MenuItem(itemName: "Assets/Create/OxGFrame/APICenter/TplScripts/TplAPI.cs (API)", isValidateFunction: false, priority: 51)]
-    public static void CreateScriptTplAPIBase()
-    {
-        string currentPath = pathFinder;
-        string finalPath = currentPath.Replace("APICenterCreateScriptEditor.cs", "") + TPL_API_BASE_SCRIPT_PATH;
-
-        ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplAPI.cs");
-    }
-
-    [MenuItem(itemName: "Assets/Create/OxGFrame/APICenter/TplScripts/TplAPICenter.cs (API Center Manager)", isValidateFunction: false, priority: 51)]
-    public static void CreateScriptTplAPICenter()
-    {
-        string currentPath = pathFinder;
-        string finalPath = currentPath.Replace("APICenterCreateScriptEditor.cs", "") + TPL_API_CENTER_SCRIPT_PATH;
-
-        ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplAPICenter.cs");
-    }
-    #endregion
 }

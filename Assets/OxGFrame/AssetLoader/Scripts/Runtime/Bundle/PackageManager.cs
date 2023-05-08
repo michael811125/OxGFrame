@@ -1,6 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Utility;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -68,9 +67,17 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<bool> InitDefaultPackage()
         {
-            var hostServer = await BundleConfig.GetHostServerUrl(_currentPackageName);
-            var fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(_currentPackageName);
-            var queryService = new RequestBuiltinQuery();
+            string hostServer = null;
+            string fallbackHostServer = null;
+            IQueryServices queryService = null;
+
+            // Only Host Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
+            {
+                hostServer = await BundleConfig.GetHostServerUrl(_currentPackageName);
+                fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(_currentPackageName);
+                queryService = new RequestBuiltinQuery();
+            }
 
             return await InitPackage(_currentPackageName, false, hostServer, fallbackHostServer, queryService);
         }

@@ -144,6 +144,7 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             string pathName = Path.Combine(GetRequestStreamingAssetsPath(), bundleUrlFileName);
             var content = await BundleUtility.FileRequestString(pathName);
+            if (string.IsNullOrEmpty(content)) return string.Empty;
             var allWords = content.Split('\n');
             var lines = new List<string>(allWords);
             var fileMap = new Dictionary<string, string>();

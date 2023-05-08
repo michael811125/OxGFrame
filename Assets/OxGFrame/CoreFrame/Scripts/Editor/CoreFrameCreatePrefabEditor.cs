@@ -5,80 +5,83 @@ using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.UI.GraphicRaycaster;
 
-public static class CoreFrameCreatePrefabEditor
+namespace OxGFrame.CoreFrame.Editor
 {
-    class DoCreatePrefabAsset : EndNameEditAction
+    public static class CoreFrameCreatePrefabEditor
     {
-        // Subclass and override this method to create specialised prefab asset creation functions
-        protected virtual GameObject CreateGameObject(string name)
+        class DoCreatePrefabAsset : EndNameEditAction
         {
-            return new GameObject(name);
+            // Subclass and override this method to create specialised prefab asset creation functions
+            protected virtual GameObject CreateGameObject(string name)
+            {
+                return new GameObject(name);
+            }
+
+            public override void Action(int instanceId, string pathName, string resourceFile)
+            {
+                GameObject go = CreateGameObject(Path.GetFileNameWithoutExtension(pathName));
+                GameObject prefab = PrefabUtility.SaveAsPrefabAsset(go, pathName);
+                GameObject.DestroyImmediate(go);
+            }
         }
 
-        public override void Action(int instanceId, string pathName, string resourceFile)
+        class DoCreateUIPrefabAsset : DoCreatePrefabAsset
         {
-            GameObject go = CreateGameObject(Path.GetFileNameWithoutExtension(pathName));
-            GameObject prefab = PrefabUtility.SaveAsPrefabAsset(go, pathName);
-            GameObject.DestroyImmediate(go);
-        }
-    }
+            protected override GameObject CreateGameObject(string name)
+            {
+                var obj = new GameObject(name, typeof(RectTransform), typeof(Canvas), typeof(GraphicRaycaster));
 
-    class DoCreateUIPrefabAsset : DoCreatePrefabAsset
-    {
-        protected override GameObject CreateGameObject(string name)
+                // calibrate RectTransform
+                RectTransform objRect = obj.GetComponent<RectTransform>();
+                objRect.anchorMin = Vector2.zero;
+                objRect.anchorMax = Vector2.one;
+                objRect.sizeDelta = Vector2.zero;
+                objRect.localScale = Vector3.one;
+                objRect.localPosition = Vector3.zero;
+
+                // calibrate Canvas
+                Canvas objCanvas = obj.GetComponent<Canvas>();
+                objCanvas.overridePixelPerfect = true;
+                objCanvas.pixelPerfect = true;
+                objCanvas.overrideSorting = false;
+                objCanvas.additionalShaderChannels = AdditionalCanvasShaderChannels.None;
+
+                // calibrate  Graphic Raycaster
+                GraphicRaycaster objGraphicRaycaster = obj.GetComponent<GraphicRaycaster>();
+                objGraphicRaycaster.ignoreReversedGraphics = false;
+                objGraphicRaycaster.blockingObjects = BlockingObjects.None;
+                objGraphicRaycaster.blockingMask = 0;
+
+                return obj;
+            }
+        }
+
+        static void CreatePrefabAsset(string name, DoCreatePrefabAsset createAction)
         {
-            var obj = new GameObject(name, typeof(RectTransform), typeof(Canvas), typeof(GraphicRaycaster));
-
-            // calibrate RectTransform
-            RectTransform objRect = obj.GetComponent<RectTransform>();
-            objRect.anchorMin = Vector2.zero;
-            objRect.anchorMax = Vector2.one;
-            objRect.sizeDelta = Vector2.zero;
-            objRect.localScale = Vector3.one;
-            objRect.localPosition = Vector3.zero;
-
-            // calibrate Canvas
-            Canvas objCanvas = obj.GetComponent<Canvas>();
-            objCanvas.overridePixelPerfect = true;
-            objCanvas.pixelPerfect = true;
-            objCanvas.overrideSorting = false;
-            objCanvas.additionalShaderChannels = AdditionalCanvasShaderChannels.None;
-
-            // calibrate  Graphic Raycaster
-            GraphicRaycaster objGraphicRaycaster = obj.GetComponent<GraphicRaycaster>();
-            objGraphicRaycaster.ignoreReversedGraphics = false;
-            objGraphicRaycaster.blockingObjects = BlockingObjects.None;
-            objGraphicRaycaster.blockingMask = 0;
-
-            return obj;
+            string directory = GetSelectedAssetDirectory();
+            string path = Path.Combine(directory, $"{name}.prefab");
+            ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, createAction, path, EditorGUIUtility.FindTexture("Prefab Icon"), null);
         }
-    }
 
-    static void CreatePrefabAsset(string name, DoCreatePrefabAsset createAction)
-    {
-        string directory = GetSelectedAssetDirectory();
-        string path = Path.Combine(directory, $"{name}.prefab");
-        ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, createAction, path, EditorGUIUtility.FindTexture("Prefab Icon"), null);
-    }
+        static string GetSelectedAssetDirectory()
+        {
+            string path = AssetDatabase.GetAssetPath(Selection.activeObject);
+            if (Directory.Exists(path))
+                return path;
+            else
+                return Path.GetDirectoryName(path);
+        }
 
-    static string GetSelectedAssetDirectory()
-    {
-        string path = AssetDatabase.GetAssetPath(Selection.activeObject);
-        if (Directory.Exists(path))
-            return path;
-        else
-            return Path.GetDirectoryName(path);
-    }
+        [MenuItem("Assets/Create/OxGFrame/CoreFrame/GSFrame/TplPrefabs/TplGS (Game Scene Prefab)", isValidateFunction: false, priority: 51)]
+        public static void CreateTplGS()
+        {
+            CreatePrefabAsset("NewTplGS", ScriptableObject.CreateInstance<DoCreatePrefabAsset>());
+        }
 
-    [MenuItem("Assets/Create/OxGFrame/CoreFrame/GSFrame/TplPrefabs/TplGS (Game Scene Prefab)", isValidateFunction: false, priority: 51)]
-    public static void CreateTplGS()
-    {
-        CreatePrefabAsset("NewTplGS", ScriptableObject.CreateInstance<DoCreatePrefabAsset>());
-    }
-
-    [MenuItem("Assets/Create/OxGFrame/CoreFrame/UIFrame/TplPrefabs/TplUI (UGUI Prefab)", isValidateFunction: false, priority: 51)]
-    public static void CreateTplUI()
-    {
-        CreatePrefabAsset("NewTplUI", ScriptableObject.CreateInstance<DoCreateUIPrefabAsset>());
+        [MenuItem("Assets/Create/OxGFrame/CoreFrame/UIFrame/TplPrefabs/TplUI (UGUI Prefab)", isValidateFunction: false, priority: 51)]
+        public static void CreateTplUI()
+        {
+            CreatePrefabAsset("NewTplUI", ScriptableObject.CreateInstance<DoCreateUIPrefabAsset>());
+        }
     }
 }

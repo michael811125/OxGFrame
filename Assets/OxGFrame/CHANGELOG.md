@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.1.1] - 2023-05-08
+- Fixed init package bug issue (only HostMode needs burlconfig.conf).
+- Optimized code (editor).
+
 ## [2.1.0] - 2023-05-06
 - Added version encode methods in BundleUtility.
 - Added semantic version check rule (supported compare rule is X.Y.Z or X.Y).

@@ -1,33 +1,36 @@
-using System.Collections;
+﻿using System.Collections;
 
-public class EditorCoroutine
+namespace OxGFrame.AssetLoader.Editor
 {
-    private IEnumerator _routine;
-
-    private EditorCoroutine(IEnumerator routine)
+    public class EditorCoroutine
     {
-        this._routine = routine;
-    }
+        private IEnumerator _routine;
 
-    public static EditorCoroutine Start(IEnumerator routine)
-    {
-        EditorCoroutine coroutine = new EditorCoroutine(routine);
-        coroutine.Start();
-        return coroutine;
-    }
+        private EditorCoroutine(IEnumerator routine)
+        {
+            this._routine = routine;
+        }
 
-    public void Start()
-    {
-        UnityEditor.EditorApplication.update += this.Update;
-    }
+        public static EditorCoroutine Start(IEnumerator routine)
+        {
+            EditorCoroutine coroutine = new EditorCoroutine(routine);
+            coroutine.Start();
+            return coroutine;
+        }
 
-    public void Stop()
-    {
-        UnityEditor.EditorApplication.update -= this.Update;
-    }
+        public void Start()
+        {
+            UnityEditor.EditorApplication.update += this.Update;
+        }
 
-    public void Update()
-    {
-        if (!this._routine.MoveNext()) this.Stop();
+        public void Stop()
+        {
+            UnityEditor.EditorApplication.update -= this.Update;
+        }
+
+        public void Update()
+        {
+            if (!this._routine.MoveNext()) this.Stop();
+        }
     }
 }
