@@ -7,12 +7,12 @@ namespace OxGFrame.MediaFrame
 {
     public abstract class MediaManager<T> : MonoBehaviour where T : MediaBase
     {
-        protected Dictionary<string, GameObject> _dictAssetCache = new Dictionary<string, GameObject>();  // 【常駐】所有資源快取
-        protected HashSet<string> _loadingFlags = new HashSet<string>();                                  // 用來標記正在加載中的資源 (暫存快取)
-        protected List<T> _listAllCache = new List<T>();                                                  // 【常駐】所有進入播放的影音柱列快取 (只會在 Destroy 時, Remove 對應的快取)
+        protected Dictionary<string, GameObject> _dictAssetCache = new Dictionary<string, GameObject>();  // 【常駐】所有資源緩存
+        protected HashSet<string> _loadingFlags = new HashSet<string>();                                  // 用來標記正在加載中的資源 (暫存緩存)
+        protected List<T> _listAllCache = new List<T>();                                                  // 【常駐】所有進入播放的影音柱列緩存 (只會在 Destroy 時, Remove 對應的緩存)
 
         /// <summary>
-        /// 檢查是否有資源快取
+        /// 檢查是否有資源緩存
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
@@ -23,7 +23,7 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 加載中的標記快取
+        /// 加載中的標記緩存
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
@@ -34,7 +34,7 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 從快取中取的資源
+        /// 從緩存中取的資源
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
@@ -108,7 +108,7 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 加載資源至資源快取中
+        /// 加載資源至資源緩存中
         /// </summary>
         /// <param name="packageName"></param>
         /// <param name="assetName"></param>
@@ -124,7 +124,7 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 加載資源至快取, 判斷是否已有加載過, 如果有則返回該資源物件
+        /// 加載資源至緩存, 判斷是否已有加載過, 如果有則返回該資源物件
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
@@ -161,7 +161,7 @@ namespace OxGFrame.MediaFrame
             // 激活檢查, 如果主體 Active 為 false 必須打開
             if (!instGo.activeSelf) instGo.SetActive(true);
 
-            this._listAllCache.Add(mBase); // 先加入快取
+            this._listAllCache.Add(mBase); // 先加入緩存
             this.SetParent(mBase, parent);
 
             // 設置管理名稱
@@ -201,7 +201,7 @@ namespace OxGFrame.MediaFrame
         protected virtual void SetParent(T mBase, Transform parent) { }
 
         #region Play
-        public abstract UniTask<T[]> Play(string packageName, string assetName, Transform parent = null, int loops = 0);
+        public abstract UniTask<T[]> Play(string packageName, string assetName, Transform parent = null, int loops = 0, float volume = 0f);
         public abstract void ResumeAll();
         #endregion
 
@@ -213,7 +213,7 @@ namespace OxGFrame.MediaFrame
         #endregion
 
         #region Load Play & Exit Stop
-        protected virtual void LoadAndPlay(T mBase, int loops) { }
+        protected virtual void LoadAndPlay(T mBase, int loops, float volume) { }
 
         protected virtual void ExitAndStop(T mBase, bool pause, bool disableEndEvent) { }
         #endregion
@@ -233,19 +233,19 @@ namespace OxGFrame.MediaFrame
             // 刪除物件
             if (!mBase.gameObject.IsDestroyed()) Destroy(mBase.gameObject);
 
-            // 刪除柱列快取
+            // 刪除柱列緩存
             this._listAllCache.Remove(mBase);
 
             // 最後判斷是否要卸載
             if (mBase.onDestroyAndUnload)
             {
-                // 取得柱列快取中的群組數量
+                // 取得柱列緩存中的群組數量
                 int groupCount = this.GetMediaComponents<T>(assetName).Length;
 
                 // 確保影音在卸載前, 是沒被引用的狀態
                 if (groupCount == 0)
                 {
-                    // 刪除資源快取 (皆使用 assetName 作為 key)
+                    // 刪除資源緩存 (皆使用 assetName 作為 key)
                     if (this.HasAssetInCache(assetName)) this._dictAssetCache.Remove(assetName);
 
                     // 卸載
@@ -264,17 +264,17 @@ namespace OxGFrame.MediaFrame
         /// <param name="assetName"></param>
         public virtual void ForceUnload(string assetName)
         {
-            // 取得柱列快取中的群組數量
+            // 取得柱列緩存中的群組數量
             int groupCount = this.GetMediaComponents<T>(assetName).Length;
 
-            // 判斷群組柱列快取 > 0, 則全部強制關閉並且刪除
+            // 判斷群組柱列緩存 > 0, 則全部強制關閉並且刪除
             if (groupCount > 0)
             {
-                // 刪除全部柱列快取
+                // 刪除全部柱列緩存
                 this.StopAll(false, true);
             }
 
-            // 刪除資源快取 (皆使用 assetName 作為 key)
+            // 刪除資源緩存 (皆使用 assetName 作為 key)
             if (this.HasAssetInCache(assetName)) this._dictAssetCache.Remove(assetName);
 
             // 卸載

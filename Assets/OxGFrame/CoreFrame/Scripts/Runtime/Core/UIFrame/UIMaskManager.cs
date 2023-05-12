@@ -101,9 +101,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <param name="maskClickEvent"></param>
         public void AddMask(Transform parent, Color color, MaskEventFunc maskClickEvent = null)
         {
-            this._maskSprite = this._MakeTexture2dSprite();
             if (parent.Find(nodeName) || !parent.GetComponent<UIBase>()) return;
 
+            this._maskSprite = this._MakeTexture2dSprite();
             this._uiMask = this._maskNodePool.GetUIMask(parent, this._maskSprite);
             this._uiMask.SetMaskColor(color);
             if (maskClickEvent != null) this._uiMask.SetMaskClickEvent(maskClickEvent);

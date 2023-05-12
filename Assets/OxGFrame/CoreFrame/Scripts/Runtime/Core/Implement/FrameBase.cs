@@ -16,8 +16,8 @@ namespace OxGFrame.CoreFrame
         #region 綁定物件的收集器
         public class Collector
         {
-            #region 依照綁定類型建立快取容器
-            // 用於存放綁定物件的快取 (GameObject)
+            #region 依照綁定類型建立緩存容器
+            // 用於存放綁定物件的緩存 (GameObject)
             private Dictionary<string, List<GameObject>> _nodes = new Dictionary<string, List<GameObject>>();
             #endregion
 
@@ -72,7 +72,7 @@ namespace OxGFrame.CoreFrame
 
         [HideInInspector] public Collector collector { get; private set; } = new Collector(); // 綁定物件收集器
         [HideInInspector] public string assetName { get; protected set; } = string.Empty;     // (Bundle) AssetName = (Resouce) PathName
-        [HideInInspector] public int groupId { get; protected set; } = 0;                     // 群組id
+        [HideInInspector] public int groupId { get; protected set; } = 0;                     // 群組 id
         [HideInInspector] public bool isHidden { get; protected set; } = false;               // 檢查是否隱藏 (主要區分 Close & Hide 行為)
 
         [HideInInspector] protected bool _isBinded { get; private set; } = false;             // 檢查是否綁定的開關
@@ -88,6 +88,11 @@ namespace OxGFrame.CoreFrame
             if (!this._isInitFirst) return;
 
             this.OnUpdate(Time.deltaTime);
+        }
+
+        private void OnValidate()
+        {
+            if (this.allowInstantiate) this.onCloseAndDestroy = false;
         }
 
         /// <summary>

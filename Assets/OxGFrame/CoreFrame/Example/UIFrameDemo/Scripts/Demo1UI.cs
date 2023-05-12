@@ -28,8 +28,10 @@ public class Demo1UI : UIBase
         */
     }
 
+    private string _msg = null;
     protected override void OnShow(object obj)
     {
+        if (obj != null) this._msg = obj as string;
         Debug.Log(string.Format("{0} Do Something OnShow.", this.gameObject.name));
     }
 
@@ -60,6 +62,8 @@ public class Demo1UI : UIBase
 
     protected override void ShowAnime(AnimeEndCb animEndCb)
     {
+        Debug.Log($"UI: {this.gameObject.name}, Check Data: {this._msg}");
+
         animEndCb(); // Must Keep, Because Parent Already Set AnimCallback
     }
 
@@ -80,9 +84,9 @@ public class Demo1UI : UIBase
 
     private async void _ShowDemoPopup2UI()
     {
-        if (this.uiSetting.canvasName == UIFrameDemo.canvasCamera)
-            await CoreFrames.UIFrame.Show(UIFrameDemo.screenId, UIFrameDemo.ScreenDemo2UI, null, UIFrameDemo.ScreenDemoLoadingUI, null, null);
-        else if (this.uiSetting.canvasName == UIFrameDemo.canvasWorld)
-            await CoreFrames.UIFrame.Show(UIFrameDemo.worldId, UIFrameDemo.WorldDemo2UI, null, UIFrameDemo.WorldDemoLoadingUI, null, null);
+        if (this.uiSetting.canvasName == UIFrameDemo.CanvasCamera)
+            await CoreFrames.UIFrame.Show(Screen.Id, Screen.Demo2UI, null, Screen.DemoLoadingUI, null, null);
+        else if (this.uiSetting.canvasName == UIFrameDemo.CanvasWorld)
+            await CoreFrames.UIFrame.Show(World.Id, World.Demo2UI, null, World.DemoLoadingUI, null, null);
     }
 }

@@ -5268,6 +5268,7 @@ MonoBehaviour:
   onCloseAndDestroy: 0
   canvas: {fileID: 0}
   graphicRaycaster: {fileID: 0}
+  reverseChanges: 1
   uiSetting:
     canvasName: CanvasWorld
     nodeType: 2

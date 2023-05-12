@@ -2,10 +2,25 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+public static class Video
+{
+    // If use prefix "res#" will load from resource else will from bundle
+    private const string _prefix = "res#";
+
+    // Paths
+    private static readonly string _videoPath = $"{_prefix}Video/";
+
+    public static readonly string VideoCamExample = $"{_videoPath}video_cam_Example";
+    public static readonly string VideoRtExample = $"{_videoPath}video_rt_Example";
+}
+
 public class VideoFrameDemo : MonoBehaviour
 {
-    // if use prefix "res#" will load from resource else will from bundle
-    public const string VIDEO_PATH = "res#Video/";
+    private void Awake()
+    {
+        // If Init instance can more efficiency
+        MediaFrames.VideoFrame.InitInstance();
+    }
 
     public RawImage rawImage = null;
 
@@ -13,29 +28,29 @@ public class VideoFrameDemo : MonoBehaviour
     public async void PlayVideoCamera()
     {
         // if render mode is Camera just play directly
-        await MediaFrames.VideoFrame.Play(VIDEO_PATH + "video_cam_Example");
+        await MediaFrames.VideoFrame.Play(Video.VideoCamExample);
     }
 
     public void StopVideoCamera()
     {
-        MediaFrames.VideoFrame.Stop(VIDEO_PATH + "video_cam_Example");
+        MediaFrames.VideoFrame.Stop(Video.VideoCamExample);
     }
 
     public void StopVideoWithDestoryCamera()
     {
-        MediaFrames.VideoFrame.Stop(VIDEO_PATH + "video_cam_Example", false, true);
+        MediaFrames.VideoFrame.Stop(Video.VideoCamExample, false, true);
     }
 
     public void PauseVideoCamera()
     {
-        MediaFrames.VideoFrame.Pause(VIDEO_PATH + "video_cam_Example");
+        MediaFrames.VideoFrame.Pause(Video.VideoCamExample);
     }
     #endregion
 
     #region Video cast to 【RenderTexture】
     public async void PlayVideoRenderTexture()
     {
-        var video = await MediaFrames.VideoFrame.Play(VIDEO_PATH + "video_rt_Example");
+        var video = await MediaFrames.VideoFrame.Play(Video.VideoRtExample);
 
         // Get Video
         if (video != null)
@@ -55,20 +70,23 @@ public class VideoFrameDemo : MonoBehaviour
 
     public void StopVideoRenderTexture()
     {
-        MediaFrames.VideoFrame.Stop(VIDEO_PATH + "video_rt_Example");
+        MediaFrames.VideoFrame.Stop(Video.VideoRtExample);
     }
 
     public void StopVideoWithDestoryRenderTexture()
     {
-        // if Video is not checked OnDestroyAndUnload, can use ForceUnload to stop and unload
-        //MediaFrames.VideoFrame.ForceUnload(VIDEO_PATH + "video_rt_Example");
+        /*
+         * [if Video is not checked OnDestroyAndUnload, can use ForceUnload to stop and unload]
+         * 
+         * MediaFrames.VideoFrame.ForceUnload(Video.VideoRtExample);
+         */
 
-        MediaFrames.VideoFrame.Stop(VIDEO_PATH + "video_rt_Example", false, true);
+        MediaFrames.VideoFrame.Stop(Video.VideoRtExample, false, true);
     }
 
     public void PauseVideoRenderTexture()
     {
-        MediaFrames.VideoFrame.Pause(VIDEO_PATH + "video_rt_Example");
+        MediaFrames.VideoFrame.Pause(Video.VideoRtExample);
     }
     #endregion
 

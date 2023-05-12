@@ -6,10 +6,12 @@ namespace OxGFrame.MediaFrame.Editor
 {
     public static class MediaHelper
     {
-        public const string MenuRoot = "OxGFrame/MediaFrame/";
+        internal const string MenuRoot = "OxGFrame/MediaFrame/";
 
+        #region Public Methods
+        #region Exporter
         /// <summary>
-        /// 產生 Media URL 配置檔至輸出路徑
+        /// 產生 Media URL 配置檔至輸出路徑 (Export MediaUrlConfig to StreamingAssets [for Built-in])
         /// </summary>
         /// <param name="productName"></param>
         /// <param name="appVersion"></param>
@@ -35,5 +37,7 @@ namespace OxGFrame.MediaFrame.Editor
 
             Debug.Log($"<color=#00FF00>【Export {MediaConfig.mediaUrlFileName} Completes】</color>");
         }
+        #endregion
+        #endregion
     }
 }

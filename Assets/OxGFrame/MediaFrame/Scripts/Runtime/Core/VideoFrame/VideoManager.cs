@@ -22,8 +22,16 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         private void Awake()
         {
-            this.gameObject.name = $"[{nameof(VideoManager)}]";
-            DontDestroyOnLoad(this);
+            string newName = $"[{nameof(VideoManager)}]";
+            this.gameObject.name = newName;
+            if (this.gameObject.transform.root.name == newName)
+            {
+                var container = GameObject.Find(nameof(OxGFrame));
+                if (container == null) container = new GameObject(nameof(OxGFrame));
+                this.gameObject.transform.SetParent(container.transform);
+                DontDestroyOnLoad(container);
+            }
+            else DontDestroyOnLoad(this.gameObject.transform.root);
         }
 
         protected override void SetParent(VideoBase vidBase, Transform parent)
@@ -39,11 +47,11 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <param name="vidBase"></param>
         /// <param name="loops"></param>
         /// <returns></returns>
-        private void _Play(VideoBase vidBase, int loops)
+        private void _Play(VideoBase vidBase, int loops, float volume)
         {
             if (vidBase == null) return;
 
-            this.LoadAndPlay(vidBase, loops);
+            this.LoadAndPlay(vidBase, loops, volume);
 
             Debug.Log(string.Format("Play Video: {0}", vidBase?.mediaName));
         }
@@ -55,7 +63,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <param name="parent"></param>
         /// <param name="loops"></param>
         /// <returns></returns>
-        public override async UniTask<VideoBase[]> Play(string packageName, string assetName, Transform parent = null, int loops = 0)
+        public override async UniTask<VideoBase[]> Play(string packageName, string assetName, Transform parent = null, int loops = 0, float volume = 0f)
         {
             if (string.IsNullOrEmpty(assetName)) return new VideoBase[] { };
 
@@ -85,7 +93,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                     return new VideoBase[] { };
                 }
 
-                this._Play(vidBase, loops);
+                this._Play(vidBase, loops, volume);
 
                 return new VideoBase[] { vidBase };
             }
@@ -93,7 +101,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             {
                 for (int i = 0; i < vidBases.Length; i++)
                 {
-                    if (!vidBases[i].IsPlaying()) this._Play(vidBases[i], 0);
+                    if (!vidBases[i].IsPlaying()) this._Play(vidBases[i], 0, 0f);
                 }
 
                 return vidBases;
@@ -108,9 +116,9 @@ namespace OxGFrame.MediaFrame.VideoFrame
         {
             if (this._listAllCache.Count == 0) return;
 
-            foreach (var vidBase in this._listAllCache.ToArray())
+            foreach (var vidBase in this._listAllCache)
             {
-                if (vidBase.IsPaused()) this._Play(vidBase, 0);
+                if (vidBase.IsPaused()) this._Play(vidBase, 0, 0f);
             }
         }
         #endregion
@@ -216,17 +224,17 @@ namespace OxGFrame.MediaFrame.VideoFrame
         {
             if (this._listAllCache.Count == 0) return;
 
-            foreach (var vidBase in this._listAllCache.ToArray())
+            foreach (var vidBase in this._listAllCache)
             {
                 this._Pause(vidBase);
             }
         }
         #endregion
 
-        protected override void LoadAndPlay(VideoBase vidBase, int loops)
+        protected override void LoadAndPlay(VideoBase vidBase, int loops, float volume)
         {
             if (vidBase == null) return;
-            vidBase.Play(loops);
+            vidBase.Play(loops, volume);
         }
 
         protected override void ExitAndStop(VideoBase vidBase, bool pause, bool disableEndEvent)

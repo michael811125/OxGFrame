@@ -108,7 +108,7 @@ namespace YooAsset.Editor
 				}
 			}
 
-			throw new Exception($"Not found collector package : {packageName}");
+			throw new Exception($"Not found collector pacakge : {packageName}");
 		}
 	}
 }

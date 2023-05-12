@@ -129,7 +129,7 @@ namespace OxGFrame.CoreFrame.USFrame
         #endregion
 
         #region Build
-        public async UniTask LoadFromBuildAsync(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
+        public async UniTask<AsyncOperation> LoadFromBuildAsync(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
             this._reqSize = 0;
             this._totalSize = 1; // 初始 1 = 必有一場景
@@ -138,7 +138,7 @@ namespace OxGFrame.CoreFrame.USFrame
             if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
             {
                 Debug.LogWarning(string.Format("【US】Single Scene => {0} already exists!!!", sceneName));
-                return;
+                return null;
             }
 
             var req = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
@@ -162,9 +162,11 @@ namespace OxGFrame.CoreFrame.USFrame
 
                 Debug.Log($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
             }
+
+            return req;
         }
 
-        public async UniTask LoadFromBuildAsync(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
+        public async UniTask<AsyncOperation> LoadFromBuildAsync(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
             this._reqSize = 0;
             this._totalSize = 1; // 初始 1 = 必有一場景
@@ -173,7 +175,7 @@ namespace OxGFrame.CoreFrame.USFrame
             if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
             {
                 Debug.LogWarning(string.Format("【US】Single Scene => {0} already exists!!!", scene.name));
-                return;
+                return null;
             }
 
             var req = SceneManager.LoadSceneAsync(buildIndex, loadSceneMode);
@@ -197,6 +199,8 @@ namespace OxGFrame.CoreFrame.USFrame
 
                 Debug.Log($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => idx: {buildIndex}, mode: {loadSceneMode}</color>");
             }
+
+            return req;
         }
 
         public void UnloadFromBuild(bool recursively, params string[] sceneNames)

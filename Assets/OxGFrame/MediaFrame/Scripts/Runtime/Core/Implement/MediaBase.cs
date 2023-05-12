@@ -110,7 +110,7 @@ namespace OxGFrame.MediaFrame
         /// <summary>
         /// 開始播放
         /// </summary>
-        public abstract void Play(int loops);
+        public abstract void Play(int loops, float volume);
 
         /// <summary>
         /// 停止播放

@@ -10,7 +10,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             try
             {
-                // 如果 Parent Destroy 時, 需要進行連動釋放, 確保 Manager 快取操作正常
+                // 如果 Parent Destroy 時, 需要進行連動釋放, 確保 Manager 緩存操作正常
                 UIBase[] uiBases = this.gameObject.GetComponentsInChildren<UIBase>(true);
                 foreach (var uiBase in uiBases)
                 {

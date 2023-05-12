@@ -18,12 +18,12 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ---
 
 ## 需先安裝 (Install via git)
-- Install from Package Manager [MyBox version 1.7.0 or higher](https://github.com/Deadcows/MyBox)
+- Install from Package Manager [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox)
 
 ---
 
 ## 第三方庫 (內建)
-- 使用 [UnitTask](https://github.com/Cysharp/UniTask) (最佳異步處理方案)
+- 使用 [UnitTask v2.3.3](https://github.com/Cysharp/UniTask) (最佳異步處理方案)
 
 ※備註 : 會持續更新內建第三方庫。
 
@@ -31,8 +31,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 ## 特別推薦 (內建)
 
-- 使用 [UnityWebSocket](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案)
-- 使用 [YooAsset](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案)
+- 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案)
+- 使用 [YooAsset v1.4.13](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案)
 - 使用部分 [UniFramework](https://github.com/gmhevinci/UniFramework) (輕量級框架)
 - TODO (待整合) [HybirdCLR](https://github.com/focus-creative-games/hybridclr) (革命性的程式熱更新方案)
 
@@ -53,6 +53,11 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 ※備註 : 建議詳看各模塊的 Example (注意 "res#" 跟 "build#" 的使用規則)。
 
+**額外有需要編寫 BuildTool 的可以調用**
+- BundleConfig (using OxGFrame.AssetLoader.Bundle)
+- BundleHelper (using OxGFrame.AssetLoader.Editor)
+- MediaHelper (using OxGFrame.MediaFrame.Editor)
+
 ---
 
 ## 模塊框架介紹
@@ -64,6 +69,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 ※備註 : Use "res#" will load from Resources else load from Bundle
 
+<u>※提醒 : 如果要使用同步加載，資源一定要是事先下載完成的 (主要是資源不在本地時，請求下載部分是異步處理)，也提醒同步加載只適合小資源 (當然強烈建議全部都使用異步處理)。</u>
+
 **選擇使用 Bundle 開發時，需要先將 PatchLauncher 拖曳至場景中，才能驅動相關配置。**
 
 - FileCryptogram (檔案加解密)
@@ -74,7 +81,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 ### 資源熱更新方案【[YooAsset](https://github.com/tuyoogame/YooAsset)】
 
-使用 YooAsset Collector 進行資源收集 (可以使用 ActiveRule 決定哪些群組需要打包，進行 Built-in 跟 Patch 資源的區分)，再使用 YooAsset Builder 進行打包 **(不需手動更改資源日期版號)**，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
+使用 YooAsset Collector 進行資源收集 (可以使用 ActiveRule 決定哪些群組需要打包，進行 Built-in 跟 Patch 資源的區分)，再使用 YooAsset Builder 進行打包 <u>**(不需要手動更改資源日期版號)**</u>，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
 
 再使用 OxGFrame/AssetLoader/Bundle Config Generator 進行配置檔建立。
 
@@ -164,9 +171,9 @@ store_link http://
 
 核心模塊 (連動 AssetLoader 實現自動卸載)，包含用於製作 UI, Game Scene, Entity Prefab, Unity Scene，針對製作對應使用 UI Prefab => UIFrame、Game Scene Prefab => GSFrame、Other Prefab => EPFrame、Unity Scene => USFrame。支援 Resources 與 AssetBundle 加載方式，並且實現物件命名綁定功能 (UIBase and GSBase = _Node@XXX, EPBase = ~Node@XXX, 類型均為 GameObject)。
 
-- UIFrame (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab，有凍結 UI 功能，避免 UI 動畫尚未完成期間，能夠觸發事件，需要進行 ShowAnime 跟 HideAnime override，並且需要正確保留 callback，另外 UI 的 MaskEvent 可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)
-- GSFrame (Game Scene) : 使用 GSManager 管理掛載 GSBase 的 Prefab (使用 _Node@XXX 進行物件綁定)
-- USFrame (Unity Scene) : 使用 USManager 管理 Unity 場景 (支援 AssetBundle)
+- UIFrame (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab，支援 UI 反切 (Reverse Changes)，基本上 UI 有隱藏凍結功能，避免 UI 動畫尚未完成期間，能夠被點擊觸發事件。另外如需要製作 UI 動畫，可以在 ShowAnime 跟 HideAnime 覆寫執行相關過渡動畫 (DoTween, Animation...)，並且一定要在完成 UI 動畫後正確呼叫 animEndCb() 回調。額外還有 UI 的 MaskEvent 也可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)。
+- GSFrame (Game Scene) : 使用 GSManager 管理掛載 GSBase 的 Prefab (使用 _Node@XXX 進行物件綁定)。
+- USFrame (Unity Scene) : 使用 USManager 管理 Unity 場景 (支援 AssetBundle)。
   - ※備註 : Use "build#" will load scene from Build else load scene from Bundle
 - EPFrame (Entity Prefab) : 使用 EPManager 管理掛載 EPBase 的 Prefab (使用 ~Node@XXX 進行綁定)，可以用於加載模板物件，並且直接進行 GameObject.Destroy 就好，將會自動卸載。
 
@@ -179,7 +186,7 @@ store_link http://
 - OnRelease : 當物件 Close And Destroy 時，此方法會被激活。
 
 #### 初始順序說明
-Init Order : Awake (Once) > OnInit (Once) > OnBind (Once) > PreInit (EveryOpen) > OpenSub (EveryOpen) > OnShow (EveryOpen)
+Init Order : OnInit (Once) > OnBind (Once) > OpenSub (EveryOpen) > OnShow (EveryOpen)
 
 #### 物件綁定說明 (OnBind)
 - 透過 collector.GetNode("BindName") 返回取得綁定 GameObject (單一名綁定)
@@ -203,11 +210,11 @@ Init Order : Awake (Once) > OnInit (Once) > OnBind (Once) > PreInit (EveryOpen) 
 - VideoFrame : 使用 VideoManager 管理掛載 VideoBase 的 Prefab，且支援 RenderTexture, Camera
 
 #### Audio Sound Type 說明
-- Sole : 唯一性 (不能重複播放)，建議 BGM (背景音樂), Voice (配音)
-- SoundEffect : 多實例 (可以重複播放)，建議 Fight Sound (戰鬥音效), General Sound (一般音效)
+- Sole : 唯一性 (不能重複播放)，建議種類為 BGM (背景音樂), Voice (配音) 等。
+- SoundEffect : 多實例 (可以重複播放)，建議種類為 Fight Sound (戰鬥音效), General Sound (一般音效) 等。
 
 #### Video Render Mode 說明
-- RenderTexture : 將 Video 映射至 RenderTexture 再透過 UGUI 的 RawImage 進行渲染 (VideoBase 使用 RenderTexture.GetTemporary 跟 RenderTexture.ReleaseTemporary 創建與釋放，確保內存正確釋放 RenderTexture)
+- RenderTexture : 將 Video 映射至 RenderTexture 再透過 UGUI 的 RawImage 進行渲染 (VideoBase 使用 RenderTexture.GetTemporary 跟 RenderTexture.ReleaseTemporary 創建與釋放，確保內存正確釋放 RenderTexture)。
 - Camera : 直接透過 Camera 進行渲染。
 
 #### Media [murlconfig] (Media URL Config) 格式

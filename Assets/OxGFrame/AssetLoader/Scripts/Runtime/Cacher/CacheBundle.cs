@@ -10,8 +10,8 @@ namespace OxGFrame.AssetLoader.Cacher
 {
     internal class CacheBundle : AssetCache<BundlePack>
     {
-        private Dictionary<string, BundlePack> _sceneCache; // 快取 Scene BundlePack
-        private Dictionary<string, int> _sceneCounter;      // 子場景堆疊式計數快取
+        private Dictionary<string, BundlePack> _sceneCache; // 緩存 Scene BundlePack
+        private Dictionary<string, int> _sceneCounter;      // 子場景堆疊式計數緩存
 
         public CacheBundle() : base()
         {
@@ -66,7 +66,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // Loading 標記
                 this._hashLoadingFlags.Add(assetName);
 
-                // 如果有在快取中就不進行預加載
+                // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
                     BundlePack pack = this.GetFromCache(assetName);
@@ -152,7 +152,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // Loading 標記
                 this._hashLoadingFlags.Add(assetName);
 
-                // 如果有在快取中就不進行預加載
+                // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
                     BundlePack pack = this.GetFromCache(assetName);
@@ -225,7 +225,7 @@ namespace OxGFrame.AssetLoader.Cacher
             // Loading 標記
             this._hashLoadingFlags.Add(assetName);
 
-            // 先從快取拿
+            // 先從緩存拿
             BundlePack pack = this.GetFromCache(assetName);
 
             if (pack == null)
@@ -315,7 +315,7 @@ namespace OxGFrame.AssetLoader.Cacher
             // Loading 標記
             this._hashLoadingFlags.Add(assetName);
 
-            // 先從快取拿
+            // 先從緩存拿
             BundlePack pack = this.GetFromCache(assetName);
 
             if (pack == null)
@@ -435,7 +435,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             HashSet<ResourcePackage> packages = new HashSet<ResourcePackage>();
 
-            // 強制釋放快取與資源
+            // 強制釋放緩存與資源
             foreach (var assetName in this._cacher.Keys.ToArray())
             {
                 if (this.HasInCache(assetName))
@@ -501,7 +501,7 @@ namespace OxGFrame.AssetLoader.Cacher
                                 {
                                     pack.SetPack(packageName, assetName, req);
 
-                                    // 清除 Additive 計數快取 (主場景無需快取, 因為會自動釋放子場景)
+                                    // 清除 Additive 計數緩存 (主場景無需緩存, 因為會自動釋放子場景)
                                     this._sceneCache.Clear();
                                     this._sceneCounter.Clear();
                                 }
@@ -510,7 +510,7 @@ namespace OxGFrame.AssetLoader.Cacher
                                 {
                                     pack.SetPack(packageName, assetName, req);
 
-                                    // 加載場景的計數快取 (Additive 需要進行計數, 要手動卸載子場景)
+                                    // 加載場景的計數緩存 (Additive 需要進行計數, 要手動卸載子場景)
                                     if (!this._sceneCounter.ContainsKey(assetName))
                                     {
                                         this._sceneCounter.Add(assetName, 1);
@@ -563,7 +563,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         }
                     }
 
-                    // 遞迴完, 移除計數快取
+                    // 遞迴完, 移除計數緩存
                     this._sceneCounter.Remove(assetName);
 
                     Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
@@ -609,7 +609,7 @@ namespace OxGFrame.AssetLoader.Cacher
                             }
                         }
 
-                        // 遞迴完, 移除計數快取
+                        // 遞迴完, 移除計數緩存
                         this._sceneCounter.Remove(assetName);
                         package?.UnloadUnusedAssets();
 
@@ -632,7 +632,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                             topCount = --this._sceneCounter[assetName];
 
-                            // 移除計數快取
+                            // 移除計數緩存
                             if (topCount <= 0)
                             {
                                 var package = PackageManager.GetPackage(packageName);
@@ -673,7 +673,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // Loading 標記
                 this._hashLoadingFlags.Add(assetName);
 
-                // 如果有在快取中就不進行預加載
+                // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
                     BundlePack pack = this.GetFromCache(assetName);
@@ -759,7 +759,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // Loading 標記
                 this._hashLoadingFlags.Add(assetName);
 
-                // 如果有在快取中就不進行預加載
+                // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
                     BundlePack pack = this.GetFromCache(assetName);
@@ -832,7 +832,7 @@ namespace OxGFrame.AssetLoader.Cacher
             // Loading 標記
             this._hashLoadingFlags.Add(assetName);
 
-            // 先從快取拿
+            // 先從緩存拿
             BundlePack pack = this.GetFromCache(assetName);
 
             if (pack == null)
@@ -914,7 +914,7 @@ namespace OxGFrame.AssetLoader.Cacher
             // Loading 標記
             this._hashLoadingFlags.Add(assetName);
 
-            // 先從快取拿
+            // 先從緩存拿
             BundlePack pack = this.GetFromCache(assetName);
 
             if (pack == null)
@@ -1026,7 +1026,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             HashSet<ResourcePackage> packages = new HashSet<ResourcePackage>();
 
-            // 強制釋放快取與資源
+            // 強制釋放緩存與資源
             foreach (var assetName in this._cacher.Keys.ToArray())
             {
                 if (this.HasInCache(assetName))

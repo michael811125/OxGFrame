@@ -35,7 +35,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
         {
             if (this._keyCacher.Count == 0) return false;
 
-            foreach (var keyGroup in this._keyCacher.ToArray())
+            foreach (var keyGroup in this._keyCacher)
             {
                 if (keyGroup.id == id && keyGroup.assetName == assetName) return true;
             }
@@ -47,7 +47,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
         {
             if (this._keyCacher.Count == 0) return null;
 
-            foreach (var keyGroup in this._keyCacher.ToArray())
+            foreach (var keyGroup in this._keyCacher)
             {
                 if (keyGroup.id == id && keyGroup.assetName == assetName) return keyGroup;
             }

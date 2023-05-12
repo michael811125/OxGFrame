@@ -134,7 +134,7 @@ namespace OxGFrame.AssetLoader.GroupCahcer
                         CacheBundle.GetInstance().UnloadRawFile(keyGroup.assetName);
                     }
 
-                    // 完成後, 直接刪除快取
+                    // 完成後, 直接刪除緩存
                     this.DelFromCache(keyGroup.id, keyGroup.assetName);
                 }
             }
@@ -262,7 +262,7 @@ namespace OxGFrame.AssetLoader.GroupCahcer
                         CacheBundle.GetInstance().UnloadAsset(keyGroup.assetName);
                     }
 
-                    // 完成後, 直接刪除快取
+                    // 完成後, 直接刪除緩存
                     this.DelFromCache(keyGroup.id, keyGroup.assetName);
                 }
             }

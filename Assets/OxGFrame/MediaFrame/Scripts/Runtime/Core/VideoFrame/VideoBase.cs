@@ -210,7 +210,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             }
         }
 
-        public override void Play(int loops)
+        public override void Play(int loops, float volume)
         {
             if (this._videoPlayer == null) return;
 
@@ -221,6 +221,9 @@ namespace OxGFrame.MediaFrame.VideoFrame
             if (!this.IsPaused()) this._loops = (loops == -1 || loops > 0) ? loops : this.loops;
 
             if (this._loops == -1) this._videoPlayer.isLooping = true;
+
+            volume = (volume > 0f) ? volume : this._videoPlayer.GetDirectAudioVolume(0); ;
+            this._videoPlayer.SetDirectAudioVolume(0, volume);
 
             this._videoPlayer.Play();
 
@@ -297,6 +300,11 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this.fullPathName = null;
             this.urlSet = null;
             this._targetCamera = null;
+        }
+
+        public VideoPlayer GetVideoPlayer()
+        {
+            return this._videoPlayer;
         }
 
         private void OnDestroy()

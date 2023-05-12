@@ -131,7 +131,7 @@ public class BundleDemo : MonoBehaviour
                     // get original patch version to display
                     string patchVersion = AssetPatcher.GetPatchVersion();
                     // show version text
-                    this.versionTxt.text = $"app_version: {appVersion}\npatch_version (encoded): {encodePatchVersion}\npatch_version: {patchVersion}";
+                    this.versionTxt.text = $"version: {appVersion}<{encodePatchVersion}>\napp_version: {appVersion}\npatch_version (encoded): {encodePatchVersion}\npatch_version: {patchVersion}";
                     if (!this.controlBtns.activeSelf) this.controlBtns.SetActive(true);
                     if (!this.bundleBtns.activeSelf) this.bundleBtns.SetActive(true);
                     if (this.progressGroup.activeSelf) this.progressGroup.SetActive(false);

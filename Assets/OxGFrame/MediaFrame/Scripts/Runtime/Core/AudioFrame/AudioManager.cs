@@ -1,7 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Networking;
@@ -33,8 +32,16 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         private void Awake()
         {
-            this.gameObject.name = $"[{nameof(AudioManager)}]";
-            DontDestroyOnLoad(this);
+            string newName = $"[{nameof(AudioManager)}]";
+            this.gameObject.name = newName;
+            if (this.gameObject.transform.root.name == newName)
+            {
+                var container = GameObject.Find(nameof(OxGFrame));
+                if (container == null) container = new GameObject(nameof(OxGFrame));
+                this.gameObject.transform.SetParent(container.transform);
+                DontDestroyOnLoad(container);
+            }
+            else DontDestroyOnLoad(this.gameObject.transform.root);
 
             foreach (var nodeName in Enum.GetNames(typeof(SoundType)))
             {
@@ -103,7 +110,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         {
             if (this._dictMixerExpParams.Count == 0) return;
 
-            foreach (var key in this._dictMixerExpParams.Keys.ToArray())
+            foreach (var key in this._dictMixerExpParams.Keys)
             {
                 string reKey = key.Replace($"{mixer.name},", string.Empty);
                 mixer.ClearFloat(reKey);
@@ -118,7 +125,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         {
             if (this._dictMixerExpParams.Count == 0) return;
 
-            foreach (var expParam in this._dictMixerExpParams.ToArray())
+            foreach (var expParam in this._dictMixerExpParams)
             {
                 string reKey = expParam.Key.Replace($"{mixer.name},", string.Empty);
                 mixer.SetFloat(reKey, expParam.Value);
@@ -194,11 +201,11 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <param name="audBase"></param>
         /// <param name="loops"></param>
         /// <returns></returns>
-        private void _Play(AudioBase audBase, int loops)
+        private void _Play(AudioBase audBase, int loops, float volume)
         {
             if (audBase == null) return;
 
-            this.LoadAndPlay(audBase, loops);
+            this.LoadAndPlay(audBase, loops, volume);
 
             Debug.Log(string.Format("Play Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));
         }
@@ -210,7 +217,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <param name="parent"></param>
         /// <param name="loops"></param>
         /// <returns></returns>
-        public override async UniTask<AudioBase[]> Play(string packageName, string assetName, Transform parent = null, int loops = 0)
+        public override async UniTask<AudioBase[]> Play(string packageName, string assetName, Transform parent = null, int loops = 0, float volume = 0f)
         {
             if (string.IsNullOrEmpty(assetName)) return new AudioBase[] { };
 
@@ -244,7 +251,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                     return new AudioBase[] { };
                 }
 
-                this._Play(audBase, loops);
+                this._Play(audBase, loops, volume);
 
                 return new AudioBase[] { audBase };
             }
@@ -252,7 +259,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             {
                 for (int i = 0; i < audBases.Length; i++)
                 {
-                    if (!audBases[i].IsPlaying()) this._Play(audBases[i], 0);
+                    if (!audBases[i].IsPlaying()) this._Play(audBases[i], 0, 0f);
                 }
 
                 return audBases;
@@ -267,9 +274,9 @@ namespace OxGFrame.MediaFrame.AudioFrame
         {
             if (this._listAllCache.Count == 0) return;
 
-            foreach (var audBase in this._listAllCache.ToArray())
+            foreach (var audBase in this._listAllCache)
             {
-                if (audBase.IsPaused()) this._Play(audBase, 0);
+                if (audBase.IsPaused()) this._Play(audBase, 0, 0f);
             }
         }
         #endregion
@@ -375,17 +382,17 @@ namespace OxGFrame.MediaFrame.AudioFrame
         {
             if (this._listAllCache.Count == 0) return;
 
-            foreach (var audBase in this._listAllCache.ToArray())
+            foreach (var audBase in this._listAllCache)
             {
                 this._Pause(audBase);
             }
         }
         #endregion
 
-        protected override void LoadAndPlay(AudioBase audBase, int loops)
+        protected override void LoadAndPlay(AudioBase audBase, int loops, float volume)
         {
             if (audBase == null) return;
-            audBase.Play(loops);
+            audBase.Play(loops, volume);
         }
 
         protected override void ExitAndStop(AudioBase audBase, bool pause, bool disableEndEvent)

@@ -19,6 +19,16 @@ namespace OxGFrame.AssetLoader.Cacher
         {
             this.refCount--;
         }
+
+        public bool IsResourcePack()
+        {
+            return typeof(ResourcePack).IsInstanceOfType(this);
+        }
+
+        public bool IsBundlePack()
+        {
+            return typeof(BundlePack).IsInstanceOfType(this);
+        }
     }
     #endregion
 

@@ -57,7 +57,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // Loading 標記
                 this._hashLoadingFlags.Add(assetName);
 
-                // 如果有在快取中就不進行預加載
+                // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
                     this.reqSize++;
@@ -134,7 +134,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // Loading 標記
                 this._hashLoadingFlags.Add(assetName);
 
-                // 如果有在快取中就不進行預加載
+                // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
                     this.reqSize++;
@@ -184,7 +184,7 @@ namespace OxGFrame.AssetLoader.Cacher
             // Loading 標記
             this._hashLoadingFlags.Add(assetName);
 
-            // 先從快取拿
+            // 先從緩存拿
             ResourcePack pack = this.GetFromCache(assetName);
 
             if (pack == null)
@@ -258,7 +258,7 @@ namespace OxGFrame.AssetLoader.Cacher
             // Loading 標記
             this._hashLoadingFlags.Add(assetName);
 
-            // 先從快取拿
+            // 先從緩存拿
             ResourcePack pack = this.GetFromCache(assetName);
 
             if (pack == null)
@@ -340,7 +340,7 @@ namespace OxGFrame.AssetLoader.Cacher
         {
             if (this.Count == 0) return;
 
-            // 強制釋放快取與資源
+            // 強制釋放緩存與資源
             foreach (var assetName in this._cacher.Keys.ToArray())
             {
                 if (this.HasInLoadingFlags(assetName))

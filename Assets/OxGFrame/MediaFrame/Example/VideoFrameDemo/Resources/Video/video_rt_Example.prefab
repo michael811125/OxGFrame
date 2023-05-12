@@ -82,6 +82,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ignoreTimeScale: 1
   loops: 0
+  volume: 1
   onStopAndDestroy: 1
   onDestroyAndUnload: 1
   autoEndToStop: 1

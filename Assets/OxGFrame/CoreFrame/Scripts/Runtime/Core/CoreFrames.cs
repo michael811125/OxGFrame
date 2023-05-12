@@ -1,6 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
-using OxGFrame.AssetLoader.Cacher;
 using OxGFrame.CoreFrame.EPFrame;
 using OxGFrame.CoreFrame.GSFrame;
 using OxGFrame.CoreFrame.UIFrame;
@@ -14,6 +13,11 @@ namespace OxGFrame.CoreFrame
     {
         public static class UIFrame
         {
+            public static void InitInstance()
+            {
+                UIManager.GetInstance();
+            }
+
             public static bool CheckIsShowing(string assetName)
             {
                 return UIManager.GetInstance().CheckIsShowing(assetName);
@@ -44,9 +48,9 @@ namespace OxGFrame.CoreFrame
                 return UIManager.GetInstance().CheckHasAnyHiding(groupId);
             }
 
-            public static void SendRefreshData(object obj = null)
+            public static void SendRefreshData(object data = null)
             {
-                UIManager.GetInstance().SendRefreshData(obj);
+                UIManager.GetInstance().SendRefreshData(data);
             }
 
             #region GetComponent
@@ -96,53 +100,53 @@ namespace OxGFrame.CoreFrame
             /// If use prefix "res#" will load from resources else will load from bundle
             /// </summary>
             /// <param name="assetName"></param>
-            /// <param name="obj"></param>
+            /// <param name="data"></param>
             /// <param name="loadingUIAssetName"></param>
             /// <param name="progression"></param>
             /// <param name="parent"></param>
             /// <returns></returns>
-            public static async UniTask<UIBase> Show(string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
+            public static async UniTask<UIBase> Show(string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(0, packageName, assetName, obj, loadingUIAssetName, progression, parent);
+                return await UIManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent);
             }
 
-            public static async UniTask<UIBase> Show(string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
+            public static async UniTask<UIBase> Show(string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
-                return await UIManager.GetInstance().Show(0, packageName, assetName, obj, loadingUIAssetName, progression, parent);
+                return await UIManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent);
             }
 
-            public static async UniTask<UIBase> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
-            {
-                var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(groupId, packageName, assetName, obj, loadingUIAssetName, progression, parent);
-            }
-
-            public static async UniTask<UIBase> Show(int groupId, string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
-            {
-                return await UIManager.GetInstance().Show(groupId, packageName, assetName, obj, loadingUIAssetName, progression, parent);
-            }
-
-            public static async UniTask<T> Show<T>(string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
+            public static async UniTask<UIBase> Show(int groupId, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(0, packageName, assetName, obj, loadingUIAssetName, progression, parent) as T;
+                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
+            public static async UniTask<UIBase> Show(int groupId, string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
-                return await UIManager.GetInstance().Show(0, packageName, assetName, obj, loadingUIAssetName, progression, parent) as T;
+                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
+            public static async UniTask<T> Show<T>(string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(groupId, packageName, assetName, obj, loadingUIAssetName, progression, parent) as T;
+                return await UIManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
+            public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
             {
-                return await UIManager.GetInstance().Show(groupId, packageName, assetName, obj, loadingUIAssetName, progression, parent) as T;
+                return await UIManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
+            {
+                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
             }
             #endregion
 
@@ -176,7 +180,7 @@ namespace OxGFrame.CoreFrame
 
             public static void RevealAll(int groupId)
             {
-                UIManager.GetInstance().RevealAll(groupId); ;
+                UIManager.GetInstance().RevealAll(groupId);
             }
             #endregion
 
@@ -200,6 +204,11 @@ namespace OxGFrame.CoreFrame
 
         public static class GSFrame
         {
+            public static void InitInstance()
+            {
+                GSManager.GetInstance();
+            }
+
             public static bool CheckIsShowing(string assetName)
             {
                 return GSManager.GetInstance().CheckIsShowing(assetName);
@@ -230,9 +239,9 @@ namespace OxGFrame.CoreFrame
                 return GSManager.GetInstance().CheckHasAnyHiding(groupId);
             }
 
-            public static void SendRefreshData(object obj = null)
+            public static void SendRefreshData(object data = null)
             {
-                GSManager.GetInstance().SendRefreshData(obj);
+                GSManager.GetInstance().SendRefreshData(data);
             }
 
             #region GetComponent
@@ -282,53 +291,53 @@ namespace OxGFrame.CoreFrame
             /// If use prefix "res#" will load from resources else will load from bundle
             /// </summary>
             /// <param name="assetName"></param>
-            /// <param name="obj"></param>
+            /// <param name="data"></param>
             /// <param name="loadingUIAssetName"></param>
             /// <param name="progression"></param>
             /// <param name="parent"></param>
             /// <returns></returns>
-            public static async UniTask<GSBase> Show(string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
+            public static async UniTask<GSBase> Show(string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await GSManager.GetInstance().Show(0, packageName, assetName, obj, loadingUIAssetName, progression, parent);
+                return await GSManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent);
             }
 
-            public static async UniTask<GSBase> Show(string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
+            public static async UniTask<GSBase> Show(string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
-                return await GSManager.GetInstance().Show(0, packageName, assetName, obj, loadingUIAssetName, progression, parent);
+                return await GSManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent);
             }
 
-            public static async UniTask<GSBase> Show(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
-            {
-                var packageName = AssetPatcher.GetDefaultPackageName();
-                return await GSManager.GetInstance().Show(groupId, packageName, assetName, obj, loadingUIAssetName, progression, parent);
-            }
-
-            public static async UniTask<GSBase> Show(int groupId, string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
-            {
-                return await GSManager.GetInstance().Show(groupId, packageName, assetName, obj, loadingUIAssetName, progression, parent);
-            }
-
-            public static async UniTask<T> Show<T>(string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
+            public static async UniTask<GSBase> Show(int groupId, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await GSManager.GetInstance().Show(0, packageName, assetName, obj, loadingUIAssetName, progression, parent) as T;
+                return await GSManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
+            public static async UniTask<GSBase> Show(int groupId, string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
-                return await GSManager.GetInstance().Show(0, packageName, assetName, obj, loadingUIAssetName, progression, parent) as T;
+                return await GSManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
+            public static async UniTask<T> Show<T>(string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await GSManager.GetInstance().Show(groupId, packageName, assetName, obj, loadingUIAssetName, progression, parent) as T;
+                return await GSManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
+            public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
             {
-                return await GSManager.GetInstance().Show(groupId, packageName, assetName, obj, loadingUIAssetName, progression, parent) as T;
+                return await GSManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                return await GSManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
+            {
+                return await GSManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
             }
             #endregion
 
@@ -386,6 +395,11 @@ namespace OxGFrame.CoreFrame
 
         public static class USFrame
         {
+            public static void InitInstance()
+            {
+                USManager.GetInstance();
+            }
+
             public static int SceneCount()
             {
                 return USManager.sceneCount;
@@ -417,61 +431,162 @@ namespace OxGFrame.CoreFrame
             }
 
             /// <summary>
-            /// (Single) If use prefix "build#" will load from build and return null else will load from bundle and return BundlePack
+            /// (Single) If use prefix "build#" will load from build and else will load from bundle
             /// </summary>
             /// <param name="sceneName"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask<BundlePack> LoadSingleSceneAsync(string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+            public static async UniTask LoadSingleSceneAsync(string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 if (RefineBuildScenePath(ref sceneName))
                 {
                     await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Single, progression);
-                    return null;
                 }
-                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, activateOnLoad, priority, progression);
+                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, activateOnLoad, priority, progression);
             }
 
-            public static async UniTask<BundlePack> LoadSingleSceneAsync(string packageName, string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+            /// <summary>
+            /// (Single) If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <param name="sceneName"></param>
+            /// <param name="activateOnLoad"></param>
+            /// <param name="priority"></param>
+            /// <param name="progression"></param>
+            /// <returns>
+            /// <para>From Build is &lt;AsyncOperation&gt;</para>
+            /// <para>From Bundle is &lt;BundlePack&gt;</para>
+            /// </returns>
+            public static async UniTask<T> LoadSingleSceneAsync<T>(string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null) where T : class
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    return await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Single, progression) as T;
+                }
+                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, activateOnLoad, priority, progression) as T;
+            }
+
+            /// <summary>
+            /// (Single) If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
+            /// <param name="packageName"></param>
+            /// <param name="sceneName"></param>
+            /// <param name="activateOnLoad"></param>
+            /// <param name="priority"></param>
+            /// <param name="progression"></param>
+            /// <returns></returns>
+            public static async UniTask LoadSingleSceneAsync(string packageName, string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
             {
                 if (RefineBuildScenePath(ref sceneName))
                 {
                     await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Single, progression);
-                    return null;
                 }
-                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, activateOnLoad, priority, progression);
+                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, activateOnLoad, priority, progression);
             }
 
             /// <summary>
-            /// (Additive) If use prefix "build#" will load from build and return null else will load from bundle and return BundlePack
+            /// (Single) If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <param name="packageName"></param>
+            /// <param name="sceneName"></param>
+            /// <param name="activateOnLoad"></param>
+            /// <param name="priority"></param>
+            /// <param name="progression"></param>
+            /// <returns>
+            /// <para>From Build is &lt;AsyncOperation&gt;</para>
+            /// <para>From Bundle is &lt;BundlePack&gt;</para>
+            /// </returns>
+            public static async UniTask<T> LoadSingleSceneAsync<T>(string packageName, string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null) where T : class
+            {
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    return await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Single, progression) as T;
+                }
+                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, activateOnLoad, priority, progression) as T;
+            }
+
+            /// <summary>
+            /// (Additive) If use prefix "build#" will load from build and else will load from bundle
             /// </summary>
             /// <param name="sceneName"></param>
+            /// <param name="activateOnLoad"></param>
+            /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask<BundlePack> LoadAdditiveSceneAsync(string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+            public static async UniTask LoadAdditiveSceneAsync(string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 if (RefineBuildScenePath(ref sceneName))
                 {
                     await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Additive, progression);
-                    return null;
                 }
-                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
+                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
             }
 
-            public static async UniTask<BundlePack> LoadAdditiveSceneAsync(string packageName, string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+            /// <summary>
+            /// (Additive) If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
+            /// <param name="sceneName"></param>
+            /// <param name="progression"></param>
+            /// <returns>
+            /// <para>From Build is &lt;AsyncOperation&gt;</para>
+            /// <para>From Bundle is &lt;BundlePack&gt;</para>
+            /// </returns>
+            public static async UniTask<T> LoadAdditiveSceneAsync<T>(string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null) where T : class
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    return await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Additive, progression) as T;
+                }
+                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression) as T;
+            }
+
+            /// <summary>
+            /// (Additive) If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
+            /// <param name="packageName"></param>
+            /// <param name="sceneName"></param>
+            /// <param name="activateOnLoad"></param>
+            /// <param name="priority"></param>
+            /// <param name="progression"></param>
+            /// <returns></returns>
+            public static async UniTask LoadAdditiveSceneAsync(string packageName, string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
             {
                 if (RefineBuildScenePath(ref sceneName))
                 {
                     await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Additive, progression);
-                    return null;
                 }
-                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
+                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
             }
 
             /// <summary>
-            /// If use prefix "build#" will load from build and return null else will load from bundle and return BundlePack
+            /// (Additive) If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <param name="packageName"></param>
+            /// <param name="sceneName"></param>
+            /// <param name="activateOnLoad"></param>
+            /// <param name="priority"></param>
+            /// <param name="progression"></param>
+            /// <returns>
+            /// <para>From Build is &lt;AsyncOperation&gt;</para>
+            /// <para>From Bundle is &lt;BundlePack&gt;</para>
+            /// </returns>
+            public static async UniTask<T> LoadAdditiveSceneAsync<T>(string packageName, string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null) where T : class
+            {
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    return await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Additive, progression) as T;
+                }
+                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression) as T;
+            }
+
+            /// <summary>
+            /// If use prefix "build#" will load from build and else will load from bundle
             /// </summary>
             /// <param name="sceneName"></param>
             /// <param name="loadSceneMode"></param>
@@ -479,37 +594,90 @@ namespace OxGFrame.CoreFrame
             /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask<BundlePack> LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+            public static async UniTask LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, int priority = 100, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 if (RefineBuildScenePath(ref sceneName))
                 {
                     await USManager.GetInstance().LoadFromBuildAsync(sceneName, loadSceneMode, progression);
-                    return null;
                 }
-                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, activateOnLoad, priority, progression);
+                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, activateOnLoad, priority, progression);
             }
 
-            public static async UniTask<BundlePack> LoadSceneAsync(string packageName, string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+            /// <summary>
+            /// If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
+            /// <param name="sceneName"></param>
+            /// <param name="loadSceneMode"></param>
+            /// <param name="activateOnLoad"></param>
+            /// <param name="priority"></param>
+            /// <param name="progression"></param>
+            /// <returns>
+            /// <para>From Build is &lt;AsyncOperation&gt;</para>
+            /// <para>From Bundle is &lt;BundlePack&gt;</para>
+            /// </returns>
+            public static async UniTask<T> LoadSceneAsync<T>(string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, int priority = 100, Progression progression = null) where T : class
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    return await USManager.GetInstance().LoadFromBuildAsync(sceneName, loadSceneMode, progression) as T;
+                }
+                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, activateOnLoad, priority, progression) as T;
+            }
+
+            /// <summary>
+            /// If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
+            /// <param name="packageName"></param>
+            /// <param name="sceneName"></param>
+            /// <param name="loadSceneMode"></param>
+            /// <param name="activateOnLoad"></param>
+            /// <param name="priority"></param>
+            /// <param name="progression"></param>
+            /// <returns></returns>
+            public static async UniTask LoadSceneAsync(string packageName, string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, int priority = 100, Progression progression = null)
             {
                 if (RefineBuildScenePath(ref sceneName))
                 {
                     await USManager.GetInstance().LoadFromBuildAsync(sceneName, loadSceneMode, progression);
-                    return null;
                 }
-                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, activateOnLoad, priority, progression);
+                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, activateOnLoad, priority, progression);
             }
 
             /// <summary>
-            /// only load from build
+            /// If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <param name="packageName"></param>
+            /// <param name="sceneName"></param>
+            /// <param name="loadSceneMode"></param>
+            /// <param name="activateOnLoad"></param>
+            /// <param name="priority"></param>
+            /// <param name="progression"></param>
+            /// <returns>
+            /// <para>From Build is &lt;AsyncOperation&gt;</para>
+            /// <para>From Bundle is &lt;BundlePack&gt;</para>
+            /// </returns>
+            public static async UniTask<T> LoadSceneAsync<T>(string packageName, string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, int priority = 100, Progression progression = null) where T : class
+            {
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    return await USManager.GetInstance().LoadFromBuildAsync(sceneName, loadSceneMode, progression) as T;
+                }
+                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, activateOnLoad, priority, progression) as T;
+            }
+
+            /// <summary>
+            /// Only load from build via build index
             /// </summary>
             /// <param name="buildIndex"></param>
             /// <param name="loadSceneMode"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask LoadSceneAsync(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
+            public static async UniTask<AsyncOperation> LoadSceneAsync(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
             {
-                await USManager.GetInstance().LoadFromBuildAsync(buildIndex, loadSceneMode, progression);
+                return await USManager.GetInstance().LoadFromBuildAsync(buildIndex, loadSceneMode, progression);
             }
 
             /// <summary>
@@ -553,6 +721,11 @@ namespace OxGFrame.CoreFrame
 
         public static class EPFrame
         {
+            public static void InitInstance()
+            {
+                EPManager.GetInstance();
+            }
+
             /// <summary>
             /// If use prefix "res#" will load from resources else will load from bundle
             /// </summary>

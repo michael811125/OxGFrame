@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace OxGFrame.NetFrame
 {
     public class NetManager
     {
-        private Dictionary<byte, NetNode> _dictNetNode = null; // NetNode 快取
+        private Dictionary<byte, NetNode> _dictNetNode = null; // NetNode 緩存
 
         private static NetManager _instance = null;
         public static NetManager GetInstance()
@@ -24,7 +23,7 @@ namespace OxGFrame.NetFrame
         {
             if (this._dictNetNode.Count == 0) return;
 
-            foreach (NetNode netNode in this._dictNetNode.Values.ToArray())
+            foreach (NetNode netNode in this._dictNetNode.Values)
             {
                 if (netNode == null) continue;
                 netNode.OnUpdate();

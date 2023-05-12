@@ -24,8 +24,16 @@ namespace OxGFrame.CoreFrame.GSFrame
 
         private void Awake()
         {
-            this.gameObject.name = $"[{nameof(GSManager)}]";
-            DontDestroyOnLoad(this);
+            string newName = $"[{nameof(GSManager)}]";
+            this.gameObject.name = newName;
+            if (this.gameObject.transform.root.name == newName)
+            {
+                var container = GameObject.Find(nameof(OxGFrame));
+                if (container == null) container = new GameObject(nameof(OxGFrame));
+                this.gameObject.transform.SetParent(container.transform);
+                DontDestroyOnLoad(container);
+            }
+            else DontDestroyOnLoad(this.gameObject.transform.root);
         }
 
         #region 實作 Loading
@@ -261,7 +269,7 @@ namespace OxGFrame.CoreFrame.GSFrame
             }
 
             FrameStack<GSBase> stack = this.GetStackFromAllCache(assetName);
-            foreach (var gsBase in stack.cache.ToArray())
+            foreach (var gsBase in stack.cache)
             {
                 if (!gsBase.isHidden) return;
 
@@ -280,7 +288,7 @@ namespace OxGFrame.CoreFrame.GSFrame
         {
             if (this._dictAllCache.Count == 0) return;
 
-            foreach (FrameStack<GSBase> stack in this._dictAllCache.Values.ToArray())
+            foreach (FrameStack<GSBase> stack in this._dictAllCache.Values)
             {
                 // prevent preload mode
                 if (stack.Count() == 0) continue;
@@ -299,7 +307,7 @@ namespace OxGFrame.CoreFrame.GSFrame
         {
             if (this._dictAllCache.Count == 0) return;
 
-            foreach (FrameStack<GSBase> stack in this._dictAllCache.Values.ToArray())
+            foreach (FrameStack<GSBase> stack in this._dictAllCache.Values)
             {
                 // prevent preload mode
                 if (stack.Count() == 0) continue;
@@ -330,7 +338,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             if (!this.CheckIsShowing(stack.Peek())) return;
 
-            foreach (var gsBase in stack.cache.ToArray())
+            foreach (var gsBase in stack.cache)
             {
                 gsBase.SetHidden(true);
                 this.ExitAndHide(gsBase);
@@ -348,7 +356,7 @@ namespace OxGFrame.CoreFrame.GSFrame
         {
             if (this._dictAllCache.Count == 0) return;
 
-            foreach (FrameStack<GSBase> stack in this._dictAllCache.Values.ToArray())
+            foreach (FrameStack<GSBase> stack in this._dictAllCache.Values)
             {
                 // prevent preload mode
                 if (stack.Count() == 0) continue;
@@ -381,7 +389,7 @@ namespace OxGFrame.CoreFrame.GSFrame
         {
             if (this._dictAllCache.Count == 0) return;
 
-            foreach (FrameStack<GSBase> stack in this._dictAllCache.Values.ToArray())
+            foreach (FrameStack<GSBase> stack in this._dictAllCache.Values)
             {
                 // prevent preload mode
                 if (stack.Count() == 0) continue;
@@ -414,13 +422,13 @@ namespace OxGFrame.CoreFrame.GSFrame
         #endregion
 
         #region 顯示場景 & 關閉場景
-        protected override async UniTask LoadAndDisplay(GSBase gsBase, object obj = null)
+        protected async UniTask LoadAndDisplay(GSBase gsBase, object obj = null)
         {
             if (!gsBase.isHidden) await gsBase.PreInit();
             gsBase.Display(obj);
         }
 
-        protected override void ExitAndHide(GSBase gsBase, bool disableDoSub = false)
+        protected void ExitAndHide(GSBase gsBase, bool disableDoSub = false)
         {
             gsBase.Hide(disableDoSub);
         }

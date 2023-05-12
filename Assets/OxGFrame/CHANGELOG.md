@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [2.1.2] - 2023-05-13
+- Added UI supports **Reverse Changes** feature (can auto hide last UI and show back).
+- Added InitInstance() method for CoreFrames and MediaFrames.
+- Added audio and video can adjust volume via API param.
+- Added GetAudioSource() method for AudioBase.
+- Added GetVideoPlayer() method for VideoBase.
+- Added IsResourcePack() and IsBundlePack() methods for AssetObject. 
+- Modified API description and optimized params.
+- Modified all Monobehaviour Managers will group together.
+- Optimized cache.
+- Optimized Examples code.
+
 ## [2.1.1] - 2023-05-08
 - Fixed init package bug issue (only HostMode needs burlconfig.conf).
 - Optimized code (editor).

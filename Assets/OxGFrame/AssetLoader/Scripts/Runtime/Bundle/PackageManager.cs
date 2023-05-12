@@ -182,7 +182,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// Unload package and clear package files from sandbox
         /// </summary>
         /// <param name="packageName"></param>
-        public static void UnloadPackageAndClearCacheFiles(string packageName)
+        public static async UniTask UnloadPackageAndClearCacheFiles(string packageName)
         {
             var package = GetPackage(packageName);
             if (package == null) return;
@@ -190,7 +190,7 @@ namespace OxGFrame.AssetLoader.Bundle
             var sandboxPath = BundleConfig.GetLocalSandboxPath();
             string packagePath = Path.Combine(sandboxPath, BundleConfig.yooCacheFolderName, packageName);
             BundleUtility.DeleteFolder(packagePath);
-            YooAssets.DestroyPackage(packageName);
+            await package.ClearAllCacheFilesAsync();
         }
 
         /// <summary>

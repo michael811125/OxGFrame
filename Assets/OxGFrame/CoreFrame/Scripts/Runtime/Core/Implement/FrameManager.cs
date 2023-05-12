@@ -1,9 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
-using OxGFrame.AssetLoader.Utility;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -91,11 +89,11 @@ namespace OxGFrame.CoreFrame
             }
         }
 
-        public float reqSize { get; protected set; }
-        public float totalSize { get; protected set; }
+        public float reqSize { get; protected set; }   // [計算進度條用] 加載數量
+        public float totalSize { get; protected set; } // [計算進度條用] 總加載數量
 
-        protected Dictionary<string, FrameStack<T>> _dictAllCache = new Dictionary<string, FrameStack<T>>();  // 【常駐】所有快取 (只會在Destroy時, Remove對應的快取)
-        protected HashSet<string> _loadingFlags = new HashSet<string>();                                      // 用來標記正在加載中的資源 (暫存快取)
+        protected Dictionary<string, FrameStack<T>> _dictAllCache = new Dictionary<string, FrameStack<T>>();  // 【常駐】所有緩存 (只會在 Destroy 時, Remove 對應的緩存)
+        protected HashSet<string> _loadingFlags = new HashSet<string>();                                      // 用來標記正在加載中的資源 (暫存緩存)
 
         ~FrameManager()
         {
@@ -228,7 +226,7 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public bool CheckHasAnyHiding(int groupId)
         {
-            foreach (var fBase in this._dictAllCache.Values.ToArray())
+            foreach (var fBase in this._dictAllCache.Values)
             {
                 if (fBase.Peek().groupId == groupId && fBase.Peek().isHidden) return true;
             }
@@ -243,7 +241,7 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public bool CheckHasAnyHiding()
         {
-            foreach (var fBase in this._dictAllCache.Values.ToArray())
+            foreach (var fBase in this._dictAllCache.Values)
             {
                 if (fBase.Peek().isHidden) return true;
             }
@@ -274,7 +272,7 @@ namespace OxGFrame.CoreFrame
         protected abstract T Instantiate(T fBase, string assetName, AddIntoCache addIntoCache, Transform parent);
 
         /// <summary>
-        /// 加載資源至快取
+        /// 加載資源至緩存
         /// </summary>
         /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
@@ -288,10 +286,10 @@ namespace OxGFrame.CoreFrame
             GameObject asset;
             T fBase = null;
 
-            // 檢查是否有快取
+            // 檢查是否有緩存
             if (this.HasStackInAllCache(assetName))
             {
-                // 如果有快取, 再透過允許多實例區分作法
+                // 如果有緩存, 再透過允許多實例區分作法
                 FrameStack<T> stack = this.GetStackFromAllCache(assetName);
                 if (stack != null)
                 {
@@ -520,12 +518,6 @@ namespace OxGFrame.CoreFrame
         public virtual void HideAll(int groupId, params string[] withoutAssetNames) { }
         #endregion
 
-        #region Load Display & Exit Hide
-        protected virtual async UniTask LoadAndDisplay(T fBase, object obj = null) { }
-
-        protected virtual void ExitAndHide(T fBase, bool disableDoSub = false) { }
-        #endregion
-
         #region Destroy
         /// <summary>
         /// 銷毀釋放
@@ -540,7 +532,7 @@ namespace OxGFrame.CoreFrame
             // 刪除物件
             if (!fBase.gameObject.IsDestroyed()) Destroy(fBase.gameObject);
 
-            // 取出柱列快取
+            // 取出柱列緩存
             FrameStack<T> stack = this.GetStackFromAllCache(assetName);
             stack.Pop();
 
@@ -553,7 +545,7 @@ namespace OxGFrame.CoreFrame
                 Debug.Log($"<color=#ffa2a3>[FrameManager] Extra Unload Asset: {assetName}</color>");
             }
 
-            // 柱列為空, 則刪除資源快取
+            // 柱列為空, 則刪除資源緩存
             if (stack.Count() == 0) this._dictAllCache.Remove(assetName);
 
             // 卸載
@@ -571,11 +563,11 @@ namespace OxGFrame.CoreFrame
         /// <param name="obj"></param>
         public void SendRefreshData(object obj)
         {
-            foreach (FrameStack<T> stack in this._dictAllCache.Values.ToArray())
+            foreach (FrameStack<T> stack in this._dictAllCache.Values)
             {
                 if (this.CheckIsShowing(stack.Peek()) || this.CheckIsHiding(stack.Peek()))
                 {
-                    foreach (var fBase in stack.cache.ToArray())
+                    foreach (var fBase in stack.cache)
                     {
                         fBase.OnReceiveAndRefresh(obj);
                     }

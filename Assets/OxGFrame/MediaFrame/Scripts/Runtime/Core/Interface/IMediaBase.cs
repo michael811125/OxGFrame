@@ -7,7 +7,7 @@ namespace OxGFrame.MediaFrame
     {
         UniTask Init();
 
-        void Play(int loops);
+        void Play(int loops, float volume);
 
         void Stop();
 

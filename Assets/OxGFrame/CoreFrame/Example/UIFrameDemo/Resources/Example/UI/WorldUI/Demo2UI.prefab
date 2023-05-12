@@ -5142,15 +5142,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4c904d479c934847acaabb4b2689d1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allowInstantiate: 1
+  allowInstantiate: 0
   onCloseAndDestroy: 0
   canvas: {fileID: 0}
   graphicRaycaster: {fileID: 0}
+  reverseChanges: 1
   uiSetting:
     canvasName: CanvasWorld
     nodeType: 2
     stack: 1
-    order: 0
+    order: 1000
     whenCloseAllToSkip: 0
     whenHideAllToSkip: 0
   autoMask: 1

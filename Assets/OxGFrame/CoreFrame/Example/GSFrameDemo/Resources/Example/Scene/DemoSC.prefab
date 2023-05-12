@@ -245,7 +245,6 @@ MonoBehaviour:
   allowInstantiate: 1
   onCloseAndDestroy: 0
   gsSetting:
-    nodeName: Scenes
     whenCloseAllToSkip: 0
     whenHideAllToSkip: 0
 --- !u!1 &7655318841875574380

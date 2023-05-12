@@ -137,7 +137,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             }
         }
 
-        public override void Play(int loops)
+        public override void Play(int loops, float volume)
         {
             if (this._audioSource == null || this._audioSource.clip == null) return;
 
@@ -154,6 +154,9 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 this._audioSource.clip.LoadAudioData();
                 Debug.Log($"Load AudioName: {this.mediaName}, AudioSource => Time: {this._audioSource.time}, TimeSamples: {this._audioSource.timeSamples}; AudioClip => Time: {this._audioSource.clip.length}, Samples: {this._audioSource.clip.samples}, Freq: {this._audioSource.clip.frequency}");
             }
+
+            volume = (volume > 0f) ? volume : this._audioSource.volume;
+            this._audioSource.volume = volume;
 
             if (!this.IsPaused()) this._audioSource.Play();
             else this._audioSource.UnPause();
@@ -226,6 +229,11 @@ namespace OxGFrame.MediaFrame.AudioFrame
             this.audioType = null;
             this.fullPathName = null;
             this.urlSet = null;
+        }
+
+        public AudioSource GetAudioSource()
+        {
+            return this._audioSource;
         }
 
         private void OnDestroy()

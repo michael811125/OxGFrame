@@ -153,7 +153,7 @@ namespace OxGFrame.AssetLoader.GroupChacer
                         CacheResource.GetInstance().UnloadAsset(keyGroup.assetName);
                     }
 
-                    // 完成後, 直接刪除快取
+                    // 完成後, 直接刪除緩存
                     this.DelFromCache(keyGroup.id, keyGroup.assetName);
                 }
             }

@@ -47,6 +47,5 @@ MonoBehaviour:
   allowInstantiate: 0
   onCloseAndDestroy: 0
   gsSetting:
-    nodeName: Res
     whenCloseAllToSkip: 1
     whenHideAllToSkip: 1

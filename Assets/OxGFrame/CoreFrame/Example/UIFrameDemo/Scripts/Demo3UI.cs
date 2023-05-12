@@ -79,7 +79,7 @@ public class Demo3UI : UIBase
 
     private async void _ShowDemoScene()
     {
-        if (!CoreFrames.GSFrame.CheckIsShowing(GSFrameDemo.DemoSC)) await CoreFrames.GSFrame.Show(1, GSFrameDemo.DemoSC);
-        else CoreFrames.GSFrame.Close(GSFrameDemo.DemoSC);
+        if (!CoreFrames.GSFrame.CheckIsShowing(GameScene.DemoSC)) await CoreFrames.GSFrame.Show(1, GameScene.DemoSC);
+        else CoreFrames.GSFrame.Close(GameScene.DemoSC);
     }
 }

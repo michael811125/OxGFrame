@@ -5,7 +5,7 @@ namespace OxGFrame.GSIFrame
 {
     public class GSIManagerBase<T> where T : GSIManagerBase<T>, new()
     {
-        protected Dictionary<int, GSIBase> _dictGameStage = null; // GameStage 快取
+        protected Dictionary<int, GSIBase> _dictGameStage = null; // GameStage 緩存
         protected int _incomingId = 0;                            // 用於記錄 Incoming GameStageId (新的 GameStageId)
         protected int _currentId { get; private set; }            // 記錄當前的 GameStageId
         protected GSIBase _currentGameStage { get; private set; } // 當前 GameStage

@@ -10,7 +10,7 @@ namespace OxGFrame.CoreFrame.GSFrame
 
             try
             {
-                // 如果 Parent Destroy 時, 需要進行連動釋放, 確保 Manager 快取操作正常
+                // 如果 Parent Destroy 時, 需要進行連動釋放, 確保 Manager 緩存操作正常
                 GSBase[] gsBases = this.gameObject.GetComponentsInChildren<GSBase>(true);
                 foreach (var gsBase in gsBases)
                 {

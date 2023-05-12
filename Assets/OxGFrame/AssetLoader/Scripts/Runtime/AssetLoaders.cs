@@ -87,6 +87,15 @@ namespace OxGFrame.AssetLoader
             else return CacheBundle.GetInstance().HasInCache(assetName);
         }
 
+        /// <summary>
+        /// Get asset object cache
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <returns>
+        /// <para>From Resources is &lt;ResourcePack&gt;</para>
+        /// <para>From Bundle is &lt;BundlePack&gt;</para>
+        /// </returns>
         public static T GetFromCache<T>(string assetName) where T : AssetObject
         {
             if (RefineResourcesPath(ref assetName)) return CacheResource.GetInstance().GetFromCache(assetName) as T;

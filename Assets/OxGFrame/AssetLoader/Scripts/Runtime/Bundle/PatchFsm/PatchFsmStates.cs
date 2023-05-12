@@ -352,15 +352,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         return;
                     }
 
-                    /*
-                     * [1. Add static method in static class YooAssets]
-                     * 
-                     * public static void ResetCacheSystem()
-                     * {
-                     *     CacheSystem.ClearAll();
-                     * }
-                     */
-                    YooAssets.ResetCacheSystem();
+                    // Clear package all cache files to re-download
+                    await PackageManager.GetDefaultPackage().ClearAllCacheFilesAsync();
                     this._machine.ChangeState<FsmPatchVersionUpdate>();
                     Debug.Log("<color=#ffcf67>(Repair) Repair Patch</color>");
                     return;

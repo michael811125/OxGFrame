@@ -3,23 +3,46 @@ using UnityEngine.InputSystem;
 using OxGFrame.CoreFrame;
 using Cysharp.Threading.Tasks;
 
+public static class Screen
+{
+    // If use prefix "res#" will load from resource else will from bundle
+    private const string _prefix = "res#";
+
+    // Assets
+    public static readonly string Demo1UI = $"{_prefix}Example/UI/ScreenUI/Demo1UI";
+    public static readonly string Demo2UI = $"{_prefix}Example/UI/ScreenUI/Demo2UI";
+    public static readonly string Demo3UI = $"{_prefix}Example/UI/ScreenUI/Demo3UI";
+    public static readonly string DemoLoadingUI = $"{_prefix}Example/UI/ScreenUI/DemoLoadingUI";
+
+    // Group Id
+    public const int Id = 1;
+}
+
+public static class World
+{
+    // If use prefix "res#" will load from resource else will from bundle
+    private const string _prefix = "res#";
+
+    // Assets
+    public static readonly string Demo1UI = $"{_prefix}Example/UI/WorldUI/Demo1UI";
+    public static readonly string Demo2UI = $"{_prefix}Example/UI/WorldUI/Demo2UI";
+    public static readonly string Demo3UI = $"{_prefix}Example/UI/WorldUI/Demo3UI";
+    public static readonly string DemoLoadingUI = $"{_prefix}Example/UI/WorldUI/DemoLoadingUI";
+
+    // Group Id
+    public const int Id = 2;
+}
+
 public class UIFrameDemo : MonoBehaviour
 {
-    // if use prefix "res#" will load from resource else will from bundle
-    public static string prefix = "res#";
-    public static string canvasCamera = "CanvasCamera";
-    public static string ScreenDemo1UI = $"{prefix}Example/UI/ScreenUI/Demo1UI";
-    public static string ScreenDemo2UI = $"{prefix}Example/UI/ScreenUI/Demo2UI";
-    public static string ScreenDemo3UI = $"{prefix}Example/UI/ScreenUI/Demo3UI";
-    public static string ScreenDemoLoadingUI = $"{prefix}Example/UI/ScreenUI/DemoLoadingUI";
-    public static int screenId = 1;
+    public const string CanvasCamera = "CanvasCamera";
+    public const string CanvasWorld = "CanvasWorld";
 
-    public static string canvasWorld = "CanvasWorld";
-    public static string WorldDemo1UI = $"{prefix}Example/UI/WorldUI/Demo1UI";
-    public static string WorldDemo2UI = $"{prefix}Example/UI/WorldUI/Demo2UI";
-    public static string WorldDemo3UI = $"{prefix}Example/UI/WorldUI/Demo3UI";
-    public static string WorldDemoLoadingUI = $"{prefix}Example/UI/WorldUI/DemoLoadingUI";
-    public static int worldId = 2;
+    private void Awake()
+    {
+        // If Init instance can more efficiency
+        CoreFrames.UIFrame.InitInstance();
+    }
 
     private void Update()
     {
@@ -33,11 +56,11 @@ public class UIFrameDemo : MonoBehaviour
         }
         else if (Keyboard.current.numpad2Key.wasReleasedThisFrame)
         {
-            CoreFrames.UIFrame.HideAll(UIFrameDemo.worldId);
+            CoreFrames.UIFrame.HideAll(World.Id);
         }
         else if (Keyboard.current.numpad3Key.wasReleasedThisFrame)
         {
-            CoreFrames.UIFrame.RevealAll(UIFrameDemo.worldId);
+            CoreFrames.UIFrame.RevealAll(World.Id);
         }
         else if (Keyboard.current.numpad4Key.wasReleasedThisFrame)
         {
@@ -45,26 +68,32 @@ public class UIFrameDemo : MonoBehaviour
         }
         else if (Keyboard.current.numpad5Key.wasReleasedThisFrame)
         {
-            CoreFrames.UIFrame.Show(worldId, WorldDemo3UI).Forget();
+            CoreFrames.UIFrame.CloseAll(true);
         }
         else if (Keyboard.current.numpad6Key.wasReleasedThisFrame)
         {
-            CoreFrames.UIFrame.Close(WorldDemo3UI, true, true);
+            CoreFrames.UIFrame.Show(World.Id, World.Demo3UI).Forget();
+        }
+        else if (Keyboard.current.numpad7Key.wasReleasedThisFrame)
+        {
+            CoreFrames.UIFrame.Close(World.Demo3UI, true, true);
         }
     }
 
     public async void ShowFirstScreenUI()
     {
-        await CoreFrames.UIFrame.Show(UIFrameDemo.screenId, UIFrameDemo.ScreenDemo1UI, null, UIFrameDemo.ScreenDemoLoadingUI, null, null);
+        await CoreFrames.UIFrame.Show(Screen.Id, Screen.Demo1UI, null, Screen.DemoLoadingUI, null, null);
     }
 
+    private int _dataCount = 0;
     public async void ShowFirstWorldUI()
     {
-        await CoreFrames.UIFrame.Show(UIFrameDemo.worldId, UIFrameDemo.WorldDemo1UI, null, UIFrameDemo.WorldDemoLoadingUI, null, null);
+        if (!CoreFrames.UIFrame.CheckIsShowing(World.Demo1UI)) this._dataCount++;
+        await CoreFrames.UIFrame.Show(World.Id, World.Demo1UI, $"Send Msg Data: {this._dataCount}", World.DemoLoadingUI, null, null);
     }
 
     public async void PreloadFirstWorldUI()
     {
-        await CoreFrames.UIFrame.Preload(UIFrameDemo.WorldDemo1UI);
+        await CoreFrames.UIFrame.Preload(World.Demo1UI);
     }
 }

@@ -2,126 +2,147 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
+public static class Audio
+{
+    // If use prefix "res#" will load from resource else will from bundle
+    private const string _prefix = "res#";
+
+    // Paths
+    private static readonly string _bgmPath = $"{_prefix}Audio/BGM/";
+    private static readonly string _generalPah = $"{_prefix}Audio/General/";
+    private static readonly string _fightPath = $"{_prefix}Audio/Fight/";
+    private static readonly string _voicePath = $"{_prefix}Audio/Voice/";
+    private static readonly string _atmospherePath = $"{_prefix}Audio/Atmosphere/";
+
+    // Assets
+    public static readonly string BgmExample = $"{_bgmPath}bgm_Example";
+    public static readonly string GeneralSoundExample = $"{_generalPah}general_sound_Example";
+    public static readonly string FightSoundExample = $"{_fightPath}fight_sound_Example";
+    public static readonly string VoiceExample = $"{_voicePath}voice_Example";
+    public static readonly string AtmosphereExample = $"{_atmospherePath}atmosphere_Example";
+}
+
 public class AudioFrameDemo : MonoBehaviour
 {
-    // if use prefix "res#" will load from resource else will from bundle
-    public static string prefix = "res#";
-    public static string BGM_PATH = $"{prefix}Audio/BGM/";
-    public static string GERNERAL_SOUNDS_PATH = $"{prefix}Audio/General/";
-    public static string FIGHT_SOUNDS_PATH = $"{prefix}Audio/Fight/";
-    public static string VOICES_PATH = $"{prefix}Audio/Voice/";
-    public static string ATMOSPHERE_PATH = $"{prefix}Audio/Atmosphere/";
+    private void Awake()
+    {
+        // If Init instance can more efficiency
+        MediaFrames.AudioFrame.InitInstance();
+    }
 
     #region Audio 【BGM】
     public async void PlayBGM()
     {
-        await MediaFrames.AudioFrame.Play(BGM_PATH + "bgm_Example");
+        await MediaFrames.AudioFrame.Play(Audio.BgmExample);
     }
 
     public void StopBGM()
     {
-        MediaFrames.AudioFrame.Stop(BGM_PATH + "bgm_Example");
+        MediaFrames.AudioFrame.Stop(Audio.BgmExample);
     }
 
     public void StopBGMWithDestroy()
     {
-        MediaFrames.AudioFrame.Stop(BGM_PATH + "bgm_Example", false, true);
+        MediaFrames.AudioFrame.Stop(Audio.BgmExample, false, true);
     }
 
     public void PauseBGM()
     {
-        MediaFrames.AudioFrame.Pause(BGM_PATH + "bgm_Example");
+        MediaFrames.AudioFrame.Pause(Audio.BgmExample);
     }
     #endregion
 
     #region Audio 【GeneralFX】 
     public async void PlayGeneralFX()
     {
-        await MediaFrames.AudioFrame.Play(GERNERAL_SOUNDS_PATH + "general_sound_Example");
+        await MediaFrames.AudioFrame.Play(Audio.GeneralSoundExample);
     }
 
     public void StopGeneralFX()
     {
-        MediaFrames.AudioFrame.Stop(GERNERAL_SOUNDS_PATH + "general_sound_Example");
+        MediaFrames.AudioFrame.Stop(Audio.GeneralSoundExample);
     }
 
     public void StopGeneralFXWithDestroy()
     {
-        // if Audio is not checked OnDestroyAndUnload, can use ForceUnload to stop and unload
-        //MediaFrames.AudioFrame.ForceUnload(GERNERAL_SOUNDS_PATH + "general_sound_Example");
+        /*
+         * [if Audio is not checked OnDestroyAndUnload, can use ForceUnload to stop and unload]
+         * 
+         * MediaFrames.AudioFrame.ForceUnload(Audio.GeneralSoundExample);
+         */
 
-        MediaFrames.AudioFrame.Stop(GERNERAL_SOUNDS_PATH + "general_sound_Example", false, true);
+        MediaFrames.AudioFrame.Stop(Audio.GeneralSoundExample, false, true);
     }
 
     public void PauseGeneralFX()
     {
-        MediaFrames.AudioFrame.Pause(GERNERAL_SOUNDS_PATH + "general_sound_Example");
+        MediaFrames.AudioFrame.Pause(Audio.GeneralSoundExample);
     }
     #endregion
 
     #region Audio 【FightFX】
     public async void PlayFightFX()
     {
-        await MediaFrames.AudioFrame.Play(FIGHT_SOUNDS_PATH + "fight_sound_Example");
+        await MediaFrames.AudioFrame.Play(Audio.FightSoundExample);
     }
 
     public void StopFightFX()
     {
-        MediaFrames.AudioFrame.Stop(FIGHT_SOUNDS_PATH + "fight_sound_Example");
+        MediaFrames.AudioFrame.Stop(Audio.FightSoundExample);
     }
 
     public void StopFightFXWithDestroy()
     {
-        MediaFrames.AudioFrame.Stop(FIGHT_SOUNDS_PATH + "fight_sound_Example", false, true);
+        MediaFrames.AudioFrame.Stop(Audio.FightSoundExample, false, true);
     }
 
     public void PauseFightFX()
     {
-        MediaFrames.AudioFrame.Pause(FIGHT_SOUNDS_PATH + "fight_sound_Example");
+        MediaFrames.AudioFrame.Pause(Audio.FightSoundExample);
     }
     #endregion
 
     #region Audio 【Voice】
     public async void PlayVoice()
     {
-        await MediaFrames.AudioFrame.Play(VOICES_PATH + "voice_Example");
+        await MediaFrames.AudioFrame.Play(Audio.VoiceExample);
     }
 
     public void StopVoice()
     {
-        MediaFrames.AudioFrame.Stop(VOICES_PATH + "voice_Example");
+        MediaFrames.AudioFrame.Stop(Audio.VoiceExample);
     }
 
     public void StopVoiceWithDestroy()
     {
-        MediaFrames.AudioFrame.Stop(VOICES_PATH + "voice_Example", false, true);
+        MediaFrames.AudioFrame.Stop(Audio.VoiceExample, false, true);
     }
 
     public void PauseVoice()
     {
-        MediaFrames.AudioFrame.Pause(VOICES_PATH + "voice_Example");
+        MediaFrames.AudioFrame.Pause(Audio.VoiceExample);
     }
     #endregion
 
     #region Audio 【Atmosphere】
     public async void PlayAtmosphere()
     {
-        await MediaFrames.AudioFrame.Play(ATMOSPHERE_PATH + "atmosphere_Example");
+        await MediaFrames.AudioFrame.Play(Audio.AtmosphereExample);
     }
 
     public void StopAtmosphere()
     {
-        MediaFrames.AudioFrame.Stop(ATMOSPHERE_PATH + "atmosphere_Example");
+        MediaFrames.AudioFrame.Stop(Audio.AtmosphereExample);
     }
 
     public void StopAtmosphereWithDestroy()
     {
-        MediaFrames.AudioFrame.Stop(ATMOSPHERE_PATH + "atmosphere_Example", false, true);
+        MediaFrames.AudioFrame.Stop(Audio.AtmosphereExample, false, true);
     }
 
     public void PauseAtmosphere()
     {
-        MediaFrames.AudioFrame.Pause(ATMOSPHERE_PATH + "atmosphere_Example");
+        MediaFrames.AudioFrame.Pause(Audio.AtmosphereExample);
     }
     #endregion
 

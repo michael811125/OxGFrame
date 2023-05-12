@@ -170,12 +170,12 @@ namespace OxGFrame.AssetLoader
 
         #region Package Operation
         /// <summary>
-        /// Unload package and clear package files from sandbox (will change until next YooAsset version is release)
+        /// Unload package and clear package files from sandbox
         /// </summary>
         /// <param name="packageName"></param>
-        public static void UnloadPackageAndClearCacheFiles(string packageName)
+        public static async UniTask UnloadPackageAndClearCacheFiles(string packageName)
         {
-            PackageManager.UnloadPackageAndClearCacheFiles(packageName);
+            await PackageManager.UnloadPackageAndClearCacheFiles(packageName);
         }
 
         /// <summary>
