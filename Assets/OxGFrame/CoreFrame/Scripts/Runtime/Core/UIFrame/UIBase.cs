@@ -15,7 +15,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         [Tooltip("Use reverse changes"), ConditionalField(nameof(onCloseAndDestroy), true)]
         public bool reverseChanges = false;
         [Tooltip("UI Settings")]
-        public UISetting uiSetting = new UISetting();       // 定義UI類型, 用於取決於要新增至 UIRoot 中哪個對應的節點
+        public UISetting uiSetting = new UISetting();       // 定義 UI 類型, 用於取決於要新增至 UIRoot 中哪個對應的節點
         [Tooltip("If checked will auto create a mask")]
         public bool autoMask = false;                       // 是否自動生成 Mask
         [ConditionalField(nameof(autoMask)), Tooltip("Mask Settings")]

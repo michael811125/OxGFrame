@@ -173,9 +173,10 @@ namespace OxGFrame.AssetLoader
         /// Unload package and clear package files from sandbox
         /// </summary>
         /// <param name="packageName"></param>
-        public static async UniTask UnloadPackageAndClearCacheFiles(string packageName)
+        /// <returns></returns>
+        public static async UniTask<bool> UnloadPackageAndClearCacheFiles(string packageName)
         {
-            await PackageManager.UnloadPackageAndClearCacheFiles(packageName);
+            return await PackageManager.UnloadPackageAndClearCacheFiles(packageName);
         }
 
         /// <summary>

@@ -43,25 +43,16 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
             private async UniTask _DeleteLocalSaveFiles()
             {
-                // 刪除 Last Group Info 記錄
+                // Delete Last Group Info record
                 PatchManager.DelLastGroupInfo();
 
-                // 取得本地持久化路徑
-                var dir = BundleConfig.GetLocalSandboxPath();
+                // Get main default package name
+                var defaultPackageName = PackageManager.GetDefaultPackageName();
+                // Clear cache and files of main default package
+                bool isCleared = await PackageManager.UnloadPackageAndClearCacheFiles(defaultPackageName);
 
-                // 刪除資源數據
-                BundleUtility.DeleteFolder(dir);
-
-                // 建立目錄
-                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-
-                await UniTask.Delay(TimeSpan.FromSeconds(1), true);
-
-                // 判斷檢查目錄是否為空 (表示數據已完成清除)
-                if (BundleUtility.GetFilesRecursively(dir).Length <= 0)
-                {
-                    this._machine.ChangeState<FsmPatchPrepare>();
-                }
+                if (isCleared) this._machine.ChangeState<FsmPatchPrepare>();
+                else PatchEvents.PatchRepairFailed.SendEventMessage();
             }
         }
 
@@ -352,8 +343,6 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         return;
                     }
 
-                    // Clear package all cache files to re-download
-                    await PackageManager.GetDefaultPackage().ClearAllCacheFilesAsync();
                     this._machine.ChangeState<FsmPatchVersionUpdate>();
                     Debug.Log("<color=#ffcf67>(Repair) Repair Patch</color>");
                     return;
@@ -644,6 +633,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 downloader.OnDownloadErrorCallback = PatchEvents.PatchDownloadFailed.SendEventMessage;
                 downloader.OnDownloadProgressCallback = PatchEvents.PatchDownloadProgression.SendEventMessage;
                 downloader.BeginDownload();
+
                 await downloader;
 
                 if (downloader.Status != EOperationStatus.Succeed) return;

@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Utility;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -182,15 +183,26 @@ namespace OxGFrame.AssetLoader.Bundle
         /// Unload package and clear package files from sandbox
         /// </summary>
         /// <param name="packageName"></param>
-        public static async UniTask UnloadPackageAndClearCacheFiles(string packageName)
+        /// <returns></returns>
+        public static async UniTask<bool> UnloadPackageAndClearCacheFiles(string packageName)
         {
             var package = GetPackage(packageName);
-            if (package == null) return;
+            if (package == null) return false;
 
+            // delete local files first
             var sandboxPath = BundleConfig.GetLocalSandboxPath();
             string packagePath = Path.Combine(sandboxPath, BundleConfig.yooCacheFolderName, packageName);
             BundleUtility.DeleteFolder(packagePath);
-            await package.ClearAllCacheFilesAsync();
+
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+
+            // after clear package cache files
+            var operation = package.ClearAllCacheFilesAsync();
+            await operation;
+
+            if (operation.Status == EOperationStatus.Succeed) return true;
+
+            return false;
         }
 
         /// <summary>

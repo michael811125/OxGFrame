@@ -1,11 +1,10 @@
-﻿using Cysharp.Threading.Tasks;
-using OxGFrame.AssetLoader.Bundle;
-using System;
+﻿using OxGFrame.AssetLoader.Bundle;
 using UniFramework.Event;
 using UniFramework.Machine;
 
 namespace OxGFrame.AssetLoader.PatchEvent
 {
+    // 0. PatchRepairFailed
     // 1. PatchFsmState
     // 2. PatchGoToAppStore
     // 3. PatchAppVersionUpdateFailed
@@ -18,6 +17,18 @@ namespace OxGFrame.AssetLoader.PatchEvent
 
     public static class PatchEvents
     {
+        /// <summary>
+        /// Patch repair failed
+        /// </summary>
+        public class PatchRepairFailed : IEventMessage
+        {
+            public static void SendEventMessage()
+            {
+                var msg = new PatchRepairFailed();
+                UniEvent.SendMessage(msg);
+            }
+        }
+
         /// <summary>
         /// Patch fsm state
         /// </summary>
@@ -118,9 +129,6 @@ namespace OxGFrame.AssetLoader.PatchEvent
             public int currentDownloadCount;
             public long totalDownloadSizeBytes;
             public long currentDownloadSizeBytes;
-            public long downloadSpeedSizeBytes;
-
-            private static long _lastDownloadSizeBytes;
 
             public static void SendEventMessage(int totalDownloadCount, int currentDownloadCount, long totalDownloadSizeBytes, long currentDownloadSizeBytes)
             {
@@ -129,9 +137,7 @@ namespace OxGFrame.AssetLoader.PatchEvent
                 msg.currentDownloadCount = currentDownloadCount;
                 msg.totalDownloadSizeBytes = totalDownloadSizeBytes;
                 msg.currentDownloadSizeBytes = currentDownloadSizeBytes;
-                msg.downloadSpeedSizeBytes = msg.currentDownloadSizeBytes - _lastDownloadSizeBytes;
-                _lastDownloadSizeBytes = msg.currentDownloadSizeBytes;
-                msg.progress = currentDownloadSizeBytes * 1f / totalDownloadSizeBytes * 1f;
+                msg.progress = (msg.currentDownloadSizeBytes * 1f) / (msg.totalDownloadSizeBytes * 1f);
                 UniEvent.SendMessage(msg);
             }
         }

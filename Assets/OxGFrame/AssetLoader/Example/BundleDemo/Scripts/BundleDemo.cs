@@ -50,6 +50,7 @@ public class BundleDemo : MonoBehaviour
     #region Patch Event
     private void _InitPatchEvents()
     {
+        // 0. PatchRepairFailed
         // 1. PatchFsmState
         // 2. PatchGoToAppStore
         // 3. PatchAppVersionUpdateFailed
@@ -61,6 +62,7 @@ public class BundleDemo : MonoBehaviour
         // 9. PatchDownloadFailed
 
         #region Add PatchEvents Handle
+        this._patchEvents.AddListener<PatchEvents.PatchRepairFailed>(this._OnHandleEventMessage);
         this._patchEvents.AddListener<PatchEvents.PatchFsmState>(this._OnHandleEventMessage);
         this._patchEvents.AddListener<PatchEvents.PatchGoToAppStore>(this._OnHandleEventMessage);
         this._patchEvents.AddListener<PatchEvents.PatchAppVersionUpdateFailed>(this._OnHandleEventMessage);
@@ -75,7 +77,14 @@ public class BundleDemo : MonoBehaviour
 
     private void _OnHandleEventMessage(IEventMessage message)
     {
-        if (message is PatchEvents.PatchFsmState)
+        if (message is PatchEvents.PatchRepairFailed)
+        {
+            // Show Patch Failed Retry UI
+
+            this._retryType = 0;
+            this.ShowRetryWindow("Patch Repair Failed");
+        }
+        else if (message is PatchEvents.PatchFsmState)
         {
             // Display Patch State Msg
             #region PatchFsmState
@@ -152,7 +161,6 @@ public class BundleDemo : MonoBehaviour
 
             this._retryType = 1;
             this.ShowRetryWindow("App Version Update Failed");
-
         }
         else if (message is PatchEvents.PatchInitPatchModeFailed)
         {
@@ -185,8 +193,7 @@ public class BundleDemo : MonoBehaviour
                 $"TotalCount: {downloadInfo.totalDownloadCount}, " +
                 $"TotalSize: {BundleUtility.GetBytesToString((ulong)downloadInfo.totalDownloadSizeBytes)}, " +
                 $"CurrentCount: {downloadInfo.currentDownloadCount}, " +
-                $"CurrentSize: {BundleUtility.GetBytesToString((ulong)downloadInfo.currentDownloadSizeBytes)}, " +
-                $"Speed: {BundleUtility.GetSpeedBytesToString((ulong)downloadInfo.downloadSpeedSizeBytes)}"
+                $"CurrentSize: {BundleUtility.GetBytesToString((ulong)downloadInfo.currentDownloadSizeBytes)}"
             );
 
             this._UpdateDownloadInfo
@@ -194,7 +201,6 @@ public class BundleDemo : MonoBehaviour
                 downloadInfo.progress,
                 downloadInfo.currentDownloadCount,
                 downloadInfo.currentDownloadSizeBytes,
-                downloadInfo.downloadSpeedSizeBytes,
                 downloadInfo.totalDownloadCount,
                 downloadInfo.totalDownloadSizeBytes
             );
@@ -228,14 +234,14 @@ public class BundleDemo : MonoBehaviour
         }
     }
 
-    private void _UpdateDownloadInfo(float progress, int dlCount, long dlBytes, long dlSpeed, int totalCount, long totalBytes)
+    private void _UpdateDownloadInfo(float progress, int dlCount, long dlBytes, int totalCount, long totalBytes)
     {
         if (!this.progressGroup.activeSelf) this.progressGroup.SetActive(true);
 
         var strBuilder = new StringBuilder();
         strBuilder.Append($"Patch Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}");
         strBuilder.Append($", {dlCount} (DC) / {totalCount} (PC)");
-        strBuilder.Append($"\nDownload Size: {BundleUtility.GetBytesToString((ulong)dlBytes)}, Download Speed: {BundleUtility.GetSpeedBytesToString((ulong)dlSpeed)}");
+        strBuilder.Append($"\nCurrent Download Size: {BundleUtility.GetBytesToString((ulong)dlBytes)}");
         this.info.text = strBuilder.ToString();
 
         this.progress.size = progress;
@@ -292,14 +298,21 @@ public class BundleDemo : MonoBehaviour
         #region Retry Event
         switch (this._retryType)
         {
+            case 0:
+                // Add send event in Retry UI (click event)
+                UserEvents.UserTryPatchRepair.SendEventMessage();
+                break;
+
             case 1:
                 // Add send event in Retry UI (click event)
                 UserEvents.UserTryAppVersionUpdate.SendEventMessage();
                 break;
+
             case 2:
                 // Add send event in Retry UI (click event)
                 UserEvents.UserTryInitPatchMode.SendEventMessage();
                 break;
+
             case 3:
                 // Add send event in Retry UI (click event)
                 UserEvents.UserTryPatchVersionUpdate.SendEventMessage();
@@ -369,6 +382,7 @@ public class BundleDemo : MonoBehaviour
                 }
             }
 
+            // only after active = true will affect
             LayoutRebuilder.ForceRebuildLayoutImmediate(this.confirmWindow.transform.Find("bg").GetComponent<RectTransform>());
         }
     }
@@ -379,6 +393,9 @@ public class BundleDemo : MonoBehaviour
         label.text = msg;
 
         if (!this.retryWindow.activeSelf) this.retryWindow.SetActive(true);
+
+        // only after active = true will affect
+        LayoutRebuilder.ForceRebuildLayoutImmediate(this.retryWindow.transform.Find("bg").GetComponent<RectTransform>());
     }
 
     public void ShowRepairWindow()

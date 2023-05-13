@@ -102,6 +102,7 @@ namespace OxGFrame.AssetLoader.Bundle
 #endif
 
             // 註冊 UserEvents 監聽事件
+            this._userEvents.AddListener<UserEvents.UserTryPatchRepair>(this._OnHandleEventMessage);
             this._userEvents.AddListener<UserEvents.UserTryAppVersionUpdate>(this._OnHandleEventMessage);
             this._userEvents.AddListener<UserEvents.UserTryInitPatchMode>(this._OnHandleEventMessage);
             this._userEvents.AddListener<UserEvents.UserBeginDownload>(this._OnHandleEventMessage);
@@ -226,7 +227,11 @@ namespace OxGFrame.AssetLoader.Bundle
         #region User Event Handle
         private void _OnHandleEventMessage(IEventMessage message)
         {
-            if (message is UserEvents.UserTryAppVersionUpdate)
+            if (message is UserEvents.UserTryPatchRepair)
+            {
+                this._patchFsm.ChangeState<PatchFsmStates.FsmPatchRepair>();
+            }
+            else if (message is UserEvents.UserTryAppVersionUpdate)
             {
                 this._patchFsm.ChangeState<PatchFsmStates.FsmAppVersionUpdate>();
             }

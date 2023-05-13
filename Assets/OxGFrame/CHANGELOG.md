@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.1.3] - 2023-05-13
+- Modified patch repair procedure (the repair only delete main default package cache files and local files).
+- Modified UnloadPackageAndClearCacheFiles() method has return value (true = Successed, false = Failed).
+- Added retry patch repair events (PatchEvents and UserEvents).
+
 ## [2.1.2] - 2023-05-13
 - Added UI supports **Reverse Changes** feature (can auto hide last UI and show back).
 - Added InitInstance() method for CoreFrames and MediaFrames.

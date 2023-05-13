@@ -3,6 +3,7 @@ using UniFramework.Event;
 
 namespace OxGFrame.AssetLoader.PatchEvent
 {
+    // 0. UserTryPatchRepair
     // 1. UserTryAppVersionUpdate
     // 2. UserTryInitPatchMode
     // 3. UserBeginDownload
@@ -12,6 +13,18 @@ namespace OxGFrame.AssetLoader.PatchEvent
 
     public class UserEvents
     {
+        /// <summary>
+        /// User retry patch repair again
+        /// </summary>
+        public class UserTryPatchRepair : IEventMessage
+        {
+            public static void SendEventMessage()
+            {
+                var msg = new UserTryPatchRepair();
+                UniEvent.SendMessage(msg);
+            }
+        }
+
         /// <summary>
         /// User retry update app verison again
         /// </summary>
