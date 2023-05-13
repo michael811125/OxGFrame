@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="545" height="215" src="Docs/OxGFrame_Logo.png">
+  <img width="384" height="384" src="Docs/OxGFrame_Logo_v2.png">
 </p>
 
 ---
