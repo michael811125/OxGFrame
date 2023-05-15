@@ -14,6 +14,7 @@ namespace OxGFrame.AssetLoader.PatchEvent
     // 7. PatchCreateDownloader
     // 8. PatchDownloadProgression
     // 9. PatchDownloadFailed
+    // 10. PatchDownloadCanceled
 
     public static class PatchEvents
     {
@@ -129,14 +130,16 @@ namespace OxGFrame.AssetLoader.PatchEvent
             public int currentDownloadCount;
             public long totalDownloadSizeBytes;
             public long currentDownloadSizeBytes;
+            public long downloadSpeedBytes;
 
-            public static void SendEventMessage(int totalDownloadCount, int currentDownloadCount, long totalDownloadSizeBytes, long currentDownloadSizeBytes)
+            public static void SendEventMessage(int totalDownloadCount, int currentDownloadCount, long totalDownloadSizeBytes, long currentDownloadSizeBytes, long downloadSpeedBytes)
             {
                 var msg = new PatchDownloadProgression();
                 msg.totalDownloadCount = totalDownloadCount;
                 msg.currentDownloadCount = currentDownloadCount;
                 msg.totalDownloadSizeBytes = totalDownloadSizeBytes;
                 msg.currentDownloadSizeBytes = currentDownloadSizeBytes;
+                msg.downloadSpeedBytes = downloadSpeedBytes;
                 msg.progress = (msg.currentDownloadSizeBytes * 1f) / (msg.totalDownloadSizeBytes * 1f);
                 UniEvent.SendMessage(msg);
             }
@@ -155,6 +158,18 @@ namespace OxGFrame.AssetLoader.PatchEvent
                 var msg = new PatchDownloadFailed();
                 msg.fileName = fileName;
                 msg.error = error;
+                UniEvent.SendMessage(msg);
+            }
+        }
+
+        /// <summary>
+        /// Download canceled
+        /// </summary>
+        public class PatchDownloadCanceled : IEventMessage
+        {
+            public static void SendEventMessage()
+            {
+                var msg = new PatchDownloadCanceled();
                 UniEvent.SendMessage(msg);
             }
         }

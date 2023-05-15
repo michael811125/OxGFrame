@@ -171,7 +171,7 @@ namespace OxGFrame.Utility.Timer
         }
 
         /// <summary>
-        /// Tick觸發時間倒數, 如果超過設置的觸發時間將直接返回 0
+        /// Tick 觸發時間倒數, 如果超過設置的觸發時間將直接返回 0
         /// </summary>
         /// <returns></returns>
         public float TickCountdown()

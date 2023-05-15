@@ -1,6 +1,7 @@
 ﻿using MyBox;
 using System.Collections.Generic;
 using UnityEngine;
+using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
@@ -23,6 +24,8 @@ namespace OxGFrame.AssetLoader.Bundle
         [Header("Download Options")]
         public int maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
         public int failedRetryCount = BundleConfig.failedRetryCount;
+        [Tooltip("If file size >= [BreakpointFileSizeThreshold] that file will enable breakpoint mechanism (for all downloaders)")]
+        public int breakpointFileSizeThreshold = 20 << 20;
 
         [Header("Cryptogram Options")]
         [Tooltip("AssetBundle decrypt key. \n[NONE], \n[OFFSET, dummySize], \n[XOR, key], \n[HTXOR, headKey, tailKey], \n[AES, key, iv] \nex: \n\"None\" \n\"offset, 12\" \n\"xor, 23\" \n\"htxor, 34, 45\" \n\"aes, key, iv\"")]
@@ -41,23 +44,29 @@ namespace OxGFrame.AssetLoader.Bundle
             }
             else DontDestroyOnLoad(this.gameObject.transform.root);
 
-            // Patch Options
+            #region Patch Options
             BundleConfig.playMode = this.playMode;
             if (this.playMode == BundleConfig.PlayMode.HostMode)
             {
                 BundleConfig.semanticRule = this.semanticRule;
                 BundleConfig.skipCreateMainDownloder = this.skipCreateMainDownloder;
             }
+            #endregion
 
-            // Package List
+            #region Package List
             BundleConfig.listPackage = this.listPackage;
+            #endregion
 
-            // Download Options
+            #region Download Options
             BundleConfig.maxConcurrencyDownloadCount = this.maxConcurrencyDownloadCount <= 0 ? BundleConfig.defaultMaxConcurrencyDownloadCount : this.maxConcurrencyDownloadCount;
             BundleConfig.failedRetryCount = this.failedRetryCount <= 0 ? BundleConfig.defaultFailedRetryCount : this.failedRetryCount;
+            // Set download breakpoint size threshold
+            YooAssets.SetDownloadSystemBreakpointResumeFileSize(this.breakpointFileSizeThreshold);
+            #endregion
 
-            // Cryptogram Options
+            #region Cryptogram Options
             BundleConfig.InitCryptogram(string.IsNullOrEmpty(this.decryptArgs) ? BundleConfig.CryptogramType.NONE : this.decryptArgs);
+            #endregion
 
             // Init Settings
             PackageManager.InitSetup();

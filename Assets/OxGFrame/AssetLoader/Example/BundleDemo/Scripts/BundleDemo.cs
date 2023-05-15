@@ -60,6 +60,7 @@ public class BundleDemo : MonoBehaviour
         // 7. PatchVersionUpdateFailed
         // 8. PatchManifestUpdateFailed
         // 9. PatchDownloadFailed
+        // 10. PatchDownloadCanceled
 
         #region Add PatchEvents Handle
         this._patchEvents.AddListener<PatchEvents.PatchRepairFailed>(this._OnHandleEventMessage);
@@ -72,6 +73,7 @@ public class BundleDemo : MonoBehaviour
         this._patchEvents.AddListener<PatchEvents.PatchVersionUpdateFailed>(this._OnHandleEventMessage);
         this._patchEvents.AddListener<PatchEvents.PatchManifestUpdateFailed>(this._OnHandleEventMessage);
         this._patchEvents.AddListener<PatchEvents.PatchDownloadFailed>(this._OnHandleEventMessage);
+        this._patchEvents.AddListener<PatchEvents.PatchDownloadCanceled>(this._OnHandleEventMessage);
         #endregion
     }
 
@@ -121,7 +123,7 @@ public class BundleDemo : MonoBehaviour
                 case PatchFsmStates.FsmBeginDownload:
                     this.msg.text = "Begin Download Files";
                     if (!this.progressGroup.activeSelf) this.progressGroup.SetActive(true);
-                    if (!this.downloadBtns.activeSelf) this.downloadBtns.SetActive(true);
+                    //if (!this.downloadBtns.activeSelf) this.downloadBtns.SetActive(true);
                     break;
                 case PatchFsmStates.FsmDownloadOver:
                     this.msg.text = "Download Over";
@@ -193,7 +195,8 @@ public class BundleDemo : MonoBehaviour
                 $"TotalCount: {downloadInfo.totalDownloadCount}, " +
                 $"TotalSize: {BundleUtility.GetBytesToString((ulong)downloadInfo.totalDownloadSizeBytes)}, " +
                 $"CurrentCount: {downloadInfo.currentDownloadCount}, " +
-                $"CurrentSize: {BundleUtility.GetBytesToString((ulong)downloadInfo.currentDownloadSizeBytes)}"
+                $"CurrentSize: {BundleUtility.GetBytesToString((ulong)downloadInfo.currentDownloadSizeBytes)}" +
+                $"DownloadSpeed: {BundleUtility.GetSpeedBytesToString((ulong)downloadInfo.downloadSpeedBytes)}"
             );
 
             this._UpdateDownloadInfo
@@ -202,7 +205,8 @@ public class BundleDemo : MonoBehaviour
                 downloadInfo.currentDownloadCount,
                 downloadInfo.currentDownloadSizeBytes,
                 downloadInfo.totalDownloadCount,
-                downloadInfo.totalDownloadSizeBytes
+                downloadInfo.totalDownloadSizeBytes,
+                downloadInfo.downloadSpeedBytes
             );
             #endregion
         }
@@ -228,20 +232,27 @@ public class BundleDemo : MonoBehaviour
             this._retryType = 5;
             this.ShowRetryWindow("Patch Download Failed");
         }
+        else if (message is PatchEvents.PatchDownloadCanceled)
+        {
+            // Show Patch Download Canceled Retry UI
+
+            this._retryType = 5;
+            this.ShowRetryWindow("Patch Download Canceled");
+        }
         else
         {
             throw new System.NotImplementedException($"{message.GetType()}");
         }
     }
 
-    private void _UpdateDownloadInfo(float progress, int dlCount, long dlBytes, int totalCount, long totalBytes)
+    private void _UpdateDownloadInfo(float progress, int dlCount, long dlBytes, int totalCount, long totalBytes, long dlSpeedBytes)
     {
         if (!this.progressGroup.activeSelf) this.progressGroup.SetActive(true);
 
         var strBuilder = new StringBuilder();
         strBuilder.Append($"Patch Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}");
         strBuilder.Append($", {dlCount} (DC) / {totalCount} (PC)");
-        strBuilder.Append($"\nCurrent Download Size: {BundleUtility.GetBytesToString((ulong)dlBytes)}");
+        strBuilder.Append($"\nCurrent Download Size: {BundleUtility.GetBytesToString((ulong)dlBytes)}, Download Speed: {BundleUtility.GetSpeedBytesToString((ulong)dlSpeedBytes)}");
         this.info.text = strBuilder.ToString();
 
         this.progress.size = progress;

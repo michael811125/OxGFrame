@@ -631,7 +631,9 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 ResourceDownloaderOperation downloader = PatchManager.GetInstance().mainDownloader;
 
                 downloader.OnDownloadErrorCallback = PatchEvents.PatchDownloadFailed.SendEventMessage;
-                downloader.OnDownloadProgressCallback = PatchEvents.PatchDownloadProgression.SendEventMessage;
+                var downloadSpeedCalculator = new DownloadSpeedCalculator();
+                downloader.OnDownloadProgressCallback = downloadSpeedCalculator.OnDownloadProgress;
+                downloadSpeedCalculator.onDownloadSpeedProgress = PatchEvents.PatchDownloadProgression.SendEventMessage;
                 downloader.BeginDownload();
 
                 await downloader;

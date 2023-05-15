@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## [2.1.4] - 2023-05-15
+- Added DownloadSpeedCalculator (using OxGFrame.AssetLoader.Utility).
+```
+var packageName = "DlcPackage";
+bool isInitialized = await AssetPatcher.InitDlcPackage(packageName, "dlcVersion", true);
+if (isInitialized)
+{
+    var package = AssetPatcher.GetPackage(packageName);
+    var downloader = AssetPatcher.GetPackageDownloader(package);
+    // Create a DownloadSpeedCalculator to helps calculate download speed
+    var downloadSpeedCalculator = new DownloadSpeedCalculator();
+    downloader.OnDownloadProgressCallback = downloadSpeedCalculator.OnDownloadProgress;
+    downloadSpeedCalculator.onDownloadSpeedProgress = (totalCount, currentCount, totalBytes, currentBytes, speedBytes) =>
+    {
+        /*
+         * Display download info
+         */
+    };
+}
+```
+- Added BeakpointFileSizeThreshold on PatchLauncher (default is 20 MB).
+
 ## [2.1.3] - 2023-05-13
 - Modified patch repair procedure (the repair only delete main default package cache files and local files).
 - Modified UnloadPackageAndClearCacheFiles() method has return value (true = Successed, false = Failed).

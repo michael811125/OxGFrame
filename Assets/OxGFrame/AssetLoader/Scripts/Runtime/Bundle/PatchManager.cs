@@ -180,6 +180,8 @@ namespace OxGFrame.AssetLoader.Bundle
         public void Cancel()
         {
             this.mainDownloader?.CancelDownload();
+            // temp canceled callback in here
+            PatchEvents.PatchDownloadCanceled.SendEventMessage();
         }
         #endregion
 
