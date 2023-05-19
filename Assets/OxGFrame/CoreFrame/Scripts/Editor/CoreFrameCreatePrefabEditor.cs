@@ -72,13 +72,13 @@ namespace OxGFrame.CoreFrame.Editor
                 return Path.GetDirectoryName(path);
         }
 
-        [MenuItem("Assets/Create/OxGFrame/CoreFrame/GSFrame/TplPrefabs/TplGS (Game Scene Prefab)", isValidateFunction: false, priority: 51)]
+        [MenuItem("Assets/Create/OxGFrame/CoreFrame/GSFrame/Template Prefabs/Template GS (Game Scene Prefab)", isValidateFunction: false, priority: 51)]
         public static void CreateTplGS()
         {
             CreatePrefabAsset("NewTplGS", ScriptableObject.CreateInstance<DoCreatePrefabAsset>());
         }
 
-        [MenuItem("Assets/Create/OxGFrame/CoreFrame/UIFrame/TplPrefabs/TplUI (UGUI Prefab)", isValidateFunction: false, priority: 51)]
+        [MenuItem("Assets/Create/OxGFrame/CoreFrame/UIFrame/Template Prefabs/Template UI (UGUI Prefab)", isValidateFunction: false, priority: 51)]
         public static void CreateTplUI()
         {
             CreatePrefabAsset("NewTplUI", ScriptableObject.CreateInstance<DoCreateUIPrefabAsset>());

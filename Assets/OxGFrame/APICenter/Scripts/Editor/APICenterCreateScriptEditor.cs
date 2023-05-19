@@ -18,7 +18,7 @@ namespace OxGFrame.APICenter.Editor
         }
 
         #region APICenter Script Create
-        [MenuItem(itemName: "Assets/Create/OxGFrame/APICenter/TplScripts/TplAPI.cs (API)", isValidateFunction: false, priority: 51)]
+        [MenuItem(itemName: "Assets/Create/OxGFrame/APICenter/Template Scripts/Template API.cs (API)", isValidateFunction: false, priority: 51)]
         public static void CreateScriptTplAPIBase()
         {
             string currentPath = pathFinder;
@@ -27,7 +27,7 @@ namespace OxGFrame.APICenter.Editor
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplAPI.cs");
         }
 
-        [MenuItem(itemName: "Assets/Create/OxGFrame/APICenter/TplScripts/TplAPICenter.cs (API Center Manager)", isValidateFunction: false, priority: 51)]
+        [MenuItem(itemName: "Assets/Create/OxGFrame/APICenter/Template Scripts/Template APICenter.cs (API Center Manager)", isValidateFunction: false, priority: 51)]
         public static void CreateScriptTplAPICenter()
         {
             string currentPath = pathFinder;
