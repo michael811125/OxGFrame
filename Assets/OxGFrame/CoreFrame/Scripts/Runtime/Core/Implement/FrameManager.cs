@@ -621,7 +621,7 @@ namespace OxGFrame.CoreFrame
         }
     }
 
-    public static class GameObjectExtensions
+    internal static class GameObjectExtensions
     {
         /// <summary>
         /// Checks if a GameObject has been destroyed.

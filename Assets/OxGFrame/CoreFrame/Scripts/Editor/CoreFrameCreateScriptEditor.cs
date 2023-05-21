@@ -24,7 +24,7 @@ namespace OxGFrame.CoreFrame.Editor
         }
 
         #region GSFrame Script Create
-        [MenuItem(itemName: "Assets/Create/OxGFrame/CoreFrame/GSFrame/Template Scripts/Template GS.cs (For Game Scene Prefab)", isValidateFunction: false, priority: 51)]
+        [MenuItem(itemName: "Assets/Create/OxGFrame/Core Frame/GS Frame/Template Scripts/Template GS.cs (For Game Scene Prefab)", isValidateFunction: false, priority: 51)]
         public static void CreateScriptTplGS()
         {
             string currentPath = pathFinder;
@@ -35,7 +35,7 @@ namespace OxGFrame.CoreFrame.Editor
         #endregion
 
         #region UIFrame Script Create
-        [MenuItem(itemName: "Assets/Create/OxGFrame/CoreFrame/UIFrame/Template Scripts/Template UI.cs (For UGUI Prefab)", isValidateFunction: false, priority: 51)]
+        [MenuItem(itemName: "Assets/Create/OxGFrame/Core Frame/UI Frame/Template Scripts/Template UI.cs (For UGUI Prefab)", isValidateFunction: false, priority: 51)]
         public static void CreateScriptTplUI()
         {
             string currentPath = pathFinder;
@@ -46,7 +46,7 @@ namespace OxGFrame.CoreFrame.Editor
         #endregion
 
         #region EPFrame Script Create
-        [MenuItem(itemName: "Assets/Create/OxGFrame/CoreFrame/EPFrame/Template Scripts/Template EP.cs (For Entity Prefab)", isValidateFunction: false, priority: 51)]
+        [MenuItem(itemName: "Assets/Create/OxGFrame/Core Frame/EP Frame/Template Scripts/Template EP.cs (For Entity Prefab)", isValidateFunction: false, priority: 51)]
         public static void CreateScriptTplEP()
         {
             string currentPath = pathFinder;

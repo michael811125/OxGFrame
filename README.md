@@ -200,7 +200,7 @@ Init Order : OnInit (Once) > OnBind (Once) > OpenSub (EveryOpen) > OnShow (Every
 
 **如果沒有要使用 CoreFrame 核心製作模塊，可以直接刪除整個 CoreFrame。**
 
-※備註 : Right-Click Create/OxGFrame/CoreFrame... (Template cs and prefab)
+※備註 : Right-Click Create/OxGFrame/Core Frame... (Template cs and prefab)
 
 ---
 
@@ -255,7 +255,7 @@ video_urlset 127.0.0.1/video/
 
 **如果沒有要使用 GSIFrame 遊戲整合模塊，可以直接刪除整個 GSIFrame。**
 
-※備註 : Right-Click Create/OxGFrame/GSIFrame... (Template cs)
+※備註 : Right-Click Create/OxGFrame/GSI Frame... (Template cs)
 
 ---
 
@@ -283,7 +283,7 @@ video_urlset 127.0.0.1/video/
   
 **如果沒有要使用 EventCenter 事件模塊，可以直接刪除整個 EventCenter。**
   
-※備註 : Right-Click Create/OxGFrame/EventCenter... (Template cs)
+※備註 : Right-Click Create/OxGFrame/Event Center... (Template cs)
 
 ---
 
@@ -298,7 +298,7 @@ video_urlset 127.0.0.1/video/
 
 **如果沒有要使用 APICenter 短連接請求模塊，可以直接刪除整個 APICenter。**
 
-※備註 : Right-Click Create/OxGFrame/APICenter... (Template cs)
+※備註 : Right-Click Create/OxGFrame/API Center... (Template cs)
 
 ---
 
@@ -314,7 +314,7 @@ video_urlset 127.0.0.1/video/
   - Pool => NodePool (GameObject Pool)
   - ButtonPlus => Inherited by Unity Button. extend Long Press and Transition Scale
   - UMT => Unity Main Thread
-    - ※備註 : 需先拖曳 UnityMainThread Prefab 至場景上 (由 Monobehaviour 主線程驅動)。
+    - ※備註 : 需先拖曳 UnityMainThread Prefab 至場景上 (由 MonoBehaviour 主線程驅動)。
 
 **如果沒有要使用 Utility 通用組件，可以直接刪除整個 Utility (注意有模塊依賴引用)。**
 

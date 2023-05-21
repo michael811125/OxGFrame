@@ -111,25 +111,25 @@ namespace OxGFrame.MediaFrame.Editor
                 return Path.GetDirectoryName(path);
         }
 
-        [MenuItem("Assets/Create/OxGFrame/MediaFrame/Audio/Template Prefabs/Template Audio Sole (Sole Audio Prefab)", isValidateFunction: false, priority: 51)]
+        [MenuItem("Assets/Create/OxGFrame/Media Frame/Audio/Template Prefabs/Template Audio Sole (Sole Audio Prefab)", isValidateFunction: false, priority: 51)]
         public static void CreateTplAudioSole()
         {
             CreatePrefabAsset("NewTplAudioSole", ScriptableObject.CreateInstance<DoCreateAudioSolePrefabAsset>());
         }
 
-        [MenuItem("Assets/Create/OxGFrame/MediaFrame/Audio/Template Prefabs/Template Audio SoundEffect (SoundEffect Audio Prefab)", isValidateFunction: false, priority: 51)]
+        [MenuItem("Assets/Create/OxGFrame/Media Frame/Audio/Template Prefabs/Template Audio SoundEffect (SoundEffect Audio Prefab)", isValidateFunction: false, priority: 51)]
         public static void CreateTplAudioSoundEffect()
         {
             CreatePrefabAsset("NewTplAudioSoundEffect", ScriptableObject.CreateInstance<DoCreateAudioSoundEffectPrefabAsset>());
         }
 
-        [MenuItem("Assets/Create/OxGFrame/MediaFrame/Video/Template Prefabs/Template Video RenderTexture (RenderTexture Video Prefab)", isValidateFunction: false, priority: 51)]
+        [MenuItem("Assets/Create/OxGFrame/Media Frame/Video/Template Prefabs/Template Video RenderTexture (RenderTexture Video Prefab)", isValidateFunction: false, priority: 51)]
         public static void CreateTplVideoRenderTexture()
         {
             CreatePrefabAsset("NewTplVideoRenderTexture", ScriptableObject.CreateInstance<DoCreateVideoRenderTexturePrefabAsset>());
         }
 
-        [MenuItem("Assets/Create/OxGFrame/MediaFrame/Video/Template Prefabs/Template Video Camera (Camera Video Prefab)", isValidateFunction: false, priority: 51)]
+        [MenuItem("Assets/Create/OxGFrame/Media Frame/Video/Template Prefabs/Template Video Camera (Camera Video Prefab)", isValidateFunction: false, priority: 51)]
         public static void CreateTplVideoCamera()
         {
             CreatePrefabAsset("NewTplVideoCamera", ScriptableObject.CreateInstance<DoCreateVideoCameraPrefabAsset>());

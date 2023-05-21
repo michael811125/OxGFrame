@@ -19,7 +19,7 @@ namespace OxGFrame.EventCenter.Editor
         }
 
         #region EventCenter Script Create
-        [MenuItem(itemName: "Assets/Create/OxGFrame/EventCenter/Template Scripts/Template Event.cs (Event)", isValidateFunction: false, priority: 51)]
+        [MenuItem(itemName: "Assets/Create/OxGFrame/Event Center/Template Scripts/Template Event.cs (Event)", isValidateFunction: false, priority: 51)]
         public static void CreateScriptTplEventBase()
         {
             string currentPath = pathFinder;
@@ -28,7 +28,7 @@ namespace OxGFrame.EventCenter.Editor
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplEvent.cs");
         }
 
-        [MenuItem(itemName: "Assets/Create/OxGFrame/EventCenter/Template Scripts/Template EventCenter.cs (Event Center Manager)", isValidateFunction: false, priority: 51)]
+        [MenuItem(itemName: "Assets/Create/OxGFrame/Event Center/Template Scripts/Template EventCenter.cs (Event Center Manager)", isValidateFunction: false, priority: 51)]
         public static void CreateScriptTplEventCenter()
         {
             string currentPath = pathFinder;
