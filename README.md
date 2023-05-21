@@ -17,6 +17,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 [Roadmap wiki](https://github.com/michael811125/OxGFrame/wiki/Roadmap)
 
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_2.png)
+
 ---
 
 ## 需先安裝 (Install via git)
@@ -242,7 +244,7 @@ video_urlset 127.0.0.1/video/
 
 **如果沒有要使用 MediaFrame 影音模塊，可以直接刪除整個 MediaFrame。**
 
-※備註 : Right-Click Create/OxGFrame/MediaFrame... (Template prefab)
+※備註 : Right-Click Create/OxGFrame/Media Frame... (Template prefab)
 
 ---
 
