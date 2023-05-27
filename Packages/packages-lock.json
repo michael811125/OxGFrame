@@ -72,7 +72,7 @@
       "dependencies": {}
     },
     "com.unity.burst": {
-      "version": "1.8.2",
+      "version": "1.8.4",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -154,7 +154,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
-      "version": "3.1.0",
+      "version": "3.2.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -176,7 +176,7 @@
       "source": "builtin",
       "dependencies": {
         "com.unity.mathematics": "1.2.1",
-        "com.unity.burst": "1.8.2",
+        "com.unity.burst": "1.8.4",
         "com.unity.render-pipelines.core": "12.1.11",
         "com.unity.shadergraph": "12.1.11"
       }
