@@ -1,11 +1,12 @@
 {
-    "name": "Utilities.Runtime",
+    "name": "OxGFrame.GameFrame.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:f51ebe6a0ceec4240a699833d6309b23",
-        "GUID:48c9f6afdac61634db0e0f241c7d4d51"
+        "GUID:ece7467d68eab7a449913173f8960045"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

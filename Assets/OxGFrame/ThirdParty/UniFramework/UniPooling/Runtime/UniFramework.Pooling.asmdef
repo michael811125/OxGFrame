@@ -1,17 +1,12 @@
 {
-    "name": "AssetLoader.Editor",
+    "name": "UniFramework.Pooling",
     "rootNamespace": "",
     "references": [
-        "AssetLoader.Runtime",
-        "UniTask",
-        "YooAsset",
-        "YooAsset.Editor"
+        "GUID:e34a5702dd353724aa315fb8011f08c3"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,

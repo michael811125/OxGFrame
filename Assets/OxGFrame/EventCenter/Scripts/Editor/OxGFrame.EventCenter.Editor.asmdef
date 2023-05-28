@@ -1,10 +1,12 @@
 {
-    "name": "GameFrame.Runtime",
+    "name": "OxGFrame.EventCenter.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+        "GUID:3229d6f64a154e4418e365e22f933384"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

@@ -1,12 +1,12 @@
 {
-    "name": "NetFrame.Runtime",
+    "name": "OxGFrame.CoreFrame.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:f51ebe6a0ceec4240a699833d6309b23",
-        "GUID:8b65d8710c3b04373a41cbf6b777ee65",
-        "GUID:f3b8d4b152174ca47b578c325544e581"
+        "GUID:37d0f7f3cce4b0a4994bb1bbbc9d330e"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

@@ -1,8 +1,8 @@
 {
-    "name": "CoreFrame.Editor",
+    "name": "OxGFrame.Utility.Editor",
     "rootNamespace": "",
     "references": [
-        "CoreFrame.Runtime"
+        "GUID:f3b8d4b152174ca47b578c325544e581"
     ],
     "includePlatforms": [
         "Editor"

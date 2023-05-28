@@ -1,8 +1,8 @@
 {
-    "name": "GameFrame.Editor",
+    "name": "OxGFrame.APICenter.Editor",
     "rootNamespace": "",
     "references": [
-        "GameFrame.Runtime"
+        "GUID:7fe5b75265835b446807c9c2bbc8d23c"
     ],
     "includePlatforms": [
         "Editor"

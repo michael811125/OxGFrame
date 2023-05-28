@@ -1,8 +1,12 @@
 {
-    "name": "EventCenter.Runtime",
+    "name": "OxGFrame.AssetLoader.Runtime",
     "rootNamespace": "",
     "references": [
-        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:e34a5702dd353724aa315fb8011f08c3",
+        "GUID:f22fac247a56d2d41b687bb0d900e54e",
+        "GUID:c55575a9f1747c240822f4b7e0400716",
+        "GUID:48c9f6afdac61634db0e0f241c7d4d51"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

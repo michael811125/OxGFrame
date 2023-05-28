@@ -1,14 +1,15 @@
 {
-    "name": "AssetLoader.Runtime",
+    "name": "OxGFrame.AssetLoader.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:f51ebe6a0ceec4240a699833d6309b23",
         "GUID:e34a5702dd353724aa315fb8011f08c3",
-        "GUID:f22fac247a56d2d41b687bb0d900e54e",
-        "GUID:c55575a9f1747c240822f4b7e0400716",
-        "GUID:48c9f6afdac61634db0e0f241c7d4d51"
+        "GUID:4d1926c9df5b052469a1c63448b7609a",
+        "GUID:02b9a6f6b4dfd0b42b1b13bae3b89abf"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

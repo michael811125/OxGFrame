@@ -1,12 +1,12 @@
 {
-    "name": "APICenter.Editor",
+    "name": "OxGFrame.CoreFrame.Runtime",
     "rootNamespace": "",
     "references": [
-        "APICenter.Runtime"
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:02b9a6f6b4dfd0b42b1b13bae3b89abf",
+        "GUID:48c9f6afdac61634db0e0f241c7d4d51"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

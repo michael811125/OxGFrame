@@ -1,8 +1,9 @@
 {
-    "name": "NetFrame.Editor",
+    "name": "OxGFrame.MediaFrame.Editor",
     "rootNamespace": "",
     "references": [
-        "NetFrame.Runtime"
+        "GUID:92f995b379f3fa34caef3c6147971e38",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
     ],
     "includePlatforms": [
         "Editor"
