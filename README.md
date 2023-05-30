@@ -16,6 +16,8 @@
 ### 1. 透過 Package Manager 安裝 (Install via git)
 Add https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame to Package Manager.
 	
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_3.png)
+	
 ### 2. 透過 Github 下載 (Code Download ZIP)
 Copy Assets/OxGFrame to Unity New Project.
 
