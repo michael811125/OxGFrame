@@ -6,8 +6,28 @@
 
 ---
 
-## 新版 OxGFrame 安裝
-將舊版 2 以下的 OxGFrame 全部移除，並且重新串接新版的接口。
+## 安裝 OxGFrame
+
+#### Install via git (Package Manager)
+Add https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame to Package Manager.
+| **Auto install dependencies** |
+|:-|
+| [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox) |
+| [HybirdCLR v2.4.2 or higher](https://github.com/focus-creative-games/hybridclr) (革命性的程式熱更新方案) **特別推薦** |
+	 
+#### Code/Download ZIP
+Copy Assets/OxGFrame to Unity New Project.
+| **Manual install dependencies** |
+|:-|
+| [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox), Add https://github.com/Deadcows/MyBox.git to Package Manager|
+| [HybirdCLR v2.4.2 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
+
+※備註 : 如果沒有要自行更改框架的需求，建議直接使用 Package Manager 方式安裝。
+
+---
+
+## 舊版本更新 OxGFrame 注意
+將舊版 2 以下的 OxGFrame 全部移除，重新安裝 OxGFrame，並且重新串接新版的接口。
 
 ---
 
@@ -21,24 +41,15 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 ---
 
-## 需先安裝 (Install via git)
-- Install from Package Manager [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox)
-
----
-
 ## 第三方庫 (內建)
+
+### Main-ThirdParty
 - 使用 [UnitTask v2.3.3](https://github.com/Cysharp/UniTask) (最佳異步處理方案)
+- **特別推薦** 使用部分 [UniFramework](https://github.com/gmhevinci/UniFramework) (輕量級框架)
 
-※備註 : 會持續更新內建第三方庫。
-
----
-
-## 特別推薦 (內建)
-
-- 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案)
-- 使用 [YooAsset v1.4.13](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案)
-- 使用部分 [UniFramework](https://github.com/gmhevinci/UniFramework) (輕量級框架)
-- TODO (待整合) [HybirdCLR](https://github.com/focus-creative-games/hybridclr) (革命性的程式熱更新方案)
+### Sub-ThirdParty
+- **特別推薦** 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案)
+- **特別推薦** 使用 [YooAsset v1.4.14](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案)
 
 ※備註 : 會持續更新內建第三方庫。
 
@@ -75,7 +86,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 ※提醒 : 如果要使用同步加載，資源一定要是事先下載完成的 (主要是資源不在本地時，請求下載部分是異步處理)，也提醒同步加載只適合小資源 (當然強烈建議全部都使用異步處理)。
 
-**選擇使用 Bundle 開發時，需要先將 PatchLauncher 拖曳至場景中，才能驅動相關配置。**
+**選擇使用 Bundle 開發時，需要先將 PatchLauncher 拖曳至場景中，才能驅動相關配置。【如果透過 PakcageManager 安裝的，透過 Samples Import】**
 
 - FileCryptogram (檔案加解密)
   - 運算效率 HTXOR ~= OFFSET > XOR > AES
@@ -210,8 +221,8 @@ Init Order : OnInit (Once) > OnBind (Once) > OpenSub (EveryOpen) > OnShow (Every
 
 影音模塊 (連動 AssetLoader 實現自動卸載)，包含用於製作 Audio (2D/3D), Video 遊戲影音，支援多平台加載方式 (Local, StreamingAssets, URL)，主要也對於 WebGL 有進行細節校正，因為 WebGL 對於 Audio 請求部分是無法取得正確長度 (官方放棄修正)，導致音訊控制會有部分缺陷，所以支援預置體製作時，可進行 Preload 請求 Clip 長度進行預設置。
 
-- AudioFrame : 使用 AudioManager 管理掛載 AudioBase 的 Prefab，且採用 Unity Mixer 進行各音軌控制 **(需先將 AudioManager 預置體拖至場景)**
-- VideoFrame : 使用 VideoManager 管理掛載 VideoBase 的 Prefab，且支援 RenderTexture, Camera
+- AudioFrame : 使用 AudioManager 管理掛載 AudioBase 的 Prefab，且採用 Unity Mixer 進行各音軌控制。 **(需先將 AudioManager 預置體拖至場景)【如果透過 PakcageManager 安裝的，透過 Samples Import】**
+- VideoFrame : 使用 VideoManager 管理掛載 VideoBase 的 Prefab，且支援 RenderTexture, Camera。
 
 #### Audio Sound Type 說明
 - Sole : 唯一性 (不能重複播放)，建議種類為 BGM (背景音樂), Voice (配音) 等。
@@ -316,7 +327,8 @@ video_urlset 127.0.0.1/video/
   - Pool => NodePool (GameObject Pool)
   - ButtonPlus => Inherited by Unity Button. extend Long Press and Transition Scale
   - UMT => Unity Main Thread
-    - ※備註 : 需先拖曳 UnityMainThread Prefab 至場景上 (由 MonoBehaviour 主線程驅動)。
+    - ※備註 : 新建一個 GameObject，再掛上 UnityMainThread 腳本 (由 MonoBehaviour 主線程驅動)。
+  - Singleton => MonoSingleton (MonoBehaviour), NewSingleton (class)
 
 **如果沒有要使用 Utility 通用組件，可以直接刪除整個 Utility (注意有模塊依賴引用)。**
 

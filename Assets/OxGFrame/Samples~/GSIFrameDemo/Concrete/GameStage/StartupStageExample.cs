@@ -1,10 +1,8 @@
-﻿using Cysharp.Threading.Tasks;
-using OxGFrame.GSIFrame;
+﻿using OxGFrame.GSIFrame;
+using Cysharp.Threading.Tasks;
 
-public class #SCRIPTNAME# : GSIBase
+public class StartupStageExample : GSIBase
 {
-    // Execution Order: OnInit (Once) > OnEnter (Every Change) > OnUpdate
-
     public async override UniTask OnInit()
     {
         /* Do Somethings OnInit once in here */

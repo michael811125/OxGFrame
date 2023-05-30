@@ -8,7 +8,7 @@ public class #SCRIPTNAME# : UIBase
     public override void OnInit()
     {
         /**
-         * Do Somthing Init Once In Here
+         * Do Somethings Init Once In Here
          */
     }
 
@@ -29,14 +29,14 @@ public class #SCRIPTNAME# : UIBase
     protected override void OnBind()
     {
         /**
-         * Do Somthing Init Once Components and Events In Here (For Bind)
+         * Do Somethings Init Once Components and Events In Here (For Bind)
          */
     }
 
     protected override void OnShow(object obj)
     {
         /**
-         * Do Something Init With Every Showing In Here
+         * Do Somethings Init With Every Showing In Here
          */
     }
 
@@ -67,14 +67,14 @@ public class #SCRIPTNAME# : UIBase
     protected override void OnClose()
     {
         /**
-         * Do Something on close (Close)
+         * Do Somethings on close (Close)
          */
     }
 
     public override void OnRelease()
     {
         /**
-         * Do Something on release (CloseAndDestroy)
+         * Do Somethings on release (CloseAndDestroy)
          */
     }
 }

@@ -2,10 +2,80 @@
   "name": "com.michaelo.oxgframe",
   "displayName": "OxGFrame",
   "description": "The OxGFrame is a lightweight framework based on Unity for accelerating game development. Supports multi-platform Win, Android, iOS, WebGL.",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "unity": "2021.3",
   "license": "MIT",
-  "dependencies": {},
+  "samples": [
+    {
+      "displayName": "AudioManager Prefab",
+      "description": "",
+      "path": "Samples~/AudioManager"
+    },
+    {
+      "displayName": "PatchLauncher Prefab",
+      "description": "",
+      "path": "Samples~/PatchLauncher"
+    },
+    {
+      "displayName": "Bundle Demo",
+      "description": "Sample to use Bundle",
+      "path": "Samples~/BundleDemo"
+    },
+    {
+      "displayName": "UIFrame Demo",
+      "description": "Sample to use UIFrame",
+      "path": "Samples~/UIFrameDemo"
+    },
+	{
+      "displayName": "GSFrame Demo",
+      "description": "Sample to use GSFrame",
+      "path": "Samples~/GSFrameDemo"
+    },
+	{
+      "displayName": "USFrame Demo",
+      "description": "Sample to use USFrame",
+      "path": "Samples~/USFrameDemo"
+    },
+	{
+      "displayName": "EPFrame Demo",
+      "description": "Sample to use EPFrame",
+      "path": "Samples~/EPFrameDemo"
+    },
+	{
+      "displayName": "AudioFrame Demo",
+      "description": "Sample to use AudioFrame",
+      "path": "Samples~/AudioFrameDemo"
+    },
+	{
+      "displayName": "VideoFrame Demo",
+      "description": "Sample to use VideoFrame",
+      "path": "Samples~/VideoFrameDemo"
+    },
+    {
+      "displayName": "GSIFrame Demo",
+      "description": "Sample to use GSIFrame",
+      "path": "Samples~/GSIFrameDemo"
+    },
+	{
+      "displayName": "NetFrame Demo",
+      "description": "Sample to use NetFrame",
+      "path": "Samples~/NetFrameDemo"
+    },
+	{
+      "displayName": "APICenter Demo",
+      "description": "Sample to use APICenter",
+      "path": "Samples~/APICenterDemo"
+    },
+	{
+      "displayName": "EventCenter Demo",
+      "description": "Sample to use EventCenter",
+      "path": "Samples~/EventCenterDemo"
+    }
+  ],
+  "dependencies": {
+    "com.domybest.mybox": "https://github.com/Deadcows/MyBox.git",
+	"com.focus-creative-games.hybridclr_unity": "https://github.com/focus-creative-games/hybridclr_unity.git"
+  },
   "author": {
     "name": "MichaelO"
   }

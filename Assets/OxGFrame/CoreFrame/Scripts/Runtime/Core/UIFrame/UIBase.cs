@@ -53,10 +53,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             base.InitFirst();
         }
 
-        protected override async UniTask OpenSub()
-        {
-            await UniTask.Yield();
-        }
+        protected override async UniTask OpenSub() { }
 
         protected override void CloseSub() { }
 
@@ -180,7 +177,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             if (this.maskSetting.isClickMaskToClose) UIManager.GetInstance().Close(this.assetName);
         }
 
-        #region UI動畫過度
+        #region UI Transition Anime
         protected virtual void ShowAnime(AnimeEndCb animeEndCb)
         {
             animeEndCb();

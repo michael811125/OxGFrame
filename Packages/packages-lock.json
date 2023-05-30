@@ -9,6 +9,13 @@
       },
       "hash": "e250b932c64c9624f807ff2dad658da80dc09b8e"
     },
+    "com.focus-creative-games.hybridclr_unity": {
+      "version": "https://github.com/focus-creative-games/hybridclr_unity.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f5afc4362523d400fd3d6f4261dc81b5f62a84b3"
+    },
     "com.unity.2d.animation": {
       "version": "7.0.10",
       "depth": 0,

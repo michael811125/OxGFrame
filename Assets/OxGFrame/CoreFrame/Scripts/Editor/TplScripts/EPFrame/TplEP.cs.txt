@@ -7,14 +7,14 @@ public class #SCRIPTNAME# : EPBase
     public override void OnInit()
     {
         /**
-         * Do Somthing Init Once In Here
+         * Do Somethings Init Once In Here
          */
     }
 
     protected override void OnBind()
     {
         /**
-         * Do Somthing Init Once Components and Events In Here (For Bind)
+         * Do Somethings Init Once Components and Events In Here (For Bind)
          */
     }
 

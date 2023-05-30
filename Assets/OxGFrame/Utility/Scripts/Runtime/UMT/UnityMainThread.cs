@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace OxGFrame.Utility.UMT
 {
+    [DisallowMultipleComponent]
     internal class UnityMainThread : MonoBehaviour
     {
         internal static UnityMainThread worker;

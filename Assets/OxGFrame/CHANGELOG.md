@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.1.5] - 2023-05-30
+- Added Singleton Utility.
+- Can install via git (Organized Samples).
+
 ## [2.1.4] - 2023-05-15
 - Added DownloadSpeedCalculator (using OxGFrame.AssetLoader.Utility).
 ```

@@ -1,5 +1,0 @@
-﻿# audio_urlset = Audio Source Url Path
-# video_urlset = Video Source Url Path
-
-audio_urlset 127.0.0.1/audio/
-video_urlset 127.0.0.1/video/

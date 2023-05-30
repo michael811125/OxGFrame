@@ -25,7 +25,7 @@ MonoBehaviour:
       AssetTags: models
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/OxGFrame/AssetLoader/Example/Prefabs/model_01.prefab
+      - CollectPath: Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab
         CollectorGUID: b4ea3356cddbd8b41926c28adefdfbc5
         CollectorType: 0
         AddressRuleName: AddressByFileName
@@ -38,7 +38,7 @@ MonoBehaviour:
       AssetTags: scenes
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo01.unity
+      - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo01.unity
         CollectorGUID: 97102f27cdcc74846bb0909829b431cd
         CollectorType: 0
         AddressRuleName: AddressByFileName
@@ -46,7 +46,7 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
-      - CollectPath: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo02.unity
+      - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo02.unity
         CollectorGUID: 9f25400e0da4e034294d5e153b0533ab
         CollectorType: 0
         AddressRuleName: AddressByFileName
@@ -54,7 +54,7 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
-      - CollectPath: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo03.unity
+      - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo03.unity
         CollectorGUID: 42b42b7f9b5995748ba85a54431669b3
         CollectorType: 0
         AddressRuleName: AddressByFileName
@@ -70,7 +70,7 @@ MonoBehaviour:
       AssetTags: models
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/OxGFrame/AssetLoader/Example/Prefabs/model_01.prefab
+      - CollectPath: Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab
         CollectorGUID: b4ea3356cddbd8b41926c28adefdfbc5
         CollectorType: 0
         AddressRuleName: AddressByFileName
@@ -83,7 +83,7 @@ MonoBehaviour:
       AssetTags: scenes
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo01.unity
+      - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo01.unity
         CollectorGUID: 97102f27cdcc74846bb0909829b431cd
         CollectorType: 0
         AddressRuleName: AddressByFileName
@@ -91,7 +91,7 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
-      - CollectPath: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo02.unity
+      - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo02.unity
         CollectorGUID: 9f25400e0da4e034294d5e153b0533ab
         CollectorType: 0
         AddressRuleName: AddressByFileName
@@ -99,7 +99,7 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
-      - CollectPath: Assets/OxGFrame/CoreFrame/Example/USFrameDemo/Scenes/LevelDemo03.unity
+      - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo03.unity
         CollectorGUID: 42b42b7f9b5995748ba85a54431669b3
         CollectorType: 0
         AddressRuleName: AddressByFileName
@@ -115,7 +115,7 @@ MonoBehaviour:
       AssetTags: models
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/OxGFrame/AssetLoader/Example/Prefabs/model_01.prefab
+      - CollectPath: Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab
         CollectorGUID: b4ea3356cddbd8b41926c28adefdfbc5
         CollectorType: 0
         AddressRuleName: AddressByFileName

@@ -15,10 +15,7 @@ namespace OxGFrame.CoreFrame.GSFrame
             base.InitFirst();
         }
 
-        protected override async UniTask OpenSub()
-        {
-            await UniTask.Yield();
-        }
+        protected override async UniTask OpenSub() { }
 
         protected override void CloseSub() { }
 

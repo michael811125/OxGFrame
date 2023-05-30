@@ -1,35 +1,30 @@
-﻿using Cysharp.Threading.Tasks;
-using OxGFrame.CoreFrame.GSFrame;
+﻿using OxGFrame.CoreFrame.UIFrame;
+using Cysharp.Threading.Tasks;
 
-public class #SCRIPTNAME# : GSBase
+public class DemoLoadingUI : UIBase
 {
-    // Use _Node@XXX to Bind
-
     public override void OnInit()
     {
-        /**
-         * Do Somethings Init Once In Here
-         */
     }
 
     protected override async UniTask OpenSub()
     {
         /**
-         * Open Sub With Async
-         */
+        * Open Sub With Async
+        */
     }
 
     protected override void CloseSub()
     {
         /**
-         * Close Sub
-         */
+        * Close Sub
+        */
     }
 
     protected override void OnBind()
     {
         /**
-         * Do Somethings Init Once Components and Events In Here (For Bind)
+         * Do Somethings Init Once Components and Events In Here
          */
     }
 
@@ -47,24 +42,23 @@ public class #SCRIPTNAME# : GSBase
          */
     }
 
-    public override void OnReceiveAndRefresh(object obj = null)
+    protected override void ShowAnime(AnimeEndCb animeEndCb)
     {
-        /**
-         * Do Refresh Once After Data Receive
-         */
+        animeEndCb(); // Must Keep, Because Parent Already Set AnimCallback
+    }
+
+    protected override void HideAnime(AnimeEndCb animeEndCb)
+    {
+        animeEndCb(); // Must Keep, Because Parent Already Set AnimCallback
     }
 
     protected override void OnClose()
     {
-        /**
-         * Do Somethings on close (Close)
-         */
+
     }
 
     public override void OnRelease()
     {
-        /**
-         * Do Somethings on release (CloseAndDestroy)
-         */
+
     }
 }
