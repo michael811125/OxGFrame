@@ -72,7 +72,9 @@
       "path": "Samples~/EventCenterDemo"
     }
   ],
-  "dependencies": {},
+  "dependencies": {
+	  "com.unity.scriptablebuildpipeline": "1.21.5",
+  },
   "author": {
     "name": "MichaelO"
   }

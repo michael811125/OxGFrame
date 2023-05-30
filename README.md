@@ -8,16 +8,16 @@
 
 ## 安裝 OxGFrame
 
+| **建議先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
+|:-|
+| [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox), Add https://github.com/Deadcows/MyBox.git to Package Manager |
+| [HybirdCLR v2.4.2 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
+
 ### 1. 透過 Package Manager 安裝 (Install via git)
 Add https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame to Package Manager.
 	
 ### 2. 透過 Github 下載 (Code Download ZIP)
 Copy Assets/OxGFrame to Unity New Project.
-
-| **手動安裝第三方庫 (Manually install dependencies)** |
-|:-|
-| [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox), Add https://github.com/Deadcows/MyBox.git to Package Manager |
-| [HybirdCLR v2.4.2 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 ※備註 : 如果沒有要自行更改框架的需求，建議直接使用 Package Manager 方式安裝。
 
