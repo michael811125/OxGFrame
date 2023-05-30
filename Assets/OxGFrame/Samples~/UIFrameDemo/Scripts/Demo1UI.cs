@@ -64,12 +64,12 @@ public class Demo1UI : UIBase
     {
         Debug.Log($"UI: {this.gameObject.name}, Check Data: {this._msg}");
 
-        animeEndCb(); // Must Keep, Because Parent Already Set AnimCallback
+        animeEndCb(); // Must Keep, Because Parent Already Set AnimeCallback
     }
 
     protected override void HideAnime(AnimeEndCb animeEndCb)
     {
-        animeEndCb(); // Must Keep, Because Parent Already Set AnimCallback
+        animeEndCb(); // Must Keep, Because Parent Already Set AnimeCallback
     }
 
     protected override void OnClose()

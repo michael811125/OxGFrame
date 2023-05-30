@@ -44,12 +44,12 @@ public class DemoLoadingUI : UIBase
 
     protected override void ShowAnime(AnimeEndCb animeEndCb)
     {
-        animeEndCb(); // Must Keep, Because Parent Already Set AnimCallback
+        animeEndCb(); // Must Keep, Because Parent Already Set AnimeCallback
     }
 
     protected override void HideAnime(AnimeEndCb animeEndCb)
     {
-        animeEndCb(); // Must Keep, Because Parent Already Set AnimCallback
+        animeEndCb(); // Must Keep, Because Parent Already Set AnimeCallback
     }
 
     protected override void OnClose()
