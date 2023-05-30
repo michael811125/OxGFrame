@@ -26,27 +26,27 @@
       "description": "Sample to use UIFrame",
       "path": "Samples~/UIFrameDemo"
     },
-	{
+    {
       "displayName": "GSFrame Demo",
       "description": "Sample to use GSFrame",
       "path": "Samples~/GSFrameDemo"
     },
-	{
+    {
       "displayName": "USFrame Demo",
       "description": "Sample to use USFrame",
       "path": "Samples~/USFrameDemo"
     },
-	{
+    {
       "displayName": "EPFrame Demo",
       "description": "Sample to use EPFrame",
       "path": "Samples~/EPFrameDemo"
     },
-	{
+    {
       "displayName": "AudioFrame Demo",
       "description": "Sample to use AudioFrame",
       "path": "Samples~/AudioFrameDemo"
     },
-	{
+    {
       "displayName": "VideoFrame Demo",
       "description": "Sample to use VideoFrame",
       "path": "Samples~/VideoFrameDemo"
@@ -56,26 +56,23 @@
       "description": "Sample to use GSIFrame",
       "path": "Samples~/GSIFrameDemo"
     },
-	{
+    {
       "displayName": "NetFrame Demo",
       "description": "Sample to use NetFrame",
       "path": "Samples~/NetFrameDemo"
     },
-	{
+    {
       "displayName": "APICenter Demo",
       "description": "Sample to use APICenter",
       "path": "Samples~/APICenterDemo"
     },
-	{
+    {
       "displayName": "EventCenter Demo",
       "description": "Sample to use EventCenter",
       "path": "Samples~/EventCenterDemo"
     }
   ],
-  "dependencies": {
-    "com.domybest.mybox": "https://github.com/Deadcows/MyBox.git",
-	"com.focus-creative-games.hybridclr_unity": "https://github.com/focus-creative-games/hybridclr_unity.git"
-  },
+  "dependencies": {},
   "author": {
     "name": "MichaelO"
   }

@@ -8,18 +8,15 @@
 
 ## 安裝 OxGFrame
 
-#### Install via git (Package Manager)
+### 1. 透過 Package Manager 安裝 (Install via git)
 Add https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame to Package Manager.
-| **Auto install dependencies** |
-|:-|
-| [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox) |
-| [HybirdCLR v2.4.2 or higher](https://github.com/focus-creative-games/hybridclr) (革命性的程式熱更新方案) **特別推薦** |
-	 
-#### Code/Download ZIP
+	
+### 2. 透過 Github 下載 (Code Download ZIP)
 Copy Assets/OxGFrame to Unity New Project.
-| **Manual install dependencies** |
+
+| **手動安裝第三方庫 (Manually install dependencies)** |
 |:-|
-| [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox), Add https://github.com/Deadcows/MyBox.git to Package Manager|
+| [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox), Add https://github.com/Deadcows/MyBox.git to Package Manager |
 | [HybirdCLR v2.4.2 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 ※備註 : 如果沒有要自行更改框架的需求，建議直接使用 Package Manager 方式安裝。
@@ -45,11 +42,11 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 ### Main-ThirdParty
 - 使用 [UnitTask v2.3.3](https://github.com/Cysharp/UniTask) (最佳異步處理方案)
-- **特別推薦** 使用部分 [UniFramework](https://github.com/gmhevinci/UniFramework) (輕量級框架)
+- 使用部分 [UniFramework](https://github.com/gmhevinci/UniFramework) (輕量級框架) **特別推薦**
 
 ### Sub-ThirdParty
-- **特別推薦** 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案)
-- **特別推薦** 使用 [YooAsset v1.4.14](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案)
+- 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案) **特別推薦**
+- 使用 [YooAsset v1.4.14](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
 
 ※備註 : 會持續更新內建第三方庫。
 
