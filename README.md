@@ -81,12 +81,13 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 ### Hotfixer (dependence HybridCLR, AssetLoader)
 代碼熱修復模塊，使用 [HybridCLR](https://github.com/focus-creative-games/hybridclr) (前身 Huatuo) 革命性的熱更新方案進行整合，相關建置請前往官方文檔進行熟悉。
-- 如果相關建置完畢，前往點選 HybridCLR/ OxGFrame With HybirdCLR/Complie And Copy To HotfixCollector，將會幫忙拷貝至 HotfixCollector 文件夾，再使用 YooAsset Collector 進行收集打包。
+- 如果相關建置完畢，前往點選 HybridCLR/OxGFrame With HybirdCLR/Complie And Copy To HotfixCollector，將會幫忙拷貝至 HotfixCollector 文件夾，再使用 YooAsset Collector 進行收集打包。
 
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_4.png)
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_5.png)
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_6.png)
 
-※備註 : 需要 Import PatchLauncher from PackageManager
+※備註 : 運行打包 HotfixerDemo 需要 Import PatchLauncher from PackageManager
 
 **如果沒有要使用 Hotfixer 熱修復模塊，可以直接刪除整個 Hotfixer。**
 
@@ -113,7 +114,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 使用 YooAsset Collector 進行資源收集 (可以使用 ActiveRule 決定哪些群組需要打包，進行 Built-in 跟 Patch 資源的區分)，再使用 YooAsset Builder 進行打包 **(不需要手動更改資源日期版號)**，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
 
-再使用 OxGFrame/AssetLoader/Bundle Config Generator 進行配置檔建立。
+再使用 OxGFrame/AssetLoader/Bundle And Config Generator 進行配置檔建立。
 
 1. 先進行 Export App Config To StreamingAssets 建立 appconfig.json 至 StreamingAssets 中 (主要用於 App Version 比對)。
 2. 再選擇 Export Configs And App Bundles for CDN 輸出上傳資源，Source Folder 選擇剛剛使用 YooAsset 輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行預設包的群組分包，輸出後將 CDN 資料夾直接上傳至 Server。
@@ -199,7 +200,7 @@ store_link http://
 
 ### CoreFrame (dependence AssetLoader)
 
-核心模塊 (連動 AssetLoader 實現自動卸載)，包含用於製作 UI, Game Scene, Entity Prefab, Unity Scene，針對製作對應使用 UI Prefab => UIFrame、Scene Resource Prefab => SRFrame、Other Prefab => CPFrame、Unity Scene => USFrame。支援 Resources 與 AssetBundle 加載方式，並且實現物件命名綁定功能 (UIBase and SRBase = _Node@XXX, CPBase = ~Node@XXX, 類型均為 GameObject)。
+核心模塊 (連動 AssetLoader 實現自動卸載)，包含用於製作 UI, Scene Resource, Clone Prefab, Unity Scene，針對製作對應使用 UI Prefab => UIFrame、Scene Resource Prefab => SRFrame、Other Prefab => CPFrame、Unity Scene => USFrame。支援 Resources 與 AssetBundle 加載方式，並且實現物件命名綁定功能 (UIBase and SRBase = _Node@XXX, CPBase = ~Node@XXX, 類型均為 GameObject)。
 
 - UIFrame (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab，支援 UI 反切 (Reverse Changes)，基本上 UI 有隱藏凍結功能，避免 UI 動畫尚未完成期間，能夠被點擊觸發事件。另外如需要製作 UI 動畫，可以在 ShowAnime 跟 HideAnime 覆寫執行相關過渡動畫 (DoTween, Animation...)，並且一定要在完成 UI 動畫後正確呼叫 animeEndCb() 回調。額外還有 UI 的 MaskEvent 也可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)。
 - SRFrame (Scene Resource) : 使用 SRManager 管理掛載 SRBase 的 Prefab (使用 _Node@XXX 進行物件綁定)。
