@@ -6,7 +6,7 @@ namespace OxGFrame.CoreFrame
     {
         /* 規範符號 */
         public static readonly char BIND_PREFIX = '_';
-        public static readonly char BIND_PREFIX_ENTITY = '~';
+        public static readonly char BIND_PREFIX_CLONE_PREFAB = '~';
         public static readonly char BIND_SEPARATOR = '@';
         public static readonly char BIND_END = '#';
 

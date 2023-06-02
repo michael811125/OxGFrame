@@ -135,8 +135,7 @@ PlayerSettings:
     16:9: 0
     Others: 0
   bundleVersion: 1.0.0
-  preloadedAssets:
-  - {fileID: 11400000, guid: e5de5598d6dc5bf4e9f516934d1fe2eb, type: 2}
+  preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -156,12 +155,14 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
+    Android: com.michaelo.oxgframe
     Standalone: com.michaelo.oxgframe
+    iPhone: com.michaelo.oxgframe
   buildNumber:
     Standalone: 0
     iPhone: 0
     tvOS: 0
-  overrideDefaultApplicationIdentifier: 1
+  overrideDefaultApplicationIdentifier: 0
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 22
   AndroidTargetSdkVersion: 0
@@ -781,10 +782,10 @@ PlayerSettings:
   webGLDecompressionFallback: 1
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Android: LAGER_DEV_H5;WEBSOCKET
-    Standalone: LAGER_DEV_H5;WEBSOCKET;LAGER_EDITOR
-    WebGL: LAGER_DEV_H5;WEBSOCKET
-    iPhone: LAGER_DEV_H5;LAGER_EDITOR;WEBSOCKET
+    Android: 
+    Standalone: 
+    WebGL: 
+    iPhone: 
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
@@ -812,7 +813,7 @@ PlayerSettings:
   allowUnsafeCode: 0
   useDeterministicCompilation: 1
   enableRoslynAnalyzers: 1
-  selectedPlatform: 0
+  selectedPlatform: 3
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 1
   gcIncremental: 0

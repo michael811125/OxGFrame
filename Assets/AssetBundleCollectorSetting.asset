@@ -62,6 +62,19 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
+    - GroupName: HotfixGroup
+      GroupDesc: 
+      AssetTags: prefabs
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/OxGFrame/Hotfixer/Example/HotfixerDemo/Prefabs
+        CollectorGUID: c24c14d4ff838c84dbc48cc507fd01aa
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
   - PackageName: OtherPackage
     PackageDesc: 
     Groups:
@@ -117,6 +130,48 @@ MonoBehaviour:
       Collectors:
       - CollectPath: Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab
         CollectorGUID: b4ea3356cddbd8b41926c28adefdfbc5
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+  - PackageName: HotfixPackage
+    PackageDesc: 
+    Groups:
+    - GroupName: Scene
+      GroupDesc: Hotfix Main Scene
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/OxGFrame/Hotfixer/Example/HotfixerDemo/Scenes/Hotfix
+        CollectorGUID: 0ee84d5e2ddb7394ea79ac4b9ac7efec
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+    - GroupName: AOTAssemblies
+      GroupDesc: AOT Dlls
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/HotfixCollector/AOTDlls
+        CollectorGUID: fb8ac5d617e061d4ba07b760fe82fd72
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+    - GroupName: HotfixAssemblies
+      GroupDesc: Hotfix Dlls
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/HotfixCollector/HotfixDlls
+        CollectorGUID: cf89e5109ea5e5e43bdd4e8758d1f104
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackSeparately

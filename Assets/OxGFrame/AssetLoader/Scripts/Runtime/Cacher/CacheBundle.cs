@@ -64,7 +64,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 // Loading 標記
-                this._hashLoadingFlags.Add(assetName);
+                this._loadingFlags.Add(assetName);
 
                 // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
@@ -74,12 +74,12 @@ namespace OxGFrame.AssetLoader.Cacher
                     {
                         this.reqSize++;
                         progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                        this._hashLoadingFlags.Remove(assetName);
+                        this._loadingFlags.Remove(assetName);
                         continue;
                     }
                     else
                     {
-                        if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                        if (this.HasInLoadingFlags(assetName)) this._loadingFlags.Remove(assetName);
                         this.UnloadAsset(assetName, true);
                         await this.PreloadRawFileAsync(packageName, new string[] { assetName }, progression);
                         continue;
@@ -122,7 +122,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 // 移除標記
-                this._hashLoadingFlags.Remove(assetName);
+                this._loadingFlags.Remove(assetName);
 
                 Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
             }
@@ -150,7 +150,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 // Loading 標記
-                this._hashLoadingFlags.Add(assetName);
+                this._loadingFlags.Add(assetName);
 
                 // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
@@ -160,12 +160,12 @@ namespace OxGFrame.AssetLoader.Cacher
                     {
                         this.reqSize++;
                         progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                        this._hashLoadingFlags.Remove(assetName);
+                        this._loadingFlags.Remove(assetName);
                         continue;
                     }
                     else
                     {
-                        if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                        if (this.HasInLoadingFlags(assetName)) this._loadingFlags.Remove(assetName);
                         this.UnloadAsset(assetName, true);
                         this.PreloadRawFile(packageName, new string[] { assetName }, progression);
                         continue;
@@ -201,7 +201,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 // 移除標記
-                this._hashLoadingFlags.Remove(assetName);
+                this._loadingFlags.Remove(assetName);
 
                 Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
             }
@@ -223,7 +223,7 @@ namespace OxGFrame.AssetLoader.Cacher
             this.totalSize = 1;
 
             // Loading 標記
-            this._hashLoadingFlags.Add(assetName);
+            this._loadingFlags.Add(assetName);
 
             // 先從緩存拿
             BundlePack pack = this.GetFromCache(assetName);
@@ -277,12 +277,12 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                if (this.HasInLoadingFlags(assetName)) this._loadingFlags.Remove(assetName);
                 this.UnloadAsset(assetName, true);
                 return await this.LoadRawFileAsync<T>(packageName, assetName, progression);
             }
 
-            this._hashLoadingFlags.Remove(assetName);
+            this._loadingFlags.Remove(assetName);
 
             Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
 
@@ -313,7 +313,7 @@ namespace OxGFrame.AssetLoader.Cacher
             this.totalSize = 1;
 
             // Loading 標記
-            this._hashLoadingFlags.Add(assetName);
+            this._loadingFlags.Add(assetName);
 
             // 先從緩存拿
             BundlePack pack = this.GetFromCache(assetName);
@@ -360,12 +360,12 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                if (this.HasInLoadingFlags(assetName)) this._loadingFlags.Remove(assetName);
                 this.UnloadAsset(assetName, true);
                 return this.LoadRawFile<T>(packageName, assetName, progression);
             }
 
-            this._hashLoadingFlags.Remove(assetName);
+            this._loadingFlags.Remove(assetName);
 
             Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
 
@@ -473,7 +473,7 @@ namespace OxGFrame.AssetLoader.Cacher
             this.totalSize = 1;
 
             // Loading 標記
-            this._hashLoadingFlags.Add(assetName);
+            this._loadingFlags.Add(assetName);
 
             var package = PackageManager.GetPackage(packageName);
             if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
@@ -535,7 +535,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 } while (true);
             }
 
-            this._hashLoadingFlags.Remove(assetName);
+            this._loadingFlags.Remove(assetName);
 
             return pack;
         }
@@ -671,7 +671,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 // Loading 標記
-                this._hashLoadingFlags.Add(assetName);
+                this._loadingFlags.Add(assetName);
 
                 // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
@@ -681,12 +681,12 @@ namespace OxGFrame.AssetLoader.Cacher
                     {
                         this.reqSize++;
                         progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                        this._hashLoadingFlags.Remove(assetName);
+                        this._loadingFlags.Remove(assetName);
                         continue;
                     }
                     else
                     {
-                        if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                        if (this.HasInLoadingFlags(assetName)) this._loadingFlags.Remove(assetName);
                         this.UnloadAsset(assetName, true);
                         await this.PreloadAssetAsync(packageName, new string[] { assetName }, progression);
                         continue;
@@ -729,7 +729,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 // 移除標記
-                this._hashLoadingFlags.Remove(assetName);
+                this._loadingFlags.Remove(assetName);
 
                 Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
             }
@@ -757,7 +757,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 // Loading 標記
-                this._hashLoadingFlags.Add(assetName);
+                this._loadingFlags.Add(assetName);
 
                 // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
@@ -767,12 +767,12 @@ namespace OxGFrame.AssetLoader.Cacher
                     {
                         this.reqSize++;
                         progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                        this._hashLoadingFlags.Remove(assetName);
+                        this._loadingFlags.Remove(assetName);
                         continue;
                     }
                     else
                     {
-                        if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                        if (this.HasInLoadingFlags(assetName)) this._loadingFlags.Remove(assetName);
                         this.UnloadAsset(assetName, true);
                         this.PreloadAsset(packageName, new string[] { assetName }, progression);
                         continue;
@@ -808,7 +808,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 // 移除標記
-                this._hashLoadingFlags.Remove(assetName);
+                this._loadingFlags.Remove(assetName);
 
                 Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
             }
@@ -830,7 +830,7 @@ namespace OxGFrame.AssetLoader.Cacher
             this.totalSize = 1;
 
             // Loading 標記
-            this._hashLoadingFlags.Add(assetName);
+            this._loadingFlags.Add(assetName);
 
             // 先從緩存拿
             BundlePack pack = this.GetFromCache(assetName);
@@ -884,12 +884,12 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                if (this.HasInLoadingFlags(assetName)) this._loadingFlags.Remove(assetName);
                 this.UnloadAsset(assetName, true);
                 return await this.LoadAssetAsync<T>(packageName, assetName, progression);
             }
 
-            this._hashLoadingFlags.Remove(assetName);
+            this._loadingFlags.Remove(assetName);
 
             Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
 
@@ -912,7 +912,7 @@ namespace OxGFrame.AssetLoader.Cacher
             this.totalSize = 1;
 
             // Loading 標記
-            this._hashLoadingFlags.Add(assetName);
+            this._loadingFlags.Add(assetName);
 
             // 先從緩存拿
             BundlePack pack = this.GetFromCache(assetName);
@@ -959,12 +959,12 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                if (this.HasInLoadingFlags(assetName)) this._hashLoadingFlags.Remove(assetName);
+                if (this.HasInLoadingFlags(assetName)) this._loadingFlags.Remove(assetName);
                 this.UnloadAsset(assetName, true);
                 return this.LoadAsset<T>(packageName, assetName, progression);
             }
 
-            this._hashLoadingFlags.Remove(assetName);
+            this._loadingFlags.Remove(assetName);
 
             Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
 

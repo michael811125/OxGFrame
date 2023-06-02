@@ -2,7 +2,7 @@
   "name": "com.michaelo.oxgframe",
   "displayName": "OxGFrame",
   "description": "The OxGFrame is a lightweight framework based on Unity for accelerating game development. Supports multi-platform Win, Android, iOS, WebGL.",
-  "version": "2.1.5",
+  "version": "2.2.0",
   "unity": "2021.3",
   "license": "MIT",
   "samples": [
@@ -17,8 +17,13 @@
       "path": "Samples~/PatchLauncher"
     },
     {
+      "displayName": "Hotfixer Demo",
+      "description": "Sample to use Hotfixer",
+      "path": "Samples~/HotfixerDemo"
+    },
+    {
       "displayName": "Bundle Demo",
-      "description": "Sample to use Bundle",
+      "description": "Sample to use AssetLoader",
       "path": "Samples~/BundleDemo"
     },
     {
@@ -27,9 +32,9 @@
       "path": "Samples~/UIFrameDemo"
     },
     {
-      "displayName": "GSFrame Demo",
-      "description": "Sample to use GSFrame",
-      "path": "Samples~/GSFrameDemo"
+      "displayName": "SRFrame Demo",
+      "description": "Sample to use SRFrame",
+      "path": "Samples~/SRFrameDemo"
     },
     {
       "displayName": "USFrame Demo",
@@ -37,9 +42,9 @@
       "path": "Samples~/USFrameDemo"
     },
     {
-      "displayName": "EPFrame Demo",
-      "description": "Sample to use EPFrame",
-      "path": "Samples~/EPFrameDemo"
+      "displayName": "CPFrame Demo",
+      "description": "Sample to use CPFrame",
+      "path": "Samples~/CPFrameDemo"
     },
     {
       "displayName": "AudioFrame Demo",

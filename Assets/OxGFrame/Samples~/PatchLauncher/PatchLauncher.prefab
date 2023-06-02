@@ -44,14 +44,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4c5e5e9d860c8f48bfcf789361242dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  assetDatabaseMode: 1
-  bundleStreamMode: 1
-  readMd5BundleName: 1
-  maxDownloadSliceSize: 16777216
-  zipFileName: abzip
-  md5ForZipFileName: 1
-  unzipBufferSize: 65536
-  unzipPassword: 
+  playMode: 0
+  semanticRule:
+    major: 1
+    minor: 1
+    _patch: 0
+  skipCreateMainDownloder: 0
+  listPackage:
+  - DefaultPackage
+  - HotfixPackage
+  maxConcurrencyDownloadCount: 10
+  failedRetryCount: 3
+  breakpointFileSizeThreshold: 20971520
   decryptArgs: NONE
-  internalManifestName: imf
-  externalManifestName: emf

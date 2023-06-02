@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace OxGFrame.MediaFrame.VideoFrame
 {
-    public class VideoManager : MediaManager<VideoBase>
+    internal class VideoManager : MediaManager<VideoBase>
     {
         private static readonly object _locker = new object();
         private static VideoManager _instance = null;
-        internal static VideoManager GetInstance()
+        public static VideoManager GetInstance()
         {
             if (_instance == null)
             {

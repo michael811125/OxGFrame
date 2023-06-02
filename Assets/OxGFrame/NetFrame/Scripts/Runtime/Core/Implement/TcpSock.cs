@@ -120,7 +120,7 @@ namespace OxGFrame.NetFrame
 
             this._readBufferOffset += readBytes;
 
-            // socket 裡如果還有資料可以讀取的話就繼續讀取
+            // Socket 裡如果還有資料可以讀取的話就繼續讀取
             if (ns.DataAvailable)
             {
                 try

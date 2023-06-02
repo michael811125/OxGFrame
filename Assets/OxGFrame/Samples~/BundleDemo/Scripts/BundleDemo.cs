@@ -299,7 +299,7 @@ public class BundleDemo : MonoBehaviour
     public void StartDownload()
     {
         // Send select groupInfo and start download
-        UserEvents.UserBeginDownload.SendEventMessage(this._selectGroupInfo);
+        PatchUserEvents.UserBeginDownload.SendEventMessage(this._selectGroupInfo);
 
         if (this.confirmWindow.activeSelf) this.confirmWindow.SetActive(false);
     }
@@ -311,32 +311,32 @@ public class BundleDemo : MonoBehaviour
         {
             case 0:
                 // Add send event in Retry UI (click event)
-                UserEvents.UserTryPatchRepair.SendEventMessage();
+                PatchUserEvents.UserTryPatchRepair.SendEventMessage();
                 break;
 
             case 1:
                 // Add send event in Retry UI (click event)
-                UserEvents.UserTryAppVersionUpdate.SendEventMessage();
+                PatchUserEvents.UserTryAppVersionUpdate.SendEventMessage();
                 break;
 
             case 2:
                 // Add send event in Retry UI (click event)
-                UserEvents.UserTryInitPatchMode.SendEventMessage();
+                PatchUserEvents.UserTryInitPatchMode.SendEventMessage();
                 break;
 
             case 3:
                 // Add send event in Retry UI (click event)
-                UserEvents.UserTryPatchVersionUpdate.SendEventMessage();
+                PatchUserEvents.UserTryPatchVersionUpdate.SendEventMessage();
                 break;
 
             case 4:
                 // Add send event in Retry UI (click event)
-                UserEvents.UserTryPatchManifestUpdate.SendEventMessage();
+                PatchUserEvents.UserTryPatchManifestUpdate.SendEventMessage();
                 break;
 
             case 5:
                 // Add send event in Retry UI (click event)
-                UserEvents.UserTryCreateDownloader.SendEventMessage();
+                PatchUserEvents.UserTryCreateDownloader.SendEventMessage();
                 break;
         }
         #endregion

@@ -65,11 +65,10 @@ namespace OxGFrame.MediaFrame
         }
 
         [HideInInspector] public string mediaName { get; protected set; } = string.Empty;  // 影音名稱
-        //[HideInInspector] public string bundleName { get; protected set; } = string.Empty; // BundleName
         [HideInInspector] public string assetName { get; protected set; } = string.Empty;  // (Bundle) AssetName = (Resouce) PathName
 
         [Tooltip("Not affected by TimeScale")]
-        public bool ignoreTimeScale = true;                                                // 不受TimeScale影響
+        public bool ignoreTimeScale = true;                                                // 不受 TimeScale 影響
         [Tooltip("Repeat times 0 (equal to 1). But -1 = loop (Infinitely)")]
         public int loops = 0;                                                              // 循環次數
         protected int _loops = 0;                                                          // 當前循環次數

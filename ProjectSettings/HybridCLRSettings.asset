@@ -12,17 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e189374413a3f00468e49d51d8b27a09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enable: 0
+  enable: 1
   useGlobalIl2cpp: 0
   hybridclrRepoURL: https://gitee.com/focus-creative-games/hybridclr
   il2cppPlusRepoURL: https://gitee.com/focus-creative-games/il2cpp_plus
-  hotUpdateAssemblyDefinitions: []
+  hotUpdateAssemblyDefinitions:
+  - {fileID: 5897886265953266890, guid: cfa7923b92a78154485c954b946040f5, type: 3}
   hotUpdateAssemblies: []
   preserveHotUpdateAssemblies: []
   hotUpdateDllCompileOutputRootDir: HybridCLRData/HotUpdateDlls
   externalHotUpdateAssembliyDirs: []
   strippedAOTDllOutputRootDir: HybridCLRData/AssembliesPostIl2CppStrip
-  patchAOTAssemblies: []
+  patchAOTAssemblies:
+  - mscorlib
+  - UniTask
   outputLinkFile: HybridCLRData/Generated/link.xml
   outputAOTGenericReferenceFile: HybridCLRData/Generated/AOTGenericReferences.cs
   maxGenericReferenceIteration: 10

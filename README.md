@@ -6,7 +6,7 @@
 
 ---
 
-## 安裝 OxGFrame
+## 安裝 OxGFrame with YooAsset + HybridCLR
 
 | **建議先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
@@ -26,13 +26,13 @@ Copy Assets/OxGFrame to Unity New Project.
 ---
 
 ## 舊版本更新 OxGFrame 注意
-將舊版 2 以下的 OxGFrame 全部移除，重新安裝 OxGFrame，並且重新串接新版的接口。
+將舊版 2.1 以下的 OxGFrame 全部移除，重新安裝 OxGFrame，並且重新串接新版的接口。
 
 ---
 
 ## 基本介紹
 
-OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、遊戲場景 (GSFrame)、Unity 場景 (USFrame)、模板物件 (EPFrame)、音樂音效 (AudioFrame)、影片 (VideoFrame)、遊戲階段整合 (GSIFrame)、網路 (NetFrame)、集中式 Event 註冊 (EventCenter)、集中式 API 註冊 (APICenter)、Http.Acax (仿 Ajax 概念) 等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
+OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、場景資源 (SRFrame)、Unity 場景 (USFrame)、模板物件 (CPFrame)、音樂音效 (AudioFrame)、影片 (VideoFrame)、遊戲階段整合 (GSIFrame)、網路 (NetFrame)、集中式 Event 註冊 (EventCenter)、集中式 API 註冊 (APICenter)、Http.Acax (仿 Ajax 概念) 等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
 
 [Roadmap wiki](https://github.com/michael811125/OxGFrame/wiki/Roadmap)
 
@@ -60,14 +60,17 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ---
 
 ## 框架 API
+- Hotfixers (using OxGFrame.Hotfixer)
 - AssetLoaders (using OxGFrame.AssetLoader)
 - AssetPatcher (using OxGFrame.AssetLoader)
 - CoreFrames (using OxGFrame.CoreFrame)
 - MediaFrames (using OxGFrame.MediaFrame)
+- NetFrames (using OxGFrame.NetFrame)
 
 ※備註 : 建議詳看各模塊的 Example (注意 "res#" 跟 "build#" 的使用規則)。
 
 **額外有需要編寫 BuildTool 的可以調用**
+- HotfixHelper (using OxGFrame.Hotfix.Editor)
 - BundleConfig (using OxGFrame.AssetLoader.Bundle)
 - BundleHelper (using OxGFrame.AssetLoader.Editor)
 - MediaHelper (using OxGFrame.MediaFrame.Editor)
@@ -76,7 +79,19 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 ## 模塊框架介紹
 
-### AssetLoader
+### Hotfixer (dependence HybridCLR, AssetLoader)
+代碼熱修復模塊，使用 [HybridCLR](https://github.com/focus-creative-games/hybridclr) (前身 Huatuo) 革命性的熱更新方案進行整合，相關建置請前往官方文檔進行熟悉。
+- 如果相關建置完畢，前往點選 HybridCLR/ OxGFrame With HybirdCLR/Complie And Copy To HotfixCollector，將會幫忙拷貝至 HotfixCollector 文件夾，再使用 YooAsset Collector 進行收集打包。
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_4.png)
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_5.png)
+
+※備註 : 需要 Import PatchLauncher from PackageManager
+
+**如果沒有要使用 Hotfixer 熱修復模塊，可以直接刪除整個 Hotfixer。**
+
+---
+
+### AssetLoader (dependence YooAsset)
 
 資源加載器模塊，支援動態 Async 或 Sync 加載 (Dynamic Loading)，採用計數管理方式進行資源管控 (支援 Resources 與 AssetBundle)，如果直接使用 AssetLoaders API 進行 Load 跟 Instantiate，則在 Destroy 物件時，需要連帶調用 Unload (成對呼叫 Load & Unload)。
 其中 AssetBundle 集成【[YooAsset](https://github.com/tuyoogame/YooAsset)】實現資源熱更新方案，並且實現【[YooAsset](https://github.com/tuyoogame/YooAsset)】提供的加密介面，其中實現加解密方式有 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密。
@@ -183,18 +198,19 @@ store_link http://
 
 ### CoreFrame (dependence AssetLoader)
 
-核心模塊 (連動 AssetLoader 實現自動卸載)，包含用於製作 UI, Game Scene, Entity Prefab, Unity Scene，針對製作對應使用 UI Prefab => UIFrame、Game Scene Prefab => GSFrame、Other Prefab => EPFrame、Unity Scene => USFrame。支援 Resources 與 AssetBundle 加載方式，並且實現物件命名綁定功能 (UIBase and GSBase = _Node@XXX, EPBase = ~Node@XXX, 類型均為 GameObject)。
+核心模塊 (連動 AssetLoader 實現自動卸載)，包含用於製作 UI, Game Scene, Entity Prefab, Unity Scene，針對製作對應使用 UI Prefab => UIFrame、Scene Resource Prefab => SRFrame、Other Prefab => CPFrame、Unity Scene => USFrame。支援 Resources 與 AssetBundle 加載方式，並且實現物件命名綁定功能 (UIBase and SRBase = _Node@XXX, CPBase = ~Node@XXX, 類型均為 GameObject)。
 
-- UIFrame (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab，支援 UI 反切 (Reverse Changes)，基本上 UI 有隱藏凍結功能，避免 UI 動畫尚未完成期間，能夠被點擊觸發事件。另外如需要製作 UI 動畫，可以在 ShowAnime 跟 HideAnime 覆寫執行相關過渡動畫 (DoTween, Animation...)，並且一定要在完成 UI 動畫後正確呼叫 animEndCb() 回調。額外還有 UI 的 MaskEvent 也可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)。
-- GSFrame (Game Scene) : 使用 GSManager 管理掛載 GSBase 的 Prefab (使用 _Node@XXX 進行物件綁定)。
+- UIFrame (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab，支援 UI 反切 (Reverse Changes)，基本上 UI 有隱藏凍結功能，避免 UI 動畫尚未完成期間，能夠被點擊觸發事件。另外如需要製作 UI 動畫，可以在 ShowAnime 跟 HideAnime 覆寫執行相關過渡動畫 (DoTween, Animation...)，並且一定要在完成 UI 動畫後正確呼叫 animeEndCb() 回調。額外還有 UI 的 MaskEvent 也可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)。
+- SRFrame (Scene Resource) : 使用 SRManager 管理掛載 SRBase 的 Prefab (使用 _Node@XXX 進行物件綁定)。
 - USFrame (Unity Scene) : 使用 USManager 管理 Unity 場景 (支援 AssetBundle)。
   - ※備註 : Use "build#" will load scene from Build else load scene from Bundle
-- EPFrame (Entity Prefab) : 使用 EPManager 管理掛載 EPBase 的 Prefab (使用 ~Node@XXX 進行綁定)，可以用於加載模板物件，並且直接進行 GameObject.Destroy 就好，將會自動卸載。
+- CPFrame (Clone Prefab) : 使用 CPManager 管理掛載 CPBase 的 Prefab (使用 ~Node@XXX 進行綁定)，可以用於加載模板物件，並且直接進行 GameObject.Destroy 就好，將會自動卸載。
 
 #### 常用方法說明
 - OnInit : 初始 Member Params (建構式概念)，另外如果採用拖曳式指定組件，也可以直接在此初始 (不過不建議，建議還是在 OnBind 執行)。
 - OnBind : 初始綁定組件與事件 (After Bind)。
 - OpenSub : 當有異步處理或者附屬物件控制時，可以在此處理。例如 : TopUI 附屬連動開啟 LeftUI & RightUI，那麼就可以在 TopUI 中的 OpenSub 方法實現 Show LeftUI & RightUI。
+  - **不建議在 CloseSub 時進行相關 Show 的處理，如果有進行的話也沒關係，因為針對 CloseAll 的 API 有提供 disableDoSub 的開關。**
 - OnShow : 調用 Show 時，此方法會被激活，並且可以透過帶入的 object 進行數據傳送。
 - OnClose : 調用 Close 時，此方法會被激活。
 - OnRelease : 當物件 Close And Destroy 時，此方法會被激活。
@@ -204,11 +220,11 @@ Init Order : OnInit (Once) > OnBind (Once) > OpenSub (EveryOpen) > OnShow (Every
 
 #### 物件綁定說明 (OnBind)
 - 透過 collector.GetNode("BindName") 返回取得綁定 GameObject (單一名綁定)
-  - UIBase & GSBase 使用 _Node@XXX
-  - EPBase 使用 ~Node@XXX
+  - UIBase & SRBase 使用 _Node@XXX
+  - CPBase 使用 ~Node@XXX
 - 透過 collector.GetNodes("BindName") 返回取得綁定 GameObject[] (同名多綁定，物件順序由上至下)
-  - UIBase & GSBase 使用 _Node@XXX
-  - EPBase 使用 ~Node@XXX
+  - UIBase & SRBase 使用 _Node@XXX
+  - CPBase 使用 ~Node@XXX
 
 **如果沒有要使用 CoreFrame 核心製作模塊，可以直接刪除整個 CoreFrame。**
 
@@ -324,7 +340,7 @@ video_urlset 127.0.0.1/video/
   - Adapter => UISafeAreaAdapter
     - ※備註 : 在 Canvas 下預創建 UIRoot 並掛載 UISafeAreaAdapter 在 UIRoot 上 (也可使用自己的 UI 自適應方案)。
   - Pool => NodePool (GameObject Pool)
-  - ButtonPlus => Inherited by Unity Button. extend Long Press and Transition Scale
+  - ButtonPlus => Inherited by Unity Button. extend Long Click and Transition Scale
   - UMT => Unity Main Thread
     - ※備註 : 新建一個 GameObject，再掛上 UnityMainThread 腳本 (由 MonoBehaviour 主線程驅動)。
   - Singleton => MonoSingleton (MonoBehaviour), NewSingleton (class)

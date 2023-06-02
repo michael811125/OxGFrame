@@ -7,7 +7,7 @@ using OxGFrame.AssetLoader;
 
 namespace OxGFrame.CoreFrame.UIFrame
 {
-    public class UIManager : FrameManager<UIBase>
+    internal class UIManager : FrameManager<UIBase>
     {
         private struct ReverseCache
         {

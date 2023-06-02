@@ -1,7 +1,8 @@
 {
   "dependencies": {
+    "com.code-philosophy.hybridclr": "https://github.com/focus-creative-games/hybridclr_unity.git",
     "com.domybest.mybox": "https://github.com/Deadcows/MyBox.git",
-    "com.focus-creative-games.hybridclr_unity": "https://github.com/focus-creative-games/hybridclr_unity.git",
+    "com.jeffjadulco.guidregenerator": "https://github.com/jeffjadulco/unity-guid-regenerator.git",
     "com.unity.2d.animation": "7.0.10",
     "com.unity.2d.pixel-perfect": "5.0.3",
     "com.unity.2d.sprite": "1.0.0",

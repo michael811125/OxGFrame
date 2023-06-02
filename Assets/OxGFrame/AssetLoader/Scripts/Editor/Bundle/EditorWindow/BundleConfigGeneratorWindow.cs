@@ -17,7 +17,8 @@ namespace OxGFrame.AssetLoader.Editor
         {
             ExportAppConfigToStreamingAssets = 0,
             ExportConfigsAndAppBundlesForCDN = 1,
-            ExportIndividualDLCBundlesForCDN = 2
+            ExportAppBundlesWithoutConfigsForCDN = 2,
+            ExportIndividualDLCBundlesForCDN = 3
         }
 
         private static BundleConfigGeneratorWindow _instance = null;
@@ -63,11 +64,11 @@ namespace OxGFrame.AssetLoader.Editor
 
         private static Vector2 _windowSize = new Vector2(800f, 400f);
 
-        [MenuItem(BundleHelper.MenuRoot + "Bundle Config Generator", false, 899)]
+        [MenuItem(BundleHelper.MenuRoot + "Bundle And Config Generator", false, 899)]
         public static void ShowWindow()
         {
             _instance = null;
-            GetInstance().titleContent = new GUIContent("Bundle Config Generator");
+            GetInstance().titleContent = new GUIContent("Bundle And Config Generator");
             GetInstance().Show();
             GetInstance().minSize = _windowSize;
         }
@@ -130,6 +131,13 @@ namespace OxGFrame.AssetLoader.Editor
                 case OperationType.ExportConfigsAndAppBundlesForCDN:
                     this._DrawExportConfigsAndAppBundlesForCDNView();
                     if (this._lastOperationType != OperationType.ExportConfigsAndAppBundlesForCDN)
+                    {
+                        GetInstance().minSize = new Vector2(_windowSize.x, _windowSize.y);
+                    }
+                    break;
+                case OperationType.ExportAppBundlesWithoutConfigsForCDN:
+                    this._DrawExportAppBundlesWithoutConfigsForCDNView();
+                    if (this._lastOperationType != OperationType.ExportAppBundlesWithoutConfigsForCDN)
                     {
                         GetInstance().minSize = new Vector2(_windowSize.x, _windowSize.y);
                     }
@@ -199,6 +207,39 @@ namespace OxGFrame.AssetLoader.Editor
             this._DrawExportFolderView();
             this._DrawExportAppPackagesView();
             this._DrawGroupInfosView();
+            this._DrawProcessButtonView(this.operationType);
+
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndScrollView();
+        }
+
+        private void _DrawExportAppBundlesWithoutConfigsForCDNView()
+        {
+            this._scrollview = EditorGUILayout.BeginScrollView(this._scrollview, true, true);
+
+            EditorGUILayout.Space();
+
+            GUIStyle style = new GUIStyle();
+            var bg = new Texture2D(1, 1);
+            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+            bg.SetPixels(pixels);
+            bg.Apply();
+            style.normal.background = bg;
+            EditorGUILayout.BeginVertical(style);
+            var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+            centeredStyle.alignment = TextAnchor.UpperCenter;
+            GUILayout.Label(new GUIContent("Export App Bundles Without Configs For CDN"), centeredStyle);
+            EditorGUILayout.Space();
+
+            // draw here
+            this._DrawBuildTargetView();
+            this._DrawSourceFolderView();
+            this._DrawProductNameTextFieldView();
+            this._DrawAppVersionTextFieldView();
+            this._DrawExportFolderView();
+            this._DrawExportAppPackagesView();
             this._DrawProcessButtonView(this.operationType);
 
             EditorGUILayout.EndVertical();
@@ -507,6 +548,13 @@ namespace OxGFrame.AssetLoader.Editor
                         outputPath = $"{this.exportFolder[(int)this.operationType]}/{BundleConfig.rootFolderName}";
                         BundleHelper.ExportConfigsAndAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.groupInfos, this.exportAppPackages.ToArray(), this.activeBuildTarget, this.buildTarget);
                         EditorUtility.DisplayDialog("Process Message", "Export Configs And App Bundles For CDN.", "OK");
+                        if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
+                        break;
+                    case OperationType.ExportAppBundlesWithoutConfigsForCDN:
+                        inputPath = this.sourceFolder[(int)this.operationType];
+                        outputPath = $"{this.exportFolder[(int)this.operationType]}/{BundleConfig.rootFolderName}";
+                        BundleHelper.ExportAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.exportAppPackages.ToArray(), this.activeBuildTarget, this.buildTarget);
+                        EditorUtility.DisplayDialog("Process Message", "Export App Bundles For CDN Without Configs.", "OK");
                         if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
                         break;
                     case OperationType.ExportIndividualDLCBundlesForCDN:

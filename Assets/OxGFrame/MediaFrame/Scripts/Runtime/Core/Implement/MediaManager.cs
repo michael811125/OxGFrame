@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace OxGFrame.MediaFrame
 {
-    public abstract class MediaManager<T> : MonoBehaviour where T : MediaBase
+    internal abstract class MediaManager<T> : MonoBehaviour where T : MediaBase
     {
         protected Dictionary<string, GameObject> _dictAssetCache = new Dictionary<string, GameObject>();  // 【常駐】所有資源緩存
         protected HashSet<string> _loadingFlags = new HashSet<string>();                                  // 用來標記正在加載中的資源 (暫存緩存)

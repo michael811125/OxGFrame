@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace OxGFrame.CoreFrame.USFrame
 {
-    public class USManager
+    internal class USManager
     {
         public static int sceneCount { get { return SceneManager.sceneCount; } }
 
@@ -16,7 +16,7 @@ namespace OxGFrame.CoreFrame.USFrame
 
         private static readonly object _locker = new object();
         private static USManager _instance = null;
-        internal static USManager GetInstance()
+        public static USManager GetInstance()
         {
             if (_instance == null)
             {

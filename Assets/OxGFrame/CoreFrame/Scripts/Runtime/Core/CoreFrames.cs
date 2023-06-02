@@ -1,7 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
-using OxGFrame.CoreFrame.EPFrame;
-using OxGFrame.CoreFrame.GSFrame;
+using OxGFrame.CoreFrame.CPFrame;
+using OxGFrame.CoreFrame.SRFrame;
 using OxGFrame.CoreFrame.UIFrame;
 using OxGFrame.CoreFrame.USFrame;
 using UnityEngine;
@@ -202,57 +202,57 @@ namespace OxGFrame.CoreFrame
             #endregion
         }
 
-        public static class GSFrame
+        public static class SRFrame
         {
             public static void InitInstance()
             {
-                GSManager.GetInstance();
+                SRManager.GetInstance();
             }
 
             public static bool CheckIsShowing(string assetName)
             {
-                return GSManager.GetInstance().CheckIsShowing(assetName);
+                return SRManager.GetInstance().CheckIsShowing(assetName);
             }
 
-            public static bool CheckIsShowing(GSBase gsBase)
+            public static bool CheckIsShowing(SRBase srBase)
             {
-                return GSManager.GetInstance().CheckIsShowing(gsBase);
+                return SRManager.GetInstance().CheckIsShowing(srBase);
             }
 
             public static bool CheckIsHiding(string assetName)
             {
-                return GSManager.GetInstance().CheckIsHiding(assetName);
+                return SRManager.GetInstance().CheckIsHiding(assetName);
             }
 
-            public static bool CheckIsHiding(GSBase gsBase)
+            public static bool CheckIsHiding(SRBase srBase)
             {
-                return GSManager.GetInstance().CheckIsHiding(gsBase);
+                return SRManager.GetInstance().CheckIsHiding(srBase);
             }
 
             public static bool CheckHasAnyHiding()
             {
-                return GSManager.GetInstance().CheckHasAnyHiding();
+                return SRManager.GetInstance().CheckHasAnyHiding();
             }
 
             public static bool CheckHasAnyHiding(int groupId)
             {
-                return GSManager.GetInstance().CheckHasAnyHiding(groupId);
+                return SRManager.GetInstance().CheckHasAnyHiding(groupId);
             }
 
             public static void SendRefreshData(object data = null)
             {
-                GSManager.GetInstance().SendRefreshData(data);
+                SRManager.GetInstance().SendRefreshData(data);
             }
 
             #region GetComponent
-            public static T GetComponent<T>(string assetName) where T : GSBase
+            public static T GetComponent<T>(string assetName) where T : SRBase
             {
-                return GSManager.GetInstance().GetFrameComponent<T>(assetName);
+                return SRManager.GetInstance().GetFrameComponent<T>(assetName);
             }
 
-            public static T[] GetComponents<T>(string assetName) where T : GSBase
+            public static T[] GetComponents<T>(string assetName) where T : SRBase
             {
-                return GSManager.GetInstance().GetFrameComponents<T>(assetName);
+                return SRManager.GetInstance().GetFrameComponents<T>(assetName);
             }
             #endregion
 
@@ -266,23 +266,23 @@ namespace OxGFrame.CoreFrame
             public static async UniTask Preload(string assetName, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                await GSManager.GetInstance().Preload(packageName, new string[] { assetName }, progression);
+                await SRManager.GetInstance().Preload(packageName, new string[] { assetName }, progression);
             }
 
             public static async UniTask Preload(string packageName, string assetName, Progression progression = null)
             {
-                await GSManager.GetInstance().Preload(packageName, new string[] { assetName }, progression);
+                await SRManager.GetInstance().Preload(packageName, new string[] { assetName }, progression);
             }
 
             public static async UniTask Preload(string[] assetNames, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                await GSManager.GetInstance().Preload(packageName, assetNames, progression);
+                await SRManager.GetInstance().Preload(packageName, assetNames, progression);
             }
 
             public static async UniTask Preload(string packageName, string[] assetNames, Progression progression = null)
             {
-                await GSManager.GetInstance().Preload(packageName, assetNames, progression);
+                await SRManager.GetInstance().Preload(packageName, assetNames, progression);
             }
             #endregion
 
@@ -296,99 +296,99 @@ namespace OxGFrame.CoreFrame
             /// <param name="progression"></param>
             /// <param name="parent"></param>
             /// <returns></returns>
-            public static async UniTask<GSBase> Show(string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
+            public static async UniTask<SRBase> Show(string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await GSManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent);
+                return await SRManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent);
             }
 
-            public static async UniTask<GSBase> Show(string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
+            public static async UniTask<SRBase> Show(string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
-                return await GSManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent);
+                return await SRManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent);
             }
 
-            public static async UniTask<GSBase> Show(int groupId, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
-            {
-                var packageName = AssetPatcher.GetDefaultPackageName();
-                return await GSManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent);
-            }
-
-            public static async UniTask<GSBase> Show(int groupId, string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
-            {
-                return await GSManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent);
-            }
-
-            public static async UniTask<T> Show<T>(string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
+            public static async UniTask<SRBase> Show(int groupId, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await GSManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
+                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
+            public static async UniTask<SRBase> Show(int groupId, string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
             {
-                return await GSManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
+                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
+            public static async UniTask<T> Show<T>(string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : SRBase
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await GSManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
+                return await SRManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : GSBase
+            public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : SRBase
             {
-                return await GSManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
+                return await SRManager.GetInstance().Show(0, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : SRBase
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object data = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null) where T : SRBase
+            {
+                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, loadingUIAssetName, progression, parent) as T;
             }
             #endregion
 
             #region Close
             public static void Close(string assetName, bool disableDoSub = false, bool forceDestroy = false)
             {
-                GSManager.GetInstance().Close(assetName, disableDoSub, forceDestroy);
+                SRManager.GetInstance().Close(assetName, disableDoSub, forceDestroy);
             }
 
             public static void CloseAll(bool disableDoSub = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                GSManager.GetInstance().CloseAll(disableDoSub, forceDestroy, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(disableDoSub, forceDestroy, withoutAssetNames);
             }
 
             public static void CloseAll(int groupId, bool disableDoSub = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                GSManager.GetInstance().CloseAll(groupId, disableDoSub, forceDestroy, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(groupId, disableDoSub, forceDestroy, withoutAssetNames);
             }
             #endregion
 
             #region Reveal
             public static void Reveal(string assetName)
             {
-                GSManager.GetInstance().Reveal(assetName);
+                SRManager.GetInstance().Reveal(assetName);
             }
 
             public static void RevealAll()
             {
-                GSManager.GetInstance().RevealAll();
+                SRManager.GetInstance().RevealAll();
             }
 
             public static void RevealAll(int groupId)
             {
-                GSManager.GetInstance().RevealAll(groupId); ;
+                SRManager.GetInstance().RevealAll(groupId); ;
             }
             #endregion
 
             #region Hide
             public static void Hide(string assetName)
             {
-                GSManager.GetInstance().Hide(assetName);
+                SRManager.GetInstance().Hide(assetName);
             }
 
             public static void HideAll()
             {
-                GSManager.GetInstance().HideAll();
+                SRManager.GetInstance().HideAll();
             }
 
             public static void HideAll(int groupId)
             {
-                GSManager.GetInstance().HideAll(groupId);
+                SRManager.GetInstance().HideAll(groupId);
             }
             #endregion
         }
@@ -719,11 +719,11 @@ namespace OxGFrame.CoreFrame
             }
         }
 
-        public static class EPFrame
+        public static class CPFrame
         {
             public static void InitInstance()
             {
-                EPManager.GetInstance();
+                CPManager.GetInstance();
             }
 
             /// <summary>
@@ -735,23 +735,23 @@ namespace OxGFrame.CoreFrame
             public static async UniTask PreloadAsync(string assetName, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                await EPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, progression);
+                await CPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, progression);
             }
 
             public static async UniTask PreloadAsync(string packageName, string assetName, Progression progression = null)
             {
-                await EPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, progression);
+                await CPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, progression);
             }
 
             public static async UniTask PreloadAsync(string[] assetNames, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                await EPManager.GetInstance().PreloadAsync(packageName, assetNames, progression);
+                await CPManager.GetInstance().PreloadAsync(packageName, assetNames, progression);
             }
 
             public static async UniTask PreloadAsync(string packageName, string[] assetNames, Progression progression = null)
             {
-                await EPManager.GetInstance().PreloadAsync(packageName, assetNames, progression);
+                await CPManager.GetInstance().PreloadAsync(packageName, assetNames, progression);
             }
 
             /// <summary>
@@ -762,23 +762,23 @@ namespace OxGFrame.CoreFrame
             public static void Preload(string assetName, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                EPManager.GetInstance().Preload(packageName, new string[] { assetName }, progression);
+                CPManager.GetInstance().Preload(packageName, new string[] { assetName }, progression);
             }
 
             public static void Preload(string packageName, string assetName, Progression progression = null)
             {
-                EPManager.GetInstance().Preload(packageName, new string[] { assetName }, progression);
+                CPManager.GetInstance().Preload(packageName, new string[] { assetName }, progression);
             }
 
             public static void Preload(string[] assetNames, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                EPManager.GetInstance().Preload(packageName, assetNames, progression);
+                CPManager.GetInstance().Preload(packageName, assetNames, progression);
             }
 
             public static void Preload(string packageName, string[] assetNames, Progression progression = null)
             {
-                EPManager.GetInstance().Preload(packageName, assetNames, progression);
+                CPManager.GetInstance().Preload(packageName, assetNames, progression);
             }
 
             /// <summary>
@@ -789,37 +789,37 @@ namespace OxGFrame.CoreFrame
             /// <param name="parent"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Transform parent = null, Progression progression = null) where T : EPBase, new()
+            public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Transform parent = null, Progression progression = null) where T : CPBase, new()
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await EPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, progression);
+                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, progression);
             }
 
-            public static async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent = null, Progression progression = null) where T : EPBase, new()
+            public static async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent = null, Progression progression = null) where T : CPBase, new()
             {
-                return await EPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, progression);
+                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, progression);
             }
 
-            public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : EPBase, new()
-            {
-                var packageName = AssetPatcher.GetDefaultPackageName();
-                return await EPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, worldPositionStays, progression);
-            }
-
-            public static async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : EPBase, new()
-            {
-                return await EPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, worldPositionStays, progression);
-            }
-
-            public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : EPBase, new()
+            public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : CPBase, new()
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await EPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, position, rotation, parent, scale, progression);
+                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, worldPositionStays, progression);
             }
 
-            public static async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : EPBase, new()
+            public static async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : CPBase, new()
             {
-                return await EPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, position, rotation, parent, scale, progression);
+                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, worldPositionStays, progression);
+            }
+
+            public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : CPBase, new()
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, position, rotation, parent, scale, progression);
+            }
+
+            public static async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : CPBase, new()
+            {
+                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, position, rotation, parent, scale, progression);
             }
 
             /// <summary>
@@ -830,37 +830,37 @@ namespace OxGFrame.CoreFrame
             /// <param name="parent"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static T LoadWithClone<T>(string assetName, Transform parent = null, Progression progression = null) where T : EPBase, new()
+            public static T LoadWithClone<T>(string assetName, Transform parent = null, Progression progression = null) where T : CPBase, new()
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return EPManager.GetInstance().LoadWithClone<T>(packageName, assetName, parent, progression);
+                return CPManager.GetInstance().LoadWithClone<T>(packageName, assetName, parent, progression);
             }
 
-            public static T LoadWithClone<T>(string packageName, string assetName, Transform parent = null, Progression progression = null) where T : EPBase, new()
+            public static T LoadWithClone<T>(string packageName, string assetName, Transform parent = null, Progression progression = null) where T : CPBase, new()
             {
-                return EPManager.GetInstance().LoadWithClone<T>(packageName, assetName, parent, progression);
+                return CPManager.GetInstance().LoadWithClone<T>(packageName, assetName, parent, progression);
             }
 
-            public static T LoadWithClone<T>(string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : EPBase, new()
-            {
-                var packageName = AssetPatcher.GetDefaultPackageName();
-                return EPManager.GetInstance().LoadWithClone<T>(packageName, assetName, parent, worldPositionStays, progression);
-            }
-
-            public static T LoadWithClone<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : EPBase, new()
-            {
-                return EPManager.GetInstance().LoadWithClone<T>(packageName, assetName, parent, worldPositionStays, progression);
-            }
-
-            public static T LoadWithClone<T>(string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : EPBase, new()
+            public static T LoadWithClone<T>(string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : CPBase, new()
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return EPManager.GetInstance().LoadWithClone<T>(packageName, assetName, position, rotation, parent, scale, progression);
+                return CPManager.GetInstance().LoadWithClone<T>(packageName, assetName, parent, worldPositionStays, progression);
             }
 
-            public static T LoadWithClone<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : EPBase, new()
+            public static T LoadWithClone<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : CPBase, new()
             {
-                return EPManager.GetInstance().LoadWithClone<T>(packageName, assetName, position, rotation, parent, scale, progression);
+                return CPManager.GetInstance().LoadWithClone<T>(packageName, assetName, parent, worldPositionStays, progression);
+            }
+
+            public static T LoadWithClone<T>(string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : CPBase, new()
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                return CPManager.GetInstance().LoadWithClone<T>(packageName, assetName, position, rotation, parent, scale, progression);
+            }
+
+            public static T LoadWithClone<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : CPBase, new()
+            {
+                return CPManager.GetInstance().LoadWithClone<T>(packageName, assetName, position, rotation, parent, scale, progression);
             }
         }
     }

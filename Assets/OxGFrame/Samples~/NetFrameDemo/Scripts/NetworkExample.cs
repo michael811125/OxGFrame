@@ -33,7 +33,7 @@ public class NetworkExample
         });
 
         // Add net node (register)
-        NetManager.GetInstance().AddNetNode(wsNetNode, 0);
+        NetFrames.AddNetNode(wsNetNode, 0);
         #endregion
 
         #region TCP/IP Example
@@ -59,7 +59,7 @@ public class NetworkExample
         });
 
         // Add net node (register)
-        NetManager.GetInstance().AddNetNode(tcpNetNode, 1);
+        NetFrames.AddNetNode(tcpNetNode, 1);
         #endregion
     }
 
@@ -87,7 +87,7 @@ public class NetworkExample
     public static void OpenConnection(NetOption netOption, byte nnid = 0)
     {
         InitNetNode();
-        NetManager.GetInstance().Connect(netOption, nnid);
+        NetFrames.Connect(netOption, nnid);
     }
 
     /// <summary>
@@ -95,7 +95,7 @@ public class NetworkExample
     /// </summary>
     public static void CloseConnection(byte nnid = 0)
     {
-        NetManager.GetInstance().CloseSocket(nnid);
+        NetFrames.CloseSocket(nnid);
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public class NetworkExample
     /// <returns></returns>
     public static bool IsConnected(byte nnid = 0)
     {
-        return NetManager.GetInstance().IsConnected(nnid);
+        return NetFrames.IsConnected(nnid);
     }
 
     /// <summary>
@@ -114,6 +114,6 @@ public class NetworkExample
     /// <returns></returns>
     public static bool SendData(byte[] buffer, byte nnid = 0)
     {
-        return NetManager.GetInstance().Send(buffer, nnid);
+        return NetFrames.Send(buffer, nnid);
     }
 }

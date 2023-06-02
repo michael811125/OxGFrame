@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.code-philosophy.hybridclr": {
+      "version": "https://github.com/focus-creative-games/hybridclr_unity.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "b49b94521e3215a0a6af27870be52fe0337c05f5"
+    },
     "com.domybest.mybox": {
       "version": "https://github.com/Deadcows/MyBox.git",
       "depth": 0,
@@ -9,12 +16,12 @@
       },
       "hash": "e250b932c64c9624f807ff2dad658da80dc09b8e"
     },
-    "com.focus-creative-games.hybridclr_unity": {
-      "version": "https://github.com/focus-creative-games/hybridclr_unity.git",
+    "com.jeffjadulco.guidregenerator": {
+      "version": "https://github.com/jeffjadulco/unity-guid-regenerator.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "f5afc4362523d400fd3d6f4261dc81b5f62a84b3"
+      "hash": "7dbce4b94bd7f92c33de382439f662a0731a1db9"
     },
     "com.unity.2d.animation": {
       "version": "7.0.10",

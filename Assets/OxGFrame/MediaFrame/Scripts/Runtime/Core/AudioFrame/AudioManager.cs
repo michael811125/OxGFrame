@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 
 namespace OxGFrame.MediaFrame.AudioFrame
 {
-    public class AudioManager : MediaManager<AudioBase>
+    internal class AudioManager : MediaManager<AudioBase>
     {
         [Header("Audio Mixer")]
         [SerializeField, Tooltip("Setup AudioMixer in list")]
@@ -17,7 +17,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         private static readonly object _locker = new object();
         private static AudioManager _instance = null;
-        internal static AudioManager GetInstance()
+        public static AudioManager GetInstance()
         {
             if (_instance == null)
             {

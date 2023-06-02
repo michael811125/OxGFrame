@@ -3,9 +3,10 @@ using UnityEngine;
 
 namespace OxGFrame.NetFrame
 {
-    public class NetManager
+    internal class NetManager
     {
-        private Dictionary<byte, NetNode> _dictNetNode = null; // NetNode 緩存
+        // NetNode 緩存
+        private Dictionary<byte, NetNode> _dictNetNode = null;
 
         private static NetManager _instance = null;
         public static NetManager GetInstance()

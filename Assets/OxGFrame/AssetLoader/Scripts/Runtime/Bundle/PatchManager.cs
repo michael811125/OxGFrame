@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
-    public class PatchManager
+    internal class PatchManager
     {
         #region Last Group Info
         internal const string DEFAULT_GROUP_TAG = "#all";
@@ -30,7 +30,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
         }
 
-        public static void DelLastGroupInfo()
+        internal static void DelLastGroupInfo()
         {
             PlayerPrefs.DeleteKey(LAST_GROUP_INFO_KEY);
         }
@@ -43,7 +43,7 @@ namespace OxGFrame.AssetLoader.Bundle
         private bool _isRepair = false;
         private bool _isDone = false;
 
-        private EventGroup _userEvents = new EventGroup();
+        private EventGroup _userEvents;
         private StateMachine _patchFsm;
 
         public ResourceDownloaderOperation mainDownloader;
@@ -102,13 +102,14 @@ namespace OxGFrame.AssetLoader.Bundle
 #endif
 
             // 註冊 UserEvents 監聽事件
-            this._userEvents.AddListener<UserEvents.UserTryPatchRepair>(this._OnHandleEventMessage);
-            this._userEvents.AddListener<UserEvents.UserTryAppVersionUpdate>(this._OnHandleEventMessage);
-            this._userEvents.AddListener<UserEvents.UserTryInitPatchMode>(this._OnHandleEventMessage);
-            this._userEvents.AddListener<UserEvents.UserBeginDownload>(this._OnHandleEventMessage);
-            this._userEvents.AddListener<UserEvents.UserTryPatchVersionUpdate>(this._OnHandleEventMessage);
-            this._userEvents.AddListener<UserEvents.UserTryPatchManifestUpdate>(this._OnHandleEventMessage);
-            this._userEvents.AddListener<UserEvents.UserTryCreateDownloader>(this._OnHandleEventMessage);
+            this._userEvents = new EventGroup();
+            this._userEvents.AddListener<PatchUserEvents.UserTryPatchRepair>(this._OnHandleEventMessage);
+            this._userEvents.AddListener<PatchUserEvents.UserTryAppVersionUpdate>(this._OnHandleEventMessage);
+            this._userEvents.AddListener<PatchUserEvents.UserTryInitPatchMode>(this._OnHandleEventMessage);
+            this._userEvents.AddListener<PatchUserEvents.UserBeginDownload>(this._OnHandleEventMessage);
+            this._userEvents.AddListener<PatchUserEvents.UserTryPatchVersionUpdate>(this._OnHandleEventMessage);
+            this._userEvents.AddListener<PatchUserEvents.UserTryPatchManifestUpdate>(this._OnHandleEventMessage);
+            this._userEvents.AddListener<PatchUserEvents.UserTryCreateDownloader>(this._OnHandleEventMessage);
 
             // 註冊 PatchFsm 處理流程
             this._patchFsm = new StateMachine(this);
@@ -229,31 +230,31 @@ namespace OxGFrame.AssetLoader.Bundle
         #region User Event Handle
         private void _OnHandleEventMessage(IEventMessage message)
         {
-            if (message is UserEvents.UserTryPatchRepair)
+            if (message is PatchUserEvents.UserTryPatchRepair)
             {
                 this._patchFsm.ChangeState<PatchFsmStates.FsmPatchRepair>();
             }
-            else if (message is UserEvents.UserTryAppVersionUpdate)
+            else if (message is PatchUserEvents.UserTryAppVersionUpdate)
             {
                 this._patchFsm.ChangeState<PatchFsmStates.FsmAppVersionUpdate>();
             }
-            else if (message is UserEvents.UserTryInitPatchMode)
+            else if (message is PatchUserEvents.UserTryInitPatchMode)
             {
                 this._patchFsm.ChangeState<PatchFsmStates.FsmInitPatchMode>();
             }
-            else if (message is UserEvents.UserBeginDownload)
+            else if (message is PatchUserEvents.UserBeginDownload)
             {
                 this._patchFsm.ChangeState<PatchFsmStates.FsmBeginDownload>();
             }
-            else if (message is UserEvents.UserTryPatchVersionUpdate)
+            else if (message is PatchUserEvents.UserTryPatchVersionUpdate)
             {
                 this._patchFsm.ChangeState<PatchFsmStates.FsmPatchVersionUpdate>();
             }
-            else if (message is UserEvents.UserTryPatchManifestUpdate)
+            else if (message is PatchUserEvents.UserTryPatchManifestUpdate)
             {
                 this._patchFsm.ChangeState<PatchFsmStates.FsmPatchManifestUpdate>();
             }
-            else if (message is UserEvents.UserTryCreateDownloader)
+            else if (message is PatchUserEvents.UserTryCreateDownloader)
             {
                 this._patchFsm.ChangeState<PatchFsmStates.FsmCreateDownloader>();
             }

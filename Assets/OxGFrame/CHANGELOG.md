@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [2.2.0] - 2023-06-02 (Break Changes)
+- Added HybridCLR hotfix solution (using OxGFrame.Hotfixer).
+  - Checkout HotfixerDemo (Import sample from Unity Package Manager).
+- Modified NetManager access modifier use NetFrames to call API (using OxGFrame.NetFrame).
+- Renamed UserEvents (Patch) => PatchEvents (must manually rename).
+- Renamed GSFrame => SRFrame = SR (Scene Resource).
+  - If already use, must manually rename and setup again.
+- Renamed EPFrame => CPFrame = CP (Clone Prefab).
+  - If already use, must manually rename and setup again
+- Optimized ButtonPlus and redesigned long click.
+- Optimized code.
+
 ## [2.1.5] - 2023-05-30
 - Added Singleton Utility.
 - Can install via git (Organized Samples).

@@ -94,7 +94,34 @@ namespace OxGFrame.AssetLoader.Editor
             WriteTxt(jsonCfg, writePath);
             #endregion
 
-            Debug.Log($"<color=#00FF00>【Export AppConfig And Bundles Completes】 App Version: {appCfg.APP_VERSION}</color>");
+            Debug.Log($"<color=#00FF00>【Export Configs And App Bundles Completes】 App Version: {appCfg.APP_VERSION}</color>");
+        }
+
+        /// <summary>
+        /// 輸出 App Bundles (Export App Bundles Without Configs for CDN Server)
+        /// </summary>
+        /// <param name="inputPath"></param>
+        /// <param name="outputPath"></param>
+        /// <param name="productName"></param>
+        /// <param name="appVersion"></param>
+        /// <param name="exportPackages"></param>
+        /// <param name="activeBuildTarget"></param>
+        /// <param name="buildTarget"></param>
+        /// <param name="isClearOutputPath"></param>
+        public static void ExportAppBundles(string inputPath, string outputPath, string productName, string appVersion, string[] exportPackages, bool activeBuildTarget, BuildTarget buildTarget, bool isClearOutputPath = true)
+        {
+            // 生成配置檔數據 (AppConfig)
+            var appCfg = GenerateAppConfig(productName, appVersion, activeBuildTarget, buildTarget);
+
+            // 清空輸出路徑
+            if (isClearOutputPath && Directory.Exists(outputPath)) BundleUtility.DeleteFolder(outputPath);
+            if (!Directory.Exists(outputPath)) Directory.CreateDirectory(outputPath);
+
+            #region YooAsset Bundle
+            ExportNewestYooAssetBundles(inputPath, outputPath, appCfg.PLATFORM, productName, appVersion, exportPackages);
+            #endregion
+
+            Debug.Log($"<color=#00FF00>【Export App Bundles Without Configs Completes】</color>");
         }
 
         /// <summary>
@@ -567,7 +594,7 @@ namespace OxGFrame.AssetLoader.Editor
         [MenuItem(MenuRoot + "Clear Last Group Info Record", false, 199)]
         internal static void ClearLastGroupRecord()
         {
-            PatchManager.DelLastGroupInfo();
+            AssetPatcher.ClearLastGroupInfo();
         }
         #endregion
     }

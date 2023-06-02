@@ -8,7 +8,7 @@ using UnityEngine;
 namespace OxGFrame.CoreFrame
 {
     [DisallowMultipleComponent]
-    public abstract class FrameManager<T> : MonoBehaviour where T : FrameBase
+    internal abstract class FrameManager<T> : MonoBehaviour where T : FrameBase
     {
         protected delegate void AddIntoCache(T fBase);
 

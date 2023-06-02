@@ -4,14 +4,14 @@ namespace OxGFrame.CoreFrame.Editor
 {
     public static class CoreFrameCreateScriptEditor
     {
-        // GSFrame
-        private const string TPL_GS_SCRIPT_PATH = "TplScripts/GSFrame/TplGS.cs.txt";
+        // SRFrame
+        private const string TPL_SR_SCRIPT_PATH = "TplScripts/SRFrame/TplSR.cs.txt";
 
         // UIFrame
         private const string TPL_UI_SCRIPT_PATH = "TplScripts/UIFrame/TplUI.cs.txt";
 
-        // EPFrame
-        private const string TPL_EP_SCRIPT_PATH = "TplScripts/EPFrame/TplEP.cs.txt";
+        // CPFrame
+        private const string TPL_CP_SCRIPT_PATH = "TplScripts/CPFrame/TplCP.cs.txt";
 
         // find current file path
         private static string pathFinder
@@ -23,14 +23,14 @@ namespace OxGFrame.CoreFrame.Editor
             }
         }
 
-        #region GSFrame Script Create
-        [MenuItem(itemName: "Assets/Create/OxGFrame/Core Frame/GS Frame/Template Scripts/Template GS.cs (For Game Scene Prefab)", isValidateFunction: false, priority: 51)]
-        public static void CreateScriptTplGS()
+        #region SRFrame Script Create
+        [MenuItem(itemName: "Assets/Create/OxGFrame/Core Frame/SR Frame/Template Scripts/Template SR.cs (For Scene Resource Prefab)", isValidateFunction: false, priority: 51)]
+        public static void CreateScriptTplSR()
         {
             string currentPath = pathFinder;
-            string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + TPL_GS_SCRIPT_PATH;
+            string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + TPL_SR_SCRIPT_PATH;
 
-            ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplGS.cs");
+            ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplSR.cs");
         }
         #endregion
 
@@ -45,14 +45,14 @@ namespace OxGFrame.CoreFrame.Editor
         }
         #endregion
 
-        #region EPFrame Script Create
-        [MenuItem(itemName: "Assets/Create/OxGFrame/Core Frame/EP Frame/Template Scripts/Template EP.cs (For Entity Prefab)", isValidateFunction: false, priority: 51)]
-        public static void CreateScriptTplEP()
+        #region CPFrame Script Create
+        [MenuItem(itemName: "Assets/Create/OxGFrame/Core Frame/CP Frame/Template Scripts/Template CP.cs (For Clone Prefab)", isValidateFunction: false, priority: 51)]
+        public static void CreateScriptTplCP()
         {
             string currentPath = pathFinder;
-            string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + TPL_EP_SCRIPT_PATH;
+            string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + TPL_CP_SCRIPT_PATH;
 
-            ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplEP.cs");
+            ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplCP.cs");
         }
         #endregion
     }

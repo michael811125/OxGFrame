@@ -25,8 +25,8 @@ namespace OxGFrame.CoreFrame
             // 檢查是否要結束綁定, 有檢查到【BIND_END】時, 則停止繼續搜尋綁定物件
             if (_CheckIsToBindChildren(name))
             {
-                // 只有 EntityBase 的綁定前綴字需要區分, 避免相衝
-                if (typeof(EPFrame.EPBase).IsInstanceOfType(fBase) && _CheckNodeHasPrefixEntity(name))
+                // 只有 CPBase 的綁定前綴字需要區分, 避免相衝
+                if (typeof(CPFrame.CPBase).IsInstanceOfType(fBase) && _CheckNodeHasPrefixForClonePrefab(name))
                 {
                     _BindIntoCollector(name, go, fBase);
                 }
@@ -66,9 +66,9 @@ namespace OxGFrame.CoreFrame
             return false;
         }
 
-        private static bool _CheckNodeHasPrefixEntity(string name)
+        private static bool _CheckNodeHasPrefixForClonePrefab(string name)
         {
-            if (name.Substring(0, 1) == FrameConfig.BIND_PREFIX_ENTITY.ToString()) return true;
+            if (name.Substring(0, 1) == FrameConfig.BIND_PREFIX_CLONE_PREFAB.ToString()) return true;
             return false;
         }
 

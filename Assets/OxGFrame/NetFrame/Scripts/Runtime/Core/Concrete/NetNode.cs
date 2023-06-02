@@ -50,9 +50,9 @@ namespace OxGFrame.NetFrame
 
     public class NetNode
     {
-        protected NetStatus _netStatus;                      // Net狀態
-        protected NetOption _netOption = null;               // 網路設置選項 (TCP or WS)
-        protected ISocket _socket = null;                    // Socket介面 (TCP or WS)
+        protected NetStatus _netStatus;                      // Net 狀態
+        protected NetOption _netOption = null;               // 網路設置選項
+        protected ISocket _socket = null;                    // Socket 介面
         protected INetTips _netTips = null;                  // 網路狀態提示介面
 
         private bool _isCloseForce = false;                  // 是否強制斷線

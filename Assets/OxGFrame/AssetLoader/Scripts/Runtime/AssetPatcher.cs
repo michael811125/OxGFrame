@@ -525,6 +525,6 @@ namespace OxGFrame.AssetLoader
         {
             return PackageManager.GetPackageDownloaderByAssetInfos(package, maxConcurrencyDownloadCount, failedRetryCount, assetInfos);
         }
+        #endregion
     }
-    #endregion
 }

@@ -19,7 +19,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         [Header("Package List")]
         [Tooltip("The first element will be default package")]
-        public List<string> listPackage = new List<string>() { "DefaultPackage" };
+        public List<string> listPackage = new List<string>() { "DefaultPackage", "HotfixPackage" };
 
         [Header("Download Options")]
         public int maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
