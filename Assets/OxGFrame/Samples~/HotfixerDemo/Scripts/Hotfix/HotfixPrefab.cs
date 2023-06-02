@@ -4,7 +4,7 @@ public class HotfixPrefab : MonoBehaviour
 {
     public string GetMessageFromHotfixPrefab()
     {
-        // Modify mssage and try hotfix
-        return "\nThis is Hotfix use Load AB and Instantiate Prefab !!!";
+        // Modify message and try hotfix
+        return "\n\nThis is Hotfix use Load AB and Instantiate Prefab !!!";
     }
 }

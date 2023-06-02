@@ -67,7 +67,7 @@ MonoBehaviour:
       AssetTags: prefabs
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/OxGFrame/Hotfixer/Example/HotfixerDemo/Prefabs
+      - CollectPath: Assets/OxGFrame/Samples/HotfixerDemo/Prefabs
         CollectorGUID: c24c14d4ff838c84dbc48cc507fd01aa
         CollectorType: 0
         AddressRuleName: AddressByFileName
@@ -144,7 +144,7 @@ MonoBehaviour:
       AssetTags: 
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/OxGFrame/Hotfixer/Example/HotfixerDemo/Scenes/Hotfix
+      - CollectPath: Assets/OxGFrame/Samples/HotfixerDemo/Scenes/Hotfix
         CollectorGUID: 0ee84d5e2ddb7394ea79ac4b9ac7efec
         CollectorType: 0
         AddressRuleName: AddressByFileName

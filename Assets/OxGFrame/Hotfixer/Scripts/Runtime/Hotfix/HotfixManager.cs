@@ -5,12 +5,14 @@ using System.Reflection;
 using UniFramework.Event;
 using UniFramework.Machine;
 using UnityEngine;
+using YooAsset;
 
 namespace OxGFrame.Hotfixer
 {
     internal class HotfixManager
     {
         public string packageName { get; private set; }
+        public ResourceDownloaderOperation mainDownloader;
 
         private bool _isCheck = false;
         private bool _isDone = false;
@@ -96,14 +98,31 @@ namespace OxGFrame.Hotfixer
             this._hotfixFsm.AddNode<HotfixFsmStates.FsmHotfixDone>();
         }
 
+        public void ReleaseMainDownloader()
+        {
+            this.mainDownloader = null;
+        }
+
         public string[] GetAOTAssemblyNames()
         {
             return this._listAOTAssemblies.ToArray();
         }
 
+        public void ReleaseAOTAssemblyNames()
+        {
+            this._listAOTAssemblies.Clear();
+            this._listAOTAssemblies = null;
+        }
+
         public string[] GetHotfixAssemblyNames()
         {
             return this._listHotfixAssemblies.ToArray();
+        }
+
+        public void ReleaseHotfixAssemblyNames()
+        {
+            this._listHotfixAssemblies.Clear();
+            this._listHotfixAssemblies = null;
         }
 
         public void AddHotfixAssembly(string assemblyName, Assembly assembly)

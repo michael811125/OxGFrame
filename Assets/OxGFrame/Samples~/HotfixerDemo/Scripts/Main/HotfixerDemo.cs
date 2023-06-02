@@ -90,8 +90,12 @@ public class HotfixerDemo : MonoBehaviour
         {
             this._isLoaded = true;
 
-            // Load Hotfix Main Scene
+            // Load Hotfix Main Scene from HotfixPackage
             UniTask.Void(async () => await CoreFrames.USFrame.LoadSingleSceneAsync("HotfixPackage", "HotfixMain"));
+
+            // The main assembly cannot directly reference the hotfix assembly.
+            // Here, the hotfix code is called through reflection after all are loaded.
+            //Hotfixers.GetHotfixAssembly("HotfixDemo.Hotfix.Runtime.dll")?.GetType("Hello").GetMethod("Run", null, null);
         }
     }
 
@@ -102,6 +106,7 @@ public class HotfixerDemo : MonoBehaviour
         // Start hotfix files download and load all (Use YooAsset to collect files)
         Hotfixers.CheckHotfix
         (
+            // Download and load hotfix files from HotfixPackage
             "HotfixPackage",
             // Metadata for AOT assemblies
             new string[]

@@ -11,7 +11,7 @@
       <Collector CollectPath="Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo03.unity" CollectGUID="42b42b7f9b5995748ba85a54431669b3" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
     </Group>
     <Group GroupActiveRule="EnableGroup" GroupName="HotfixGroup" GroupDesc="" AssetTags="prefabs">
-      <Collector CollectPath="Assets/OxGFrame/Hotfixer/Example/HotfixerDemo/Prefabs" CollectGUID="c24c14d4ff838c84dbc48cc507fd01aa" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/OxGFrame/Samples/HotfixerDemo/Prefabs" CollectGUID="c24c14d4ff838c84dbc48cc507fd01aa" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
     </Group>
   </Package>
   <Package PackageName="OtherPackage" PackageDesc="">
@@ -31,7 +31,7 @@
   </Package>
   <Package PackageName="HotfixPackage" PackageDesc="">
     <Group GroupActiveRule="EnableGroup" GroupName="Scene" GroupDesc="Hotfix Main Scene" AssetTags="">
-      <Collector CollectPath="Assets/OxGFrame/Hotfixer/Example/HotfixerDemo/Scenes/Hotfix" CollectGUID="0ee84d5e2ddb7394ea79ac4b9ac7efec" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/OxGFrame/Samples/HotfixerDemo/Scenes/Hotfix" CollectGUID="0ee84d5e2ddb7394ea79ac4b9ac7efec" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
     </Group>
     <Group GroupActiveRule="EnableGroup" GroupName="AOTAssemblies" GroupDesc="AOT Dlls" AssetTags="">
       <Collector CollectPath="Assets/HotfixCollector/AOTDlls" CollectGUID="fb8ac5d617e061d4ba07b760fe82fd72" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />

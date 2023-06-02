@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "b49b94521e3215a0a6af27870be52fe0337c05f5"
+      "hash": "4b43870ff2a6c1e30e7fe99ac361dd437b583155"
     },
     "com.domybest.mybox": {
       "version": "https://github.com/Deadcows/MyBox.git",

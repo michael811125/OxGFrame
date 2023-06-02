@@ -141,8 +141,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                 var package = AssetPatcher.GetPackage(HotfixManager.GetInstance().packageName);
 
                 // Create a downloader
-                var downloader = AssetPatcher.GetPackageDownloader(package);
-                int totalDownloadCount = downloader.TotalDownloadCount;
+                HotfixManager.GetInstance().mainDownloader = AssetPatcher.GetPackageDownloader(package);
+                int totalDownloadCount = HotfixManager.GetInstance().mainDownloader.TotalDownloadCount;
 
                 // Do begin download, if download count > 0
                 if (totalDownloadCount > 0) this._machine.ChangeState<FsmHotfixBeginDownload>();
@@ -181,8 +181,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                 // Get hotfix package
                 var package = AssetPatcher.GetPackage(HotfixManager.GetInstance().packageName);
 
-                // Create a downloader
-                var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+                // Get main downloader
+                var downloader = HotfixManager.GetInstance().mainDownloader;
                 downloader.OnDownloadErrorCallback = HotfixEvents.HotfixDownloadFailed.SendEventMessage;
                 downloader.BeginDownload();
 
@@ -218,6 +218,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
             void IStateNode.OnExit()
             {
+                HotfixManager.GetInstance().ReleaseMainDownloader();
             }
         }
 
@@ -283,21 +284,28 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
             void IStateNode.OnExit()
             {
+                HotfixManager.GetInstance().ReleaseAOTAssemblyNames();
             }
 
             private async UniTask _LoadAOTAssemblies()
             {
+                if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
+                {
+                    this._machine.ChangeState<FsmLoadHotfixAssemblies>();
+                    return;
+                }
+
                 string[] aotMetaAssemblyFiles = HotfixManager.GetInstance().GetAOTAssemblyNames();
 
                 try
                 {
-                    // 注意，補充元數據是給 AOT dll 補充元數據，而不是給熱更新 dll 補充元數據。
-                    // 熱更新 dll 不缺元數據，不需要補充，如果調用 LoadMetadataForAOTAssembly 會返回錯誤
+                    // 注意, 補充元數據是給 AOT dll 補充元數據, 而不是給熱更新 dll 補充元數據
+                    // 熱更新 dll 不缺元數據, 不需要補充, 如果調用 LoadMetadataForAOTAssembly 會返回錯誤
                     HomologousImageMode mode = HomologousImageMode.SuperSet;
                     foreach (var dllName in aotMetaAssemblyFiles)
                     {
                         var dll = await AssetLoaders.LoadAssetAsync<TextAsset>(HotfixManager.GetInstance().packageName, dllName);
-                        // 加載 assembly 對應的 dll，會自動為它 hook。一旦 aot 泛型函數的 native 函數不存在，用解釋器版本代碼
+                        // 加載 assembly 對應的 dll, 會自動為它 hook, 一旦 aot 泛型函數的 native 函數不存在, 用解釋器版本代碼
                         LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dll.bytes, mode);
                         Debug.Log($"<color=#32fff5>Load <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}, ret: {err}</color>");
                     }
@@ -334,6 +342,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
             void IStateNode.OnExit()
             {
+                HotfixManager.GetInstance().ReleaseHotfixAssemblyNames();
             }
 
             private async UniTask _LoadHotfixAssemblies()
@@ -345,9 +354,10 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                     foreach (var dllName in hotfixAssemblyFiles)
                     {
                         Assembly hotfixAsm;
-                        if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
+                        if (Application.isEditor ||
+                            BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
                         {
-                            // Editor 下 無需加載，直接查找獲得 Hotfix 程序集
+                            // Editor 或 Simulate 下無需加載, 直接查找獲得 Hotfix 程序集
                             hotfixAsm = System.AppDomain.CurrentDomain.GetAssemblies().First(a => a.GetName().Name == dllName);
                         }
                         else

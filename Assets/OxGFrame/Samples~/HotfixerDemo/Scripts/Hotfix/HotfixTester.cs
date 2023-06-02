@@ -10,7 +10,7 @@ public class HotfixTester : MonoBehaviour
 
     private bool _isLoaded = false;
 
-    private async void Start()
+    private void Start()
     {
         // Check patch
         AssetPatcher.Check();
@@ -25,12 +25,12 @@ public class HotfixTester : MonoBehaviour
             string msg = ">>> Hotfix Tester <<<";
             this.printer.text = msg;
 
-            // Hotfix by AddComponent
+            // Hotfix use AddComponent
             var com = this.hotfixComponent.AddComponent<HotfixComponent>();
             msg = com.GetMessageFromHotfixComponent();
             this.printer.text += msg;
 
-            // Hotfix by Load AssetBundle and Instantiate
+            // Hotfix use Load AssetBundle and Instantiate
             UniTask.Void(async () =>
             {
                 var go = await AssetLoaders.InstantiateAssetAsync<GameObject>("HotfixPrefab");
