@@ -23,6 +23,8 @@ Copy Assets/OxGFrame to Unity New Project.
 
 ※備註 : 如果沒有要自行更改框架的需求，建議直接使用 Package Manager 方式安裝。
 
+**額外可搭配 [OxGKit](https://github.com/michael811125/OxGKit) 提供遊戲開發常用的系統工具組**
+
 ---
 
 ## 舊版本更新 OxGFrame 注意
