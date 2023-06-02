@@ -11,7 +11,7 @@
 | **建議先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
 | [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox), Add https://github.com/Deadcows/MyBox.git to Package Manager |
-| [HybirdCLR v2.4.2 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
+| [HybirdCLR v3.0.2 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 ### 1. 透過 Package Manager 安裝 (Install via git)
 Add https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame to Package Manager.
@@ -82,6 +82,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ### Hotfixer (dependence HybridCLR, AssetLoader)
 代碼熱修復模塊，使用 [HybridCLR](https://github.com/focus-creative-games/hybridclr) (前身 Huatuo) 革命性的熱更新方案進行整合，相關建置請前往官方文檔進行熟悉。
 - 如果相關建置完畢，前往點選 HybridCLR/ OxGFrame With HybirdCLR/Complie And Copy To HotfixCollector，將會幫忙拷貝至 HotfixCollector 文件夾，再使用 YooAsset Collector 進行收集打包。
+
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_4.png)
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_5.png)
 
