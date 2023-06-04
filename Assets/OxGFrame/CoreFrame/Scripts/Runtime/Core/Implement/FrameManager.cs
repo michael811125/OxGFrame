@@ -422,7 +422,7 @@ namespace OxGFrame.CoreFrame
         /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        protected async virtual UniTask ShowLoading(int groupId, string packageName, string assetName)
+        protected async virtual UniTask ShowAwaiting(int groupId, string packageName, string assetName)
         {
             await UIFrame.UIManager.GetInstance().Show(groupId, packageName, assetName);
         }
@@ -430,7 +430,7 @@ namespace OxGFrame.CoreFrame
         /// <summary>
         /// 關閉預顯加載 UI
         /// </summary>
-        protected void CloseLoading(string assetName)
+        protected void CloseAwaiting(string assetName)
         {
             if (!string.IsNullOrEmpty(assetName)) UIFrame.UIManager.GetInstance().Close(assetName, true);
         }
@@ -442,12 +442,12 @@ namespace OxGFrame.CoreFrame
         /// <param name="groupId"></param>
         /// <param name="assetName"></param>
         /// <param name="obj"></param>
-        /// <param name="loadingUIAssetName"></param>
+        /// <param name="awaitingUIAssetName"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public async virtual UniTask<T> Show(int groupId, string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
+        public async virtual UniTask<T> Show(int groupId, string packageName, string assetName, object obj = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
         {
-            await this.ShowLoading(groupId, packageName, loadingUIAssetName);
+            await this.ShowAwaiting(groupId, packageName, awaitingUIAssetName);
 
             return default;
         }
@@ -576,7 +576,7 @@ namespace OxGFrame.CoreFrame
         }
     }
 
-    public static class ComponentExtensions
+    internal static class ComponentExtensions
     {
         public static T GetCopyOf<T>(this T comp, T other) where T : Component
         {

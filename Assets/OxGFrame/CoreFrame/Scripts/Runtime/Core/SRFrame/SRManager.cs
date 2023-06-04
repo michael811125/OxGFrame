@@ -91,7 +91,7 @@ namespace OxGFrame.CoreFrame.SRFrame
         #endregion
 
         #region Show
-        public override async UniTask<SRBase> Show(int groupId, string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
+        public override async UniTask<SRBase> Show(int groupId, string packageName, string assetName, object obj = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
@@ -108,7 +108,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 }
             }
 
-            await this.ShowLoading(groupId, packageName, loadingUIAssetName); // 開啟預顯加載 UI
+            await this.ShowAwaiting(groupId, packageName, awaitingUIAssetName); // 開啟預顯加載 UI
 
             var srBase = await this.LoadIntoAllCache(packageName, assetName, progression, false, parent);
             if (srBase == null)
@@ -123,7 +123,7 @@ namespace OxGFrame.CoreFrame.SRFrame
 
             Debug.Log(string.Format("Show SR: 【{0}】", assetName));
 
-            this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
+            this.CloseAwaiting(awaitingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
 
             return srBase;
         }

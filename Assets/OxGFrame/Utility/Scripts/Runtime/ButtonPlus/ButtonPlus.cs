@@ -123,7 +123,7 @@ namespace OxGFrame.Utility.Btn
             // Invoke long click on released
             if (this.extdLongClick == ExtdLongClick.PressedAndReleased)
             {
-                if (this._isHold) this.onLongClickReleased.Invoke();
+                if (this._isHold) this.onLongClickReleased?.Invoke();
             }
         }
 
@@ -154,7 +154,7 @@ namespace OxGFrame.Utility.Btn
             // Invoke long click on released
             if (this._isHold && this.extdLongClick == ExtdLongClick.PressedAndReleased)
             {
-                this.onLongClickReleased.Invoke();
+                this.onLongClickReleased?.Invoke();
             }
 
             this.ResetExtdLongClick();
@@ -196,7 +196,7 @@ namespace OxGFrame.Utility.Btn
                 else this._longClickTimer += Time.deltaTime;
                 if (this._longClickTimer >= this.intervalTime)
                 {
-                    this.onLongClickPressed.Invoke();
+                    this.onLongClickPressed?.Invoke();
                     this._longClickTimer = 0f;
                 }
             }
@@ -210,7 +210,7 @@ namespace OxGFrame.Utility.Btn
             this._isHold = true;
 
             // Invoke long click on pressed
-            this.onLongClickPressed.Invoke();
+            this.onLongClickPressed?.Invoke();
         }
 
         protected override void OnDisable()

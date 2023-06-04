@@ -1,5 +1,4 @@
-﻿#define ENABLE_FINEPD_ALL_CANVASES         // 啟用 FindAll 查找是否有相符 Canvas 定義名稱的物件 (會在初始時耗時)
-#define ENABLE_AUTO_SET_LAYER_RECURSIVELY  // 啟用自動設置 UI 繼承主 Canvas 的 LayerMask (在每第一次加載資源會耗時設置, 後續緩存後如果不進行刪除則不影響)
+﻿#define ENABLE_AUTO_SET_LAYER_RECURSIVELY  // 啟用自動設置 UI 繼承主 Canvas 的 LayerMask (在每第一次加載資源會耗時設置, 後續緩存後如果不進行刪除則不影響)
 
 using UnityEngine;
 using System;
@@ -22,7 +21,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         LoadingPopup,
         SysPopup,
         TopSysPopup,
-        PreloadingPopup
+        AwaitingPopup
     }
 
     [Serializable]
@@ -36,9 +35,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         public bool stack = false;
         [ConditionalField(nameof(stack), inverse: true), Tooltip("Fixed rendering order without stack mode"), Range(0, UIConfig.ORDER_DIFFERENCE)]
         public int order = 0;
-        [Tooltip("If checked when call CloseAll method will auto skip process (If ReverseChanges or Stack is enabled, it will have no effect)")]
+        [Tooltip("If checked when call CloseAll method will auto skip process (If ReverseChanges or Stack is enabled, it will not work)")]
         public bool whenCloseAllToSkip = false;
-        [Tooltip("If checked when call HideAll method will auto skip process (If ReverseChanges Stack is enabled, it will have no effect)")]
+        [Tooltip("If checked when call HideAll method will auto skip process (If ReverseChanges or Stack is enabled, it will not work)")]
         public bool whenHideAllToSkip = false;
     }
 
@@ -53,12 +52,6 @@ namespace OxGFrame.CoreFrame.UIFrame
 
     public class UIConfig
     {
-#if ENABLE_FIND_ALL_CANVASES
-        public static readonly bool findAllCanvases = true;
-#else
-        public static readonly bool findAllCanvases = false;
-#endif
-
 #if ENABLE_AUTO_SET_LAYER_RECURSIVELY
         public static readonly bool autoSetLayerRecursively = true;
 #else
@@ -80,7 +73,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 { NodeType.LoadingPopup, 4000},
                 { NodeType.SysPopup, 5000},
                 { NodeType.TopSysPopup, 6000},
-                { NodeType.PreloadingPopup, 7000}
+                { NodeType.AwaitingPopup, 7000}
             };
 
         /* 節點之間的排序差值 - ORDER DIFFERENCE */

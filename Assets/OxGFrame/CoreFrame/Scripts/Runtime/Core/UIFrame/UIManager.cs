@@ -60,18 +60,14 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             // 查找與 CanvasName 定義名稱一樣的 Canvas 物件
             GameObject goCanvas = null;
-            if (UIConfig.findAllCanvases)
+            foreach (var canvas in FindObjectsOfType(typeof(Canvas)) as Canvas[])
             {
-                foreach (var canvas in FindObjectsOfType(typeof(Canvas)) as Canvas[])
+                if (canvas.gameObject.name == canvasName)
                 {
-                    if (canvas.gameObject.name == canvasName)
-                    {
-                        goCanvas = canvas.gameObject;
-                        break;
-                    }
+                    goCanvas = canvas.gameObject;
+                    break;
                 }
             }
-            else goCanvas = GameObject.Find(canvasName);
 
             if (goCanvas != null)
             {
@@ -383,7 +379,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         #endregion
 
         #region Show
-        public override async UniTask<UIBase> Show(int groupId, string packageName, string assetName, object obj = null, string loadingUIAssetName = null, Progression progression = null, Transform parent = null)
+        public override async UniTask<UIBase> Show(int groupId, string packageName, string assetName, object obj = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
@@ -400,7 +396,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 }
             }
 
-            await this.ShowLoading(groupId, packageName, loadingUIAssetName); // 開啟預顯加載 UI
+            await this.ShowAwaiting(groupId, packageName, awaitingUIAssetName); // 開啟預顯加載 UI
 
             var uiBase = await this.LoadIntoAllCache(packageName, assetName, progression, false);
             if (uiBase == null)
@@ -416,7 +412,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             Debug.Log(string.Format("Show UI: 【{0}】", assetName));
 
-            this.CloseLoading(loadingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
+            this.CloseAwaiting(awaitingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
 
             return uiBase;
         }
