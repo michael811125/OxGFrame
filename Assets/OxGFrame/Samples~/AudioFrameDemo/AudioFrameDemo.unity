@@ -272,7 +272,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Stop Destroy
 
-    (Fight)'
+    (Interact)'
 --- !u!222 &11859926
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1687,7 +1687,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Play
 
-    (Fight)'
+    (Interact)'
 --- !u!222 &209891260
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1903,7 +1903,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Pause
 
-    (GeneralFX)'
+    (General)'
 --- !u!222 &257619727
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2218,7 +2218,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Stop
 
-    (GeneralFX)'
+    (General)'
 --- !u!222 &336582385
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2451,7 +2451,7 @@ GameObject:
   m_Component:
   - component: {fileID: 376640027}
   m_Layer: 5
-  m_Name: FightSound_Slider
+  m_Name: InteractSound_Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6116,7 +6116,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Pause
 
-    (Fight)'
+    (Interact)'
 --- !u!222 &1007776476
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7091,7 +7091,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56493ef957b1c8d40ae014247f91a934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parent: {fileID: 0}
 --- !u!4 &1190862928
 Transform:
   m_ObjectHideFlags: 0
@@ -8237,7 +8236,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: GeneralFX
+  m_Text: General Sfx
 --- !u!222 &1371903220
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8932,7 +8931,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: FightFX
+  m_Text: Interact Sfx
 --- !u!222 &1518134556
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9679,7 +9678,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1190862927}
         m_TargetAssemblyTypeName: AudioFrameDemo, Assembly-CSharp
-        m_MethodName: SetFightSoundVol
+        m_MethodName: SetInteractSoundVol
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10028,7 +10027,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Play
 
-    (GeneralFX)'
+    (General)'
 --- !u!222 &1844509268
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10400,7 +10399,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Stop Destroy
 
-    (GeneralFX)'
+    (General)'
 --- !u!222 &1914241037
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10843,7 +10842,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Stop
 
-    (Fight)'
+    (Interact)'
 --- !u!222 &2020123794
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10978,7 +10977,7 @@ GameObject:
   - component: {fileID: 2085968604}
   - component: {fileID: 2085968603}
   m_Layer: 5
-  m_Name: Fight
+  m_Name: Interact
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

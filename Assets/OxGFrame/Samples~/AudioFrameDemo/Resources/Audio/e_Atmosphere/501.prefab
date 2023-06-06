@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3314353819592681585}
   - component: {fileID: 4931250275380527395}
   m_Layer: 0
-  m_Name: fight_sound_Example
+  m_Name: 501
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -142,16 +142,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ignoreTimeScale: 1
-  loops: 0
+  loops: -1
   onStopAndDestroy: 1
-  onDestroyAndUnload: 0
+  onDestroyAndUnload: 1
   autoEndToStop: 1
   audioType:
-    soundType: 1
+    soundType: 0
     priority: 128
   audioFileType: 13
   sourceType: 0
-  audioClip: {fileID: 8300000, guid: ddf4c2454856b1941b9506eba8f82ce2, type: 3}
+  audioClip: {fileID: 8300000, guid: 2ee1a40e3e7b7be468893108808a1660, type: 3}
   fullPathName: 
   urlSet:
     getUrlPathFromCfg: 1
@@ -159,9 +159,9 @@ MonoBehaviour:
       requestType: 0
       file: {fileID: 4900000, guid: be06055d97fa03f428adb763efc06836, type: 3}
       fullPathName: 
-    url: Fight/impact.mp3
-  audioLength: 1.7502041
+    url: Atmosphere/raining.mp3
+  audioLength: 36.310204
   _mixerGroupSourceType: 1
   _mixerGroup: {fileID: 0}
   _mixerName: MasterMixer
-  _mixerGroupName: Fight
+  _mixerGroupName: Atmosphere

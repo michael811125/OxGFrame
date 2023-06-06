@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3314353819592681585}
   - component: {fileID: 4931250275380527395}
   m_Layer: 0
-  m_Name: voice_Example
+  m_Name: 101
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -142,7 +142,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ignoreTimeScale: 1
-  loops: 0
+  loops: -1
+  volume: 1
   onStopAndDestroy: 1
   onDestroyAndUnload: 1
   autoEndToStop: 1
@@ -151,7 +152,7 @@ MonoBehaviour:
     priority: 128
   audioFileType: 13
   sourceType: 0
-  audioClip: {fileID: 8300000, guid: 1da89a41c3aaa4f47ae515378ffd7462, type: 3}
+  audioClip: {fileID: 8300000, guid: 1da9e5b945b45a442b2133b528e6e8a7, type: 3}
   fullPathName: 
   urlSet:
     getUrlPathFromCfg: 1
@@ -159,9 +160,10 @@ MonoBehaviour:
       requestType: 0
       file: {fileID: 4900000, guid: be06055d97fa03f428adb763efc06836, type: 3}
       fullPathName: 
-    url: Voice/MmiHoYo_Autopilot_end_83FEBACF.mp3
-  audioLength: 3.6571429
+    url: BGM/Destiny.mp3
+  audioLength: 29.152653
   _mixerGroupSourceType: 1
-  _mixerGroup: {fileID: 0}
+  _mixerGroup: {fileID: -7577605468030191186, guid: c0a9042bc65c3264e959236d0aac6208,
+    type: 2}
   _mixerName: MasterMixer
-  _mixerGroupName: Voice
+  _mixerGroupName: BGM

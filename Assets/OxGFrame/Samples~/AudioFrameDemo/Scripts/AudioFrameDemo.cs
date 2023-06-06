@@ -8,18 +8,18 @@ public static class Audio
     private const string _prefix = "res#";
 
     // Paths
-    private static readonly string _bgmPath = $"{_prefix}Audio/BGM/";
-    private static readonly string _generalPah = $"{_prefix}Audio/General/";
-    private static readonly string _fightPath = $"{_prefix}Audio/Fight/";
-    private static readonly string _voicePath = $"{_prefix}Audio/Voice/";
-    private static readonly string _atmospherePath = $"{_prefix}Audio/Atmosphere/";
+    private static readonly string _bgmPath = $"{_prefix}Audio/a_BGM/";
+    private static readonly string _generalPath = $"{_prefix}Audio/b_General/";
+    private static readonly string _interactPath = $"{_prefix}Audio/c_Interact/";
+    private static readonly string _voicePath = $"{_prefix}Audio/d_Voice/";
+    private static readonly string _atmospherePath = $"{_prefix}Audio/e_Atmosphere/";
 
     // Assets
-    public static readonly string BgmExample = $"{_bgmPath}bgm_Example";
-    public static readonly string GeneralSoundExample = $"{_generalPah}general_sound_Example";
-    public static readonly string FightSoundExample = $"{_fightPath}fight_sound_Example";
-    public static readonly string VoiceExample = $"{_voicePath}voice_Example";
-    public static readonly string AtmosphereExample = $"{_atmospherePath}atmosphere_Example";
+    public static readonly string a101 = $"{_bgmPath}101";
+    public static readonly string a201 = $"{_generalPath}201";
+    public static readonly string a301 = $"{_interactPath}301";
+    public static readonly string a401 = $"{_voicePath}401";
+    public static readonly string a501 = $"{_atmospherePath}501";
 }
 
 public class AudioFrameDemo : MonoBehaviour
@@ -33,34 +33,34 @@ public class AudioFrameDemo : MonoBehaviour
     #region Audio 【BGM】
     public async void PlayBGM()
     {
-        await MediaFrames.AudioFrame.Play(Audio.BgmExample);
+        await MediaFrames.AudioFrame.Play(Audio.a101);
     }
 
     public void StopBGM()
     {
-        MediaFrames.AudioFrame.Stop(Audio.BgmExample);
+        MediaFrames.AudioFrame.Stop(Audio.a101);
     }
 
     public void StopBGMWithDestroy()
     {
-        MediaFrames.AudioFrame.Stop(Audio.BgmExample, false, true);
+        MediaFrames.AudioFrame.Stop(Audio.a101, false, true);
     }
 
     public void PauseBGM()
     {
-        MediaFrames.AudioFrame.Pause(Audio.BgmExample);
+        MediaFrames.AudioFrame.Pause(Audio.a101);
     }
     #endregion
 
-    #region Audio 【GeneralFX】 
+    #region Audio 【General SFX】 
     public async void PlayGeneralFX()
     {
-        await MediaFrames.AudioFrame.Play(Audio.GeneralSoundExample);
+        await MediaFrames.AudioFrame.Play(Audio.a201);
     }
 
     public void StopGeneralFX()
     {
-        MediaFrames.AudioFrame.Stop(Audio.GeneralSoundExample);
+        MediaFrames.AudioFrame.Stop(Audio.a201);
     }
 
     public void StopGeneralFXWithDestroy()
@@ -71,78 +71,78 @@ public class AudioFrameDemo : MonoBehaviour
          * MediaFrames.AudioFrame.ForceUnload(Audio.GeneralSoundExample);
          */
 
-        MediaFrames.AudioFrame.Stop(Audio.GeneralSoundExample, false, true);
+        MediaFrames.AudioFrame.Stop(Audio.a201, false, true);
     }
 
     public void PauseGeneralFX()
     {
-        MediaFrames.AudioFrame.Pause(Audio.GeneralSoundExample);
+        MediaFrames.AudioFrame.Pause(Audio.a201);
     }
     #endregion
 
-    #region Audio 【FightFX】
+    #region Audio 【Interact SFX】
     public async void PlayFightFX()
     {
-        await MediaFrames.AudioFrame.Play(Audio.FightSoundExample);
+        await MediaFrames.AudioFrame.Play(Audio.a301);
     }
 
     public void StopFightFX()
     {
-        MediaFrames.AudioFrame.Stop(Audio.FightSoundExample);
+        MediaFrames.AudioFrame.Stop(Audio.a301);
     }
 
     public void StopFightFXWithDestroy()
     {
-        MediaFrames.AudioFrame.Stop(Audio.FightSoundExample, false, true);
+        MediaFrames.AudioFrame.Stop(Audio.a301, false, true);
     }
 
     public void PauseFightFX()
     {
-        MediaFrames.AudioFrame.Pause(Audio.FightSoundExample);
+        MediaFrames.AudioFrame.Pause(Audio.a301);
     }
     #endregion
 
     #region Audio 【Voice】
     public async void PlayVoice()
     {
-        await MediaFrames.AudioFrame.Play(Audio.VoiceExample);
+        await MediaFrames.AudioFrame.Play(Audio.a401);
     }
 
     public void StopVoice()
     {
-        MediaFrames.AudioFrame.Stop(Audio.VoiceExample);
+        MediaFrames.AudioFrame.Stop(Audio.a401);
     }
 
     public void StopVoiceWithDestroy()
     {
-        MediaFrames.AudioFrame.Stop(Audio.VoiceExample, false, true);
+        MediaFrames.AudioFrame.Stop(Audio.a401, false, true);
     }
 
     public void PauseVoice()
     {
-        MediaFrames.AudioFrame.Pause(Audio.VoiceExample);
+        MediaFrames.AudioFrame.Pause(Audio.a401);
     }
     #endregion
 
     #region Audio 【Atmosphere】
     public async void PlayAtmosphere()
     {
-        await MediaFrames.AudioFrame.Play(Audio.AtmosphereExample);
+        await MediaFrames.AudioFrame.Play(Audio.a501);
     }
 
     public void StopAtmosphere()
     {
-        MediaFrames.AudioFrame.Stop(Audio.AtmosphereExample);
+        MediaFrames.AudioFrame.Stop(Audio.a501);
     }
 
     public void StopAtmosphereWithDestroy()
     {
-        MediaFrames.AudioFrame.Stop(Audio.AtmosphereExample, false, true);
+        MediaFrames.AudioFrame.Stop(Audio.a501, false, true);
     }
 
     public void PauseAtmosphere()
     {
-        MediaFrames.AudioFrame.Pause(Audio.AtmosphereExample);
+        MediaFrames.AudioFrame.Pause(Audio.a501);
     }
     #endregion
 
@@ -210,10 +210,10 @@ public class AudioFrameDemo : MonoBehaviour
         MediaFrames.AudioFrame.SetMixerExposedParam(mixer, "General_Vol", vol);
     }
 
-    public void SetFightSoundVol(float vol)
+    public void SetInteractSoundVol(float vol)
     {
         var mixer = MediaFrames.AudioFrame.GetMixerByName("MasterMixer");
-        MediaFrames.AudioFrame.SetMixerExposedParam(mixer, "Fight_Vol", vol);
+        MediaFrames.AudioFrame.SetMixerExposedParam(mixer, "Interact_Vol", vol);
     }
 
     public void SetVoiceVol(float vol)

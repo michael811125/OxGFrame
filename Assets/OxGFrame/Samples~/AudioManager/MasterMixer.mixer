@@ -216,7 +216,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Fight
+  m_Name: Interact
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: d6c3c1b3b1c9cb7438206d4c205e3eaa
   m_Children: []
@@ -281,7 +281,7 @@ AudioMixerController:
   - guid: 1d155bf291d4fa343a306eaf8347ae8c
     name: BGM_Vol
   - guid: 913e20605265e594998b9158e03dd363
-    name: Fight_Vol
+    name: Interact_Vol
   - guid: 0af5e3e9e51feaf4a9dc40fab90503de
     name: General_Vol
   - guid: dbee44598de3bab41858b438a6c6b9ab
