@@ -17,6 +17,10 @@
 Add https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame to Package Manager.
 	
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_3.png)
+
+Import Prefabs from Samples
+
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_7.png)
 	
 ### 2. 透過 Github 下載 (Code Download ZIP)
 Copy Assets/OxGFrame to Unity New Project.
