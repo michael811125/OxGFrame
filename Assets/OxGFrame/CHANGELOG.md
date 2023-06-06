@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.2.1] - 2023-06-06
+- Modified default Mixer for AudioManager (import from PackageManager sample).
+  - changes Fight name to Interact.
+
 ## [2.2.0] - 2023-06-02 (Break Changes)
 - Added HybridCLR hotfix solution (using OxGFrame.Hotfixer).
   - Checkout HotfixerDemo (Import sample from Unity Package Manager).
