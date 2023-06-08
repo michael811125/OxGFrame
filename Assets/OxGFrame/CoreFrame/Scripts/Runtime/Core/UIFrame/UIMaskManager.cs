@@ -82,6 +82,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         public Transform uiMaskRoot { get; private set; } = null;
         public int layer { get; private set; } = 0;
         private MaskNodePool _maskNodePool = null;
+        private Sprite _maskSprite = null;
 
         public UIMaskManager(int layer, Transform uiMaskRoot)
         {
@@ -99,7 +100,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         {
             if (parent.Find(nodeName) || !parent.GetComponent<UIBase>()) return;
 
-            var uiMask = this._maskNodePool.GetUIMask(parent, this._MakeTexture2dSprite());
+            if (this._maskSprite == null) this._maskSprite = this._MakeTexture2dSprite();
+            var uiMask = this._maskNodePool.GetUIMask(parent, this._maskSprite);
             uiMask.SetMaskColor(color);
             if (sprite != null) uiMask.SetMaskSprite(sprite);
             if (maskClickEvent != null) uiMask.SetMaskClickEvent(maskClickEvent);
