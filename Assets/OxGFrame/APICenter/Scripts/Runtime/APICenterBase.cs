@@ -73,7 +73,7 @@ namespace OxGFrame.APICenter
         /// 註冊 API
         /// </summary>
         /// <typeparam name="U"></typeparam>
-        protected void Register<U>() where U : APIBase, new()
+        public void Register<U>() where U : APIBase, new()
         {
             System.Type apiType = typeof(U);
             int hashCode = apiType.GetHashCode();
@@ -88,7 +88,7 @@ namespace OxGFrame.APICenter
         /// </summary>
         /// <typeparam name="U"></typeparam>
         /// <param name="apiId"></param>
-        protected void Register<U>(int apiId) where U : APIBase, new()
+        public void Register<U>(int apiId) where U : APIBase, new()
         {
             U apiBase = new U();
 
@@ -100,7 +100,7 @@ namespace OxGFrame.APICenter
         /// </summary>
         /// <param name="apiId"></param>
         /// <param name="apiBase"></param>
-        protected void Register(int apiId, APIBase apiBase)
+        public void Register(int apiId, APIBase apiBase)
         {
             if (this._HasInCache(apiId))
             {

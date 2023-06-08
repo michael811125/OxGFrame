@@ -73,7 +73,7 @@ namespace OxGFrame.EventCenter
         /// 註冊事件
         /// </summary>
         /// <typeparam name="U"></typeparam>
-        protected void Register<U>() where U : EventBase, new()
+        public void Register<U>() where U : EventBase, new()
         {
             System.Type eventType = typeof(U);
             int hashCode = eventType.GetHashCode();
@@ -89,7 +89,7 @@ namespace OxGFrame.EventCenter
         /// </summary>
         /// <typeparam name="U"></typeparam>
         /// <param name="eventId"></param>
-        protected void Register<U>(int eventId) where U : EventBase, new()
+        public void Register<U>(int eventId) where U : EventBase, new()
         {
             U eventBase = new U();
 
@@ -101,7 +101,7 @@ namespace OxGFrame.EventCenter
         /// </summary>
         /// <param name="eventId"></param>
         /// <param name="eventBase"></param>
-        protected void Register(int eventId, EventBase eventBase)
+        public void Register(int eventId, EventBase eventBase)
         {
             if (this._HasInCache(eventId))
             {
