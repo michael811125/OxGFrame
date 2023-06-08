@@ -137,7 +137,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         private void _AddMask()
         {
-            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasName).uiMaskManager.AddMask(this.transform, this.maskSetting.color, this.MaskEvent);
+            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasName).uiMaskManager.AddMask(this.transform, this.maskSetting.color, this.maskSetting.sprite, this.MaskEvent);
         }
 
         /// <summary>

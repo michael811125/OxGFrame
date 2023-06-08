@@ -46,6 +46,8 @@ namespace OxGFrame.CoreFrame.UIFrame
     {
         [Tooltip("Mask color")]
         public Color color = new Color32(0, 0, 0, 192);
+        [Tooltip("Mask sprite")]
+        public Sprite sprite;
         [Tooltip("If checked when click mask will close self")]
         public bool isClickMaskToClose = true;
     }

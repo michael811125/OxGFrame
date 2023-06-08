@@ -91,8 +91,8 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 建立 UIMask & UIFreeze 容器 (parent = UIRoot)
                 GameObject uiMaskGo = this._CreateUIContainer(uiCanvas, UIConfig.UI_MASK_NAME, goUIRoot.transform);
                 GameObject uiFreezeGo = this._CreateUIContainer(uiCanvas, UIConfig.UI_FREEZE_NAME, goUIRoot.transform);
-                uiCanvas.uiMaskManager = new UIMaskManager(uiCanvas.gameObject.layer, uiMaskGo.transform);
-                uiCanvas.uiFreezeManager = new UIFreezeManager(uiCanvas.gameObject.layer, uiFreezeGo.transform);
+                uiCanvas.SetMaskManager(new UIMaskManager(uiCanvas.gameObject.layer, uiMaskGo.transform));
+                uiCanvas.SetFreezeManager(new UIFreezeManager(uiCanvas.gameObject.layer, uiFreezeGo.transform));
 
                 this._dictUICanvas.Add(canvasName, uiCanvas);
             }

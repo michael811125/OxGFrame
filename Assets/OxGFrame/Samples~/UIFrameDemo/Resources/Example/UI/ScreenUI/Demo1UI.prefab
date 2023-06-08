@@ -462,6 +462,7 @@ MonoBehaviour:
   autoMask: 1
   maskSetting:
     color: {r: 0, g: 0.40392157, b: 0.32156864, a: 0.5019608}
+    sprite: {fileID: 0}
     isClickMaskToClose: 1
 --- !u!1 &8326820277654019497
 GameObject:

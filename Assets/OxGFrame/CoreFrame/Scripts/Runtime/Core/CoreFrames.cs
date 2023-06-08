@@ -53,6 +53,18 @@ namespace OxGFrame.CoreFrame
                 UIManager.GetInstance().SendRefreshData(data);
             }
 
+            #region Canvas
+            /// <summary>
+            /// Get UICanvas by canvas name
+            /// </summary>
+            /// <param name="canvasName"></param>
+            /// <returns></returns>
+            public static UICanvas GetUICanvas(string canvasName)
+            {
+                return UIManager.GetInstance().GetUICanvas(canvasName);
+            }
+            #endregion
+
             #region GetComponent
             public static T GetComponent<T>(string assetName) where T : UIBase
             {

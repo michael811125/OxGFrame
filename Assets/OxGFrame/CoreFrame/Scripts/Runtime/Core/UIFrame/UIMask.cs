@@ -52,6 +52,15 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
+        /// 交由 UIMaskManager 調用顯示 Mask Sprite
+        /// </summary>
+        /// <param name="sprite"></param>
+        public void SetMaskSprite(Sprite sprite)
+        {
+            this._maskImage.sprite = sprite;
+        }
+
+        /// <summary>
         /// 取得當前 Mask Alpha Color
         /// </summary>
         /// <returns></returns>

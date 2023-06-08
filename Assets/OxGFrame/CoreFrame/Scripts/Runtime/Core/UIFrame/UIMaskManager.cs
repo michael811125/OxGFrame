@@ -81,9 +81,6 @@ namespace OxGFrame.CoreFrame.UIFrame
         public const string nodeName = "_UIMaskNode";
         public Transform uiMaskRoot { get; private set; } = null;
         public int layer { get; private set; } = 0;
-
-        private UIMask _uiMask = null;
-        private Sprite _maskSprite = null;
         private MaskNodePool _maskNodePool = null;
 
         public UIMaskManager(int layer, Transform uiMaskRoot)
@@ -98,19 +95,14 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="maskClickEvent"></param>
-        public void AddMask(Transform parent, Color color, MaskEventFunc maskClickEvent = null)
+        public void AddMask(Transform parent, Color color, Sprite sprite, MaskEventFunc maskClickEvent = null)
         {
             if (parent.Find(nodeName) || !parent.GetComponent<UIBase>()) return;
 
-            this._maskSprite = this._MakeTexture2dSprite();
-            this._uiMask = this._maskNodePool.GetUIMask(parent, this._maskSprite);
-            this._uiMask.SetMaskColor(color);
-            if (maskClickEvent != null) this._uiMask.SetMaskClickEvent(maskClickEvent);
-        }
-
-        public void SetMaskColor(Color color)
-        {
-            this._uiMask.SetMaskColor(color);
+            var uiMask = this._maskNodePool.GetUIMask(parent, this._MakeTexture2dSprite());
+            uiMask.SetMaskColor(color);
+            if (sprite != null) uiMask.SetMaskSprite(sprite);
+            if (maskClickEvent != null) uiMask.SetMaskClickEvent(maskClickEvent);
         }
 
         /// <summary>

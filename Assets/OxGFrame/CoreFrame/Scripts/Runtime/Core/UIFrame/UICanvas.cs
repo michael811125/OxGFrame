@@ -12,10 +12,10 @@ namespace OxGFrame.CoreFrame.UIFrame
         [HideInInspector] public Canvas canvas;
         [HideInInspector] public CanvasScaler canvasScaler;
         [HideInInspector] public GraphicRaycaster graphicRaycaster;
-        [HideInInspector] public GameObject uiRoot;    // UI 根節點物件
-        public Dictionary<string, GameObject> uiNodes; // UI 節點物件
-        public UIMaskManager uiMaskManager = null;     // UIMaskMgr, 由 UIManager 進行單例管控
-        public UIFreezeManager uiFreezeManager = null; // UIFreezeMgr, 由 UIManager 進行單例管控
+        [HideInInspector] public GameObject uiRoot;                    // UI 根節點物件
+        public Dictionary<string, GameObject> uiNodes;                 // UI 節點物件
+        public UIMaskManager uiMaskManager { get; protected set; }     // UIMaskMgr, 由 UIManager 進行單例管控
+        public UIFreezeManager uiFreezeManager { get; protected set; } // UIFreezeMgr, 由 UIManager 進行單例管控
 
         public UICanvas()
         {
@@ -27,6 +27,16 @@ namespace OxGFrame.CoreFrame.UIFrame
             this.canvas = this.GetComponent<Canvas>();
             this.canvasScaler = this.GetComponent<CanvasScaler>();
             this.graphicRaycaster = this.GetComponent<GraphicRaycaster>();
+        }
+
+        public void SetMaskManager(UIMaskManager maskManager)
+        {
+            this.uiMaskManager = maskManager;
+        }
+
+        public void SetFreezeManager(UIFreezeManager freezeManager)
+        {
+            this.uiFreezeManager = freezeManager;
         }
 
         public GameObject GetUINode(NodeType nodeType)
