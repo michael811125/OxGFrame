@@ -1,6 +1,6 @@
 ﻿using OxGFrame.EventCenter;
 
-public class #SCRIPTNAME# : EventCenterBase<#SCRIPTNAME#>
+public class #SCRIPTNAME# : EventCenter<#SCRIPTNAME#>
 {
     public #SCRIPTNAME#()
     {

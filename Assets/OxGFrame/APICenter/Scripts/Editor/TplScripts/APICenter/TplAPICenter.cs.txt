@@ -1,6 +1,6 @@
 ﻿using OxGFrame.APICenter;
 
-public class #SCRIPTNAME# : APICenterBase<#SCRIPTNAME#>
+public class #SCRIPTNAME# : APICenter<#SCRIPTNAME#>
 {
     public #SCRIPTNAME#()
     {

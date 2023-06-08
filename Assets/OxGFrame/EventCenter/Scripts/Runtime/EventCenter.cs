@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace OxGFrame.EventCenter
 {
-    public class EventCenterBase<T> where T : EventCenterBase<T>, new()
+    public class EventCenter<T> where T : EventCenter<T>, new()
     {
         private Dictionary<int, EventBase> _dictEvents = new Dictionary<int, EventBase>();
 
@@ -82,7 +82,6 @@ namespace OxGFrame.EventCenter
 
             this.Register(hashCode, eventBase);
         }
-
 
         /// <summary>
         /// 註冊事件

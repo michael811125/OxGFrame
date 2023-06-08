@@ -1,6 +1,6 @@
 ﻿using OxGFrame.APICenter;
 
-public class APICenterExample : APICenterBase<APICenterExample>
+public class APICenterExample : APICenter<APICenterExample>
 {
     public APICenterExample()
     {

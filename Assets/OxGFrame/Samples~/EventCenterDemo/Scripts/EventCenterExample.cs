@@ -1,6 +1,6 @@
 ﻿using OxGFrame.EventCenter;
 
-public class EventCenterExample : EventCenterBase<EventCenterExample>
+public class EventCenterExample : EventCenter<EventCenterExample>
 {
     public EventCenterExample()
     {

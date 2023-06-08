@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace OxGFrame.APICenter
 {
-    public class APICenterBase<T> where T : APICenterBase<T>, new()
+    public class APICenter<T> where T : APICenter<T>, new()
     {
         private Dictionary<int, APIBase> _dictAPIs = new Dictionary<int, APIBase>();
 
