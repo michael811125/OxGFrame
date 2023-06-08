@@ -343,15 +343,13 @@ video_urlset 127.0.0.1/video/
 各通用組件
 
 - Utility 
-  - Timer => DeltaTimer, RealTimer, DTUpdate, RTUpdate
-    - ※備註 : RealTimer 啟用條件需要由 Main Monobehaviour Awake 調用 RealTime.InitStartupTime() 進行初始。
-  - Adapter => UISafeAreaAdapter
-    - ※備註 : 在 Canvas 下預創建 UIRoot 並掛載 UISafeAreaAdapter 在 UIRoot 上 (也可使用自己的 UI 自適應方案)。
-  - Pool => NodePool (GameObject Pool)
-  - ButtonPlus => Inherited by Unity Button. extend Long Click and Transition Scale
-  - UMT => Unity Main Thread
-    - ※備註 : 新建一個 GameObject，再掛上 UnityMainThread 腳本 (由 MonoBehaviour 主線程驅動)。
-  - Singleton => MonoSingleton (MonoBehaviour), NewSingleton (class)
+  - Timer: DeltaTimer, RealTimer, DTUpdate, RTUpdate.
+  - Adapter: UISafeAreaAdapter.
+  - Pool: NodePool (GameObject Pool).
+  - ButtonPlus: Inherited by Unity Button. extend Long Click and Transition Scale.
+  - UMT: Unity Main Thread.
+  - Singleton: MonoSingleton (MonoBehaviour), NewSingleton (class).
+  - Requester: RequestAudio, RequestTexture2D, RequestSprite, RequestBytes, RequestText.
 
 **如果沒有要使用 Utility 通用組件，可以直接刪除整個 Utility (注意有模塊依賴引用)。**
 

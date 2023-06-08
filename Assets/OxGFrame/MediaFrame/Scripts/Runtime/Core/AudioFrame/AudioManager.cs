@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
-using UnityEngine.Networking;
 
 namespace OxGFrame.MediaFrame.AudioFrame
 {
@@ -403,46 +402,6 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 audBase.Stop();
             }
             else audBase.Pause();
-        }
-
-        /// <summary>
-        /// 請求音訊
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="audioType"></param>
-        /// <returns></returns>
-        public static async UniTask<AudioClip> AudioRequest(string url, UnityEngine.AudioType audioType = UnityEngine.AudioType.MPEG)
-        {
-            try
-            {
-                UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(url, audioType);
-                ((DownloadHandlerAudioClip)request.downloadHandler).streamAudio = true;
-                request.SendWebRequest().ToUniTask().Forget();
-
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
-                {
-                    Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                    request.Dispose();
-                    request = null;
-
-                    return null;
-                }
-
-                while (!request.isDone)
-                {
-                    await UniTask.Yield();
-                }
-
-                AudioClip audioClip = ((DownloadHandlerAudioClip)request.downloadHandler).audioClip;
-                Debug.Log($"<color=#B1FF00>Request Audio => Channel: {audioClip.channels}, Frequency: {audioClip.frequency}, Sample: {audioClip.samples}, Length: {audioClip.length}, State: {audioClip.loadState}</color>");
-
-                return audioClip;
-            }
-            catch
-            {
-                Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                return null;
-            }
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
 using Newtonsoft.Json;
-using OxGFrame.AssetLoader.Utility;
+using OxGFrame.Utility.Request;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -143,7 +143,7 @@ namespace OxGFrame.AssetLoader.Bundle
         public static async UniTask<string> GetValueFromUrlCfg(string key)
         {
             string pathName = Path.Combine(GetRequestStreamingAssetsPath(), bundleUrlFileName);
-            var content = await BundleUtility.FileRequestString(pathName);
+            var content = await Requester.RequestText(pathName);
             if (string.IsNullOrEmpty(content)) return string.Empty;
             var allWords = content.Split('\n');
             var lines = new List<string>(allWords);
@@ -168,7 +168,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<AppConfig> GetAppConfigFromStreamingAssets()
         {
-            string cfgJson = await BundleUtility.FileRequestString(GetStreamingAssetsAppConfigPath());
+            string cfgJson = await Requester.RequestText(GetStreamingAssetsAppConfigPath());
             if (!string.IsNullOrEmpty(cfgJson)) return JsonConvert.DeserializeObject<AppConfig>(cfgJson);
 
             return null;

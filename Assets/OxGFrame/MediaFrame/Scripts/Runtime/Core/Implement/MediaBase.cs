@@ -1,9 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
+using OxGFrame.Utility.Request;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace OxGFrame.MediaFrame
 {
@@ -51,7 +51,7 @@ namespace OxGFrame.MediaFrame
 
                     case RequestType.StreamingAssets:
                         string pathName = System.IO.Path.Combine(GetRequestStreamingAssetsPath(), this.fullPathName);
-                        return await FileRequestString(pathName);
+                        return await Requester.RequestText(pathName);
                 }
 
                 return null;
@@ -251,38 +251,6 @@ namespace OxGFrame.MediaFrame
 #else
             return Application.streamingAssetsPath;
 #endif
-        }
-
-        /// <summary>
-        /// 檔案請求 (string)
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public static async UniTask<string> FileRequestString(string url)
-        {
-            try
-            {
-                var request = UnityWebRequest.Get(url);
-                await request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
-                {
-                    Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                    request.Dispose();
-
-                    return null;
-                }
-
-                string text = request.downloadHandler.text;
-                request.Dispose();
-
-                return text;
-            }
-            catch
-            {
-                Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                return null;
-            }
         }
         #endregion
     }

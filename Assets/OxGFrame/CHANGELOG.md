@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.2.2] - 2023-06-08
+- Added Requester in Utility.
+- Optimized AssetLoader and MediaFrame to use Requester of Utility.
+
 ## [2.2.1] - 2023-06-06
 - Modified default Mixer for AudioManager (import from PackageManager sample).
   - changes Fight name to Interact.

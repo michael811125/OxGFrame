@@ -13,7 +13,7 @@ namespace OxGFrame.AssetLoader.Utility
     {
         #region ToString
         /// <summary>
-        /// 轉換 Bytes 傳輸速率
+        /// Speed Bytes ToString (KB, MB, GB)
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
@@ -34,7 +34,7 @@ namespace OxGFrame.AssetLoader.Utility
         }
 
         /// <summary>
-        /// 轉換 Bytes 為大小字串 (KB, MB, GB)
+        /// Bytes ToString (KB, MB, GB)
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
@@ -133,109 +133,7 @@ namespace OxGFrame.AssetLoader.Utility
         }
         #endregion
 
-        #region File Request
-        /// <summary>
-        /// 檔案請求 (byte)
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public static async UniTask<byte[]> FileRequestByte(string url, Action errorAction = null, CancellationTokenSource cts = null)
-        {
-            UnityWebRequest request = null;
-            try
-            {
-                request = UnityWebRequest.Get(url);
-
-                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
-                else await request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
-                {
-                    request.Dispose();
-                    errorAction?.Invoke();
-                    Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                    return new byte[] { };
-                }
-
-                byte[] bytes = request.downloadHandler.data;
-                request.Dispose();
-
-                return bytes;
-            }
-            catch
-            {
-                request?.Dispose();
-                errorAction?.Invoke();
-                Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                return new byte[] { };
-            }
-        }
-
-        /// <summary>
-        /// 檔案請求 (string)
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        public static async UniTask<string> FileRequestString(string url, Action errorAction = null, CancellationTokenSource cts = null)
-        {
-            UnityWebRequest request = null;
-            try
-            {
-                request = UnityWebRequest.Get(url);
-
-                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
-                else await request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
-                {
-                    request.Dispose();
-                    errorAction?.Invoke();
-                    Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                    return null;
-                }
-
-                string text = request.downloadHandler.text;
-                request.Dispose();
-
-                return text;
-            }
-            catch
-            {
-                request?.Dispose();
-                errorAction?.Invoke();
-                Debug.Log($"<color=#FF0000>Request failed, URL: {url}</color>");
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// 從 StreamingAssets 中複製檔案 (for Android, iOS, WebGL)
-        /// </summary>
-        /// <param name="sourceFile"></param>
-        /// <param name="destFile"></param>
-        /// <returns></returns>
-        public static async UniTask RequestAndCopyFileFromStreamingAssets(string sourceFile, string destFile, CancellationTokenSource cts = null)
-        {
-            using (UnityWebRequest request = UnityWebRequest.Get(sourceFile))
-            {
-                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
-                else await request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
-                {
-                    Debug.Log("<color=#FF0000>Request failed. Cannot found file in StreamingAssets.</color>");
-                    Debug.Log(request.error);
-                }
-                else
-                {
-                    string json = request.downloadHandler.text;
-                    File.WriteAllText(destFile, json);
-                }
-            }
-        }
-        #endregion
-
-        #region File
+        #region Folder
         /// <summary>
         /// 刪除目錄 (包含底下所有的檔案與資料夾)
         /// </summary>
@@ -326,6 +224,34 @@ namespace OxGFrame.AssetLoader.Utility
                 }
             }
             System.Diagnostics.Process.Start(dir);
+        }
+        #endregion
+
+        #region File Request
+        /// <summary>
+        /// 從 StreamingAssets 中複製檔案 (for Android, iOS, WebGL)
+        /// </summary>
+        /// <param name="sourceFile"></param>
+        /// <param name="destFile"></param>
+        /// <returns></returns>
+        public static async UniTask RequestAndCopyFileFromStreamingAssets(string sourceFile, string destFile, CancellationTokenSource cts = null)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Get(sourceFile))
+            {
+                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
+                else await request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+                {
+                    Debug.Log("<color=#FF0000>Request failed. Cannot found file in StreamingAssets.</color>");
+                    Debug.Log(request.error);
+                }
+                else
+                {
+                    string json = request.downloadHandler.text;
+                    File.WriteAllText(destFile, json);
+                }
+            }
         }
         #endregion
 

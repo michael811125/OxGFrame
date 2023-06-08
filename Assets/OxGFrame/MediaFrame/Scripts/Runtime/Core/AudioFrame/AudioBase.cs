@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
+using OxGFrame.Utility.Request;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -94,7 +95,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         public async UniTask<AudioClip> GetAudioFromStreamingAssets()
         {
             string pathName = System.IO.Path.Combine(GetRequestStreamingAssetsPath(), this.fullPathName);
-            var audioClip = await AudioManager.AudioRequest(pathName, this.audioFileType);
+            var audioClip = await Requester.RequestAudio(pathName, this.audioFileType);
             return audioClip;
         }
 
@@ -103,7 +104,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             string urlCfg = await this.urlSet.urlCfg.GetFileText();
             string vUrlset = (this.urlSet.getUrlPathFromCfg) ? this.GetValueFromUrlCfg(urlCfg, AUDIO_URLSET) : string.Empty;
             string url = (!string.IsNullOrEmpty(vUrlset)) ? $"{vUrlset.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
-            var audioClip = await AudioManager.AudioRequest(url, this.audioFileType);
+            var audioClip = await Requester.RequestAudio(url, this.audioFileType);
             return audioClip;
         }
 

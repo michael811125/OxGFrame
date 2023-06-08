@@ -10,7 +10,7 @@ namespace OxGFrame.APICenter
         public delegate void ResponseHandle(string response);
 
         /// <summary>
-        /// Asynchronous C# and Xml = Acax
+        /// Synchronous C# and Xml = Acax
         /// </summary>
         /// <param name="url"></param>
         /// <param name="method"></param>
@@ -21,7 +21,7 @@ namespace OxGFrame.APICenter
         public static void Acax(string url, string method, string[,] headers, object[,] body, ResponseHandle success = null, ResponseHandle error = null)
         {
             method = method.ToUpper();
-            _Request(url, method, headers, body, success, error).Forget();
+            RequestAPI(url, method, headers, body, success, error).Forget();
         }
 
         /// <summary>
@@ -37,10 +37,10 @@ namespace OxGFrame.APICenter
         public async static UniTask AcaxAsync(string url, string method, string[,] headers, object[,] body, ResponseHandle success = null, ResponseHandle error = null)
         {
             method = method.ToUpper();
-            await _Request(url, method, headers, body, success, error);
+            await RequestAPI(url, method, headers, body, success, error);
         }
 
-        private static async UniTask _Request(string url, string method, string[,] headers, object[,] body, ResponseHandle success, ResponseHandle error)
+        internal static async UniTask RequestAPI(string url, string method, string[,] headers, object[,] body, ResponseHandle success, ResponseHandle error)
         {
             using (UnityWebRequest request = new UnityWebRequest(url, method))
             {

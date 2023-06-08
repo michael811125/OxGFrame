@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.PatchEvent;
 using OxGFrame.AssetLoader.Utility;
+using OxGFrame.Utility.Request;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -129,10 +130,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 // 反之, 請求 Server 的 Cfg
                 else url = await BundleConfig.GetHostServerAppConfigPath();
 
-                string hostCfgJson = await BundleUtility.FileRequestString(url, () =>
-                {
-                    PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage();
-                });
+                string hostCfgJson = await Requester.RequestText(url, null, PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage);
 
                 AppConfig hostCfg = JsonConvert.DeserializeObject<AppConfig>(hostCfgJson);
 
@@ -156,7 +154,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     // 從 StreamingAssets 中取得配置檔 (InApp)
                     string saCfgPath = BundleConfig.GetStreamingAssetsAppConfigPath();
-                    string saCfgJson = await BundleUtility.FileRequestString(saCfgPath);
+                    string saCfgJson = await Requester.RequestText(saCfgPath);
 
                     // Local save path (Sandbox)
                     string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
@@ -177,7 +175,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     // 從 StreamingAssets 讀取配置檔 (StreamingAssets 使用 Request)
                     string saCfgPath = BundleConfig.GetStreamingAssetsAppConfigPath();
-                    string saCfgJson = await BundleUtility.FileRequestString(saCfgPath);
+                    string saCfgJson = await Requester.RequestText(saCfgPath);
                     saCfg = JsonConvert.DeserializeObject<AppConfig>(saCfgJson);
 
                     // 從本地端讀取配置檔 (持久化路徑使用 File.Read)
@@ -516,7 +514,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 #region Create Downaloder by Tags
                 string url = await BundleConfig.GetHostServerPatchConfigPath();
-                string hostCfgJson = await BundleUtility.FileRequestString(url);
+                string hostCfgJson = await Requester.RequestText(url);
                 PatchConfig patchCfg = JsonConvert.DeserializeObject<PatchConfig>(hostCfgJson);
                 List<GroupInfo> patchGroupInfos = patchCfg.GROUP_INFOS;
 
