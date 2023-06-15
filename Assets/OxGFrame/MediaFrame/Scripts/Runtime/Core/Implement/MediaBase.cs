@@ -197,18 +197,10 @@ namespace OxGFrame.MediaFrame
         /// <summary>
         /// 設置名稱
         /// </summary>
-        /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
-        //public void SetNames(string bundleName, string assetName, string mediaName)
-        //{
-        //    this.bundleName = bundleName;
-        //    this.assetName = assetName;
-        //    this.mediaName = mediaName;
-        //}      
-
+        /// <param name="mediaName"></param>
         public void SetNames(string assetName, string mediaName)
         {
-            //this.bundleName = bundleName;
             this.assetName = assetName;
             this.mediaName = mediaName;
         }

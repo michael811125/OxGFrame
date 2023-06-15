@@ -78,7 +78,7 @@ namespace OxGFrame.CoreFrame
         [HideInInspector] protected bool _isBinded { get; private set; } = false;             // 檢查是否綁定的開關
         [HideInInspector] protected bool _isInitFirst { get; private set; } = false;          // 是否初次初始
 
-        [Tooltip("Allow instantiate when close will destroy directly")]
+        [Tooltip("Allow instantiate, but when close will destroy directly")]
         public bool allowInstantiate = false;                                                 // 是否允許多實例            
         [Tooltip("If checked will destroy on close"), ConditionalField(nameof(allowInstantiate), true)]
         public bool onCloseAndDestroy = false;                                                // 是否關閉時就 DestroyUI
@@ -203,11 +203,9 @@ namespace OxGFrame.CoreFrame
         /// <summary>
         /// 設置名稱
         /// </summary>
-        /// <param name="bundleName"></param>
         /// <param name="assetName"></param>
         public void SetNames(string assetName)
         {
-            //this.bundleName = bundleName;
             this.assetName = assetName;
         }
 

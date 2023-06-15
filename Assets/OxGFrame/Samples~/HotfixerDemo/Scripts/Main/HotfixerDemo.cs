@@ -119,7 +119,7 @@ public class HotfixerDemo : MonoBehaviour
             // Hotfix assemblies
             new string[]
             {
-                "HotfixDemo.Hotfix.Runtime.dll"
+                "HotfixerDemo.Hotfix.Runtime.dll"
             }
         );
     }

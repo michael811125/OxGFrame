@@ -2,6 +2,35 @@
 
 All notable changes to this package will be documented in this file.
 
+## [1.4.16] - 2023-06-14
+
+### Changed
+
+- 增加了自动分析冗余资源的开关
+
+  ```c#
+  /// <summary>
+  /// 构建参数
+  /// </summary>
+  public class BuildParameters
+  {
+      /// <summary>
+      /// 自动分析冗余资源
+      /// </summary>
+      public bool AutoAnalyzeRedundancy = true;
+  }
+  ```
+
+- 太空战机DEMO启用了新的内置资源查询机制。
+
+## [1.4.15] - 2023-06-09
+
+### Fixed
+
+- 修复了安卓平台，解压内置文件到沙盒失败后不再重新尝试的问题。
+- 修复了验证远端下载文件，极小概率失败的问题。
+- 修复了太空战机DEMO在IOS平台流解密失败的问题。
+
 ## [1.4.14] - 2023-05-26
 
 ### Fixed

@@ -1,0 +1,18 @@
+{
+    "name": "HotfixerDemo.Hotfix.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:02b9a6f6b4dfd0b42b1b13bae3b89abf",
+        "GUID:fe4a54556f5e65d47a28ffe1fce14a15"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
