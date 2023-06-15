@@ -93,6 +93,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_5.png)
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_6.png)
 
+[![Hotfix (Android)](https://img.youtube.com/vi/3b6J7oDCPgo/maxresdefault.jpg)](https://www.youtube.com/watch?v=3b6J7oDCPgo)
+
 ※備註 : 運行打包 HotfixerDemo 需要 Import PatchLauncher from PackageManager
 
 **如果沒有要使用 Hotfixer 熱修復模塊，可以直接刪除整個 Hotfixer。**
