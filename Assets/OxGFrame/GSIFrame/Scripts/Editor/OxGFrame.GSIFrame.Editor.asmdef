@@ -1,5 +1,5 @@
 {
-    "name": "OxGFrame.GameFrame.Editor",
+    "name": "OxGFrame.GSIFrame.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:ece7467d68eab7a449913173f8960045"

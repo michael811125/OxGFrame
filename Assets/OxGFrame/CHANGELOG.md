@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.2.3] - 2023-06-15
+- Fixed GSIFrame assembly wrong name issue.
+
 ## [2.2.2] - 2023-06-08
 - Added Requester in Utility.
 - Optimized AssetLoader and MediaFrame to use Requester of Utility.
