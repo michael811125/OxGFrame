@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.2.4] - 2023-06-15
+- Optimized unload hotfix files after loaded (release memory).
+
 ## [2.2.3] - 2023-06-15
 - Fixed GSIFrame assembly wrong name issue.
 

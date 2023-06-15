@@ -307,6 +307,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                         var dll = await AssetLoaders.LoadAssetAsync<TextAsset>(HotfixManager.GetInstance().packageName, dllName);
                         // 加載 assembly 對應的 dll, 會自動為它 hook, 一旦 aot 泛型函數的 native 函數不存在, 用解釋器版本代碼
                         LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dll.bytes, mode);
+                        // Unload after load
+                        AssetLoaders.UnloadAsset(dllName);
                         Debug.Log($"<color=#32fff5>Load <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}, ret: {err}</color>");
                     }
                 }
@@ -364,6 +366,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                         {
                             var dll = await AssetLoaders.LoadAssetAsync<TextAsset>(HotfixManager.GetInstance().packageName, dllName);
                             hotfixAsm = Assembly.Load(dll.bytes);
+                            // Unload after load
+                            AssetLoaders.UnloadAsset(dllName);
                         }
 
                         HotfixManager.GetInstance().AddHotfixAssembly(dllName, hotfixAsm);
