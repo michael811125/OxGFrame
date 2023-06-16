@@ -42,7 +42,7 @@ namespace OxGFrame.APICenter
         /// <returns></returns>
         public U GetAPI<U>(int apiId) where U : APIBase
         {
-            return (U)this._GetFromCache(apiId);
+            return (U)this.GetFromCache(apiId);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace OxGFrame.APICenter
         /// <returns></returns>
         public bool HasAPI<U>(int apiId) where U : APIBase
         {
-            return this._HasInCache(apiId);
+            return this.HasInCache(apiId);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace OxGFrame.APICenter
         /// <param name="apiBase"></param>
         public void Register(int apiId, APIBase apiBase)
         {
-            if (this._HasInCache(apiId))
+            if (this.HasInCache(apiId))
             {
                 Debug.Log(string.Format("<color=#FF0000>Repeat registration. API Id: {0}, API: {1}</color>", apiId, apiBase.GetType().Name));
                 return;
@@ -111,9 +111,9 @@ namespace OxGFrame.APICenter
             this._dictAPIs.Add(apiId, apiBase);
         }
 
-        private APIBase _GetFromCache(int apiId)
+        protected APIBase GetFromCache(int apiId)
         {
-            if (!this._HasInCache(apiId))
+            if (!this.HasInCache(apiId))
             {
                 Debug.Log(string.Format("<color=#FF0000>Cannot found API. API Id: {0}</color>", apiId));
                 return null;
@@ -122,7 +122,7 @@ namespace OxGFrame.APICenter
             return this._dictAPIs[apiId];
         }
 
-        private bool _HasInCache(int apiId)
+        protected bool HasInCache(int apiId)
         {
             return this._dictAPIs.ContainsKey(apiId);
         }
