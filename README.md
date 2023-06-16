@@ -415,6 +415,7 @@ video_urlset 127.0.0.1/video/
   - UMT: Unity Main Thread.
   - Singleton: MonoSingleton (MonoBehaviour), NewSingleton (class).
   - Requester: RequestAudio, RequestTexture2D, RequestSprite, RequestBytes, RequestText.
+  - Cacher: ARCCache<TKey, TValue>, LRUCache<TKey, TValue>.
 
 **如果沒有要使用 Utility 通用組件，可以直接刪除整個 Utility (注意有模塊依賴引用)。**
 

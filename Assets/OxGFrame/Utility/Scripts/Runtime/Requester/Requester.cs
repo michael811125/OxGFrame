@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using OxGFrame.Utility.Cacher;
 using System;
 using System.Threading;
 using UnityEngine;
@@ -8,6 +9,55 @@ namespace OxGFrame.Utility.Request
 {
     public static class Requester
     {
+        private static ARCCache<string, AudioClip> _arcAudios = null;
+        private static ARCCache<string, Texture2D> _arcTexture2ds = null;
+        private static ARCCache<string, string> _arcTexts = null;
+        private static LRUCache<string, AudioClip> _lruAudios = null;
+        private static LRUCache<string, Texture2D> _lruTexture2ds = null;
+        private static LRUCache<string, string> _lruTexts = null;
+
+        public static void InitARCCacheCapacityForAudio(int capacity = 20)
+        {
+            if (_arcAudios == null) _arcAudios = new ARCCache<string, AudioClip>(capacity);
+            // Only allow one cache type
+            _lruAudios = null;
+        }
+
+        public static void InitARCCacheCapacityForTexture2d(int capacity = 60)
+        {
+            if (_arcTexture2ds == null) _arcTexture2ds = new ARCCache<string, Texture2D>(capacity);
+            // Only allow one cache type
+            _lruTexture2ds = null;
+        }
+
+        public static void InitARCCacheCapacityForText(int capacity = 80)
+        {
+            if (_arcTexts == null) _arcTexts = new ARCCache<string, string>(capacity);
+            // Only allow one cache type
+            _lruTexts = null;
+        }
+
+        public static void InitLRUCacheCapacityForAudio(int capacity = 20)
+        {
+            if (_lruAudios == null) _lruAudios = new LRUCache<string, AudioClip>(capacity);
+            // Only allow one cache type
+            _arcAudios = null;
+        }
+
+        public static void InitLRUCacheCapacityForTexture2d(int capacity = 60)
+        {
+            if (_lruTexture2ds == null) _lruTexture2ds = new LRUCache<string, Texture2D>(capacity);
+            // Only allow one cache type
+            _arcTexture2ds = null;
+        }
+
+        public static void InitLRUCacheCapacityForText(int capacity = 80)
+        {
+            if (_lruTexts == null) _lruTexts = new LRUCache<string, string>(capacity);
+            // Only allow one cache type
+            _arcTexts = null;
+        }
+
         /// <summary>
         /// Audio request
         /// </summary>
@@ -19,6 +69,19 @@ namespace OxGFrame.Utility.Request
         /// <returns></returns>
         public static async UniTask<AudioClip> RequestAudio(string url, AudioType audioType = AudioType.MPEG, Action<AudioClip> successAction = null, Action errorAction = null, CancellationTokenSource cts = null)
         {
+            // ARCCache
+            if (_arcAudios != null)
+            {
+                AudioClip audioClip = _arcAudios.Get(url);
+                if (audioClip != null) return audioClip;
+            }
+            // LRUCache
+            else if (_lruAudios != null)
+            {
+                AudioClip audioClip = _lruAudios.Get(url);
+                if (audioClip != null) return audioClip;
+            }
+
             UnityWebRequest request = null;
             try
             {
@@ -38,11 +101,25 @@ namespace OxGFrame.Utility.Request
                 }
 
                 AudioClip audioClip = ((DownloadHandlerAudioClip)request.downloadHandler).audioClip;
+                // ARCCache
+                if (_arcAudios != null)
+                {
+                    _arcAudios.Add(url, audioClip);
+                    audioClip = _arcAudios.Get(url);
+                }
+                // LRUCache
+                else if (_lruAudios != null)
+                {
+                    _lruAudios.Add(url, audioClip);
+                    audioClip = _lruAudios.Get(url);
+                }
                 successAction?.Invoke(audioClip);
+
 #if UNITY_EDITOR
                 ulong sizeBytes = (ulong)request.downloadHandler.data.Length;
                 Debug.Log($"<color=#90ff67>Request Audio => Channel: {audioClip.channels}, Frequency: {audioClip.frequency}, Sample: {audioClip.samples}, Length: {audioClip.length}, State: {audioClip.loadState}, Size: {GetBytesToString(sizeBytes)}</color>");
 #endif
+
                 request.Dispose();
                 return audioClip;
             }
@@ -65,6 +142,19 @@ namespace OxGFrame.Utility.Request
         /// <returns></returns>
         public static async UniTask<Texture2D> RequestTexture2D(string url, Action<Texture2D> successAction = null, Action errorAction = null, CancellationTokenSource cts = null)
         {
+            // ARCCache
+            if (_arcTexture2ds != null)
+            {
+                Texture2D t2d = _arcTexture2ds.Get(url);
+                if (t2d != null) return t2d;
+            }
+            // LRUCache
+            else if (_lruTexture2ds != null)
+            {
+                Texture2D t2d = _lruTexture2ds.Get(url);
+                if (t2d != null) return t2d;
+            }
+
             UnityWebRequest request = null;
             try
             {
@@ -83,14 +173,28 @@ namespace OxGFrame.Utility.Request
                     return null;
                 }
 
-                Texture2D texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
-                successAction?.Invoke(texture);
+                Texture2D t2d = ((DownloadHandlerTexture)request.downloadHandler).texture;
+                // ARCCache
+                if (_arcTexture2ds != null)
+                {
+                    _arcTexture2ds.Add(url, t2d);
+                    t2d = _arcTexture2ds.Get(url);
+                }
+                // LRUCache
+                else if (_lruTexture2ds != null)
+                {
+                    _lruTexture2ds.Add(url, t2d);
+                    t2d = _lruTexture2ds.Get(url);
+                }
+                successAction?.Invoke(t2d);
+
 #if UNITY_EDITOR
                 ulong sizeBytes = (ulong)request.downloadHandler.data.Length;
-                Debug.Log($"<color=#90ff67>Request Texture2D => Width: {texture.width}, Height: {texture.height}, Size: {GetBytesToString(sizeBytes)}</color>");
+                Debug.Log($"<color=#90ff67>Request Texture2D => Width: {t2d.width}, Height: {t2d.height}, Size: {GetBytesToString(sizeBytes)}</color>");
 #endif
+
                 request.Dispose();
-                return texture;
+                return t2d;
             }
             catch
             {
@@ -154,10 +258,12 @@ namespace OxGFrame.Utility.Request
 
                 byte[] bytes = request.downloadHandler.data;
                 successAction?.Invoke(bytes);
+
 #if UNITY_EDITOR
                 ulong sizeBytes = (ulong)bytes.Length;
                 Debug.Log($"<color=#90ff67>Request Bytes => Size: {GetBytesToString(sizeBytes)}</color>");
 #endif
+
                 request.Dispose();
                 return bytes;
             }
@@ -180,6 +286,19 @@ namespace OxGFrame.Utility.Request
         /// <returns></returns>
         public static async UniTask<string> RequestText(string url, Action<string> successAction = null, Action errorAction = null, CancellationTokenSource cts = null)
         {
+            // ARCCache
+            if (_arcTexts != null)
+            {
+                string text = _arcTexts.Get(url);
+                if (text != null) return text;
+            }
+            // LRUCache
+            else if (_lruTexts != null)
+            {
+                string text = _lruTexts.Get(url);
+                if (text != null) return text;
+            }
+
             UnityWebRequest request = null;
             try
             {
@@ -198,11 +317,25 @@ namespace OxGFrame.Utility.Request
                 }
 
                 string text = request.downloadHandler.text;
+                // ARCCache
+                if (_arcTexts != null)
+                {
+                    _arcTexts.Add(url, text);
+                    text = _arcTexts.Get(url);
+                }
+                // LRUCache
+                else if (_lruTexts != null)
+                {
+                    _lruTexts.Add(url, text);
+                    text = _lruTexts.Get(url);
+                }
                 successAction?.Invoke(text);
+
 #if UNITY_EDITOR
                 ulong sizeBytes = (ulong)request.downloadHandler.data.Length;
                 Debug.Log($"<color=#90ff67>Request Text => Size: {GetBytesToString(sizeBytes)}</color>");
 #endif
+
                 request.Dispose();
                 return text;
             }

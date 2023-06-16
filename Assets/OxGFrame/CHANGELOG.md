@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.2.6] - 2023-06-16
+- Added ARCCache and LRUCache in Utility (using OxGFrame.Utility.Cacher).
+- Added Cacher for Requester (If want to active cache must Init).
+
 ## [2.2.5] - 2023-06-16
 - Added template prefabs for CPFrame (Transform and RectTransform).
 - Added virtual OnShow() without params for CPBase, and then deprecated OnShow(object obj).
