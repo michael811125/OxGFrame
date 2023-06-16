@@ -321,7 +321,36 @@ video_urlset 127.0.0.1/video/
   - EventBase，單個 Event 基類，需建立實作 => 右鍵創建
   - EventCenterBase，用於繼承管理層與註冊階段，需建立實作 => 右鍵創建
     - 使用 Default API 進行調用 (Add, Find)
-  
+
+```
+    #region Default API
+    public static void Add<T>() where T : EventBase, new()
+    {
+        GetInstance().Register<T>();
+    }
+    
+    public static void Add<T>(int eventId) where T : EventBase, new()
+    {
+        GetInstance().Register<T>(eventId);
+    }
+    
+    public static void Add(int eventId, EventBase eventBase)
+    {
+        GetInstance().Register(eventId, eventBase);
+    }
+    
+    public static T Find<T>() where T : EventBase
+    {
+        return GetInstance().GetEvent<T>();
+    }
+    
+    public static T Find<T>(int eventId) where T : EventBase
+    {
+        return GetInstance().GetEvent<T>(eventId);
+    }
+    #endregion
+```  
+
 **如果沒有要使用 EventCenter 事件模塊，可以直接刪除整個 EventCenter。**
   
 ※備註 : Right-Click Create/OxGFrame/Event Center... (Template cs)
@@ -337,6 +366,35 @@ video_urlset 127.0.0.1/video/
   - APIBase，單個 API 基類，需建立實作 => 右鍵創建
   - APICenterBase，用於繼承管理層與註冊階段，需建立實作 => 右鍵創建
     - 使用 Default API 進行調用 (Add, Find)
+
+```
+    #region Default API
+    public static void Add<T>() where T : APIBase, new()
+    {
+        GetInstance().Register<T>();
+    }
+    
+    public static void Add<T>(int apiId) where T : APIBase, new()
+    {
+        GetInstance().Register<T>(apiId);
+    }
+    
+    public static void Add(int apiId, APIBase apiBase)
+    {
+        GetInstance().Register(apiId, apiBase);
+    }
+    
+    public static T Find<T>() where T : APIBase
+    {
+        return GetInstance().GetAPI<T>();
+    }
+    
+    public static T Find<T>(int apiId) where T : APIBase
+    {
+        return GetInstance().GetAPI<T>(apiId);
+    }
+    #endregion
+```
 
 **如果沒有要使用 APICenter 短連接請求模塊，可以直接刪除整個 APICenter。**
 
