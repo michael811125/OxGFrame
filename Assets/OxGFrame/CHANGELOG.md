@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [2.2.5] - 2023-06-16
+- Added template prefabs for CPFrame (Transform and RectTransform).
+- Added virtual OnShow() without params for CPBase, and then deprecated OnShow(object obj).
+- Added default API for EventCenter, because use protected access modifier for GetInstance().
+  - Use Find to GetEvent.
+- Added default API for APICenter, because use protected access modifier for GetInstance().
+  - Use Find to GetAPI.
+- Renamed method OpenSub() => OnPreShow().
+- Renamed method CloseSub() => OnPreClose().
+
 ## [2.2.4] - 2023-06-15
 - Optimized unload hotfix files after loaded (release memory).
 

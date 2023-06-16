@@ -56,6 +56,24 @@ namespace OxGFrame.CoreFrame.Editor
             }
         }
 
+        class DoCreateRectTransformPrefabAsset : DoCreatePrefabAsset
+        {
+            protected override GameObject CreateGameObject(string name)
+            {
+                var obj = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer));
+
+                // calibrate RectTransform
+                RectTransform objRect = obj.GetComponent<RectTransform>();
+                objRect.anchorMin = new Vector2(0.5f, 0.5f);
+                objRect.anchorMax = new Vector2(0.5f, 0.5f);
+                objRect.sizeDelta = new Vector2(128, 128);
+                objRect.localScale = Vector3.one;
+                objRect.localPosition = Vector3.zero;
+
+                return obj;
+            }
+        }
+
         static void CreatePrefabAsset(string name, DoCreatePrefabAsset createAction)
         {
             string directory = GetSelectedAssetDirectory();
@@ -82,6 +100,18 @@ namespace OxGFrame.CoreFrame.Editor
         public static void CreateTplUI()
         {
             CreatePrefabAsset("NewTplUI", ScriptableObject.CreateInstance<DoCreateUIPrefabAsset>());
+        }
+
+        [MenuItem("Assets/Create/OxGFrame/Core Frame/CP Frame/Template Prefabs/Template CP (Transform Prefab)", isValidateFunction: false, priority: 51)]
+        public static void CreateTplTransformCP()
+        {
+            CreatePrefabAsset("NewTplTransformCP", ScriptableObject.CreateInstance<DoCreatePrefabAsset>());
+        }
+
+        [MenuItem("Assets/Create/OxGFrame/Core Frame/CP Frame/Template Prefabs/Template CP (RectTransform Prefab)", isValidateFunction: false, priority: 51)]
+        public static void CreateTplRectTransformCP()
+        {
+            CreatePrefabAsset("NewTplRectTransformCP", ScriptableObject.CreateInstance<DoCreateRectTransformPrefabAsset>());
         }
     }
 }

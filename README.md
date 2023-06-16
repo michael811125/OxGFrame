@@ -32,7 +32,7 @@ Copy Assets/OxGFrame to Unity New Project.
 ---
 
 ## 舊版本更新 OxGFrame 注意
-將舊版 2.1 以下的 OxGFrame 全部移除，重新安裝 OxGFrame，並且重新串接新版的接口。
+將舊版 2 以下的 OxGFrame 全部移除，重新安裝 OxGFrame，並且重新串接新版的接口。
 
 ---
 
@@ -92,6 +92,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_4.png)
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_5.png)
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_6.png)
+
+**Hotfix 演示影片**
 
 [![Hotfix (Android)](https://img.youtube.com/vi/3b6J7oDCPgo/maxresdefault.jpg)](https://www.youtube.com/watch?v=3b6J7oDCPgo)
 
@@ -219,14 +221,14 @@ store_link http://
 #### 常用方法說明
 - OnInit : 初始 Member Params (建構式概念)，另外如果採用拖曳式指定組件，也可以直接在此初始 (不過不建議，建議還是在 OnBind 執行)。
 - OnBind : 初始綁定組件與事件 (After Bind)。
-- OpenSub : 當有異步處理或者附屬物件控制時，可以在此處理。例如 : TopUI 附屬連動開啟 LeftUI & RightUI，那麼就可以在 TopUI 中的 OpenSub 方法實現 Show LeftUI & RightUI。
-  - **不建議在 CloseSub 時進行相關 Show 的處理，如果有進行的話也沒關係，因為針對 CloseAll 的 API 有提供 disableDoSub 的開關。**
+- OnPreShow : 當有異步處理或者附屬物件控制時，可以在此處理。例如 : TopUI 附屬連動開啟 LeftUI & RightUI，那麼就可以在 TopUI 中的 OnPreShow 方法實現 Show LeftUI & RightUI。
+  - **不建議在 OnPreClose 時進行相關 Show 的處理，如果有進行的話也沒關係，因為針對 CloseAll 的 API 有提供 disablePreClose 的開關。**
 - OnShow : 調用 Show 時，此方法會被激活，並且可以透過帶入的 object 進行數據傳送。
 - OnClose : 調用 Close 時，此方法會被激活。
 - OnRelease : 當物件 Close And Destroy 時，此方法會被激活。
 
 #### 初始順序說明
-Init Order : OnInit (Once) > OnBind (Once) > OpenSub (EveryOpen) > OnShow (EveryOpen)
+Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
 
 #### 物件綁定說明 (OnBind)
 - 透過 collector.GetNode("BindName") 返回取得綁定 GameObject (單一名綁定)
@@ -286,7 +288,7 @@ video_urlset 127.0.0.1/video/
 
 ### GSIFrame
 
-遊戲階段整合模塊 (FSM 概念)，而 GSI 為 Game Stage Integration 的縮寫，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商業Logo階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), GamingStage (遊玩階段), FightStage (戰鬥階段) 等, 以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
+遊戲階段整合模塊 (FSM 概念)，而 GSI 為 Game Stage Integration 的縮寫，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商業Logo階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), GamingStage (遊玩階段), FightStage (戰鬥階段) 等，以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
 
 - GSIBase，遊戲階段基類，在透過 Update 切換當前階段自定義的狀態流程 (Enum) 時，可透過 StopUpdate & RunUpdate 方法進行開關設置，即可停止或繼續 Update 的每幀調用，需建立實作 => 右鍵創建
 - GSIManagerBase，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
@@ -313,11 +315,12 @@ video_urlset 127.0.0.1/video/
 
 ### EventCenter
 
-集中式 Event 整合模塊 (非多監聽式)，可以自定義每個 Event 的格式進行派送。
+集中式 Event 整合模塊 (非多監聽式)，可以自定義每個 Event 的格式進行派送 (也可列出事件 ID 交由企劃填表填入已註冊的 ID，就能讀表取出事件 ID 進行派送)。
 
 - EventCenter : 事件註冊調度管理，管理基類已實現單例
   - EventBase，單個 Event 基類，需建立實作 => 右鍵創建
-  - EventCenter，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
+  - EventCenterBase，用於繼承管理層與註冊階段，需建立實作 => 右鍵創建
+    - 使用 Default API 進行調用 (Add, Find)
   
 **如果沒有要使用 EventCenter 事件模塊，可以直接刪除整個 EventCenter。**
   
@@ -327,12 +330,13 @@ video_urlset 127.0.0.1/video/
 
 ### APICenter
 
-集中式 API 整合模塊，可以自定義每個 API 的格式進行短連接請求，能夠有效的集中管理各型式的 API 格式，。
+集中式 API 整合模塊，可以自定義每個 API 的格式進行短連接請求，能夠有效的集中管理各型式的 API 格式。
 
 - Acax (類似 Ajax 方式，請求 API)，支援 Async & Sync
 - APICenter : Http API 註冊管理，管理基類已實現單例
   - APIBase，單個 API 基類，需建立實作 => 右鍵創建
-  - APICenter，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
+  - APICenterBase，用於繼承管理層與註冊階段，需建立實作 => 右鍵創建
+    - 使用 Default API 進行調用 (Add, Find)
 
 **如果沒有要使用 APICenter 短連接請求模塊，可以直接刪除整個 APICenter。**
 

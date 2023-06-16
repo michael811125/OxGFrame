@@ -222,7 +222,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             if (this._loops == -1) this._videoPlayer.isLooping = true;
 
-            volume = (volume > 0f) ? volume : this._videoPlayer.GetDirectAudioVolume(0); ;
+            volume = (volume > 0f) ? volume : this._videoPlayer.GetDirectAudioVolume(0);
             this._videoPlayer.SetDirectAudioVolume(0, volume);
 
             this._videoPlayer.Play();

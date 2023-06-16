@@ -4,11 +4,11 @@ public class EventCenterDemo : MonoBehaviour
 {
     public void OnEventEmit()
     {
-        EventCenterExample.GetInstance().GetEvent<EventMsgTest>()?.Emit(10, "Hello Event!");
+        EventCenterExample.Find<EventMsgTest>()?.Emit(10, "Hello Event!");
     }
 
     public void OnEventHandle()
     {
-        EventCenterExample.GetInstance().GetEvent<EventMsgTest>()?.HandleEvent();
+        EventCenterExample.Find<EventMsgTest>()?.HandleEvent();
     }
 }

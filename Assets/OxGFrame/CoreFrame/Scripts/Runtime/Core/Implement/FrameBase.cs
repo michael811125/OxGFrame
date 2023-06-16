@@ -7,7 +7,7 @@ namespace OxGFrame.CoreFrame
 {
     /// <summary>
     /// <para>
-    /// Init Order: Awake (Once) > OnInit (Once) > OnBind (Once) > PreInit (EveryOpen) > OpenSub (EveryOpen) > OnShow (EveryOpen)
+    /// Init Order: Awake (Once) > OnInit (Once) > OnBind (Once) > PreInit (EveryOpen) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
     /// </para>
     /// </summary>
     [DisallowMultipleComponent]
@@ -127,19 +127,19 @@ namespace OxGFrame.CoreFrame
         public async UniTask PreInit()
         {
             // 等待異步加載, 進行異步加載動作
-            await this.OpenSub();
+            await this.OnPreShow();
         }
 
         /// <summary>
         /// 子類實現開啟附屬程序
         /// </summary>
         /// <returns></returns>
-        protected abstract UniTask OpenSub();
+        protected abstract UniTask OnPreShow();
 
         /// <summary>
         /// 子類實現關閉附屬程序
         /// </summary>
-        protected abstract void CloseSub();
+        protected abstract void OnPreClose();
 
         /// <summary>
         /// 初始相關綁定組件與事件 (僅執行一次)
@@ -155,7 +155,7 @@ namespace OxGFrame.CoreFrame
         /// <summary>
         /// 隱藏相關流程
         /// </summary>
-        public abstract void Hide(bool disableDoSub);
+        public abstract void Hide(bool disablePreClose);
 
         /// <summary>
         /// 開啟時每次都會被呼叫

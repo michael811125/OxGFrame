@@ -163,19 +163,19 @@ namespace OxGFrame.CoreFrame
             #endregion
 
             #region Close
-            public static void Close(string assetName, bool disableDoSub = false, bool forceDestroy = false)
+            public static void Close(string assetName, bool disablePreClose = false, bool forceDestroy = false)
             {
-                UIManager.GetInstance().Close(assetName, disableDoSub, forceDestroy);
+                UIManager.GetInstance().Close(assetName, disablePreClose, forceDestroy);
             }
 
-            public static void CloseAll(bool disableDoSub = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAll(bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(disableDoSub, forceDestroy, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(disablePreClose, forceDestroy, withoutAssetNames);
             }
 
-            public static void CloseAll(int groupId, bool disableDoSub = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAll(int groupId, bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(groupId, disableDoSub, forceDestroy, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(groupId, disablePreClose, forceDestroy, withoutAssetNames);
             }
             #endregion
 
@@ -354,19 +354,19 @@ namespace OxGFrame.CoreFrame
             #endregion
 
             #region Close
-            public static void Close(string assetName, bool disableDoSub = false, bool forceDestroy = false)
+            public static void Close(string assetName, bool disablePreClose = false, bool forceDestroy = false)
             {
-                SRManager.GetInstance().Close(assetName, disableDoSub, forceDestroy);
+                SRManager.GetInstance().Close(assetName, disablePreClose, forceDestroy);
             }
 
-            public static void CloseAll(bool disableDoSub = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAll(bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(disableDoSub, forceDestroy, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(disablePreClose, forceDestroy, withoutAssetNames);
             }
 
-            public static void CloseAll(int groupId, bool disableDoSub = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAll(int groupId, bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(groupId, disableDoSub, forceDestroy, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(groupId, disablePreClose, forceDestroy, withoutAssetNames);
             }
             #endregion
 
@@ -383,7 +383,7 @@ namespace OxGFrame.CoreFrame
 
             public static void RevealAll(int groupId)
             {
-                SRManager.GetInstance().RevealAll(groupId); ;
+                SRManager.GetInstance().RevealAll(groupId);
             }
             #endregion
 

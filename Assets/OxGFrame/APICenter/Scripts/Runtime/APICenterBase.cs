@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace OxGFrame.APICenter
 {
-    public class APICenter<T> where T : APICenter<T>, new()
+    public class APICenterBase<T> where T : APICenterBase<T>, new()
     {
         private Dictionary<int, APIBase> _dictAPIs = new Dictionary<int, APIBase>();
 
         private static readonly object _locker = new object();
         private static T _instance = null;
-        public static T GetInstance()
+        protected static T GetInstance()
         {
             if (_instance == null)
             {

@@ -492,10 +492,10 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// 將 Close 方法封裝 (由接口 Close 與 CloseAll 統一調用)
         /// </summary>
         /// <param name="assetName"></param>
-        /// <param name="disableDoSub"></param>
+        /// <param name="disablePreClose"></param>
         /// <param name="forceDestroy"></param>
         /// <param name="doAll"></param>
-        private void _Close(string assetName, bool disableDoSub, bool forceDestroy, bool doAll)
+        private void _Close(string assetName, bool disablePreClose, bool forceDestroy, bool doAll)
         {
             if (string.IsNullOrEmpty(assetName) || !this.HasStackInAllCache(assetName)) return;
 
@@ -505,7 +505,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 foreach (var uiBase in stack.cache.ToArray())
                 {
                     uiBase.SetHidden(false);
-                    this.ExitAndHide(uiBase, disableDoSub);
+                    this.ExitAndHide(uiBase, disablePreClose);
 
                     if (forceDestroy) this.Destroy(uiBase, assetName);
                     else if (uiBase.allowInstantiate) this.Destroy(uiBase, assetName);
@@ -524,7 +524,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 如果強制關閉 UI, 需要處理原本柱列在 Reverse 中的 UI 緩存
                 ReverseCache equalsTop = this._PreprocessRemoveReserveSafety(forceDestroy, uiBase);
                 uiBase.SetHidden(false);
-                this.ExitAndHide(uiBase, disableDoSub, equalsTop.extraStack);
+                this.ExitAndHide(uiBase, disablePreClose, equalsTop.extraStack);
                 // 如果檢測到 equalsTop.uiBase != null 則需要進行反切還原
                 this.ExitAndHideReverse(uiBase, !forceDestroy || (equalsTop.uiBase != null));
 
@@ -536,14 +536,14 @@ namespace OxGFrame.CoreFrame.UIFrame
             Debug.Log(string.Format("Close UI: 【{0}】", assetName));
         }
 
-        public override void Close(string assetName, bool disableDoSub = false, bool forceDestroy = false)
+        public override void Close(string assetName, bool disablePreClose = false, bool forceDestroy = false)
         {
             // 如果沒有強制 Destroy + 不是顯示狀態則直接 return
             if (!forceDestroy && !this.CheckIsShowing(assetName)) return;
-            this._Close(assetName, disableDoSub, forceDestroy, false);
+            this._Close(assetName, disablePreClose, forceDestroy, false);
         }
 
-        public override void CloseAll(bool disableDoSub = false, bool forceDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -575,11 +575,11 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
                 if (uiBase.uiSetting.whenCloseAllToSkip) continue;
 
-                this._Close(assetName, disableDoSub, forceDestroy, true);
+                this._Close(assetName, disablePreClose, forceDestroy, true);
             }
         }
 
-        public override void CloseAll(int groupId, bool disableDoSub = false, bool forceDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(int groupId, bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -613,7 +613,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
                 if (uiBase.uiSetting.whenCloseAllToSkip) continue;
 
-                this._Close(assetName, disableDoSub, forceDestroy, true);
+                this._Close(assetName, disablePreClose, forceDestroy, true);
             }
         }
         #endregion
@@ -836,9 +836,9 @@ namespace OxGFrame.CoreFrame.UIFrame
             }
         }
 
-        protected void ExitAndHide(UIBase uiBase, bool disableDoSub = false, int extraStack = 0)
+        protected void ExitAndHide(UIBase uiBase, bool disablePreClose = false, int extraStack = 0)
         {
-            uiBase.Hide(disableDoSub);
+            uiBase.Hide(disablePreClose);
 
             // 堆疊式管理 (只有非隱藏才進行堆疊計數管理)
             if (uiBase.uiSetting.stack && !uiBase.isHidden)

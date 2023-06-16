@@ -15,9 +15,9 @@ namespace OxGFrame.CoreFrame.SRFrame
             base.InitFirst();
         }
 
-        protected override async UniTask OpenSub() { }
+        protected override async UniTask OnPreShow() { }
 
-        protected override void CloseSub() { }
+        protected override void OnPreClose() { }
 
         protected override void OnBind() { }
 
@@ -35,13 +35,13 @@ namespace OxGFrame.CoreFrame.SRFrame
             else this.OnReveal();
         }
 
-        public sealed override void Hide(bool disableDoSub = false)
+        public sealed override void Hide(bool disablePreClose = false)
         {
             if (!this.gameObject.activeSelf) return;
 
             if (!this.isHidden)
             {
-                if (!disableDoSub) this.CloseSub();
+                if (!disablePreClose) this.OnPreClose();
                 this.OnClose();
             }
             else this.OnHide();

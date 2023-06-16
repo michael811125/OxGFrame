@@ -14,7 +14,7 @@ public class DemoCP2 : CPBase
         Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {this.collector.GetNode("B2").name}");
     }
 
-    protected override void OnShow(object obj)
+    protected override void OnShow()
     {
         Debug.Log($"<color=#6FFF20>OnShow:</color> {this.gameObject.name}");
     }

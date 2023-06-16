@@ -85,7 +85,8 @@ namespace OxGFrame.CoreFrame.CPFrame
             entityBase.SetNames(assetName);
             entityBase.OnInit();
             entityBase.InitFirst();
-            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+            // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+            if (active) entityBase.Display(null);
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
@@ -115,7 +116,8 @@ namespace OxGFrame.CoreFrame.CPFrame
             entityBase.SetNames(assetName);
             entityBase.OnInit();
             entityBase.InitFirst();
-            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+            // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+            if (active) entityBase.Display(null);
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
@@ -148,7 +150,8 @@ namespace OxGFrame.CoreFrame.CPFrame
             entityBase.SetNames(assetName);
             entityBase.OnInit();
             entityBase.InitFirst();
-            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+            // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+            if (active) entityBase.Display(null);
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
@@ -178,7 +181,8 @@ namespace OxGFrame.CoreFrame.CPFrame
             entityBase.SetNames(assetName);
             entityBase.OnInit();
             entityBase.InitFirst();
-            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+            // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+            if (active) entityBase.Display(null);
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
@@ -208,7 +212,8 @@ namespace OxGFrame.CoreFrame.CPFrame
             entityBase.SetNames(assetName);
             entityBase.OnInit();
             entityBase.InitFirst();
-            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+            // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+            if (active) entityBase.Display(null);
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
@@ -241,7 +246,8 @@ namespace OxGFrame.CoreFrame.CPFrame
             entityBase.SetNames(assetName);
             entityBase.OnInit();
             entityBase.InitFirst();
-            if (active) entityBase.Display(null); // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+            // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+            if (active) entityBase.Display(null);
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);

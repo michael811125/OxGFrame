@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace OxGFrame.EventCenter
 {
-    public class EventCenter<T> where T : EventCenter<T>, new()
+    public class EventCenterBase<T> where T : EventCenterBase<T>, new()
     {
         private Dictionary<int, EventBase> _dictEvents = new Dictionary<int, EventBase>();
 
         private static readonly object _locker = new object();
         private static T _instance = null;
-        public static T GetInstance()
+        protected static T GetInstance()
         {
             if (_instance == null)
             {
@@ -42,7 +42,7 @@ namespace OxGFrame.EventCenter
         /// <returns></returns>
         public U GetEvent<U>(int eventId) where U : EventBase
         {
-            return (U)this._GetFromCache(eventId);
+            return (U)this.GetFromCache(eventId);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace OxGFrame.EventCenter
         /// <returns></returns>
         public bool HasEvent<U>(int eventId) where U : EventBase
         {
-            return this._HasInCache(eventId);
+            return this.HasInCache(eventId);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace OxGFrame.EventCenter
         /// <param name="eventBase"></param>
         public void Register(int eventId, EventBase eventBase)
         {
-            if (this._HasInCache(eventId))
+            if (this.HasInCache(eventId))
             {
                 Debug.Log(string.Format("<color=#FF0000>Repeat registration. Event Id: {0}, Event: {1}</color>", eventId, eventBase.GetType().Name));
                 return;
@@ -111,9 +111,9 @@ namespace OxGFrame.EventCenter
             this._dictEvents.Add(eventId, eventBase);
         }
 
-        private EventBase _GetFromCache(int eventId)
+        protected EventBase GetFromCache(int eventId)
         {
-            if (!this._HasInCache(eventId))
+            if (!this.HasInCache(eventId))
             {
                 Debug.Log(string.Format("<color=#FF0000>Cannot found Event. Event Id: {0}</color>", eventId));
                 return null;
@@ -122,7 +122,7 @@ namespace OxGFrame.EventCenter
             return this._dictEvents[eventId];
         }
 
-        private bool _HasInCache(int eventId)
+        protected bool HasInCache(int eventId)
         {
             return this._dictEvents.ContainsKey(eventId);
         }

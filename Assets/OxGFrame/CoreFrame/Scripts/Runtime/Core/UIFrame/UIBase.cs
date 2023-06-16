@@ -53,9 +53,9 @@ namespace OxGFrame.CoreFrame.UIFrame
             base.InitFirst();
         }
 
-        protected override async UniTask OpenSub() { }
+        protected override async UniTask OnPreShow() { }
 
-        protected override void CloseSub() { }
+        protected override void OnPreClose() { }
 
         /// <summary>
         /// UI 初始相關 UI 綁定組件與註冊事件等 (僅初始一次)
@@ -86,17 +86,17 @@ namespace OxGFrame.CoreFrame.UIFrame
             // 非隱藏才正規處理
             if (!this.isHidden)
             {
-                // 進行顯示初始動作【子類 OnShow】
-                this.OnShow(obj);
                 // 啟用 Mask
                 if (this.autoMask) this._AddMask();
+                // 進行顯示初始動作【子類 OnShow】
+                this.OnShow(obj);
             }
             else
             {
-                // 隱藏顯示
-                this.OnReveal();
                 // 確保 Mask
                 if (this.autoMask) this._AddMask();
+                // 隱藏顯示
+                this.OnReveal();
             }
 
             this.Freeze();
@@ -109,7 +109,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         ///  UIManager 控制調用 Hide
         /// </summary>
-        public sealed override void Hide(bool disableDoSub = false)
+        public sealed override void Hide(bool disablePreClose = false)
         {
             if (!this.gameObject.activeSelf) return;
 
@@ -123,7 +123,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 {
                     // 如果有啟用 Mask, 則需要回收 Mask
                     if (this.autoMask) this._RemoveMask();
-                    if (!disableDoSub) this.CloseSub();
+                    if (!disablePreClose) this.OnPreClose();
                     this.OnClose();
                 }
                 else this.OnHide();

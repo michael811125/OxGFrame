@@ -10,8 +10,7 @@ namespace OxGFrame.CoreFrame.CPFrame
         private void OnEnable()
         {
             if (!this._isInitFirst) return;
-
-            this.OnShow(null);
+            this.OnShow();
         }
 
         private void OnDisable()
@@ -22,7 +21,6 @@ namespace OxGFrame.CoreFrame.CPFrame
         private void OnDestroy()
         {
             this.OnRelease();
-
             AssetLoaders.UnloadAsset(this.assetName);
         }
 
@@ -35,14 +33,14 @@ namespace OxGFrame.CoreFrame.CPFrame
 
         protected override void OnBind() { }
 
-        protected override void OnShow(object obj) { }
+        protected virtual void OnShow() { }
 
         protected override void OnUpdate(float dt) { }
 
         public sealed override void Display(object obj)
         {
             this.gameObject.SetActive(true);
-            this.OnShow(obj);
+            this.OnShow();
         }
 
         #region GameObject Set
@@ -83,16 +81,19 @@ namespace OxGFrame.CoreFrame.CPFrame
 
         #region Non-Use
         [System.Obsolete("This is not supported in this class.")]
-        protected override async UniTask OpenSub() { }
+        protected override async UniTask OnPreShow() { }
 
         [System.Obsolete("This is not supported in this class.")]
-        protected override void CloseSub() { }
+        protected override void OnPreClose() { }
+
+        [System.Obsolete("This is not supported in this class.")]
+        protected override void OnShow(object obj) { }
 
         [System.Obsolete("This is not supported in this class.")]
         public override void OnReceiveAndRefresh(object obj = null) { }
 
         [System.Obsolete("This is not supported in this class.")]
-        public sealed override void Hide(bool disableDoSub = false) { }
+        public sealed override void Hide(bool disablePreClose = false) { }
 
         [System.Obsolete("This is not supported in this class.")]
         protected sealed override void CloseSelf() { }

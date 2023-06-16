@@ -21,7 +21,7 @@ public class DemoCP1 : CPBase
         }
     }
 
-    protected override void OnShow(object obj)
+    protected override void OnShow()
     {
         Debug.Log($"<color=#6FFF20>OnShow:</color> {this.gameObject.name}");
     }
@@ -44,6 +44,7 @@ public class DemoCP1 : CPBase
          * Update
          */
     }
+
     public void MyMethod()
     {
         Debug.Log($"<color=#E553FF>MyMethod:</color> {this.gameObject.name}");

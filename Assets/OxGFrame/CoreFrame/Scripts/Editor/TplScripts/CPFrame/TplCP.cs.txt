@@ -18,7 +18,7 @@ public class #SCRIPTNAME# : CPBase
          */
     }
 
-    protected override void OnShow(object obj)
+    protected override void OnShow()
     {
         /**
          * OnEnable
