@@ -11,7 +11,7 @@
 | **建議先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
 | [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox), Add https://github.com/Deadcows/MyBox.git to Package Manager |
-| [HybirdCLR v3.0.2 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
+| [HybirdCLR v3.2.0 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 ### 1. 透過 Package Manager 安裝 (Install via git)
 Add https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame to Package Manager.
@@ -93,7 +93,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_5.png)
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_6.png)
 
-**Hotfix 演示影片**
+**Hotfix 演示**
 
 [![Hotfix (Android)](https://img.youtube.com/vi/3b6J7oDCPgo/maxresdefault.jpg)](https://www.youtube.com/watch?v=3b6J7oDCPgo)
 
@@ -157,6 +157,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 **指定特定的 Package 進行資源加載**
 - 需先手動進行 AssetPatcher.InitPackage 的初始 (如果 autoUpdate = false，則需要自行另外調用 AssetPatcher.UpdatePackage 進行 Manifest 的更新)。
 - 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion，變成只要 DLC 有更新就可以使用固定路徑進行更新。
+
 ```
 // [Load asset and download from specific package (Export App Bundles for CDN)]
 
