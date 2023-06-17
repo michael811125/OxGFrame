@@ -34,7 +34,7 @@ namespace OxGFrame.Utility.Cacher
         {
             if (this._cache.TryGetValue(key, out var value))
             {
-                MoveToT2(key);
+                this.MoveToT2(key);
                 return value;
             }
 
@@ -46,15 +46,15 @@ namespace OxGFrame.Utility.Cacher
             if (this._cache.ContainsKey(key))
             {
                 this._cache[key] = value;
-                MoveToT2(key);
+                this.MoveToT2(key);
             }
             else
             {
                 if (this._cache.Count >= _capacity)
-                    PerformEviction();
+                    this.PerformEviction();
 
                 this._cache.Add(key, value);
-                MoveToT1(key);
+                this.MoveToT1(key);
             }
         }
 

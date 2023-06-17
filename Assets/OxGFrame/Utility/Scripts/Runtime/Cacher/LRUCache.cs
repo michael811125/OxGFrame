@@ -44,7 +44,7 @@ namespace OxGFrame.Utility.Cacher
         public void Add(TKey key, TValue value)
         {
             if (this._cache.Count >= this._capacity)
-                RemoveLRUItem();
+                this.RemoveLRUItem();
 
             var cacheItem = new CacheItem(key, value);
             var newNode = new LinkedListNode<CacheItem>(cacheItem);
