@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.2.7] - 2023-06-17
+- Fixed when use HybridCLR will not found default constructor issue (FsmStates).
+
 ## [2.2.6] - 2023-06-16
 - Added ARCCache and LRUCache in Utility (using OxGFrame.Utility.Cacher).
 - Added Cacher for Requester (If want to active cache must Init).

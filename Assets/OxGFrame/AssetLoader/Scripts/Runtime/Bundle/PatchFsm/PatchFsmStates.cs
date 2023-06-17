@@ -22,6 +22,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
         {
             private StateMachine _machine;
 
+            public FsmPatchRepair() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
                 this._machine = machine;
@@ -64,6 +66,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
         {
             private StateMachine _machine;
 
+            public FsmPatchPrepare() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
                 this._machine = machine;
@@ -91,6 +95,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
         public class FsmAppVersionUpdate : IStateNode
         {
             private StateMachine _machine;
+
+            public FsmAppVersionUpdate() { }
 
             void IStateNode.OnCreate(StateMachine machine)
             {
@@ -306,6 +312,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
         {
             private StateMachine _machine;
 
+            public FsmInitPatchMode() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
                 this._machine = machine;
@@ -372,6 +380,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
         {
             private StateMachine _machine;
 
+            public FsmPatchVersionUpdate() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
                 this._machine = machine;
@@ -424,6 +434,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
         {
             private StateMachine _machine;
 
+            public FsmPatchManifestUpdate() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
                 this._machine = machine;
@@ -472,6 +484,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
         public class FsmCreateDownloader : IStateNode
         {
             private StateMachine _machine;
+
+            public FsmCreateDownloader() { }
 
             void IStateNode.OnCreate(StateMachine machine)
             {
@@ -592,6 +606,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
         {
             private StateMachine _machine;
 
+            public FsmBeginDownload() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
                 this._machine = machine;
@@ -649,6 +665,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
         {
             private StateMachine _machine;
 
+            public FsmDownloadOver() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
                 this._machine = machine;
@@ -676,6 +694,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
         public class FsmClearCache : IStateNode
         {
             private StateMachine _machine;
+
+            public FsmClearCache() { }
 
             void IStateNode.OnCreate(StateMachine machine)
             {
@@ -712,6 +732,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
         /// </summary>
         public class FsmPatchDone : IStateNode
         {
+            public FsmPatchDone() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
             }

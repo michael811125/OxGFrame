@@ -20,6 +20,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
         {
             private StateMachine _machine;
 
+            public FsmHotfixPrepare() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
                 this._machine = machine;
@@ -47,6 +49,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
         public class FsmInitHotfixPackage : IStateNode
         {
             private StateMachine _machine;
+
+            public FsmInitHotfixPackage() { }
 
             void IStateNode.OnCreate(StateMachine machine)
             {
@@ -82,6 +86,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
         {
             private StateMachine _machine;
 
+            public FsmUpdateHotfixPackage() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
                 this._machine = machine;
@@ -115,6 +121,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
         public class FsmHotfixCreateDownloader : IStateNode
         {
             private StateMachine _machine;
+
+            public FsmHotfixCreateDownloader() { }
 
             void IStateNode.OnCreate(StateMachine machine)
             {
@@ -156,6 +164,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
         public class FsmHotfixBeginDownload : IStateNode
         {
             private StateMachine _machine;
+
+            public FsmHotfixBeginDownload() { }
 
             void IStateNode.OnCreate(StateMachine machine)
             {
@@ -201,6 +211,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
         {
             private StateMachine _machine;
 
+            public FsmHotfixDownloadOver() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
                 this._machine = machine;
@@ -228,6 +240,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
         public class FsmHotfixClearCache : IStateNode
         {
             private StateMachine _machine;
+
+            public FsmHotfixClearCache() { }
 
             void IStateNode.OnCreate(StateMachine machine)
             {
@@ -266,6 +280,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
         public class FsmLoadAOTAssemblies : IStateNode
         {
             private StateMachine _machine;
+
+            public FsmLoadAOTAssemblies() { }
 
             void IStateNode.OnCreate(StateMachine machine)
             {
@@ -327,6 +343,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
         {
             private StateMachine _machine;
 
+            public FsmLoadHotfixAssemblies() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
                 this._machine = machine;
@@ -387,6 +405,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
         /// </summary>
         public class FsmHotfixDone : IStateNode
         {
+            public FsmHotfixDone() { }
+
             void IStateNode.OnCreate(StateMachine machine)
             {
             }
