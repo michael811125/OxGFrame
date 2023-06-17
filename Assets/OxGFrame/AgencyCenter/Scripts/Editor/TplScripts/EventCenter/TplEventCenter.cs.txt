@@ -1,46 +1,45 @@
 ﻿using OxGFrame.AgencyCenter;
 using OxGFrame.AgencyCenter.EventCenter;
 
-public class EventCenterExample : CenterBase<EventCenterExample, EventBase>
+public class #SCRIPTNAME# : CenterBase<#SCRIPTNAME#, EventBase>
 {
     #region Default API
     public static void Add<T>() where T : EventBase, new()
     {
         GetInstance().Register<T>();
     }
-
+    
     public static void Add<T>(int eventId) where T : EventBase, new()
     {
         GetInstance().Register<T>(eventId);
     }
-
+    
     public static void Add(int eventId, EventBase eventBase)
     {
         GetInstance().Register(eventId, eventBase);
     }
-
+    
     public static T Find<T>() where T : EventBase
     {
         return GetInstance().Get<T>();
     }
-
+    
     public static T Find<T>(int eventId) where T : EventBase
     {
         return GetInstance().Get<T>(eventId);
     }
     #endregion
 
-    public EventCenterExample()
+    public #SCRIPTNAME#()
     {
-        // easy
-        this.Register<EventMsgTest>();
+        /*
+        // >>> EXAMPLE <<<
 
-        // or
+        this.Register<EventBase>();
+        this.Register<EventBase>(0x01);
+        this.Register(0x01, new EventBase());
 
-        //this.Register<EventMsgTest>(0x01);
-
-        // or
-
-        //this.Register(0x01, new EventMsgTest());
+        // >>> EXAMPLE <<<
+        */
     }
 }

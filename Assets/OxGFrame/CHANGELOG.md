@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [2.3.0] - 2023-06-17 (Breaking Changes)
+- Combined EventCenter and APICenter group in AgencyCenter. Unified inherit CenterBase<TCenter, TClass>, can more easier maintenance and extension.
+  - If already use must reassign using and rename class.
+    - CenterBase<TCenter, TClass> (using OxGFrame.AgencyCenter).
+	- EventBase (using OxGFrame.AgencyCenter.EventCenter).
+	- APIBase (using OxGFrame.AgencyCenter.APICenter).
+	
 ## [2.2.7] - 2023-06-17
 - Fixed when use HybridCLR will not found default constructor issue (FsmStates).
 
@@ -31,7 +38,7 @@
 - Modified default Mixer for AudioManager (import from PackageManager sample).
   - changes Fight name to Interact.
 
-## [2.2.0] - 2023-06-02 (Break Changes)
+## [2.2.0] - 2023-06-02 (Breaking Changes)
 - Added HybridCLR hotfix solution (using OxGFrame.Hotfixer).
   - Checkout HotfixerDemo (Import sample from Unity Package Manager).
 - Modified NetManager access modifier use NetFrames to call API (using OxGFrame.NetFrame).

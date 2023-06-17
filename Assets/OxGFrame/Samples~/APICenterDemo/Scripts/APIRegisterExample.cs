@@ -1,6 +1,6 @@
-﻿using OxGFrame.APICenter;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Cysharp.Threading.Tasks;
+using OxGFrame.AgencyCenter.APICenter;
 
 public class APIQueryTest : APIBase
 {

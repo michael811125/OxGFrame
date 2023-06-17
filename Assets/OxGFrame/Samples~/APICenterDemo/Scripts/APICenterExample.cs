@@ -1,6 +1,7 @@
-﻿using OxGFrame.APICenter;
+﻿using OxGFrame.AgencyCenter;
+using OxGFrame.AgencyCenter.APICenter;
 
-public class APICenterExample : APICenterBase<APICenterExample>
+public class APICenterExample : CenterBase<APICenterExample, APIBase>
 {
     #region Default API
     public static void Add<T>() where T : APIBase, new()
@@ -20,12 +21,12 @@ public class APICenterExample : APICenterBase<APICenterExample>
 
     public static T Find<T>() where T : APIBase
     {
-        return GetInstance().GetAPI<T>();
+        return GetInstance().Get<T>();
     }
 
     public static T Find<T>(int apiId) where T : APIBase
     {
-        return GetInstance().GetAPI<T>(apiId);
+        return GetInstance().Get<T>(apiId);
     }
     #endregion
 
@@ -47,7 +48,7 @@ public class APICenterExample : APICenterBase<APICenterExample>
     public async void UseExample()
     {
         // Get API and Request Callback
-        APICenterExample.GetInstance().GetAPI<APIQueryTest>()?.Req
+        APICenterExample.Find<APIQueryTest>()?.Req
         (
              new string[] { "id1", "id2" },
              (data) =>
@@ -57,10 +58,10 @@ public class APICenterExample : APICenterBase<APICenterExample>
         );
 
         // Get API and Request Async
-        var api = APICenterExample.GetInstance().GetAPI<APIQueryTest>();
+        var api = APICenterExample.Find<APIQueryTest>();
         if (api != null)
         {
-            await APICenterExample.GetInstance().GetAPI<APIQueryTest>().ReqAsync
+            await APICenterExample.Find<APIQueryTest>().ReqAsync
             (
                  new string[] { "id1", "id2" },
                  (data) =>

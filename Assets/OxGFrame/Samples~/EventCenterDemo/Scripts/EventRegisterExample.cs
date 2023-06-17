@@ -1,16 +1,16 @@
 ﻿using Cysharp.Threading.Tasks;
-using OxGFrame.EventCenter;
+using OxGFrame.AgencyCenter.EventCenter;
 using UnityEngine;
 
 public class EventMsgTest : EventBase
 {
-    private int e_valueInt;
-    private string e_valueString;
+    private int valueInt;
+    private string valueString;
 
     public void Emit(int valueInt, string valueString)
     {
-        this.e_valueInt = valueInt;
-        this.e_valueString = valueString;
+        this.valueInt = valueInt;
+        this.valueString = valueString;
 
         this.HandleEvent().Forget();
     }
@@ -19,8 +19,8 @@ public class EventMsgTest : EventBase
     {
         Debug.Log(string.Format("<color=#FFC078>【Handle Event】 -> {0}</color>", nameof(EventMsgTest)));
 
-        int getValueInt = this.e_valueInt;
-        string getValueString = this.e_valueString;
+        int getValueInt = this.valueInt;
+        string getValueString = this.valueString;
 
         Debug.Log($"Get Values: {getValueInt}, {getValueString}");
 
@@ -29,7 +29,7 @@ public class EventMsgTest : EventBase
 
     protected override void Release()
     {
-        this.e_valueInt = 0;
-        this.e_valueString = null;
+        this.valueInt = 0;
+        this.valueString = null;
     }
 }

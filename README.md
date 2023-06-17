@@ -213,11 +213,22 @@ store_link http://
 
 核心模塊 (連動 AssetLoader 實現自動卸載)，包含用於製作 UI, Scene Resource, Clone Prefab, Unity Scene，針對製作對應使用 UI Prefab => UIFrame、Scene Resource Prefab => SRFrame、Other Prefab => CPFrame、Unity Scene => USFrame。支援 Resources 與 AssetBundle 加載方式，並且實現物件命名綁定功能 (UIBase and SRBase = _Node@XXX, CPBase = ~Node@XXX, 類型均為 GameObject)。
 
-- UIFrame (User Interface) : 使用 UIManager 管理掛載 UIBase 的 Prefab，支援 UI 反切 (Reverse Changes)，基本上 UI 有隱藏凍結功能，避免 UI 動畫尚未完成期間，能夠被點擊觸發事件。另外如需要製作 UI 動畫，可以在 ShowAnime 跟 HideAnime 覆寫執行相關過渡動畫 (DoTween, Animation...)，並且一定要在完成 UI 動畫後正確呼叫 animeEndCb() 回調。額外還有 UI 的 MaskEvent 也可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)。
-- SRFrame (Scene Resource) : 使用 SRManager 管理掛載 SRBase 的 Prefab (使用 _Node@XXX 進行物件綁定)。
-- USFrame (Unity Scene) : 使用 USManager 管理 Unity 場景 (支援 AssetBundle)。
-  - ※備註 : Use "build#" will load scene from Build else load scene from Bundle
-- CPFrame (Clone Prefab) : 使用 CPManager 管理掛載 CPBase 的 Prefab (使用 ~Node@XXX 進行綁定)，可以用於加載模板物件，並且直接進行 GameObject.Destroy 就好，將會自動卸載。
+#### UIFrame (User Interface)
+
+用於調度 UI Prefab，僅支援 UGUI，使用 UIManager 管理掛載 UIBase 的 Prefab，支援 UI 反切 (Reverse Changes)，基本上 UI 有隱藏凍結功能，避免 UI 動畫尚未完成期間，能夠被點擊觸發事件。另外如需要製作 UI 動畫，可以在 ShowAnime 跟 HideAnime 覆寫執行相關過渡動畫 (DoTween, Animation...)，並且一定要在完成 UI 動畫後正確呼叫 animeEndCb() 回調。額外還有 UI 的 MaskEvent 也可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)。
+
+#### SRFrame (Scene Resource)
+
+用於調度場景或資源物件 Prefab，使用 SRManager 管理掛載 SRBase 的 Prefab (使用 _Node@XXX 進行物件綁定)。
+
+#### USFrame (Unity Scene)
+
+用於調度 Unity Scene，使用 USManager 管理 Unity 場景 (支援 AssetBundle)。
+- ※備註 : Use "build#" will load scene from Build else load scene from Bundle
+
+#### CPFrame (Clone Prefab)
+
+用於實例 Prefab 模板物件，使用 CPManager 管理掛載 CPBase 的 Prefab (使用 ~Node@XXX 進行綁定)，可以用於加載模板物件，並且直接進行 GameObject.Destroy 就好，將會自動卸載。
 
 #### 常用方法說明
 - OnInit : 初始 Member Params (建構式概念)，另外如果採用拖曳式指定組件，也可以直接在此初始 (不過不建議，建議還是在 OnBind 執行)。
@@ -314,14 +325,16 @@ video_urlset 127.0.0.1/video/
 
 ---
 
-### EventCenter
+### AgencyCenter
+
+事件代理管理中心，可以自行實現 TClass 事件註冊類型，再由自定義管理類統一繼承 CenterBase<TCenter, TClass>，實現簡易事件代理管理中心，預設提供以下。
+
+#### EventCenter
 
 集中式 Event 整合模塊 (非多監聽式)，可以自定義每個 Event 的格式進行派送 (也可列出事件 ID 交由企劃填表填入已註冊的 ID，就能讀表取出事件 ID 進行派送)。
-
-- EventCenter : 事件註冊調度管理，管理基類已實現單例
-  - EventBase，單個 Event 基類，需建立實作 => 右鍵創建
-  - EventCenterBase，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
-    - 使用 Default API 進行調用 (Add, Find)
+- TClass: EventBase，單個 Event 基類，需建立實作 => 右鍵創建
+- TCenter: EventCenter，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
+  - 使用 Default API 進行調用 (Add, Find)
 
 ```
     #region Default API
@@ -342,31 +355,22 @@ video_urlset 127.0.0.1/video/
     
     public static T Find<T>() where T : EventBase
     {
-        return GetInstance().GetEvent<T>();
+        return GetInstance().Get<T>();
     }
     
     public static T Find<T>(int eventId) where T : EventBase
     {
-        return GetInstance().GetEvent<T>(eventId);
+        return GetInstance().Get<T>(eventId);
     }
     #endregion
 ```  
 
-**如果沒有要使用 EventCenter 事件模塊，可以直接刪除整個 EventCenter。**
-  
-※備註 : Right-Click Create/OxGFrame/Event Center... (Template cs)
+#### APICenter
 
----
-
-### APICenter
-
-集中式 API 整合模塊，可以自定義每個 API 的格式進行短連接請求，能夠有效的集中管理各型式的 API 格式。
-
-- Acax (類似 Ajax 方式，請求 API)，支援 Async & Sync
-- APICenter : Http API 註冊管理，管理基類已實現單例
-  - APIBase，單個 API 基類，需建立實作 => 右鍵創建
-  - APICenterBase，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
-    - 使用 Default API 進行調用 (Add, Find)
+集中式 API 整合模塊，可以自定義每個 API 的格式進行 Http API 短連接請求，能夠有效的集中管理各型式的 API 格式，使用 Acax (類似 Ajax 方式，請求 API)，支援 Async & Sync。
+- TClass: APIBase，單個 API 基類，需建立實作 => 右鍵創建
+- TCenter: APICenter，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
+  - 使用 Default API 進行調用 (Add, Find)
 
 ```
     #region Default API
@@ -387,19 +391,19 @@ video_urlset 127.0.0.1/video/
     
     public static T Find<T>() where T : APIBase
     {
-        return GetInstance().GetAPI<T>();
+        return GetInstance().Get<T>();
     }
     
     public static T Find<T>(int apiId) where T : APIBase
     {
-        return GetInstance().GetAPI<T>(apiId);
+        return GetInstance().Get<T>(apiId);
     }
     #endregion
 ```
 
-**如果沒有要使用 APICenter 短連接請求模塊，可以直接刪除整個 APICenter。**
-
-※備註 : Right-Click Create/OxGFrame/API Center... (Template cs)
+**如果沒有要使用 AgencyCenter 事件模塊，可以直接刪除整個 AgencyCenter。**
+  
+※備註 : Right-Click Create/OxGFrame/Agency Center... (Template cs)
 
 ---
 
