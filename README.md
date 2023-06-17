@@ -320,7 +320,7 @@ video_urlset 127.0.0.1/video/
 
 - EventCenter : 事件註冊調度管理，管理基類已實現單例
   - EventBase，單個 Event 基類，需建立實作 => 右鍵創建
-  - EventCenterBase，用於繼承管理層與註冊階段，需建立實作 => 右鍵創建
+  - EventCenterBase，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
     - 使用 Default API 進行調用 (Add, Find)
 
 ```
@@ -365,7 +365,7 @@ video_urlset 127.0.0.1/video/
 - Acax (類似 Ajax 方式，請求 API)，支援 Async & Sync
 - APICenter : Http API 註冊管理，管理基類已實現單例
   - APIBase，單個 API 基類，需建立實作 => 右鍵創建
-  - APICenterBase，用於繼承管理層與註冊階段，需建立實作 => 右鍵創建
+  - APICenterBase，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
     - 使用 Default API 進行調用 (Add, Find)
 
 ```
@@ -415,7 +415,7 @@ video_urlset 127.0.0.1/video/
   - UMT: Unity Main Thread.
   - Singleton: MonoSingleton (MonoBehaviour), NewSingleton (class).
   - Requester: RequestAudio, RequestTexture2D, RequestSprite, RequestBytes, RequestText.
-  - Cacher: ARCCache<TKey, TValue>, LRUCache<TKey, TValue>.
+  - Cacher: ARCCache<TKey, TValue>, LRUCache<TKey, TValue>, LRUKCache<TKey, TValue>.
 
 **如果沒有要使用 Utility 通用組件，可以直接刪除整個 Utility (注意有模塊依賴引用)。**
 
