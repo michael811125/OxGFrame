@@ -14,6 +14,7 @@
 | [HybirdCLR v3.2.0 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 ### 1. 透過 Package Manager 安裝 (Install via git)
+
 Add https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame to Package Manager.
 	
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_3.png)
@@ -23,6 +24,7 @@ Import Prefabs from Samples
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_7.png)
 	
 ### 2. 透過 Github 下載 (Code Download ZIP)
+
 Copy Assets/OxGFrame to Unity New Project.
 
 ※備註 : 如果沒有要自行更改框架的需求，建議直接使用 Package Manager 方式安裝。
@@ -32,6 +34,7 @@ Copy Assets/OxGFrame to Unity New Project.
 ---
 
 ## 舊版本更新 OxGFrame 注意
+
 將舊版 2 以下的 OxGFrame 全部移除，重新安裝 OxGFrame，並且重新串接新版的接口。
 
 ---
@@ -49,10 +52,12 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ## 第三方庫 (內建)
 
 ### Main-ThirdParty
+
 - 使用 [UnitTask v2.3.3](https://github.com/Cysharp/UniTask) (最佳異步處理方案)
 - 使用部分 [UniFramework](https://github.com/gmhevinci/UniFramework) (輕量級框架) **特別推薦**
 
 ### Sub-ThirdParty
+
 - 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案) **特別推薦**
 - 使用 [YooAsset v1.4.16](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
 
@@ -61,11 +66,13 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ---
 
 ### Unity 低版本如果有遇到 Newtonsoft 問題
+
 - 請自行安裝 [com.unity.nuget.newtonsoft-json](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/wiki/Install-official-via-UPM)
 
 ---
 
 ## 框架 API
+
 - Hotfixers (using OxGFrame.Hotfixer)
 - AssetLoaders (using OxGFrame.AssetLoader)
 - AssetPatcher (using OxGFrame.AssetLoader)
@@ -86,6 +93,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ## 模塊框架介紹
 
 ### Hotfixer (dependence HybridCLR, AssetLoader)
+
 代碼熱修復模塊，使用 [HybridCLR](https://github.com/focus-creative-games/hybridclr) (前身 Huatuo) 革命性的熱更新方案進行整合，相關建置請前往官方文檔進行熟悉。
 - 如果相關建置完畢，前往點選 HybridCLR/OxGFrame With HybirdCLR/Complie And Copy To HotfixCollector，將會幫忙拷貝至 HotfixCollector 文件夾，再使用 YooAsset Collector 進行收集打包。
 
@@ -231,6 +239,7 @@ store_link http://
 用於實例 Prefab 模板物件，使用 CPManager 管理掛載 CPBase 的 Prefab (使用 ~Node@XXX 進行綁定)，可以用於加載模板物件，並且直接進行 GameObject.Destroy 就好，將會自動卸載。
 
 #### 常用方法說明
+
 - OnInit : 初始 Member Params (建構式概念)，另外如果採用拖曳式指定組件，也可以直接在此初始 (不過不建議，建議還是在 OnBind 執行)。
 - OnBind : 初始綁定組件與事件 (After Bind)。
 - OnPreShow : 當有異步處理或者附屬物件控制時，可以在此處理。例如 : TopUI 附屬連動開啟 LeftUI & RightUI，那麼就可以在 TopUI 中的 OnPreShow 方法實現 Show LeftUI & RightUI。
@@ -240,9 +249,11 @@ store_link http://
 - OnRelease : 當物件 Close And Destroy 時，此方法會被激活。
 
 #### 初始順序說明
+
 Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
 
 #### 物件綁定說明 (OnBind)
+
 - 透過 collector.GetNode("BindName") 返回取得綁定 GameObject (單一名綁定)
   - UIBase & SRBase 使用 _Node@XXX
   - CPBase 使用 ~Node@XXX
@@ -260,16 +271,22 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
 
 影音模塊 (連動 AssetLoader 實現自動卸載)，包含用於製作 Audio (2D/3D), Video 遊戲影音，支援多平台加載方式 (Local, StreamingAssets, URL)，主要也對於 WebGL 有進行細節校正，因為 WebGL 對於 Audio 請求部分是無法取得正確長度 (官方放棄修正)，導致音訊控制會有部分缺陷，所以支援預置體製作時，可進行 Preload 請求 Clip 長度進行預設置。
 
-- AudioFrame : 使用 AudioManager 管理掛載 AudioBase 的 Prefab，且採用 Unity Mixer 進行各音軌控制。 **(需先將 AudioManager 預置體拖至場景)【如果透過 PakcageManager 安裝的，透過 Samples Import】**
-- VideoFrame : 使用 VideoManager 管理掛載 VideoBase 的 Prefab，且支援 RenderTexture, Camera。
+#### AudioFrame
 
-#### Audio Sound Type 說明
-- Sole : 唯一性 (不能重複播放)，建議種類為 BGM (背景音樂), Voice (配音) 等。
-- SoundEffect : 多實例 (可以重複播放)，建議種類為 Fight Sound (戰鬥音效), General Sound (一般音效) 等。
+用於播放 Audio，使用 AudioManager 管理掛載 AudioBase 的 Prefab，且採用 Unity Mixer 進行各音軌控制。 
 
-#### Video Render Mode 說明
-- RenderTexture : 將 Video 映射至 RenderTexture 再透過 UGUI 的 RawImage 進行渲染 (VideoBase 使用 RenderTexture.GetTemporary 跟 RenderTexture.ReleaseTemporary 創建與釋放，確保內存正確釋放 RenderTexture)。
-- Camera : 直接透過 Camera 進行渲染。
+**(需先將 AudioManager 預置體拖至場景)【如果透過 PakcageManager 安裝的，透過 Samples Import】**
+
+- Audio Sound Type 說明
+  - Sole : 唯一性 (不能重複播放)，建議種類為 BGM (背景音樂), Voice (配音) 等。
+  - SoundEffect : 多實例 (可以重複播放)，建議種類為 Fight Sound (戰鬥音效), General Sound (一般音效) 等。
+
+#### VideoFrame
+
+用於播放 Video，使用 VideoManager 管理掛載 VideoBase 的 Prefab，且支援 RenderTexture, Camera。
+- Video Render Mode 說明
+  - RenderTexture : 將 Video 映射至 RenderTexture 再透過 UGUI 的 RawImage 進行渲染 (VideoBase 使用 RenderTexture.GetTemporary 跟 RenderTexture.ReleaseTemporary 創建與釋放，確保內存正確釋放 RenderTexture)。
+  - Camera : 直接透過 Camera 進行渲染。
 
 #### Media [murlconfig] (Media URL Config) 格式
 
@@ -327,7 +344,7 @@ video_urlset 127.0.0.1/video/
 
 ### AgencyCenter
 
-事件代管中心，可以自行實現 TClass 註冊類型，再由自定義管理類統一繼承 CenterBase<TCenter, TClass>，實現簡易事件代管中心，預設提供以下。
+事件代管中心，可以自行實現 TClass 註冊類型，再由自定義管理類統一繼承 CenterBase<TCenter, TClass>，實現簡易事件代管派送 (集中式管理)，預設提供以下。
 
 #### EventCenter
 
