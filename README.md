@@ -327,7 +327,7 @@ video_urlset 127.0.0.1/video/
 
 ### AgencyCenter
 
-事件管理代理中心，可以自行實現 TClass 註冊類型，再由自定義管理類統一繼承 CenterBase<TCenter, TClass>，實現簡易事件管理代理中心，預設提供以下。
+事件代管中心，可以自行實現 TClass 註冊類型，再由自定義管理類統一繼承 CenterBase<TCenter, TClass>，實現簡易事件代管中心，預設提供以下。
 
 #### EventCenter
 
