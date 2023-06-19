@@ -79,19 +79,19 @@ namespace OxGFrame.CoreFrame.CPFrame
             }
             else active = instGo.activeSelf;
 
-            T entityBase = instGo.GetComponent<T>();
-            if (entityBase == null) return null;
+            T cpBase = instGo.GetComponent<T>();
+            if (cpBase == null) return null;
 
-            entityBase.SetNames(assetName);
-            entityBase.OnInit();
-            entityBase.InitFirst();
+            cpBase.SetNames(assetName);
+            cpBase.OnInit();
+            cpBase.InitFirst();
             // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
-            if (active) entityBase.Display(null);
+            if (active) cpBase.Display(null);
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
 
-            return entityBase;
+            return cpBase;
         }
 
         public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : CPBase, new()
@@ -110,19 +110,19 @@ namespace OxGFrame.CoreFrame.CPFrame
             }
             else active = instGo.activeSelf;
 
-            T entityBase = instGo.GetComponent<T>();
-            if (entityBase == null) return null;
+            T cpBase = instGo.GetComponent<T>();
+            if (cpBase == null) return null;
 
-            entityBase.SetNames(assetName);
-            entityBase.OnInit();
-            entityBase.InitFirst();
+            cpBase.SetNames(assetName);
+            cpBase.OnInit();
+            cpBase.InitFirst();
             // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
-            if (active) entityBase.Display(null);
+            if (active) cpBase.Display(null);
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
 
-            return entityBase;
+            return cpBase;
         }
 
         public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : CPBase, new()
@@ -144,19 +144,19 @@ namespace OxGFrame.CoreFrame.CPFrame
             Vector3 localScale = (scale == null) ? instGo.transform.localScale : (Vector3)scale;
             instGo.transform.localScale = localScale;
 
-            T entityBase = instGo.GetComponent<T>();
-            if (entityBase == null) return null;
+            T cpBase = instGo.GetComponent<T>();
+            if (cpBase == null) return null;
 
-            entityBase.SetNames(assetName);
-            entityBase.OnInit();
-            entityBase.InitFirst();
+            cpBase.SetNames(assetName);
+            cpBase.OnInit();
+            cpBase.InitFirst();
             // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
-            if (active) entityBase.Display(null);
+            if (active) cpBase.Display(null);
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
 
-            return entityBase;
+            return cpBase;
         }
 
         public T LoadWithClone<T>(string packageName, string assetName, Transform parent = null, Progression progression = null) where T : CPBase, new()
@@ -175,19 +175,19 @@ namespace OxGFrame.CoreFrame.CPFrame
             }
             else active = instGo.activeSelf;
 
-            T entityBase = instGo.GetComponent<T>();
-            if (entityBase == null) return null;
+            T cpBase = instGo.GetComponent<T>();
+            if (cpBase == null) return null;
 
-            entityBase.SetNames(assetName);
-            entityBase.OnInit();
-            entityBase.InitFirst();
+            cpBase.SetNames(assetName);
+            cpBase.OnInit();
+            cpBase.InitFirst();
             // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
-            if (active) entityBase.Display(null);
+            if (active) cpBase.Display(null);
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
 
-            return entityBase;
+            return cpBase;
         }
 
         public T LoadWithClone<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : CPBase, new()
@@ -206,19 +206,19 @@ namespace OxGFrame.CoreFrame.CPFrame
             }
             else active = instGo.activeSelf;
 
-            T entityBase = instGo.GetComponent<T>();
-            if (entityBase == null) return null;
+            T cpBase = instGo.GetComponent<T>();
+            if (cpBase == null) return null;
 
-            entityBase.SetNames(assetName);
-            entityBase.OnInit();
-            entityBase.InitFirst();
+            cpBase.SetNames(assetName);
+            cpBase.OnInit();
+            cpBase.InitFirst();
             // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
-            if (active) entityBase.Display(null);
+            if (active) cpBase.Display(null);
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
 
-            return entityBase;
+            return cpBase;
         }
 
         public T LoadWithClone<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : CPBase, new()
@@ -240,19 +240,19 @@ namespace OxGFrame.CoreFrame.CPFrame
             Vector3 localScale = (scale == null) ? instGo.transform.localScale : (Vector3)scale;
             instGo.transform.localScale = localScale;
 
-            T entityBase = instGo.GetComponent<T>();
-            if (entityBase == null) return null;
+            T cpBase = instGo.GetComponent<T>();
+            if (cpBase == null) return null;
 
-            entityBase.SetNames(assetName);
-            entityBase.OnInit();
-            entityBase.InitFirst();
+            cpBase.SetNames(assetName);
+            cpBase.OnInit();
+            cpBase.InitFirst();
             // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
-            if (active) entityBase.Display(null);
+            if (active) cpBase.Display(null);
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
 
-            return entityBase;
+            return cpBase;
         }
     }
 }
