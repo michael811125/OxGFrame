@@ -38,7 +38,7 @@ namespace OxGFrame.CoreFrame
             }
 
             /// <summary>
-            /// 取得綁定節點 (GameObject)
+            /// Get Node GameObject
             /// </summary>
             /// <param name="key"></param>
             /// <returns></returns>
@@ -53,7 +53,7 @@ namespace OxGFrame.CoreFrame
             }
 
             /// <summary>
-            /// 取得綁定節點 (GameObjects)
+            /// Get Node GameObjects
             /// </summary>
             /// <param name="key"></param>
             /// <returns></returns>
@@ -65,6 +65,40 @@ namespace OxGFrame.CoreFrame
                 }
 
                 return null;
+            }
+
+            /// <summary>
+            /// Get Node Component
+            /// </summary>
+            /// <typeparam name="TComponent"></typeparam>
+            /// <param name="key"></param>
+            /// <returns></returns>
+            public TComponent GetNodeComponent<TComponent>(string key)
+            {
+                GameObject go = this.GetNode(key);
+                if (go == null) return default;
+
+                return go.GetComponent<TComponent>();
+            }
+
+            /// <summary>
+            /// Get Node Components
+            /// </summary>
+            /// <typeparam name="TComponent"></typeparam>
+            /// <param name="key"></param>
+            /// <returns></returns>
+            public TComponent[] GetNodeComponents<TComponent>(string key)
+            {
+                GameObject[] gos = this.GetNodes(key);
+                if (gos == null) return default;
+
+                TComponent[] components = new TComponent[gos.Length];
+                for (int i = 0; i < components.Length; i++)
+                {
+                    components[i] = gos[i].GetComponent<TComponent>();
+                }
+
+                return components;
             }
             #endregion
         }

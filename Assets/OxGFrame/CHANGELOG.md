@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [2.3.1] - 2023-06-19
+- Added bind collector can use GetNodeComponent(string nodeName) to get component.
+```
+// Single
+collector.GetNodeComponent<TComponent>("BindName");
+
+// Array by multi-same node name
+collector.GetNodeComponents<TComponent>("BindName");
+```
+
 ## [2.3.0] - 2023-06-17 (Breaking Changes)
 - Combined EventCenter and APICenter group in AgencyCenter. Unified inherit CenterBase<TCenter, TClass>, can more easier maintenance and extension.
   - If already use must reassign using and rename class.
