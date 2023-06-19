@@ -260,10 +260,10 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
 - 透過 collector.GetNodes("BindName") 返回取得綁定 GameObject[] (同名多綁定，物件順序由上至下)
   - UIBase & SRBase 使用 _Node@XXX
   - CPBase 使用 ~Node@XXX
-- 透過 collector.GetNodeComponent<TComponent>("BindName") 返回取得綁定 TComponent (單一名綁定)
+- 透過 collector.GetNodeComponent\<TComponent\>("BindName") 返回取得綁定 TComponent (單一名綁定)
   - UIBase & SRBase 使用 _Node@XXX
   - CPBase 使用 ~Node@XXX
-- 透過 collector.GetNodeComponents<TComponent>("BindName") 返回取得綁定 TComponent[] (同名多綁定，物件順序由上至下)
+- 透過 collector.GetNodeComponents\<TComponent\>("BindName") 返回取得綁定 TComponent[] (同名多綁定，物件順序由上至下)
   - UIBase & SRBase 使用 _Node@XXX
   - CPBase 使用 ~Node@XXX
 
