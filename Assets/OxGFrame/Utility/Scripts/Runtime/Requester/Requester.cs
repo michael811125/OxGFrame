@@ -69,6 +69,12 @@ namespace OxGFrame.Utility.Request
         /// <returns></returns>
         public static async UniTask<AudioClip> RequestAudio(string url, AudioType audioType = AudioType.MPEG, Action<AudioClip> successAction = null, Action errorAction = null, CancellationTokenSource cts = null)
         {
+            if (string.IsNullOrEmpty(url))
+            {
+                Debug.Log($"<color=#FF0000>Request failed, URL is null or empty.</color>");
+                return null;
+            }
+
             // ARCCache
             if (_arcAudios != null)
             {
@@ -142,6 +148,12 @@ namespace OxGFrame.Utility.Request
         /// <returns></returns>
         public static async UniTask<Texture2D> RequestTexture2D(string url, Action<Texture2D> successAction = null, Action errorAction = null, CancellationTokenSource cts = null)
         {
+            if (string.IsNullOrEmpty(url))
+            {
+                Debug.Log($"<color=#FF0000>Request failed, URL is null or empty.</color>");
+                return null;
+            }
+
             // ARCCache
             if (_arcTexture2ds != null)
             {
@@ -239,6 +251,12 @@ namespace OxGFrame.Utility.Request
         /// <returns></returns>
         public static async UniTask<byte[]> RequestBytes(string url, Action<byte[]> successAction = null, Action errorAction = null, CancellationTokenSource cts = null)
         {
+            if (string.IsNullOrEmpty(url))
+            {
+                Debug.Log($"<color=#FF0000>Request failed, URL is null or empty.</color>");
+                return new byte[] { };
+            }
+
             UnityWebRequest request = null;
             try
             {
@@ -286,6 +304,12 @@ namespace OxGFrame.Utility.Request
         /// <returns></returns>
         public static async UniTask<string> RequestText(string url, Action<string> successAction = null, Action errorAction = null, CancellationTokenSource cts = null)
         {
+            if (string.IsNullOrEmpty(url))
+            {
+                Debug.Log($"<color=#FF0000>Request failed, URL is null or empty.</color>");
+                return null;
+            }
+
             // ARCCache
             if (_arcTexts != null)
             {
