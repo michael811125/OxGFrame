@@ -388,7 +388,7 @@ namespace OxGFrame.AssetLoader.Editor
             GUI.backgroundColor = new Color32(255, 151, 240, 255);
             if (GUILayout.Button("Reset", GUILayout.MaxWidth(100f)))
             {
-                this.exportAppPackages = new List<string>() { "DefaultPackage" };
+                this.exportAppPackages = new List<string>() { "DefaultPackage", "HotfixPackage" };
             }
             GUI.backgroundColor = bc;
             EditorGUILayout.EndHorizontal();
