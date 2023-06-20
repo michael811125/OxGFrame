@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.3.3] - 2023-06-20
+- Fixed GetHostServerUrl and GetFallbackHostServerUrl url including redundant symbols bug.
+
 ## [2.3.2] - 2023-06-20
 - Modified Editor windows key saver including project path.
 

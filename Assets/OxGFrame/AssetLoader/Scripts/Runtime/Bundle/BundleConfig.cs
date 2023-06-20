@@ -185,7 +185,7 @@ namespace OxGFrame.AssetLoader.Bundle
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
             string appVersion = appConfig.APP_VERSION;
-            string refineAppVersion = $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
+            string refineAppVersion = $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
 
             // 預設組合路徑
             return $"{host}/{rootFolderName}/{productName}/{platform}/{refineAppVersion}/{packageName}";
@@ -202,7 +202,7 @@ namespace OxGFrame.AssetLoader.Bundle
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
             string appVersion = appConfig.APP_VERSION;
-            string refineAppVersion = $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
+            string refineAppVersion = $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
 
             // 預設組合路徑
             return $"{host}/{rootFolderName}/{productName}/{platform}/{refineAppVersion}/{packageName}";
