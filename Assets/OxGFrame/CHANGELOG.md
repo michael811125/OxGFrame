@@ -2,7 +2,8 @@
 
 ## [2.3.2] - 2023-06-20
 - Modified Editor windows key saver including project path.
-**If occurred any errors, please restart Unity Project again**
+
+**Note: If occurred any errors, please restart Unity Project again**
 
 ## [2.3.1] - 2023-06-19
 - Added bind collector can use GetNodeComponent(string nodeName) to get component.
