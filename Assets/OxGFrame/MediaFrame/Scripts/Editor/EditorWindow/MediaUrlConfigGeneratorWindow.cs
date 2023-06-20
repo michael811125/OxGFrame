@@ -1,5 +1,4 @@
-﻿using OxGFrame.MediaFrame;
-using System;
+﻿using System;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -22,7 +21,8 @@ namespace OxGFrame.MediaFrame.Editor
         [SerializeField]
         public bool autoReveal;
 
-        internal const string KEY_SAVE_DATA_FOR_GENERATE_MEDIA_URL_CONFIG_EDITOR = "KEY_SAVE_DATA_FOR_GENERATE_MEDIA_URL_CONFIG_EDITOR";
+        internal static string PROJECT_PATH = Application.dataPath;
+        internal readonly string KEY_SAVER = $"{PROJECT_PATH}_{nameof(MediaUrlConfigGeneratorWindow)}";
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
@@ -37,10 +37,10 @@ namespace OxGFrame.MediaFrame.Editor
 
         private void OnEnable()
         {
-            this.audioUrlset = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_MEDIA_URL_CONFIG_EDITOR, "audioUrlset", "127.0.0.1/audio/");
-            this.videoUrlset = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_MEDIA_URL_CONFIG_EDITOR, "videoUrlset", "127.0.0.1/video/");
+            this.audioUrlset = EditorStorage.GetData(KEY_SAVER, "audioUrlset", "127.0.0.1/audio/");
+            this.videoUrlset = EditorStorage.GetData(KEY_SAVER, "videoUrlset", "127.0.0.1/video/");
 
-            this.autoReveal = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_MEDIA_URL_CONFIG_EDITOR, "autoReveal", "true"));
+            this.autoReveal = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVER, "autoReveal", "true"));
         }
 
         private void OnGUI()
@@ -83,7 +83,7 @@ namespace OxGFrame.MediaFrame.Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             this.audioUrlset = EditorGUILayout.TextField("Audio Urlset", this.audioUrlset);
-            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_MEDIA_URL_CONFIG_EDITOR, "audioUrlset", this.audioUrlset);
+            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "audioUrlset", this.audioUrlset);
             EditorGUILayout.EndHorizontal();
         }
 
@@ -94,7 +94,7 @@ namespace OxGFrame.MediaFrame.Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             this.videoUrlset = EditorGUILayout.TextField("Video Urlset", this.videoUrlset);
-            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_MEDIA_URL_CONFIG_EDITOR, "videoUrlset", this.videoUrlset);
+            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "videoUrlset", this.videoUrlset);
             EditorGUILayout.EndHorizontal();
         }
 
@@ -108,7 +108,7 @@ namespace OxGFrame.MediaFrame.Editor
 
             // auto reveal toggle
             this.autoReveal = GUILayout.Toggle(this.autoReveal, new GUIContent("Auto Reveal", "If checked after process will reveal destination folder."));
-            EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_MEDIA_URL_CONFIG_EDITOR, "autoReveal", this.autoReveal.ToString());
+            EditorStorage.SaveData(KEY_SAVER, "autoReveal", this.autoReveal.ToString());
 
             // process button
             Color bc = GUI.backgroundColor;

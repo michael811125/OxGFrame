@@ -28,7 +28,8 @@ namespace OxGFrame.AssetLoader.Editor
         private CryptogramSetting _settings;
         private bool _isDirty = false;
 
-        internal const string KEY_SAVE_DATA_FOR_CRYPTOGRAM_SETTING_EDITOR = "KEY_SAVE_DATA_FOR_CRYPTOGRAM_SETTING_EDITOR";
+        internal static string PROJECT_PATH = Application.dataPath;
+        internal readonly string KEY_SAVER = $"{PROJECT_PATH}_{nameof(CryptogramWindow)}";
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
@@ -46,7 +47,7 @@ namespace OxGFrame.AssetLoader.Editor
             this._isDirty = false;
             this._settings = EditorTool.LoadSettingData<CryptogramSetting>();
             this._LoadSettingsData();
-            this.cryptogramType = (CryptogramType)Convert.ToInt32(EditorStorage.GetData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_SETTING_EDITOR, "cryptogramType", "0"));
+            this.cryptogramType = (CryptogramType)Convert.ToInt32(EditorStorage.GetData(KEY_SAVER, "cryptogramType", "0"));
         }
 
         private void OnGUI()
@@ -60,7 +61,7 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 this._isDirty = false;
                 this._LoadSettingsData();
-                EditorStorage.SaveData(KEY_SAVE_DATA_FOR_CRYPTOGRAM_SETTING_EDITOR, "cryptogramType", ((int)this.cryptogramType).ToString());
+                EditorStorage.SaveData(KEY_SAVER, "cryptogramType", ((int)this.cryptogramType).ToString());
             }
 
             EditorGUILayout.EndHorizontal();

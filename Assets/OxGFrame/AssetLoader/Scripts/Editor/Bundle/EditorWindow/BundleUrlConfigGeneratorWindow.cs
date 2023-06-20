@@ -24,7 +24,8 @@ namespace OxGFrame.AssetLoader.Editor
         [SerializeField]
         public bool autoReveal;
 
-        internal const string KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_URL_CONFIG_EDITOR = "KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_URL_CONFIG_EDITOR";
+        internal static string PROJECT_PATH = Application.dataPath;
+        internal readonly string KEY_SAVER = $"{PROJECT_PATH}_{nameof(BundleUrlConfigGeneratorWindow)}";
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
@@ -39,11 +40,11 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void OnEnable()
         {
-            this.bundleIp = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_URL_CONFIG_EDITOR, "bundleIp", "127.0.0.1");
-            this.bundleFallbackIp = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_URL_CONFIG_EDITOR, "bundleFallbackIp", "127.0.0.1");
-            this.storeLink = EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_URL_CONFIG_EDITOR, "storeLink", "http://");
+            this.bundleIp = EditorStorage.GetData(KEY_SAVER, "bundleIp", "127.0.0.1");
+            this.bundleFallbackIp = EditorStorage.GetData(KEY_SAVER, "bundleFallbackIp", "127.0.0.1");
+            this.storeLink = EditorStorage.GetData(KEY_SAVER, "storeLink", "http://");
 
-            this.autoReveal = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_URL_CONFIG_EDITOR, "autoReveal", "true"));
+            this.autoReveal = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVER, "autoReveal", "true"));
         }
 
         private void OnGUI()
@@ -87,7 +88,7 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             this.bundleIp = EditorGUILayout.TextField("Bundle IP", this.bundleIp);
-            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_URL_CONFIG_EDITOR, "bundleIp", this.bundleIp);
+            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "bundleIp", this.bundleIp);
             EditorGUILayout.EndHorizontal();
         }
 
@@ -98,7 +99,7 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             this.bundleFallbackIp = EditorGUILayout.TextField("Bundle Fallback IP", this.bundleFallbackIp);
-            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_URL_CONFIG_EDITOR, "bundleFallbackIp", this.bundleFallbackIp);
+            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "bundleFallbackIp", this.bundleFallbackIp);
             EditorGUILayout.EndHorizontal();
         }
 
@@ -109,7 +110,7 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             this.storeLink = EditorGUILayout.TextField("Store Link", this.storeLink);
-            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_URL_CONFIG_EDITOR, "storeLink", this.storeLink);
+            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "storeLink", this.storeLink);
             EditorGUILayout.EndHorizontal();
         }
 
@@ -123,7 +124,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             // auto reveal toggle
             this.autoReveal = GUILayout.Toggle(this.autoReveal, new GUIContent("Auto Reveal", "If checked after process will reveal destination folder."));
-            EditorStorage.SaveData(KEY_SAVE_DATA_FOR_GENERATE_BUNDLE_URL_CONFIG_EDITOR, "autoReveal", this.autoReveal.ToString());
+            EditorStorage.SaveData(KEY_SAVER, "autoReveal", this.autoReveal.ToString());
 
             // process button
             Color bc = GUI.backgroundColor;
