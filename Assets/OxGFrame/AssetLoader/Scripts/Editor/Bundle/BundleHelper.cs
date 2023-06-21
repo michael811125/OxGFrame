@@ -339,6 +339,7 @@ namespace OxGFrame.AssetLoader.Editor
 
                 if (isSkip) continue;
 
+                #region Newest Filter
                 string[] versionPaths = Directory.GetDirectories(packagePath);
                 Dictionary<string, decimal> packageVersions = new Dictionary<string, decimal>();
                 foreach (var versionPath in versionPaths)
@@ -361,6 +362,7 @@ namespace OxGFrame.AssetLoader.Editor
                 }
 
                 string newestVersionPath = packageVersions.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                #endregion
 
                 string destFullDir = Path.GetFullPath(outputPath + $@"/{productName}" + $@"/{platform}" + $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}" + $@"/{packageName}");
                 BundleUtility.CopyFolderRecursively(newestVersionPath, destFullDir);
@@ -500,19 +502,33 @@ namespace OxGFrame.AssetLoader.Editor
 
                 if (isSkip) continue;
 
+                #region Newest Filter
                 string[] versionPaths = Directory.GetDirectories(packagePath);
                 Dictionary<string, decimal> packageVersions = new Dictionary<string, decimal>();
                 foreach (var versionPath in versionPaths)
                 {
                     string versionName = Path.GetFileNameWithoutExtension(versionPath);
-                    string refineVersionName = versionName.Replace("-", string.Empty);
+
+                    if (versionName.IndexOf('-') <= -1) continue;
+
+                    string major = versionName.Substring(0, versionName.LastIndexOf("-"));
+                    string minor = versionName.Substring(versionName.LastIndexOf("-") + 1, versionName.Length - versionName.LastIndexOf("-") - 1);
+
+                    // yyyy-mm-dd
+                    major = major.Trim().Replace("-", string.Empty);
+                    // 24 h * 60 m = 1440 m (max is 4 num of digits)
+                    minor = minor.Trim().PadLeft(4, '0');
+                    //Debug.Log($"Major Date: {major}, Minor Minute: {minor} => {major}{minor}");
+
+                    string refineVersionName = $"{major}{minor}";
                     if (decimal.TryParse(refineVersionName, out decimal value)) packageVersions.Add(versionPath, value);
                 }
 
                 string newestVersionPath = packageVersions.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                #endregion
 
                 // 建立 Package info
-                OxGFrame.AssetLoader.Bundle.PackageInfo packageInfo = new OxGFrame.AssetLoader.Bundle.PackageInfo();
+                Bundle.PackageInfo packageInfo = new Bundle.PackageInfo();
                 // 生成 Package total size
                 long packageSize = 0;
 
