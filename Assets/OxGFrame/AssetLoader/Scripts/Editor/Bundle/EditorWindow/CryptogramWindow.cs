@@ -28,14 +28,17 @@ namespace OxGFrame.AssetLoader.Editor
         private CryptogramSetting _settings;
         private bool _isDirty = false;
 
-        internal static string PROJECT_PATH = Application.dataPath;
-        internal readonly string KEY_SAVER = $"{PROJECT_PATH}_{nameof(CryptogramWindow)}";
+        internal static string PROJECT_PATH;
+        internal static string KEY_SAVER;
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
         [MenuItem("YooAsset/" + "OxGFrame Cryptogram Setting With YooAsset", false, 999)]
         public static void ShowWindow()
         {
+            PROJECT_PATH = Application.dataPath;
+            KEY_SAVER = $"{PROJECT_PATH}_{nameof(CryptogramWindow)}";
+
             _instance = null;
             GetInstance().titleContent = new GUIContent("Cryptogram Setting");
             GetInstance().Show();

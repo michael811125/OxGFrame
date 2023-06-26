@@ -60,14 +60,17 @@ namespace OxGFrame.AssetLoader.Editor
         private SerializedProperty _exportAppPackagesPty;
         private SerializedProperty _exportIndividualPackagesPty;
 
-        internal static string PROJECT_PATH = Application.dataPath;
-        internal readonly string KEY_SAVER = $"{PROJECT_PATH}_{nameof(BundleConfigGeneratorWindow)}";
+        internal static string PROJECT_PATH;
+        internal static string KEY_SAVER;
 
         private static Vector2 _windowSize = new Vector2(800f, 400f);
 
         [MenuItem(BundleHelper.MenuRoot + "Bundle And Config Generator", false, 899)]
         public static void ShowWindow()
         {
+            PROJECT_PATH = Application.dataPath;
+            KEY_SAVER = $"{PROJECT_PATH}_{nameof(BundleConfigGeneratorWindow)}";
+
             _instance = null;
             GetInstance().titleContent = new GUIContent("Bundle And Config Generator");
             GetInstance().Show();
@@ -446,7 +449,7 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             string placeholder = "g1,t1#g2,t1,t2#g3,t1,t2,t3";
-            this.groupInfoArgs = EditorGUILayout.TextField(new GUIContent("Group Info Args", "Group split by '#' and Args split by ','"), string.IsNullOrEmpty(this.groupInfoArgs) ? placeholder : this.groupInfoArgs);
+            this.groupInfoArgs = EditorGUILayout.TextField(new GUIContent("Group Info Args", $"Group split by '#' and Args split by ','\n{placeholder}"), this.groupInfoArgs);
             if (EditorGUI.EndChangeCheck())
             {
                 this._isParsingDirty = true;
@@ -457,7 +460,7 @@ namespace OxGFrame.AssetLoader.Editor
             if (GUILayout.Button("Reset", GUILayout.MaxWidth(100f)))
             {
                 this._isParsingDirty = true;
-                this.groupInfoArgs = placeholder;
+                this.groupInfoArgs = string.Empty;
                 EditorStorage.SaveData(KEY_SAVER, "groupInfoArgs", this.groupInfoArgs);
             }
             GUI.backgroundColor = bc;
@@ -496,6 +499,8 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 this.groupInfos = new List<GroupInfo>();
                 this._isParsingDirty = true;
+                string json = JsonConvert.SerializeObject(this.groupInfos);
+                EditorStorage.SaveData(KEY_SAVER, "groupInfos", json);
             }
             GUI.backgroundColor = bc;
 

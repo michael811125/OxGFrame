@@ -21,14 +21,17 @@ namespace OxGFrame.MediaFrame.Editor
         [SerializeField]
         public bool autoReveal;
 
-        internal static string PROJECT_PATH = Application.dataPath;
-        internal readonly string KEY_SAVER = $"{PROJECT_PATH}_{nameof(MediaUrlConfigGeneratorWindow)}";
+        internal static string PROJECT_PATH;
+        internal static string KEY_SAVER;
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
         [MenuItem(MediaHelper.MenuRoot + "Media Url Config Generator", false, 899)]
         public static void ShowWindow()
         {
+            PROJECT_PATH = Application.dataPath;
+            KEY_SAVER = $"{PROJECT_PATH}_{nameof(MediaUrlConfigGeneratorWindow)}";
+
             _instance = null;
             GetInstance().titleContent = new GUIContent("Media Url Config Generator");
             GetInstance().Show();
