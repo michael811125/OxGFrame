@@ -392,6 +392,8 @@ namespace OxGFrame.AssetLoader.Editor
             if (GUILayout.Button("Reset", GUILayout.MaxWidth(100f)))
             {
                 this.exportAppPackages = new List<string>() { "DefaultPackage", "HotfixPackage" };
+                string json = JsonConvert.SerializeObject(this.exportAppPackages);
+                EditorStorage.SaveData(KEY_SAVER, "exportAppPackages", json);
             }
             GUI.backgroundColor = bc;
             EditorGUILayout.EndHorizontal();
@@ -426,6 +428,8 @@ namespace OxGFrame.AssetLoader.Editor
             if (GUILayout.Button("Clear", GUILayout.MaxWidth(100f)))
             {
                 this.exportIndividualPackages = new List<DlcInfo>();
+                string json = JsonConvert.SerializeObject(this.exportIndividualPackages);
+                EditorStorage.SaveData(KEY_SAVER, "exportIndividualPackages", json);
             }
             GUI.backgroundColor = bc;
             EditorGUILayout.EndHorizontal();
