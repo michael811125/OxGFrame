@@ -7,14 +7,12 @@ namespace YooAsset
 	internal class EditorSimulateModeImpl : IPlayModeServices, IBundleServices
 	{
 		private PackageManifest _activeManifest;
-		private bool _locationToLower;
 
 		/// <summary>
 		/// 异步初始化
 		/// </summary>
-		public InitializationOperation InitializeAsync(bool locationToLower, string simulateManifestFilePath)
+		public InitializationOperation InitializeAsync(string simulateManifestFilePath)
 		{
-			_locationToLower = locationToLower;
 			var operation = new EditorSimulateModeInitializationOperation(this, simulateManifestFilePath);
 			OperationSystem.StartOperation(operation);
 			return operation;
@@ -26,14 +24,13 @@ namespace YooAsset
 			set
 			{
 				_activeManifest = value;
-				_activeManifest.InitAssetPathMapping(_locationToLower);
 			}
 			get
 			{
 				return _activeManifest;
 			}
 		}
-		public void FlushManifestVersionFile() 
+		public void FlushManifestVersionFile()
 		{
 		}
 
@@ -55,7 +52,7 @@ namespace YooAsset
 			OperationSystem.StartOperation(operation);
 			return operation;
 		}
-		
+
 		ResourceDownloaderOperation IPlayModeServices.CreateResourceDownloaderByAll(int downloadingMaxNumber, int failedTryAgain, int timeout)
 		{
 			return ResourceDownloaderOperation.CreateEmptyDownloader(downloadingMaxNumber, failedTryAgain, timeout);
@@ -85,7 +82,8 @@ namespace YooAsset
 			if (packageBundle == null)
 				throw new Exception("Should never get here !");
 
-			BundleInfo bundleInfo = new BundleInfo(packageBundle, BundleInfo.ELoadMode.LoadFromEditor, assetInfo.AssetPath);
+			BundleInfo bundleInfo = new BundleInfo(packageBundle, BundleInfo.ELoadMode.LoadFromEditor);
+			bundleInfo.IncludeAssets = _activeManifest.GetBundleIncludeAssets(assetInfo.AssetPath);
 			return bundleInfo;
 		}
 		BundleInfo IBundleServices.GetBundleInfo(AssetInfo assetInfo)

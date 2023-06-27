@@ -25,28 +25,28 @@ namespace OxGFrame.CoreFrame
             /// <summary>
             /// 加入綁定節點 (GameObject)
             /// </summary>
-            /// <param name="key"></param>
+            /// <param name="bindName"></param>
             /// <param name="go"></param>
-            public void AddNode(string key, GameObject go)
+            public void AddNode(string bindName, GameObject go)
             {
-                if (!this._nodes.ContainsKey(key))
+                if (!this._nodes.ContainsKey(bindName))
                 {
-                    this._nodes[key] = new List<GameObject>();
-                    this._nodes[key].Add(go);
+                    this._nodes[bindName] = new List<GameObject>();
+                    this._nodes[bindName].Add(go);
                 }
-                else this._nodes[key].Add(go);
+                else this._nodes[bindName].Add(go);
             }
 
             /// <summary>
             /// Get Node GameObject
             /// </summary>
-            /// <param name="key"></param>
+            /// <param name="bindName"></param>
             /// <returns></returns>
-            public GameObject GetNode(string key)
+            public GameObject GetNode(string bindName)
             {
-                if (this._nodes.ContainsKey(key))
+                if (this._nodes.ContainsKey(bindName))
                 {
-                    return this._nodes[key][0];
+                    return this._nodes[bindName][0];
                 }
 
                 return null;
@@ -55,13 +55,13 @@ namespace OxGFrame.CoreFrame
             /// <summary>
             /// Get Node GameObjects
             /// </summary>
-            /// <param name="key"></param>
+            /// <param name="bindName"></param>
             /// <returns></returns>
-            public GameObject[] GetNodes(string key)
+            public GameObject[] GetNodes(string bindName)
             {
-                if (this._nodes.ContainsKey(key))
+                if (this._nodes.ContainsKey(bindName))
                 {
-                    return this._nodes[key].ToArray();
+                    return this._nodes[bindName].ToArray();
                 }
 
                 return null;
@@ -71,11 +71,11 @@ namespace OxGFrame.CoreFrame
             /// Get Node Component
             /// </summary>
             /// <typeparam name="TComponent"></typeparam>
-            /// <param name="key"></param>
+            /// <param name="bindName"></param>
             /// <returns></returns>
-            public TComponent GetNodeComponent<TComponent>(string key)
+            public TComponent GetNodeComponent<TComponent>(string bindName)
             {
-                GameObject go = this.GetNode(key);
+                GameObject go = this.GetNode(bindName);
                 if (go == null) return default;
 
                 return go.GetComponent<TComponent>();
@@ -85,11 +85,11 @@ namespace OxGFrame.CoreFrame
             /// Get Node Components
             /// </summary>
             /// <typeparam name="TComponent"></typeparam>
-            /// <param name="key"></param>
+            /// <param name="bindName"></param>
             /// <returns></returns>
-            public TComponent[] GetNodeComponents<TComponent>(string key)
+            public TComponent[] GetNodeComponents<TComponent>(string bindName)
             {
-                GameObject[] gos = this.GetNodes(key);
+                GameObject[] gos = this.GetNodes(bindName);
                 if (gos == null) return default;
 
                 TComponent[] components = new TComponent[gos.Length];

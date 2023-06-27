@@ -10,7 +10,6 @@ namespace YooAsset
 
 		// 参数相关
 		private string _packageName;
-		private bool _locationToLower;
 		private string _defaultHostServer;
 		private string _fallbackHostServer;
 		private IQueryServices _queryServices;
@@ -18,10 +17,9 @@ namespace YooAsset
 		/// <summary>
 		/// 异步初始化
 		/// </summary>
-		public InitializationOperation InitializeAsync(string packageName, bool locationToLower, string defaultHostServer, string fallbackHostServer, IQueryServices queryServices)
+		public InitializationOperation InitializeAsync(string packageName, string defaultHostServer, string fallbackHostServer, IQueryServices queryServices)
 		{
 			_packageName = packageName;
-			_locationToLower = locationToLower;
 			_defaultHostServer = defaultHostServer;
 			_fallbackHostServer = fallbackHostServer;
 			_queryServices = queryServices;
@@ -50,22 +48,6 @@ namespace YooAsset
 			return bundleInfo;
 		}
 
-		// 解压相关
-		private List<BundleInfo> ConvertToUnpackList(List<PackageBundle> unpackList)
-		{
-			List<BundleInfo> result = new List<BundleInfo>(unpackList.Count);
-			foreach (var packageBundle in unpackList)
-			{
-				var bundleInfo = ConvertToUnpackInfo(packageBundle);
-				result.Add(bundleInfo);
-			}
-			return result;
-		}
-		private BundleInfo ConvertToUnpackInfo(PackageBundle packageBundle)
-		{
-			return ManifestTools.GetUnpackInfo(packageBundle);
-		}
-
 		#region IRemoteServices接口
 		public string GetRemoteMainURL(string fileName)
 		{
@@ -83,7 +65,6 @@ namespace YooAsset
 			set
 			{
 				_activeManifest = value;
-				_activeManifest.InitAssetPathMapping(_locationToLower);
 			}
 			get
 			{
@@ -256,7 +237,7 @@ namespace YooAsset
 				}
 			}
 
-			return ConvertToUnpackList(downloadList);
+			return ManifestTools.ConvertToUnpackInfos(downloadList);
 		}
 
 		ResourceUnpackerOperation IPlayModeServices.CreateResourceUnpackerByTags(string[] tags, int upackingMaxNumber, int failedTryAgain, int timeout)
@@ -284,7 +265,7 @@ namespace YooAsset
 				}
 			}
 
-			return ConvertToUnpackList(downloadList);
+			return ManifestTools.ConvertToUnpackInfos(downloadList);
 		}
 		#endregion
 

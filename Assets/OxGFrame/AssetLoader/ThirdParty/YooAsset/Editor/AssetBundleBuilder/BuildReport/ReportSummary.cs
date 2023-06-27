@@ -59,19 +59,24 @@ namespace YooAsset.Editor
 		public bool EnableAddressable;
 
 		/// <summary>
+		/// 资源定位地址大小写不敏感
+		/// </summary>
+		public bool LocationToLower;
+
+		/// <summary>
+		/// 包含资源GUID数据
+		/// </summary>
+		public bool IncludeAssetGUID;
+
+		/// <summary>
 		/// 资源包名唯一化
 		/// </summary>
 		public bool UniqueBundleName;
 
 		/// <summary>
-		/// 自动分析冗余
+		/// 共享资源的打包规则类名
 		/// </summary>
-		public bool AutoAnalyzeRedundancy;
-
-		/// <summary>
-		/// 共享资源的打包类名称
-		/// </summary>
-		public string ShareAssetPackRuleClassName;
+		public string SharedPackRuleClassName;
 
 		/// <summary>
 		/// 加密服务类名称

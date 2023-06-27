@@ -23,7 +23,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo03.unity
     guid: 42b42b7f9b5995748ba85a54431669b3
-  - enabled: 1
+  - enabled: 0
     path: Assets/OxGFrame/Samples/HotfixerDemo/Scenes/Main/HotfixerDemo.unity
     guid: b2f42f35bbfda28478550033c1e123bb
   m_configObjects:

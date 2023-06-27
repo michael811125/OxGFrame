@@ -6,7 +6,7 @@ using UnityEditor;
 
 namespace YooAsset.Editor
 {
-	[TaskAttribute("创建构建报告文件")]
+	[TaskAttribute(ETaskPipeline.AllPipeline, 900, "创建构建报告文件")]
 	public class TaskCreateReport : IBuildTask
 	{
 		void IBuildTask.Run(BuildContext context)
@@ -45,11 +45,12 @@ namespace YooAsset.Editor
 				buildReport.Summary.BuildMode = buildParameters.BuildMode;
 				buildReport.Summary.BuildPackageName = buildParameters.PackageName;
 				buildReport.Summary.BuildPackageVersion = buildParameters.PackageVersion;
-				buildReport.Summary.EnableAddressable = buildMapContext.EnableAddressable;
-				buildReport.Summary.UniqueBundleName = buildMapContext.UniqueBundleName;
-				buildReport.Summary.AutoAnalyzeRedundancy = buildParameters.AutoAnalyzeRedundancy;
-				buildReport.Summary.ShareAssetPackRuleClassName = buildParameters.ShareAssetPackRule == null ?
-					"null" : buildParameters.ShareAssetPackRule.GetType().FullName;
+				buildReport.Summary.EnableAddressable = buildMapContext.Command.EnableAddressable;
+				buildReport.Summary.LocationToLower = buildMapContext.Command.LocationToLower;
+				buildReport.Summary.IncludeAssetGUID = buildMapContext.Command.IncludeAssetGUID;
+				buildReport.Summary.UniqueBundleName = buildMapContext.Command.UniqueBundleName;
+				buildReport.Summary.SharedPackRuleClassName = buildParameters.SharedPackRule == null ?
+					"null" : buildParameters.SharedPackRule.GetType().FullName;
 				buildReport.Summary.EncryptionServicesClassName = buildParameters.EncryptionServices == null ?
 					"null" : buildParameters.EncryptionServices.GetType().FullName;
 
@@ -159,7 +160,7 @@ namespace YooAsset.Editor
 		}
 
 		/// <summary>
-		/// 获取该资源包内的所有资源（包括零依赖资源）
+		/// 获取该资源包内的所有资源
 		/// </summary>
 		private List<string> GetAllBuiltinAssets(BuildMapContext buildMapContext, string bundleName)
 		{

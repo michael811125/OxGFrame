@@ -267,6 +267,36 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
   - UIBase & SRBase 使用 _Node@XXX
   - CPBase 使用 ~Node@XXX
 
+#### 自動生成物件綁定代碼 (Shift + B)
+
+命名規範使用 * 指向 TailName
+  - _Node@XXX*Btn 以此類推
+
+預設組件綁定表 (可從 BindCodeSetting 中自行新增組件類型)
+
+| **Tail Name** | **Component** |
+|:-|:-|
+| **Other** |
+| Trans | Transform |
+| RectTrans | RectTransform |
+| **Legacy** |
+| Img | Image |
+| RawImg | RawImage |
+| Txt | Text | 
+| Btn | Button | 
+| Tgl | Toggle | 
+| Sld | Slider | 
+| ScrBar | Scrollbar | 
+| ScrView | ScrollRect | 
+| Drd | Dropdown | 
+| Field | InputField | 
+| **TMP** |
+| TmpTxt | TMP_Text | 
+| TmpDrd | TMP_Dropdown | 
+| TmpField | TMP_InputField |
+
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/gif_1.gif)
+
 **如果沒有要使用 CoreFrame 核心製作模塊，可以直接刪除整個 CoreFrame。**
 
 ※備註 : Right-Click Create/OxGFrame/Core Frame... (Template cs and prefab)
@@ -443,6 +473,8 @@ video_urlset 127.0.0.1/video/
   - Singleton: MonoSingleton (MonoBehaviour), NewSingleton (class).
   - Requester: RequestAudio, RequestTexture2D, RequestSprite, RequestBytes, RequestText.
   - Cacher: ARCCache<TKey, TValue>, LRUCache<TKey, TValue>, LRUKCache<TKey, TValue>.
+- Editor
+  - RectTransform: RectTransformAdjuster (Shift + R).
 
 **如果沒有要使用 Utility 通用組件，可以直接刪除整個 Utility (注意有模塊依賴引用)。**
 

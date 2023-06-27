@@ -169,7 +169,7 @@ namespace YooAsset
 		/// <summary>
 		/// 加载场景
 		/// </summary>
-		public SceneOperationHandle LoadSceneAsync(AssetInfo assetInfo, LoadSceneMode sceneMode, bool activateOnLoad, int priority)
+		public SceneOperationHandle LoadSceneAsync(AssetInfo assetInfo, LoadSceneMode sceneMode, bool suspendLoad, int priority)
 		{
 			if (assetInfo.IsInvalid)
 			{
@@ -190,9 +190,9 @@ namespace YooAsset
 			ProviderBase provider;
 			{
 				if (_simulationOnEditor)
-					provider = new DatabaseSceneProvider(this, providerGUID, assetInfo, sceneMode, activateOnLoad, priority);
+					provider = new DatabaseSceneProvider(this, providerGUID, assetInfo, sceneMode, suspendLoad, priority);
 				else
-					provider = new BundledSceneProvider(this, providerGUID, assetInfo, sceneMode, activateOnLoad, priority);
+					provider = new BundledSceneProvider(this, providerGUID, assetInfo, sceneMode, suspendLoad, priority);
 				provider.InitSpawnDebugInfo();
 				_providerList.Add(provider);
 				_providerDic.Add(providerGUID, provider);
@@ -258,6 +258,34 @@ namespace YooAsset
 				_providerDic.Add(providerGUID, provider);
 			}
 			return provider.CreateHandle<SubAssetsOperationHandle>();
+		}
+
+		/// <summary>
+		/// 加载所有资源对象
+		/// </summary>
+		public AllAssetsOperationHandle LoadAllAssetsAsync(AssetInfo assetInfo)
+		{
+			if (assetInfo.IsInvalid)
+			{
+				YooLogger.Error($"Failed to load all assets ! {assetInfo.Error}");
+				CompletedProvider completedProvider = new CompletedProvider(assetInfo);
+				completedProvider.SetCompleted(assetInfo.Error);
+				return completedProvider.CreateHandle<AllAssetsOperationHandle>();
+			}
+
+			string providerGUID = assetInfo.GUID;
+			ProviderBase provider = TryGetProvider(providerGUID);
+			if (provider == null)
+			{
+				if (_simulationOnEditor)
+					provider = new DatabaseAllAssetsProvider(this, providerGUID, assetInfo);
+				else
+					provider = new BundledAllAssetsProvider(this, providerGUID, assetInfo);
+				provider.InitSpawnDebugInfo();
+				_providerList.Add(provider);
+				_providerDic.Add(providerGUID, provider);
+			}
+			return provider.CreateHandle<AllAssetsOperationHandle>();
 		}
 
 		/// <summary>
@@ -377,10 +405,10 @@ namespace YooAsset
 			else
 			{
 #if UNITY_WEBGL
-			if (bundleInfo.Bundle.IsRawFile)
-				loader = new RawBundleWebLoader(this, bundleInfo);
-			else
-				loader = new AssetBundleWebLoader(this, bundleInfo);
+				if (bundleInfo.Bundle.IsRawFile)
+					loader = new RawBundleWebLoader(this, bundleInfo);
+				else
+					loader = new AssetBundleWebLoader(this, bundleInfo);
 #else
 				if (bundleInfo.Bundle.IsRawFile)
 					loader = new RawBundleFileLoader(this, bundleInfo);

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using OxGFrame.CoreFrame.CPFrame;
+using UnityEngine;
 
 namespace OxGFrame.CoreFrame
 {
@@ -10,7 +11,7 @@ namespace OxGFrame.CoreFrame
         /// <param name="fBase"></param>
         public static void BindComponent(FrameBase fBase)
         {
-            _BindNode(fBase.gameObject, fBase);
+            BindNode(fBase.gameObject, fBase);
         }
 
         /// <summary>
@@ -18,83 +19,102 @@ namespace OxGFrame.CoreFrame
         /// </summary>
         /// <param name="go"></param>
         /// <param name="fBase"></param>
-        private static void _BindNode(GameObject go, FrameBase fBase)
+        internal static void BindNode(GameObject go, FrameBase fBase)
         {
             string name = go.name;
 
-            // 檢查是否要結束綁定, 有檢查到【BIND_END】時, 則停止繼續搜尋綁定物件
-            if (_CheckIsToBindChildren(name))
+            // 檢查是否要結束綁定, 有檢查到【BIND_STOP_END】時, 則停止繼續搜尋綁定物件
+            if (CheckIsToBindChildren(name))
             {
-                // 只有 CPBase 的綁定前綴字需要區分, 避免相衝
-                if (typeof(CPFrame.CPBase).IsInstanceOfType(fBase) && _CheckNodeHasPrefixForClonePrefab(name))
+                // 這邊檢查有【BIND_PREFIXES】時, 則進入判斷
+                if (CheckNodeHasPrefix(name, fBase))
                 {
-                    _BindIntoCollector(name, go, fBase);
-                }
-                // 這邊檢查有【BIND_PREFIX】時, 則進入判斷
-                else if (_CheckNodeHasPrefix(name))
-                {
-                    _BindIntoCollector(name, go, fBase);
+                    BindIntoCollector(name, go, fBase);
                 }
 
                 // 依序綁定下一個子物件 (遞迴找到符合綁定條件)
-                foreach (Transform cTs in go.GetComponentInChildren<Transform>())
+                foreach (Transform child in go.GetComponentInChildren<Transform>())
                 {
-                    _BindNode(cTs.gameObject, fBase);
+                    BindNode(child.gameObject, fBase);
                 }
             }
         }
 
         /// <summary>
-        /// 步驟1. 會先執行檢查是否要進行子節點綁定 (如果不進行則在最後面加上【BIND_END】後綴字, 就會停止執行以下步驟)
+        /// 步驟1. 會先執行檢查是否要進行子節點綁定 (如果不進行則在最後面加上【BIND_STOP_END】後綴字, 就會停止遞迴綁定)
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private static bool _CheckIsToBindChildren(string name)
+        public static bool CheckIsToBindChildren(string name)
         {
-            if (name.Substring(name.Length - 1) != FrameConfig.BIND_END.ToString()) return true;
+            if (name.Substring(name.Length - 1) != FrameConfig.BIND_STOP_END) return true;
             return false;
         }
 
         /// <summary>
-        /// 步驟2. 檢查是否有+【BIND_PREFIX】前綴字 (表示想要進行綁定)
+        /// 步驟2. 檢查是否有 +【BIND_PREFIXES】前綴字 (表示想要進行綁定)
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private static bool _CheckNodeHasPrefix(string name)
+        internal static bool CheckNodeHasPrefix(string name, FrameBase fBase)
         {
-            if (name.Substring(0, 1) == FrameConfig.BIND_PREFIX.ToString()) return true;
+            switch (fBase)
+            {
+                case CPBase:
+                    if (name.Substring(0, 1) == FrameConfig.BIND_PREFIXES[1]) return true;
+                    break;
+                default:
+                    if (name.Substring(0, 1) == FrameConfig.BIND_PREFIXES[0]) return true;
+                    break;
+            }
+
             return false;
         }
 
-        private static bool _CheckNodeHasPrefixForClonePrefab(string name)
+        public static bool CheckNodeHasPrefix(string name)
         {
-            if (name.Substring(0, 1) == FrameConfig.BIND_PREFIX_CLONE_PREFAB.ToString()) return true;
+            if (name.Substring(0, 1) == FrameConfig.BIND_PREFIXES[0] ||
+                name.Substring(0, 1) == FrameConfig.BIND_PREFIXES[1]) return true;
+
             return false;
         }
 
         /// <summary>
-        /// 步驟3. 透過【BIND_SEPARATOR】去 Split 字串, 返回取得字串陣列. 
+        /// 步驟3. 透過【BIND_HEAD_SEPARATOR】去 Split 字串, 返回取得字串陣列. 
         /// ※備註: (Example) _Node@MyObj => ["_Node", "MyObj"], 之後可以透過取得的陣列去查找表看是否有對應的組件需要綁定
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private static string[] _GetPrefixSplitNameBySeparator(string name)
+        public static string[] GetHeadSplitNameBySeparator(string name)
         {
             if (string.IsNullOrEmpty(name)) return null;
 
-            return name.Split(FrameConfig.BIND_SEPARATOR);
+            return name.Split(FrameConfig.BIND_HEAD_SEPARATOR);
         }
 
-        private static void _BindIntoCollector(string name, GameObject go, FrameBase fBase)
+        /// <summary>
+        /// 透過【BIND_TAIL_SEPARATOR】去 Split 字串, 返回取得字串陣列. 
+        /// ※備註: (Example) _Node@MyObj*Txt => ["MyObj", "Txt"]
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static string[] GetTailSplitNameBySeparator(string name)
         {
-            // 之後再透過【BIND_SEPARATOR】去切開取得字串陣列
-            string[] names = _GetPrefixSplitNameBySeparator(name);
+            if (string.IsNullOrEmpty(name)) return null;
 
-            string bindType = names[0]; // 綁定類型(會去查找 dictComponentFinder 裡面有沒有符合的類型)
-            string bindKey = names[1];  // 要成為取得綁定物件後的Key
+            return name.Split(FrameConfig.BIND_TAIL_SEPARATOR);
+        }
+
+        internal static void BindIntoCollector(string name, GameObject go, FrameBase fBase)
+        {
+            // 綁定開頭檢測
+            string[] heads = GetHeadSplitNameBySeparator(name);
+
+            string bindType = heads[0]; // 綁定類型(會去查找 dictComponentFinder 裡面有沒有符合的類型)
+            string bindName = heads[1]; // 要成為取得綁定物件後的Key
 
             // 再去判斷取得後的字串陣列是否綁定格式資格
-            if (names == null || names.Length < 2 || !FrameConfig.BIND_COMPONENTS.ContainsKey(bindType))
+            if (heads == null || heads.Length < 2 || !FrameConfig.BIND_COMPONENTS.ContainsKey(bindType))
             {
                 Debug.Log($"{name} => Naming format error. Please check the bind name.");
                 return;
@@ -104,7 +124,7 @@ namespace OxGFrame.CoreFrame
             if (FrameConfig.BIND_COMPONENTS[bindType] == "GameObject")
             {
                 // 綁定至 FrameBase 中對應的容器, 此時進行完成綁定
-                fBase.collector.AddNode(bindKey, go);
+                fBase.collector.AddNode(bindName, go);
             }
         }
     }

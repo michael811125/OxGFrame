@@ -6,7 +6,7 @@ namespace OxGFrame.AssetLoader.Editor
     public class EditorTool
     {
         /// <summary>
-        /// 加?相?的配置文件
+        /// 加載相關配置文件
         /// </summary>
         public static TSetting LoadSettingData<TSetting>() where TSetting : ScriptableObject
         {

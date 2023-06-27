@@ -6,7 +6,7 @@ using UnityEditor;
 
 namespace YooAsset.Editor
 {
-	[TaskAttribute("资源构建准备工作")]
+	[TaskAttribute(ETaskPipeline.AllPipeline, 100, "资源构建准备工作")]
 	public class TaskPrepare : IBuildTask
 	{
 		void IBuildTask.Run(BuildContext context)
@@ -48,7 +48,7 @@ namespace YooAsset.Editor
 				}
 
 				// 检测共享资源打包规则
-				if (buildParameters.ShareAssetPackRule == null)
+				if (buildParameters.SharedPackRule == null)
 					throw new Exception("共享资源打包规则不能为空！");
 
 #if UNITY_WEBGL
