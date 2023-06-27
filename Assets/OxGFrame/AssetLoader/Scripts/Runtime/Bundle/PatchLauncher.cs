@@ -45,9 +45,9 @@ namespace OxGFrame.AssetLoader.Bundle
             else DontDestroyOnLoad(this.gameObject.transform.root);
 
             #region Patch Options
-#if OXGFRAME_OFFLINE_MODE
+#if !UNITY_EDITOR && OXGFRAME_OFFLINE_MODE
             this.playMode = BundleConfig.PlayMode.OfflineMode;
-#elif OXGFRAME_HOST_MODE
+#elif !UNITY_EDITOR && OXGFRAME_HOST_MODE
             this.playMode = BundleConfig.PlayMode.HostMode;
 #endif
             BundleConfig.playMode = this.playMode;
