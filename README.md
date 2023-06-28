@@ -482,6 +482,8 @@ video_urlset 127.0.0.1/video/
   - Cacher: ARCCache<TKey, TValue>, LRUCache<TKey, TValue>, LRUKCache<TKey, TValue>.
 - Editor
   - RectTransform: RectTransformAdjuster (Shift + R).
+  - MissingScriptsFinder.
+  - SymlinkUtility.
 
 **如果沒有要使用 Utility 通用組件，可以直接刪除整個 Utility (注意有模塊依賴引用)。**
 
