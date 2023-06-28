@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.4.1] - 2023-06-28
+- Added material for MaskSetting.
+- Optimized UIMask.
+
 ## [2.4.0] - 2023-06-28
 - Updated YooAsset to v1.14.17.
 - Added Create Settings MenuItem option.

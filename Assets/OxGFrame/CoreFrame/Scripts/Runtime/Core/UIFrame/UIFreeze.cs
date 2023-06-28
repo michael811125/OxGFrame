@@ -22,21 +22,17 @@ namespace OxGFrame.CoreFrame.UIFrame
             });
         }
 
-        /**
-        <summary>
-        重新使用 UIFreeze
-        </summary>
-         */
+        /// <summary>
+        /// 重新使用 UIFreeze
+        /// </summary>
         public void ReUse()
         {
             this.gameObject.SetActive(true);
         }
 
-        /**
-        <summary>
-        回收至 FreezePool 的相關釋放
-        </summary>
-         */
+        /// <summary>
+        /// 回收至 FreezePool 的相關釋放
+        /// </summary>
         public void UnUse()
         {
             this.gameObject.SetActive(false);

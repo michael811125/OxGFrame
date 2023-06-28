@@ -8,11 +8,10 @@ namespace OxGFrame.CoreFrame.UIFrame
         private MaskEventFunc _maskClickEvent = null;
         private Image _maskImage = null;
 
-        public void InitMask(Sprite maskSprite)
+        public void InitMask()
         {
             // 建立一個 Image 當作遮罩 & MaskButton Raycast
             this._maskImage = this.gameObject.AddComponent<Image>();
-            this._maskImage.sprite = maskSprite;
 
             // 建立 Mask 事件
             Button maskBtn = this.gameObject.AddComponent<Button>();
@@ -37,13 +36,15 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         public void UnUse()
         {
+            this._maskImage.color = Color.white;
+            this._maskImage.sprite = null;
+            this._maskImage.material = null;
             this._maskClickEvent = null;
-            this._maskImage.color = new Color(0, 0, 0, 0);
             this.gameObject.SetActive(false);
         }
 
         /// <summary>
-        /// 交由 UIMaskManager 調用顯示 Mask Alpha
+        /// 交由 UIMaskManager 調用設置 Mask Color
         /// </summary>
         /// <param name="opacityType"></param>
         public void SetMaskColor(Color color)
@@ -52,7 +53,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 交由 UIMaskManager 調用顯示 Mask Sprite
+        /// 交由 UIMaskManager 調用設置 Mask Sprite
         /// </summary>
         /// <param name="sprite"></param>
         public void SetMaskSprite(Sprite sprite)
@@ -61,12 +62,21 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 取得當前 Mask Alpha Color
+        /// 交由 UIMaskManager 調用設置 Mask Material
         /// </summary>
-        /// <returns></returns>
-        public Color GetMaskAlpha()
+        /// <param name="material"></param>
+        public void SetMaskMaterial(Material material)
         {
-            return this._maskImage.color;
+            this._maskImage.material = material;
+        }
+
+        /// <summary>
+        /// 設置 Mask 事件
+        /// </summary>
+        /// <param name="maskEventFunc"></param>
+        public void SetMaskClickEvent(MaskEventFunc maskEventFunc)
+        {
+            this._maskClickEvent = maskEventFunc;
         }
 
         /// <summary>
@@ -88,15 +98,6 @@ namespace OxGFrame.CoreFrame.UIFrame
             this._maskImage.rectTransform.anchorMax = new Vector2(1, 1);
             this._maskImage.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             this._maskImage.rectTransform.localRotation = Quaternion.identity;
-        }
-
-        /// <summary>
-        /// 設置 Mask 事件
-        /// </summary>
-        /// <param name="maskEventFunc"></param>
-        public void SetMaskClickEvent(MaskEventFunc maskEventFunc)
-        {
-            this._maskClickEvent = maskEventFunc;
         }
     }
 }

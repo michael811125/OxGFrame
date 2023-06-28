@@ -17,7 +17,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 this._uiMaskManager = uiMaskManager;
             }
 
-            private void _Init(Sprite maskSprite)
+            private void _Init()
             {
                 for (int i = 0; i < this._initNum; i++)
                 {
@@ -27,14 +27,14 @@ namespace OxGFrame.CoreFrame.UIFrame
                     uiMask.gameObject.transform.SetParent(this._uiMaskManager.uiMaskRoot);
                     uiMask.gameObject.transform.localPosition = Vector3.zero;
                     uiMask.gameObject.transform.localScale = Vector3.one;
-                    uiMask.InitMask(maskSprite);
+                    uiMask.InitMask();
                     this._uiMaskPool.Add(uiMask);
                 }
             }
 
-            public UIMask GetUIMask(Transform parent, Sprite maskSprite)
+            public UIMask GetUIMask(Transform parent)
             {
-                if (this._uiMaskPool.Count <= 0) this._Init(maskSprite);
+                if (this._uiMaskPool.Count <= 0) this._Init();
 
                 UIMask uiMask = this._uiMaskPool[this._uiMaskPool.Count - 1];
                 this._uiMaskPool.RemoveAt(this._uiMaskPool.Count - 1);
@@ -82,7 +82,6 @@ namespace OxGFrame.CoreFrame.UIFrame
         public Transform uiMaskRoot { get; private set; } = null;
         public int layer { get; private set; } = 0;
         private MaskNodePool _maskNodePool = null;
-        private Sprite _maskSprite = null;
 
         public UIMaskManager(int layer, Transform uiMaskRoot)
         {
@@ -96,15 +95,15 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="maskClickEvent"></param>
-        public void AddMask(Transform parent, Color color, Sprite sprite, MaskEventFunc maskClickEvent = null)
+        public void AddMask(Transform parent, Color color, Sprite sprite, Material material, MaskEventFunc maskClickEvent = null)
         {
             if (parent.Find(nodeName) || !parent.GetComponent<UIBase>()) return;
 
-            if (this._maskSprite == null) this._maskSprite = this._MakeTexture2dSprite();
-            var uiMask = this._maskNodePool.GetUIMask(parent, this._maskSprite);
+            var uiMask = this._maskNodePool.GetUIMask(parent);
             uiMask.SetMaskColor(color);
-            if (sprite != null) uiMask.SetMaskSprite(sprite);
-            if (maskClickEvent != null) uiMask.SetMaskClickEvent(maskClickEvent);
+            uiMask.SetMaskSprite(sprite);
+            uiMask.SetMaskMaterial(material);
+            uiMask.SetMaskClickEvent(maskClickEvent);
         }
 
         /// <summary>
@@ -114,15 +113,6 @@ namespace OxGFrame.CoreFrame.UIFrame
         public void RemoveMask(Transform parent)
         {
             this._maskNodePool.RecycleUIMask(parent);
-        }
-
-        private Sprite _MakeTexture2dSprite()
-        {
-            Texture2D texture = new Texture2D(1, 1, TextureFormat.RGBA32, true);
-            texture.SetPixel(0, 0, Color.white);
-            texture.Apply();
-            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
-            return sprite;
         }
         #endregion
     }
