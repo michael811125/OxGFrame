@@ -477,7 +477,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             var package = PackageManager.GetPackage(packageName);
             if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-            var req = package?.LoadSceneAsync(assetName, loadSceneMode, activateOnLoad, priority);
+            var req = package?.LoadSceneAsync(assetName, loadSceneMode, !activateOnLoad, priority);
 
             var pack = new BundlePack();
 
