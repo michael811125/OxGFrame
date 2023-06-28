@@ -210,6 +210,10 @@ bundle_fallback_ip 127.0.0.1
 store_link http://
 ```
 
+#### Build 防呆標籤 (避免再打包時，忘記將 EditorSimulateMode 調成 OfflineMode 或 HostMode)
+- OXGFRAME_OFFLINE_MODE
+- OXGFRAME_HOST_MODE
+
 **\>\> 建立 burlconfig.conf 方式 \<\<**
 - 使用 OxGFrame/AssetLoader/Bundle Url Config Generator 創建 burlconfig.conf (StreamingAssets/burlconfig.conf)。
 
