@@ -279,7 +279,7 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
 - CPBase
   - ~Node@XXX*Btn (以此類推)
 
-預設組件綁定表 (可從 BindCodeSetting 中自行新增組件類型)
+預設組件綁定表 (可從 BindCodeSetting 中自行新增或修改對應綁定組件類型)
 
 | **Tail Name** | **Component** |
 |:-|:-|
