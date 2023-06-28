@@ -270,7 +270,10 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
 #### 自動生成物件綁定代碼 (Shift + B)
 
 命名規範使用 * 指向 TailName
-  - _Node@XXX*Btn 以此類推
+- UIBase & SRBase
+  - _Node@XXX*Btn (以此類推)
+- CPBase
+  - ~Node@XXX*Btn (以此類推)
 
 預設組件綁定表 (可從 BindCodeSetting 中自行新增組件類型)
 

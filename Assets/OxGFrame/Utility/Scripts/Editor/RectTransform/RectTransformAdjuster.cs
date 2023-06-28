@@ -5,7 +5,7 @@ namespace OxGFrame.Utility.RectTrans.Editor
 {
     public class RectTransformAdjuster
     {
-        [MenuItem("GameObject/Adjust RectTransform Anchors #r")]
+        [MenuItem("GameObject/Adjust RectTransform Anchors (Shift+R) #r")]
         static void Adjust()
         {
             foreach (GameObject gameObject in Selection.gameObjects)

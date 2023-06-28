@@ -29,7 +29,7 @@ namespace OxGFrame.CoreFrame.Editor
         private static string _builder = string.Empty;
         private static int _executeCount = 0;
 
-        [MenuItem("GameObject/OxGFrame/Auto Generate Bind Codes #b", false, 0)]
+        [MenuItem("GameObject/OxGFrame/Auto Generate Bind Codes (Shift+B) #b", false, 0)]
         static void Generate()
         {
             // 避免多選時執行多次
