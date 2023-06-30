@@ -13,6 +13,10 @@
 | [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox), Add https://github.com/Deadcows/MyBox.git to Package Manager |
 | [HybirdCLR v3.2.0 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
+### Unity 如果有遇到 Newtonsoft 問題
+
+- 請自行安裝 Add package by name [com.unity.nuget.newtonsoft-json](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/wiki/Install-official-via-UPM)
+
 ### 1. 透過 Package Manager 安裝 (Install via git)
 
 Add https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame to Package Manager.
@@ -59,15 +63,9 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ### Sub-ThirdParty
 
 - 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案) **特別推薦**
-- 使用 [YooAsset v1.4.16](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
+- 使用 [YooAsset v1.4.17](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
 
 ※備註 : 會持續更新內建第三方庫。
-
----
-
-### Unity 低版本如果有遇到 Newtonsoft 問題
-
-- 請自行安裝 [com.unity.nuget.newtonsoft-json](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/wiki/Install-official-via-UPM)
 
 ---
 
@@ -96,6 +94,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 
 代碼熱修復模塊，使用 [HybridCLR](https://github.com/focus-creative-games/hybridclr) (前身 Huatuo) 革命性的熱更新方案進行整合，相關建置請前往官方文檔進行熟悉。
 - 如果相關建置完畢，前往點選 HybridCLR/OxGFrame With HybirdCLR/Complie And Copy To HotfixCollector，將會幫忙拷貝至 HotfixCollector 文件夾，再使用 YooAsset Collector 進行收集打包。
+
+**使用流程詳看 HotfixerDemo (Import frome Package Manager)**
 
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_4.png)
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_5.png)
@@ -154,13 +154,16 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
   - 允許跳過 Default Package 主下載器的下載階段 (強制邊玩邊下載)。
 
 **檢查 PlayMode 是否初始完成**
-- 判斷檢查 AssetPatcher.IsInitialized() 是否初始完成，因為初始完成後，才能開始進行 Bundle 加載。
+- 判斷檢查 AssetPatcher.IsInitialized() 是否初始完成，因為初始完成後，才能開始進行 Built-in Bundle 的加載與 AssetPatcher.Check()，又或者邊玩邊下載。
   - 備註 : 區分 Built-in 跟 Patch (視情況自行訂定運作流程)
     1. 需自己拆分 Patch 更新前用到的資源 (例如 : LogoUI, PatchUI 等...)，需要先打包至 Built-in 作為內置資源。
 	2. 後續執行 AssetPatcher.Check() 檢查 Patch 更新完成後，就可以讀取更新資源了。
 	
 **檢查 Patch 是否更新完成**
 - 判斷檢查 AssetPatcher.IsDone() 是否更新完成。
+
+**Patch 執行順序流程**
+- 判斷 AssetPathcer.IsInitialized() => 執行 AssetPatcher.Check() => 判斷 AssetPatcher.IsDone() => 完成
 
 **指定特定的 Package 進行資源加載**
 - 需先手動進行 AssetPatcher.InitPackage 的初始 (如果 autoUpdate = false，則需要自行另外調用 AssetPatcher.UpdatePackage 進行 Manifest 的更新)。
@@ -250,7 +253,7 @@ store_link http://
   - **不建議在 OnPreClose 時進行相關 Show 的處理，如果有進行的話也沒關係，因為針對 CloseAll 的 API 有提供 disablePreClose 的開關。**
 - OnShow : 調用 Show 時，此方法會被激活，並且可以透過帶入的 object 進行數據傳送。
 - OnClose : 調用 Close 時，此方法會被激活。
-- OnRelease : 當物件 Close And Destroy 時，此方法會被激活。
+- OnRelease : 當物件被 Destroy 時，此方法會被激活。
 
 #### 初始順序說明
 
@@ -271,7 +274,7 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
   - UIBase & SRBase 使用 _Node@XXX
   - CPBase 使用 ~Node@XXX
 
-#### 自動生成物件綁定代碼 (Shift + B)
+#### 自動生成物件綁定代碼 (Hotkey: Shift+B)
 
 命名規範使用 * 指向 TailName
 - UIBase & SRBase
@@ -279,7 +282,7 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
 - CPBase
   - ~Node@XXX*Btn (以此類推)
 
-預設組件綁定表 (可從 BindCodeSetting 中自行新增或修改對應綁定組件類型)
+預設組件綁定表 (可從 BindCodeSetting 中自行新增或修改 TailName 對應綁定組件類型)
 
 | **Tail Name** | **Component** |
 |:-|:-|
@@ -387,7 +390,7 @@ video_urlset 127.0.0.1/video/
 
 ### AgencyCenter
 
-事件代管中心，可以自行實現 TClass 註冊類型，再由自定義管理類統一繼承 CenterBase<TCenter, TClass>，實現簡易事件代管派送 (集中式管理)，預設提供以下。
+事件代管中心，可以自行實現 TClass 註冊類型，再由自定義管理類統一繼承 CenterBase<TCenter, TClass> (可複製下面 **Center API Template** 作為調用接口)，實現簡易事件代管派送 (集中式管理)，預設提供以下。
 
 #### EventCenter
 
@@ -425,6 +428,8 @@ video_urlset 127.0.0.1/video/
     #endregion
 ```  
 
+---
+
 #### APICenter
 
 集中式 API 整合模塊，可以自定義每個 API 的格式進行 Http API 短連接請求，能夠有效的集中管理各型式的 API 格式，使用 Acax (類似 Ajax 方式，請求 API)，支援 Async & Sync。
@@ -461,6 +466,39 @@ video_urlset 127.0.0.1/video/
     #endregion
 ```
 
+---
+
+### Center API Template
+
+```
+    #region Default API
+    public static void Add<T>() where T : YOUR_TCLASS, new()
+    {
+        GetInstance().Register<T>();
+    }
+    
+    public static void Add<T>(int id) where T : YOUR_TCLASS, new()
+    {
+        GetInstance().Register<T>(id);
+    }
+    
+    public static void Add(int id, YOUR_TCLASS @class)
+    {
+        GetInstance().Register(id, @class);
+    }
+    
+    public static T Find<T>() where T : YOUR_TCLASS
+    {
+        return GetInstance().Get<T>();
+    }
+    
+    public static T Find<T>(int id) where T : YOUR_TCLASS
+    {
+        return GetInstance().Get<T>(id);
+    }
+    #endregion
+```
+
 **如果沒有要使用 AgencyCenter 事件模塊，可以直接刪除整個 AgencyCenter。**
   
 ※備註 : Right-Click Create/OxGFrame/Agency Center... (Template cs)
@@ -480,8 +518,9 @@ video_urlset 127.0.0.1/video/
   - Singleton: MonoSingleton (MonoBehaviour), NewSingleton (class).
   - Requester: RequestAudio, RequestTexture2D, RequestSprite, RequestBytes, RequestText.
   - Cacher: ARCCache<TKey, TValue>, LRUCache<TKey, TValue>, LRUKCache<TKey, TValue>.
+  - TextureAnimation.
 - Editor
-  - RectTransform: RectTransformAdjuster (Shift + R).
+  - RectTransform: RectTransformAdjuster (Hotkey: Shift+R).
   - MissingScriptsFinder.
   - SymlinkUtility.
 

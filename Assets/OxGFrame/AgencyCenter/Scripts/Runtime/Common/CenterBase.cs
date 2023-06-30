@@ -75,6 +75,22 @@ namespace OxGFrame.AgencyCenter
             this._cache.Add(id, @class);
         }
 
+        public void Remove<UClass>() where UClass : TClass
+        {
+            System.Type type = typeof(UClass);
+            int hashCode = type.GetHashCode();
+
+            this.Remove(hashCode);
+        }
+
+        public void Remove(int id)
+        {
+            if (this.HasInCache(id))
+            {
+                this._cache.Remove(id);
+            }
+        }
+
         protected TClass GetFromCache(int id)
         {
             if (!this.HasInCache(id))

@@ -78,7 +78,7 @@
     }
   ],
   "dependencies": {
-	  "com.unity.scriptablebuildpipeline": "1.21.5"
+	  "com.unity.scriptablebuildpipeline": "1.21.7"
   },
   "author": {
     "name": "MichaelO"

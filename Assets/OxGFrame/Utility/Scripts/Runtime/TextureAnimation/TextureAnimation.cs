@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,7 +22,7 @@ namespace OxGFrame.Utility.TextureAnime
         [SerializeField]
         private PlayMode _playMode = PlayMode.Normal;
         [SerializeField]
-        private int frameRate = 30;
+        private int _frameRate = 30;
         [SerializeField]
         private bool _ignoreTimeScale = true;
 
@@ -86,6 +86,11 @@ namespace OxGFrame.Utility.TextureAnime
             this._ignoreTimeScale = ignore;
         }
 
+        public void SetFrameRate(int frameRate)
+        {
+            this._frameRate = frameRate;
+        }
+
         public void ResetAnime()
         {
             this._dt = 0;
@@ -103,7 +108,7 @@ namespace OxGFrame.Utility.TextureAnime
 
         private void _UpdateTextureAnimation(float dt)
         {
-            float fps = this.frameRate;
+            float fps = this._frameRate;
             this._dt += dt;
 
             this._spIdx = Mathf.FloorToInt(this._dt * fps);
