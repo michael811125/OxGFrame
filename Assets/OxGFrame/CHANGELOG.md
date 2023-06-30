@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [2.4.3] - 2023-06-30
+- Added FixBuildTasks for SBP.
+- Fixed use SBP to build SpriteAtlas occurred redundancy bug.
+- Fixed LoadAsset<T>, LoadAssetAsync<T> bug (cannot cast generic type correctly for Sprite).
+- Modified PreloadAsset<T>, PreloadAssetAsync<T> can use generic to cast type.
+- Reduced demo size.
+
 ## [2.4.2] - 2023-06-28
 - Added MissingScriptsFinder.
 - Added SymlinkUtility.

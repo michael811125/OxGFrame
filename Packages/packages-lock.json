@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "8e178c0e372a396e1bf1687e450d85693a95baf4"
+      "hash": "be113567ba3e04bb4f400e5c1e6b4b9cdecb63f5"
     },
     "com.domybest.mybox": {
       "version": "https://github.com/Deadcows/MyBox.git",
@@ -168,7 +168,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
-      "version": "3.2.0",
+      "version": "3.2.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -196,7 +196,7 @@
       }
     },
     "com.unity.scriptablebuildpipeline": {
-      "version": "1.20.2",
+      "version": "1.21.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {},

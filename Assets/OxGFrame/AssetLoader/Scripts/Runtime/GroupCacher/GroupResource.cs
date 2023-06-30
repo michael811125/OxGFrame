@@ -15,21 +15,21 @@ namespace OxGFrame.AssetLoader.GroupChacer
             return _instance;
         }
 
-        public async UniTask PreloadAssetAsync(int id, string assetName, Progression progression = null)
+        public async UniTask PreloadAssetAsync<T>(int id, string assetName, Progression progression = null) where T : Object
         {
             if (string.IsNullOrEmpty(assetName)) return;
 
-            await CacheResource.GetInstance().PreloadAssetAsync(assetName, progression);
+            await CacheResource.GetInstance().PreloadAssetAsync<T>(assetName, progression);
             if (CacheResource.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
 
             Debug.Log($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
-        public async UniTask PreloadAssetAsync(int id, string[] assetNames, Progression progression = null)
+        public async UniTask PreloadAssetAsync<T>(int id, string[] assetNames, Progression progression = null) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
-            await CacheResource.GetInstance().PreloadAssetAsync(assetNames, progression);
+            await CacheResource.GetInstance().PreloadAssetAsync<T>(assetNames, progression);
             foreach (string assetName in assetNames)
             {
                 if (string.IsNullOrEmpty(assetName)) continue;
@@ -39,21 +39,21 @@ namespace OxGFrame.AssetLoader.GroupChacer
             Debug.Log($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
-        public void PreloadAsset(int id, string assetName, Progression progression = null)
+        public void PreloadAsset<T>(int id, string assetName, Progression progression = null) where T : Object
         {
             if (string.IsNullOrEmpty(assetName)) return;
 
-            CacheResource.GetInstance().PreloadAsset(assetName, progression);
+            CacheResource.GetInstance().PreloadAsset<T>(assetName, progression);
             if (CacheResource.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
 
             Debug.Log($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
-        public void PreloadAsset(int id, string[] assetNames, Progression progression = null)
+        public void PreloadAsset<T>(int id, string[] assetNames, Progression progression = null) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
-            CacheResource.GetInstance().PreloadAsset(assetNames, progression);
+            CacheResource.GetInstance().PreloadAsset<T>(assetNames, progression);
             foreach (string assetName in assetNames)
             {
                 if (string.IsNullOrEmpty(assetName)) continue;

@@ -144,11 +144,11 @@ namespace OxGFrame.AssetLoader.GroupCahcer
         #endregion
 
         #region Asset
-        public async UniTask PreloadAssetAsync(int id, string packageName, string[] assetNames, Progression progression = null)
+        public async UniTask PreloadAssetAsync<T>(int id, string packageName, string[] assetNames, Progression progression = null) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
-            await CacheBundle.GetInstance().PreloadAssetAsync(packageName, assetNames, progression);
+            await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, assetNames, progression);
             foreach (string assetName in assetNames)
             {
                 if (string.IsNullOrEmpty(assetName)) continue;
@@ -158,11 +158,11 @@ namespace OxGFrame.AssetLoader.GroupCahcer
             Debug.Log($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
-        public void PreloadAsset(int id, string packageName, string[] assetNames, Progression progression = null)
+        public void PreloadAsset<T>(int id, string packageName, string[] assetNames, Progression progression = null) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
-            CacheBundle.GetInstance().PreloadAsset(packageName, assetNames, progression);
+            CacheBundle.GetInstance().PreloadAsset<T>(packageName, assetNames, progression);
             foreach (string assetName in assetNames)
             {
                 if (string.IsNullOrEmpty(assetName)) continue;

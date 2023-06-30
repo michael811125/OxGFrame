@@ -55,12 +55,22 @@ namespace OxGFrame.CoreFrame.CPFrame
 
         public async UniTask PreloadAsync(string packageName, string[] assetNames, Progression progression = null)
         {
-            await AssetLoaders.PreloadAssetAsync(packageName, assetNames, progression);
+            await AssetLoaders.PreloadAssetAsync<Object>(packageName, assetNames, progression);
+        }
+
+        public async UniTask PreloadAsync<T>(string packageName, string[] assetNames, Progression progression = null) where T : Object
+        {
+            await AssetLoaders.PreloadAssetAsync<T>(packageName, assetNames, progression);
         }
 
         public void Preload(string packageName, string[] assetNames, Progression progression = null)
         {
-            AssetLoaders.PreloadAsset(packageName, assetNames, progression);
+            AssetLoaders.PreloadAsset<Object>(packageName, assetNames, progression);
+        }
+
+        public void Preload<T>(string packageName, string[] assetNames, Progression progression = null) where T : Object
+        {
+            AssetLoaders.PreloadAsset<T>(packageName, assetNames, progression);
         }
 
         public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent = null, Progression progression = null) where T : CPBase, new()

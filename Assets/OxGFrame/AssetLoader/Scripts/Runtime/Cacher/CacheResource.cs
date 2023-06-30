@@ -28,12 +28,13 @@ namespace OxGFrame.AssetLoader.Cacher
             return null;
         }
 
-        public async UniTask PreloadAssetAsync(string assetName, Progression progression = null)
+        #region Asset
+        public async UniTask PreloadAssetAsync<T>(string assetName, Progression progression = null) where T : Object
         {
-            await this.PreloadAssetAsync(new string[] { assetName }, progression);
+            await this.PreloadAssetAsync<T>(new string[] { assetName }, progression);
         }
 
-        public async UniTask PreloadAssetAsync(string[] assetNames, Progression progression = null)
+        public async UniTask PreloadAssetAsync<T>(string[] assetNames, Progression progression = null) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
@@ -68,7 +69,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                 ResourcePack pack = new ResourcePack();
                 {
-                    var req = Resources.LoadAsync<Object>(assetName);
+                    var req = Resources.LoadAsync<T>(assetName);
 
                     if (req != null)
                     {
@@ -105,12 +106,12 @@ namespace OxGFrame.AssetLoader.Cacher
             }
         }
 
-        public void PreloadAsset(string assetName, Progression progression = null)
+        public void PreloadAsset<T>(string assetName, Progression progression = null) where T : Object
         {
-            this.PreloadAsset(new string[] { assetName }, progression);
+            this.PreloadAsset<T>(new string[] { assetName }, progression);
         }
 
-        public void PreloadAsset(string[] assetNames, Progression progression = null)
+        public void PreloadAsset<T>(string[] assetNames, Progression progression = null) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
@@ -145,7 +146,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                 ResourcePack pack = new ResourcePack();
                 {
-                    var asset = Resources.Load<Object>(assetName);
+                    var asset = Resources.Load<T>(assetName);
 
                     this.reqSize++;
                     progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
@@ -191,7 +192,7 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 pack = new ResourcePack();
                 {
-                    var req = Resources.LoadAsync<Object>(assetName);
+                    var req = Resources.LoadAsync<T>(assetName);
 
                     if (req != null)
                     {
@@ -265,7 +266,7 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 pack = new ResourcePack();
                 {
-                    var asset = Resources.Load<Object>(assetName);
+                    var asset = Resources.Load<T>(assetName);
 
                     this.reqSize = this.totalSize;
                     progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
@@ -361,5 +362,6 @@ namespace OxGFrame.AssetLoader.Cacher
 
             Debug.Log($"<color=#ff71b7>【Release All】 => Current << CacheResource >> Cache Count: {this.Count}</color>");
         }
+        #endregion
     }
 }

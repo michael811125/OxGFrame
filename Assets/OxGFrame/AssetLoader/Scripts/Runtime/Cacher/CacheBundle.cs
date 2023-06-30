@@ -650,7 +650,7 @@ namespace OxGFrame.AssetLoader.Cacher
         #endregion
 
         #region Asset
-        public async UniTask PreloadAssetAsync(string packageName, string[] assetNames, Progression progression = null)
+        public async UniTask PreloadAssetAsync<T>(string packageName, string[] assetNames, Progression progression = null) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
@@ -689,7 +689,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     {
                         if (this.HasInLoadingFlags(assetName)) this._loadingFlags.Remove(assetName);
                         this.UnloadAsset(assetName, true);
-                        await this.PreloadAssetAsync(packageName, new string[] { assetName }, progression);
+                        await this.PreloadAssetAsync<T>(packageName, new string[] { assetName }, progression);
                         continue;
                     }
                 }
@@ -699,7 +699,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                     var package = PackageManager.GetPackage(packageName);
                     if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-                    var req = package?.LoadAssetAsync<Object>(assetName);
+                    var req = package?.LoadAssetAsync<T>(assetName);
 
                     if (req != null)
                     {
@@ -736,7 +736,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
         }
 
-        public void PreloadAsset(string packageName, string[] assetNames, Progression progression = null)
+        public void PreloadAsset<T>(string packageName, string[] assetNames, Progression progression = null) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
@@ -775,7 +775,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     {
                         if (this.HasInLoadingFlags(assetName)) this._loadingFlags.Remove(assetName);
                         this.UnloadAsset(assetName, true);
-                        this.PreloadAsset(packageName, new string[] { assetName }, progression);
+                        this.PreloadAsset<T>(packageName, new string[] { assetName }, progression);
                         continue;
                     }
                 }
@@ -785,7 +785,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                     var package = PackageManager.GetPackage(packageName);
                     if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-                    var req = package?.LoadAssetSync<Object>(assetName);
+                    var req = package?.LoadAssetSync<T>(assetName);
 
                     if (req != null)
                     {
@@ -842,7 +842,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 {
                     var package = PackageManager.GetPackage(packageName);
                     if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-                    var req = package?.LoadAssetAsync<Object>(assetName);
+                    var req = package?.LoadAssetAsync<T>(assetName);
 
                     if (req != null)
                     {
@@ -924,7 +924,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 {
                     var package = PackageManager.GetPackage(packageName);
                     if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-                    var req = package?.LoadAssetSync<Object>(assetName);
+                    var req = package?.LoadAssetSync<T>(assetName);
 
                     if (req != null)
                     {

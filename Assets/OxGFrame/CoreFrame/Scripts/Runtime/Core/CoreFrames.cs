@@ -766,6 +766,28 @@ namespace OxGFrame.CoreFrame
                 await CPManager.GetInstance().PreloadAsync(packageName, assetNames, progression);
             }
 
+            public static async UniTask PreloadAsync<T>(string assetName, Progression progression = null) where T : Object
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                await CPManager.GetInstance().PreloadAsync<T>(packageName, new string[] { assetName }, progression);
+            }
+
+            public static async UniTask PreloadAsync<T>(string packageName, string assetName, Progression progression = null) where T : Object
+            {
+                await CPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, progression);
+            }
+
+            public static async UniTask PreloadAsync<T>(string[] assetNames, Progression progression = null) where T : Object
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                await CPManager.GetInstance().PreloadAsync<T>(packageName, assetNames, progression);
+            }
+
+            public static async UniTask PreloadAsync<T>(string packageName, string[] assetNames, Progression progression = null) where T : Object
+            {
+                await CPManager.GetInstance().PreloadAsync<T>(packageName, assetNames, progression);
+            }
+
             /// <summary>
             /// If use prefix "res#" will load from resources else will load from bundle
             /// </summary>
@@ -791,6 +813,28 @@ namespace OxGFrame.CoreFrame
             public static void Preload(string packageName, string[] assetNames, Progression progression = null)
             {
                 CPManager.GetInstance().Preload(packageName, assetNames, progression);
+            }
+
+            public static void Preload<T>(string assetName, Progression progression = null) where T : Object
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                CPManager.GetInstance().Preload<T>(packageName, new string[] { assetName }, progression);
+            }
+
+            public static void Preload<T>(string packageName, string assetName, Progression progression = null) where T : Object
+            {
+                CPManager.GetInstance().Preload<T>(packageName, new string[] { assetName }, progression);
+            }
+
+            public static void Preload<T>(string[] assetNames, Progression progression = null) where T : Object
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                CPManager.GetInstance().Preload<T>(packageName, assetNames, progression);
+            }
+
+            public static void Preload<T>(string packageName, string[] assetNames, Progression progression = null) where T : Object
+            {
+                CPManager.GetInstance().Preload<T>(packageName, assetNames, progression);
             }
 
             /// <summary>

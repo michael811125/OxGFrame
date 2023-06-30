@@ -456,7 +456,7 @@ public class BundleDemo : MonoBehaviour
     public async void PreloadBundle()
     {
         // if assetName has prefix "res#" will use Resources to load
-        await AssetLoaders.PreloadAssetAsync(this.assetName);
+        await AssetLoaders.PreloadAssetAsync<GameObject>(this.assetName);
     }
 
     public async void LoadBundle()

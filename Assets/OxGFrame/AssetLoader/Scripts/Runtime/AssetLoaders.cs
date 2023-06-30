@@ -280,20 +280,20 @@ namespace OxGFrame.AssetLoader
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public static async UniTask PreloadAssetAsync(string assetName, Progression progression = null)
+        public static async UniTask PreloadAssetAsync<T>(string assetName, Progression progression = null) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName)) await CacheResource.GetInstance().PreloadAssetAsync(assetName, progression);
-            else await CacheBundle.GetInstance().PreloadAssetAsync(packageName, new string[] { assetName }, progression);
+            if (RefineResourcesPath(ref assetName)) await CacheResource.GetInstance().PreloadAssetAsync<T>(assetName, progression);
+            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, new string[] { assetName }, progression);
         }
 
-        public static async UniTask PreloadAssetAsync(string packageName, string assetName, Progression progression = null)
+        public static async UniTask PreloadAssetAsync<T>(string packageName, string assetName, Progression progression = null) where T : Object
         {
-            if (RefineResourcesPath(ref assetName)) await CacheResource.GetInstance().PreloadAssetAsync(assetName, progression);
-            else await CacheBundle.GetInstance().PreloadAssetAsync(packageName, new string[] { assetName }, progression);
+            if (RefineResourcesPath(ref assetName)) await CacheResource.GetInstance().PreloadAssetAsync<T>(assetName, progression);
+            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, new string[] { assetName }, progression);
         }
 
-        public static async UniTask PreloadAssetAsync(string[] assetNames, Progression progression = null)
+        public static async UniTask PreloadAssetAsync<T>(string[] assetNames, Progression progression = null) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
 
@@ -309,11 +309,11 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) await CacheResource.GetInstance().PreloadAssetAsync(assetNames, progression);
-            else await CacheBundle.GetInstance().PreloadAssetAsync(packageName, assetNames, progression);
+            if (refineAssetNames.Count > 0) await CacheResource.GetInstance().PreloadAssetAsync<T>(assetNames, progression);
+            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, assetNames, progression);
         }
 
-        public static async UniTask PreloadAssetAsync(string packageName, string[] assetNames, Progression progression = null)
+        public static async UniTask PreloadAssetAsync<T>(string packageName, string[] assetNames, Progression progression = null) where T : Object
         {
             List<string> refineAssetNames = new List<string>();
 
@@ -327,8 +327,8 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) await CacheResource.GetInstance().PreloadAssetAsync(assetNames, progression);
-            else await CacheBundle.GetInstance().PreloadAssetAsync(packageName, assetNames, progression);
+            if (refineAssetNames.Count > 0) await CacheResource.GetInstance().PreloadAssetAsync<T>(assetNames, progression);
+            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, assetNames, progression);
         }
 
         /// <summary>
@@ -336,20 +336,20 @@ namespace OxGFrame.AssetLoader
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
-        public static void PreloadAsset(string assetName, Progression progression = null)
+        public static void PreloadAsset<T>(string assetName, Progression progression = null) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName)) CacheResource.GetInstance().PreloadAsset(assetName, progression);
-            else CacheBundle.GetInstance().PreloadAsset(packageName, new string[] { assetName }, progression);
+            if (RefineResourcesPath(ref assetName)) CacheResource.GetInstance().PreloadAsset<T>(assetName, progression);
+            else CacheBundle.GetInstance().PreloadAsset<T>(packageName, new string[] { assetName }, progression);
         }
 
-        public static void PreloadAsset(string packageName, string assetName, Progression progression = null)
+        public static void PreloadAsset<T>(string packageName, string assetName, Progression progression = null) where T : Object
         {
-            if (RefineResourcesPath(ref assetName)) CacheResource.GetInstance().PreloadAsset(assetName, progression);
-            else CacheBundle.GetInstance().PreloadAsset(packageName, new string[] { assetName }, progression);
+            if (RefineResourcesPath(ref assetName)) CacheResource.GetInstance().PreloadAsset<T>(assetName, progression);
+            else CacheBundle.GetInstance().PreloadAsset<T>(packageName, new string[] { assetName }, progression);
         }
 
-        public static void PreloadAsset(string[] assetNames, Progression progression = null)
+        public static void PreloadAsset<T>(string[] assetNames, Progression progression = null) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
 
@@ -365,11 +365,11 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) CacheResource.GetInstance().PreloadAsset(assetNames, progression);
-            else CacheBundle.GetInstance().PreloadAsset(packageName, assetNames, progression);
+            if (refineAssetNames.Count > 0) CacheResource.GetInstance().PreloadAsset<T>(assetNames, progression);
+            else CacheBundle.GetInstance().PreloadAsset<T>(packageName, assetNames, progression);
         }
 
-        public static void PreloadAsset(string packageName, string[] assetNames, Progression progression = null)
+        public static void PreloadAsset<T>(string packageName, string[] assetNames, Progression progression = null) where T : Object
         {
             List<string> refineAssetNames = new List<string>();
 
@@ -383,8 +383,8 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) CacheResource.GetInstance().PreloadAsset(assetNames, progression);
-            else CacheBundle.GetInstance().PreloadAsset(packageName, assetNames, progression);
+            if (refineAssetNames.Count > 0) CacheResource.GetInstance().PreloadAsset<T>(assetNames, progression);
+            else CacheBundle.GetInstance().PreloadAsset<T>(packageName, assetNames, progression);
         }
 
         /// <summary>
@@ -977,20 +977,20 @@ namespace OxGFrame.AssetLoader
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public static async UniTask PreloadAssetAsync(int groupId, string assetName, Progression progression = null)
+        public static async UniTask PreloadAssetAsync<T>(int groupId, string assetName, Progression progression = null) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName)) await GroupResource.GetInstance().PreloadAssetAsync(groupId, assetName, progression);
-            else await GroupBundle.GetInstance().PreloadAssetAsync(groupId, packageName, new string[] { assetName }, progression);
+            if (RefineResourcesPath(ref assetName)) await GroupResource.GetInstance().PreloadAssetAsync<T>(groupId, assetName, progression);
+            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, new string[] { assetName }, progression);
         }
 
-        public static async UniTask PreloadAssetAsync(int groupId, string packageName, string assetName, Progression progression = null)
+        public static async UniTask PreloadAssetAsync<T>(int groupId, string packageName, string assetName, Progression progression = null) where T : Object
         {
-            if (RefineResourcesPath(ref assetName)) await GroupResource.GetInstance().PreloadAssetAsync(groupId, assetName, progression);
-            else await GroupBundle.GetInstance().PreloadAssetAsync(groupId, packageName, new string[] { assetName }, progression);
+            if (RefineResourcesPath(ref assetName)) await GroupResource.GetInstance().PreloadAssetAsync<T>(groupId, assetName, progression);
+            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, new string[] { assetName }, progression);
         }
 
-        public static async UniTask PreloadAssetAsync(int groupId, string[] assetNames, Progression progression = null)
+        public static async UniTask PreloadAssetAsync<T>(int groupId, string[] assetNames, Progression progression = null) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
 
@@ -1006,11 +1006,11 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) await GroupResource.GetInstance().PreloadAssetAsync(groupId, assetNames, progression);
-            else await GroupBundle.GetInstance().PreloadAssetAsync(groupId, packageName, assetNames, progression);
+            if (refineAssetNames.Count > 0) await GroupResource.GetInstance().PreloadAssetAsync<T>(groupId, assetNames, progression);
+            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, assetNames, progression);
         }
 
-        public static async UniTask PreloadAssetAsync(int groupId, string packageName, string[] assetNames, Progression progression = null)
+        public static async UniTask PreloadAssetAsync<T>(int groupId, string packageName, string[] assetNames, Progression progression = null) where T : Object
         {
             List<string> refineAssetNames = new List<string>();
 
@@ -1024,8 +1024,8 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) await GroupResource.GetInstance().PreloadAssetAsync(groupId, assetNames, progression);
-            else await GroupBundle.GetInstance().PreloadAssetAsync(groupId, packageName, assetNames, progression);
+            if (refineAssetNames.Count > 0) await GroupResource.GetInstance().PreloadAssetAsync<T>(groupId, assetNames, progression);
+            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, assetNames, progression);
         }
 
         /// <summary>
@@ -1034,20 +1034,20 @@ namespace OxGFrame.AssetLoader
         /// <param name="groupId"></param>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
-        public static void PreloadAsset(int groupId, string assetName, Progression progression = null)
+        public static void PreloadAsset<T>(int groupId, string assetName, Progression progression = null) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName)) GroupResource.GetInstance().PreloadAsset(groupId, assetName, progression);
-            else GroupBundle.GetInstance().PreloadAsset(groupId, packageName, new string[] { assetName }, progression);
+            if (RefineResourcesPath(ref assetName)) GroupResource.GetInstance().PreloadAsset<T>(groupId, assetName, progression);
+            else GroupBundle.GetInstance().PreloadAsset<T>(groupId, packageName, new string[] { assetName }, progression);
         }
 
-        public static void PreloadAsset(int groupId, string packageName, string assetName, Progression progression = null)
+        public static void PreloadAsset<T>(int groupId, string packageName, string assetName, Progression progression = null) where T : Object
         {
-            if (RefineResourcesPath(ref assetName)) GroupResource.GetInstance().PreloadAsset(groupId, assetName, progression);
-            else GroupBundle.GetInstance().PreloadAsset(groupId, packageName, new string[] { assetName }, progression);
+            if (RefineResourcesPath(ref assetName)) GroupResource.GetInstance().PreloadAsset<T>(groupId, assetName, progression);
+            else GroupBundle.GetInstance().PreloadAsset<T>(groupId, packageName, new string[] { assetName }, progression);
         }
 
-        public static void PreloadAsset(int groupId, string[] assetNames, Progression progression = null)
+        public static void PreloadAsset<T>(int groupId, string[] assetNames, Progression progression = null) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
 
@@ -1063,11 +1063,11 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) GroupResource.GetInstance().PreloadAsset(groupId, assetNames, progression);
-            else GroupBundle.GetInstance().PreloadAsset(groupId, packageName, assetNames, progression);
+            if (refineAssetNames.Count > 0) GroupResource.GetInstance().PreloadAsset<T>(groupId, assetNames, progression);
+            else GroupBundle.GetInstance().PreloadAsset<T>(groupId, packageName, assetNames, progression);
         }
 
-        public static void PreloadAsset(int groupId, string packageName, string[] assetNames, Progression progression = null)
+        public static void PreloadAsset<T>(int groupId, string packageName, string[] assetNames, Progression progression = null) where T : Object
         {
             List<string> refineAssetNames = new List<string>();
 
@@ -1081,8 +1081,8 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) GroupResource.GetInstance().PreloadAsset(groupId, assetNames, progression);
-            else GroupBundle.GetInstance().PreloadAsset(groupId, packageName, assetNames, progression);
+            if (refineAssetNames.Count > 0) GroupResource.GetInstance().PreloadAsset<T>(groupId, assetNames, progression);
+            else GroupBundle.GetInstance().PreloadAsset<T>(groupId, packageName, assetNames, progression);
         }
 
         /// <summary>
