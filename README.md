@@ -304,6 +304,9 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
 | TmpTxt | TMP_Text | 
 | TmpDrd | TMP_Dropdown | 
 | TmpField | TMP_InputField |
+| **Custom** |
+| BtnPlus | ButtonPlus |
+| NodePool | NodePool |
 
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/gif_1.gif)
 

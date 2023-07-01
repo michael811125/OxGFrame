@@ -52,7 +52,11 @@ namespace OxGFrame.CoreFrame.Editor
             // TMP
             { "TmpTxt", "TMP_Text" },
             { "TmpDrd", "TMP_Dropdown" },
-            { "TmpField", "TMP_InputField" }
+            { "TmpField", "TMP_InputField" },
+
+            // Custom
+            { "BtnPlus", "ButtonPlus"},
+            { "NodePool", "NodePool"}
         };
 
         public string GetIndicateModifier()

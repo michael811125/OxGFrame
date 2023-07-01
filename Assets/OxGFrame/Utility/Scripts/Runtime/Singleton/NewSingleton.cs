@@ -4,6 +4,7 @@
     {
         private static readonly object _locker = new object();
         private static T _instance = null;
+
         public static T GetInstance()
         {
             if (_instance == null)
