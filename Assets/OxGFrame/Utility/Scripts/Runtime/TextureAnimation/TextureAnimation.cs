@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 namespace OxGFrame.Utility.TextureAnime
 {
+    [AddComponentMenu("OxGFrame/Utility/TextureAnime/TextureAnimation")]
     [ExecuteInEditMode]
     public class TextureAnimation : MonoBehaviour
     {
