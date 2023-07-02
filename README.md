@@ -276,6 +276,8 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
 
 ---
 
+***建議使用 Hotkey，不然使用 Right-Click 會執行多次 (實際上不影響自動生成)，但這是 [Unity Bug](https://issuetracker.unity3d.com/issues/menuitem-is-executed-more-than-once-when-multiple-objects-are-selected) 官方不修復了***
+
 #### 自動生成停止綁定標籤 (Hotkey: Shift+E, E: End)
 
 能夠縮短 Runtime 在綁定的向下查找次數 O(N)，N = StopEndIdx
