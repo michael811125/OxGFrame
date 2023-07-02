@@ -31,8 +31,7 @@ namespace OxGFrame.CoreFrame
             {
                 if (!this._nodes.ContainsKey(bindName))
                 {
-                    this._nodes[bindName] = new List<GameObject>();
-                    this._nodes[bindName].Add(go);
+                    this._nodes[bindName] = new List<GameObject>() { go };
                 }
                 else this._nodes[bindName].Add(go);
             }

@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
-public static class Audio
+public static class AudioPrefs
 {
     // If use prefix "res#" will load from resource else will from bundle
     private const string _prefix = "res#";
@@ -33,34 +33,34 @@ public class AudioFrameDemo : MonoBehaviour
     #region Audio 【BGM】
     public async void PlayBGM()
     {
-        await MediaFrames.AudioFrame.Play(Audio.a101);
+        await MediaFrames.AudioFrame.Play(AudioPrefs.a101);
     }
 
     public void StopBGM()
     {
-        MediaFrames.AudioFrame.Stop(Audio.a101);
+        MediaFrames.AudioFrame.Stop(AudioPrefs.a101);
     }
 
     public void StopBGMWithDestroy()
     {
-        MediaFrames.AudioFrame.Stop(Audio.a101, false, true);
+        MediaFrames.AudioFrame.Stop(AudioPrefs.a101, false, true);
     }
 
     public void PauseBGM()
     {
-        MediaFrames.AudioFrame.Pause(Audio.a101);
+        MediaFrames.AudioFrame.Pause(AudioPrefs.a101);
     }
     #endregion
 
     #region Audio 【General SFX】 
     public async void PlayGeneralFX()
     {
-        await MediaFrames.AudioFrame.Play(Audio.a201);
+        await MediaFrames.AudioFrame.Play(AudioPrefs.a201);
     }
 
     public void StopGeneralFX()
     {
-        MediaFrames.AudioFrame.Stop(Audio.a201);
+        MediaFrames.AudioFrame.Stop(AudioPrefs.a201);
     }
 
     public void StopGeneralFXWithDestroy()
@@ -71,78 +71,78 @@ public class AudioFrameDemo : MonoBehaviour
          * MediaFrames.AudioFrame.ForceUnload(Audio.GeneralSoundExample);
          */
 
-        MediaFrames.AudioFrame.Stop(Audio.a201, false, true);
+        MediaFrames.AudioFrame.Stop(AudioPrefs.a201, false, true);
     }
 
     public void PauseGeneralFX()
     {
-        MediaFrames.AudioFrame.Pause(Audio.a201);
+        MediaFrames.AudioFrame.Pause(AudioPrefs.a201);
     }
     #endregion
 
     #region Audio 【Interact SFX】
     public async void PlayFightFX()
     {
-        await MediaFrames.AudioFrame.Play(Audio.a301);
+        await MediaFrames.AudioFrame.Play(AudioPrefs.a301);
     }
 
     public void StopFightFX()
     {
-        MediaFrames.AudioFrame.Stop(Audio.a301);
+        MediaFrames.AudioFrame.Stop(AudioPrefs.a301);
     }
 
     public void StopFightFXWithDestroy()
     {
-        MediaFrames.AudioFrame.Stop(Audio.a301, false, true);
+        MediaFrames.AudioFrame.Stop(AudioPrefs.a301, false, true);
     }
 
     public void PauseFightFX()
     {
-        MediaFrames.AudioFrame.Pause(Audio.a301);
+        MediaFrames.AudioFrame.Pause(AudioPrefs.a301);
     }
     #endregion
 
     #region Audio 【Voice】
     public async void PlayVoice()
     {
-        await MediaFrames.AudioFrame.Play(Audio.a401);
+        await MediaFrames.AudioFrame.Play(AudioPrefs.a401);
     }
 
     public void StopVoice()
     {
-        MediaFrames.AudioFrame.Stop(Audio.a401);
+        MediaFrames.AudioFrame.Stop(AudioPrefs.a401);
     }
 
     public void StopVoiceWithDestroy()
     {
-        MediaFrames.AudioFrame.Stop(Audio.a401, false, true);
+        MediaFrames.AudioFrame.Stop(AudioPrefs.a401, false, true);
     }
 
     public void PauseVoice()
     {
-        MediaFrames.AudioFrame.Pause(Audio.a401);
+        MediaFrames.AudioFrame.Pause(AudioPrefs.a401);
     }
     #endregion
 
     #region Audio 【Atmosphere】
     public async void PlayAtmosphere()
     {
-        await MediaFrames.AudioFrame.Play(Audio.a501);
+        await MediaFrames.AudioFrame.Play(AudioPrefs.a501);
     }
 
     public void StopAtmosphere()
     {
-        MediaFrames.AudioFrame.Stop(Audio.a501);
+        MediaFrames.AudioFrame.Stop(AudioPrefs.a501);
     }
 
     public void StopAtmosphereWithDestroy()
     {
-        MediaFrames.AudioFrame.Stop(Audio.a501, false, true);
+        MediaFrames.AudioFrame.Stop(AudioPrefs.a501, false, true);
     }
 
     public void PauseAtmosphere()
     {
-        MediaFrames.AudioFrame.Pause(Audio.a501);
+        MediaFrames.AudioFrame.Pause(AudioPrefs.a501);
     }
     #endregion
 

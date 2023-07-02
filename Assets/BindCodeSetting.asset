@@ -51,4 +51,8 @@ MonoBehaviour:
       Component: TMP_Dropdown
     - TailName: TmpField
       Component: TMP_InputField
+    - TailName: BtnPlus
+      Component: ButtonPlus
+    - TailName: NodePool
+      Component: NodePool
     keyCollision: 0

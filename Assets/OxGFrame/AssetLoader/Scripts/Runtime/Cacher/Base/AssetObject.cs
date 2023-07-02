@@ -20,14 +20,9 @@ namespace OxGFrame.AssetLoader.Cacher
             this.refCount--;
         }
 
-        public bool IsResourcePack()
+        public bool IsPack<T>() where T : AssetObject
         {
-            return typeof(ResourcePack).IsInstanceOfType(this);
-        }
-
-        public bool IsBundlePack()
-        {
-            return typeof(BundlePack).IsInstanceOfType(this);
+            return typeof(T).IsInstanceOfType(this);
         }
     }
     #endregion

@@ -3,31 +3,33 @@ using UnityEngine.InputSystem;
 using OxGFrame.CoreFrame;
 using Cysharp.Threading.Tasks;
 
-public static class Screen
+public static class ScreenUIs
 {
     // If use prefix "res#" will load from resource else will from bundle
     private const string _prefix = "res#";
+    private const string _path = "Example/UI/ScreenUI/";
 
     // Assets
-    public static readonly string Demo1UI = $"{_prefix}Example/UI/ScreenUI/Demo1UI";
-    public static readonly string Demo2UI = $"{_prefix}Example/UI/ScreenUI/Demo2UI";
-    public static readonly string Demo3UI = $"{_prefix}Example/UI/ScreenUI/Demo3UI";
-    public static readonly string DemoLoadingUI = $"{_prefix}Example/UI/ScreenUI/DemoLoadingUI";
+    public static readonly string Demo1UI = $"{_prefix}{_path}Demo1UI";
+    public static readonly string Demo2UI = $"{_prefix}{_path}Demo2UI";
+    public static readonly string Demo3UI = $"{_prefix}{_path}Demo3UI";
+    public static readonly string DemoLoadingUI = $"{_prefix}{_path}DemoLoadingUI";
 
     // Group Id
     public const int Id = 1;
 }
 
-public static class World
+public static class WorldUIs
 {
     // If use prefix "res#" will load from resource else will from bundle
     private const string _prefix = "res#";
+    private const string _path = "Example/UI/WorldUI/";
 
     // Assets
-    public static readonly string Demo1UI = $"{_prefix}Example/UI/WorldUI/Demo1UI";
-    public static readonly string Demo2UI = $"{_prefix}Example/UI/WorldUI/Demo2UI";
-    public static readonly string Demo3UI = $"{_prefix}Example/UI/WorldUI/Demo3UI";
-    public static readonly string DemoLoadingUI = $"{_prefix}Example/UI/WorldUI/DemoLoadingUI";
+    public static readonly string Demo1UI = $"{_prefix}{_path}Demo1UI";
+    public static readonly string Demo2UI = $"{_prefix}{_path}Demo2UI";
+    public static readonly string Demo3UI = $"{_prefix}{_path}Demo3UI";
+    public static readonly string DemoLoadingUI = $"{_prefix}{_path}DemoLoadingUI";
 
     // Group Id
     public const int Id = 2;
@@ -56,11 +58,11 @@ public class UIFrameDemo : MonoBehaviour
         }
         else if (Keyboard.current.numpad2Key.wasReleasedThisFrame)
         {
-            CoreFrames.UIFrame.HideAll(World.Id);
+            CoreFrames.UIFrame.HideAll(WorldUIs.Id);
         }
         else if (Keyboard.current.numpad3Key.wasReleasedThisFrame)
         {
-            CoreFrames.UIFrame.RevealAll(World.Id);
+            CoreFrames.UIFrame.RevealAll(WorldUIs.Id);
         }
         else if (Keyboard.current.numpad4Key.wasReleasedThisFrame)
         {
@@ -72,28 +74,28 @@ public class UIFrameDemo : MonoBehaviour
         }
         else if (Keyboard.current.numpad6Key.wasReleasedThisFrame)
         {
-            CoreFrames.UIFrame.Show(World.Id, World.Demo3UI).Forget();
+            CoreFrames.UIFrame.Show(WorldUIs.Id, WorldUIs.Demo3UI).Forget();
         }
         else if (Keyboard.current.numpad7Key.wasReleasedThisFrame)
         {
-            CoreFrames.UIFrame.Close(World.Demo3UI, true, true);
+            CoreFrames.UIFrame.Close(WorldUIs.Demo3UI, true, true);
         }
     }
 
     public async void ShowFirstScreenUI()
     {
-        await CoreFrames.UIFrame.Show(Screen.Id, Screen.Demo1UI, null, Screen.DemoLoadingUI, null, null);
+        await CoreFrames.UIFrame.Show(ScreenUIs.Id, ScreenUIs.Demo1UI, null, ScreenUIs.DemoLoadingUI, null, null);
     }
 
     private int _dataCount = 0;
     public async void ShowFirstWorldUI()
     {
-        if (!CoreFrames.UIFrame.CheckIsShowing(World.Demo1UI)) this._dataCount++;
-        await CoreFrames.UIFrame.Show(World.Id, World.Demo1UI, $"Send Msg Data: {this._dataCount}", World.DemoLoadingUI, null, null);
+        if (!CoreFrames.UIFrame.CheckIsShowing(WorldUIs.Demo1UI)) this._dataCount++;
+        await CoreFrames.UIFrame.Show(WorldUIs.Id, WorldUIs.Demo1UI, $"Send Msg Data: {this._dataCount}", WorldUIs.DemoLoadingUI, null, null);
     }
 
     public async void PreloadFirstWorldUI()
     {
-        await CoreFrames.UIFrame.Preload(World.Demo1UI);
+        await CoreFrames.UIFrame.Preload(WorldUIs.Demo1UI);
     }
 }

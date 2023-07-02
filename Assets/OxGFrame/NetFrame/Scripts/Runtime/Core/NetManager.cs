@@ -5,26 +5,33 @@ namespace OxGFrame.NetFrame
 {
     internal class NetManager
     {
-        // NetNode 緩存
-        private Dictionary<byte, NetNode> _dictNetNode = null;
+        private Dictionary<byte, NetNode> _netNodes = null; // NetNode 緩存
 
+        private static readonly object _locker = new object();
         private static NetManager _instance = null;
+
         public static NetManager GetInstance()
         {
-            if (_instance == null) _instance = new NetManager();
+            if (_instance == null)
+            {
+                lock (_locker)
+                {
+                    _instance = new NetManager();
+                }
+            }
             return _instance;
         }
 
         public NetManager()
         {
-            this._dictNetNode = new Dictionary<byte, NetNode>();
+            this._netNodes = new Dictionary<byte, NetNode>();
         }
 
         public void OnUpdate()
         {
-            if (this._dictNetNode.Count == 0) return;
+            if (this._netNodes.Count == 0) return;
 
-            foreach (NetNode netNode in this._dictNetNode.Values)
+            foreach (NetNode netNode in this._netNodes.Values)
             {
                 if (netNode == null) continue;
                 netNode.OnUpdate();
@@ -38,8 +45,8 @@ namespace OxGFrame.NetFrame
         /// <param name="nnId">預設 = 0</param>
         public void AddNetNode(NetNode netNode, byte nnId = 0)
         {
-            if (!this._dictNetNode.ContainsKey(nnId)) this._dictNetNode.Add(nnId, netNode);
-            else this._dictNetNode[nnId] = netNode;
+            if (!this._netNodes.ContainsKey(nnId)) this._netNodes.Add(nnId, netNode);
+            else this._netNodes[nnId] = netNode;
         }
 
         /// <summary>
@@ -48,7 +55,7 @@ namespace OxGFrame.NetFrame
         /// <param name="nnId">預設 = 0</param>
         public void RemoveNetNode(byte nnId = 0)
         {
-            if (this._dictNetNode.ContainsKey(nnId)) this._dictNetNode.Remove(nnId);
+            if (this._netNodes.ContainsKey(nnId)) this._netNodes.Remove(nnId);
         }
 
         /// <summary>
@@ -58,7 +65,7 @@ namespace OxGFrame.NetFrame
         /// <returns></returns>
         public NetNode GetNetNode(byte nnId = 0)
         {
-            if (this._dictNetNode.ContainsKey(nnId)) return this._dictNetNode[nnId];
+            if (this._netNodes.ContainsKey(nnId)) return this._netNodes[nnId];
             return null;
         }
 
@@ -69,9 +76,9 @@ namespace OxGFrame.NetFrame
         /// <param name="nnId">預設 = 0</param>
         public void Connect(NetOption netOption, byte nnId = 0)
         {
-            if (this._dictNetNode.ContainsKey(nnId))
+            if (this._netNodes.ContainsKey(nnId))
             {
-                this._dictNetNode[nnId].Connect(netOption);
+                this._netNodes[nnId].Connect(netOption);
             }
             else Debug.LogWarning(string.Format("The NodeId: {0} Can't Found !!! Connect Failed.", nnId));
         }
@@ -83,10 +90,10 @@ namespace OxGFrame.NetFrame
         /// <returns></returns>
         public bool IsConnected(byte nnId = 0)
         {
-            if (this._dictNetNode.ContainsKey(nnId))
+            if (this._netNodes.ContainsKey(nnId))
             {
-                if (this._dictNetNode[nnId] == null) return false;
-                return this._dictNetNode[nnId].IsConnected();
+                if (this._netNodes[nnId] == null) return false;
+                return this._netNodes[nnId].IsConnected();
             }
 
             return false;
@@ -99,9 +106,9 @@ namespace OxGFrame.NetFrame
         /// <returns></returns>
         public bool Send(byte[] buffer, byte nnId = 0)
         {
-            if (this._dictNetNode.ContainsKey(nnId))
+            if (this._netNodes.ContainsKey(nnId))
             {
-                return this._dictNetNode[nnId].Send(buffer);
+                return this._netNodes[nnId].Send(buffer);
             }
             else
             {
@@ -116,10 +123,10 @@ namespace OxGFrame.NetFrame
         /// <param name="nnId">預設 = 0</param>
         public void CloseSocket(byte nnId = 0)
         {
-            if (this._dictNetNode.ContainsKey(nnId))
+            if (this._netNodes.ContainsKey(nnId))
             {
-                this._dictNetNode[nnId].CloseSocket();
-                this._dictNetNode.Remove(nnId);
+                this._netNodes[nnId].CloseSocket();
+                this._netNodes.Remove(nnId);
             }
         }
     }

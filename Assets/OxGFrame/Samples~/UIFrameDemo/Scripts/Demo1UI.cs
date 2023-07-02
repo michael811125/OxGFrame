@@ -85,8 +85,8 @@ public class Demo1UI : UIBase
     private async void _ShowDemoPopup2UI()
     {
         if (this.uiSetting.canvasName == UIFrameDemo.CanvasCamera)
-            await CoreFrames.UIFrame.Show(Screen.Id, Screen.Demo2UI, null, Screen.DemoLoadingUI, null, null);
+            await CoreFrames.UIFrame.Show(ScreenUIs.Id, ScreenUIs.Demo2UI, null, ScreenUIs.DemoLoadingUI, null, null);
         else if (this.uiSetting.canvasName == UIFrameDemo.CanvasWorld)
-            await CoreFrames.UIFrame.Show(World.Id, World.Demo2UI, null, World.DemoLoadingUI, null, null);
+            await CoreFrames.UIFrame.Show(WorldUIs.Id, WorldUIs.Demo2UI, null, WorldUIs.DemoLoadingUI, null, null);
     }
 }

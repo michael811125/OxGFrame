@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public static class Video
+public static class VideoPrefs
 {
     // If use prefix "res#" will load from resource else will from bundle
     private const string _prefix = "res#";
@@ -10,6 +10,7 @@ public static class Video
     // Paths
     private static readonly string _videoPath = $"{_prefix}Video/";
 
+    // Assets
     public static readonly string VideoCamExample = $"{_videoPath}video_cam_Example";
     public static readonly string VideoRtExample = $"{_videoPath}video_rt_Example";
 }
@@ -28,29 +29,29 @@ public class VideoFrameDemo : MonoBehaviour
     public async void PlayVideoCamera()
     {
         // if render mode is Camera just play directly
-        await MediaFrames.VideoFrame.Play(Video.VideoCamExample);
+        await MediaFrames.VideoFrame.Play(VideoPrefs.VideoCamExample);
     }
 
     public void StopVideoCamera()
     {
-        MediaFrames.VideoFrame.Stop(Video.VideoCamExample);
+        MediaFrames.VideoFrame.Stop(VideoPrefs.VideoCamExample);
     }
 
     public void StopVideoWithDestoryCamera()
     {
-        MediaFrames.VideoFrame.Stop(Video.VideoCamExample, false, true);
+        MediaFrames.VideoFrame.Stop(VideoPrefs.VideoCamExample, false, true);
     }
 
     public void PauseVideoCamera()
     {
-        MediaFrames.VideoFrame.Pause(Video.VideoCamExample);
+        MediaFrames.VideoFrame.Pause(VideoPrefs.VideoCamExample);
     }
     #endregion
 
     #region Video cast to 【RenderTexture】
     public async void PlayVideoRenderTexture()
     {
-        var video = await MediaFrames.VideoFrame.Play(Video.VideoRtExample);
+        var video = await MediaFrames.VideoFrame.Play(VideoPrefs.VideoRtExample);
 
         // Get Video
         if (video != null)
@@ -70,7 +71,7 @@ public class VideoFrameDemo : MonoBehaviour
 
     public void StopVideoRenderTexture()
     {
-        MediaFrames.VideoFrame.Stop(Video.VideoRtExample);
+        MediaFrames.VideoFrame.Stop(VideoPrefs.VideoRtExample);
     }
 
     public void StopVideoWithDestoryRenderTexture()
@@ -81,12 +82,12 @@ public class VideoFrameDemo : MonoBehaviour
          * MediaFrames.VideoFrame.ForceUnload(Video.VideoRtExample);
          */
 
-        MediaFrames.VideoFrame.Stop(Video.VideoRtExample, false, true);
+        MediaFrames.VideoFrame.Stop(VideoPrefs.VideoRtExample, false, true);
     }
 
     public void PauseVideoRenderTexture()
     {
-        MediaFrames.VideoFrame.Pause(Video.VideoRtExample);
+        MediaFrames.VideoFrame.Pause(VideoPrefs.VideoRtExample);
     }
     #endregion
 
