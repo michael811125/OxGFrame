@@ -10,7 +10,7 @@ namespace OxGFrame.GSIFrame.Editor
         private const string TPL_GSI_BASE_SCRIPT_PATH = "TplScripts/GSIFrame/TplGSI.cs.txt";
 
         // find current file path
-        private static string pathFinder
+        private static string _pathFinder
         {
             get
             {
@@ -23,7 +23,7 @@ namespace OxGFrame.GSIFrame.Editor
         [MenuItem(itemName: "Assets/Create/OxGFrame/GSI Frame/Template Scripts/Template GSI.cs (Game Stage)", isValidateFunction: false, priority: 51)]
         public static void CreateScriptTplGSIBase()
         {
-            string currentPath = pathFinder;
+            string currentPath = _pathFinder;
             string finalPath = currentPath.Replace("GSIFrameCreateScriptEditor.cs", "") + TPL_GSI_BASE_SCRIPT_PATH;
 
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplGSI.cs");
@@ -32,7 +32,7 @@ namespace OxGFrame.GSIFrame.Editor
         [MenuItem(itemName: "Assets/Create/OxGFrame/GSI Frame/Template Scripts/Template GSIManager.cs (Game Stage Manager)", isValidateFunction: false, priority: 51)]
         public static void CreateScriptTplGSIManager()
         {
-            string currentPath = pathFinder;
+            string currentPath = _pathFinder;
             string finalPath = currentPath.Replace("GSIFrameCreateScriptEditor.cs", "") + TPL_GSI_MANAGER_SCRIPT_PATH;
 
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplGSIManager.cs");

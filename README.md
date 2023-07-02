@@ -274,7 +274,17 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
   - UIBase & SRBase 使用 _Node@XXX
   - CPBase 使用 ~Node@XXX
 
-#### 自動生成物件綁定代碼 (Hotkey: Shift+B)
+---
+
+#### 自動生成停止綁定標籤 (Hotkey: Shift+E, E: End)
+
+能夠縮短 Runtime 在綁定的向下查找次數 O(N)，N = StopEndIdx
+
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_8.png)
+
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/gif_2.gif)
+
+#### 自動生成物件綁定代碼 (Hotkey: Shift+B, B: Bind)
 
 命名規範使用 * 指向 TailName
 - UIBase & SRBase
@@ -523,7 +533,7 @@ video_urlset 127.0.0.1/video/
   - Cacher: ARCCache<TKey, TValue>, LRUCache<TKey, TValue>, LRUKCache<TKey, TValue>.
   - TextureAnimation.
 - Editor
-  - RectTransform: RectTransformAdjuster (Hotkey: Shift+R).
+  - RectTransform: RectTransformAdjuster (Hotkey: Shift+R, R: RectTransform).
   - MissingScriptsFinder.
   - SymlinkUtility.
 

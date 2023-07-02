@@ -27,45 +27,39 @@ namespace OxGFrame.CoreFrame.Editor
         private static BindCodeSetting _settings;
         private static Dictionary<string, BindInfo> _collectBindInfos = new Dictionary<string, BindInfo>();
         private static string _builder = string.Empty;
-        private static int _executeCount = 0;
 
+        #region MenuItem
         [MenuItem("GameObject/OxGFrame/Auto Generate Bind Codes (Shift+B) #b", false, 0)]
-        static void Generate()
+        public static void Execute()
         {
-            // 避免多選時執行多次
-            if (Selection.gameObjects.Length > 1) _executeCount++;
-
-            if (_executeCount > 1)
-            {
-                _executeCount = 0;
-                return;
-            }
+            if (Selection.gameObjects.Length == 0) return;
 
             // 載入配置檔
             _settings = EditorTool.LoadSettingData<BindCodeSetting>();
 
             // 檢查選擇物件是否包含子節點
-            if (CheckHasChildren()) return;
+            if (_CheckHasChildren()) return;
 
             // 開始搜集綁定資訊
-            StartCollect();
+            _StartCollect();
 
             // 生成代碼
-            GenerateCodes();
+            _GenerateCodes();
         }
+        #endregion
 
         #region Check
-        internal static bool CheckHasChildren()
+        private static bool _CheckHasChildren()
         {
             foreach (var go in Selection.gameObjects)
             {
-                if (HasChild(go, Selection.gameObjects)) return true;
+                if (_HasChild(go, Selection.gameObjects)) return true;
             }
 
             return false;
         }
 
-        internal static bool HasChild(GameObject selected, GameObject[] selections)
+        private static bool _HasChild(GameObject selected, GameObject[] selections)
         {
             if (selected.transform.childCount > 0)
             {
@@ -80,7 +74,7 @@ namespace OxGFrame.CoreFrame.Editor
                         }
                     }
 
-                    if (HasChild(child.gameObject, selections)) return true;
+                    if (_HasChild(child.gameObject, selections)) return true;
                 }
             }
 
@@ -89,39 +83,36 @@ namespace OxGFrame.CoreFrame.Editor
         #endregion
 
         #region Collect
-        internal static void StartCollect()
+        private static void _StartCollect()
         {
             _builder = string.Empty;
             _collectBindInfos.Clear();
-
-            foreach (var go in Selection.gameObjects)
-            {
-                Collect(go);
-            }
+            foreach (var go in Selection.gameObjects) _Collect(go);
         }
 
-        internal static void Collect(GameObject go)
+        private static bool _Collect(GameObject go)
         {
             string name = go.name;
 
             // 檢查是否要結束綁定, 有檢查到【BIND_END】時, 則停止繼續搜尋綁定物件
-            if (Binder.CheckIsToBindChildren(name))
-            {
-                // 這邊檢查有【BIND_PREFIX】時, 則進入判斷
-                if (Binder.CheckNodeHasPrefix(name))
-                {
-                    CollectBindInfo(name);
-                }
+            if (Binder.CheckNodeIsStopEnd(name)) return false;
 
-                // 依序綁定下一個子物件 (遞迴找到符合綁定條件)
-                foreach (Transform child in go.GetComponentInChildren<Transform>())
-                {
-                    Collect(child.gameObject);
-                }
+            // 這邊檢查有【BIND_PREFIX】時, 則進入判斷
+            if (Binder.CheckNodeHasPrefix(name))
+            {
+                _CollectBindInfo(name);
             }
+
+            // 依序綁定下一個子物件 (遞迴找到符合綁定條件)
+            foreach (Transform child in go.GetComponentInChildren<Transform>())
+            {
+                if (!_Collect(child.gameObject)) return false;
+            }
+
+            return true;
         }
 
-        internal static void CollectBindInfo(string name)
+        private static void _CollectBindInfo(string name)
         {
             // 綁定開頭檢測
             string[] heads = Binder.GetHeadSplitNameBySeparator(name);
@@ -168,7 +159,7 @@ namespace OxGFrame.CoreFrame.Editor
         #endregion
 
         #region Generate
-        internal static void GenerateCodes()
+        private static void _GenerateCodes()
         {
             #region 組件規則檢查
             foreach (var bindInfo in _collectBindInfos)

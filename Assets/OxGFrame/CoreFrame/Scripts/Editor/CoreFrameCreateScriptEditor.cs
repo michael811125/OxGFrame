@@ -14,7 +14,7 @@ namespace OxGFrame.CoreFrame.Editor
         private const string TPL_CP_SCRIPT_PATH = "TplScripts/CPFrame/TplCP.cs.txt";
 
         // find current file path
-        private static string pathFinder
+        private static string _pathFinder
         {
             get
             {
@@ -27,7 +27,7 @@ namespace OxGFrame.CoreFrame.Editor
         [MenuItem(itemName: "Assets/Create/OxGFrame/Core Frame/SR Frame/Template Scripts/Template SR.cs (For Scene Resource Prefab)", isValidateFunction: false, priority: 51)]
         public static void CreateScriptTplSR()
         {
-            string currentPath = pathFinder;
+            string currentPath = _pathFinder;
             string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + TPL_SR_SCRIPT_PATH;
 
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplSR.cs");
@@ -38,7 +38,7 @@ namespace OxGFrame.CoreFrame.Editor
         [MenuItem(itemName: "Assets/Create/OxGFrame/Core Frame/UI Frame/Template Scripts/Template UI.cs (For UGUI Prefab)", isValidateFunction: false, priority: 51)]
         public static void CreateScriptTplUI()
         {
-            string currentPath = pathFinder;
+            string currentPath = _pathFinder;
             string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + TPL_UI_SCRIPT_PATH;
 
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplUI.cs");
@@ -49,7 +49,7 @@ namespace OxGFrame.CoreFrame.Editor
         [MenuItem(itemName: "Assets/Create/OxGFrame/Core Frame/CP Frame/Template Scripts/Template CP.cs (For Clone Prefab)", isValidateFunction: false, priority: 51)]
         public static void CreateScriptTplCP()
         {
-            string currentPath = pathFinder;
+            string currentPath = _pathFinder;
             string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + TPL_CP_SCRIPT_PATH;
 
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplCP.cs");

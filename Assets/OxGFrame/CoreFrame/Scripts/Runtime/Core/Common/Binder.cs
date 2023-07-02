@@ -11,48 +11,75 @@ namespace OxGFrame.CoreFrame
         /// <param name="fBase"></param>
         public static void BindComponent(FrameBase fBase)
         {
-            BindNode(fBase.gameObject, fBase);
+            _BindNode(fBase.gameObject, fBase);
         }
 
+        #region Bind
         /// <summary>
         /// 開始遞迴綁定
         /// </summary>
         /// <param name="go"></param>
         /// <param name="fBase"></param>
-        internal static void BindNode(GameObject go, FrameBase fBase)
+        private static bool _BindNode(GameObject go, FrameBase fBase)
         {
             string name = go.name;
 
             // 檢查是否要結束綁定, 有檢查到【BIND_STOP_END】時, 則停止繼續搜尋綁定物件
-            if (CheckIsToBindChildren(name))
-            {
-                // 這邊檢查有【BIND_PREFIXES】時, 則進入判斷
-                if (CheckNodeHasPrefix(name, fBase))
-                {
-                    BindIntoCollector(name, go, fBase);
-                }
+            if (CheckNodeIsStopEnd(name)) return false;
 
-                // 依序綁定下一個子物件 (遞迴找到符合綁定條件)
-                foreach (Transform child in go.GetComponentInChildren<Transform>())
-                {
-                    BindNode(child.gameObject, fBase);
-                }
+            // 這邊檢查有【BIND_PREFIXES】時, 則進入判斷
+            if (CheckNodeHasPrefix(name, fBase))
+            {
+                _BindIntoCollector(name, go, fBase);
             }
+
+            // 依序綁定下一個子物件 (遞迴找到符合綁定條件)
+            foreach (Transform child in go.GetComponentInChildren<Transform>())
+            {
+                if (!_BindNode(child.gameObject, fBase)) return false;
+            }
+
+            return true;
         }
 
+        private static void _BindIntoCollector(string name, GameObject go, FrameBase fBase)
+        {
+            // 綁定開頭檢測
+            string[] heads = GetHeadSplitNameBySeparator(name);
+
+            string bindType = heads[0]; // 綁定類型(會去查找 dictComponentFinder 裡面有沒有符合的類型)
+            string bindName = heads[1]; // 要成為取得綁定物件後的Key
+
+            // 再去判斷取得後的字串陣列是否綁定格式資格
+            if (heads == null || heads.Length < 2 || !FrameConfig.BIND_COMPONENTS.ContainsKey(bindType))
+            {
+                Debug.Log($"{name} => Naming format error. Please check the bind name.");
+                return;
+            }
+
+            // 找到對應的綁定類型後, 進行綁定
+            if (FrameConfig.BIND_COMPONENTS[bindType] == "GameObject")
+            {
+                // 綁定至 FrameBase 中對應的容器, 此時進行完成綁定
+                fBase.collector.AddNode(bindName, go);
+            }
+        }
+        #endregion
+
+        #region Helps
         /// <summary>
-        /// 步驟1. 會先執行檢查是否要進行子節點綁定 (如果不進行則在最後面加上【BIND_STOP_END】後綴字, 就會停止遞迴綁定)
+        /// 檢查是否有 +【BIND_STOP_END】後綴字 (表示停止向下綁定)
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static bool CheckIsToBindChildren(string name)
+        public static bool CheckNodeIsStopEnd(string name)
         {
-            if (name.Substring(name.Length - 1) != FrameConfig.BIND_STOP_END) return true;
+            if (name.Substring(name.Length - 1) == FrameConfig.BIND_STOP_END) return true;
             return false;
         }
 
         /// <summary>
-        /// 步驟2. 檢查是否有 +【BIND_PREFIXES】前綴字 (表示想要進行綁定)
+        /// 檢查是否有 +【BIND_PREFIXES】前綴字 (表示想要進行綁定)
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -80,8 +107,8 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 步驟3. 透過【BIND_HEAD_SEPARATOR】去 Split 字串, 返回取得字串陣列. 
-        /// ※備註: (Example) _Node@MyObj => ["_Node", "MyObj"], 之後可以透過取得的陣列去查找表看是否有對應的組件需要綁定
+        /// 透過【BIND_HEAD_SEPARATOR】去 Split 字串, 返回取得字串陣列
+        /// ※備註: (Example) _Node@MyObj => ["_Node", "MyObj"]
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -93,7 +120,7 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 透過【BIND_TAIL_SEPARATOR】去 Split 字串, 返回取得字串陣列. 
+        /// 透過【BIND_TAIL_SEPARATOR】去 Split 字串, 返回取得字串陣列
         /// ※備註: (Example) _Node@MyObj*Txt => ["MyObj", "Txt"]
         /// </summary>
         /// <param name="name"></param>
@@ -104,28 +131,6 @@ namespace OxGFrame.CoreFrame
 
             return name.Split(FrameConfig.BIND_TAIL_SEPARATOR);
         }
-
-        internal static void BindIntoCollector(string name, GameObject go, FrameBase fBase)
-        {
-            // 綁定開頭檢測
-            string[] heads = GetHeadSplitNameBySeparator(name);
-
-            string bindType = heads[0]; // 綁定類型(會去查找 dictComponentFinder 裡面有沒有符合的類型)
-            string bindName = heads[1]; // 要成為取得綁定物件後的Key
-
-            // 再去判斷取得後的字串陣列是否綁定格式資格
-            if (heads == null || heads.Length < 2 || !FrameConfig.BIND_COMPONENTS.ContainsKey(bindType))
-            {
-                Debug.Log($"{name} => Naming format error. Please check the bind name.");
-                return;
-            }
-
-            // 找到對應的綁定類型後, 進行綁定
-            if (FrameConfig.BIND_COMPONENTS[bindType] == "GameObject")
-            {
-                // 綁定至 FrameBase 中對應的容器, 此時進行完成綁定
-                fBase.collector.AddNode(bindName, go);
-            }
-        }
+        #endregion
     }
 }

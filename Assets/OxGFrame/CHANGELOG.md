@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.4.4] - 2023-07-03
+- Added auto generate stop end symbol feature (Shift+E).
+- Fixed when bind detect stop end symbol bug issue.
+
 ## [2.4.3] - 2023-06-30
 - Added FixBuildTasks for SBP.
 - Fixed use SBP to build SpriteAtlas occurred redundancy bug.
@@ -18,10 +22,10 @@
 ## [2.4.0] - 2023-06-28
 - Updated YooAsset to v1.14.17.
 - Added Create Settings MenuItem option.
-- Added BindCodeSetting for auto generate bind code feature (Shift + B).
+- Added BindCodeSetting for auto generate bind code feature (Shift+B).
   - _Node@MyObj*Img (use * pointer component type)
 - Added symbols for patch play mode are OXGFRAME_OFFLINE_MODE, OXGFRAME_HOST_MODE (force change play mode on build).
-- Added RectTransformAdjuster for adjust anchors (Shift + R).
+- Added RectTransformAdjuster for adjust anchors (Shift+R).
 
 ## [2.3.3] - 2023-06-20
 - Fixed GetHostServerUrl and GetFallbackHostServerUrl url including redundant symbols bug.
