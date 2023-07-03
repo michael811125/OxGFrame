@@ -227,13 +227,13 @@ namespace OxGFrame.Utility.Request
         /// <param name="pivot"></param>
         /// <param name="cts"></param>
         /// <returns></returns>
-        public static async UniTask<Sprite> RequestSprite(string url, Action<Sprite> successAction = null, Action errorAction = null, Vector2 position = default, Vector2 pivot = default, CancellationTokenSource cts = null)
+        public static async UniTask<Sprite> RequestSprite(string url, Action<Sprite> successAction = null, Action errorAction = null, Vector2 position = default, Vector2 pivot = default, float pixelPerUnit = 100, uint extrue = 0, SpriteMeshType meshType = SpriteMeshType.FullRect, CancellationTokenSource cts = null)
         {
             var texture = await RequestTexture2D(url, null, errorAction, cts);
             if (texture != null)
             {
                 pivot = pivot != Vector2.zero ? pivot : new Vector2(0.5f, 0.5f);
-                Sprite sprite = Sprite.Create(texture, new Rect(position.x, position.y, texture.width, texture.height), pivot);
+                Sprite sprite = Sprite.Create(texture, new Rect(position.x, position.y, texture.width, texture.height), pivot, pixelPerUnit, extrue, meshType);
                 successAction?.Invoke(sprite);
                 return sprite;
             }
