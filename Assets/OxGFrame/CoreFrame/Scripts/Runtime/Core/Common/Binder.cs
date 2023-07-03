@@ -25,7 +25,12 @@ namespace OxGFrame.CoreFrame
             string name = go.name;
 
             // 檢查是否要結束綁定, 有檢查到【BIND_STOP_END】時, 則停止繼續搜尋綁定物件
-            if (CheckNodeIsStopEnd(name)) return false;
+            if (CheckNodeHasStopEnd(name))
+            {
+                // 在 Runtime 時, 還原字串 (主要是在 Transform.Find 時, 可以無視 BIND_STOP_END 標籤)
+                go.name = go.name.Replace(FrameConfig.BIND_STOP_END, string.Empty);
+                return false;
+            }
 
             // 這邊檢查有【BIND_PREFIXES】時, 則進入判斷
             if (CheckNodeHasPrefix(name, fBase))
@@ -72,7 +77,7 @@ namespace OxGFrame.CoreFrame
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static bool CheckNodeIsStopEnd(string name)
+        public static bool CheckNodeHasStopEnd(string name)
         {
             if (name.Substring(name.Length - 1) == FrameConfig.BIND_STOP_END) return true;
             return false;

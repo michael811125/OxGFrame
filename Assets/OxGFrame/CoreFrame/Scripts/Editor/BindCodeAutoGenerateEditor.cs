@@ -95,7 +95,7 @@ namespace OxGFrame.CoreFrame.Editor
             string name = go.name;
 
             // 檢查是否要結束綁定, 有檢查到【BIND_END】時, 則停止繼續搜尋綁定物件
-            if (Binder.CheckNodeIsStopEnd(name)) return false;
+            if (Binder.CheckNodeHasStopEnd(name)) return false;
 
             // 這邊檢查有【BIND_PREFIX】時, 則進入判斷
             if (Binder.CheckNodeHasPrefix(name))

@@ -71,7 +71,7 @@ namespace OxGFrame.CoreFrame.Editor
             // 清除原有的 StopEnd
             foreach (var go in _listGos)
             {
-                if (Binder.CheckNodeIsStopEnd(go.name))
+                if (Binder.CheckNodeHasStopEnd(go.name))
                 {
                     go.name = go.name.Replace(FrameConfig.BIND_STOP_END, string.Empty);
                 }
