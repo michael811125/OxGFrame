@@ -278,15 +278,16 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
 
 ***建議使用 Hotkey，不然使用 Right-Click 會執行多次 (實際上不影響自動生成)，但這是 [Unity Bug](https://issuetracker.unity3d.com/issues/menuitem-is-executed-more-than-once-when-multiple-objects-are-selected) 官方不修復了***
 
-### 自動生成停止綁定標籤 (Hotkey: Shift+E, E: End)
+#### 自動生成停止綁定標籤 (Hotkey: Shift+E, E: End)
 
-能夠縮短 Runtime 在綁定的向下查找次數 O(N)，N = StopEndIdx
+能夠縮短 Runtime 在綁定的向下查找次數，時間複雜度為 O(N)，N = StopEndIdx。
+  - 如果有特殊使用 Transform.Find 查找子物件時，剛好子物件名稱有 # 標籤，可以無視 (在 Runtime 時，會 Replace 標籤，還原字串)。
 
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_8.png)
 
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/gif_2.gif)
 
-### 自動生成物件綁定代碼 (Hotkey: Shift+B, B: Bind)
+#### 自動生成物件綁定代碼 (Hotkey: Shift+B, B: Bind)
 
 命名規範使用 * 指向 TailName
 - UIBase & SRBase
