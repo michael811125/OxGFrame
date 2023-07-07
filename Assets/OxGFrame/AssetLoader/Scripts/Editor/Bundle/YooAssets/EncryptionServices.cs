@@ -77,7 +77,7 @@ namespace OxGFrame.AssetLoader.Editor
         }
     }
 
-    public class HTXorEncryption : IEncryptionServices
+    public class HT2XorEncryption : IEncryptionServices
     {
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
@@ -87,12 +87,13 @@ namespace OxGFrame.AssetLoader.Editor
 
             byte hXorKey = cryptogramSettings.hXorKey;
             byte tXorKey = cryptogramSettings.tXorKey;
+            byte jXorKey = cryptogramSettings.jXorKey;
 
             byte[] fileData = File.ReadAllBytes(filePath);
 
-            if (FileCryptogram.HTXOR.HTXorEncryptBytes(fileData, hXorKey, tXorKey))
+            if (FileCryptogram.HT2XOR.HT2XorEncryptBytes(fileData, hXorKey, tXorKey, jXorKey))
             {
-                Debug.Log($"HTXorCryptogram => hXorKey: {hXorKey}, tXorKey: {tXorKey}");
+                Debug.Log($"HT2XorCryptogram => hXorKey: {hXorKey}, tXorKey: {tXorKey}, jXorKey: {jXorKey}");
 
                 EncryptResult result = new EncryptResult();
                 result.LoadMethod = EBundleLoadMethod.LoadFromStream;

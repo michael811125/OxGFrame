@@ -17,5 +17,6 @@ MonoBehaviour:
   xorKey: 1
   hXorKey: 1
   tXorKey: 1
+  jXorKey: 1
   aesKey: aes_key
   aesIv: aes_iv

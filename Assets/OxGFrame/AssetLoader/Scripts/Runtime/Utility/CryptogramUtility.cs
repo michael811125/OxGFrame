@@ -33,7 +33,7 @@ namespace OxGFrame.AssetLoader.Utility
             }
         }
 
-        public static void XorEncryptBundleFiles(string dir, byte key = 0)
+        public static void XorEncryptBundleFiles(string dir, byte key)
         {
             // 取得目錄下所有檔案
             FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
@@ -47,7 +47,7 @@ namespace OxGFrame.AssetLoader.Utility
             }
         }
 
-        public static void XorDecryptBundleFiles(string dir, byte key = 0)
+        public static void XorDecryptBundleFiles(string dir, byte key)
         {
             // 取得目錄下所有檔案
             FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
@@ -61,7 +61,7 @@ namespace OxGFrame.AssetLoader.Utility
             }
         }
 
-        public static void HTXorEncryptBundleFiles(string dir, byte hKey = 0, byte tKey = 0)
+        public static void HT2XorEncryptBundleFiles(string dir, byte hKey, byte tKey, byte jKey)
         {
             // 取得目錄下所有檔案
             FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
@@ -71,11 +71,11 @@ namespace OxGFrame.AssetLoader.Utility
             {
                 // 執行各檔案的加密
                 string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
-                FileCryptogram.HTXOR.WriteFile.HTXorEncryptFile(fPath, hKey, tKey);
+                FileCryptogram.HT2XOR.WriteFile.HT2XorEncryptFile(fPath, hKey, tKey, jKey);
             }
         }
 
-        public static void HTXorDecryptBundleFiles(string dir, byte hKey = 0, byte tKey = 0)
+        public static void HT2XorDecryptBundleFiles(string dir, byte hKey, byte tKey, byte jKey)
         {
             // 取得目錄下所有檔案
             FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
@@ -85,7 +85,7 @@ namespace OxGFrame.AssetLoader.Utility
             {
                 // 執行各檔案的解密
                 string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
-                FileCryptogram.HTXOR.WriteFile.HTXorDecryptFile(fPath, hKey, tKey);
+                FileCryptogram.HT2XOR.WriteFile.HT2XorDecryptFile(fPath, hKey, tKey, jKey);
             }
         }
 

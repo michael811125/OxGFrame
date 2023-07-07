@@ -148,7 +148,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 /// </summary>
                 /// <param name="sourceFile"></param>
                 /// <returns></returns>
-                public static bool XorEncryptFile(string sourceFile, byte key = 0)
+                public static bool XorEncryptFile(string sourceFile, byte key)
                 {
                     try
                     {
@@ -172,7 +172,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 /// </summary>
                 /// <param name="encryptFile"></param>
                 /// <returns></returns>
-                public static bool XorDecryptFile(string encryptFile, byte key = 0)
+                public static bool XorDecryptFile(string encryptFile, byte key)
                 {
                     try
                     {
@@ -198,7 +198,7 @@ namespace OxGFrame.AssetLoader.Bundle
             /// <param name="rawBytes"></param>
             /// <param name="key"></param>
             /// <returns></returns>
-            public static bool XorEncryptBytes(byte[] rawBytes, byte key = 0)
+            public static bool XorEncryptBytes(byte[] rawBytes, byte key)
             {
                 try
                 {
@@ -220,7 +220,7 @@ namespace OxGFrame.AssetLoader.Bundle
             /// </summary>
             /// <param name="encryptBytes"></param>
             /// <returns></returns>
-            public static bool XorDecryptBytes(byte[] encryptBytes, byte key = 0)
+            public static bool XorDecryptBytes(byte[] encryptBytes, byte key)
             {
                 for (int i = 0; i < encryptBytes.Length; i++)
                 {
@@ -235,7 +235,7 @@ namespace OxGFrame.AssetLoader.Bundle
             /// </summary>
             /// <param name="encryptFile"></param>
             /// <returns></returns>
-            public static Stream XorDecryptStream(string encryptFile, byte key = 0)
+            public static Stream XorDecryptStream(string encryptFile, byte key)
             {
                 var fsDecrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.None);
                 var dataBytes = new byte[fsDecrypt.Length];
@@ -253,24 +253,32 @@ namespace OxGFrame.AssetLoader.Bundle
             }
         }
 
-        public class HTXOR
+        public class HT2XOR
         {
             public class WriteFile
             {
                 /// <summary>
-                /// Head-Tail XOR 加密檔案 【檢測OK】
+                /// Head-Tail 2 XOR 加密檔案 【檢測OK】
                 /// </summary>
                 /// <param name="sourceFile"></param>
                 /// <returns></returns>
-                public static bool HTXorEncryptFile(string sourceFile, byte hKey = 0, byte tKey = 0)
+                public static bool HT2XorEncryptFile(string sourceFile, byte hKey, byte tKey, byte jKey)
                 {
                     try
                     {
                         byte[] dataBytes = File.ReadAllBytes(sourceFile);
+
                         // head encrypt
                         dataBytes[0] ^= hKey;
                         // tail encrypt
                         dataBytes[dataBytes.Length - 1] ^= tKey;
+
+                        // jump 2 encrypt
+                        for (int i = 0; i < dataBytes.Length >> 1; i++)
+                        {
+                            dataBytes[i << 1] ^= jKey;
+                        }
+
                         File.WriteAllBytes(sourceFile, dataBytes);
                     }
                     catch
@@ -282,19 +290,27 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 /// <summary>
-                /// Head-Tail XOR 解密檔案 【檢測OK】
+                /// Head-Tail 2 XOR 解密檔案 【檢測OK】
                 /// </summary>
                 /// <param name="encryptFile"></param>
                 /// <returns></returns>
-                public static bool HTXorDecryptFile(string encryptFile, byte hKey = 0, byte tKey = 0)
+                public static bool HT2XorDecryptFile(string encryptFile, byte hKey, byte tKey, byte jKey)
                 {
                     try
                     {
                         byte[] dataBytes = File.ReadAllBytes(encryptFile);
+
+                        // jump 2 encrypt
+                        for (int i = 0; i < dataBytes.Length >> 1; i++)
+                        {
+                            dataBytes[i << 1] ^= jKey;
+                        }
+
                         // head encrypt
                         dataBytes[0] ^= hKey;
                         // tail encrypt
                         dataBytes[dataBytes.Length - 1] ^= tKey;
+
                         File.WriteAllBytes(encryptFile, dataBytes);
                     }
                     catch
@@ -307,11 +323,11 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail XOR 加密檔案 【檢測OK】
+            /// Head-Tail 2 XOR 加密檔案 【檢測OK】
             /// </summary>
             /// <param name="sourceFile"></param>
             /// <returns></returns>
-            public static bool HTXorEncryptBytes(byte[] rawBytes, byte hKey = 0, byte tKey = 0)
+            public static bool HT2XorEncryptBytes(byte[] rawBytes, byte hKey, byte tKey, byte jKey)
             {
                 try
                 {
@@ -319,6 +335,12 @@ namespace OxGFrame.AssetLoader.Bundle
                     rawBytes[0] ^= hKey;
                     // tail encrypt
                     rawBytes[rawBytes.Length - 1] ^= tKey;
+
+                    // jump 2 encrypt
+                    for (int i = 0; i < rawBytes.Length >> 1; i++)
+                    {
+                        rawBytes[i << 1] ^= jKey;
+                    }
                 }
                 catch
                 {
@@ -329,12 +351,18 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail XOR 解密檔案 【檢測OK】
+            /// Head-Tail 2 XOR 解密檔案 【檢測OK】
             /// </summary>
             /// <param name="encryptBytes"></param>
             /// <returns></returns>
-            public static bool HTXorDecryptBytes(byte[] encryptBytes, byte hKey = 0, byte tKey = 0)
+            public static bool HT2XorDecryptBytes(byte[] encryptBytes, byte hKey, byte tKey, byte jKey)
             {
+                // jump 2 encrypt
+                for (int i = 0; i < encryptBytes.Length >> 1; i++)
+                {
+                    encryptBytes[i << 1] ^= jKey;
+                }
+
                 // head encrypt
                 encryptBytes[0] ^= hKey;
                 // tail encrypt
@@ -344,11 +372,11 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// 返回 Head-Tail XOR 解密 Stream 【檢測OK】
+            /// 返回 Head-Tail 2 XOR 解密 Stream 【檢測OK】
             /// </summary>
             /// <param name="encryptFile"></param>
             /// <returns></returns>
-            public static Stream HTXorDecryptStream(string encryptFile, byte hKey = 0, byte tKey = 0)
+            public static Stream HT2XorDecryptStream(string encryptFile, byte hKey, byte tKey, byte jKey)
             {
                 var fsDecrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.None);
                 var dataBytes = new byte[fsDecrypt.Length];
@@ -356,10 +384,18 @@ namespace OxGFrame.AssetLoader.Bundle
                 fsDecrypt.Dispose();
 
                 var msDecrypt = new MemoryStream();
+
+                // jump 2 encrypt
+                for (int i = 0; i < dataBytes.Length >> 1; i++)
+                {
+                    dataBytes[i << 1] ^= jKey;
+                }
+
                 // head encrypt
                 dataBytes[0] ^= hKey;
                 // tail encrypt
                 dataBytes[dataBytes.Length - 1] ^= tKey;
+
                 msDecrypt.Write(dataBytes, 0, dataBytes.Length);
 
                 return msDecrypt;

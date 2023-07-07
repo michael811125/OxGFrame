@@ -38,13 +38,14 @@ namespace OxGFrame.AssetLoader.Bundle
                 case BundleConfig.CryptogramType.XOR:
                     _decryption = new XorDecryption();
                     break;
-                case BundleConfig.CryptogramType.HTXOR:
-                    _decryption = new HTXorDecryption();
+                case BundleConfig.CryptogramType.HT2XOR:
+                    _decryption = new HT2XorDecryption();
                     break;
                 case BundleConfig.CryptogramType.AES:
                     _decryption = new AesDecryption();
                     break;
             }
+            Debug.Log($"<color=#ffe45a>Init Bundle Decryption: {cryptogramType}</color>");
             #endregion
 
             #region Init Package

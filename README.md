@@ -114,7 +114,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ### AssetLoader (dependence YooAsset)
 
 資源加載器模塊，支援動態 Async 或 Sync 加載 (Dynamic Loading)，採用計數管理方式進行資源管控 (支援 Resources 與 AssetBundle)，如果直接使用 AssetLoaders API 進行 Load 跟 Instantiate，則在 Destroy 物件時，需要連帶調用 Unload (成對呼叫 Load & Unload)。
-其中 AssetBundle 集成 YooAsset 實現資源熱更新方案，並且實現 YooAsset 提供的加密介面，其中實現加解密方式有 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密。
+其中 AssetBundle 集成 YooAsset 實現資源熱更新方案，並且實現 YooAsset 提供的加密介面，其中實現加解密方式有 Offset (偏移量方式)、XOR、HT2XOR (Head-Tail 2 XOR)、AES 實現檔案加密。
 
 ※備註 : Use "res#" will load from Resources else load from Bundle
 
@@ -123,10 +123,10 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 **選擇使用 Bundle 開發時，需要先將 PatchLauncher 拖曳至場景中，才能驅動相關配置。【如果透過 PakcageManager 安裝的，透過 Samples Import】**
 
 - FileCryptogram (檔案加解密)
-  - 運算效率 HTXOR ~= OFFSET > XOR > AES
-  - 內存占用 OFFSET > AES > HTXOR = XOR 
-  - AB 包體積增加 OFFSET > AES > HTXOR = XOR
-  - 破解難度 AES > HTXOR > XOR > OFFSET
+  - 運算效率 OFFSET > HT2XOR > XOR > AES
+  - 內存占用 OFFSET > AES > HT2XOR = XOR 
+  - AB 包體積增加 OFFSET > AES > HT2XOR = XOR
+  - 破解難度 AES > HT2XOR > XOR > OFFSET
 
 ### 資源熱更新方案【[YooAsset](https://github.com/tuyoogame/YooAsset)】
 

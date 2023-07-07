@@ -1720,7 +1720,7 @@ PrefabInstance:
     - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
         type: 3}
       propertyPath: decryptArgs
-      value: xor,1
+      value: ht2xor,1,1,1
       objectReference: {fileID: 0}
     - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
         type: 3}

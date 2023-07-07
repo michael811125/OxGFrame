@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [2.5.1] - 2023-07-07
+- Added HT2Xor (hKey, tKey, jKey), time complexity is O((length >> 1) + 2).
+  - [For Encrypt] Do hKey and tKey first, after do jKey.
+  - [For Decrypt] Do jKey first, after do hKey and tKey.
+- Added Bundle Cryptogram Utility (For Verify).
+- Deprecated HTXor.
+
 ## [2.5.0] - 2023-07-07
 - Upgraded YooAsset to v1.5.0 (Breaking Changes).
 - Added GetLocalSandboxRootPath() => .../yoo.

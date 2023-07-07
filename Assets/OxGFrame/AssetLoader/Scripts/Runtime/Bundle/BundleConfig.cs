@@ -35,7 +35,7 @@ namespace OxGFrame.AssetLoader.Bundle
             public const string NONE = "NONE";
             public const string OFFSET = "OFFSET";
             public const string XOR = "XOR";
-            public const string HTXOR = "HTXOR";
+            public const string HT2XOR = "HT2XOR";
             public const string AES = "AES";
         }
 
@@ -79,29 +79,22 @@ namespace OxGFrame.AssetLoader.Bundle
         public static int failedRetryCount = defaultFailedRetryCount;
 
         /// <summary>
-        /// 解密 Key, [NONE], [OFFSET, dummySize], [XOR, key], [HTXOR, hKey, tKey], [AES, key, iv] => ex: "None" or "offset, 12" or "xor, 23" or "htxor, 34, 45" or "aes, key, iv"
+        /// 解密 Key, [NONE], [OFFSET, dummySize], [XOR, key], [HT2XOR, hKey, tKey, jKey], [AES, key, iv]
         /// </summary>
-        private static string _cryptogram;
-        public static string[] cryptogramArgs
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_cryptogram)) return new string[] { CryptogramType.NONE };
-                else
-                {
-                    string[] args = _cryptogram.Trim().Split(',');
-                    for (int i = 0; i < args.Length; i++)
-                    {
-                        args[i] = args[i].Trim();
-                    }
-                    return args;
-                }
-            }
-        }
+        private static string[] _cryptogramArgs = null;
+        public static string[] cryptogramArgs => _cryptogramArgs;
 
-        public static void InitCryptogram(string cryptogram)
+        /// <summary>
+        /// Init Decryption args
+        /// </summary>
+        /// <param name="args"></param>
+        public static void InitCryptogram(string args)
         {
-            _cryptogram = cryptogram;
+            _cryptogramArgs = args.Trim().Split(',');
+            for (int i = 0; i < _cryptogramArgs.Length; i++)
+            {
+                _cryptogramArgs[i] = _cryptogramArgs[i].Trim();
+            }
         }
         #endregion
 

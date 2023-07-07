@@ -66,7 +66,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
     }
 
-    public class HTXorDecryption : IDecryptionServices
+    public class HT2XorDecryption : IDecryptionServices
     {
         public uint GetManagedReadBufferSize()
         {
@@ -91,8 +91,9 @@ namespace OxGFrame.AssetLoader.Bundle
 
             byte hXorkey = Convert.ToByte(cryptogramArgs[1]);
             byte tXorkey = Convert.ToByte(cryptogramArgs[2]);
+            byte jXorKey = Convert.ToByte(cryptogramArgs[3]);
 
-            Stream fs = FileCryptogram.HTXOR.HTXorDecryptStream(filePath, hXorkey, tXorkey);
+            Stream fs = FileCryptogram.HT2XOR.HT2XorDecryptStream(filePath, hXorkey, tXorkey, jXorKey);
 
             return fs;
         }
