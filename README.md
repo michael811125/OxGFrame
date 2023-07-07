@@ -11,7 +11,7 @@
 | **建議先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
 | [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox), Add https://github.com/Deadcows/MyBox.git to Package Manager |
-| [HybirdCLR v3.2.0 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
+| [HybirdCLR v3.2.1 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 ### Unity 如果有遇到 Newtonsoft 問題
 
@@ -63,7 +63,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ### Sub-ThirdParty
 
 - 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案) **特別推薦**
-- 使用 [YooAsset v1.4.17](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
+- 使用 [YooAsset v1.5.0](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
 
 ※備註 : 會持續更新內建第三方庫。
 
