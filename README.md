@@ -165,7 +165,10 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 **Patch 執行順序流程**
 - 判斷 AssetPathcer.IsInitialized() => 執行 AssetPatcher.Check() => 判斷 AssetPatcher.IsDone() => 完成
 
+---
+
 **指定特定的 Package 進行資源加載**
+
 分別區分 App Packages 跟 DLC Packages，注意路徑不同。
 - App Packages (.../CDN/\<ProductName\>/\<Platform\>/\<Version\>/Packages)
   - 手動進行 AssetPatcher.InitAppPackage 的初始 (如果 autoUpdate = false，則需要自行另外調用 AssetPatcher.UpdatePackage 進行 Manifest 的更新)。
