@@ -7,12 +7,12 @@ namespace OxGFrame.AssetLoader.Bundle
 {
     public class RequestBuiltinQuery : IQueryServices
     {
-        public bool QueryStreamingAssets(string fileName)
+        public bool QueryStreamingAssets(string packageName, string fileName, bool isRawFile)
         {
             bool result;
 
-            string builtinFolderName = YooAssets.GetStreamingAssetBuildinFolderName();
-            string url = Path.Combine(BundleConfig.GetRequestStreamingAssetsPath(), $"{builtinFolderName}/{fileName}");
+            string builtinPackagePath = BundleConfig.GetBuiltinPackagePath(packageName);
+            string url = Path.Combine(builtinPackagePath, fileName);
 
             UnityWebRequest request = null;
             try
@@ -63,26 +63,19 @@ namespace OxGFrame.AssetLoader.Bundle
 
     public class RequestSandboxQuery : IQueryServices
     {
-        private string _packageName;
-
-        public RequestSandboxQuery(string packageName)
-        {
-            this._packageName = packageName;
-        }
-
-        public bool QueryStreamingAssets(string fileName)
+        public bool QueryStreamingAssets(string packageName, string fileName, bool isRawFile)
         {
             bool result;
 
-            string sandboxPath = YooAssets.GetSandboxRoot();
+            string sandboxPackagePath = BundleConfig.GetLocalSandboxPackagePath(packageName);
             string hashPrefix = fileName.Substring(0, 2);
             string hashFolderName = fileName.Split(".")[0];
+
+            string bundleFolderName = isRawFile ? BundleConfig.yooCacheRawFolderName : BundleConfig.yooCacheBundleFolderName;
             string url = Path.Combine
             (
-                sandboxPath,
-                BundleConfig.yooCacheFolderName,
-                this._packageName,
-                BundleConfig.yooBundleFolderName,
+                sandboxPackagePath,
+                bundleFolderName,
                 hashPrefix,
                 hashFolderName,
                 BundleConfig.yooBundleFileName

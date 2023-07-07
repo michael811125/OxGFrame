@@ -51,12 +51,12 @@ namespace OxGFrame.MediaFrame.Editor
                         break;
 
                     case SourceType.Streaming:
-                        audioClip = await this._target.GetAudioFromStreamingAssets();
+                        audioClip = await this._target.GetAudioFromStreamingAssets(false);
                         if (audioClip != null) this.audioLength.floatValue = this._target.audioLength = audioClip.length;
                         break;
 
                     case SourceType.Url:
-                        audioClip = await this._target.GetAudioFromURL();
+                        audioClip = await this._target.GetAudioFromURL(false);
                         if (audioClip != null) this.audioLength.floatValue = this._target.audioLength = audioClip.length;
                         break;
                 }

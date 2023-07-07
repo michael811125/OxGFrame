@@ -152,12 +152,13 @@ MonoBehaviour:
   audioFileType: 13
   sourceType: 0
   audioClip: {fileID: 8300000, guid: 2ee1a40e3e7b7be468893108808a1660, type: 3}
+  requestCached: 1
   fullPathName: 
   urlSet:
     getUrlPathFromCfg: 1
     urlCfg:
       requestType: 0
-      file: {fileID: 4900000, guid: be06055d97fa03f428adb763efc06836, type: 3}
+      file: {fileID: 0}
       fullPathName: 
     url: Atmosphere/raining.mp3
   audioLength: 36.310204

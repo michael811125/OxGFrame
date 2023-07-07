@@ -87,7 +87,7 @@ namespace OxGFrame.AssetLoader.Editor
             int operationTypeCount = Enum.GetNames(typeof(OperationType)).Length;
             for (int i = 0; i < operationTypeCount; i++)
             {
-                this.sourceFolder[i] = EditorStorage.GetData(KEY_SAVER, $"sourceFolder{i}", Path.Combine($"{Application.dataPath}/", AssetBundleBuilderHelper.GetDefaultOutputRoot()));
+                this.sourceFolder[i] = EditorStorage.GetData(KEY_SAVER, $"sourceFolder{i}", Path.Combine($"{Application.dataPath}/", AssetBundleBuilderHelper.GetDefaultBuildOutputRoot()));
                 this.exportFolder[i] = EditorStorage.GetData(KEY_SAVER, $"exportFolder{i}", Path.Combine($"{Application.dataPath}/", $"{EditorTools.GetProjectPath()}/ExportBundles"));
             }
 

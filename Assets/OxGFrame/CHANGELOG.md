@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [2.5.0] - 2023-07-07
+- Upgraded YooAsset to v1.5.0 (Breaking Changes).
+- Added GetLocalSandboxRootPath() => .../yoo.
+- Added GetLocalSandboxPackagePath(string packageName) => .../yoo/\<PackageName\>.
+- Added GetBuiltinPackagePath(string packageName) => .../StreamingAssets/\<PackageName\>.
+- Modified QueryServices.
+- Modified Requester methods has (bool cached) param. The cached param depends on InitCache.
+- Modified Audio has requestCached option (depends on Requester.InitCacheForAudio).
+- Optimized url configs request (url configs will cached).
+- Renamed AssetPatcher.InitPackage to AssetPatcher.InitAppPackage.
+- Removed GetLocalSandboxPath method.
+- Removed InitCustomPackage by idx method.
+
 ## [2.4.4] - 2023-07-03
 - Added auto generate stop end symbol feature (Shift+E).
 - Fixed when bind detect stop end symbol bug issue.

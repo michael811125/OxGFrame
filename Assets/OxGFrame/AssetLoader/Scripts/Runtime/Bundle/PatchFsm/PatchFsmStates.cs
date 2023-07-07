@@ -136,7 +136,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 // 反之, 請求 Server 的 Cfg
                 else url = await BundleConfig.GetHostServerAppConfigPath();
 
-                string hostCfgJson = await Requester.RequestText(url, null, PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage);
+                string hostCfgJson = await Requester.RequestText(url, null, PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage, null, false);
 
                 AppConfig hostCfg = JsonConvert.DeserializeObject<AppConfig>(hostCfgJson);
 
@@ -149,9 +149,9 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 AppConfig localCfg = new AppConfig();
 
                 // 確保本地端的儲存目錄是否存在, 無存在則建立
-                if (!Directory.Exists(BundleConfig.GetLocalSandboxPath()))
+                if (!Directory.Exists(BundleConfig.GetLocalSandboxRootPath()))
                 {
-                    Directory.CreateDirectory(BundleConfig.GetLocalSandboxPath());
+                    Directory.CreateDirectory(BundleConfig.GetLocalSandboxRootPath());
                 }
 
                 // 把資源配置文件拷貝到持久化目錄 Application.persistentDataPath
@@ -160,7 +160,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     // 從 StreamingAssets 中取得配置檔 (InApp)
                     string saCfgPath = BundleConfig.GetStreamingAssetsAppConfigPath();
-                    string saCfgJson = await Requester.RequestText(saCfgPath);
+                    string saCfgJson = await Requester.RequestText(saCfgPath, null, null, null, false);
 
                     // Local save path (Sandbox)
                     string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
@@ -181,7 +181,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     // 從 StreamingAssets 讀取配置檔 (StreamingAssets 使用 Request)
                     string saCfgPath = BundleConfig.GetStreamingAssetsAppConfigPath();
-                    string saCfgJson = await Requester.RequestText(saCfgPath);
+                    string saCfgJson = await Requester.RequestText(saCfgPath, null, null, null, false);
                     saCfg = JsonConvert.DeserializeObject<AppConfig>(saCfgJson);
 
                     // 從本地端讀取配置檔 (持久化路徑使用 File.Read)
@@ -528,7 +528,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 #region Create Downaloder by Tags
                 string url = await BundleConfig.GetHostServerPatchConfigPath();
-                string hostCfgJson = await Requester.RequestText(url);
+                string hostCfgJson = await Requester.RequestText(url, null, null, null, false);
                 PatchConfig patchCfg = JsonConvert.DeserializeObject<PatchConfig>(hostCfgJson);
                 List<GroupInfo> patchGroupInfos = patchCfg.GROUP_INFOS;
 

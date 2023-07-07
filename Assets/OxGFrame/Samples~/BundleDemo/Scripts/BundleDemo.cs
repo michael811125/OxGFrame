@@ -8,6 +8,7 @@ using System.Text;
 using UniFramework.Event;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.ReloadAttribute;
 
 public class BundleDemo : MonoBehaviour
 {
@@ -429,7 +430,7 @@ public class BundleDemo : MonoBehaviour
      * [Load asset and download from specific package (Export App Bundles for CDN)]
      * 
      * var packageName = "OtherPackage";
-     * bool isInitialized = await AssetPatcher.InitPackage(packageName, true);
+     * bool isInitialized = await AssetPatcher.InitAppPackage(packageName, true);
      * if (isInitialized)
      * {
      *     var package = AssetPatcher.GetPackage(packageName);

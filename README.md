@@ -114,7 +114,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 ### AssetLoader (dependence YooAsset)
 
 資源加載器模塊，支援動態 Async 或 Sync 加載 (Dynamic Loading)，採用計數管理方式進行資源管控 (支援 Resources 與 AssetBundle)，如果直接使用 AssetLoaders API 進行 Load 跟 Instantiate，則在 Destroy 物件時，需要連帶調用 Unload (成對呼叫 Load & Unload)。
-其中 AssetBundle 集成【[YooAsset](https://github.com/tuyoogame/YooAsset)】實現資源熱更新方案，並且實現【[YooAsset](https://github.com/tuyoogame/YooAsset)】提供的加密介面，其中實現加解密方式有 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密。
+其中 AssetBundle 集成 YooAsset 實現資源熱更新方案，並且實現 YooAsset 提供的加密介面，其中實現加解密方式有 Offset (偏移量方式)、XOR、HTXOR (Head-Tail XOR)、AES 實現檔案加密。
 
 ※備註 : Use "res#" will load from Resources else load from Bundle
 
@@ -166,14 +166,18 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的輕量級框架，並且使�
 - 判斷 AssetPathcer.IsInitialized() => 執行 AssetPatcher.Check() => 判斷 AssetPatcher.IsDone() => 完成
 
 **指定特定的 Package 進行資源加載**
-- 需先手動進行 AssetPatcher.InitPackage 的初始 (如果 autoUpdate = false，則需要自行另外調用 AssetPatcher.UpdatePackage 進行 Manifest 的更新)。
-- 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion，變成只要 DLC 有更新就可以使用固定路徑進行更新。
+分別區分 App Packages 跟 DLC Packages，注意路徑不同。
+- App Packages (.../CDN/\<ProductName\>/\<Platform\>/\<Version\>/Packages)
+  - 手動進行 AssetPatcher.InitAppPackage 的初始 (如果 autoUpdate = false，則需要自行另外調用 AssetPatcher.UpdatePackage 進行 Manifest 的更新)。
+- DLC Packages (.../CDN/\<ProductName\>/\<Platform\>/DLC/Packages)
+  - 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion，變成只要 DLC 有更新就可以使用固定路徑進行更新。
 
+**App Package**
 ```
 // [Load asset and download from specific package (Export App Bundles for CDN)]
 
 var packageName = "OtherPackage";
-bool isInitialized = await AssetPatcher.InitPackage(packageName, true);
+bool isInitialized = await AssetPatcher.InitAppPackage(packageName, true);
 if (isInitialized)
 {
     var package = AssetPatcher.GetPackage(packageName);
@@ -183,6 +187,7 @@ if (isInitialized)
 }
 ```
 
+**DLC Package**
 ```
 // [Load asset and download from specific package (Export Individual DLC Bundles for CDN)]
 

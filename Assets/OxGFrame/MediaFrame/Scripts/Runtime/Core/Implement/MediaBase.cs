@@ -40,8 +40,10 @@ namespace OxGFrame.MediaFrame
             [Tooltip("Get URL_PATH from UrlCfg .txt file (Assign a file, This is not supports [WebGL])"), ConditionalField(nameof(requestType), false, RequestType.Assign)]
             public TextAsset file = null;
             [Tooltip("Get URL_PATH from UrlCfg .txt file (StreamingAssets Request)"), ConditionalField(nameof(requestType), false, RequestType.StreamingAssets)]
-            public string fullPathName = string.Empty;
+            public string fullPathName = MediaConfig.mediaUrlFileName;
 
+            #region Get UrlConfig File Content
+            private static string _urlCfgContent = null;
             public async UniTask<string> GetFileText()
             {
                 switch (this.requestType)
@@ -51,11 +53,13 @@ namespace OxGFrame.MediaFrame
 
                     case RequestType.StreamingAssets:
                         string pathName = System.IO.Path.Combine(GetRequestStreamingAssetsPath(), this.fullPathName);
-                        return await Requester.RequestText(pathName);
+                        if (string.IsNullOrEmpty(_urlCfgContent)) _urlCfgContent = await Requester.RequestText(pathName, null, null, null, false);
+                        return _urlCfgContent;
                 }
 
                 return null;
             }
+            #endregion
 
             ~UrlCfg()
             {
@@ -205,17 +209,18 @@ namespace OxGFrame.MediaFrame
             this.mediaName = mediaName;
         }
 
-        #region MEDIA_URL請求
+        #region MEDIA_URL 請求
         public const string VIDEO_URLSET = "video_urlset";
         public const string AUDIO_URLSET = "audio_urlset";
-        public string GetValueFromUrlCfg(string urlCfg, string key)
+        public static string GetValueFromUrlCfg(string urlCfg, string key)
         {
-            if (urlCfg == null) return string.Empty;
+            if (string.IsNullOrEmpty(urlCfg)) return string.Empty;
 
             var content = urlCfg;
             var allWords = content.Split('\n');
             var lines = new List<string>(allWords);
-            Dictionary<string, string> fileMap = new Dictionary<string, string>();
+
+            var fileMap = new Dictionary<string, string>();
             foreach (var readLine in lines)
             {
                 Debug.Log($"readline: {readLine}");

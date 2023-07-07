@@ -315,7 +315,7 @@ namespace OxGFrame.AssetLoader.Editor
         {
             #region YooAsset Bundle Process
             // 取得 Bundle 輸出路徑
-            if (string.IsNullOrEmpty(inputPath)) inputPath = AssetBundleBuilderHelper.GetDefaultOutputRoot();
+            if (string.IsNullOrEmpty(inputPath)) inputPath = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
 
             // 取得平台路徑
             string inputPathWithPlatform = Path.Combine(inputPath, $"{EditorUserBuildSettings.activeBuildTarget}");
@@ -365,7 +365,7 @@ namespace OxGFrame.AssetLoader.Editor
         {
             #region YooAsset Bundle Process
             // 取得 Bundle 輸出路徑
-            if (string.IsNullOrEmpty(inputPath)) inputPath = AssetBundleBuilderHelper.GetDefaultOutputRoot();
+            if (string.IsNullOrEmpty(inputPath)) inputPath = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
 
             // 取得平台路徑
             string inputPathWithPlatform = Path.Combine(inputPath, $"{EditorUserBuildSettings.activeBuildTarget}");
@@ -459,7 +459,7 @@ namespace OxGFrame.AssetLoader.Editor
             var cfg = new PatchConfig();
 
             // 取得 Bundle 路徑
-            if (string.IsNullOrEmpty(inputPath)) inputPath = AssetBundleBuilderHelper.GetDefaultOutputRoot();
+            if (string.IsNullOrEmpty(inputPath)) inputPath = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
 
             string inputPathWithPlatform = Path.Combine(inputPath, $"{EditorUserBuildSettings.activeBuildTarget}");
 
@@ -563,7 +563,7 @@ namespace OxGFrame.AssetLoader.Editor
         [MenuItem(MenuRoot + "Local Download Directory (Sandbox)/Open Download Directory", false, 197)]
         internal static void OpenDownloadDir()
         {
-            var dir = YooAssets.GetSandboxRoot();
+            var dir = BundleConfig.GetLocalSandboxRootPath();
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
@@ -583,8 +583,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             if (!operate) return;
 
-            var dir = YooAssets.GetSandboxRoot();
-
+            var dir = BundleConfig.GetLocalSandboxRootPath();
             BundleUtility.DeleteFolder(dir);
 
             if (!Directory.Exists(dir))

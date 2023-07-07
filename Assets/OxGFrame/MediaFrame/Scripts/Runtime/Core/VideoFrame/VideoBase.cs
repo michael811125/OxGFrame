@@ -90,8 +90,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 case SourceType.Url:
                     {
                         string urlCfg = await this.urlSet.urlCfg.GetFileText();
-                        string vUrlset = (this.urlSet.getUrlPathFromCfg) ? this.GetValueFromUrlCfg(urlCfg, VIDEO_URLSET) : string.Empty;
-                        string url = (!string.IsNullOrEmpty(vUrlset)) ? $"{vUrlset.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
+                        string urlSet = this.urlSet.getUrlPathFromCfg ? GetValueFromUrlCfg(urlCfg, VIDEO_URLSET) : string.Empty;
+                        string url = (!string.IsNullOrEmpty(urlSet)) ? $"{urlSet.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
                         if (!this.TrySetUrl(url))
                         {
                             Debug.Log($"<color=#FF0000>Cannot found VideoClip: {this.mediaName}</color>");

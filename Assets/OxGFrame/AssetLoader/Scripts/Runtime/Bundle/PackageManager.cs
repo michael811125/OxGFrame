@@ -190,9 +190,7 @@ namespace OxGFrame.AssetLoader.Bundle
             if (package == null) return false;
 
             // delete local files first
-            var sandboxPath = BundleConfig.GetLocalSandboxPath();
-            string packagePath = Path.Combine(sandboxPath, BundleConfig.yooCacheFolderName, packageName);
-            BundleUtility.DeleteFolder(packagePath);
+            package.ClearPackageSandbox();
 
             await UniTask.Delay(TimeSpan.FromSeconds(1f));
 

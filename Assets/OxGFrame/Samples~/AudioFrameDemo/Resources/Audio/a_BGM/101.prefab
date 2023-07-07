@@ -143,7 +143,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ignoreTimeScale: 1
   loops: -1
-  volume: 1
   onStopAndDestroy: 1
   onDestroyAndUnload: 1
   autoEndToStop: 1
@@ -158,7 +157,7 @@ MonoBehaviour:
     getUrlPathFromCfg: 1
     urlCfg:
       requestType: 0
-      file: {fileID: 4900000, guid: be06055d97fa03f428adb763efc06836, type: 3}
+      file: {fileID: 0}
       fullPathName: 
     url: BGM/Destiny.mp3
   audioLength: 29.152653

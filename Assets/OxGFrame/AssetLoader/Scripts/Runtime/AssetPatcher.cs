@@ -43,12 +43,31 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get local save persistent path
+        /// Get local save persistent root path (.../yoo)
         /// </summary>
         /// <returns></returns>
-        public static string GetLocalSandboxPath()
+        public static string GetLocalSandboxRootPath()
         {
-            return BundleConfig.GetLocalSandboxPath();
+            return BundleConfig.GetLocalSandboxRootPath();
+        }
+
+        /// <summary>
+        /// Get local save persistent path by pakcage (...yoo/PackageName)
+        /// </summary>
+        /// <returns></returns>
+        public static string GetLocalSandboxPackagePath(string packageName)
+        {
+            return BundleConfig.GetLocalSandboxPackagePath(packageName);
+        }
+
+        /// <summary>
+        /// Get built-in path by package (.../StreamingAssets/yoo/PackageName)
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <returns></returns>
+        public static string GetBuiltinPackagePath(string packageName)
+        {
+            return BundleConfig.GetBuiltinPackagePath(packageName);
         }
 
         /// <summary>
@@ -179,13 +198,14 @@ namespace OxGFrame.AssetLoader
             return await PackageManager.UnloadPackageAndClearCacheFiles(packageName);
         }
 
+        #region App Package
         /// <summary>
-        /// Init package by package name (If PlayMode is HostMode will request from default host path)
+        /// Init app package by package name (If PlayMode is HostMode will request from default host path)
         /// </summary>
         /// <param name="packageName"></param>
         /// <param name="autoUpdate"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitPackage(string packageName, bool autoUpdate = false)
+        public static async UniTask<bool> InitAppPackage(string packageName, bool autoUpdate = false)
         {
             string hostServer = null;
             string fallbackHostServer = null;
@@ -203,12 +223,12 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Init package by package list idx (If PlayMode is HostMode will request from default host path)
+        /// Init app package by package list idx (If PlayMode is HostMode will request from default host path)
         /// </summary>
         /// <param name="idx"></param>
         /// <param name="autoUpdate"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitPackage(int idx, bool autoUpdate = false)
+        public static async UniTask<bool> InitAppPackage(int idx, bool autoUpdate = false)
         {
             string packageName = GetPackageNameByIdx(idx);
 
@@ -226,7 +246,9 @@ namespace OxGFrame.AssetLoader
 
             return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
         }
+        #endregion
 
+        #region DLC Package
         /// <summary>
         /// Init dlc package (If PlayMode is HostMode will request from default host dlc path)
         /// </summary>
@@ -245,7 +267,7 @@ namespace OxGFrame.AssetLoader
             {
                 hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
                 fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
-                queryService = new RequestSandboxQuery(packageName);
+                queryService = new RequestSandboxQuery();
             }
 
             return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
@@ -269,12 +291,14 @@ namespace OxGFrame.AssetLoader
             {
                 hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
                 fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
-                queryService = (queryService == null) ? new RequestSandboxQuery(packageName) : queryService;
+                queryService = (queryService == null) ? new RequestSandboxQuery() : queryService;
             }
 
             return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
         }
+        #endregion
 
+        #region Custom Package
         /// <summary>
         /// Init package by package name (Custom your host path and query service)
         /// </summary>
@@ -288,21 +312,7 @@ namespace OxGFrame.AssetLoader
         {
             return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
         }
-
-        /// <summary>
-        /// Init package by package list idx (Custom your host path and query service)
-        /// </summary>
-        /// <param name="idx"></param>
-        /// <param name="hostServer"></param>
-        /// <param name="fallbackHostServer"></param>
-        /// <param name="autoUpdate"></param>
-        /// <param name="queryService"></param>
-        /// <returns></returns>
-        public static async UniTask<bool> InitCustomPackage(int idx, string hostServer, string fallbackHostServer, IQueryServices queryService, bool autoUpdate = false)
-        {
-            string packageName = GetPackageNameByIdx(idx);
-            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
-        }
+        #endregion
 
         /// <summary>
         /// Update package manifest by package name

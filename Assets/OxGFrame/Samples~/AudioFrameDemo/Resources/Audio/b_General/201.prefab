@@ -157,7 +157,7 @@ MonoBehaviour:
     getUrlPathFromCfg: 1
     urlCfg:
       requestType: 0
-      file: {fileID: 4900000, guid: be06055d97fa03f428adb763efc06836, type: 3}
+      file: {fileID: 0}
       fullPathName: 
     url: General/button_click.mp3
   audioLength: 2.0636735

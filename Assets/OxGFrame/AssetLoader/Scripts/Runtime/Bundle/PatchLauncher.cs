@@ -17,8 +17,8 @@ namespace OxGFrame.AssetLoader.Bundle
         [Tooltip("If checked will skip default package download step of patch (force download while playing)"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
         public bool skipCreateMainDownloder = false;
 
-        [Header("Package List")]
-        [Tooltip("The first element will be default package")]
+        [Header("App Package List")]
+        [Tooltip("The first element will be default app package")]
         public List<string> listPackage = new List<string>() { "DefaultPackage", "HotfixPackage" };
 
         [Header("Download Options")]

@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuildPipeline: 1
   BuildMode: 1
-  BuildPackage: HotfixPackage
+  BuildPackage: DefaultPackage
   CompressOption: 2
   OutputNameStyle: 1
-  CopyBuildinFileOption: 0
+  CopyBuildinFileOption: 1
   CopyBuildinFileTags: 
   EncyptionClassName: XorEncryption

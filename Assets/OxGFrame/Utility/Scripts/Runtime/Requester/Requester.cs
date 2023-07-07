@@ -30,7 +30,7 @@ namespace OxGFrame.Utility.Request
             _lruTexture2ds = null;
         }
 
-        public static void InitARCCacheCapacityForText(int capacity = 80)
+        public static void InitARCCacheCapacityForText(int capacity = 100)
         {
             if (_arcTexts == null) _arcTexts = new ARCCache<string, string>(capacity);
             // Only allow one cache type
@@ -67,7 +67,7 @@ namespace OxGFrame.Utility.Request
         /// <param name="errorAction"></param>
         /// <param name="cts"></param>
         /// <returns></returns>
-        public static async UniTask<AudioClip> RequestAudio(string url, AudioType audioType = AudioType.MPEG, Action<AudioClip> successAction = null, Action errorAction = null, CancellationTokenSource cts = null)
+        public static async UniTask<AudioClip> RequestAudio(string url, AudioType audioType = AudioType.MPEG, Action<AudioClip> successAction = null, Action errorAction = null, CancellationTokenSource cts = null, bool cached = true)
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -75,17 +75,20 @@ namespace OxGFrame.Utility.Request
                 return null;
             }
 
-            // ARCCache
-            if (_arcAudios != null)
+            if (cached)
             {
-                AudioClip audioClip = _arcAudios.Get(url);
-                if (audioClip != null) return audioClip;
-            }
-            // LRUCache
-            else if (_lruAudios != null)
-            {
-                AudioClip audioClip = _lruAudios.Get(url);
-                if (audioClip != null) return audioClip;
+                // ARCCache
+                if (_arcAudios != null)
+                {
+                    AudioClip audioClip = _arcAudios.Get(url);
+                    if (audioClip != null) return audioClip;
+                }
+                // LRUCache
+                else if (_lruAudios != null)
+                {
+                    AudioClip audioClip = _lruAudios.Get(url);
+                    if (audioClip != null) return audioClip;
+                }
             }
 
             UnityWebRequest request = null;
@@ -107,17 +110,20 @@ namespace OxGFrame.Utility.Request
                 }
 
                 AudioClip audioClip = ((DownloadHandlerAudioClip)request.downloadHandler).audioClip;
-                // ARCCache
-                if (_arcAudios != null)
+                if (cached)
                 {
-                    _arcAudios.Add(url, audioClip);
-                    audioClip = _arcAudios.Get(url);
-                }
-                // LRUCache
-                else if (_lruAudios != null)
-                {
-                    _lruAudios.Add(url, audioClip);
-                    audioClip = _lruAudios.Get(url);
+                    // ARCCache
+                    if (_arcAudios != null)
+                    {
+                        _arcAudios.Add(url, audioClip);
+                        audioClip = _arcAudios.Get(url);
+                    }
+                    // LRUCache
+                    else if (_lruAudios != null)
+                    {
+                        _lruAudios.Add(url, audioClip);
+                        audioClip = _lruAudios.Get(url);
+                    }
                 }
                 successAction?.Invoke(audioClip);
 
@@ -146,7 +152,7 @@ namespace OxGFrame.Utility.Request
         /// <param name="errorAction"></param>
         /// <param name="cts"></param>
         /// <returns></returns>
-        public static async UniTask<Texture2D> RequestTexture2D(string url, Action<Texture2D> successAction = null, Action errorAction = null, CancellationTokenSource cts = null)
+        public static async UniTask<Texture2D> RequestTexture2D(string url, Action<Texture2D> successAction = null, Action errorAction = null, CancellationTokenSource cts = null, bool cached = true)
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -154,17 +160,20 @@ namespace OxGFrame.Utility.Request
                 return null;
             }
 
-            // ARCCache
-            if (_arcTexture2ds != null)
+            if (cached)
             {
-                Texture2D t2d = _arcTexture2ds.Get(url);
-                if (t2d != null) return t2d;
-            }
-            // LRUCache
-            else if (_lruTexture2ds != null)
-            {
-                Texture2D t2d = _lruTexture2ds.Get(url);
-                if (t2d != null) return t2d;
+                // ARCCache
+                if (_arcTexture2ds != null)
+                {
+                    Texture2D t2d = _arcTexture2ds.Get(url);
+                    if (t2d != null) return t2d;
+                }
+                // LRUCache
+                else if (_lruTexture2ds != null)
+                {
+                    Texture2D t2d = _lruTexture2ds.Get(url);
+                    if (t2d != null) return t2d;
+                }
             }
 
             UnityWebRequest request = null;
@@ -186,17 +195,20 @@ namespace OxGFrame.Utility.Request
                 }
 
                 Texture2D t2d = ((DownloadHandlerTexture)request.downloadHandler).texture;
-                // ARCCache
-                if (_arcTexture2ds != null)
+                if (cached)
                 {
-                    _arcTexture2ds.Add(url, t2d);
-                    t2d = _arcTexture2ds.Get(url);
-                }
-                // LRUCache
-                else if (_lruTexture2ds != null)
-                {
-                    _lruTexture2ds.Add(url, t2d);
-                    t2d = _lruTexture2ds.Get(url);
+                    // ARCCache
+                    if (_arcTexture2ds != null)
+                    {
+                        _arcTexture2ds.Add(url, t2d);
+                        t2d = _arcTexture2ds.Get(url);
+                    }
+                    // LRUCache
+                    else if (_lruTexture2ds != null)
+                    {
+                        _lruTexture2ds.Add(url, t2d);
+                        t2d = _lruTexture2ds.Get(url);
+                    }
                 }
                 successAction?.Invoke(t2d);
 
@@ -227,9 +239,9 @@ namespace OxGFrame.Utility.Request
         /// <param name="pivot"></param>
         /// <param name="cts"></param>
         /// <returns></returns>
-        public static async UniTask<Sprite> RequestSprite(string url, Action<Sprite> successAction = null, Action errorAction = null, Vector2 position = default, Vector2 pivot = default, float pixelPerUnit = 100, uint extrude = 0, SpriteMeshType meshType = SpriteMeshType.FullRect, CancellationTokenSource cts = null)
+        public static async UniTask<Sprite> RequestSprite(string url, Action<Sprite> successAction = null, Action errorAction = null, Vector2 position = default, Vector2 pivot = default, float pixelPerUnit = 100, uint extrude = 0, SpriteMeshType meshType = SpriteMeshType.FullRect, CancellationTokenSource cts = null, bool cached = true)
         {
-            var texture = await RequestTexture2D(url, null, errorAction, cts);
+            var texture = await RequestTexture2D(url, null, errorAction, cts, cached);
             if (texture != null)
             {
                 pivot = pivot != Vector2.zero ? pivot : new Vector2(0.5f, 0.5f);
@@ -302,7 +314,7 @@ namespace OxGFrame.Utility.Request
         /// <param name="errorAction"></param>
         /// <param name="cts"></param>
         /// <returns></returns>
-        public static async UniTask<string> RequestText(string url, Action<string> successAction = null, Action errorAction = null, CancellationTokenSource cts = null)
+        public static async UniTask<string> RequestText(string url, Action<string> successAction = null, Action errorAction = null, CancellationTokenSource cts = null, bool cached = true)
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -310,17 +322,20 @@ namespace OxGFrame.Utility.Request
                 return null;
             }
 
-            // ARCCache
-            if (_arcTexts != null)
+            if (cached)
             {
-                string text = _arcTexts.Get(url);
-                if (text != null) return text;
-            }
-            // LRUCache
-            else if (_lruTexts != null)
-            {
-                string text = _lruTexts.Get(url);
-                if (text != null) return text;
+                // ARCCache
+                if (_arcTexts != null)
+                {
+                    string text = _arcTexts.Get(url);
+                    if (text != null) return text;
+                }
+                // LRUCache
+                else if (_lruTexts != null)
+                {
+                    string text = _lruTexts.Get(url);
+                    if (text != null) return text;
+                }
             }
 
             UnityWebRequest request = null;
@@ -341,17 +356,20 @@ namespace OxGFrame.Utility.Request
                 }
 
                 string text = request.downloadHandler.text;
-                // ARCCache
-                if (_arcTexts != null)
+                if (cached)
                 {
-                    _arcTexts.Add(url, text);
-                    text = _arcTexts.Get(url);
-                }
-                // LRUCache
-                else if (_lruTexts != null)
-                {
-                    _lruTexts.Add(url, text);
-                    text = _lruTexts.Get(url);
+                    // ARCCache
+                    if (_arcTexts != null)
+                    {
+                        _arcTexts.Add(url, text);
+                        text = _arcTexts.Get(url);
+                    }
+                    // LRUCache
+                    else if (_lruTexts != null)
+                    {
+                        _lruTexts.Add(url, text);
+                        text = _lruTexts.Get(url);
+                    }
                 }
                 successAction?.Invoke(text);
 

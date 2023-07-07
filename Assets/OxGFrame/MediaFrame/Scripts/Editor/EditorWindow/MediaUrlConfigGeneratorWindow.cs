@@ -26,7 +26,7 @@ namespace OxGFrame.MediaFrame.Editor
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
-        [MenuItem(MediaHelper.MenuRoot + "Media Url Config Generator", false, 899)]
+        [MenuItem(MediaHelper.MenuRoot + "Media Url Config Generator (" + MediaConfig.mediaUrlFileName + ")", false, 899)]
         public static void ShowWindow()
         {
             PROJECT_PATH = Application.dataPath;

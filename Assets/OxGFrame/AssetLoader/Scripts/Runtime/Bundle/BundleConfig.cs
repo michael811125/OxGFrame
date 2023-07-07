@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
@@ -130,10 +129,13 @@ namespace OxGFrame.AssetLoader.Bundle
         public const string dlcFolderName = "DLC";  // DLC 資料夾名稱
 
         // YooAsset 歸類名稱
-        public const string yooCacheFolderName = "CacheFiles";
-        public const string yooBundleFolderName = "BundleFiles";
+        public const string yooDefaultFolderName = "yoo";
+        public const string yooCacheBundleFolderName = "CacheBundleFiles";
+        public const string yooCacheRawFolderName = "CacheRawFiles";
         public const string yooBundleFileName = "__data";
         #endregion
+
+        private static Dictionary<string, string> _urlCfgFileMap = null;
 
         /// <summary>
         /// 取得 burlconfig 佈署配置檔的數據
@@ -142,23 +144,27 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetValueFromUrlCfg(string key)
         {
-            string pathName = Path.Combine(GetRequestStreamingAssetsPath(), bundleUrlFileName);
-            var content = await Requester.RequestText(pathName);
-            if (string.IsNullOrEmpty(content)) return string.Empty;
-            var allWords = content.Split('\n');
-            var lines = new List<string>(allWords);
-            var fileMap = new Dictionary<string, string>();
-            foreach (var readLine in lines)
+            if (_urlCfgFileMap == null)
             {
-                if (readLine.IndexOf('#') != -1 && readLine[0] == '#') continue;
-                var args = readLine.Split(' ');
-                if (args.Length >= 2)
+                string pathName = Path.Combine(GetRequestStreamingAssetsPath(), bundleUrlFileName);
+                var content = await Requester.RequestText(pathName, null, null, null, false);
+                if (string.IsNullOrEmpty(content)) return string.Empty;
+                var allWords = content.Split('\n');
+                var lines = new List<string>(allWords);
+
+                _urlCfgFileMap = new Dictionary<string, string>();
+                foreach (var readLine in lines)
                 {
-                    if (!fileMap.ContainsKey(args[0])) fileMap.Add(args[0], args[1].Replace("\n", "").Replace("\r", ""));
+                    if (readLine.IndexOf('#') != -1 && readLine[0] == '#') continue;
+                    var args = readLine.Split(' ');
+                    if (args.Length >= 2)
+                    {
+                        if (!_urlCfgFileMap.ContainsKey(args[0])) _urlCfgFileMap.Add(args[0], args[1].Replace("\n", "").Replace("\r", ""));
+                    }
                 }
             }
 
-            fileMap.TryGetValue(key, out string value);
+            _urlCfgFileMap.TryGetValue(key, out string value);
             return value;
         }
 
@@ -168,7 +174,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<AppConfig> GetAppConfigFromStreamingAssets()
         {
-            string cfgJson = await Requester.RequestText(GetStreamingAssetsAppConfigPath());
+            string cfgJson = await Requester.RequestText(GetStreamingAssetsAppConfigPath(), null, null, null, false);
             if (!string.IsNullOrEmpty(cfgJson)) return JsonConvert.DeserializeObject<AppConfig>(cfgJson);
 
             return null;
@@ -259,12 +265,43 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得本地持久化路徑 (下載的儲存路徑)
+        /// 取得本地持久化根目錄
         /// </summary>
         /// <returns></returns>
-        public static string GetLocalSandboxPath()
+        public static string GetLocalSandboxRootPath()
         {
-            return YooAssets.GetSandboxRoot();
+#if UNITY_EDITOR
+            string projectPath = Path.GetDirectoryName(Application.dataPath);
+            projectPath = projectPath.Replace('\\', '/').Replace("\\", "/");
+            return Path.Combine(projectPath, yooDefaultFolderName);
+#elif UNITY_STANDALONE
+            return Path.Combine(Application.dataPath, yooDefaultFolderName);
+#else
+            return Path.Combine(Application.persistentDataPath, yooDefaultFolderName);
+#endif
+        }
+
+        /// <summary>
+        /// 依照 Package 取得本地持久化路徑 (下載的儲存路徑)
+        /// </summary>
+        /// <returns></returns>
+        public static string GetLocalSandboxPackagePath(string packageName)
+        {
+            var package = PackageManager.GetPackage(packageName);
+            string rootPath = package?.GetPackageSandboxRootDirectory();
+            return Path.Combine(rootPath, packageName);
+        }
+
+        /// <summary>
+        /// 依照 Package 取得內置路徑
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <returns></returns>
+        public static string GetBuiltinPackagePath(string packageName)
+        {
+            var package = PackageManager.GetPackage(packageName);
+            string rootPath = package?.GetPackageBuildinRootDirectory();
+            return Path.Combine(rootPath, packageName);
         }
 
         /// <summary>
@@ -273,7 +310,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetLocalSandboxAppConfigPath()
         {
-            return Path.Combine(YooAssets.GetSandboxRoot(), $"{appCfgName}{appCfgExtension}");
+            return Path.Combine(GetLocalSandboxRootPath(), $"{appCfgName}{appCfgExtension}");
         }
 
         /// <summary>
