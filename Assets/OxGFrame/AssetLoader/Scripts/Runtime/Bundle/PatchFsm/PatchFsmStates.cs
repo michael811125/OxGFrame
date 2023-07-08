@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.PatchEvent;
 using OxGFrame.AssetLoader.Utility;
-using OxGFrame.Utility.Request;
+using OxGKit.Utilities.Request;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -1,7 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
-using OxGFrame.AssetLoader;
-using OxGFrame.Utility.Request;
+using OxGKit.Utilities.Request;
 using UnityEngine;
 using UnityEngine.Audio;
 

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [2.5.2] - 2023-07-09
+- Removed OxGFrame.Utility.
+  - Install OxGKit.Utilities Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager.
+  - If already use must reassign using OxGKit.Utilities (replace namespace prefix OxGFrame.Utility to OxGKit.Utilities).
+
+**Note: (Reinstall) Remove OxGFrame from Package Manager, and then install OxGKit.Utilities first, Finally reinstall OxGFrame**
+
 ## [2.5.1] - 2023-07-07
 - Added HT2Xor (hKey, tKey, jKey), time complexity is O((length >> 1) + 2).
   - [For Encrypt] Do hKey and tKey first, after do jKey.

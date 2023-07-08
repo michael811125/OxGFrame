@@ -8,8 +8,9 @@
 
 ## 安裝 OxGFrame with YooAsset + HybridCLR
 
-| **建議先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
+| **需先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
+| [OxGKit.Utilities v0.0.1-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
 | [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox), Add https://github.com/Deadcows/MyBox.git to Package Manager |
 | [HybirdCLR v3.2.1 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
@@ -398,7 +399,7 @@ video_urlset 127.0.0.1/video/
 
 ---
 
-### NetFrame (dependence Utility)
+### NetFrame (dependence OxGKit.Utilities)
 
 網路模塊，實現 WebSocket 跟 TCP/IP 統一接口，依照 WebSocket 狀態概念進行接口設計 (ISocket)，狀態分為 OnOpen, OnMessage, OnError, OnClose，進行事件註冊後就可以針對網路狀態進行監控，也實現多網路節點 (NetNode)，可以自行建立 WebSocket NetNode 或是 TCP/IP NetNode，再由 NetManager 進行網路節點註冊進行管理操作，另外可以設置心跳檢測回調、超時處理回調、重新連接回調的各處理，並且也能實現 INetTips 接口網路訊息介面的實作。
 
@@ -526,29 +527,6 @@ video_urlset 127.0.0.1/video/
 **如果沒有要使用 AgencyCenter 事件模塊，可以直接刪除整個 AgencyCenter。**
   
 ※備註 : Right-Click Create/OxGFrame/Agency Center... (Template cs)
-
----
-
-### Utility
-
-各通用組件
-
-- Utility 
-  - Timer: DeltaTimer, RealTimer, DTUpdate, RTUpdate.
-  - Adapter: UISafeAreaAdapter.
-  - Pool: NodePool (GameObject Pool).
-  - ButtonPlus: Inherited by Unity Button. extend Long Click and Transition Scale.
-  - UMT: Unity Main Thread.
-  - Singleton: MonoSingleton (MonoBehaviour), NewSingleton (class).
-  - Requester: RequestAudio, RequestTexture2D, RequestSprite, RequestBytes, RequestText.
-  - Cacher: ARCCache<TKey, TValue>, LRUCache<TKey, TValue>, LRUKCache<TKey, TValue>.
-  - TextureAnimation.
-- Editor
-  - RectTransform: RectTransformAdjuster (Hotkey: Shift+R, R: RectTransform).
-  - MissingScriptsFinder.
-  - SymlinkUtility.
-
-**如果沒有要使用 Utility 通用組件，可以直接刪除整個 Utility (注意有模塊依賴引用)。**
 
 ---
 

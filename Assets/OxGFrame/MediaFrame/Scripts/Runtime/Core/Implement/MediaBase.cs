@@ -1,6 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
-using OxGFrame.Utility.Request;
+using OxGKit.Utilities.Request;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
