@@ -11,6 +11,7 @@ namespace OxGFrame.CoreFrame.Editor
             public string bindName;
             public string variableName;
             public string componentName;
+            public string pluralRule;
             public int count;
 
             public BindInfo(string bindeName, string variableName, string componentName, int count)
@@ -168,7 +169,8 @@ namespace OxGFrame.CoreFrame.Editor
                 {
                     if (bindInfo.Value.componentName == tail.Key)
                     {
-                        bindInfo.Value.componentName = tail.Value;
+                        bindInfo.Value.componentName = tail.Value.componentName;
+                        bindInfo.Value.pluralRule = tail.Value.pluralRule;
                         break;
                     }
                 }
@@ -181,9 +183,19 @@ namespace OxGFrame.CoreFrame.Editor
                 // Array
                 if (bindInfo.Value.count > 1)
                 {
-                    _builder += $"{_settings.variableAccessModifier} ";
-                    _builder += $"{bindInfo.Value.componentName}[] ";
-                    _builder += $"{_settings.variablePrefix}{bindInfo.Value.variableName}s;\n";
+                    // For GameObjects
+                    if (bindInfo.Value.componentName == _defComponentName)
+                    {
+                        _builder += $"{_settings.variableAccessModifier} ";
+                        _builder += $"{bindInfo.Value.componentName}[] ";
+                        _builder += $"{_settings.variablePrefix}{bindInfo.Value.variableName}s;\n";
+                    }
+                    else
+                    {
+                        _builder += $"{_settings.variableAccessModifier} ";
+                        _builder += $"{bindInfo.Value.componentName}[] ";
+                        _builder += $"{_settings.variablePrefix}{bindInfo.Value.variableName}{bindInfo.Value.pluralRule};\n";
+                    }
                 }
                 // Single
                 else
@@ -204,6 +216,7 @@ namespace OxGFrame.CoreFrame.Editor
                 // Array
                 if (bindInfo.Value.count > 1)
                 {
+                    // For GameObjects
                     if (bindInfo.Value.componentName == _defComponentName)
                     {
                         _builder += $"    ";
@@ -213,13 +226,14 @@ namespace OxGFrame.CoreFrame.Editor
                     else
                     {
                         _builder += $"    ";
-                        _builder += $"{_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName}s = ";
+                        _builder += $"{_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName}{bindInfo.Value.pluralRule} = ";
                         _builder += $"{_settings.GetIndicateModifier()}collector.GetNodeComponents<{bindInfo.Value.componentName}>(\"{bindInfo.Value.bindName}\");\n";
                     }
                 }
                 // Single
                 else
                 {
+                    // For GameObject
                     if (bindInfo.Value.componentName == _defComponentName)
                     {
                         _builder += $"    ";

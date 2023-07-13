@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.5.3] - 2023-07-13
+- Added RemoteServices implements default HostServers;
+- Modified BindCodeSetting rules, can custom plural end to adjust grammar.
+- Upgraded YooAsset to v1.5.1.
+
 ## [2.5.2] - 2023-07-09
 - Removed OxGFrame.Utility.
   - Install OxGKit.Utilities Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager.

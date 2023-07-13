@@ -2,7 +2,7 @@
 
 namespace OxGFrame.AssetLoader.Editor
 {
-    [CreateAssetMenu(fileName = nameof(CryptogramSetting), menuName = "OxGFrame/Create Settings/Cryptogram Setting")]
+    [CreateAssetMenu(fileName = nameof(CryptogramSetting), menuName = "OxGFrame/Create Settings/Create Cryptogram Setting")]
     public class CryptogramSetting : ScriptableObject
     {
         [Header("OFFSET")]

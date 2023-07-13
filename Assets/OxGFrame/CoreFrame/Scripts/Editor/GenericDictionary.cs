@@ -29,11 +29,11 @@ namespace OxGFrame.CoreFrame.Editor
         private struct KeyValuePair
         {
             public TKey TailName;
-            public TValue Component;
+            public TValue Reference;
             public KeyValuePair(TKey Key, TValue Value)
             {
                 this.TailName = Key;
-                this.Component = Value;
+                this.Reference = Value;
             }
         }
 
@@ -51,7 +51,7 @@ namespace OxGFrame.CoreFrame.Editor
                 var key = list[i].TailName;
                 if (key != null && !ContainsKey(key))
                 {
-                    dict.Add(key, list[i].Component);
+                    dict.Add(key, list[i].Reference);
                     indexByKey.Add(key, i);
                 }
                 else

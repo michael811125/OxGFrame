@@ -22,37 +22,71 @@ MonoBehaviour:
   _tailRules:
     list:
     - TailName: Trans
-      Component: Transform
+      Reference:
+        componentName: Transform
+        pluralRule: s
     - TailName: RectTrans
-      Component: RectTransform
+      Reference:
+        componentName: RectTransform
+        pluralRule: s
     - TailName: Img
-      Component: Image
+      Reference:
+        componentName: Image
+        pluralRule: s
     - TailName: RawImg
-      Component: RawImage
+      Reference:
+        componentName: RawImage
+        pluralRule: s
     - TailName: Txt
-      Component: Text
+      Reference:
+        componentName: Text
+        pluralRule: s
     - TailName: Btn
-      Component: Button
+      Reference:
+        componentName: Button
+        pluralRule: s
     - TailName: Tgl
-      Component: Toggle
+      Reference:
+        componentName: Toggle
+        pluralRule: s
     - TailName: Sld
-      Component: Slider
+      Reference:
+        componentName: Slider
+        pluralRule: s
     - TailName: ScrBar
-      Component: Scrollbar
+      Reference:
+        componentName: Scrollbar
+        pluralRule: s
     - TailName: ScrView
-      Component: ScrollRect
+      Reference:
+        componentName: ScrollRect
+        pluralRule: s
     - TailName: Drd
-      Component: Dropdown
+      Reference:
+        componentName: Dropdown
+        pluralRule: s
     - TailName: Field
-      Component: InputField
+      Reference:
+        componentName: InputField
+        pluralRule: s
     - TailName: TmpTxt
-      Component: TMP_Text
+      Reference:
+        componentName: TMP_Text
+        pluralRule: s
     - TailName: TmpDrd
-      Component: TMP_Dropdown
+      Reference:
+        componentName: TMP_Dropdown
+        pluralRule: s
     - TailName: TmpField
-      Component: TMP_InputField
+      Reference:
+        componentName: TMP_InputField
+        pluralRule: s
     - TailName: BtnPlus
-      Component: ButtonPlus
+      Reference:
+        componentName: ButtonPlus
+        pluralRule: es
     - TailName: NodePool
-      Component: NodePool
+      Reference:
+        componentName: NodePool
+        pluralRule: s
     keyCollision: 0

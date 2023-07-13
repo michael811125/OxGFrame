@@ -126,8 +126,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 var createParameters = new HostPlayModeParameters();
                 createParameters.DecryptionServices = _decryption;
                 createParameters.QueryServices = queryService;
-                createParameters.DefaultHostServer = hostServer;
-                createParameters.FallbackHostServer = fallbackHostServer;
+                createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 

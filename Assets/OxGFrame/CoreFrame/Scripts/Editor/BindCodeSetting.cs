@@ -1,10 +1,24 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace OxGFrame.CoreFrame.Editor
 {
-    [CreateAssetMenu(fileName = nameof(BindCodeSetting), menuName = "OxGFrame/Create Settings/Bind Code Setting")]
+    [CreateAssetMenu(fileName = nameof(BindCodeSetting), menuName = "OxGFrame/Create Settings/Create Bind Code Setting")]
     public class BindCodeSetting : ScriptableObject
     {
+        [Serializable]
+        public struct ComponentInfo
+        {
+            public string componentName;
+            public string pluralRule;
+
+            public ComponentInfo(string componentName, string pluralRule)
+            {
+                this.componentName = componentName;
+                this.pluralRule = pluralRule;
+            }
+        }
+
         public enum CaseType
         {
             CamelCase,
@@ -31,32 +45,32 @@ namespace OxGFrame.CoreFrame.Editor
         public IndicateModifier indicateModifier = IndicateModifier.This;
 
         [Header("Tail Bind Setting")]
-        public GenericDictionary<string, string> _tailRules = new GenericDictionary<string, string>()
+        public GenericDictionary<string, ComponentInfo> _tailRules = new GenericDictionary<string, ComponentInfo>()
         {
             // Other
-            { "Trans", "Transform" },
-            { "RectTrans", "RectTransform" },
+            { "Trans", new ComponentInfo("Transform", "es") },
+            { "RectTrans", new ComponentInfo("RectTransform", "es") },
 
             // Legacy
-            { "Img", "Image" },
-            { "RawImg", "RawImage" },
-            { "Txt", "Text" },
-            { "Btn", "Button" },
-            { "Tgl", "Toggle" },
-            { "Sld", "Slider" },
-            { "ScrBar", "Scrollbar" },
-            { "ScrView", "ScrollRect" },
-            { "Drd", "Dropdown" },
-            { "Field", "InputField" },
+            { "Img", new ComponentInfo("Image", "s") },
+            { "RawImg", new ComponentInfo("RawImage", "s") },
+            { "Txt", new ComponentInfo("Text", "s") },
+            { "Btn", new ComponentInfo("Button", "s") },
+            { "Tgl", new ComponentInfo("Toggle", "s") },
+            { "Sld", new ComponentInfo("Slider", "s") },
+            { "ScrBar", new ComponentInfo("Scrollbar", "s") },
+            { "ScrView", new ComponentInfo("ScrollRect", "s") },
+            { "Drd", new ComponentInfo("Dropdown", "s") },
+            { "Field", new ComponentInfo("InputField", "s") },
 
             // TMP
-            { "TmpTxt", "TMP_Text" },
-            { "TmpDrd", "TMP_Dropdown" },
-            { "TmpField", "TMP_InputField" },
+            { "TmpTxt", new ComponentInfo("TMP_Text", "s") },
+            { "TmpDrd", new ComponentInfo("TMP_Dropdown", "s") },
+            { "TmpField", new ComponentInfo("TMP_InputField", "s") },
 
             // Custom
-            { "BtnPlus", "ButtonPlus"},
-            { "NodePool", "NodePool"}
+            { "BtnPlus", new ComponentInfo("ButtonPlus", "es")},
+            { "NodePool", new ComponentInfo("NodePool", "s")}
         };
 
         public string GetIndicateModifier()
