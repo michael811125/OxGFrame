@@ -14,7 +14,9 @@
 | [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox), Add https://github.com/Deadcows/MyBox.git to Package Manager |
 | [HybirdCLR v3.2.1 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
-### Unity 如果有遇到 Newtonsoft 問題
+**OxGKit.Utilities 遇到 UniTask 引用問題請無視，因為最後完成 OxGFrame 的安裝後，就會自動引用內建的 UniTask 了**
+
+### Unity 如果新專案有遇到 Newtonsoft 引用問題
 
 - 請自行安裝 Add package by name [com.unity.nuget.newtonsoft-json](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/wiki/Install-official-via-UPM)
 
@@ -306,29 +308,29 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
 
 預設組件綁定表 (可從 BindCodeSetting 中自行新增或修改 TailName 對應綁定組件類型)
 
-| **Tail Name** | **Component** |
-|:-|:-|
+| **Tail Name** | **Component** | **Plura Rule** |
+|:-|:-|:-|
 | **Other** |
-| Trans | Transform |
-| RectTrans | RectTransform |
+| Trans | Transform | es |
+| RectTrans | RectTransform | es |
 | **Legacy** |
-| Img | Image |
-| RawImg | RawImage |
-| Txt | Text | 
-| Btn | Button | 
-| Tgl | Toggle | 
-| Sld | Slider | 
-| ScrBar | Scrollbar | 
-| ScrView | ScrollRect | 
-| Drd | Dropdown | 
-| Field | InputField | 
+| Img | Image | s |
+| RawImg | RawImage | s |
+| Txt | Text | s | 
+| Btn | Button | s | 
+| Tgl | Toggle | s | 
+| Sld | Slider | s | 
+| ScrBar | Scrollbar | s | 
+| ScrView | ScrollRect | s | 
+| Drd | Dropdown | s | 
+| Field | InputField | s | 
 | **TMP** |
-| TmpTxt | TMP_Text | 
-| TmpDrd | TMP_Dropdown | 
-| TmpField | TMP_InputField |
+| TmpTxt | TMP_Text | s | 
+| TmpDrd | TMP_Dropdown | s | 
+| TmpField | TMP_InputField | s |
 | **Custom** |
-| BtnPlus | ButtonPlus |
-| NodePool | NodePool |
+| BtnPlus | ButtonPlus | es |
+| NodePool | NodePool | s |
 
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/gif_1.gif)
 
