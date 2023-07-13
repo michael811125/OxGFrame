@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## [2.5.3] - 2023-07-13
-- Added RemoteServices implements default HostServers;
+- Added RemoteServices implements default HostServers.
 - Modified BindCodeSetting rules, can custom plural end to adjust grammar.
 - Upgraded YooAsset to v1.5.1.
 
