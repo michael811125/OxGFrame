@@ -308,29 +308,29 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
 
 預設組件綁定表 (可從 BindCodeSetting 中自行新增或修改 TailName 對應綁定組件類型)
 
-| **Tail Name** | **Component** | **Plura Rule** |
-|:-|:-|:-|
+| **Tail Name** | **Component Name** | **End Remove Count** | **End Plural Txt** |
+|:-|:-|:-|:-|
 | **Other** |
-| Trans | Transform | es |
-| RectTrans | RectTransform | es |
+| Trans | Transform | 0 | es |
+| RectTrans | RectTransform | 0 | es |
 | **Legacy** |
-| Img | Image | s |
-| RawImg | RawImage | s |
-| Txt | Text | s | 
-| Btn | Button | s | 
-| Tgl | Toggle | s | 
-| Sld | Slider | s | 
-| ScrBar | Scrollbar | s | 
-| ScrView | ScrollRect | s | 
-| Drd | Dropdown | s | 
-| Field | InputField | s | 
+| Img | Image | 0 | s |
+| RawImg | RawImage | 0 | s |
+| Txt | Text | 0 | s | 
+| Btn | Button | 0 | s | 
+| Tgl | Toggle | 0 | s | 
+| Sld | Slider | 0 | s | 
+| ScrBar | Scrollbar | 0 | s | 
+| ScrView | ScrollRect | 0 | s | 
+| Drd | Dropdown | 0 | s | 
+| Field | InputField | 0 | s | 
 | **TMP** |
-| TmpTxt | TMP_Text | s | 
-| TmpDrd | TMP_Dropdown | s | 
-| TmpField | TMP_InputField | s |
+| TmpTxt | TMP_Text | 0 | s | 
+| TmpDrd | TMP_Dropdown | 0 | s | 
+| TmpField | TMP_InputField | 0 | s |
 | **Custom** |
-| BtnPlus | ButtonPlus | es |
-| NodePool | NodePool | s |
+| BtnPlus | ButtonPlus | 0 | es |
+| NodePool | NodePool | 0 | s |
 
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/gif_1.gif)
 

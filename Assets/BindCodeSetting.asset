@@ -24,11 +24,11 @@ MonoBehaviour:
     - TailName: Trans
       Reference:
         componentName: Transform
-        pluralRule: s
+        pluralRule: es
     - TailName: RectTrans
       Reference:
         componentName: RectTransform
-        pluralRule: s
+        pluralRule: es
     - TailName: Img
       Reference:
         componentName: Image
