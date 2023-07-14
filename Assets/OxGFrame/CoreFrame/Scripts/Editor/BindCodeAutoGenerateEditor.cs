@@ -11,7 +11,7 @@ namespace OxGFrame.CoreFrame.Editor
             public string bindName;
             public string variableName;
             public string componentName;
-            public string pluralRule;
+            public BindCodeSetting.Pluralize pluralize;
             public int count;
 
             public BindInfo(string bindeName, string variableName, string componentName, int count)
@@ -170,7 +170,7 @@ namespace OxGFrame.CoreFrame.Editor
                     if (bindInfo.Value.componentName == tail.Key)
                     {
                         bindInfo.Value.componentName = tail.Value.componentName;
-                        bindInfo.Value.pluralRule = tail.Value.pluralRule;
+                        bindInfo.Value.pluralize = tail.Value.pluralize;
                         break;
                     }
                 }
@@ -194,7 +194,12 @@ namespace OxGFrame.CoreFrame.Editor
                     {
                         _builder += $"{_settings.variableAccessModifier} ";
                         _builder += $"{bindInfo.Value.componentName}[] ";
-                        _builder += $"{_settings.variablePrefix}{bindInfo.Value.variableName}{bindInfo.Value.pluralRule};\n";
+                        int varNameLength = bindInfo.Value.variableName.Length;
+                        int endRemoveCount = (bindInfo.Value.pluralize.endRemoveCount > varNameLength) ? 0 : bindInfo.Value.pluralize.endRemoveCount;
+                        string varName = bindInfo.Value.variableName.Substring(0, varNameLength - endRemoveCount);
+                        string endPluralTxt = bindInfo.Value.pluralize.endPluralTxt;
+                        string newVarName = $"{varName}{endPluralTxt}";
+                        _builder += $"{_settings.variablePrefix}{newVarName};\n";
                     }
                 }
                 // Single
@@ -226,7 +231,12 @@ namespace OxGFrame.CoreFrame.Editor
                     else
                     {
                         _builder += $"    ";
-                        _builder += $"{_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName}{bindInfo.Value.pluralRule} = ";
+                        int varNameLength = bindInfo.Value.variableName.Length;
+                        int endRemoveCount = (bindInfo.Value.pluralize.endRemoveCount > varNameLength) ? 0 : bindInfo.Value.pluralize.endRemoveCount;
+                        string varName = bindInfo.Value.variableName.Substring(0, varNameLength - endRemoveCount);
+                        string endPluralTxt = bindInfo.Value.pluralize.endPluralTxt;
+                        string newVarName = $"{varName}{endPluralTxt}";
+                        _builder += $"{_settings.GetIndicateModifier()}{_settings.variablePrefix}{newVarName} = ";
                         _builder += $"{_settings.GetIndicateModifier()}collector.GetNodeComponents<{bindInfo.Value.componentName}>(\"{bindInfo.Value.bindName}\");\n";
                     }
                 }

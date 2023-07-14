@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.5.4] - 2023-07-14
+- Modified BindCodeSetting pluralize feature, can edit EndRemoveCount and EndPluralTxt.
+  - ex: If text end is y => EndRemoveCount = 1, EndPluralTxt = 'ies'.
+
 ## [2.5.3] - 2023-07-13
 - Added RemoteServices implements default HostServers.
 - Modified BindCodeSetting rules, can custom plural end to adjust grammar.

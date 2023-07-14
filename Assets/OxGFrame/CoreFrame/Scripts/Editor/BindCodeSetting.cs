@@ -7,15 +7,28 @@ namespace OxGFrame.CoreFrame.Editor
     public class BindCodeSetting : ScriptableObject
     {
         [Serializable]
+        public struct Pluralize
+        {
+            public byte endRemoveCount;
+            public string endPluralTxt;
+
+            public Pluralize(byte endRemoveCount, string endPluralTxt)
+            {
+                this.endRemoveCount = endRemoveCount;
+                this.endPluralTxt = endPluralTxt;
+            }
+        }
+
+        [Serializable]
         public struct ComponentInfo
         {
             public string componentName;
-            public string pluralRule;
+            public Pluralize pluralize;
 
-            public ComponentInfo(string componentName, string pluralRule)
+            public ComponentInfo(string componentName, Pluralize pluralize)
             {
                 this.componentName = componentName;
-                this.pluralRule = pluralRule;
+                this.pluralize = pluralize;
             }
         }
 
@@ -48,29 +61,29 @@ namespace OxGFrame.CoreFrame.Editor
         public GenericDictionary<string, ComponentInfo> _tailRules = new GenericDictionary<string, ComponentInfo>()
         {
             // Other
-            { "Trans", new ComponentInfo("Transform", "es") },
-            { "RectTrans", new ComponentInfo("RectTransform", "es") },
+            { "Trans", new ComponentInfo("Transform", new Pluralize(0, "es")) },
+            { "RectTrans", new ComponentInfo("RectTransform", new Pluralize(0, "es")) },
 
             // Legacy
-            { "Img", new ComponentInfo("Image", "s") },
-            { "RawImg", new ComponentInfo("RawImage", "s") },
-            { "Txt", new ComponentInfo("Text", "s") },
-            { "Btn", new ComponentInfo("Button", "s") },
-            { "Tgl", new ComponentInfo("Toggle", "s") },
-            { "Sld", new ComponentInfo("Slider", "s") },
-            { "ScrBar", new ComponentInfo("Scrollbar", "s") },
-            { "ScrView", new ComponentInfo("ScrollRect", "s") },
-            { "Drd", new ComponentInfo("Dropdown", "s") },
-            { "Field", new ComponentInfo("InputField", "s") },
+            { "Img", new ComponentInfo("Image", new Pluralize(0, "s")) },
+            { "RawImg", new ComponentInfo("RawImage", new Pluralize(0, "s")) },
+            { "Txt", new ComponentInfo("Text", new Pluralize(0, "s")) },
+            { "Btn", new ComponentInfo("Button", new Pluralize(0, "s")) },
+            { "Tgl", new ComponentInfo("Toggle", new Pluralize(0, "s")) },
+            { "Sld", new ComponentInfo("Slider", new Pluralize(0, "s")) },
+            { "ScrBar", new ComponentInfo("Scrollbar", new Pluralize(0, "s")) },
+            { "ScrView", new ComponentInfo("ScrollRect", new Pluralize(0, "s")) },
+            { "Drd", new ComponentInfo("Dropdown", new Pluralize(0, "s")) },
+            { "Field", new ComponentInfo("InputField", new Pluralize(0, "s")) },
 
             // TMP
-            { "TmpTxt", new ComponentInfo("TMP_Text", "s") },
-            { "TmpDrd", new ComponentInfo("TMP_Dropdown", "s") },
-            { "TmpField", new ComponentInfo("TMP_InputField", "s") },
+            { "TmpTxt", new ComponentInfo("TMP_Text", new Pluralize(0, "s")) },
+            { "TmpDrd", new ComponentInfo("TMP_Dropdown", new Pluralize(0, "s")) },
+            { "TmpField", new ComponentInfo("TMP_InputField", new Pluralize(0, "s")) },
 
             // Custom
-            { "BtnPlus", new ComponentInfo("ButtonPlus", "es")},
-            { "NodePool", new ComponentInfo("NodePool", "s")}
+            { "BtnPlus", new ComponentInfo("ButtonPlus", new Pluralize(0, "es"))},
+            { "NodePool", new ComponentInfo("NodePool", new Pluralize(0, "s"))}
         };
 
         public string GetIndicateModifier()
