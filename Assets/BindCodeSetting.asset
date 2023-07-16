@@ -24,69 +24,103 @@ MonoBehaviour:
     - TailName: Trans
       Reference:
         componentName: Transform
-        pluralRule: es
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: es
     - TailName: RectTrans
       Reference:
         componentName: RectTransform
-        pluralRule: es
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: es
     - TailName: Img
       Reference:
         componentName: Image
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: RawImg
       Reference:
         componentName: RawImage
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: Txt
       Reference:
         componentName: Text
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: Btn
       Reference:
         componentName: Button
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: Tgl
       Reference:
         componentName: Toggle
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: Sld
       Reference:
         componentName: Slider
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: ScrBar
       Reference:
         componentName: Scrollbar
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: ScrView
       Reference:
         componentName: ScrollRect
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: Drd
       Reference:
         componentName: Dropdown
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: Field
       Reference:
         componentName: InputField
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: TmpTxt
       Reference:
         componentName: TMP_Text
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: TmpDrd
       Reference:
         componentName: TMP_Dropdown
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: TmpField
       Reference:
         componentName: TMP_InputField
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: BtnPlus
       Reference:
         componentName: ButtonPlus
-        pluralRule: es
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: es
     - TailName: NodePool
       Reference:
         componentName: NodePool
-        pluralRule: s
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     keyCollision: 0

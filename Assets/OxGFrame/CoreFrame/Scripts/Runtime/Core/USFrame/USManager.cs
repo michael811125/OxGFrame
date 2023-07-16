@@ -153,10 +153,10 @@ namespace OxGFrame.CoreFrame.USFrame
                     {
                         this._reqSize += (req.progress - lastSize);
                         lastSize = req.progress;
-                        if (req.progress >= 0.9f) this._reqSize = 1f;
+                        if (this._reqSize >= 0.9f) this._reqSize = 1f;
                         progression.Invoke(this._reqSize / this._totalSize, this._reqSize, this._totalSize);
                     }
-                    if (req.progress >= 0.9f) req.allowSceneActivation = true;
+                    if (this._reqSize == 1f) req.allowSceneActivation = true;
                     await UniTask.Yield();
                 }
 
@@ -190,10 +190,10 @@ namespace OxGFrame.CoreFrame.USFrame
                     {
                         this._reqSize += (req.progress - lastSize);
                         lastSize = req.progress;
-                        if (req.progress >= 0.9f) this._reqSize = 1f;
+                        if (this._reqSize >= 0.9f) this._reqSize = 1f;
                         progression.Invoke(this._reqSize / this._totalSize, this._reqSize, this._totalSize);
                     }
-                    if (req.progress >= 0.9f) req.allowSceneActivation = true;
+                    if (this._reqSize == 1f) req.allowSceneActivation = true;
                     await UniTask.Yield();
                 }
 

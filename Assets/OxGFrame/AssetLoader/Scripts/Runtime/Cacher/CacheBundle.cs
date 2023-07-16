@@ -490,7 +490,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     {
                         this.reqSize += (req.Progress - lastSize);
                         lastSize = req.Progress;
-                        if (req.Progress >= 0.9f) this.reqSize = 1f;
+                        if (this.reqSize >= 0.9f) this.reqSize = 1f;
                         progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
                     }
 

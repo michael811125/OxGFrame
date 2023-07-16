@@ -1,6 +1,5 @@
 ﻿using OxGFrame.AssetLoader;
 using OxGFrame.CoreFrame;
-using OxGFrame.MediaFrame;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -11,7 +10,7 @@ public static class UnityScene
     public static class Build
     {
         // If use prefix "build#" will load from build else will from bundle
-        private const string _prefix = "buil#";
+        private const string _prefix = "build#";
 
         // Unity Scenes
         public static readonly string LevelDemo01 = $"{_prefix}LevelDemo01";
