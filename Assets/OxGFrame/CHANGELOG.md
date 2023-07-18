@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.5.5] - 2023-07-18
+- Fixed load scene frome Build suspend bug issue.
+
 ## [2.5.4] - 2023-07-14
 - Modified BindCodeSetting pluralize feature, can edit EndRemoveCount and EndPluralTxt.
   - ex: If text end is y => EndRemoveCount = 1, EndPluralTxt = 'ies'.

@@ -14,13 +14,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/OxGFrame/Samples/BundleDemo/BundleDemo.unity
     guid: 5648aa95b7111a54198733f86df587a8
-  - enabled: 1
+  - enabled: 0
     path: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo01.unity
     guid: 97102f27cdcc74846bb0909829b431cd
-  - enabled: 1
+  - enabled: 0
     path: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo02.unity
     guid: 9f25400e0da4e034294d5e153b0533ab
-  - enabled: 1
+  - enabled: 0
     path: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo03.unity
     guid: 42b42b7f9b5995748ba85a54431669b3
   - enabled: 0
