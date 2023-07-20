@@ -1,5 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <linker>
+  <assembly fullname="OxGFrame.AssetLoader.Runtime">
+    <type fullname="OxGFrame.AssetLoader.AssetLoaders" preserve="all" />
+    <type fullname="OxGFrame.AssetLoader.AssetPatcher" preserve="all" />
+    <type fullname="OxGFrame.AssetLoader.Progression" preserve="all" />
+  </assembly>
+  <assembly fullname="UniTask">
+    <type fullname="Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskVoidMethodBuilder" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.UniTask" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.UniTaskVoid" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.UniTask`1" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.UniTask`1/Awaiter" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.CoreModule">
+    <type fullname="UnityEngine.GameObject" preserve="all" />
+    <type fullname="UnityEngine.MonoBehaviour" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.UI">
+    <type fullname="UnityEngine.UI.Text" preserve="all" />
+  </assembly>
   <assembly fullname="mscorlib">
     <type fullname="System.Diagnostics.DebuggableAttribute" preserve="all" />
     <type fullname="System.Diagnostics.DebuggableAttribute/DebuggingModes" preserve="all" />
@@ -15,24 +34,5 @@
     <type fullname="System.String" preserve="all" />
     <type fullname="System.Type" preserve="all" />
     <type fullname="System.ValueType" preserve="all" />
-  </assembly>
-  <assembly fullname="OxGFrame.AssetLoader.Runtime">
-    <type fullname="OxGFrame.AssetLoader.AssetLoaders" preserve="all" />
-    <type fullname="OxGFrame.AssetLoader.AssetPatcher" preserve="all" />
-    <type fullname="OxGFrame.AssetLoader.Progression" preserve="all" />
-  </assembly>
-  <assembly fullname="UniTask">
-    <type fullname="Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskVoidMethodBuilder" preserve="all" />
-    <type fullname="Cysharp.Threading.Tasks.UniTask" preserve="all" />
-    <type fullname="Cysharp.Threading.Tasks.UniTask`1" preserve="all" />
-    <type fullname="Cysharp.Threading.Tasks.UniTask`1/Awaiter" preserve="all" />
-    <type fullname="Cysharp.Threading.Tasks.UniTaskVoid" preserve="all" />
-  </assembly>
-  <assembly fullname="UnityEngine.CoreModule">
-    <type fullname="UnityEngine.GameObject" preserve="all" />
-    <type fullname="UnityEngine.MonoBehaviour" preserve="all" />
-  </assembly>
-  <assembly fullname="UnityEngine.UI">
-    <type fullname="UnityEngine.UI.Text" preserve="all" />
   </assembly>
 </linker>

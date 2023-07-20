@@ -8,7 +8,7 @@ using System.Text;
 using UniFramework.Event;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.ReloadAttribute;
+using YooAsset;
 
 public class BundleDemo : MonoBehaviour
 {

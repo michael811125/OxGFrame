@@ -211,8 +211,9 @@ namespace OxGFrame.AssetLoader
             string fallbackHostServer = null;
             IQueryServices queryService = null;
 
-            // Only Host Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
+            // Host Mode or WebGL Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
+                BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
             {
                 hostServer = await BundleConfig.GetHostServerUrl(packageName);
                 fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
@@ -236,8 +237,9 @@ namespace OxGFrame.AssetLoader
             string fallbackHostServer = null;
             IQueryServices queryService = null;
 
-            // Only Host Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
+            // Host Mode or WebGL Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
+                BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
             {
                 hostServer = await BundleConfig.GetHostServerUrl(packageName);
                 fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
@@ -262,8 +264,9 @@ namespace OxGFrame.AssetLoader
             string fallbackHostServer = null;
             IQueryServices queryService = null;
 
-            // Only Host Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
+            // Host Mode or WebGL Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
+                BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
             {
                 hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
                 fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
@@ -286,8 +289,9 @@ namespace OxGFrame.AssetLoader
             string hostServer = null;
             string fallbackHostServer = null;
 
-            // Only Host Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
+            // Host Mode or WebGL Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
+                BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
             {
                 hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
                 fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);

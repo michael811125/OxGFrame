@@ -2,7 +2,7 @@
     "name": "OxGFrame.AgencyCenter.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:8b348405f7edbc04e94b4ef83f465122"
+        "GUID:a24dbf7565faccf4bbaa3b675e168c4f"
     ],
     "includePlatforms": [
         "Editor"

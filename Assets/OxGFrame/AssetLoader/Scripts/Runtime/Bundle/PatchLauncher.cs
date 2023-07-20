@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using YooAsset;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace OxGFrame.AssetLoader.Bundle
 {
     [DisallowMultipleComponent]
@@ -12,7 +16,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         [Header("Patch Options")]
         public BundleConfig.PlayMode playMode = BundleConfig.PlayMode.EditorSimulateMode;
-        [Tooltip("If checker patch field will compare whole version"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
+        [Tooltip("If checker patch field will compare whole version"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WebGLMode)]
         public BundleConfig.SemanticRule semanticRule = new BundleConfig.SemanticRule();
         [Tooltip("If checked will skip default package download step of patch (force download while playing)"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
         public bool skipCreateMainDownloder = false;
@@ -49,12 +53,20 @@ namespace OxGFrame.AssetLoader.Bundle
             this.playMode = BundleConfig.PlayMode.OfflineMode;
 #elif !UNITY_EDITOR && OXGFRAME_HOST_MODE
             this.playMode = BundleConfig.PlayMode.HostMode;
+#elif !UNITY_EDITOR && OXGFRAME_WEBGL_MODE
+            this.playMode = BundleConfig.PlayMode.WebGLMode;
 #endif
             BundleConfig.playMode = this.playMode;
+            // For Host Mode
             if (this.playMode == BundleConfig.PlayMode.HostMode)
             {
                 BundleConfig.semanticRule = this.semanticRule;
                 BundleConfig.skipCreateMainDownloder = this.skipCreateMainDownloder;
+            }
+            // For WebGL Mode
+            else if (this.playMode == BundleConfig.PlayMode.WebGLMode)
+            {
+                BundleConfig.semanticRule = this.semanticRule;
             }
             #endregion
 
@@ -88,9 +100,36 @@ namespace OxGFrame.AssetLoader.Bundle
 
         private void OnApplicationQuit()
         {
+#if !UNITY_WEBGL  
             PackageManager.Release();
-
             Debug.Log("<color=#ff84d1>(Powered by YooAsset) Release Packages Completes.</color>");
+#endif
         }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+#if UNITY_WEBGL
+            switch (this.playMode)
+            {
+                case BundleConfig.PlayMode.OfflineMode:
+
+                    Debug.Log($"<color=#ff1f4c>[Offline Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    break;
+                case BundleConfig.PlayMode.HostMode:
+                    Debug.Log($"<color=#ff1f4c>[Host Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    break;
+            }
+#else
+            switch (this.playMode)
+            {
+                case BundleConfig.PlayMode.WebGLMode:
+
+                    Debug.Log($"<color=#ff1f4c>[WebGL Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    break;
+            }
+#endif
+        }
+#endif
     }
 }

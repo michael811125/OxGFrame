@@ -1,8 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
-using OxGFrame.AssetLoader.Utility;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using YooAsset;
 
@@ -22,7 +20,7 @@ namespace OxGFrame.AssetLoader.Bundle
             #region Init YooAssets
             YooAssets.Destroy();
             YooAssets.Initialize();
-            YooAssets.SetOperationSystemMaxTimeSlice(10);
+            YooAssets.SetOperationSystemMaxTimeSlice(30);
             #endregion
 
             #region Init Decryption Type
@@ -73,8 +71,9 @@ namespace OxGFrame.AssetLoader.Bundle
             string fallbackHostServer = null;
             IQueryServices queryService = null;
 
-            // Only Host Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
+            // Host Mode or WebGL Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
+                BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
             {
                 hostServer = await BundleConfig.GetHostServerUrl(_currentPackageName);
                 fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(_currentPackageName);
@@ -124,6 +123,16 @@ namespace OxGFrame.AssetLoader.Bundle
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
             {
                 var createParameters = new HostPlayModeParameters();
+                createParameters.DecryptionServices = _decryption;
+                createParameters.QueryServices = queryService;
+                createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);
+                initializationOperation = package.InitializeAsync(createParameters);
+            }
+
+            // WebGL Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
+            {
+                var createParameters = new WebPlayModeParameters();
                 createParameters.DecryptionServices = _decryption;
                 createParameters.QueryServices = queryService;
                 createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);

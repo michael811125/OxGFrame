@@ -5,8 +5,8 @@ namespace OxGFrame.AssetLoader.Bundle
 {
     public class HostServers : IRemoteServices
     {
-        private string _hostServer;
-        private string _fallbackHostServer;
+        private readonly string _hostServer;
+        private readonly string _fallbackHostServer;
 
         public HostServers(string hostServer, string fallbackHostServer)
         {

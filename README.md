@@ -10,9 +10,9 @@
 
 | **需先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
-| [OxGKit.Utilities v0.0.1-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
+| [OxGKit.Utilities v0.0.2-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
 | [MyBox v1.7.0 or higher](https://github.com/Deadcows/MyBox), Add https://github.com/Deadcows/MyBox.git to Package Manager |
-| [HybirdCLR v3.2.1 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
+| [HybirdCLR v3.4.0 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 **OxGKit.Utilities 遇到 UniTask 引用問題請無視，因為最後完成 OxGFrame 的安裝後，就會自動引用內建的 UniTask 了**
 
@@ -66,7 +66,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 ### Sub-ThirdParty
 
 - 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案) **特別推薦**
-- 使用 [YooAsset v1.5.0](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
+- 使用 [YooAsset v1.5.2-preview](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
 
 ※備註 : 會持續更新內建第三方庫。
 
@@ -224,9 +224,10 @@ bundle_fallback_ip 127.0.0.1
 store_link http://
 ```
 
-#### Build 防呆標籤 (避免再打包時，忘記將 EditorSimulateMode 調成 OfflineMode 或 HostMode)
+#### Build 防呆標籤 (避免再打包時，忘記將 EditorSimulateMode 調成 OfflineMode, HostMode, WebGLMode)
 - OXGFRAME_OFFLINE_MODE
 - OXGFRAME_HOST_MODE
+- OXGFRAME_WEBGL_MODE
 
 **\>\> 建立 burlconfig.conf 方式 \<\<**
 - 使用 OxGFrame/AssetLoader/Bundle Url Config Generator 創建 burlconfig.conf (StreamingAssets/burlconfig.conf)。

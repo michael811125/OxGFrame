@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [2.6.0] - 2023-07-21
+- Upgraded YooAsset to v1.5.2-preview.
+- Added StreamingAssetsHelper from YooAsset sample.
+- Added WebGL Mode only for WebGL build.
+- Fixed WebGL query service bug issue.
+- Modified QueryServices.
+
 ## [2.5.5] - 2023-07-18
 - Fixed load scene frome Build suspend bug issue.
 

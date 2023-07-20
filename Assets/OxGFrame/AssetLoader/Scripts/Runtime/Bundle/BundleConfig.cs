@@ -27,7 +27,8 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             EditorSimulateMode,
             OfflineMode,
-            HostMode
+            HostMode,
+            WebGLMode
         }
 
         public class CryptogramType

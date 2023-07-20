@@ -1,5 +1,4 @@
-﻿using System.IO;
-
+﻿
 namespace YooAsset
 {
 	internal class QueryRemotePackageVersionOperation : AsyncOperationBase
@@ -54,6 +53,7 @@ namespace YooAsset
 				}
 
 				Progress = _downloader.Progress();
+				_downloader.CheckTimeout();
 				if (_downloader.IsDone() == false)
 					return;
 
