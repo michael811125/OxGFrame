@@ -95,7 +95,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 
 ### Hotfixer (dependence HybridCLR, AssetLoader)
 
-代碼熱修復模塊，使用 [HybridCLR](https://github.com/focus-creative-games/hybridclr) (前身 Huatuo) 革命性的熱更新方案進行整合，相關建置請前往官方文檔進行熟悉。
+代碼熱修復模塊，使用 [HybridCLR](https://github.com/focus-creative-games/hybridclr) (前身 Huatuo) 革命性的熱更新方案進行整合，相關建置請前往[官方文檔](https://hybridclr.doc.code-philosophy.com/)進行熟悉。
 - 如果相關建置完畢，前往點選 HybridCLR/OxGFrame With HybirdCLR/Complie And Copy To HotfixCollector，將會幫忙拷貝至 HotfixCollector 文件夾，再使用 YooAsset Collector 進行收集打包。
 
 **使用流程詳看 HotfixerDemo (Import frome Package Manager)**
@@ -103,10 +103,6 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_4.png)
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_5.png)
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_6.png)
-
-**Hotfix Demo build and run on Android**
-
-https://github.com/michael811125/OxGFrame/assets/30960759/c65b19da-d957-4cef-a1bb-6b9ad4a656f3
 
 ※備註 : 運行打包 HotfixerDemo 需要 Import PatchLauncher from PackageManager
 
