@@ -57,6 +57,19 @@ namespace OxGFrame.AssetLoader.Bundle
                 yield return null;
             }
         }
+
+        protected string ConvertToWWWPath(string path)
+        {
+#if UNITY_EDITOR
+            return string.Format("file:///{0}", path);
+#elif UNITY_IPHONE
+            return string.Format("file://{0}", path);
+#elif UNITY_ANDROID
+            return path;
+#elif UNITY_STANDALONE
+            return string.Format("file:///{0}", path);
+#endif
+        }
     }
 
     public class RequestBuiltinQuery : RequestQueryBase
@@ -71,7 +84,8 @@ namespace OxGFrame.AssetLoader.Bundle
             string url = Path.Combine(builtinPackagePath, fileName);
             #endregion
 
-            var e = this.WebRequest(url);
+            // Convert url to www path
+            var e = this.WebRequest(this.ConvertToWWWPath(url));
             while (e.MoveNext())
                 if (e.Current != null)
                     return (bool)e.Current;
@@ -104,7 +118,8 @@ namespace OxGFrame.AssetLoader.Bundle
             );
             #endregion
 
-            var e = this.WebRequest(url);
+            // Convert url to www path
+            var e = this.WebRequest(this.ConvertToWWWPath(url));
             while (e.MoveNext())
                 if (e.Current != null)
                     return (bool)e.Current;

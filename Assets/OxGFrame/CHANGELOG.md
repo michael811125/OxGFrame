@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.6.1] - 2023-07-25
+- Fixed query service on iOS or MacOSX bug issue (Convert url to www path).
+
 ## [2.6.0] - 2023-07-21
 - Upgraded YooAsset to v1.5.2-preview.
 - Added StreamingAssetsHelper from YooAsset sample.

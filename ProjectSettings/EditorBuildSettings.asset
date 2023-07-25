@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/OxGFrame/Samples/AudioFrameDemo/AudioFrameDemo.unity
     guid: 11ee897e214632f43a9e8978e6927bc7
-  - enabled: 1
+  - enabled: 0
     path: Assets/OxGFrame/Samples/BundleDemo/BundleDemo.unity
     guid: 5648aa95b7111a54198733f86df587a8
   - enabled: 0
