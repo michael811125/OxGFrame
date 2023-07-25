@@ -85,11 +85,8 @@ namespace OxGFrame.AssetLoader.Bundle
             BundleConfig.InitCryptogram(string.IsNullOrEmpty(this.decryptArgs) ? BundleConfig.CryptogramType.NONE : this.decryptArgs);
             #endregion
 
-            // Init Settings
-            PackageManager.InitSetup();
-
-            // Init Default Package
-            await PackageManager.InitDefaultPackage();
+            // Init Settings and App Packages setup
+            await PackageManager.InitSetup();
 
             Debug.Log($"<color=#32ff94>(Powered by YooAsset) Initialized Play Mode: {BundleConfig.playMode}</color>");
 

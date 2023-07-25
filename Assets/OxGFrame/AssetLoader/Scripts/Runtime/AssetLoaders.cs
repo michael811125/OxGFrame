@@ -5,6 +5,7 @@ using OxGFrame.AssetLoader.GroupChacer;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using YooAsset;
 
 namespace OxGFrame.AssetLoader
 {
@@ -103,6 +104,96 @@ namespace OxGFrame.AssetLoader
         }
 
         #region RawFile
+        /// <summary>
+        /// Get RawFile save path
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
+        public static async UniTask<string> GetRawFilePathAsync(string assetName)
+        {
+            // Use preload to load bundle in cache, but for raw file the memory has not been allocated yet
+            await PreloadRawFileAsync(assetName);
+            var pack = GetFromCache<BundlePack>(assetName);
+            if (pack != null)
+            {
+                // Get path from operation handle
+                var operation = pack.GetOperationHandle<RawFileOperationHandle>();
+                string filePath = operation.GetRawFilePath();
+                UnloadRawFile(assetName, true);
+                return filePath;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Get RawFile save path from specific package
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
+        public static async UniTask<string> GetRawFilePathAsync(string packageName, string assetName)
+        {
+            // Use preload to load bundle in cache, but for raw file the memory has not been allocated yet
+            await PreloadRawFileAsync(packageName, assetName);
+            var pack = GetFromCache<BundlePack>(assetName);
+            if (pack != null)
+            {
+                // Get path from operation handle
+                var operation = pack.GetOperationHandle<RawFileOperationHandle>();
+                string filePath = operation.GetRawFilePath();
+                UnloadRawFile(assetName, true);
+                return filePath;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Get RawFile save path
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
+        public static string GetRawFilePath(string assetName)
+        {
+            // Use preload to load bundle in cache, but for raw file the memory has not been allocated yet
+            PreloadRawFile(assetName);
+            var pack = GetFromCache<BundlePack>(assetName);
+            if (pack != null)
+            {
+                var operation = pack.GetOperationHandle<RawFileOperationHandle>();
+                // Get path from operation handle
+                string filePath = operation.GetRawFilePath();
+                UnloadRawFile(assetName, true);
+                return filePath;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Get RawFile save path from specific package
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
+        public static string GetRawFilePath(string packageName, string assetName)
+        {
+            // Use preload to load bundle in cache, but for raw file the memory has not been allocated yet
+            PreloadRawFile(packageName, assetName);
+            var pack = GetFromCache<BundlePack>(assetName);
+            if (pack != null)
+            {
+                var operation = pack.GetOperationHandle<RawFileOperationHandle>();
+                // Get path from operation handle
+                string filePath = operation.GetRawFilePath();
+                UnloadRawFile(assetName, true);
+                return filePath;
+            }
+
+            return null;
+        }
+
         public static async UniTask PreloadRawFileAsync(string assetName, Progression progression = null)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();

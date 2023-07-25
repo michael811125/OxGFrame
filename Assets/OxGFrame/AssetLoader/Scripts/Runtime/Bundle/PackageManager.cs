@@ -15,7 +15,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// Init settings
         /// </summary>
-        public static void InitSetup()
+        public async static UniTask InitSetup()
         {
             #region Init YooAssets
             YooAssets.Destroy();
@@ -46,7 +46,7 @@ namespace OxGFrame.AssetLoader.Bundle
             Debug.Log($"<color=#ffe45a>Init Bundle Decryption: {cryptogramType}</color>");
             #endregion
 
-            #region Init Package
+            #region Init App Packages and Set Default Package
             // Init AssetsPackage first
             if (BundleConfig.listPackage != null && BundleConfig.listPackage.Count > 0)
             {
@@ -57,6 +57,9 @@ namespace OxGFrame.AssetLoader.Bundle
 
                 // Set default AssetsPackage
                 SetDefaultPackage(0);
+
+                // Init Default Package
+                await InitDefaultPackage();
             }
             #endregion
         }

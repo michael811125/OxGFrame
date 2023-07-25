@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [2.6.2] - 2023-07-25
+- Added GetRawFilePath (where is raw file local save path).
+  - AssetLoaders.GetRawFilePathAsync(string assetName).
+  - AssetLoaders.GetRawFilePathAsync(string packageName, string assetName).
+  - AssetLoaders.GetRawFilePath(string assetName).
+  - AssetLoaders.GetRawFilePath(string packageName, string assetName).
+- Modified PatchLauncher init procedure.
+
 ## [2.6.1] - 2023-07-25
 - Fixed query service on iOS or MacOSX bug issue (Convert url to www path).
 
