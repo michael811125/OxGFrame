@@ -55,7 +55,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 - MacOSX (Passed)
 - Android (Passed)
 - iOS (Passed)
-
+- WebGL (Passed)
 
 [Roadmap wiki](https://github.com/michael811125/OxGFrame/wiki/Roadmap)
 
