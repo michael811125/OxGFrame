@@ -87,7 +87,7 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static bool IsInitialized()
         {
-            return PatchLauncher.isInitialized;
+            return PackageManager.isInitialized;
         }
 
         /// <summary>
@@ -174,7 +174,10 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static string GetPatchVersion(bool encode = false, int encodeLength = 6, string separator = "-")
         {
-            string patchVersion = PatchManager.patchVersion;
+            string patchVersion = (PatchManager.patchVersions != null &&
+                PatchManager.patchVersions.Length > 0) ?
+                PatchManager.patchVersions[0] :
+                string.Empty;
 
             if (encode)
             {
@@ -207,32 +210,6 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static async UniTask<bool> InitAppPackage(string packageName, bool autoUpdate = false)
         {
-            string hostServer = null;
-            string fallbackHostServer = null;
-            IQueryServices queryService = null;
-
-            // Host Mode or WebGL Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
-                BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
-            {
-                hostServer = await BundleConfig.GetHostServerUrl(packageName);
-                fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
-                queryService = new RequestBuiltinQuery();
-            }
-
-            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
-        }
-
-        /// <summary>
-        /// Init app package by package list idx (If PlayMode is HostMode will request from default host path)
-        /// </summary>
-        /// <param name="idx"></param>
-        /// <param name="autoUpdate"></param>
-        /// <returns></returns>
-        public static async UniTask<bool> InitAppPackage(int idx, bool autoUpdate = false)
-        {
-            string packageName = GetPackageNameByIdx(idx);
-
             string hostServer = null;
             string fallbackHostServer = null;
             IQueryServices queryService = null;
@@ -329,28 +306,12 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Update package manifest by package list idx
-        /// </summary>
-        /// <param name="idx"></param>
-        /// <returns></returns>
-        public static async UniTask<bool> UpdatePackage(int idx)
-        {
-            string packageName = GetPackageNameByIdx(idx);
-            return await PackageManager.UpdatePackage(packageName);
-        }
-
-        /// <summary>
         /// Set default package. If is not exist will auto register and set it be default
         /// </summary>
         /// <param name="packageName"></param>
         public static void SetDefaultPackage(string packageName)
         {
             PackageManager.SetDefaultPackage(packageName);
-        }
-
-        public static void SetDefaultPackage(int idx)
-        {
-            PackageManager.SetDefaultPackage(idx);
         }
 
         /// <summary>
@@ -360,11 +321,6 @@ namespace OxGFrame.AssetLoader
         public static void SwitchDefaultPackage(string packageName)
         {
             PackageManager.SwitchDefaultPackage(packageName);
-        }
-
-        public static void SwitchDefaultPackage(int idx)
-        {
-            PackageManager.SwitchDefaultPackage(idx);
         }
 
         /// <summary>
@@ -396,32 +352,31 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get package by idx
+        /// Get preset app packages
         /// </summary>
-        /// <param name="idx"></param>
         /// <returns></returns>
-        public static ResourcePackage GetPackage(int idx)
+        public static ResourcePackage[] GetPresetAppPackages()
         {
-            return PackageManager.GetPackage(idx);
+            return PackageManager.GetPresetAppPackages();
         }
 
         /// <summary>
-        /// Retrun package name list
+        /// Get preset app package name list from PatchLauncher
         /// </summary>
         /// <returns></returns>
-        public static string[] GetPackageNames()
+        public static string[] GetPresetAppPackageNames()
         {
-            return PackageManager.GetPackageNames();
+            return PackageManager.GetPresetAppPackageNames();
         }
 
         /// <summary>
-        /// Get package name by idx
+        /// Get preset app package name from PatchLauncher by package list idx 
         /// </summary>
         /// <param name="idx"></param>
         /// <returns></returns>
-        public static string GetPackageNameByIdx(int idx)
+        public static string GetPresetAppPackageNameByIdx(int idx)
         {
-            return PackageManager.GetPackageNameByIdx(idx);
+            return PackageManager.GetPresetAppPackageNameByIdx(idx);
         }
 
         /// <summary>

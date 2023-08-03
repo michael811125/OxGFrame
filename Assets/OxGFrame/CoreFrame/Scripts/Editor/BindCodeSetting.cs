@@ -58,7 +58,7 @@ namespace OxGFrame.CoreFrame.Editor
         public IndicateModifier indicateModifier = IndicateModifier.This;
 
         [Header("Tail Bind Setting")]
-        public GenericDictionary<string, ComponentInfo> _tailRules = new GenericDictionary<string, ComponentInfo>()
+        public GenericDictionary<string, ComponentInfo> tailRules = new GenericDictionary<string, ComponentInfo>()
         {
             // Other
             { "Trans", new ComponentInfo("Transform", new Pluralize(0, "es")) },
@@ -96,5 +96,13 @@ namespace OxGFrame.CoreFrame.Editor
                     return string.Empty;
             }
         }
+
+        #region ContextMenus
+        [ContextMenu("Sort Tail Rules (A-Z)", false, 0)]
+        public void SortTailRules()
+        {
+            this.tailRules.Sort();
+        }
+        #endregion
     }
 }

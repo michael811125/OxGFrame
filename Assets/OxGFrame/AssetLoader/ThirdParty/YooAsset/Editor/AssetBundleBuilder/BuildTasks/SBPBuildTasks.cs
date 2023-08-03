@@ -33,7 +33,8 @@ namespace UnityEditor.Build.Pipeline.Tasks
 
 			// Packing
 			buildTasks.Add(new GenerateBundlePacking());
-			buildTasks.Add(new UpdateBundleObjectLayout());
+            buildTasks.Add(new RemoveSpriteAtlasRedundancy()); // Fix for SpriteAtlas Redundancy
+            buildTasks.Add(new UpdateBundleObjectLayout());
 			buildTasks.Add(new GenerateBundleCommands());
 			buildTasks.Add(new GenerateSubAssetPathMaps());
 			buildTasks.Add(new GenerateBundleMaps());

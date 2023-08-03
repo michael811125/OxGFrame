@@ -12,18 +12,16 @@ namespace OxGFrame.AssetLoader.Bundle
     [DisallowMultipleComponent]
     internal class PatchLauncher : MonoBehaviour
     {
-        public static bool isInitialized { get; private set; } = false;
-
         [Header("Patch Options")]
         public BundleConfig.PlayMode playMode = BundleConfig.PlayMode.EditorSimulateMode;
         [Tooltip("If checker patch field will compare whole version"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WebGLMode)]
         public BundleConfig.SemanticRule semanticRule = new BundleConfig.SemanticRule();
-        [Tooltip("If checked will skip default package download step of patch (force download while playing)"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
-        public bool skipCreateMainDownloder = false;
+        [Tooltip("If checked will skip preset app packages download step of the patch (force download while playing)"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
+        public bool skipMainDownload = false;
 
-        [Header("App Package List")]
-        [Tooltip("The first element will be default app package")]
-        public List<string> listPackage = new List<string>() { "DefaultPackage", "HotfixPackage" };
+        [Header("Preset App Packages")]
+        [Tooltip("The first element will be default app package\n\nNote: The presets will combine in main download of the patch")]
+        public List<string> listPackages = new List<string>() { "DefaultPackage" };
 
         [Header("Download Options")]
         public int maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
@@ -32,7 +30,7 @@ namespace OxGFrame.AssetLoader.Bundle
         public int breakpointFileSizeThreshold = 20 << 20;
 
         [Header("Cryptogram Options")]
-        [Tooltip("AssetBundle decrypt key. \n[NONE], \n[OFFSET, dummySize], \n[XOR, key], \n[HT2XOR, headKey, tailKey, jumpKey], \n[AES, key, iv] \nex: \n\"None\" \n\"offset, 12\" \n\"xor, 23\" \n\"ht2xor, 34, 45, 56\" \n\"aes, key, iv\"")]
+        [Tooltip("Bundle decryption (case-insensitive)\n\n[NONE], \n[OFFSET, dummySize], \n[XOR, key], \n[HT2XOR, headKey, tailKey, jumpKey], \n[AES, key, iv]\n\nex: \n\"none\" \n\"offset, 12\" \n\"xor, 23\" \n\"ht2xor, 34, 45, 56\" \n\"aes, key, iv\"")]
         public string decryptArgs = BundleConfig.CryptogramType.NONE;
 
         private async void Awake()
@@ -61,7 +59,7 @@ namespace OxGFrame.AssetLoader.Bundle
             if (this.playMode == BundleConfig.PlayMode.HostMode)
             {
                 BundleConfig.semanticRule = this.semanticRule;
-                BundleConfig.skipCreateMainDownloder = this.skipCreateMainDownloder;
+                BundleConfig.skipCreateMainDownloder = this.skipMainDownload;
             }
             // For WebGL Mode
             else if (this.playMode == BundleConfig.PlayMode.WebGLMode)
@@ -71,7 +69,7 @@ namespace OxGFrame.AssetLoader.Bundle
             #endregion
 
             #region Package List
-            BundleConfig.listPackage = this.listPackage;
+            BundleConfig.listPackages = this.listPackages;
             #endregion
 
             #region Download Options
@@ -85,14 +83,14 @@ namespace OxGFrame.AssetLoader.Bundle
             BundleConfig.InitCryptogram(string.IsNullOrEmpty(this.decryptArgs) ? BundleConfig.CryptogramType.NONE : this.decryptArgs);
             #endregion
 
-            // Init Settings and App Packages setup
+            // Init Settings and Setup Preset App Packages
             await PackageManager.InitSetup();
 
-            Debug.Log($"<color=#32ff94>(Powered by YooAsset) Initialized Play Mode: {BundleConfig.playMode}</color>");
-
-            isInitialized = true;
-
-            Debug.Log("<color=#b5ff00>(Powered by YooAsset) PatchLauncher Setup Completes.</color>");
+            if (PackageManager.isInitialized)
+            {
+                Debug.Log($"<color=#32ff94>(Powered by YooAsset) Initialized Play Mode: {BundleConfig.playMode}</color>");
+                Debug.Log("<color=#b5ff00>(Powered by YooAsset) PatchLauncher Setup Completes.</color>");
+            }
         }
 
         private void OnApplicationQuit()

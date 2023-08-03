@@ -19,7 +19,7 @@ MonoBehaviour:
   methodPrefix: 
   methodName: InitComponents
   indicateModifier: 1
-  _tailRules:
+  tailRules:
     list:
     - TailName: Trans
       Reference:

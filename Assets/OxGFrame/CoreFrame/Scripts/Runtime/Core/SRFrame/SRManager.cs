@@ -103,7 +103,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             {
                 if (this.CheckIsShowing(assetName))
                 {
-                    Debug.LogWarning(string.Format("【SR】{0} already exists!!!", assetName));
+                    Debug.LogWarning($"SR: {assetName} already exists!!!");
                     return null;
                 }
             }
@@ -113,7 +113,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             var srBase = await this.LoadIntoAllCache(packageName, assetName, progression, false, parent);
             if (srBase == null)
             {
-                Debug.LogWarning(string.Format("Asset not found at this path!!!【SR】: {0}", assetName));
+                Debug.LogWarning($"SR: {assetName} => Asset not found at this path!!!");
                 return null;
             }
 
@@ -121,7 +121,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             srBase.SetHidden(false);
             await this.LoadAndDisplay(srBase, obj);
 
-            Debug.Log(string.Format("Show SR: 【{0}】", assetName));
+            Debug.Log($"<color=#1effad>Show SR: <color=#ffdb1e>{assetName}</color></color>");
 
             this.CloseAwaiting(awaitingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
 
@@ -167,7 +167,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 else if (srBase.onCloseAndDestroy) this.Destroy(srBase, assetName);
             }
 
-            Debug.Log(string.Format("Close SR: 【{0}】", assetName));
+            Debug.Log($"<color=#1effad>Close SR: <color=#ffdb1e>{assetName}</color></color>");
         }
 
         public override void Close(string assetName, bool disablePreClose = false, bool forceDestroy = false)
@@ -196,7 +196,11 @@ namespace OxGFrame.CoreFrame.SRFrame
                 {
                     for (int i = 0; i < withoutAssetNames.Length; i++)
                     {
-                        if (assetName == withoutAssetNames[i]) checkWithout = true;
+                        if (assetName == withoutAssetNames[i])
+                        {
+                            checkWithout = true;
+                            break;
+                        }
                     }
                 }
 
@@ -234,7 +238,11 @@ namespace OxGFrame.CoreFrame.SRFrame
                 {
                     for (int i = 0; i < withoutAssetNames.Length; i++)
                     {
-                        if (assetName == withoutAssetNames[i]) checkWithout = true;
+                        if (assetName == withoutAssetNames[i])
+                        {
+                            checkWithout = true;
+                            break;
+                        }
                     }
                 }
 
@@ -263,7 +271,7 @@ namespace OxGFrame.CoreFrame.SRFrame
 
             if (this.CheckIsShowing(assetName))
             {
-                Debug.LogWarning(string.Format("【SR】{0} Already Reveal!!!", assetName));
+                Debug.LogWarning($"SR: {assetName} already reveal!!!");
                 return;
             }
 
@@ -274,7 +282,7 @@ namespace OxGFrame.CoreFrame.SRFrame
 
                 this.LoadAndDisplay(srBase).Forget();
 
-                Debug.Log(string.Format("Reveal SR: 【{0}】", assetName));
+                Debug.Log($"<color=#1effad>Reveal SR: <color=#ffdb1e>{assetName}</color></color>");
             }
         }
 
@@ -343,7 +351,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 this.ExitAndHide(srBase);
             }
 
-            Debug.Log(string.Format("Hide SR: 【{0}】", assetName));
+            Debug.Log($"<color=#1effad>Hide SR: <color=#ffdb1e>{assetName}</color></color>");
         }
 
         public override void Hide(string assetName)
@@ -370,7 +378,11 @@ namespace OxGFrame.CoreFrame.SRFrame
                 {
                     for (int i = 0; i < withoutAssetNames.Length; i++)
                     {
-                        if (assetName == withoutAssetNames[i]) checkWithout = true;
+                        if (assetName == withoutAssetNames[i])
+                        {
+                            checkWithout = true;
+                            break;
+                        }
                     }
                 }
 
@@ -405,7 +417,11 @@ namespace OxGFrame.CoreFrame.SRFrame
                 {
                     for (int i = 0; i < withoutAssetNames.Length; i++)
                     {
-                        if (assetName == withoutAssetNames[i]) checkWithout = true;
+                        if (assetName == withoutAssetNames[i])
+                        {
+                            checkWithout = true;
+                            break;
+                        }
                     }
                 }
 

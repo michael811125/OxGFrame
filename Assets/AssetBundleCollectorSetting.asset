@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowPackageView: 1
   EnableAddressable: 1
+  LocationToLower: 0
+  IncludeAssetGUID: 0
   UniqueBundleName: 0
   ShowEditorAlias: 0
   Packages:

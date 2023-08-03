@@ -3,6 +3,10 @@ using UnityEngine;
 
 public static class ScenePrefs
 {
+    /**
+     * SC = Scene (Sc)
+     */
+
     // If use prefix "res#" will load from resource else will from bundle
     private const string _prefix = "res#";
     private const string _path = "Example/ScenePrefabs/";
@@ -16,6 +20,10 @@ public static class ScenePrefs
 
 public static class ResPrefs
 {
+    /**
+     * RS = Resource (Res)
+     */
+
     // If use prefix "res#" will load from resource else will from bundle
     private const string _prefix = "res#";
     private const string _path = "Example/ResPrefabs/";

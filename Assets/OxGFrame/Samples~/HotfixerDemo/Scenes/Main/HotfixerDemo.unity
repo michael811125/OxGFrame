@@ -909,6 +909,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
         type: 3}
+      propertyPath: skipMainDownload
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
+        type: 3}
       propertyPath: skipCreateMainDownloder
       value: 1
       objectReference: {fileID: 0}

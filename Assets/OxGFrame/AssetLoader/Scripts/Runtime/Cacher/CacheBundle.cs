@@ -87,6 +87,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 {
+                    bool loaded = false;
                     BundlePack pack = new BundlePack();
 
                     var package = PackageManager.GetPackage(packageName);
@@ -107,6 +108,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                             if (req.IsDone)
                             {
+                                loaded = true;
                                 pack.SetPack(packageName, assetName, req);
                                 break;
                             }
@@ -114,17 +116,19 @@ namespace OxGFrame.AssetLoader.Cacher
                         } while (true);
                     }
 
-                    if (pack != null)
+                    if (pack != null && loaded)
                     {
                         // skipping duplicate keys
-                        if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
+                        if (!this.HasInCache(assetName))
+                        {
+                            this._cacher.Add(assetName, pack);
+                            Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                        }
                     }
                 }
 
                 // 移除標記
                 this._loadingFlags.Remove(assetName);
-
-                Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
             }
         }
 
@@ -173,6 +177,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 {
+                    bool loaded = false;
                     BundlePack pack = new BundlePack();
 
                     var package = PackageManager.GetPackage(packageName);
@@ -189,21 +194,24 @@ namespace OxGFrame.AssetLoader.Cacher
                                 progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
                             }
 
+                            loaded = true;
                             pack.SetPack(packageName, assetName, req);
                         }
                     }
 
-                    if (pack != null)
+                    if (pack != null && loaded)
                     {
                         // skipping duplicate keys
-                        if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
+                        if (!this.HasInCache(assetName))
+                        {
+                            this._cacher.Add(assetName, pack);
+                            Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                        }
                     }
                 }
 
                 // 移除標記
                 this._loadingFlags.Remove(assetName);
-
-                Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
             }
         }
 
@@ -230,6 +238,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             if (pack == null)
             {
+                bool loaded = false;
                 pack = new BundlePack();
                 {
                     var package = PackageManager.GetPackage(packageName);
@@ -250,6 +259,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                             if (req.IsDone)
                             {
+                                loaded = true;
                                 pack.SetPack(packageName, assetName, req);
                                 break;
                             }
@@ -258,7 +268,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                 }
 
-                if (pack != null)
+                if (pack != null && loaded)
                 {
                     // skipping duplicate keys
                     if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
@@ -270,10 +280,22 @@ namespace OxGFrame.AssetLoader.Cacher
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
             }
 
-            if (pack.IsValid())
+            object data;
+            if (typeof(T) == typeof(string))
+            {
+                data = pack.GetRawFileText();
+            }
+            else if (typeof(T) == typeof(byte[]))
+            {
+                data = pack.GetRawFileData();
+            }
+            else data = null;
+
+            if (pack.IsValid() && data != null)
             {
                 // 引用計數++
                 pack.AddRef();
+                Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
             }
             else
             {
@@ -284,17 +306,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             this._loadingFlags.Remove(assetName);
 
-            Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
-
-            if (typeof(T) == typeof(string))
-            {
-                return (T)(object)pack.GetRawFileText();
-            }
-            else if (typeof(T) == typeof(byte[]))
-            {
-                return (T)(object)pack.GetRawFileData();
-            }
-            else return default;
+            return (T)data;
         }
 
         public T LoadRawFile<T>(string packageName, string assetName, Progression progression = null)
@@ -320,6 +332,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             if (pack == null)
             {
+                bool loaded = false;
                 pack = new BundlePack();
                 {
                     var package = PackageManager.GetPackage(packageName);
@@ -336,12 +349,13 @@ namespace OxGFrame.AssetLoader.Cacher
                                 progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
                             }
 
+                            loaded = true;
                             pack.SetPack(packageName, assetName, req);
                         }
                     }
                 }
 
-                if (pack != null)
+                if (pack != null && loaded)
                 {
                     // skipping duplicate keys
                     if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
@@ -353,10 +367,22 @@ namespace OxGFrame.AssetLoader.Cacher
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
             }
 
-            if (pack.IsValid())
+            object data;
+            if (typeof(T) == typeof(string))
+            {
+                data = pack.GetRawFileText();
+            }
+            else if (typeof(T) == typeof(byte[]))
+            {
+                data = pack.GetRawFileData();
+            }
+            else data = null;
+
+            if (pack.IsValid() && data != null)
             {
                 // 引用計數++
                 pack.AddRef();
+                Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
             }
             else
             {
@@ -367,17 +393,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             this._loadingFlags.Remove(assetName);
 
-            Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
-
-            if (typeof(T) == typeof(string))
-            {
-                return (T)(object)pack.GetRawFileText();
-            }
-            else if (typeof(T) == typeof(byte[]))
-            {
-                return (T)(object)pack.GetRawFileData();
-            }
-            else return default;
+            return (T)data;
         }
 
         public void UnloadRawFile(string assetName, bool forceUnload = false)
@@ -538,7 +554,9 @@ namespace OxGFrame.AssetLoader.Cacher
 
             this._loadingFlags.Remove(assetName);
 
-            return pack;
+            if (pack.GetScene().isLoaded) return pack;
+
+            return null;
         }
 
         public void UnloadScene(string assetName, bool recursively = false)
@@ -580,7 +598,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         var pack = this._sceneCache[key];
                         if (pack.IsSceneOperationHandle())
                         {
-                            if (!pack.GetScene().isLoaded)
+                            if (pack.GetScene().isLoaded)
                             {
                                 saftyChecker = true;
                                 break;
@@ -695,6 +713,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 {
+                    bool loaded = false;
                     BundlePack pack = new BundlePack();
 
                     var package = PackageManager.GetPackage(packageName);
@@ -715,6 +734,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                             if (req.IsDone)
                             {
+                                loaded = true;
                                 pack.SetPack(packageName, assetName, req);
                                 break;
                             }
@@ -722,17 +742,19 @@ namespace OxGFrame.AssetLoader.Cacher
                         } while (true);
                     }
 
-                    if (pack != null)
+                    if (pack != null && loaded)
                     {
                         // skipping duplicate keys
-                        if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
+                        if (!this.HasInCache(assetName))
+                        {
+                            this._cacher.Add(assetName, pack);
+                            Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                        }
                     }
                 }
 
                 // 移除標記
                 this._loadingFlags.Remove(assetName);
-
-                Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
             }
         }
 
@@ -781,6 +803,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 {
+                    bool loaded = false;
                     BundlePack pack = new BundlePack();
 
                     var package = PackageManager.GetPackage(packageName);
@@ -797,21 +820,24 @@ namespace OxGFrame.AssetLoader.Cacher
                                 progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
                             }
 
+                            loaded = true;
                             pack.SetPack(packageName, assetName, req);
                         }
                     }
 
-                    if (pack != null)
+                    if (pack != null && loaded)
                     {
                         // skipping duplicate keys
-                        if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
+                        if (!this.HasInCache(assetName))
+                        {
+                            this._cacher.Add(assetName, pack);
+                            Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                        }
                     }
                 }
 
                 // 移除標記
                 this._loadingFlags.Remove(assetName);
-
-                Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
             }
         }
 
@@ -838,6 +864,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             if (pack == null)
             {
+                bool loaded = false;
                 pack = new BundlePack();
                 {
                     var package = PackageManager.GetPackage(packageName);
@@ -858,6 +885,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                             if (req.IsDone)
                             {
+                                loaded = true;
                                 pack.SetPack(packageName, assetName, req);
                                 break;
                             }
@@ -866,7 +894,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                 }
 
-                if (pack != null)
+                if (pack != null && loaded)
                 {
                     // skipping duplicate keys
                     if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
@@ -878,10 +906,12 @@ namespace OxGFrame.AssetLoader.Cacher
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
             }
 
-            if (pack.IsValid())
+            var asset = pack.GetAsset<T>();
+            if (pack.IsValid() && asset != null)
             {
                 // 引用計數++
                 pack.AddRef();
+                Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
             }
             else
             {
@@ -892,9 +922,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             this._loadingFlags.Remove(assetName);
 
-            Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
-
-            return pack.GetAsset<T>();
+            return asset;
         }
 
         public T LoadAsset<T>(string packageName, string assetName, Progression progression = null) where T : Object
@@ -920,6 +948,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             if (pack == null)
             {
+                bool loaded = false;
                 pack = new BundlePack();
                 {
                     var package = PackageManager.GetPackage(packageName);
@@ -936,12 +965,13 @@ namespace OxGFrame.AssetLoader.Cacher
                                 progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
                             }
 
+                            loaded = true;
                             pack.SetPack(packageName, assetName, req);
                         }
                     }
                 }
 
-                if (pack != null)
+                if (pack != null && loaded)
                 {
                     // skipping duplicate keys
                     if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
@@ -953,10 +983,12 @@ namespace OxGFrame.AssetLoader.Cacher
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
             }
 
-            if (pack.IsValid())
+            var asset = pack.GetAsset<T>();
+            if (pack.IsValid() && asset != null)
             {
                 // 引用計數++
                 pack.AddRef();
+                Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
             }
             else
             {
@@ -967,9 +999,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             this._loadingFlags.Remove(assetName);
 
-            Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
-
-            return pack.GetAsset<T>();
+            return asset;
         }
 
         public void UnloadAsset(string assetName, bool forceUnload = false)

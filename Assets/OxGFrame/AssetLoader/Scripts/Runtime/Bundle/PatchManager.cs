@@ -37,7 +37,8 @@ namespace OxGFrame.AssetLoader.Bundle
         #endregion
 
         internal static string appVersion = string.Empty;
-        internal static string patchVersion = string.Empty;
+        internal static string[] patchVersions;
+        internal ResourceDownloaderOperation[] mainDownloaders;
 
         private bool _isCheck = false;
         private bool _isRepair = false;
@@ -45,8 +46,6 @@ namespace OxGFrame.AssetLoader.Bundle
 
         private EventGroup _userEvents;
         private StateMachine _patchFsm;
-
-        public ResourceDownloaderOperation mainDownloader;
 
         private static PatchManager _instance = null;
         internal static PatchManager GetInstance()
@@ -164,7 +163,11 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         public void Pause()
         {
-            this.mainDownloader?.PauseDownload();
+            if (this.mainDownloaders == null) return;
+            foreach (var downloader in this.mainDownloaders)
+            {
+                downloader.PauseDownload();
+            }
         }
 
         /// <summary>
@@ -172,7 +175,11 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         public void Resume()
         {
-            this.mainDownloader?.ResumeDownload();
+            if (this.mainDownloaders == null) return;
+            foreach (var downloader in this.mainDownloaders)
+            {
+                downloader.ResumeDownload();
+            }
         }
 
         /// <summary>
@@ -180,8 +187,11 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         public void Cancel()
         {
-            this.mainDownloader?.CancelDownload();
-            // temp canceled callback in here
+            if (this.mainDownloaders == null) return;
+            foreach (var downloader in this.mainDownloaders)
+            {
+                downloader.CancelDownload();
+            }
             PatchEvents.PatchDownloadCanceled.SendEventMessage();
         }
         #endregion
@@ -196,7 +206,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
             this._isCheck = false;
             this._isRepair = false;
-            this.mainDownloader = null;
+            this.mainDownloaders = null;
         }
 
         /// <summary>

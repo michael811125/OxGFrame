@@ -67,6 +67,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     continue;
                 }
 
+                bool loaded = false;
                 ResourcePack pack = new ResourcePack();
                 {
                     var req = Resources.LoadAsync<T>(assetName);
@@ -85,6 +86,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                             if (req.isDone)
                             {
+                                loaded = true;
                                 pack.SetPack(assetName, req.asset);
                                 break;
                             }
@@ -93,16 +95,18 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                 }
 
-                if (pack != null)
+                if (loaded)
                 {
                     // skipping duplicate keys
-                    if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
+                    if (!this.HasInCache(assetName))
+                    {
+                        this._cacher.Add(assetName, pack);
+                        Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                    }
                 }
 
                 // 移除標記
                 this._loadingFlags.Remove(assetName);
-
-                Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}</color>");
             }
         }
 
@@ -144,26 +148,32 @@ namespace OxGFrame.AssetLoader.Cacher
                     continue;
                 }
 
+                bool loaded = false;
                 ResourcePack pack = new ResourcePack();
                 {
                     var asset = Resources.Load<T>(assetName);
+                    if (asset != null)
+                    {
+                        this.reqSize++;
+                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
 
-                    this.reqSize++;
-                    progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-
-                    pack.SetPack(assetName, asset);
+                        loaded = true;
+                        pack.SetPack(assetName, asset);
+                    }
                 }
 
-                if (pack != null)
+                if (loaded)
                 {
                     // skipping duplicate keys
-                    if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
+                    if (!this.HasInCache(assetName))
+                    {
+                        this._cacher.Add(assetName, pack);
+                        Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                    }
                 }
 
                 // 移除標記
                 this._loadingFlags.Remove(assetName);
-
-                Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}</color>");
             }
         }
 
@@ -190,6 +200,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             if (pack == null)
             {
+                bool loaded = false;
                 pack = new ResourcePack();
                 {
                     var req = Resources.LoadAsync<T>(assetName);
@@ -208,6 +219,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                             if (req.isDone)
                             {
+                                loaded = true;
                                 pack.SetPack(assetName, req.asset);
                                 break;
                             }
@@ -216,7 +228,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                 }
 
-                if (pack != null)
+                if (loaded)
                 {
                     // skipping duplicate keys
                     if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
@@ -228,17 +240,17 @@ namespace OxGFrame.AssetLoader.Cacher
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
             }
 
-            if (pack.asset != null)
+            var asset = pack.GetAsset<T>();
+            if (asset != null)
             {
                 // 引用計數++
                 pack.AddRef();
+                Debug.Log($"<color=#90FF71>【Load】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
             }
 
             this._loadingFlags.Remove(assetName);
 
-            Debug.Log($"<color=#90FF71>【Load】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
-
-            return pack.GetAsset<T>();
+            return asset;
         }
 
         public T LoadAsset<T>(string assetName, Progression progression = null) where T : Object
@@ -261,20 +273,25 @@ namespace OxGFrame.AssetLoader.Cacher
 
             // 先從緩存拿
             ResourcePack pack = this.GetFromCache(assetName);
+            T asset = default;
 
             if (pack == null)
             {
+                bool loaded = false;
                 pack = new ResourcePack();
                 {
-                    var asset = Resources.Load<T>(assetName);
+                    asset = Resources.Load<T>(assetName);
+                    if (asset != null)
+                    {
+                        this.reqSize = this.totalSize;
+                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
 
-                    this.reqSize = this.totalSize;
-                    progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-
-                    pack.SetPack(assetName, asset);
+                        loaded = true;
+                        pack.SetPack(assetName, asset);
+                    }
                 }
 
-                if (pack != null)
+                if (loaded)
                 {
                     // skipping duplicate keys
                     if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
@@ -286,17 +303,17 @@ namespace OxGFrame.AssetLoader.Cacher
                 progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
             }
 
-            if (pack.asset != null)
+            asset = pack.GetAsset<T>();
+            if (asset != null)
             {
                 // 引用計數++
                 pack.AddRef();
+                Debug.Log($"<color=#90FF71>【Load】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
             }
 
             this._loadingFlags.Remove(assetName);
 
-            Debug.Log($"<color=#90FF71>【Load】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
-
-            return pack.GetAsset<T>();
+            return asset;
         }
 
         public void UnloadAsset(string assetName, bool forceUnload = false)

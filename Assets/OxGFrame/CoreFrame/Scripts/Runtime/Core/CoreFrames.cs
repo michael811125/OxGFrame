@@ -448,14 +448,14 @@ namespace OxGFrame.CoreFrame
             /// <param name="sceneName"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask LoadSingleSceneAsync(string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+            public static async UniTask LoadSingleSceneAsync(string sceneName, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 if (RefineBuildScenePath(ref sceneName))
                 {
                     await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Single, progression);
                 }
-                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, activateOnLoad, priority, progression);
+                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, true, 100, progression);
             }
 
             /// <summary>
@@ -463,21 +463,19 @@ namespace OxGFrame.CoreFrame
             /// </summary>
             /// <typeparam name="T"></typeparam>
             /// <param name="sceneName"></param>
-            /// <param name="activateOnLoad"></param>
-            /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns>
             /// <para>From Build is &lt;AsyncOperation&gt;</para>
             /// <para>From Bundle is &lt;BundlePack&gt;</para>
             /// </returns>
-            public static async UniTask<T> LoadSingleSceneAsync<T>(string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null) where T : class
+            public static async UniTask<T> LoadSingleSceneAsync<T>(string sceneName, Progression progression = null) where T : class
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 if (RefineBuildScenePath(ref sceneName))
                 {
                     return await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Single, progression) as T;
                 }
-                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, activateOnLoad, priority, progression) as T;
+                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, true, 100, progression) as T;
             }
 
             /// <summary>
@@ -485,17 +483,15 @@ namespace OxGFrame.CoreFrame
             /// </summary>
             /// <param name="packageName"></param>
             /// <param name="sceneName"></param>
-            /// <param name="activateOnLoad"></param>
-            /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask LoadSingleSceneAsync(string packageName, string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+            public static async UniTask LoadSingleSceneAsync(string packageName, string sceneName, Progression progression = null)
             {
                 if (RefineBuildScenePath(ref sceneName))
                 {
                     await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Single, progression);
                 }
-                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, activateOnLoad, priority, progression);
+                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, true, 100, progression);
             }
 
             /// <summary>
@@ -504,20 +500,18 @@ namespace OxGFrame.CoreFrame
             /// <typeparam name="T"></typeparam>
             /// <param name="packageName"></param>
             /// <param name="sceneName"></param>
-            /// <param name="activateOnLoad"></param>
-            /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns>
             /// <para>From Build is &lt;AsyncOperation&gt;</para>
             /// <para>From Bundle is &lt;BundlePack&gt;</para>
             /// </returns>
-            public static async UniTask<T> LoadSingleSceneAsync<T>(string packageName, string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null) where T : class
+            public static async UniTask<T> LoadSingleSceneAsync<T>(string packageName, string sceneName, Progression progression = null) where T : class
             {
                 if (RefineBuildScenePath(ref sceneName))
                 {
                     return await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Single, progression) as T;
                 }
-                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, activateOnLoad, priority, progression) as T;
+                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, true, 100, progression) as T;
             }
 
             /// <summary>
