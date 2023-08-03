@@ -165,7 +165,7 @@ namespace OxGFrame.CoreFrame.Editor
             #region 組件規則檢查
             foreach (var bindInfo in _collectBindInfos)
             {
-                foreach (var tail in _settings._tailRules)
+                foreach (var tail in _settings.tailRules)
                 {
                     if (bindInfo.Value.componentName == tail.Key)
                     {

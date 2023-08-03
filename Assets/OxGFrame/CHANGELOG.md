@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## [2.7.0] - 2023-08-03
+- Added AssetPatcher.GetPresetAppPackages() method.
+- Added [Sort Tail Rules (A-Z)] ContextMenu for BindCodeSetting.
+- Upgraded YooAsset to v1.5.3-preview.
+- Fixed FixBuildTasks add back (accidentally deleted).
+- Modified PatchLauncher preset app packages, will collect all preset app packages in main download.
+- Modified CoreFrames.USFrame.LoadSingleSceneAsync params of method (removed activateOnLoad and priority).
+- Renamed PatchLauncher param skipCreateMainDownloader to skipMainDownload.
+- Changed AssetPatcher.GetPackageNames() => AssetPatcher.GetPresetAppPackageNames().
+- Changed AssetPatcher.GetPackageNameByIdx => AssetPatcher.GetPresetAppPackageNameByIdx().
+- Removed AssetPatcher.GetPackage(int idx) method.
+- Removed AssetPatcher.InitAppPackage(int idx, bool autoUpdate = false) method.
+- Removed AssetPatcher.UpdatePackage(int idx) method.
+- Removed AssetPatcher.SetDefaultPackage(int idx) method.
+- Removed AssetPatcher.SwitchDefaultPackage(int idx) method.
+- Optimized AssetLoader (CacheResource and CacheBundle determines).
+
 ## [2.6.2] - 2023-07-25
 - Added GetRawFilePath (where is raw file local save path).
   - AssetLoaders.GetRawFilePathAsync(string assetName).

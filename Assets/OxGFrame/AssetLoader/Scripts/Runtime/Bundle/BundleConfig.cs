@@ -59,7 +59,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// Package 設置清單
         /// </summary>
-        public static List<string> listPackage;
+        public static List<string> listPackages;
 
         /// <summary>
         /// 預設同時併發下載數量

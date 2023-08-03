@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 namespace OxGFrame.CoreFrame.Editor
 {
@@ -83,6 +84,11 @@ namespace OxGFrame.CoreFrame.Editor
 
         public ICollection<TKey> Keys => dict.Keys;
         public ICollection<TValue> Values => dict.Values;
+
+        public void Sort()
+        {
+            this.list = this.list.OrderBy(o => o.TailName).ToList();
+        }
 
         public void Add(TKey key, TValue value)
         {

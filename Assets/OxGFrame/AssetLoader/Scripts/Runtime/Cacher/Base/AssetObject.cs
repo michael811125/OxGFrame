@@ -30,7 +30,7 @@ namespace OxGFrame.AssetLoader.Cacher
     #region Resource
     public class ResourcePack : AssetObject
     {
-        public Object asset { get; protected set; }
+        public Object asset { get; protected set; } = null;
 
         /// <summary>
         /// Set pack info
@@ -45,6 +45,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public T GetAsset<T>() where T : Object
         {
+            if (this.asset == null) return default;
             return this.asset as T;
         }
 
@@ -60,7 +61,7 @@ namespace OxGFrame.AssetLoader.Cacher
     public class BundlePack : AssetObject
     {
         public string packageName { get; protected set; }
-        public OperationHandleBase operationHandle { get; protected set; }
+        public OperationHandleBase operationHandle { get; protected set; } = null;
 
         /// <summary>
         /// Set pack info
@@ -146,6 +147,7 @@ namespace OxGFrame.AssetLoader.Cacher
         /// <returns></returns>
         public bool IsValid()
         {
+            if (this.operationHandle == null) return false;
             return this.operationHandle.IsValid;
         }
 

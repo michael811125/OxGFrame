@@ -158,13 +158,22 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 - Host Mode (聯機模式)，需將 AB 打包區分 Built-in 跟 Patch，並且產出相關配置，需注意 PatchLauncher 的解密設定。
   - 允許選擇 Semantic Version 版號檢查規則 (比對完整版號 X.Y.Z 或比對大小版號 X.Y)。
   - 允許跳過 Default Package 主下載器的下載階段 (強制邊玩邊下載)。
+- WebGL Mode (僅支援 WebGL 平台)，需將 AB 全部打包至 Built-in (StreamingAssets)。
+  - 不支援事先下載，主要是因為 WebGL 是邊玩邊下載。
 
 **檢查 PlayMode 是否初始完成**
-- 判斷檢查 AssetPatcher.IsInitialized() 是否初始完成，因為初始完成後，才能開始進行 Built-in Bundle 的加載與 AssetPatcher.Check()，又或者邊玩邊下載。
+- 判斷檢查 AssetPatcher.IsInitialized() 是否完成 Preset App Packages 的初始，因為初始完成後，才能開始進行 Built-in Bundle 的加載與 AssetPatcher.Check() 檢查更新，又或者邊玩邊下載。
   - 備註 : 區分 Built-in 跟 Patch (視情況自行訂定運作流程)
     1. 需自己拆分 Patch 更新前用到的資源 (例如 : LogoUI, PatchUI 等...)，需要先打包至 Built-in 作為內置資源。
-	2. 後續執行 AssetPatcher.Check() 檢查 Patch 更新完成後，就可以讀取更新資源了。
-	
+	2. 後續執行 AssetPatcher.Check() 檢查 Patch 更新完成後，就可以讀取更新資源了 (**檢查流程會將 Preset App Packages 進行 Main Download 的合併**)。
+
+| **Preset App Packages** |
+|:-|
+| Pkg_01 (TotalCount = 3, TotalSize = 600 KB) |
+| Pkg_02 (TotalCount = 6, TotalSize = 1200 KB) |
+| **Combination** |
+| Pkg_01 + Pkg_02 (TotalCount = 9, TotalSize = 1800 KB) |
+
 **檢查 Patch 是否更新完成**
 - 判斷檢查 AssetPatcher.IsDone() 是否更新完成。
 

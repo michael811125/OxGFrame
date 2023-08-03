@@ -105,15 +105,18 @@ namespace OxGFrame.CoreFrame.USFrame
             var scene = this.GetSceneByName(sceneName);
             if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
             {
-                Debug.LogWarning(string.Format("【US】Single Scene => {0} already exists!!!", sceneName));
+                Debug.LogWarning($"【US】Single Scene => {sceneName} already exists!!!");
                 return null;
             }
 
             var pack = await AssetLoaders.LoadSceneAsync(packageName, sceneName, loadSceneMode, activateOnLoad, priority, progression);
+            if (pack != null)
+            {
+                Debug.Log($"<color=#4affc2>Load Scene From <color=#ffc04a>Bundle</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
+                return pack;
+            }
 
-            Debug.Log($"<color=#4affc2>Load Scene From <color=#ffc04a>Bundle</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
-
-            return pack;
+            return null;
         }
 
         public void UnloadFromBundle(bool recursively, params string[] sceneNames)
@@ -137,7 +140,7 @@ namespace OxGFrame.CoreFrame.USFrame
             var scene = this.GetSceneByName(sceneName);
             if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
             {
-                Debug.LogWarning(string.Format("【US】Single Scene => {0} already exists!!!", sceneName));
+                Debug.LogWarning($"【US】Single Scene => {sceneName} already exists!!!");
                 return null;
             }
 
@@ -172,9 +175,10 @@ namespace OxGFrame.CoreFrame.USFrame
             this._totalSize = 1; // 初始 1 = 必有一場景
 
             var scene = this.GetSceneByBuildIndex(buildIndex);
-            if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
+            string sceneName = scene.name;
+            if (!string.IsNullOrEmpty(sceneName) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
             {
-                Debug.LogWarning(string.Format("【US】Single Scene => {0} already exists!!!", scene.name));
+                Debug.LogWarning($"【US】Single Scene => {sceneName} already exists!!!");
                 return null;
             }
 

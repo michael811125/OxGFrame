@@ -4,11 +4,11 @@ using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.PatchEvent;
 using OxGFrame.AssetLoader.PatchFsm;
 using OxGFrame.AssetLoader.Utility;
+using System.Collections;
 using System.Text;
 using UniFramework.Event;
 using UnityEngine;
 using UnityEngine.UI;
-using YooAsset;
 
 public class BundleDemo : MonoBehaviour
 {
@@ -34,7 +34,7 @@ public class BundleDemo : MonoBehaviour
 
     private int _retryType = 0;
 
-    public void Start()
+    private IEnumerator Start()
     {
         this.progress.size = 0f;
         this.info.text = string.Empty;
@@ -46,6 +46,22 @@ public class BundleDemo : MonoBehaviour
 
         // Init Patch Events
         this._InitPatchEvents();
+
+        // Disable Buttons
+        var btns = this.controlBtns.GetComponentsInChildren<Button>();
+        foreach (var btn in btns)
+        {
+            btn.interactable = false;
+        }
+
+        // Wait Until IsInitialized
+        while (!AssetPatcher.IsInitialized()) yield return null;
+
+        // Enable Buttons
+        foreach (var btn in btns)
+        {
+            btn.interactable = true;
+        }
     }
 
     #region Patch Event

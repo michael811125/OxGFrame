@@ -43,7 +43,7 @@ namespace OxGFrame.AssetLoader.Editor
         [SerializeField]
         public string appVersion;
         [SerializeField]
-        public List<string> exportAppPackages = new List<string>() { "DefaultPackage", "HotfixPackage" };
+        public List<string> exportAppPackages = new List<string>() { "DefaultPackage" };
         [SerializeField]
         public List<DlcInfo> exportIndividualPackages = new List<DlcInfo>();
         [SerializeField]
@@ -391,7 +391,7 @@ namespace OxGFrame.AssetLoader.Editor
             GUI.backgroundColor = new Color32(255, 151, 240, 255);
             if (GUILayout.Button("Reset", GUILayout.MaxWidth(100f)))
             {
-                this.exportAppPackages = new List<string>() { "DefaultPackage", "HotfixPackage" };
+                this.exportAppPackages = new List<string>() { "DefaultPackage" };
                 string json = JsonConvert.SerializeObject(this.exportAppPackages);
                 EditorStorage.SaveData(KEY_SAVER, "exportAppPackages", json);
             }
@@ -445,7 +445,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
             centeredStyle.alignment = TextAnchor.UpperCenter;
-            GUILayout.Label(new GUIContent("Group Tags For Default Package"), centeredStyle);
+            GUILayout.Label(new GUIContent("Group Tags For Preset App Packages (Main Download)"), centeredStyle);
             EditorGUILayout.Space();
 
             EditorGUILayout.BeginVertical();

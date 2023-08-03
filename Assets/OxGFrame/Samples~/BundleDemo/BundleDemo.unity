@@ -1715,7 +1715,7 @@ PrefabInstance:
     - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
         type: 3}
       propertyPath: playMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
         type: 3}
@@ -1744,13 +1744,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
         type: 3}
+      propertyPath: listPackages.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
+        type: 3}
       propertyPath: skipCreateMainDownloder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
         type: 3}
       propertyPath: listPackage.Array.data[1]
       value: HotfixPackage
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
+        type: 3}
+      propertyPath: listPackages.Array.data[0]
+      value: DefaultPackage
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
+        type: 3}
+      propertyPath: listPackages.Array.data[1]
+      value: OtherPackage
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 992bffa5c79679749861326baa5441c6, type: 3}

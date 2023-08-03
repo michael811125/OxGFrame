@@ -7,6 +7,7 @@ using OxGKit.Utilities.Request;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UniFramework.Machine;
 using UnityEngine;
 using YooAsset;
@@ -49,10 +50,15 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 // Delete Last Group Info record
                 PatchManager.DelLastGroupInfo();
 
-                // Get main default package name
-                var defaultPackageName = PackageManager.GetDefaultPackageName();
-                // Clear cache and files of main default package
-                bool isCleared = await PackageManager.UnloadPackageAndClearCacheFiles(defaultPackageName);
+                // Get preset app package names
+                bool isCleared = false;
+                var packageNames = PackageManager.GetPresetAppPackageNames();
+                foreach (var packageName in packageNames)
+                {
+                    // Clear cache and files of package
+                    isCleared = await PackageManager.UnloadPackageAndClearCacheFiles(packageName);
+                    if (!isCleared) isCleared = false;
+                }
 
                 if (isCleared) this._machine.ChangeState<FsmPatchPrepare>();
                 else PatchEvents.PatchRepairFailed.SendEventMessage();
@@ -339,7 +345,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
 
                 if (PatchManager.GetInstance().IsRepair() &&
-                    PackageManager.GetDefaultPackage().InitializeStatus == EOperationStatus.Succeed)
+                    PackageManager.isInitialized)
                 {
                     // SimulateMode and OfflineMode doesn't need to update patch version and manifest
                     if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
@@ -353,14 +359,14 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     Debug.Log("<color=#ffcf67>(Repair) Repair Patch</color>");
                     return;
                 }
-                else if (PackageManager.GetDefaultPackage().InitializeStatus == EOperationStatus.Succeed)
+                else if (PackageManager.isInitialized)
                 {
                     this._machine.ChangeState<FsmPatchVersionUpdate>();
                     Debug.Log("<color=#ffcf67>(Check) Check Patch</color>");
                     return;
                 }
 
-                bool isInitialized = await PackageManager.InitDefaultPackage();
+                bool isInitialized = await PackageManager.InitPresetAppPackages();
                 if (isInitialized)
                 {
                     this._machine.ChangeState<FsmPatchVersionUpdate>();
@@ -406,23 +412,33 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
 
-                var package = PackageManager.GetDefaultPackage();
-                var operation = package.UpdatePackageVersionAsync();
-                await operation;
+                var packages = PackageManager.GetPresetAppPackages();
 
-                if (operation.Status == EOperationStatus.Succeed)
+                bool succeed = false;
+                List<string> patchVersions = new List<string>();
+                foreach (var package in packages)
                 {
-                    PatchManager.patchVersion = operation.PackageVersion;
-                    if (string.IsNullOrEmpty(PatchManager.patchVersion))
+                    var operation = package.UpdatePackageVersionAsync();
+                    await operation;
+
+                    if (operation.Status == EOperationStatus.Succeed)
                     {
-                        PatchManager.patchVersion = package.GetPackageVersion();
+                        succeed = true;
+                        patchVersions.Add(operation.PackageVersion);
                     }
-                    this._machine.ChangeState<FsmPatchManifestUpdate>();
+                    else
+                    {
+                        succeed = false;
+                        PatchEvents.PatchVersionUpdateFailed.SendEventMessage();
+                        Debug.Log($"<color=#ff3696>Package: {package.PackageName} update version failed.</color>");
+                        break;
+                    }
                 }
-                else
+
+                if (succeed)
                 {
-                    Debug.LogWarning(operation.Error);
-                    PatchEvents.PatchVersionUpdateFailed.SendEventMessage();
+                    PatchManager.patchVersions = patchVersions.ToArray();
+                    this._machine.ChangeState<FsmPatchManifestUpdate>();
                 }
             }
         }
@@ -460,20 +476,33 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
 
-                var package = PackageManager.GetDefaultPackage();
-                var operation = package.UpdatePackageManifestAsync(PatchManager.patchVersion);
-                await operation;
+                var packages = PackageManager.GetPresetAppPackages();
 
-                if (operation.Status == EOperationStatus.Succeed)
+                bool succeed = false;
+                for (int i = 0; i < packages.Length; i++)
                 {
-                    operation.SavePackageVersion();
+                    var operation = packages[i].UpdatePackageManifestAsync(PatchManager.patchVersions[i]);
+                    await operation;
+
+                    if (operation.Status == EOperationStatus.Succeed)
+                    {
+                        succeed = true;
+                        operation.SavePackageVersion();
+                        Debug.Log($"<color=#85cf0f>Package: {packages[i].PackageName} <color=#00c1ff>Update</color> completed successfully.</color>");
+                    }
+                    else
+                    {
+                        succeed = false;
+                        PatchEvents.PatchManifestUpdateFailed.SendEventMessage();
+                        Debug.Log($"<color=#ff3696>Package: {packages[i].PackageName} update manifest failed.</color>");
+                        break;
+                    }
+                }
+
+                if (succeed)
+                {
                     if (BundleConfig.skipCreateMainDownloder) this._machine.ChangeState<FsmDownloadOver>();
                     else this._machine.ChangeState<FsmCreateDownloader>();
-                }
-                else
-                {
-                    Debug.LogWarning(operation.Error);
-                    PatchEvents.PatchManifestUpdateFailed.SendEventMessage();
                 }
             }
         }
@@ -524,56 +553,153 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 GroupInfo lastGroupInfo = PatchManager.GetLastGroupInfo();
                 Debug.Log($"<color=#ffce54>Get last GroupName: {lastGroupInfo?.groupName}</color>");
 
-                List<GroupInfo> newGroupInfos = new List<GroupInfo>();
-
                 #region Create Downaloder by Tags
                 string url = await BundleConfig.GetHostServerPatchConfigPath();
                 string hostCfgJson = await Requester.RequestText(url, null, null, null, false);
                 PatchConfig patchCfg = JsonConvert.DeserializeObject<PatchConfig>(hostCfgJson);
                 List<GroupInfo> patchGroupInfos = patchCfg.GROUP_INFOS;
 
-                var package = PackageManager.GetDefaultPackage();
+                var packages = PackageManager.GetPresetAppPackages();
 
-                if (lastGroupInfo == null)
+                string key;
+                int totalDownloadCount;
+                long totalDownloadBytes;
+                Dictionary<string, GroupInfo> newGroupInfos = new Dictionary<string, GroupInfo>();
+                for (int i = 0; i < packages.Length; i++)
                 {
-                    // all package
-                    var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
-                    int totalDownloadCount = downloader.TotalDownloadCount;
-                    long totalDownloadBytes = downloader.TotalDownloadBytes;
-                    if (totalDownloadCount > 0) newGroupInfos.Add(new GroupInfo() { groupName = defaultGroupTag, tags = new string[] { }, totalCount = totalDownloadCount, totalBytes = totalDownloadBytes });
+                    var package = packages[i];
 
-                    // package by tags
-                    if (patchGroupInfos != null && patchGroupInfos.Count > 0)
+                    if (lastGroupInfo == null)
                     {
-                        foreach (var groupInfo in patchGroupInfos)
+                        // all package
+                        var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+                        totalDownloadCount = downloader.TotalDownloadCount;
+                        totalDownloadBytes = downloader.TotalDownloadBytes;
+                        key = defaultGroupTag;
+                        if (totalDownloadCount > 0)
                         {
-                            downloader = package.CreateResourceDownloader(groupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
-                            totalDownloadCount = downloader.TotalDownloadCount;
-                            totalDownloadBytes = downloader.TotalDownloadBytes;
-                            if (totalDownloadCount > 0) newGroupInfos.Add(new GroupInfo() { groupName = groupInfo.groupName, tags = groupInfo.tags, totalCount = totalDownloadCount, totalBytes = totalDownloadBytes });
+                            if (!newGroupInfos.ContainsKey(key))
+                            {
+                                newGroupInfos.Add
+                                (
+                                    key,
+                                    new GroupInfo()
+                                    {
+                                        groupName = key,
+                                        tags = new string[] { },
+                                        totalCount = totalDownloadCount,
+                                        totalBytes = totalDownloadBytes
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                newGroupInfos[key].totalCount += totalDownloadCount;
+                                newGroupInfos[key].totalBytes += totalDownloadBytes;
+                            }
+                        }
+
+                        // package by tags
+                        if (patchGroupInfos != null && patchGroupInfos.Count > 0)
+                        {
+                            foreach (var groupInfo in patchGroupInfos)
+                            {
+                                downloader = package.CreateResourceDownloader(groupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+                                totalDownloadCount = downloader.TotalDownloadCount;
+                                totalDownloadBytes = downloader.TotalDownloadBytes;
+                                key = groupInfo.groupName;
+                                if (totalDownloadCount > 0)
+                                {
+                                    if (!newGroupInfos.ContainsKey(key))
+                                    {
+                                        newGroupInfos.Add
+                                        (
+                                            key,
+                                            new GroupInfo()
+                                            {
+                                                groupName = key,
+                                                tags = groupInfo.tags,
+                                                totalCount = totalDownloadCount,
+                                                totalBytes = totalDownloadBytes
+                                            }
+                                        );
+                                    }
+                                    else
+                                    {
+                                        newGroupInfos[key].totalCount += totalDownloadCount;
+                                        newGroupInfos[key].totalBytes += totalDownloadBytes;
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-                else
-                {
-                    if (defaultGroupTag == lastGroupInfo.groupName)
+                    else
                     {
-                        var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
-                        int totalDownloadCount = downloader.TotalDownloadCount;
-                        long totalDownloadBytes = downloader.TotalDownloadBytes;
-                        if (totalDownloadCount > 0) newGroupInfos.Add(new GroupInfo() { groupName = defaultGroupTag, tags = new string[] { }, totalCount = totalDownloadCount, totalBytes = totalDownloadBytes });
-                    }
-                    else if (patchGroupInfos != null && patchGroupInfos.Count > 0)
-                    {
-                        foreach (var groupInfo in patchGroupInfos)
+                        // all package
+                        if (defaultGroupTag == lastGroupInfo.groupName)
                         {
-                            if (groupInfo.groupName == lastGroupInfo.groupName)
+                            var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+                            totalDownloadCount = downloader.TotalDownloadCount;
+                            totalDownloadBytes = downloader.TotalDownloadBytes;
+                            key = defaultGroupTag;
+                            if (totalDownloadCount > 0)
                             {
-                                var downloader = package.CreateResourceDownloader(groupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
-                                int totalDownloadCount = downloader.TotalDownloadCount;
-                                long totalDownloadBytes = downloader.TotalDownloadBytes;
-                                if (totalDownloadCount > 0) newGroupInfos.Add(new GroupInfo() { groupName = groupInfo.groupName, tags = groupInfo.tags, totalCount = totalDownloadCount, totalBytes = totalDownloadBytes });
-                                break;
+                                if (!newGroupInfos.ContainsKey(key))
+                                {
+                                    newGroupInfos.Add
+                                    (
+                                        key,
+                                        new GroupInfo()
+                                        {
+                                            groupName = key,
+                                            tags = new string[] { },
+                                            totalCount = totalDownloadCount,
+                                            totalBytes = totalDownloadBytes
+                                        }
+                                    );
+                                }
+                                else
+                                {
+                                    newGroupInfos[key].totalCount += totalDownloadCount;
+                                    newGroupInfos[key].totalBytes += totalDownloadBytes;
+                                }
+                            }
+                        }
+                        // package by tags
+                        else if (patchGroupInfos != null && patchGroupInfos.Count > 0)
+                        {
+                            foreach (var groupInfo in patchGroupInfos)
+                            {
+                                if (groupInfo.groupName == lastGroupInfo.groupName)
+                                {
+                                    var downloader = package.CreateResourceDownloader(groupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+                                    totalDownloadCount = downloader.TotalDownloadCount;
+                                    totalDownloadBytes = downloader.TotalDownloadBytes;
+                                    key = groupInfo.groupName;
+                                    if (totalDownloadCount > 0)
+                                    {
+                                        if (!newGroupInfos.ContainsKey(key))
+                                        {
+                                            newGroupInfos.Add
+                                            (
+                                                key,
+                                                new GroupInfo()
+                                                {
+                                                    groupName = key,
+                                                    tags = groupInfo.tags,
+                                                    totalCount = totalDownloadCount,
+                                                    totalBytes = totalDownloadBytes
+                                                }
+                                            );
+                                        }
+                                        else
+                                        {
+                                            newGroupInfos[key].totalCount += totalDownloadCount;
+                                            newGroupInfos[key].totalBytes += totalDownloadBytes;
+                                        }
+                                    }
+                                    break;
+                                }
                             }
                         }
                     }
@@ -586,7 +712,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                     Debug.Log($"<color=#54beff>Found total group {newGroupInfos.Count} to choose download =>\n{JsonConvert.SerializeObject(newGroupInfos)}</color>");
 
-                    PatchEvents.PatchCreateDownloader.SendEventMessage(newGroupInfos.ToArray());
+                    PatchEvents.PatchCreateDownloader.SendEventMessage(newGroupInfos.Values.ToArray());
 
                     // 開始等待使用者選擇是否開始下載
                 }
@@ -630,29 +756,64 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
             private async UniTask _StartDownload()
             {
-                var package = PackageManager.GetDefaultPackage();
+                var packages = PackageManager.GetPresetAppPackages();
 
+                // Get last GroupInfo by UserEvent Set
                 GroupInfo lastGroupInfo = PatchManager.GetLastGroupInfo();
 
                 Debug.Log($"<color=#54ffad>Start Download Group Name: {lastGroupInfo?.groupName}, Tags: {JsonConvert.SerializeObject(lastGroupInfo?.tags)}</color>");
 
-                if (lastGroupInfo != null)
+                List<ResourceDownloaderOperation> mainDownloaders = new List<ResourceDownloaderOperation>();
+                foreach (var package in packages)
                 {
-                    if (lastGroupInfo.groupName == PatchManager.DEFAULT_GROUP_TAG) PatchManager.GetInstance().mainDownloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
-                    else PatchManager.GetInstance().mainDownloader = package.CreateResourceDownloader(lastGroupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+                    if (lastGroupInfo != null)
+                    {
+                        if (lastGroupInfo.groupName == PatchManager.DEFAULT_GROUP_TAG) mainDownloaders.Add(package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount));
+                        else mainDownloaders.Add(package.CreateResourceDownloader(lastGroupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount));
+                    }
                 }
 
-                ResourceDownloaderOperation downloader = PatchManager.GetInstance().mainDownloader;
+                // Set Main Downloaders
+                PatchManager.GetInstance().mainDownloaders = mainDownloaders.ToArray();
 
-                downloader.OnDownloadErrorCallback = PatchEvents.PatchDownloadFailed.SendEventMessage;
+                // Combine all main downloaders count and bytes
+                int totalCount = 0;
+                long totalBytes = 0;
+                foreach (var downloader in mainDownloaders)
+                {
+                    totalCount += downloader.TotalDownloadCount;
+                    totalBytes += downloader.TotalDownloadBytes;
+                }
+
+                // Begin Download
+                int currentCount = 0;
+                long currentBytes = 0;
                 var downloadSpeedCalculator = new DownloadSpeedCalculator();
-                downloader.OnDownloadProgressCallback = downloadSpeedCalculator.OnDownloadProgress;
                 downloadSpeedCalculator.onDownloadSpeedProgress = PatchEvents.PatchDownloadProgression.SendEventMessage;
-                downloader.BeginDownload();
+                foreach (var downloader in mainDownloaders)
+                {
+                    int lastCount = 0;
+                    long lastBytes = 0;
+                    downloader.OnDownloadErrorCallback = PatchEvents.PatchDownloadFailed.SendEventMessage;
+                    downloader.OnDownloadProgressCallback =
+                    (
+                        int totalDownloadCount,
+                        int currentDownloadCount,
+                        long totalDownloadBytes,
+                        long currentDownloadBytes) =>
+                    {
+                        currentCount += currentDownloadCount - lastCount;
+                        lastCount = currentDownloadCount;
+                        currentBytes += currentDownloadBytes - lastBytes;
+                        lastBytes = currentDownloadBytes;
+                        downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
+                    };
+                    downloader.BeginDownload();
 
-                await downloader;
+                    await downloader;
 
-                if (downloader.Status != EOperationStatus.Succeed) return;
+                    if (downloader.Status != EOperationStatus.Succeed) return;
+                }
 
                 this._machine.ChangeState<FsmDownloadOver>();
             }
@@ -676,7 +837,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 // 資源下載完成
                 PatchEvents.PatchFsmState.SendEventMessage(this);
-                this._machine.ChangeState<FsmClearCache>();
+                this._DownloadOver().Forget();
             }
 
             void IStateNode.OnUpdate()
@@ -685,6 +846,13 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
             void IStateNode.OnExit()
             {
+            }
+
+            private async UniTask _DownloadOver()
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
+
+                this._machine.ChangeState<FsmClearCache>();
             }
         }
 
@@ -719,11 +887,16 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
             private async UniTask _ClearUnusedCache()
             {
-                var package = PackageManager.GetDefaultPackage();
-                var operation = package.ClearUnusedCacheFilesAsync();
-                await operation;
+                await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
 
-                if (operation.IsDone) this._machine.ChangeState<FsmPatchDone>();
+                var packages = PackageManager.GetPresetAppPackages();
+                foreach (var package in packages)
+                {
+                    var operation = package.ClearUnusedCacheFilesAsync();
+                    await operation;
+                }
+
+                this._machine.ChangeState<FsmPatchDone>();
             }
         }
 
