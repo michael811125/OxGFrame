@@ -100,6 +100,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 
 ## 模塊框架介紹
 
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_9.png)
+
 ### Hotfixer (dependence HybridCLR, AssetLoader)
 
 代碼熱修復模塊，使用 [HybridCLR](https://github.com/focus-creative-games/hybridclr) (前身 Huatuo) 革命性的熱更新方案進行整合，相關建置請前往[官方文檔](https://hybridclr.doc.code-philosophy.com/)進行熟悉。
@@ -126,7 +128,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 
 ※提醒 : 如果要使用同步加載，資源一定要是事先下載完成的 (主要是資源不在本地時，請求下載部分是異步處理)，也提醒同步加載只適合小資源 (當然強烈建議全部都使用異步處理)。
 
-**選擇使用 Bundle 開發時，需要先將 PatchLauncher 拖曳至場景中，才能驅動相關配置。【如果透過 PakcageManager 安裝的，透過 Samples Import】**
+**選擇使用 Bundle 開發時，需要先將 PatchLauncher 拖曳至場景中，才能驅動相關配置。【如果使用 PakcageManager 安裝的，透過 Samples Import PatchLauncher Prefab】**
 
 - FileCryptogram (檔案加解密)
   - 運算效率 OFFSET > HT2XOR > XOR > AES
@@ -165,7 +167,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 - 判斷檢查 AssetPatcher.IsInitialized() 是否完成 Preset App Packages 的初始，因為初始完成後，才能開始進行 Built-in Bundle 的加載與 AssetPatcher.Check() 檢查更新，又或者邊玩邊下載。
   - 備註 : 區分 Built-in 跟 Patch (視情況自行訂定運作流程)
     1. 需自己拆分 Patch 更新前用到的資源 (例如 : LogoUI, PatchUI 等...)，需要先打包至 Built-in 作為內置資源。
-	2. 後續執行 AssetPatcher.Check() 檢查 Patch 更新完成後，就可以讀取更新資源了 (**檢查流程會將 Preset App Packages 進行 Main Download 的合併**)。
+	2. 後續執行 AssetPatcher.Check() 檢查 Patch 更新完成後，就可以讀取更新資源了。
+      - 執行 AssetPatcher.Check() 檢查流程時，**會將 Preset App Packages 進行 Main Download 的合併**。  
 
 | **Preset App Packages** |
 |:-|
@@ -361,7 +364,7 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
 
 用於播放 Audio，使用 AudioManager 管理掛載 AudioBase 的 Prefab，且採用 Unity Mixer 進行各音軌控制。 
 
-**(需先將 AudioManager 預置體拖至場景)【如果透過 PakcageManager 安裝的，透過 Samples Import】**
+**(需先將 AudioManager 預置體拖至場景)【如果使用 PakcageManager 安裝的，透過 Samples Import AudioManager Prefab】**
 
 - Audio Sound Type 說明
   - Sole : 唯一性 (不能重複播放)，建議種類為 BGM (背景音樂), Voice (配音) 等。
@@ -403,7 +406,7 @@ video_urlset 127.0.0.1/video/
 
 ### GSIFrame
 
-遊戲階段整合模塊 (FSM 概念)，而 GSI 為 Game Stage Integration 的縮寫，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商業Logo階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), GamingStage (遊玩階段), FightStage (戰鬥階段) 等，以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
+遊戲階段整合模塊 (FSM 概念)，而 GSI 為 Game Stage Integration 的縮寫，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商標階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), GamingStage (遊玩階段), FightStage (戰鬥階段) 等，以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
 
 - GSIBase，遊戲階段基類，在透過 Update 切換當前階段自定義的狀態流程 (Enum) 時，可透過 StopUpdate & RunUpdate 方法進行開關設置，即可停止或繼續 Update 的每幀調用，需建立實作 => 右鍵創建
 - GSIManagerBase，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
