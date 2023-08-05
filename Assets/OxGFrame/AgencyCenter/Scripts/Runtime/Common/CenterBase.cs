@@ -21,6 +21,33 @@ namespace OxGFrame.AgencyCenter
             return _instance;
         }
 
+        #region Default API
+        public static void Add<UClass>() where UClass : TClass, new()
+        {
+            GetInstance().Register<UClass>();
+        }
+
+        public static void Add<UClass>(int id) where UClass : TClass, new()
+        {
+            GetInstance().Register<UClass>(id);
+        }
+
+        public static void Add(int id, TClass @class)
+        {
+            GetInstance().Register(id, @class);
+        }
+
+        public static UClass Find<UClass>() where UClass : TClass
+        {
+            return GetInstance().Get<UClass>();
+        }
+
+        public static UClass Find<UClass>(int id) where UClass : TClass
+        {
+            return GetInstance().Get<UClass>(id);
+        }
+        #endregion
+
         public UClass Get<UClass>() where UClass : TClass
         {
             System.Type type = typeof(UClass);

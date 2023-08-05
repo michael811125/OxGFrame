@@ -1,5 +1,14 @@
 {
-    "templatePinStates": [],
+    "templatePinStates": [
+        {
+            "templateId": "Empty",
+            "isEnabled": false
+        },
+        {
+            "templateId": "Standard (URP)",
+            "isEnabled": true
+        }
+    ],
     "dependencyTypeInfos": [
         {
             "userAdded": false,

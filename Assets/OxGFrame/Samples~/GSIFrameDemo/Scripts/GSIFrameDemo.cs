@@ -7,12 +7,12 @@ public class GSIFrameDemo : MonoBehaviour
 
     void Start()
     {
-        GSIManagerExample.GetInstance().OnStart();
+        GSIManagerExample.Start();
     }
 
     void Update()
     {
-        GSIManagerExample.GetInstance().OnUpdate(Time.deltaTime);
+        GSIManagerExample.Update(Time.deltaTime);
 
         if (Keyboard.current.numpad0Key.wasReleasedThisFrame)
         {
@@ -24,32 +24,27 @@ public class GSIFrameDemo : MonoBehaviour
 
         if (Keyboard.current.numpad1Key.wasReleasedThisFrame)
         {
-            if (this.forceMode) GSIManagerExample.GetInstance().ChangeGameStageForce<StartupStageExample>();
-            else GSIManagerExample.GetInstance().ChangeGameStage<StartupStageExample>();
+            GSIManagerExample.ChangeStage<StartupStageExample>(this.forceMode);
         }
 
         if (Keyboard.current.numpad2Key.wasReleasedThisFrame)
         {
-            if (this.forceMode) GSIManagerExample.GetInstance().ChangeGameStageForce<LogoStageExample>();
-            else GSIManagerExample.GetInstance().ChangeGameStage<LogoStageExample>();
+            GSIManagerExample.ChangeStage<LogoStageExample>(this.forceMode);
         }
 
         if (Keyboard.current.numpad3Key.wasReleasedThisFrame)
         {
-            if (this.forceMode) GSIManagerExample.GetInstance().ChangeGameStageForce<PatchStageExample>();
-            else GSIManagerExample.GetInstance().ChangeGameStage<PatchStageExample>();
+            GSIManagerExample.ChangeStage<PatchStageExample>(this.forceMode);
         }
 
         if (Keyboard.current.numpad4Key.wasReleasedThisFrame)
         {
-            if (this.forceMode) GSIManagerExample.GetInstance().ChangeGameStageForce<LoginStageExample>();
-            else GSIManagerExample.GetInstance().ChangeGameStage<LoginStageExample>();
+            GSIManagerExample.ChangeStage<LoginStageExample>(this.forceMode);
         }
 
         if (Keyboard.current.numpad5Key.wasReleasedThisFrame)
         {
-            if (this.forceMode) GSIManagerExample.GetInstance().ChangeGameStageForce<EnterStageExample>();
-            else GSIManagerExample.GetInstance().ChangeGameStage<EnterStageExample>();
+            GSIManagerExample.ChangeStage<EnterStageExample>(this.forceMode);
         }
     }
 }

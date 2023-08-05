@@ -12,7 +12,7 @@ namespace OxGFrame.GSIFrame
 
         private static readonly object _locker = new object();
         private static T _instance = null;
-        public static T GetInstance()
+        protected static T GetInstance()
         {
             if (_instance == null)
             {
@@ -24,10 +24,70 @@ namespace OxGFrame.GSIFrame
             return _instance;
         }
 
+        #region Default API
+        public static int GetCurrentId()
+        {
+            return GetInstance()._currentId;
+        }
+
+        public static U GetStage<U>() where U : GSIBase
+        {
+            return GetInstance().GetGameStage<U>();
+        }
+
+        public static U GetStage<U>(int id) where U : GSIBase
+        {
+            return GetInstance().GetGameStage<U>(id);
+        }
+
+        public static void AddStage<U>() where U : GSIBase, new()
+        {
+            GetInstance().AddGameStage<U>();
+        }
+
+        public void AddStage<U>(int id) where U : GSIBase, new()
+        {
+            GetInstance().AddGameStage<U>(id);
+        }
+
+        public static void AddStage(int id, GSIBase gameStage)
+        {
+            GetInstance().AddGameStage(id, gameStage);
+        }
+
+        public static void ChangeStage<U>(bool force = false) where U : GSIBase
+        {
+            if (force) GetInstance().ChangeGameStageForce<U>();
+            else GetInstance().ChangeGameStage<U>();
+        }
+
+        public static void ChangeStage(int id, bool force = false)
+        {
+            if (force) GetInstance().ChangeGameStageForce(id);
+            else GetInstance().ChangeGameStage(id);
+        }
+
+        /// <summary>
+        /// Call by main MonoBehaviour (Start)
+        /// </summary>
+        public static void Start()
+        {
+            GetInstance().OnStart();
+        }
+
+        /// <summary>
+        /// Call by main MonoBehaviour (Update)
+        /// </summary>
+        /// <param name="dt"></param>
+        public static void Update(float dt = 0.0f)
+        {
+            GetInstance().OnUpdate(dt);
+        }
+        #endregion
+
         public GSIManagerBase()
         {
             this._dictGameStage = new Dictionary<int, GSIBase>();
-
             this._currentId = 0;
             this._currentGameStage = null;
         }
@@ -36,7 +96,6 @@ namespace OxGFrame.GSIFrame
         {
             this._dictGameStage.Clear();
             this._dictGameStage = null;
-
             this._currentGameStage = null;
         }
 
@@ -219,15 +278,15 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 子類實作, 並且透過主要的 MonoBehaviour Start 調用
+        /// Call by Main MonoBehaviour (Start)
         /// </summary>
         public virtual void OnStart() { }
 
         /// <summary>
-        /// 子類實作, 並且透過主要的 MonoBehaviour Update 調用
+        /// Call by Main MonoBehaviour (Update)
         /// </summary>
         /// <param name="dt"></param>
-        public virtual void OnUpdate(float dt = 0.0f)
+        public virtual void OnUpdate(float dt)
         {
             this.UpdateGameStage(dt);
         }

@@ -1,5 +1,41 @@
 # CHANGELOG
 
+## [2.7.1] - 2023-08-05
+- Added Default API in GSIManagerBase (protected GetInstance() method).
+```
+    public static int GetCurrentId()
+    
+    public static U GetStage<U>() where U : GSIBase
+    
+    public static U GetStage<U>(int id) where U : GSIBase
+    
+    public static void AddStage<U>() where U : GSIBase, new()
+    
+    public void AddStage<U>(int id) where U : GSIBase, new()
+    
+    public static void AddStage(int id, GSIBase gameStage)
+    
+    public static void ChangeStage<U>(bool force = false) where U : GSIBase
+    
+    public static void ChangeStage(int id, bool force = false)
+    
+    public static void Start()
+    
+    public static void Update(float dt = 0.0f)
+```
+- Added Default API in CenterBase (removed Default API from subtype).
+```
+    public static void Add<UClass>() where UClass : TClass, new()
+    
+    public static void Add<UClass>(int id) where UClass : TClass, new()
+    
+    public static void Add(int id, TClass @class)
+    
+    public static UClass Find<UClass>() where UClass : TClass
+    
+    public static UClass Find<UClass>(int id) where UClass : TClass
+```
+
 ## [2.7.0] - 2023-08-03
 - Added AssetPatcher.GetPresetAppPackages() method.
 - Added [Sort Tail Rules (A-Z)] ContextMenu for BindCodeSetting.

@@ -411,6 +411,30 @@ video_urlset 127.0.0.1/video/
 - GSIBase，遊戲階段基類，在透過 Update 切換當前階段自定義的狀態流程 (Enum) 時，可透過 StopUpdate & RunUpdate 方法進行開關設置，即可停止或繼續 Update 的每幀調用，需建立實作 => 右鍵創建
 - GSIManagerBase，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
 
+#### Default API
+
+```
+    public static int GetCurrentId()
+    
+    public static U GetStage<U>() where U : GSIBase
+    
+    public static U GetStage<U>(int id) where U : GSIBase
+    
+    public static void AddStage<U>() where U : GSIBase, new()
+    
+    public void AddStage<U>(int id) where U : GSIBase, new()
+    
+    public static void AddStage(int id, GSIBase gameStage)
+    
+    public static void ChangeStage<U>(bool force = false) where U : GSIBase
+    
+    public static void ChangeStage(int id, bool force = false)
+    
+    public static void Start()
+    
+    public static void Update(float dt = 0.0f)
+```
+
 **如果沒有要使用 GSIFrame 遊戲整合模塊，可以直接刪除整個 GSIFrame。**
 
 ※備註 : Right-Click Create/OxGFrame/GSI Frame... (Template cs)
@@ -433,7 +457,21 @@ video_urlset 127.0.0.1/video/
 
 ### AgencyCenter
 
-事件代管中心，可以自行實現 TClass 註冊類型，再由自定義管理類統一繼承 CenterBase<TCenter, TClass> (可複製下面 **Center API Template** 作為調用接口)，實現簡易事件代管派送 (集中式管理)，預設提供以下。
+事件代管中心，可以自行實現 TClass 註冊類型，再由自定義管理類統一繼承 CenterBase<TCenter, TClass>，實現簡易事件代管派送 (集中式管理)，預設提供以下。
+
+#### Default API
+
+```
+    public static void Add<UClass>() where UClass : TClass, new()
+    
+    public static void Add<UClass>(int id) where UClass : TClass, new()
+    
+    public static void Add(int id, TClass @class)
+    
+    public static UClass Find<UClass>() where UClass : TClass
+    
+    public static UClass Find<UClass>(int id) where UClass : TClass
+```
 
 #### EventCenter
 
@@ -442,105 +480,12 @@ video_urlset 127.0.0.1/video/
 - TCenter: EventCenter，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
   - 使用 Default API 進行調用 (Add, Find)
 
-```
-    #region Default API
-    public static void Add<T>() where T : EventBase, new()
-    {
-        GetInstance().Register<T>();
-    }
-    
-    public static void Add<T>(int eventId) where T : EventBase, new()
-    {
-        GetInstance().Register<T>(eventId);
-    }
-    
-    public static void Add(int eventId, EventBase eventBase)
-    {
-        GetInstance().Register(eventId, eventBase);
-    }
-    
-    public static T Find<T>() where T : EventBase
-    {
-        return GetInstance().Get<T>();
-    }
-    
-    public static T Find<T>(int eventId) where T : EventBase
-    {
-        return GetInstance().Get<T>(eventId);
-    }
-    #endregion
-```  
-
----
-
 #### APICenter
 
 集中式 API 整合模塊，可以自定義每個 API 的格式進行 Http API 短連接請求，能夠有效的集中管理各型式的 API 格式，使用 Acax (類似 Ajax 方式，請求 API)，支援 Async & Sync。
 - TClass: APIBase，單個 API 基類，需建立實作 => 右鍵創建
 - TCenter: APICenter，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
   - 使用 Default API 進行調用 (Add, Find)
-
-```
-    #region Default API
-    public static void Add<T>() where T : APIBase, new()
-    {
-        GetInstance().Register<T>();
-    }
-    
-    public static void Add<T>(int apiId) where T : APIBase, new()
-    {
-        GetInstance().Register<T>(apiId);
-    }
-    
-    public static void Add(int apiId, APIBase apiBase)
-    {
-        GetInstance().Register(apiId, apiBase);
-    }
-    
-    public static T Find<T>() where T : APIBase
-    {
-        return GetInstance().Get<T>();
-    }
-    
-    public static T Find<T>(int apiId) where T : APIBase
-    {
-        return GetInstance().Get<T>(apiId);
-    }
-    #endregion
-```
-
----
-
-### Center API Template
-
-```
-    #region Default API
-    public static void Add<T>() where T : YOUR_TCLASS, new()
-    {
-        GetInstance().Register<T>();
-    }
-    
-    public static void Add<T>(int id) where T : YOUR_TCLASS, new()
-    {
-        GetInstance().Register<T>(id);
-    }
-    
-    public static void Add(int id, YOUR_TCLASS @class)
-    {
-        GetInstance().Register(id, @class);
-    }
-    
-    public static T Find<T>() where T : YOUR_TCLASS
-    {
-        return GetInstance().Get<T>();
-    }
-    
-    public static T Find<T>(int id) where T : YOUR_TCLASS
-    {
-        return GetInstance().Get<T>(id);
-    }
-    #endregion
-```
 
 **如果沒有要使用 AgencyCenter 事件模塊，可以直接刪除整個 AgencyCenter。**
   
