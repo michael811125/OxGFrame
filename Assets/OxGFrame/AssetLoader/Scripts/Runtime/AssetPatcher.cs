@@ -192,6 +192,26 @@ namespace OxGFrame.AssetLoader
 
         #region Package Operation
         /// <summary>
+        /// Check package has any files in local
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <returns></returns>
+        public static bool CheckPackageHasAnyFilesInLocal(string packageName)
+        {
+            return PackageManager.CheckPackageHasAnyFilesInLocal(packageName);
+        }
+
+        /// <summary>
+        /// Get package files size in local
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <returns></returns>
+        public static ulong GetPackageSizeInLocal(string packageName)
+        {
+            return PackageManager.GetPackageSizeInLocal(packageName);
+        }
+
+        /// <summary>
         /// Unload package and clear package files from sandbox
         /// </summary>
         /// <param name="packageName"></param>

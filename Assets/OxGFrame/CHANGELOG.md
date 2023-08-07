@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.7.2] - 2023-08-07
+- Added CheckPackageHasAnyFilesInLocal(string packageName).
+- Added GetPackageSizeInLocal(string packageName).
+
 ## [2.7.1] - 2023-08-05
 - Added Default API in GSIManagerBase (protected GetInstance() method).
 ```

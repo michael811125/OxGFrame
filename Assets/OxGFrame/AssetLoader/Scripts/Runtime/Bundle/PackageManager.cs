@@ -1,6 +1,8 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 using YooAsset;
 
@@ -194,6 +196,66 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 Debug.Log($"<color=#ff3696>Package: {packageName} update version failed.</color>");
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Check package has any files in local
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <returns></returns>
+        public static bool CheckPackageHasAnyFilesInLocal(string packageName)
+        {
+            if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
+            {
+                Debug.Log($"<color=#ffce00><color=#0fa>[{BundleConfig.PlayMode.EditorSimulateMode}]</color> Check Package In Local <color=#0fa>return true</color></color>");
+                return true;
+            }
+
+            try
+            {
+                var package = GetPackage(packageName);
+                if (package == null) return false;
+
+                string path = BundleConfig.GetLocalSandboxPackagePath(packageName);
+                if (!Directory.Exists(path)) return false;
+
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                return directoryInfo.GetFiles("*.*", SearchOption.AllDirectories).Any();
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Get package files size in local
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <returns></returns>
+        public static ulong GetPackageSizeInLocal(string packageName)
+        {
+            if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
+            {
+                Debug.Log($"<color=#ffce00><color=#0fa>[{BundleConfig.PlayMode.EditorSimulateMode}]</color> Get Package Size In Local <color=#0fa>return 1</color></color>");
+                return 1;
+            }
+
+            try
+            {
+                var package = GetPackage(packageName);
+                if (package == null) return 0;
+
+                string path = BundleConfig.GetLocalSandboxPackagePath(packageName);
+                if (!Directory.Exists(path)) return 0;
+
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                return (ulong)directoryInfo.GetFiles("*.*", SearchOption.AllDirectories).Sum(fi => fi.Length);
+            }
+            catch
+            {
+                return 0;
             }
         }
 
