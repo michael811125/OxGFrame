@@ -202,7 +202,7 @@ namespace OxGFrame.CoreFrame
         protected virtual void OnReveal() { }
 
         /// <summary>
-        /// 會由 Protocol 接收到封包時, 被調用
+        /// 呼叫 SendRefreshData 時被調用
         /// </summary>
         /// <param name="obj"></param>
         public abstract void OnReceiveAndRefresh(object obj = null);

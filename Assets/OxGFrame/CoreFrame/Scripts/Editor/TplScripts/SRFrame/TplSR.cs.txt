@@ -57,14 +57,14 @@ public class #SCRIPTNAME# : SRBase
     protected override void OnClose()
     {
         /**
-         * Do Somethings on close (Close)
+         * Do Somethings On Close (Close)
          */
     }
 
     public override void OnRelease()
     {
         /**
-         * Do Somethings on release (CloseAndDestroy)
+         * Do Somethings On Release (CloseAndDestroy)
          */
     }
 }

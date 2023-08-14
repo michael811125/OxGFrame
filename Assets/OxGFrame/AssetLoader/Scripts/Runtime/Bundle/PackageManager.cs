@@ -76,7 +76,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     // Init preset app package
                     string hostServer = null;
                     string fallbackHostServer = null;
-                    IQueryServices queryService = null;
+                    IBuildinQueryServices queryService = null;
 
                     // Host Mode or WebGL Mode
                     if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
@@ -103,7 +103,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <param name="fallbackHostServer"></param>
         /// <param name="queryService"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitPackage(string packageName, bool autoUpdate, string hostServer, string fallbackHostServer, IQueryServices queryService)
+        public static async UniTask<bool> InitPackage(string packageName, bool autoUpdate, string hostServer, string fallbackHostServer, IBuildinQueryServices queryService)
         {
             var package = RegisterPackage(packageName);
             if (package.InitializeStatus == EOperationStatus.Succeed)
@@ -135,7 +135,7 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 var createParameters = new HostPlayModeParameters();
                 createParameters.DecryptionServices = _decryption;
-                createParameters.QueryServices = queryService;
+                createParameters.BuildinQueryServices = queryService;
                 createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);
                 initializationOperation = package.InitializeAsync(createParameters);
             }
@@ -145,7 +145,7 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 var createParameters = new WebPlayModeParameters();
                 createParameters.DecryptionServices = _decryption;
-                createParameters.QueryServices = queryService;
+                createParameters.BuildinQueryServices = queryService;
                 createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);
                 initializationOperation = package.InitializeAsync(createParameters);
             }
@@ -388,6 +388,28 @@ namespace OxGFrame.AssetLoader.Bundle
         public static ResourcePackage GetPackage(string packageName)
         {
             return YooAssets.TryGetPackage(packageName);
+        }
+
+        /// <summary>
+        /// Get packages by package names
+        /// </summary>
+        /// <param name="packageNames"></param>
+        /// <returns></returns>
+        public static ResourcePackage[] GetPackages(string[] packageNames)
+        {
+            if (packageNames != null && packageNames.Length > 0)
+            {
+                List<ResourcePackage> packages = new List<ResourcePackage>();
+                foreach (string packageName in packageNames)
+                {
+                    var package = GetPackage(packageName);
+                    if (package != null) packages.Add(package);
+                }
+
+                return packages.ToArray();
+            }
+
+            return null;
         }
 
         /// <summary>

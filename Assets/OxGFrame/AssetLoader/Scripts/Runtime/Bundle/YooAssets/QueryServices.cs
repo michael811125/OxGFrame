@@ -6,7 +6,7 @@ using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
-    public abstract class RequestQueryBase : IQueryServices
+    public abstract class RequestQueryBase : IBuildinQueryServices
     {
         public DeliveryFileInfo GetDeliveryFileInfo(string packageName, string fileName)
         {

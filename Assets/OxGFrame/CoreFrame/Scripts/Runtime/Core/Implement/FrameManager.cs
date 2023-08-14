@@ -558,18 +558,53 @@ namespace OxGFrame.CoreFrame
         #endregion
 
         /// <summary>
-        /// 【特殊方法】可交由 Protocol 委託 Handle (主要用於 Server 傳送封包給 Client 後, 進行一次性刷新)
+        /// 【特殊方法】刷新特定物件
+        /// </summary>
+        /// <param name="assetNames"></param>
+        /// <param name="objs"></param>
+        public void SendRefreshData(string[] assetNames, object[] objs)
+        {
+            if (assetNames != null)
+            {
+                for (int i = 0; i < assetNames.Length; i++)
+                {
+                    if (this.HasStackInAllCache(assetNames[i]))
+                    {
+                        FrameStack<T> stack = this.GetStackFromAllCache(assetNames[i]);
+                        if (stack != null)
+                        {
+                            if (this.CheckIsShowing(stack.Peek()) ||
+                                this.CheckIsHiding(stack.Peek()))
+                            {
+                                foreach (var fBase in stack.cache)
+                                {
+                                    if (objs != null && objs.Length > 0) fBase.OnReceiveAndRefresh(objs[i]);
+                                    else fBase.OnReceiveAndRefresh(objs);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 【特殊方法】刷新特定物件
         /// </summary>
         /// <param name="obj"></param>
         public void SendRefreshData(object obj)
         {
             foreach (FrameStack<T> stack in this._dictAllCache.Values)
             {
-                if (this.CheckIsShowing(stack.Peek()) || this.CheckIsHiding(stack.Peek()))
+                if (stack != null)
                 {
-                    foreach (var fBase in stack.cache)
+                    if (this.CheckIsShowing(stack.Peek()) ||
+                        this.CheckIsHiding(stack.Peek()))
                     {
-                        fBase.OnReceiveAndRefresh(obj);
+                        foreach (var fBase in stack.cache)
+                        {
+                            fBase.OnReceiveAndRefresh(obj);
+                        }
                     }
                 }
             }

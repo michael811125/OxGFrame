@@ -48,6 +48,30 @@ namespace OxGFrame.CoreFrame
                 return UIManager.GetInstance().CheckHasAnyHiding(groupId);
             }
 
+            /// <summary>
+            /// Send refresh message to specific with data
+            /// </summary>
+            /// <param name="assetName"></param>
+            /// <param name="data"></param>
+            public static void SendRefreshData(string assetName, object data = null)
+            {
+                UIManager.GetInstance().SendRefreshData(new string[] { assetName }, new object[] { data });
+            }
+
+            /// <summary>
+            /// Send refresh message to specific with data (array pairs)
+            /// </summary>
+            /// <param name="assetNames"></param>
+            /// <param name="data"></param>
+            public static void SendRefreshData(string[] assetNames, object[] data = null)
+            {
+                UIManager.GetInstance().SendRefreshData(assetNames, data);
+            }
+
+            /// <summary>
+            /// Send refresh message to all
+            /// </summary>
+            /// <param name="data"></param>
             public static void SendRefreshData(object data = null)
             {
                 UIManager.GetInstance().SendRefreshData(data);
@@ -251,6 +275,30 @@ namespace OxGFrame.CoreFrame
                 return SRManager.GetInstance().CheckHasAnyHiding(groupId);
             }
 
+            /// <summary>
+            /// Send refresh message to specific with data
+            /// </summary>
+            /// <param name="assetName"></param>
+            /// <param name="data"></param>
+            public static void SendRefreshData(string assetName, object data = null)
+            {
+                SRManager.GetInstance().SendRefreshData(new string[] { assetName }, new object[] { data });
+            }
+
+            /// <summary>
+            /// Send refresh message to specific with data (array pairs)
+            /// </summary>
+            /// <param name="assetNames"></param>
+            /// <param name="data"></param>
+            public static void SendRefreshData(string[] assetNames, object[] data = null)
+            {
+                SRManager.GetInstance().SendRefreshData(assetNames, data);
+            }
+
+            /// <summary>
+            /// Send refresh message to all
+            /// </summary>
+            /// <param name="data"></param>
             public static void SendRefreshData(object data = null)
             {
                 SRManager.GetInstance().SendRefreshData(data);
