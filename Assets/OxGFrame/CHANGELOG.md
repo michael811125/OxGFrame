@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.7.4] - 2023-08-15
+- Fixed DeliveryQueryService is null bug issue.
+- Modified InitAppPackage, InitDlcPackage, InitCustomPackage param of methods, add IDeliveryQueryServices interface.
+
 ## [2.7.3] - 2023-08-14
 - Updated YooAsset (new commits).
 - Updated part of UniFramework.

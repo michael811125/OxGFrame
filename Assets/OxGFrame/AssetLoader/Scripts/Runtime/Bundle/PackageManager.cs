@@ -76,7 +76,8 @@ namespace OxGFrame.AssetLoader.Bundle
                     // Init preset app package
                     string hostServer = null;
                     string fallbackHostServer = null;
-                    IBuildinQueryServices queryService = null;
+                    IBuildinQueryServices builtinQueryService = null;
+                    IDeliveryQueryServices deliveryQueryService = null;
 
                     // Host Mode or WebGL Mode
                     if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
@@ -84,9 +85,10 @@ namespace OxGFrame.AssetLoader.Bundle
                     {
                         hostServer = await BundleConfig.GetHostServerUrl(packageName);
                         fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
-                        queryService = new RequestBuiltinQuery();
+                        builtinQueryService = new RequestBuiltinQuery();
+                        deliveryQueryService = new RequestDeliveryQuery();
                     }
-                    bool isInitialized = await InitPackage(packageName, false, hostServer, fallbackHostServer, queryService);
+                    bool isInitialized = await InitPackage(packageName, false, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService);
                     if (!isInitialized) return false;
                 }
             }
@@ -101,9 +103,10 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <param name="autoUpdate"></param>
         /// <param name="hostServer"></param>
         /// <param name="fallbackHostServer"></param>
-        /// <param name="queryService"></param>
+        /// <param name="builtinQueryService"></param>
+        /// <param name="deliveryQueryService"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitPackage(string packageName, bool autoUpdate, string hostServer, string fallbackHostServer, IBuildinQueryServices queryService)
+        public static async UniTask<bool> InitPackage(string packageName, bool autoUpdate, string hostServer, string fallbackHostServer, IBuildinQueryServices builtinQueryService, IDeliveryQueryServices deliveryQueryService)
         {
             var package = RegisterPackage(packageName);
             if (package.InitializeStatus == EOperationStatus.Succeed)
@@ -135,7 +138,8 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 var createParameters = new HostPlayModeParameters();
                 createParameters.DecryptionServices = _decryption;
-                createParameters.BuildinQueryServices = queryService;
+                createParameters.BuildinQueryServices = builtinQueryService;
+                createParameters.DeliveryQueryServices = deliveryQueryService;
                 createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);
                 initializationOperation = package.InitializeAsync(createParameters);
             }
@@ -145,7 +149,7 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 var createParameters = new WebPlayModeParameters();
                 createParameters.DecryptionServices = _decryption;
-                createParameters.BuildinQueryServices = queryService;
+                createParameters.BuildinQueryServices = builtinQueryService;
                 createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);
                 initializationOperation = package.InitializeAsync(createParameters);
             }

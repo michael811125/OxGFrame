@@ -241,7 +241,8 @@ namespace OxGFrame.AssetLoader
         {
             string hostServer = null;
             string fallbackHostServer = null;
-            IBuildinQueryServices queryService = null;
+            IBuildinQueryServices builtinQueryService = null;
+            IDeliveryQueryServices deliveryQueryService = null;
 
             // Host Mode or WebGL Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
@@ -249,10 +250,11 @@ namespace OxGFrame.AssetLoader
             {
                 hostServer = await BundleConfig.GetHostServerUrl(packageName);
                 fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
-                queryService = new RequestBuiltinQuery();
+                builtinQueryService = new RequestBuiltinQuery();
+                deliveryQueryService = new RequestDeliveryQuery();
             }
 
-            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService);
         }
         #endregion
 
@@ -268,7 +270,8 @@ namespace OxGFrame.AssetLoader
         {
             string hostServer = null;
             string fallbackHostServer = null;
-            IBuildinQueryServices queryService = null;
+            IBuildinQueryServices builtinQueryService = null;
+            IDeliveryQueryServices deliveryQueryService = null;
 
             // Host Mode or WebGL Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
@@ -276,10 +279,11 @@ namespace OxGFrame.AssetLoader
             {
                 hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
                 fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
-                queryService = new RequestSandboxQuery();
+                builtinQueryService = new RequestSandboxQuery();
+                deliveryQueryService = new RequestDeliveryQuery();
             }
 
-            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService);
         }
 
         /// <summary>
@@ -288,9 +292,10 @@ namespace OxGFrame.AssetLoader
         /// <param name="packageName"></param>
         /// <param name="dlcVersion"></param>
         /// <param name="autoUpdate"></param>
-        /// <param name="queryService"></param>
+        /// <param name="builtinQueryService"></param>
+        /// <param name="deliveryQueryService"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitDlcPackage(string packageName, string dlcVersion, bool autoUpdate = false, IBuildinQueryServices queryService = null)
+        public static async UniTask<bool> InitDlcPackage(string packageName, string dlcVersion, bool autoUpdate = false, IBuildinQueryServices builtinQueryService = null, IDeliveryQueryServices deliveryQueryService = null)
         {
             string hostServer = null;
             string fallbackHostServer = null;
@@ -301,10 +306,11 @@ namespace OxGFrame.AssetLoader
             {
                 hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
                 fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
-                queryService = (queryService == null) ? new RequestSandboxQuery() : queryService;
+                builtinQueryService = builtinQueryService == null ? new RequestSandboxQuery() : builtinQueryService;
+                deliveryQueryService = deliveryQueryService == null ? new RequestDeliveryQuery() : deliveryQueryService;
             }
 
-            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService);
         }
         #endregion
 
@@ -315,12 +321,13 @@ namespace OxGFrame.AssetLoader
         /// <param name="packageName"></param>
         /// <param name="hostServer"></param>
         /// <param name="fallbackHostServer"></param>
+        /// <param name="builtinQueryService"></param>
+        /// <param name="deliveryQueryService"></param>
         /// <param name="autoUpdate"></param>
-        /// <param name="queryService"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitCustomPackage(string packageName, string hostServer, string fallbackHostServer, IBuildinQueryServices queryService, bool autoUpdate = false)
+        public static async UniTask<bool> InitCustomPackage(string packageName, string hostServer, string fallbackHostServer, IBuildinQueryServices builtinQueryService, IDeliveryQueryServices deliveryQueryService, bool autoUpdate = false)
         {
-            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, queryService);
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService);
         }
         #endregion
 

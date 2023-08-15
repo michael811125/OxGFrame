@@ -6,16 +6,16 @@ using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
-    public abstract class RequestQueryBase : IBuildinQueryServices
+    public abstract class RequestQueryBase : IBuildinQueryServices, IDeliveryQueryServices
     {
-        public DeliveryFileInfo GetDeliveryFileInfo(string packageName, string fileName)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool QueryDeliveryFiles(string packageName, string fileName)
+        public virtual bool QueryDeliveryFiles(string packageName, string fileName)
         {
             return false;
+        }
+
+        public virtual DeliveryFileInfo GetDeliveryFileInfo(string packageName, string fileName)
+        {
+            throw new System.NotImplementedException();
         }
 
         public virtual bool QueryStreamingAssets(string packageName, string fileName, bool isRawFile)
@@ -72,6 +72,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
     }
 
+    #region Builtin Services
     public class RequestBuiltinQuery : RequestQueryBase
     {
         public override bool QueryStreamingAssets(string packageName, string fileName, bool isRawFile)
@@ -128,4 +129,9 @@ namespace OxGFrame.AssetLoader.Bundle
 #endif
         }
     }
+    #endregion
+
+    #region Delivery Services
+    public class RequestDeliveryQuery : RequestQueryBase { }
+    #endregion
 }

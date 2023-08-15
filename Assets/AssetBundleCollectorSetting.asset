@@ -16,7 +16,7 @@ MonoBehaviour:
   EnableAddressable: 1
   LocationToLower: 0
   IncludeAssetGUID: 0
-  UniqueBundleName: 0
+  UniqueBundleName: 1
   ShowEditorAlias: 0
   Packages:
   - PackageName: DefaultPackage
