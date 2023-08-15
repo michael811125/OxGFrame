@@ -18,7 +18,7 @@ namespace OxGFrame.AssetLoader.Bundle
             throw new System.NotImplementedException();
         }
 
-        public virtual bool QueryStreamingAssets(string packageName, string fileName, bool isRawFile)
+        public virtual bool QueryStreamingAssets(string packageName, string fileName)
         {
             return false;
         }
@@ -75,7 +75,7 @@ namespace OxGFrame.AssetLoader.Bundle
     #region Builtin Services
     public class RequestBuiltinQuery : RequestQueryBase
     {
-        public override bool QueryStreamingAssets(string packageName, string fileName, bool isRawFile)
+        public override bool QueryStreamingAssets(string packageName, string fileName)
         {
 #if UNITY_WEBGL
             return StreamingAssetsHelper.FileExists(packageName, fileName);
@@ -83,40 +83,6 @@ namespace OxGFrame.AssetLoader.Bundle
             #region Builtin (StreamingAssets)
             string builtinPackagePath = BundleConfig.GetBuiltinPackagePath(packageName);
             string url = Path.Combine(builtinPackagePath, fileName);
-            #endregion
-
-            // Convert url to www path
-            var e = this.WebRequest(this.ConvertToWWWPath(url));
-            while (e.MoveNext())
-                if (e.Current != null)
-                    return (bool)e.Current;
-
-            return false;
-#endif
-        }
-    }
-
-    public class RequestSandboxQuery : RequestQueryBase
-    {
-        public override bool QueryStreamingAssets(string packageName, string fileName, bool isRawFile)
-        {
-#if UNITY_WEBGL
-            return false;
-#else
-            #region Sandbox (PersistentData)
-            string sandboxPackagePath = BundleConfig.GetLocalSandboxPackagePath(packageName);
-            string hashPrefix = fileName.Substring(0, 2);
-            string hashFolderName = fileName.Split(".")[0];
-
-            string bundleFolderName = isRawFile ? BundleConfig.yooCacheRawFolderName : BundleConfig.yooCacheBundleFolderName;
-            string url = Path.Combine
-            (
-                sandboxPackagePath,
-                bundleFolderName,
-                hashPrefix,
-                hashFolderName,
-                BundleConfig.yooBundleFileName
-            );
             #endregion
 
             // Convert url to www path

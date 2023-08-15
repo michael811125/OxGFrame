@@ -6,6 +6,6 @@ namespace YooAsset
 		/// <summary>
 		/// 查询应用程序里的内置资源是否存在
 		/// </summary>
-		bool QueryStreamingAssets(string packageName, string fileName, bool isRawFile);
+		bool QueryStreamingAssets(string packageName, string fileName);
 	}
 }

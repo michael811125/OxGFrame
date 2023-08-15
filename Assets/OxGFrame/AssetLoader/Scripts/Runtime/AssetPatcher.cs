@@ -279,7 +279,7 @@ namespace OxGFrame.AssetLoader
             {
                 hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
                 fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
-                builtinQueryService = new RequestSandboxQuery();
+                builtinQueryService = new RequestBuiltinQuery();
                 deliveryQueryService = new RequestDeliveryQuery();
             }
 
@@ -306,7 +306,7 @@ namespace OxGFrame.AssetLoader
             {
                 hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
                 fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
-                builtinQueryService = builtinQueryService == null ? new RequestSandboxQuery() : builtinQueryService;
+                builtinQueryService = builtinQueryService == null ? new RequestBuiltinQuery() : builtinQueryService;
                 deliveryQueryService = deliveryQueryService == null ? new RequestDeliveryQuery() : deliveryQueryService;
             }
 
