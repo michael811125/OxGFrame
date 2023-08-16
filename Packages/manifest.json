@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.code-philosophy.hybridclr": "https://github.com/focus-creative-games/hybridclr_unity.git",
-    "com.domybest.mybox": "https://github.com/Deadcows/MyBox.git",
+    "com.domybest.lwmybox": "https://github.com/michael811125/LWMyBox.git",
     "com.jeffjadulco.guidregenerator": "https://github.com/jeffjadulco/unity-guid-regenerator.git",
     "com.michaelo.oxgkit.utilities": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts",
     "com.unity.2d.animation": "7.0.10",
