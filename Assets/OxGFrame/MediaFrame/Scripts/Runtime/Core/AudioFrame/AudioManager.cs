@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using MyBox;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 {
     internal class AudioManager : MediaManager<AudioBase>
     {
-        [Header("Audio Mixer")]
+        [Separator("Audio Mixer")]
         [SerializeField, Tooltip("Setup AudioMixer in list")]
         private List<AudioMixer> _listMixer = new List<AudioMixer>();                             // 中控混音器
         private Dictionary<string, float> _dictMixerExpParams = new Dictionary<string, float>();  // 用於記錄 Exposed Parameters 參數

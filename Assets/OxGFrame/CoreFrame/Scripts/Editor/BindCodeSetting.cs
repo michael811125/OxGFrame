@@ -1,5 +1,7 @@
 ﻿using System;
 using UnityEngine;
+using MyBox;
+using UnityEditor;
 
 namespace OxGFrame.CoreFrame.Editor
 {
@@ -44,20 +46,20 @@ namespace OxGFrame.CoreFrame.Editor
             This
         }
 
-        [Header("Variable Setting")]
+        [Separator("Variable Setting")]
         public CaseType variableCaseType = CaseType.CamelCase;
         public string variableAccessModifier = "protected";
         public string variablePrefix = "_";
 
-        [Header("Method Setting")]
+        [Separator("Method Setting")]
         public string methodAccessModifier = "protected";
         public string methodPrefix = "";
         public string methodName = "InitComponents";
 
-        [Header("Indicate Modifier Setting")]
+        [Separator("Indicate Modifier Setting")]
         public IndicateModifier indicateModifier = IndicateModifier.This;
 
-        [Header("Tail Bind Setting")]
+        [Separator("Tail Bind Setting")]
         public GenericDictionary<string, ComponentInfo> tailRules = new GenericDictionary<string, ComponentInfo>()
         {
             // Other
@@ -98,6 +100,9 @@ namespace OxGFrame.CoreFrame.Editor
         }
 
         #region ContextMenus
+        [ButtonClicker(nameof(SortTailRules), "Sort Tail Rules (A-Z)")]
+        public bool sortTailRules;
+
         [ContextMenu("Sort Tail Rules (A-Z)", false, 0)]
         public void SortTailRules()
         {

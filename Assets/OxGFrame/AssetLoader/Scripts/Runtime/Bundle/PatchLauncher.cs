@@ -12,24 +12,24 @@ namespace OxGFrame.AssetLoader.Bundle
     [DisallowMultipleComponent]
     internal class PatchLauncher : MonoBehaviour
     {
-        [Header("Patch Options")]
+        [Separator("Patch Options")]
         public BundleConfig.PlayMode playMode = BundleConfig.PlayMode.EditorSimulateMode;
         [Tooltip("If checker patch field will compare whole version"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WebGLMode)]
         public BundleConfig.SemanticRule semanticRule = new BundleConfig.SemanticRule();
         [Tooltip("If checked will skip preset app packages download step of the patch (force download while playing)"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
         public bool skipMainDownload = false;
 
-        [Header("Preset App Packages")]
+        [Separator("Preset App Packages")]
         [Tooltip("The first element will be default app package\n\nNote: The presets will combine in main download of the patch")]
         public List<string> listPackages = new List<string>() { "DefaultPackage" };
 
-        [Header("Download Options")]
+        [Separator("Download Options")]
         public int maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
         public int failedRetryCount = BundleConfig.failedRetryCount;
         [Tooltip("If file size >= [BreakpointFileSizeThreshold] that file will enable breakpoint mechanism (for all downloaders)")]
         public int breakpointFileSizeThreshold = 20 << 20;
 
-        [Header("Cryptogram Options")]
+        [Separator("Cryptogram Options")]
         [Tooltip("Bundle decryption (case-insensitive)\n\n[NONE], \n[OFFSET, dummySize], \n[XOR, key], \n[HT2XOR, headKey, tailKey, jumpKey], \n[AES, key, iv]\n\nex: \n\"none\" \n\"offset, 12\" \n\"xor, 23\" \n\"ht2xor, 34, 45, 56\" \n\"aes, key, iv\"")]
         public string decryptArgs = BundleConfig.CryptogramType.NONE;
 

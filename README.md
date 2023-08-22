@@ -11,7 +11,7 @@
 | **需先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
 | [OxGKit.Utilities v0.0.2-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
-| [LWMyBox v1.0.0](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager **(建議改成輕量版的 MyBox 改進編譯效率)** |
+| [LWMyBox v1.1.3 or higher](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager **(建議改成輕量版的 MyBox 改進編譯效率)** |
 | [HybirdCLR v3.4.0 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 **OxGKit.Utilities 遇到 UniTask 引用問題請無視，因為最後完成 OxGFrame 的安裝後，就會自動引用內建的 UniTask 了**
@@ -482,7 +482,7 @@ video_urlset 127.0.0.1/video/
 
 #### APICenter
 
-集中式 API 整合模塊，可以自定義每個 API 的格式進行 Http API 短連接請求，能夠有效的集中管理各型式的 API 格式，使用 Acax (類似 Ajax 方式，請求 API)，支援 Async & Sync。
+集中式 API 整合模塊，可以自定義每個 API 的格式進行 Http API 短連接請求，能夠有效的集中管理各型式的 API 格式，使用 Acax (類似 Ajax 方式，請求 API)。
 - TClass: APIBase，單個 API 基類，需建立實作 => 右鍵創建
 - TCenter: APICenter，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
   - 使用 Default API 進行調用 (Add, Find)

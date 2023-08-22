@@ -2,7 +2,8 @@
     "name": "OxGFrame.CoreFrame.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:37d0f7f3cce4b0a4994bb1bbbc9d330e"
+        "GUID:37d0f7f3cce4b0a4994bb1bbbc9d330e",
+        "GUID:48c9f6afdac61634db0e0f241c7d4d51"
     ],
     "includePlatforms": [
         "Editor"

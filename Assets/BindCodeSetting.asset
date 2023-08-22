@@ -124,3 +124,4 @@ MonoBehaviour:
           endRemoveCount: 0
           endPluralTxt: s
     keyCollision: 0
+  sortTailRules: 0
