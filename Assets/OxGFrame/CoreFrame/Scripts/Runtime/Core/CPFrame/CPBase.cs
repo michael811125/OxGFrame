@@ -7,6 +7,8 @@ namespace OxGFrame.CoreFrame.CPFrame
     [HidePropertiesInInspector("onCloseAndDestroy", "allowInstantiate")]
     public class CPBase : FrameBase
     {
+        protected void DriveSelfUpdate(float dt) => this.DriveUpdate(dt);
+
         private void OnEnable()
         {
             if (!this._isInitFirst) return;

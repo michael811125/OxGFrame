@@ -116,17 +116,18 @@ namespace OxGFrame.CoreFrame
         [Tooltip("If checked will destroy on close"), ConditionalField(nameof(allowInstantiate), true)]
         public bool onCloseAndDestroy = false;                                                // 是否關閉時就 DestroyUI
 
-        private void Update()
+        internal virtual void DriveUpdate(float dt)
         {
             if (!this._isInitFirst) return;
-
-            this.OnUpdate(Time.deltaTime);
+            this.OnUpdate(dt);
         }
 
+#if UNITY_EDITOR
         private void OnValidate()
         {
             if (this.allowInstantiate) this.onCloseAndDestroy = false;
         }
+#endif
 
         /// <summary>
         /// 起始初始 (僅執行一次)

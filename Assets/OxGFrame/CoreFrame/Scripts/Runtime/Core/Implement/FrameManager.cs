@@ -2,6 +2,7 @@
 using OxGFrame.AssetLoader;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -99,6 +100,30 @@ namespace OxGFrame.CoreFrame
         {
             this._dictAllCache = null;
             this._loadingFlags = null;
+        }
+
+        private void Update()
+        {
+            if (this._dictAllCache.Count > 0)
+            {
+                float dt = Time.deltaTime;
+
+                var fStacks = this._dictAllCache.Values.ToArray();
+                foreach (var fStack in fStacks)
+                {
+                    // 判斷陣列長度是否有改變, 有改變表示陣列元素有更動
+                    if (this._dictAllCache.Count != fStacks.Length) break;
+
+                    var fBases = fStack.cache.ToArray();
+                    foreach (var fBase in fBases)
+                    {
+                        if (fStack.Count() != fBases.Length) break;
+
+                        // 僅刷新顯示中的物件
+                        if (this.CheckIsShowing(fBase)) fBase.DriveUpdate(dt);
+                    }
+                }
+            }
         }
 
         /// <summary>

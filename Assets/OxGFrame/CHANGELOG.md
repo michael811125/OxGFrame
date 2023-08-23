@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [2.7.5] - 2023-08-23
+- Optimized UIBase and SRBase of CoreFrame update behaviour call by FrameManager.
+- Optimized CPBase of CoreFrame update behaviour, if need to update have to call by self to drive.
+  - Added DriveSelfUpdate(float dt) method in CPBase (drive by self).
+```
+public class NewTplCP : CPBase
+{
+    private void Update()
+    {
+        this.DriveSelfUpdate(Time.deltaTime);
+    }
+}
+```
+
 ## [2.7.4] - 2023-08-15
 - Fixed DeliveryQueryService is null bug issue.
 - Modified InitAppPackage, InitDlcPackage, InitCustomPackage param of methods, add IDeliveryQueryServices interface.
