@@ -21,7 +21,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
         [Tooltip("Drag video clip. This is not supports [WebGL]"), ConditionalField(nameof(sourceType), false, SourceType.Video)]
         public VideoClip videoClip = null;
         // SourceType => StreamingAssets
-        [Tooltip("Default path is [StreamingAssets]. Just set that inside path and file name, Don't forget file name must include extension, ex: Video/example.mp4"), ConditionalField(nameof(sourceType), false, SourceType.Streaming)]
+        [Tooltip("Default path is [StreamingAssets]. Just set that inside path and file name, Don't forget file name must with extension, ex: Video/example.mp4"), ConditionalField(nameof(sourceType), false, SourceType.Streaming)]
         public string fullPathName = "";
         // SourceType => Url
         [ConditionalField(nameof(sourceType), false, SourceType.Url)]

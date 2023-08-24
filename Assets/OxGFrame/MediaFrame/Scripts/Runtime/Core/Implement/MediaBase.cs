@@ -90,12 +90,11 @@ namespace OxGFrame.MediaFrame
         protected Action _endEvent = null;                                                 // 停止播放時的事件調用
         public bool isPrepared { get; protected set; } = false;                            // 影音準備好的標記
 
-        private void FixedUpdate()
+        internal void DriveFixedUpdate(float dt)
         {
             if (!this._isInit) return;
-
-            if (!this.ignoreTimeScale) this.OnFixedUpdate(Time.fixedDeltaTime);
-            else this.OnFixedUpdate(Time.fixedUnscaledDeltaTime);
+            if (!this.ignoreTimeScale) this.OnFixedUpdate(dt);
+            else this.OnFixedUpdate(dt);
         }
 
         #region IMediaBase

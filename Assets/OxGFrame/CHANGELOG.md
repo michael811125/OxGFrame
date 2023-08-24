@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.7.6] - 2023-08-24
+- Optimized AudioBase and VideoBase of MediaFrame update behaviour call by MediaManager.
+- Updated YooAsset new commit files.
+
 ## [2.7.5] - 2023-08-23
 - Optimized UIBase and SRBase of CoreFrame update behaviour call by FrameManager.
 - Optimized CPBase of CoreFrame update behaviour, if need to update have to call by self to drive.

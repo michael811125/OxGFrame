@@ -119,7 +119,7 @@ namespace OxGFrame.CoreFrame
                     {
                         if (fStack.Count() != fBases.Length) break;
 
-                        // 僅刷新顯示中的物件
+                        // 僅刷新激活的物件
                         if (this.CheckIsShowing(fBase)) fBase.DriveUpdate(dt);
                     }
                 }
