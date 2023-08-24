@@ -37,6 +37,16 @@ namespace OxGFrame.AgencyCenter
             GetInstance().Register(id, @class);
         }
 
+        public static void Delete<UClass>() where UClass : TClass
+        {
+            GetInstance().Remove<UClass>();
+        }
+
+        public static void Delete(int id)
+        {
+            GetInstance().Remove(id);
+        }
+
         public static UClass Find<UClass>() where UClass : TClass
         {
             return GetInstance().Get<UClass>();

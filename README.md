@@ -10,9 +10,9 @@
 
 | **需先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
-| [OxGKit.Utilities v0.0.2-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
+| [OxGKit.Utilities v0.0.4-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
 | [LWMyBox v1.1.3 or higher](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager **(建議改成輕量版的 MyBox 改進編譯效率)** |
-| [HybirdCLR v3.4.0 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
+| [HybirdCLR v3.4.2 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 **OxGKit.Utilities 遇到 UniTask 引用問題請無視，因為最後完成 OxGFrame 的安裝後，就會自動引用內建的 UniTask 了**
 
@@ -426,6 +426,10 @@ video_urlset 127.0.0.1/video/
     
     public static void AddStage(int id, GSIBase gameStage)
     
+    public static void DeleteStage<U>() where U : GSIBase
+    
+    public static void DeleteStage(int id)
+    
     public static void ChangeStage<U>(bool force = false) where U : GSIBase
     
     public static void ChangeStage(int id, bool force = false)
@@ -468,6 +472,10 @@ video_urlset 127.0.0.1/video/
     
     public static void Add(int id, TClass @class)
     
+    public static void Delete<UClass>() where UClass : TClass
+    		
+    public static void Delete(int id)
+    	
     public static UClass Find<UClass>() where UClass : TClass
     
     public static UClass Find<UClass>(int id) where UClass : TClass

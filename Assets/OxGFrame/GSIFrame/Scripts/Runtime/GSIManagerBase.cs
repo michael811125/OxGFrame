@@ -55,6 +55,16 @@ namespace OxGFrame.GSIFrame
             GetInstance().AddGameStage(id, gameStage);
         }
 
+        public static void DeleteStage<U>() where U : GSIBase
+        {
+            GetInstance().DeleteGameStage<U>();
+        }
+
+        public static void DeleteStage(int id)
+        {
+            GetInstance().DeleteGameStage(id);
+        }
+
         public static void ChangeStage<U>(bool force = false) where U : GSIBase
         {
             if (force) GetInstance().ChangeGameStageForce<U>();
@@ -176,6 +186,27 @@ namespace OxGFrame.GSIFrame
 
             gameStage.SetId(id);
             this._dictGameStage.Add(id, gameStage);
+        }
+
+        /// <summary>
+        /// 刪除 GameStage
+        /// </summary>
+        /// <typeparam name="U"></typeparam>
+        public void DeleteGameStage<U>() where U : GSIBase
+        {
+            System.Type gameStageType = typeof(U);
+            int hashCode = gameStageType.GetHashCode();
+
+            this.DeleteGameStage(hashCode);
+        }
+
+        /// <summary>
+        /// 刪除 GameStage
+        /// </summary>
+        /// <param name="id"></param>
+        public void DeleteGameStage(int id)
+        {
+            if (this._dictGameStage.ContainsKey(id)) this._dictGameStage.Remove(id);
         }
 
         /// <summary>
