@@ -45,7 +45,7 @@ namespace OxGFrame.GSIFrame
             GetInstance().AddGameStage<U>();
         }
 
-        public void AddStage<U>(int id) where U : GSIBase, new()
+        public static void AddStage<U>(int id) where U : GSIBase, new()
         {
             GetInstance().AddGameStage<U>(id);
         }

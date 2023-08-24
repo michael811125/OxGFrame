@@ -422,7 +422,7 @@ video_urlset 127.0.0.1/video/
     
     public static void AddStage<U>() where U : GSIBase, new()
     
-    public void AddStage<U>(int id) where U : GSIBase, new()
+    public static void AddStage<U>(int id) where U : GSIBase, new()
     
     public static void AddStage(int id, GSIBase gameStage)
     
