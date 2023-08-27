@@ -28,7 +28,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "16c81642939153a6b3fe374f902eac04ca3eea07"
+      "hash": "0befa70f813bfb3036d3744b56810b904f712889"
     },
     "com.michaelo.oxgkit.utilities": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts",
