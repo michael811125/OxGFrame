@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using OxGKit.LoggingSystem;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace OxGFrame.CoreFrame.UIFrame
@@ -55,7 +56,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 GameObject uiMaskNode = parent.Find(nodeName).gameObject;
                 if (uiMaskNode == null || !uiMaskNode.GetComponent<UIMask>())
                 {
-                    Debug.Log(string.Format("No matching object found: {0}, doesn't need to recycle!", nodeName));
+                    Logging.Print<Logger>(string.Format("No matching object found: {0}, doesn't need to recycle!", nodeName));
                     return false;
                 }
 

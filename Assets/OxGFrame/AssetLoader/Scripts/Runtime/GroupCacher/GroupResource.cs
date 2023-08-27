@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Cacher;
 using OxGFrame.AssetLoader.GroupCacher;
+using OxGKit.LoggingSystem;
 using System.Linq;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ namespace OxGFrame.AssetLoader.GroupChacer
             await CacheResource.GetInstance().PreloadAssetAsync<T>(assetName, progression);
             if (CacheResource.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
 
-            Debug.Log($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         public async UniTask PreloadAssetAsync<T>(int id, string[] assetNames, Progression progression = null) where T : Object
@@ -36,7 +37,7 @@ namespace OxGFrame.AssetLoader.GroupChacer
                 if (CacheResource.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
             }
 
-            Debug.Log($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         public void PreloadAsset<T>(int id, string assetName, Progression progression = null) where T : Object
@@ -46,7 +47,7 @@ namespace OxGFrame.AssetLoader.GroupChacer
             CacheResource.GetInstance().PreloadAsset<T>(assetName, progression);
             if (CacheResource.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
 
-            Debug.Log($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         public void PreloadAsset<T>(int id, string[] assetNames, Progression progression = null) where T : Object
@@ -60,7 +61,7 @@ namespace OxGFrame.AssetLoader.GroupChacer
                 if (CacheResource.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
             }
 
-            Debug.Log($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         /// <summary>
@@ -83,7 +84,7 @@ namespace OxGFrame.AssetLoader.GroupChacer
                 {
                     keyGroup.AddRef();
 
-                    Debug.Log($"【Load】 => Current << GroupResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Load】 => Current << GroupResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
 
@@ -104,7 +105,7 @@ namespace OxGFrame.AssetLoader.GroupChacer
                 {
                     keyGroup.AddRef();
 
-                    Debug.Log($"【Load】 => Current << GroupResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Load】 => Current << GroupResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
 
@@ -118,21 +119,21 @@ namespace OxGFrame.AssetLoader.GroupChacer
             {
                 keyGroup.DelRef();
 
-                Debug.Log($"【Unload】 => Current << GroupResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                Logging.Print<Logger>($"【Unload】 => Current << GroupResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
 
                 // 強制釋放
                 if (forceUnload)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
 
-                    Debug.Log($"【Force Unload Completes】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
                 }
                 // 使用引用計數釋放
                 else if (keyGroup.refCount <= 0)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
 
-                    Debug.Log($"【Unload Completes】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Unload Completes】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
                 }
 
                 CacheResource.GetInstance().UnloadAsset(keyGroup.assetName, forceUnload);
@@ -158,7 +159,7 @@ namespace OxGFrame.AssetLoader.GroupChacer
                 }
             }
 
-            Debug.Log($"【Release All】 => Current << GroupResource >> Cache Count: {this.Count}");
+            Logging.Print<Logger>($"【Release All】 => Current << GroupResource >> Cache Count: {this.Count}");
         }
     }
 }

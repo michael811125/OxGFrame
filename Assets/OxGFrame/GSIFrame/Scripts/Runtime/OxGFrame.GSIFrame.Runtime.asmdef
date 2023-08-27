@@ -2,7 +2,8 @@
     "name": "OxGFrame.GSIFrame.Runtime",
     "rootNamespace": "",
     "references": [
-        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:981f0bbbcbf62b74c9821862b0cd0202"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

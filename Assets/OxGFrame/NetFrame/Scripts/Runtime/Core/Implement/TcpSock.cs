@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 using System.Threading;
+using OxGKit.LoggingSystem;
 
 namespace OxGFrame.NetFrame
 {
@@ -40,8 +41,7 @@ namespace OxGFrame.NetFrame
 
             try
             {
-                Debug.Log(netOption.host);
-                Debug.Log(netOption.port);
+                Logging.Print<Logger>($"{netOption.host}:{netOption.port}");
                 IPAddress ipa = IPAddress.Parse(netOption.host);
                 IAsyncResult iAsyncResult = this._tcp.BeginConnect(ipa, netOption.port, this._ConnectedAction, null);
                 iAsyncResult.AsyncWaitHandle.WaitOne(CONNECTING_TIMEOUT_MSEC);
@@ -51,7 +51,7 @@ namespace OxGFrame.NetFrame
                     if (this._tcp != null) this._tcp.Close();
                     this.OnClose(this, 0);
 
-                    Debug.Log("!iAsyncResult.IsCompleted");
+                    Logging.Print<Logger>("!iAsyncResult.IsCompleted");
                 }
             }
             catch (Exception ex)
@@ -59,7 +59,7 @@ namespace OxGFrame.NetFrame
                 this._tcp.Close();
                 this.OnError(this, string.Format("{0}", ex));
 
-                Debug.Log("CreateConnect Failed" + ex.Message);
+                Logging.Print<Logger>("CreateConnect Failed" + ex.Message);
             }
         }
 
@@ -74,7 +74,7 @@ namespace OxGFrame.NetFrame
             }
             catch (Exception ex)
             {
-                Debug.LogError("End Connect Failed" + ex.Message);
+                Logging.PrintError<Logger>("End Connect Failed" + ex.Message);
 
                 Interlocked.Increment(ref this._failedConnectionCount);
 
@@ -105,12 +105,12 @@ namespace OxGFrame.NetFrame
             try
             {
                 readBytes = ns.EndRead(ar);
-                Debug.Log(string.Format("<color=#C9FF49>Reading Ends: Time {0}, ReadSize: {1} bytes</color>", DateTime.Now, readBytes));
+                Logging.Print<Logger>(string.Format("<color=#C9FF49>Reading Ends: Time {0}, ReadSize: {1} bytes</color>", DateTime.Now, readBytes));
             }
             catch (Exception ex)
             {
                 this.Close();
-                Debug.LogError(string.Format("EndRead Error {0}, The Connection Has Been Closed. {1}, bytes: {2}", ex.Message, ar, readBytes));
+                Logging.PrintError<Logger>(string.Format("EndRead Error {0}, The Connection Has Been Closed. {1}, bytes: {2}", ex.Message, ar, readBytes));
                 this.OnError(this, string.Format("{0}", ex));
 
                 return;
@@ -129,7 +129,7 @@ namespace OxGFrame.NetFrame
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError(ex.Message);
+                    Logging.PrintError<Logger>(ex.Message);
                 }
             }
             else
@@ -151,7 +151,7 @@ namespace OxGFrame.NetFrame
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError(ex.Message);
+                    Logging.PrintError<Logger>(ex.Message);
                 }
 
             }
@@ -164,7 +164,7 @@ namespace OxGFrame.NetFrame
 
             ns.EndWrite(ar);
 
-            Debug.Log(string.Format("<color=#C9FF49>Sending Buffer Ends: Time {0}</color>", DateTime.Now));
+            Logging.Print<Logger>(string.Format("<color=#C9FF49>Sending Buffer Ends: Time {0}</color>", DateTime.Now));
         }
 
         public bool Send(byte[] buffer)
@@ -175,12 +175,12 @@ namespace OxGFrame.NetFrame
                 {
                     NetworkStream ns = this._tcp.GetStream();
                     ns.BeginWrite(buffer, 0, buffer.Length, new AsyncCallback(this._WriteAction), ns);
-                    Debug.Log(string.Format("<color=#C9FF49>TcpSock - SentSize: {0} bytes</color>", buffer.Length));
+                    Logging.Print<Logger>(string.Format("<color=#C9FF49>TcpSock - SentSize: {0} bytes</color>", buffer.Length));
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError(string.Format("Send Error {0}", ex.Message));
+                    Logging.PrintError<Logger>(string.Format("Send Error {0}", ex.Message));
                     this.Close();
                     return false;
                 }

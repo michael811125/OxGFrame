@@ -8,6 +8,7 @@ using System.Reflection;
 using YooAsset;
 using OxGFrame.Hotfixer.HotfixEvent;
 using OxGFrame.AssetLoader;
+using OxGKit.LoggingSystem;
 
 namespace OxGFrame.Hotfixer.HotfixFsm
 {
@@ -31,7 +32,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
             {
                 HotfixEvents.HotfixFsmState.SendEventMessage(this);
                 this._machine.ChangeState<FsmInitHotfixPackage>();
-                Debug.Log("<color=#00cf6b>(Powered by HybridCLR) Hotfix Work</color>");
+                Logging.Print<Logger>("<color=#00cf6b>(Powered by HybridCLR) Hotfix Work</color>");
             }
 
             void IStateNode.OnUpdate()
@@ -325,7 +326,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                         LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dll.bytes, mode);
                         // Unload after load
                         AssetLoaders.UnloadAsset(dllName);
-                        Debug.Log($"<color=#32fff5>Load <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}, ret: {err}</color>");
+                        Logging.Print<Logger>($"<color=#32fff5>Load <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}, ret: {err}</color>");
                     }
                 }
                 catch
@@ -389,7 +390,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                         }
 
                         HotfixManager.GetInstance().AddHotfixAssembly(dllName, hotfixAsm);
-                        Debug.Log($"<color=#32fff5>Load <color=#ffde4c>Hotfix Assembly</color>: <color=#e2b3ff>{dllName}</color></color>");
+                        Logging.Print<Logger>($"<color=#32fff5>Load <color=#ffde4c>Hotfix Assembly</color>: <color=#e2b3ff>{dllName}</color></color>");
                     }
                 }
                 catch

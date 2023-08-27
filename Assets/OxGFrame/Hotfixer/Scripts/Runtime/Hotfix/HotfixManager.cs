@@ -1,5 +1,6 @@
 ﻿using OxGFrame.Hotfixer.HotfixEvent;
 using OxGFrame.Hotfixer.HotfixFsm;
+using OxGKit.LoggingSystem;
 using System.Collections.Generic;
 using System.Reflection;
 using UniFramework.Event;
@@ -45,34 +46,34 @@ namespace OxGFrame.Hotfixer
                 switch (msgData.stateNode)
                 {
                     case HotfixFsmStates.FsmHotfixPrepare:
-                        Debug.Log("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixPrepare <<<< </color>");
+                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixPrepare <<<< </color>");
                         break;
                     case HotfixFsmStates.FsmInitHotfixPackage:
-                        Debug.Log("<color=#00e7aa> >>>> HotfixFsmStates.FsmInitHotfixPackage <<<< </color>");
+                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmInitHotfixPackage <<<< </color>");
                         break;
                     case HotfixFsmStates.FsmUpdateHotfixPackage:
-                        Debug.Log("<color=#00e7aa> >>>> HotfixFsmStates.FsmUpdateHotfixPackage <<<< </color>");
+                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmUpdateHotfixPackage <<<< </color>");
                         break;
                     case HotfixFsmStates.FsmHotfixCreateDownloader:
-                        Debug.Log("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixCreateDownloader <<<< </color>");
+                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixCreateDownloader <<<< </color>");
                         break;
                     case HotfixFsmStates.FsmHotfixBeginDownload:
-                        Debug.Log("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixBeginDownload <<<< </color>");
+                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixBeginDownload <<<< </color>");
                         break;
                     case HotfixFsmStates.FsmHotfixDownloadOver:
-                        Debug.Log("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixDownloadOver <<<< </color>");
+                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixDownloadOver <<<< </color>");
                         break;
                     case HotfixFsmStates.FsmHotfixClearCache:
-                        Debug.Log("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixClearCache <<<< </color>");
+                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixClearCache <<<< </color>");
                         break;
                     case HotfixFsmStates.FsmLoadAOTAssemblies:
-                        Debug.Log("<color=#00e7aa> >>>> HotfixFsmStates.FsmLoadAOTAssemblies <<<< </color>");
+                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmLoadAOTAssemblies <<<< </color>");
                         break;
                     case HotfixFsmStates.FsmLoadHotfixAssemblies:
-                        Debug.Log("<color=#00e7aa> >>>> HotfixFsmStates.FsmLoadHotfixAssemblies <<<< </color>");
+                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmLoadHotfixAssemblies <<<< </color>");
                         break;
                     case HotfixFsmStates.FsmHotfixDone:
-                        Debug.Log("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixDone <<<< </color>");
+                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixDone <<<< </color>");
                         break;
                 }
             });
@@ -144,7 +145,7 @@ namespace OxGFrame.Hotfixer
         {
             if (this._isDone)
             {
-                Debug.Log("<color=#ff8686>Hotfix all are loaded.</color>");
+                Logging.Print<Logger>("<color=#ff8686>Hotfix all are loaded.</color>");
                 return;
             }
 
@@ -175,7 +176,7 @@ namespace OxGFrame.Hotfixer
             }
             else
             {
-                Debug.LogWarning("Hotfix Checking...");
+                Logging.PrintWarning<Logger>("Hotfix Checking...");
             }
         }
         #endregion

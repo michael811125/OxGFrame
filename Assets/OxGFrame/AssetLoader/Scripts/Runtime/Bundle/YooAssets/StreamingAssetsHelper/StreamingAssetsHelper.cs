@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using OxGKit.LoggingSystem;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
@@ -18,11 +19,11 @@ namespace OxGFrame.AssetLoader.Bundle
             string filePath = Path.Combine(Application.streamingAssetsPath, BundleConfig.yooDefaultFolderName, packageName, fileName);
             if (File.Exists(filePath))
             {
-                Debug.Log($"<color=#00FF00>【Query】Request succeeded. File: {filePath}</color>");
+                Logging.Print<Logger>($"<color=#00FF00>【Query】Request succeeded. File: {filePath}</color>");
                 return true;
             }
 
-            Debug.Log($"<color=#FF0000>【Query】Request failed. File: {filePath}</color>");
+            Logging.Print<Logger>($"<color=#FF0000>【Query】Request failed. File: {filePath}</color>");
             return false;
         }
     }
@@ -63,11 +64,11 @@ namespace OxGFrame.AssetLoader.Bundle
 
             if (_cacheData.Contains(fileName))
             {
-                Debug.Log($"<color=#00FF00>【Query】Request succeeded. File: {fileName}</color>");
+                Logging.Print<Logger>($"<color=#00FF00>【Query】Request succeeded. File: {fileName}</color>");
                 return true;
             }
 
-            Debug.Log($"<color=#FF0000>【Query】Request failed. File: {fileName}</color>");
+            Logging.Print<Logger>($"<color=#FF0000>【Query】Request failed. File: {fileName}</color>");
             return false;
         }
     }
@@ -91,7 +92,7 @@ namespace OxGFrame.AssetLoader.Bundle
             DirectoryInfo root = new DirectoryInfo(folderPath);
             if (root.Exists == false)
             {
-                Debug.Log($"<color=#43ffce>No Built-in Bundles Found: {folderPath}</color>");
+                Logging.Print<Logger>($"<color=#43ffce>No Built-in Bundles Found: {folderPath}</color>");
                 return;
             }
 
@@ -111,7 +112,7 @@ namespace OxGFrame.AssetLoader.Bundle
             UnityEditor.AssetDatabase.CreateAsset(manifest, saveFilePath);
             UnityEditor.AssetDatabase.SaveAssets();
             UnityEditor.AssetDatabase.Refresh();
-            Debug.Log($"<color=#00FF00>Total File Count: {manifest.BuildinFiles.Count} in Built-in. The BuildinFileManifest Save Succeeded: {saveFilePath}</color>");
+            Logging.Print<Logger>($"<color=#00FF00>Total File Count: {manifest.BuildinFiles.Count} in Built-in. The BuildinFileManifest Save Succeeded: {saveFilePath}</color>");
         }
     }
 #endif

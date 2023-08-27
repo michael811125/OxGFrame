@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using OxGKit.LoggingSystem;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -56,7 +57,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 GameObject uiFreezeNode = parent.Find(nodeName).gameObject;
                 if (uiFreezeNode == null || !uiFreezeNode.GetComponent<UIFreeze>())
                 {
-                    Debug.Log(string.Format("No matching object found: {0}, doesn't need to recycle!", nodeName));
+                    Logging.Print<Logger>(string.Format("No matching object found: {0}, doesn't need to recycle!", nodeName));
                     return false;
                 }
 

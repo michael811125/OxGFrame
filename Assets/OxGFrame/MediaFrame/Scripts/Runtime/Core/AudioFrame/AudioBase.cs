@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
+using OxGKit.LoggingSystem;
 using OxGKit.Utilities.Request;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -66,7 +67,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             if (this.audioClip == null)
             {
-                Debug.Log($"<color=#FF0000>Cannot found AudioClip: {this.mediaName}</color>");
+                Logging.Print<Logger>($"<color=#FF0000>Cannot found AudioClip: {this.mediaName}</color>");
                 return;
             }
 
@@ -92,7 +93,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.isPrepared = true;
 
-            Debug.Log($"<color=#00EEFF>【Init Once】 Audio length: {this._mediaLength} (s)</color>");
+            Logging.Print<Logger>($"<color=#00EEFF>【Init Once】 Audio length: {this._mediaLength} (s)</color>");
         }
 
         public async UniTask<AudioClip> GetAudioFromStreamingAssets(bool cached)
@@ -156,7 +157,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             if (!this._audioSource.clip.preloadAudioData)
             {
                 this._audioSource.clip.LoadAudioData();
-                Debug.Log($"Load AudioName: {this.mediaName}, AudioSource => Time: {this._audioSource.time}, TimeSamples: {this._audioSource.timeSamples}; AudioClip => Time: {this._audioSource.clip.length}, Samples: {this._audioSource.clip.samples}, Freq: {this._audioSource.clip.frequency}");
+                Logging.Print<Logger>($"Load AudioName: {this.mediaName}, AudioSource => Time: {this._audioSource.time}, TimeSamples: {this._audioSource.timeSamples}; AudioClip => Time: {this._audioSource.clip.length}, Samples: {this._audioSource.clip.samples}, Freq: {this._audioSource.clip.frequency}");
             }
 
             volume = (volume > 0f) ? volume : this._audioSource.volume;

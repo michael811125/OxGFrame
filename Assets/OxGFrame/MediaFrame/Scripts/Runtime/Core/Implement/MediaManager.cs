@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
+using OxGKit.LoggingSystem;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -273,11 +274,11 @@ namespace OxGFrame.MediaFrame
                     // 卸載
                     AssetLoaders.UnloadAsset(assetName);
 
-                    Debug.Log($"<color=#ffb6db>[MediaManager] Unload Asset: {assetName}</color>");
+                    Logging.Print<Logger>($"<color=#ffb6db>[MediaManager] Unload Asset: {assetName}</color>");
                 }
             }
 
-            Debug.Log($"<color=#ff9d55>[MediaManager] Destroy Object: {assetName}, <color=#ffdc55>All Count: {this._listAllCache.Count}</color></color>");
+            Logging.Print<Logger>($"<color=#ff9d55>[MediaManager] Destroy Object: {assetName}, <color=#ffdc55>All Count: {this._listAllCache.Count}</color></color>");
         }
 
         /// <summary>

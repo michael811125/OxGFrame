@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using OxGKit.LoggingSystem;
 using UnityEngine;
 
 namespace OxGFrame.MediaFrame.VideoFrame
@@ -53,7 +54,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.LoadAndPlay(vidBase, loops, volume);
 
-            Debug.Log(string.Format("Play Video: {0}", vidBase?.mediaName));
+            Logging.Print<Logger>(string.Format("Play Video: {0}", vidBase?.mediaName));
         }
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 VideoBase main = vidBases[0];
                 if (main.IsPlaying())
                 {
-                    Debug.LogWarning(string.Format("【Video】{0} already played!!!", assetName));
+                    Logging.PrintWarning<Logger>(string.Format("【Video】{0} already played!!!", assetName));
                     return vidBases;
                 }
 
@@ -89,7 +90,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 VideoBase vidBase = await this.CloneAsset<VideoBase>(assetName, go, parent, spawnParent);
                 if (vidBase == null)
                 {
-                    Debug.LogWarning(string.Format("Asset not found at this path!!!【Video】: {0}", assetName));
+                    Logging.PrintWarning<Logger>(string.Format("Asset not found at this path!!!【Video】: {0}", assetName));
                     return new VideoBase[] { };
                 }
 
@@ -135,7 +136,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.ExitAndStop(vidBase, false, disableEndEvent);
 
-            Debug.Log(string.Format("Stop Video: {0}", vidBase?.mediaName));
+            Logging.Print<Logger>(string.Format("Stop Video: {0}", vidBase?.mediaName));
 
             // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
             if (vidBase.isPrepared)
@@ -198,7 +199,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.ExitAndStop(vidBase, true, false);
 
-            Debug.Log(string.Format("Pause Video: {0}, Current Length: {1} (s)", vidBase?.mediaName, vidBase?.CurrentLength()));
+            Logging.Print<Logger>(string.Format("Pause Video: {0}, Current Length: {1} (s)", vidBase?.mediaName, vidBase?.CurrentLength()));
         }
 
         /// <summary>

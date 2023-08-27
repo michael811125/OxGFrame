@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using OxGKit.LoggingSystem;
+using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -33,7 +34,7 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 if (request == null)
                 {
-                    Debug.Log($"<color=#FF0000>Request is null. URL: {url}</color>");
+                    Logging.Print<Logger>($"<color=#FF0000>Request is null. URL: {url}</color>");
                     yield return false;
                 }
 
@@ -42,14 +43,14 @@ namespace OxGFrame.AssetLoader.Bundle
                     request.result == UnityWebRequest.Result.ProtocolError ||
                     request.result == UnityWebRequest.Result.ConnectionError)
                 {
-                    Debug.Log($"<color=#FF0000>【Query】Request failed. Code: {request.responseCode}, URL: {url}</color>");
+                    Logging.Print<Logger>($"<color=#FF0000>【Query】Request failed. Code: {request.responseCode}, URL: {url}</color>");
                     request?.Dispose();
                     yield return false;
                 }
 
                 if (request.downloadedBytes > 0 && request.responseCode < 400)
                 {
-                    Debug.Log($"<color=#00FF00>【Query】Request succeeded. Code: {request.responseCode}, PartialBytes: {request.downloadedBytes}, URL: {url}</color>");
+                    Logging.Print<Logger>($"<color=#00FF00>【Query】Request succeeded. Code: {request.responseCode}, PartialBytes: {request.downloadedBytes}, URL: {url}</color>");
                     request?.Dispose();
                     yield return true;
                 }

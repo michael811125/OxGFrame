@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OxGKit.LoggingSystem;
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -450,7 +451,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     }
                     catch (Exception ex)
                     {
-                        Debug.Log($"<color=#FF0000>File Encrypt failed.</color> {ex}");
+                        Logging.Print<Logger>($"<color=#FF0000>File Encrypt failed.</color> {ex}");
                         return false;
                     }
 
@@ -496,7 +497,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     }
                     catch (Exception ex)
                     {
-                        Debug.Log($"<color=#FF0000>File Decrypt failed.</color> {ex}");
+                        Logging.Print<Logger>($"<color=#FF0000>File Decrypt failed.</color> {ex}");
                         return false;
                     }
 
@@ -535,7 +536,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
                 catch (Exception ex)
                 {
-                    Debug.Log($"<color=#FF0000>File Encrypt failed.</color> {ex}");
+                    Logging.Print<Logger>($"<color=#FF0000>File Encrypt failed.</color> {ex}");
                     return false;
                 }
 
@@ -578,7 +579,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
                 catch (Exception ex)
                 {
-                    Debug.Log($"<color=#FF0000>File Decrypt failed.</color> {ex}");
+                    Logging.Print<Logger>($"<color=#FF0000>File Decrypt failed.</color> {ex}");
                     return false;
                 }
 
@@ -620,7 +621,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
                 catch (Exception ex)
                 {
-                    Debug.Log($"<color=#FF0000>File Decrypt failed.</color> {ex}");
+                    Logging.Print<Logger>($"<color=#FF0000>File Decrypt failed.</color> {ex}");
                     return null;
                 }
 

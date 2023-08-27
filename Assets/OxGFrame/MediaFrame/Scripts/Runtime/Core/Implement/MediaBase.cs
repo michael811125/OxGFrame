@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
+using OxGKit.LoggingSystem;
 using OxGKit.Utilities.Request;
 using System;
 using System.Collections.Generic;
@@ -222,12 +223,12 @@ namespace OxGFrame.MediaFrame
             var fileMap = new Dictionary<string, string>();
             foreach (var readLine in lines)
             {
-                Debug.Log($"readline: {readLine}");
+                Logging.Print<Logger>($"readline: {readLine}");
                 if (readLine.IndexOf('#') != -1 && readLine[0] == '#') continue;
                 var args = readLine.Split(' ');
                 if (args.Length >= 2)
                 {
-                    Debug.Log($"args => key: {args[0]}, value: {args[1]}");
+                    Logging.Print<Logger>($"args => key: {args[0]}, value: {args[1]}");
                     if (!fileMap.ContainsKey(args[0])) fileMap.Add(args[0], args[1].Replace("\n", "").Replace("\r", ""));
                 }
             }

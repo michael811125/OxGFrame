@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Bundle;
+using OxGKit.LoggingSystem;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -59,7 +60,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // 如果有進行 Loading 標記後, 直接 return
                 if (this.HasInLoadingFlags(assetName))
                 {
-                    Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                    Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                     return;
                 }
 
@@ -91,7 +92,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = new BundlePack();
 
                     var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
+                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
                     var req = package?.LoadRawFileAsync(assetName);
 
                     if (req != null)
@@ -122,7 +123,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         if (!this.HasInCache(assetName))
                         {
                             this._cacher.Add(assetName, pack);
-                            Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                            Logging.Print<Logger>($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                         }
                     }
                 }
@@ -149,7 +150,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // 如果有進行 Loading 標記後, 直接 return
                 if (this.HasInLoadingFlags(assetName))
                 {
-                    Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                    Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                     return;
                 }
 
@@ -181,7 +182,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = new BundlePack();
 
                     var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
+                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
                     var req = package?.LoadRawFileSync(assetName);
 
                     if (req != null)
@@ -205,7 +206,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         if (!this.HasInCache(assetName))
                         {
                             this._cacher.Add(assetName, pack);
-                            Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                            Logging.Print<Logger>($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                         }
                     }
                 }
@@ -222,7 +223,7 @@ namespace OxGFrame.AssetLoader.Cacher
             // 如果有進行 Loading 標記後, 直接 return
             if (this.HasInLoadingFlags(assetName))
             {
-                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                 return default;
             }
 
@@ -242,7 +243,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 pack = new BundlePack();
                 {
                     var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
+                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
                     var req = package?.LoadRawFileAsync(assetName);
 
                     if (req != null)
@@ -295,7 +296,7 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 // 引用計數++
                 pack.AddRef();
-                Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
+                Logging.Print<Logger>($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
             }
             else
             {
@@ -316,7 +317,7 @@ namespace OxGFrame.AssetLoader.Cacher
             // 如果有進行 Loading 標記後, 直接 return
             if (this.HasInLoadingFlags(assetName))
             {
-                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                 return default;
             }
 
@@ -336,7 +337,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 pack = new BundlePack();
                 {
                     var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
+                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
                     var req = package?.LoadRawFileSync(assetName);
 
                     if (req != null)
@@ -382,7 +383,7 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 // 引用計數++
                 pack.AddRef();
-                Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
+                Logging.Print<Logger>($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
             }
             else
             {
@@ -402,7 +403,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             if (this.HasInLoadingFlags(assetName))
             {
-                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                 return;
             }
 
@@ -416,7 +417,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     // 引用計數--
                     pack.DelRef();
 
-                    Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
+                    Logging.Print<Logger>($"<color=#00e5ff>【<color=#ffcf92>Unload</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
 
                     if (forceUnload)
                     {
@@ -427,7 +428,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         var package = PackageManager.GetPackage(packageName);
                         package?.UnloadUnusedAssets();
 
-                        Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Force Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                        Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Force Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
                     else if (this._cacher[assetName].refCount <= 0)
                     {
@@ -438,10 +439,10 @@ namespace OxGFrame.AssetLoader.Cacher
                         var package = PackageManager.GetPackage(packageName);
                         package?.UnloadUnusedAssets();
 
-                        Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                        Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
                 }
-                else Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload Type Error</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
+                else Logging.Print<Logger>($"<color=#00e5ff>【<color=#ffcf92>Unload Type Error</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
             }
         }
 
@@ -468,7 +469,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 package?.UnloadUnusedAssets();
             }
 
-            Debug.Log($"<color=#ff71b7>【Release All RawFiles】 => Current << CacheBundle >> Cache Count: {this.Count}</color>");
+            Logging.Print<Logger>($"<color=#ff71b7>【Release All RawFiles】 => Current << CacheBundle >> Cache Count: {this.Count}</color>");
         }
         #endregion
 
@@ -480,7 +481,7 @@ namespace OxGFrame.AssetLoader.Cacher
             // 如果有進行 Loading 標記後, 直接 return
             if (this.HasInLoadingFlags(assetName))
             {
-                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                 return null;
             }
 
@@ -492,7 +493,7 @@ namespace OxGFrame.AssetLoader.Cacher
             this._loadingFlags.Add(assetName);
 
             var package = PackageManager.GetPackage(packageName);
-            if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
+            if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
             var req = package?.LoadSceneAsync(assetName, loadSceneMode, !activateOnLoad, priority);
 
             var pack = new BundlePack();
@@ -534,14 +535,14 @@ namespace OxGFrame.AssetLoader.Cacher
                                         var count = this._sceneCounter[assetName];
                                         string key = $"{assetName}#{count}";
                                         this._sceneCache.Add(key, pack);
-                                        Debug.Log($"<color=#90FF71>【Load Scene Additive】 => << CacheBundle >> scene: {key}</color>");
+                                        Logging.Print<Logger>($"<color=#90FF71>【Load Scene Additive】 => << CacheBundle >> scene: {key}</color>");
                                     }
                                     else
                                     {
                                         var count = ++this._sceneCounter[assetName];
                                         string key = $"{assetName}#{count}";
                                         this._sceneCache.Add(key, pack);
-                                        Debug.Log($"<color=#90FF71>【Load Scene Additive】 => << CacheBundle >> scene: {key}</color>");
+                                        Logging.Print<Logger>($"<color=#90FF71>【Load Scene Additive】 => << CacheBundle >> scene: {key}</color>");
                                     }
                                 }
                                 break;
@@ -577,7 +578,7 @@ namespace OxGFrame.AssetLoader.Cacher
                                 this._sceneCache[key] = null;
                                 this._sceneCache.Remove(key);
 
-                                Debug.Log($"<color=#00e5ff>【Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
+                                Logging.Print<Logger>($"<color=#00e5ff>【Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
                             }
                         }
                     }
@@ -585,7 +586,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     // 遞迴完, 移除計數緩存
                     this._sceneCounter.Remove(assetName);
 
-                    Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
+                    Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
                 }
                 else
                 {
@@ -623,7 +624,7 @@ namespace OxGFrame.AssetLoader.Cacher
                                     this._sceneCache[key] = null;
                                     this._sceneCache.Remove(key);
 
-                                    Debug.Log($"<color=#00e5ff>【<color=#97ff3e>Safty</color> Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
+                                    Logging.Print<Logger>($"<color=#00e5ff>【<color=#97ff3e>Safty</color> Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
                                 }
                             }
                         }
@@ -632,7 +633,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._sceneCounter.Remove(assetName);
                         package?.UnloadUnusedAssets();
 
-                        Debug.Log($"<color=#00e5ff>【<color=#ff92ef><color=#97ff3e>Safty</color> Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
+                        Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef><color=#97ff3e>Safty</color> Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
                     }
                     else
                     {
@@ -647,7 +648,7 @@ namespace OxGFrame.AssetLoader.Cacher
                             this._sceneCache[key] = null;
                             this._sceneCache.Remove(key);
 
-                            Debug.Log($"<color=#00e5ff>【Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
+                            Logging.Print<Logger>($"<color=#00e5ff>【Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
 
                             topCount = --this._sceneCounter[assetName];
 
@@ -657,13 +658,13 @@ namespace OxGFrame.AssetLoader.Cacher
                                 var package = PackageManager.GetPackage(packageName);
                                 this._sceneCounter.Remove(assetName);
                                 package?.UnloadUnusedAssets();
-                                Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
+                                Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
                             }
                         }
                     }
                 }
             }
-            else Debug.Log($"<color=#00e5ff>【<color=#ff4a8d>Unload Scene Invalid</color>】 => << CacheBundle >> sceneName: {assetName} maybe not <color=#ffb33e>Additive</color> or is <color=#ffb33e>Single</color></color>");
+            else Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff4a8d>Unload Scene Invalid</color>】 => << CacheBundle >> sceneName: {assetName} maybe not <color=#ffb33e>Additive</color> or is <color=#ffb33e>Single</color></color>");
         }
         #endregion
 
@@ -685,7 +686,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // 如果有進行 Loading 標記後, 直接 return
                 if (this.HasInLoadingFlags(assetName))
                 {
-                    Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                    Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                     return;
                 }
 
@@ -717,7 +718,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = new BundlePack();
 
                     var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
+                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
                     var req = package?.LoadAssetAsync<T>(assetName);
 
                     if (req != null)
@@ -748,7 +749,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         if (!this.HasInCache(assetName))
                         {
                             this._cacher.Add(assetName, pack);
-                            Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                            Logging.Print<Logger>($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                         }
                     }
                 }
@@ -775,7 +776,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // 如果有進行 Loading 標記後, 直接 return
                 if (this.HasInLoadingFlags(assetName))
                 {
-                    Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                    Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                     return;
                 }
 
@@ -807,7 +808,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = new BundlePack();
 
                     var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
+                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
                     var req = package?.LoadAssetSync<T>(assetName);
 
                     if (req != null)
@@ -831,7 +832,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         if (!this.HasInCache(assetName))
                         {
                             this._cacher.Add(assetName, pack);
-                            Debug.Log($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                            Logging.Print<Logger>($"<color=#ff9600>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                         }
                     }
                 }
@@ -848,7 +849,7 @@ namespace OxGFrame.AssetLoader.Cacher
             // 如果有進行 Loading 標記後, 直接 return
             if (this.HasInLoadingFlags(assetName))
             {
-                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                 return null;
             }
 
@@ -868,7 +869,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 pack = new BundlePack();
                 {
                     var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
+                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
                     var req = package?.LoadAssetAsync<T>(assetName);
 
                     if (req != null)
@@ -911,7 +912,7 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 // 引用計數++
                 pack.AddRef();
-                Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
+                Logging.Print<Logger>($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
             }
             else
             {
@@ -932,7 +933,7 @@ namespace OxGFrame.AssetLoader.Cacher
             // 如果有進行 Loading 標記後, 直接 return
             if (this.HasInLoadingFlags(assetName))
             {
-                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                 return null;
             }
 
@@ -952,7 +953,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 pack = new BundlePack();
                 {
                     var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Debug.Log($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
+                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
                     var req = package?.LoadAssetSync<T>(assetName);
 
                     if (req != null)
@@ -988,7 +989,7 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 // 引用計數++
                 pack.AddRef();
-                Debug.Log($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
+                Logging.Print<Logger>($"<color=#90FF71>【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
             }
             else
             {
@@ -1008,7 +1009,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             if (this.HasInLoadingFlags(assetName))
             {
-                Debug.Log($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                 return;
             }
 
@@ -1022,7 +1023,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     // 引用計數--
                     pack.DelRef();
 
-                    Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
+                    Logging.Print<Logger>($"<color=#00e5ff>【<color=#ffcf92>Unload</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
 
                     if (forceUnload)
                     {
@@ -1033,7 +1034,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         var package = PackageManager.GetPackage(packageName);
                         package?.UnloadUnusedAssets();
 
-                        Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Force Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                        Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Force Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
                     else if (this._cacher[assetName].refCount <= 0)
                     {
@@ -1044,10 +1045,10 @@ namespace OxGFrame.AssetLoader.Cacher
                         var package = PackageManager.GetPackage(packageName);
                         package?.UnloadUnusedAssets();
 
-                        Debug.Log($"<color=#00e5ff>【<color=#ff92ef>Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                        Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
                 }
-                else Debug.Log($"<color=#00e5ff>【<color=#ffcf92>Unload Type Error</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
+                else Logging.Print<Logger>($"<color=#00e5ff>【<color=#ffcf92>Unload Type Error</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
             }
         }
 
@@ -1074,7 +1075,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 package?.UnloadUnusedAssets();
             }
 
-            Debug.Log($"<color=#ff71b7>【Release All Assets】 => Current << CacheBundle >> Cache Count: {this.Count}</color>");
+            Logging.Print<Logger>($"<color=#ff71b7>【Release All Assets】 => Current << CacheBundle >> Cache Count: {this.Count}</color>");
         }
         #endregion
 

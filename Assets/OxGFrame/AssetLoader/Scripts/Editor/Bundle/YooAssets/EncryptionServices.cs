@@ -7,12 +7,12 @@ namespace OxGFrame.AssetLoader.Editor
 {
     public static class CryptogramSettingSetup
     {
-        public static CryptogramSetting cryptogramSettings;
+        public static CryptogramSetting cryptogramSetting;
 
-        public static CryptogramSetting GetCryptogramSettings()
+        public static CryptogramSetting GetCryptogramSetting()
         {
-            if (cryptogramSettings == null) cryptogramSettings = EditorTool.LoadSettingData<CryptogramSetting>();
-            return cryptogramSettings;
+            if (cryptogramSetting == null) cryptogramSetting = EditorTool.LoadSettingData<CryptogramSetting>();
+            return cryptogramSetting;
         }
     }
 
@@ -20,7 +20,7 @@ namespace OxGFrame.AssetLoader.Editor
     {
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSettings();
+            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
 
             string filePath = fileInfo.FilePath;
 
@@ -51,7 +51,7 @@ namespace OxGFrame.AssetLoader.Editor
     {
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSettings();
+            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
 
             string filePath = fileInfo.FilePath;
 
@@ -81,7 +81,7 @@ namespace OxGFrame.AssetLoader.Editor
     {
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSettings();
+            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
 
             string filePath = fileInfo.FilePath;
 
@@ -113,7 +113,7 @@ namespace OxGFrame.AssetLoader.Editor
     {
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSettings();
+            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
 
             string filePath = fileInfo.FilePath;
 

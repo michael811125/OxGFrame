@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OxGKit.LoggingSystem;
+using System;
 using UnityEngine;
 using UnityWebSocket;
 
@@ -19,7 +20,7 @@ namespace OxGFrame.NetFrame
             this._netOption = netOption;
             if (string.IsNullOrEmpty(netOption.url))
             {
-                Debug.Log("<color=##FF0000>ERROR: Websocket Connect failed, net option URL cannot be null.</color>");
+                Logging.Print<Logger>("<color=##FF0000>ERROR: Websocket Connect failed, net option URL cannot be null.</color>");
                 return;
             }
 
@@ -44,7 +45,7 @@ namespace OxGFrame.NetFrame
 
             this._ws.ConnectAsync();
 
-            Debug.Log(string.Format("URL: {0} => Websocket is Connected.", this._netOption.url));
+            Logging.Print<Logger>(string.Format("URL: {0} => Websocket is Connected.", this._netOption.url));
         }
 
         public bool IsConnected()
@@ -60,7 +61,7 @@ namespace OxGFrame.NetFrame
             if (this.IsConnected())
             {
                 this._ws.SendAsync(buffer);
-                Debug.Log(string.Format("<color=#C9FF49>Websocket - SentSize: {0} bytes</color>", buffer.Length));
+                Logging.Print<Logger>(string.Format("<color=#C9FF49>Websocket - SentSize: {0} bytes</color>", buffer.Length));
                 return true;
             }
 

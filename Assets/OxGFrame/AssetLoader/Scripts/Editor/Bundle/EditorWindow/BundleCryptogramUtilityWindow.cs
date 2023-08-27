@@ -31,7 +31,7 @@ namespace OxGFrame.AssetLoader.Editor
         [SerializeField]
         public string sourceFolder;
 
-        private CryptogramSetting _settings;
+        private CryptogramSetting _setting;
 
         internal static string PROJECT_PATH;
         internal static string KEY_SAVER;
@@ -52,7 +52,7 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void OnEnable()
         {
-            this._settings = EditorTool.LoadSettingData<CryptogramSetting>();
+            this._setting = EditorTool.LoadSettingData<CryptogramSetting>();
             this._LoadSettingsData();
             this.sourceFolder = EditorStorage.GetData(KEY_SAVER, $"sourceFolder", Path.Combine($"{Application.dataPath}/", AssetBundleBuilderHelper.GetDefaultBuildOutputRoot()));
             this.cryptogramType = (CryptogramType)Convert.ToInt32(EditorStorage.GetData(KEY_SAVER, "cryptogramType", "0"));
@@ -60,14 +60,14 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void _LoadSettingsData()
         {
-            this.randomSeed = this._settings.randomSeed;
-            this.dummySize = this._settings.dummySize;
-            this.xorKey = this._settings.xorKey;
-            this.hXorKey = this._settings.hXorKey;
-            this.tXorKey = this._settings.tXorKey;
-            this.jXorKey = this._settings.jXorKey;
-            this.aesKey = this._settings.aesKey;
-            this.aesIv = this._settings.aesIv;
+            this.randomSeed = this._setting.randomSeed;
+            this.dummySize = this._setting.dummySize;
+            this.xorKey = this._setting.xorKey;
+            this.hXorKey = this._setting.hXorKey;
+            this.tXorKey = this._setting.tXorKey;
+            this.jXorKey = this._setting.jXorKey;
+            this.aesKey = this._setting.aesKey;
+            this.aesIv = this._setting.aesIv;
         }
 
         private void OnDisable()

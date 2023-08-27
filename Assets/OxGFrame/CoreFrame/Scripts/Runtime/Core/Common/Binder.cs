@@ -1,4 +1,5 @@
 ﻿using OxGFrame.CoreFrame.CPFrame;
+using OxGKit.LoggingSystem;
 using UnityEngine;
 
 namespace OxGFrame.CoreFrame
@@ -58,7 +59,7 @@ namespace OxGFrame.CoreFrame
             // 再去判斷取得後的字串陣列是否綁定格式資格
             if (heads == null || heads.Length < 2 || !FrameConfig.BIND_COMPONENTS.ContainsKey(bindType))
             {
-                Debug.Log($"{name} => Naming format error. Please check the bind name.");
+                Logging.Print<Logger>($"{name} => Naming format error. Please check the bind name.");
                 return;
             }
 

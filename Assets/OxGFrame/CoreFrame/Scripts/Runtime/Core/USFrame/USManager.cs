@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
 using OxGFrame.AssetLoader.Cacher;
+using OxGKit.LoggingSystem;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -105,14 +106,14 @@ namespace OxGFrame.CoreFrame.USFrame
             var scene = this.GetSceneByName(sceneName);
             if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
             {
-                Debug.LogWarning($"【US】Single Scene => {sceneName} already exists!!!");
+                Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
                 return null;
             }
 
             var pack = await AssetLoaders.LoadSceneAsync(packageName, sceneName, loadSceneMode, activateOnLoad, priority, progression);
             if (pack != null)
             {
-                Debug.Log($"<color=#4affc2>Load Scene From <color=#ffc04a>Bundle</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
+                Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Bundle</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
                 return pack;
             }
 
@@ -140,7 +141,7 @@ namespace OxGFrame.CoreFrame.USFrame
             var scene = this.GetSceneByName(sceneName);
             if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
             {
-                Debug.LogWarning($"【US】Single Scene => {sceneName} already exists!!!");
+                Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
                 return null;
             }
 
@@ -163,7 +164,7 @@ namespace OxGFrame.CoreFrame.USFrame
                     await UniTask.Yield();
                 }
 
-                Debug.Log($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
+                Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
             }
 
             return req;
@@ -178,7 +179,7 @@ namespace OxGFrame.CoreFrame.USFrame
             string sceneName = scene.name;
             if (!string.IsNullOrEmpty(sceneName) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
             {
-                Debug.LogWarning($"【US】Single Scene => {sceneName} already exists!!!");
+                Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
                 return null;
             }
 
@@ -201,7 +202,7 @@ namespace OxGFrame.CoreFrame.USFrame
                     await UniTask.Yield();
                 }
 
-                Debug.Log($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => idx: {buildIndex}, mode: {loadSceneMode}</color>");
+                Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => idx: {buildIndex}, mode: {loadSceneMode}</color>");
             }
 
             return req;
@@ -211,7 +212,7 @@ namespace OxGFrame.CoreFrame.USFrame
         {
             if (sceneCount == 1)
             {
-                Debug.LogWarning("Cannot unload last scene!!!");
+                Logging.PrintWarning<Logger>("Cannot unload last scene!!!");
                 return;
             }
 
@@ -226,7 +227,7 @@ namespace OxGFrame.CoreFrame.USFrame
                             if (sceneName == this.GetSceneAt(i).name)
                             {
                                 SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
-                                Debug.Log($"<color=#ff4ae0>Unload Scene <color=#ffc04a>(Build)</color> => sceneName: {sceneName}</color>");
+                                Logging.Print<Logger>($"<color=#ff4ae0>Unload Scene <color=#ffc04a>(Build)</color> => sceneName: {sceneName}</color>");
                             }
                         }
                     }
@@ -237,7 +238,7 @@ namespace OxGFrame.CoreFrame.USFrame
                             if (sceneName == this.GetSceneAt(i).name)
                             {
                                 SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
-                                Debug.Log($"<color=#ff4ae0>Unload Scene <color=#ffc04a>(Build)</color> => sceneName: {sceneName}</color>");
+                                Logging.Print<Logger>($"<color=#ff4ae0>Unload Scene <color=#ffc04a>(Build)</color> => sceneName: {sceneName}</color>");
                                 break;
                             }
                         }
@@ -250,7 +251,7 @@ namespace OxGFrame.CoreFrame.USFrame
         {
             if (sceneCount == 1)
             {
-                Debug.LogWarning("Cannot unload last scene!!!");
+                Logging.PrintWarning<Logger>("Cannot unload last scene!!!");
                 return;
             }
 
@@ -265,7 +266,7 @@ namespace OxGFrame.CoreFrame.USFrame
                             if (buildIndex == this.GetSceneAt(i).buildIndex)
                             {
                                 SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
-                                Debug.Log($"<color=#ff4ae0>Unload Scene <color=#ffc04a>(Build)</color> => sceneName: {this.GetSceneAt(i).name}, buildIdx: {this.GetSceneAt(i).buildIndex}</color>");
+                                Logging.Print<Logger>($"<color=#ff4ae0>Unload Scene <color=#ffc04a>(Build)</color> => sceneName: {this.GetSceneAt(i).name}, buildIdx: {this.GetSceneAt(i).buildIndex}</color>");
                             }
                         }
                     }
@@ -279,7 +280,7 @@ namespace OxGFrame.CoreFrame.USFrame
                             if (buildIndex == this.GetSceneAt(i).buildIndex)
                             {
                                 SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
-                                Debug.Log($"<color=#ff4ae0>Unload Scene <color=#ffc04a>(Build)</color> => sceneName: {this.GetSceneAt(i).name}, buildIdx: {this.GetSceneAt(i).buildIndex}</color>");
+                                Logging.Print<Logger>($"<color=#ff4ae0>Unload Scene <color=#ffc04a>(Build)</color> => sceneName: {this.GetSceneAt(i).name}, buildIdx: {this.GetSceneAt(i).buildIndex}</color>");
                                 break;
                             }
                         }

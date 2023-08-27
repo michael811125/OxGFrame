@@ -3,6 +3,7 @@
     "com.code-philosophy.hybridclr": "https://github.com/focus-creative-games/hybridclr_unity.git",
     "com.domybest.lwmybox": "https://github.com/michael811125/LWMyBox.git",
     "com.jeffjadulco.guidregenerator": "https://github.com/jeffjadulco/unity-guid-regenerator.git",
+    "com.michaelo.oxgkit.loggingsystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts",
     "com.michaelo.oxgkit.utilities": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts",
     "com.unity.2d.animation": "7.0.10",
     "com.unity.2d.pixel-perfect": "5.0.3",

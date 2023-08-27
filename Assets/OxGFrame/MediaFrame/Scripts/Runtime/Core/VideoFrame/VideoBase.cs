@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
+using OxGKit.LoggingSystem;
 using System;
 using System.Threading;
 using UnityEngine;
@@ -72,7 +73,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                     this._videoPlayer.clip = this.videoClip;
                     if (this.videoClip == null)
                     {
-                        Debug.Log($"<color=#FF0000>Cannot found VideoClip: {this.mediaName}</color>");
+                        Logging.Print<Logger>($"<color=#FF0000>Cannot found VideoClip: {this.mediaName}</color>");
                         return;
                     }
                     break;
@@ -82,7 +83,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                         string url = System.IO.Path.Combine(Application.streamingAssetsPath, this.fullPathName);
                         if (!this.TrySetUrl(url))
                         {
-                            Debug.Log($"<color=#FF0000>Cannot found VideoClip: {this.mediaName}</color>");
+                            Logging.Print<Logger>($"<color=#FF0000>Cannot found VideoClip: {this.mediaName}</color>");
                             return;
                         }
                     }
@@ -94,7 +95,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                         string url = (!string.IsNullOrEmpty(urlSet)) ? $"{urlSet.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
                         if (!this.TrySetUrl(url))
                         {
-                            Debug.Log($"<color=#FF0000>Cannot found VideoClip: {this.mediaName}</color>");
+                            Logging.Print<Logger>($"<color=#FF0000>Cannot found VideoClip: {this.mediaName}</color>");
                             return;
                         }
                     }
@@ -102,11 +103,11 @@ namespace OxGFrame.MediaFrame.VideoFrame
             }
 
             this._videoPlayer.Prepare();
-            Debug.Log($"{this.mediaName} video is preparing...");
+            Logging.Print<Logger>($"{this.mediaName} video is preparing...");
             var cts = new CancellationTokenSource();
             cts.CancelAfterSlim(TimeSpan.FromSeconds(5f));
             await UniTask.WaitUntil(() => { return this._videoPlayer.isPrepared; }, PlayerLoopTiming.FixedUpdate, cts.Token);
-            Debug.Log($"{this.mediaName} video is prepared");
+            Logging.Print<Logger>($"{this.mediaName} video is prepared");
 
             this._videoPlayer.SetDirectAudioMute(0, true);
             this._videoPlayer.playOnAwake = false;
@@ -129,7 +130,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.isPrepared = true;
 
-            Debug.Log($"<color=#00EEFF>【Init Once】 Video length: {this._mediaLength} (s)</color>");
+            Logging.Print<Logger>($"<color=#00EEFF>【Init Once】 Video length: {this._mediaLength} (s)</color>");
         }
 
         /// <summary>

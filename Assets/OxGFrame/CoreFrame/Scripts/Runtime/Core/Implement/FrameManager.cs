@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
+using OxGKit.LoggingSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -321,7 +322,7 @@ namespace OxGFrame.CoreFrame
                     // 如果允許多實例 & 預加載模式, 則直接返回 (主要是 Cacher 已經有加載資源了)
                     if (stack.allowInstantiate && isPreloadMode)
                     {
-                        Debug.Log($"<color=#FF9149>{stack.assetName} => 【Allow Instantiate + Preload Mode】skip cache process.</color>");
+                        Logging.Print<Logger>($"<color=#FF9149>{stack.assetName} => 【Allow Instantiate + Preload Mode】skip cache process.</color>");
                         return null;
                     }
                     // 允所多實例時, 需要重覆加載 (確保 ref 正確, 不過會多 1 次, 需要額外減去)
@@ -567,7 +568,7 @@ namespace OxGFrame.CoreFrame
                 // 額外卸載
                 AssetLoaders.UnloadAsset(assetName);
 
-                Debug.Log($"<color=#ffa2a3>[FrameManager] Extra Unload Asset: {assetName}</color>");
+                Logging.Print<Logger>($"<color=#ffa2a3>[FrameManager] Extra Unload Asset: {assetName}</color>");
             }
 
             // 柱列為空, 則刪除資源緩存
@@ -576,9 +577,9 @@ namespace OxGFrame.CoreFrame
             // 卸載
             AssetLoaders.UnloadAsset(assetName);
 
-            Debug.Log($"<color=#ffb6db>[FrameManager] Unload Asset: {assetName}</color>");
+            Logging.Print<Logger>($"<color=#ffb6db>[FrameManager] Unload Asset: {assetName}</color>");
 
-            Debug.Log($"<color=#ff9d55>[FrameManager] Destroy Object: {assetName}</color>");
+            Logging.Print<Logger>($"<color=#ff9d55>[FrameManager] Destroy Object: {assetName}</color>");
         }
         #endregion
 

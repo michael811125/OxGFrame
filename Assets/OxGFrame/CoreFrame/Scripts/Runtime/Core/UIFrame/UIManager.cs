@@ -4,6 +4,7 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine.UI;
 using OxGFrame.AssetLoader;
+using OxGKit.LoggingSystem;
 
 namespace OxGFrame.CoreFrame.UIFrame
 {
@@ -98,7 +99,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             }
             else
             {
-                Debug.Log($"<color=#FFD600>【Setup Failed】Not found UICanvas:</color> <color=#FF6ECB>{canvasName}</color>");
+                Logging.Print<Logger>($"<color=#FFD600>【Setup Failed】Not found UICanvas:</color> <color=#FF6ECB>{canvasName}</color>");
                 return false;
             }
 
@@ -211,7 +212,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             if (uiCanvas == null)
             {
-                Debug.Log($"<color=#FFD600>【Loading Failed】Not found UICanvas:</color> <color=#FF6ECB>{uiBase.uiSetting.canvasName}</color>");
+                Logging.Print<Logger>($"<color=#FFD600>【Loading Failed】Not found UICanvas:</color> <color=#FF6ECB>{uiBase.uiSetting.canvasName}</color>");
                 return null;
             }
 
@@ -276,7 +277,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 var uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasName);
                 if (uiCanvas == null)
                 {
-                    Debug.Log($"<color=#FF0068>When UI <color=#FF9000>[{uiBase.assetName}]</color> to set parent failed. Not found UICanvas:</color> <color=#FF9000>[{uiBase.uiSetting.canvasName}]</color>");
+                    Logging.Print<Logger>($"<color=#FF0068>When UI <color=#FF9000>[{uiBase.assetName}]</color> to set parent failed. Not found UICanvas:</color> <color=#FF9000>[{uiBase.uiSetting.canvasName}]</color>");
                     return false;
                 }
 
@@ -410,7 +411,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             await this.LoadAndDisplay(uiBase, obj);
             this.LoadAndDisplayReverse(uiBase, obj);
 
-            Debug.Log($"<color=#1effad>Show UI: <color=#ffdb1e>{assetName}</color></color>");
+            Logging.Print<Logger>($"<color=#1effad>Show UI: <color=#ffdb1e>{assetName}</color></color>");
 
             this.CloseAwaiting(awaitingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
 
@@ -456,7 +457,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                         this._dictReverse[key].RemoveAt(i);
                         // 額外計算堆疊數 (用於校正堆疊計數)
                         reverseCache.extraStack++;
-                        Debug.Log($"[pre-forceDestroy process] Remove {uiBase.assetName} from reverse cache.");
+                        Logging.Print<Logger>($"[pre-forceDestroy process] Remove {uiBase.assetName} from reverse cache.");
                     }
                 }
                 reverseCache.uiBase = equalsTop;
@@ -533,7 +534,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 else if (uiBase.onCloseAndDestroy) this.Destroy(uiBase, assetName);
             }
 
-            Debug.Log($"<color=#1effad>Close UI: <color=#ffdb1e>{assetName}</color></color>");
+            Logging.Print<Logger>($"<color=#1effad>Close UI: <color=#ffdb1e>{assetName}</color></color>");
         }
 
         public override void Close(string assetName, bool disablePreClose = false, bool forceDestroy = false)
@@ -651,7 +652,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
                 this.LoadAndDisplay(uiBase).Forget();
 
-                Debug.Log($"<color=#1effad>Reveal UI: <color=#ffdb1e>{assetName}</color></color>");
+                Logging.Print<Logger>($"<color=#1effad>Reveal UI: <color=#ffdb1e>{assetName}</color></color>");
             }
         }
 
@@ -720,7 +721,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 this.ExitAndHide(uiBase);
             }
 
-            Debug.Log($"<color=#1effad>Hide UI: <color=#ffdb1e>{assetName}</color></color>");
+            Logging.Print<Logger>($"<color=#1effad>Hide UI: <color=#ffdb1e>{assetName}</color></color>");
         }
 
         public override void Hide(string assetName)
@@ -830,7 +831,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
                 // 堆疊層數++
                 this._dictStackCounter[key]++;
-                Debug.Log($"<color=#45b5ff>[UI Stack Layer] Canvas: {uiBase.uiSetting.canvasName}, Layer: {uiBase.uiSetting.nodeType}, Stack Count: <color=#9dff45>{this._dictStackCounter[key]}</color></color>");
+                Logging.Print<Logger>($"<color=#45b5ff>[UI Stack Layer] Canvas: {uiBase.uiSetting.canvasName}, Layer: {uiBase.uiSetting.nodeType}, Stack Count: <color=#9dff45>{this._dictStackCounter[key]}</color></color>");
                 // 最大差值 -1 是為了保留給下一階層
                 if (this._dictStackCounter[key] >= (UIConfig.ORDER_DIFFERENCE - 1))
                 {
@@ -866,7 +867,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 {
                     // 堆疊層數--
                     this._dictStackCounter[key] = (extraStack > 0) ? this._dictStackCounter[key] - extraStack : --this._dictStackCounter[key];
-                    Debug.Log($"<color=#45b5ff>[UI Stack Layer] Canvas: {uiBase.uiSetting.canvasName}, Layer: {uiBase.uiSetting.nodeType} => Stack Count: <color=#ff45be>{this._dictStackCounter[key]}</color></color>");
+                    Logging.Print<Logger>($"<color=#45b5ff>[UI Stack Layer] Canvas: {uiBase.uiSetting.canvasName}, Layer: {uiBase.uiSetting.nodeType} => Stack Count: <color=#ff45be>{this._dictStackCounter[key]}</color></color>");
                     if (this._dictStackCounter[key] <= 0) this._dictStackCounter.Remove(key);
                 }
             }

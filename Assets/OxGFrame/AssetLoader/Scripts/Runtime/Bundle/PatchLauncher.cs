@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using YooAsset;
+using OxGKit.LoggingSystem;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -88,8 +89,8 @@ namespace OxGFrame.AssetLoader.Bundle
 
             if (PackageManager.isInitialized)
             {
-                Debug.Log($"<color=#32ff94>(Powered by YooAsset) Initialized Play Mode: {BundleConfig.playMode}</color>");
-                Debug.Log("<color=#b5ff00>(Powered by YooAsset) PatchLauncher Setup Completes.</color>");
+                Logging.Print<Logger>($"<color=#32ff94>(Powered by YooAsset) Initialized Play Mode: {BundleConfig.playMode}</color>");
+                Logging.Print<Logger>("<color=#b5ff00>(Powered by YooAsset) PatchLauncher Setup Completes.</color>");
             }
         }
 
@@ -97,7 +98,7 @@ namespace OxGFrame.AssetLoader.Bundle
         {
 #if !UNITY_WEBGL  
             PackageManager.Release();
-            Debug.Log("<color=#ff84d1>(Powered by YooAsset) Release Packages Completes.</color>");
+            Logging.Print<Logger>("<color=#ff84d1>(Powered by YooAsset) Release Packages Completes.</color>");
 #endif
         }
 
@@ -109,10 +110,10 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 case BundleConfig.PlayMode.OfflineMode:
 
-                    Debug.Log($"<color=#ff1f4c>[Offline Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    Logging.Print<Logger>($"<color=#ff1f4c>[Offline Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
                     break;
                 case BundleConfig.PlayMode.HostMode:
-                    Debug.Log($"<color=#ff1f4c>[Host Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    Logging.Print<Logger>($"<color=#ff1f4c>[Host Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
                     break;
             }
 #else
@@ -120,7 +121,7 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 case BundleConfig.PlayMode.WebGLMode:
 
-                    Debug.Log($"<color=#ff1f4c>[WebGL Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    Logging.Print<Logger>($"<color=#ff1f4c>[WebGL Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
                     break;
             }
 #endif

@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using OxGKit.LoggingSystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -47,7 +48,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     _decryption = new AesDecryption();
                     break;
             }
-            Debug.Log($"<color=#ffe45a>Init Bundle Decryption: {cryptogramType}</color>");
+            Logging.Print<Logger>($"<color=#ffe45a>Init Bundle Decryption: {cryptogramType}</color>");
             #endregion
 
             #region Init Preset App Packages
@@ -112,7 +113,7 @@ namespace OxGFrame.AssetLoader.Bundle
             if (package.InitializeStatus == EOperationStatus.Succeed)
             {
                 if (autoUpdate) await UpdatePackage(packageName);
-                Debug.Log($"<color=#e2ec00>Package: {packageName} is initialized. Status: {package.InitializeStatus}.</color>");
+                Logging.Print<Logger>($"<color=#e2ec00>Package: {packageName} is initialized. Status: {package.InitializeStatus}.</color>");
                 return true;
             }
 
@@ -159,12 +160,12 @@ namespace OxGFrame.AssetLoader.Bundle
             if (initializationOperation.Status == EOperationStatus.Succeed)
             {
                 if (autoUpdate) await UpdatePackage(packageName);
-                Debug.Log($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Init</color> completed successfully.</color>");
+                Logging.Print<Logger>($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Init</color> completed successfully.</color>");
                 return true;
             }
             else
             {
-                Debug.Log($"<color=#ff3696>Package: {packageName} init failed.</color>");
+                Logging.Print<Logger>($"<color=#ff3696>Package: {packageName} init failed.</color>");
                 return false;
             }
         }
@@ -187,18 +188,18 @@ namespace OxGFrame.AssetLoader.Bundle
                 await manifestOperation;
                 if (manifestOperation.Status == EOperationStatus.Succeed)
                 {
-                    Debug.Log($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Update</color> completed successfully.</color>");
+                    Logging.Print<Logger>($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Update</color> completed successfully.</color>");
                     return true;
                 }
                 else
                 {
-                    Debug.Log($"<color=#ff3696>Package: {packageName} update manifest failed.</color>");
+                    Logging.Print<Logger>($"<color=#ff3696>Package: {packageName} update manifest failed.</color>");
                     return false;
                 }
             }
             else
             {
-                Debug.Log($"<color=#ff3696>Package: {packageName} update version failed.</color>");
+                Logging.Print<Logger>($"<color=#ff3696>Package: {packageName} update version failed.</color>");
                 return false;
             }
         }
@@ -212,7 +213,7 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
             {
-                Debug.Log($"<color=#ffce00><color=#0fa>[{BundleConfig.PlayMode.EditorSimulateMode}]</color> Check Package In Local <color=#0fa>return true</color></color>");
+                Logging.Print<Logger>($"<color=#ffce00><color=#0fa>[{BundleConfig.PlayMode.EditorSimulateMode}]</color> Check Package In Local <color=#0fa>return true</color></color>");
                 return true;
             }
 
@@ -242,7 +243,7 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
             {
-                Debug.Log($"<color=#ffce00><color=#0fa>[{BundleConfig.PlayMode.EditorSimulateMode}]</color> Get Package Size In Local <color=#0fa>return 1</color></color>");
+                Logging.Print<Logger>($"<color=#ffce00><color=#0fa>[{BundleConfig.PlayMode.EditorSimulateMode}]</color> Get Package Size In Local <color=#0fa>return 1</color></color>");
                 return 1;
             }
 
@@ -469,7 +470,7 @@ namespace OxGFrame.AssetLoader.Bundle
             if (idx >= BundleConfig.listPackages.Count)
             {
                 idx = BundleConfig.listPackages.Count - 1;
-                Debug.Log($"<color=#ff41d5>Package Idx Warning: {idx} is out of range will be auto set last idx.</color>");
+                Logging.Print<Logger>($"<color=#ff41d5>Package Idx Warning: {idx} is out of range will be auto set last idx.</color>");
             }
             else if (idx < 0) idx = 0;
 

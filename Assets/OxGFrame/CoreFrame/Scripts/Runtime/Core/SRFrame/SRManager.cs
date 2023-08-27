@@ -2,6 +2,7 @@
 using OxGFrame.AssetLoader;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using OxGKit.LoggingSystem;
 
 namespace OxGFrame.CoreFrame.SRFrame
 {
@@ -121,7 +122,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             srBase.SetHidden(false);
             await this.LoadAndDisplay(srBase, obj);
 
-            Debug.Log($"<color=#1effad>Show SR: <color=#ffdb1e>{assetName}</color></color>");
+            Logging.Print<Logger>($"<color=#1effad>Show SR: <color=#ffdb1e>{assetName}</color></color>");
 
             this.CloseAwaiting(awaitingUIAssetName); // 執行完畢後, 關閉預顯加載 UI
 
@@ -167,7 +168,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 else if (srBase.onCloseAndDestroy) this.Destroy(srBase, assetName);
             }
 
-            Debug.Log($"<color=#1effad>Close SR: <color=#ffdb1e>{assetName}</color></color>");
+            Logging.Print<Logger>($"<color=#1effad>Close SR: <color=#ffdb1e>{assetName}</color></color>");
         }
 
         public override void Close(string assetName, bool disablePreClose = false, bool forceDestroy = false)
@@ -282,7 +283,7 @@ namespace OxGFrame.CoreFrame.SRFrame
 
                 this.LoadAndDisplay(srBase).Forget();
 
-                Debug.Log($"<color=#1effad>Reveal SR: <color=#ffdb1e>{assetName}</color></color>");
+                Logging.Print<Logger>($"<color=#1effad>Reveal SR: <color=#ffdb1e>{assetName}</color></color>");
             }
         }
 
@@ -351,7 +352,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 this.ExitAndHide(srBase);
             }
 
-            Debug.Log($"<color=#1effad>Hide SR: <color=#ffdb1e>{assetName}</color></color>");
+            Logging.Print<Logger>($"<color=#1effad>Hide SR: <color=#ffdb1e>{assetName}</color></color>");
         }
 
         public override void Hide(string assetName)

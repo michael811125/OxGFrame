@@ -107,6 +107,8 @@ namespace OxGFrame.CoreFrame.Editor
         public void SortTailRules()
         {
             this.tailRules.Sort();
+            EditorUtility.SetDirty(this);
+            AssetDatabase.SaveAssets();
         }
         #endregion
     }

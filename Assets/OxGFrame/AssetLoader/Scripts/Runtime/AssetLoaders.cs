@@ -2,6 +2,7 @@
 using OxGFrame.AssetLoader.Cacher;
 using OxGFrame.AssetLoader.GroupCahcer;
 using OxGFrame.AssetLoader.GroupChacer;
+using OxGKit.LoggingSystem;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -197,13 +198,13 @@ namespace OxGFrame.AssetLoader
         public static async UniTask PreloadRawFileAsync(string assetName, Progression progression = null)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName)) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, new string[] { assetName }, progression);
         }
 
         public static async UniTask PreloadRawFileAsync(string packageName, string assetName, Progression progression = null)
         {
-            if (RefineResourcesPath(ref assetName)) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, new string[] { assetName }, progression);
         }
 
@@ -223,7 +224,7 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (refineAssetNames.Count > 0) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, progression);
         }
 
@@ -241,20 +242,20 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (refineAssetNames.Count > 0) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, progression);
         }
 
         public static void PreloadRawFile(string assetName, Progression progression = null)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName)) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else CacheBundle.GetInstance().PreloadRawFile(packageName, new string[] { assetName }, progression);
         }
 
         public static void PreloadRawFile(string packageName, string assetName, Progression progression = null)
         {
-            if (RefineResourcesPath(ref assetName)) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else CacheBundle.GetInstance().PreloadRawFile(packageName, new string[] { assetName }, progression);
         }
 
@@ -274,7 +275,7 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (refineAssetNames.Count > 0) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else CacheBundle.GetInstance().PreloadRawFile(packageName, assetNames, progression);
         }
 
@@ -292,7 +293,7 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (refineAssetNames.Count > 0) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else CacheBundle.GetInstance().PreloadRawFile(packageName, assetNames, progression);
         }
 
@@ -308,7 +309,7 @@ namespace OxGFrame.AssetLoader
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+                Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
             return await CacheBundle.GetInstance().LoadRawFileAsync<T>(packageName, assetName, progression);
@@ -318,7 +319,7 @@ namespace OxGFrame.AssetLoader
         {
             if (RefineResourcesPath(ref assetName))
             {
-                Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+                Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
             return await CacheBundle.GetInstance().LoadRawFileAsync<T>(packageName, assetName, progression);
@@ -336,7 +337,7 @@ namespace OxGFrame.AssetLoader
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+                Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
             return CacheBundle.GetInstance().LoadRawFile<T>(packageName, assetName, progression);
@@ -346,7 +347,7 @@ namespace OxGFrame.AssetLoader
         {
             if (RefineResourcesPath(ref assetName))
             {
-                Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+                Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
             return CacheBundle.GetInstance().LoadRawFile<T>(packageName, assetName, progression);
@@ -354,7 +355,7 @@ namespace OxGFrame.AssetLoader
 
         public static void UnloadRawFile(string assetName, bool forceUnload = false)
         {
-            if (RefineResourcesPath(ref assetName)) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else CacheBundle.GetInstance().UnloadRawFile(assetName, forceUnload);
         }
 
@@ -891,13 +892,13 @@ namespace OxGFrame.AssetLoader
         public static async UniTask PreloadRawFileAsync(int groupId, string assetName, Progression progression = null)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName)) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, new string[] { assetName }, progression);
         }
 
         public static async UniTask PreloadRawFileAsync(int groupId, string packageName, string assetName, Progression progression = null)
         {
-            if (RefineResourcesPath(ref assetName)) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, new string[] { assetName }, progression);
         }
 
@@ -917,7 +918,7 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (refineAssetNames.Count > 0) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, assetNames, progression);
         }
 
@@ -935,20 +936,20 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (refineAssetNames.Count > 0) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, assetNames, progression);
         }
 
         public static void PreloadRawFile(int groupId, string assetName, Progression progression = null)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName)) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else GroupBundle.GetInstance().PreloadRawFile(groupId, packageName, new string[] { assetName }, progression);
         }
 
         public static void PreloadRawFile(int groupId, string packageName, string assetName, Progression progression = null)
         {
-            if (RefineResourcesPath(ref assetName)) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else GroupBundle.GetInstance().PreloadRawFile(groupId, packageName, new string[] { assetName }, progression);
         }
 
@@ -968,7 +969,7 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (refineAssetNames.Count > 0) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else GroupBundle.GetInstance().PreloadRawFile(groupId, packageName, assetNames, progression);
         }
 
@@ -986,7 +987,7 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (refineAssetNames.Count > 0) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else GroupBundle.GetInstance().PreloadRawFile(groupId, packageName, assetNames, progression);
         }
 
@@ -1003,7 +1004,7 @@ namespace OxGFrame.AssetLoader
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+                Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
             else return await GroupBundle.GetInstance().LoadRawFileAsync<T>(groupId, packageName, assetName, progression);
@@ -1013,7 +1014,7 @@ namespace OxGFrame.AssetLoader
         {
             if (RefineResourcesPath(ref assetName))
             {
-                Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+                Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
             else return await GroupBundle.GetInstance().LoadRawFileAsync<T>(groupId, packageName, assetName, progression);
@@ -1032,7 +1033,7 @@ namespace OxGFrame.AssetLoader
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+                Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
             else return GroupBundle.GetInstance().LoadRawFile<T>(groupId, packageName, assetName, progression);
@@ -1042,7 +1043,7 @@ namespace OxGFrame.AssetLoader
         {
             if (RefineResourcesPath(ref assetName))
             {
-                Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+                Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
             else return GroupBundle.GetInstance().LoadRawFile<T>(groupId, packageName, assetName, progression);
@@ -1050,7 +1051,7 @@ namespace OxGFrame.AssetLoader
 
         public static void UnloadRawFile(int groupId, string assetName, bool forceUnload = false)
         {
-            if (RefineResourcesPath(ref assetName)) Debug.Log("<color=#ff0000>【Error】Only Bundle Type</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
             else GroupBundle.GetInstance().UnloadRawFile(groupId, assetName, forceUnload);
         }
 

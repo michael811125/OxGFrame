@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using OxGKit.Utilities.Timer;
+using OxGKit.LoggingSystem;
 
 namespace OxGFrame.NetFrame
 {
@@ -294,7 +295,7 @@ namespace OxGFrame.NetFrame
             {
                 this._outReceiveAction?.Invoke();
 
-                Debug.Log("<color=#FFC100>NetNode timeout processing...</color>");
+                Logging.Print<Logger>("<color=#FFC100>NetNode timeout processing...</color>");
             }
         }
         #endregion
@@ -326,7 +327,7 @@ namespace OxGFrame.NetFrame
             {
                 this._heartBeatAction?.Invoke();
 
-                Debug.Log("<color=#8EFF00>NetNode check heartbeat...</color>");
+                Logging.Print<Logger>("<color=#8EFF00>NetNode check heartbeat...</color>");
             }
         }
         #endregion
@@ -379,7 +380,7 @@ namespace OxGFrame.NetFrame
 
                     this._reconnectAction?.Invoke();
 
-                    Debug.Log("<color=#FF0000>NetNode try to reconnecting...</color>");
+                    Logging.Print<Logger>("<color=#FF0000>NetNode try to reconnecting...</color>");
                 }
             }
             else

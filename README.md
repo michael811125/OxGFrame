@@ -8,8 +8,11 @@
 
 ## 安裝 OxGFrame with YooAsset + HybridCLR
 
+各模組的日誌打印可以自由控制開關，皆依賴 [OxGKit.LoggingSystem](https://github.com/michael811125/OxGKit)，安裝後需要 Import LoggingLauncher from Samples，再拖曳至場景上並且加載 LoggerSetting 才能成功激活日誌系統的配置。
+
 | **需先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
+| [OxGKit.LoggingSystem v0.0.1-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
 | [OxGKit.Utilities v0.0.4-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
 | [LWMyBox v1.1.3 or higher](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager **(建議改成輕量版的 MyBox 改進編譯效率)** |
 | [HybirdCLR v3.4.2 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
@@ -194,7 +197,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
   - 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion，變成只要 DLC 有更新就可以使用固定路徑進行更新。
 
 **App Package**
-```
+```C#
 // [Load asset and download from specific package (Export App Bundles for CDN)]
 
 var packageName = "OtherPackage";
@@ -209,7 +212,7 @@ if (isInitialized)
 ```
 
 **DLC Package**
-```
+```C#
 // [Load asset and download from specific package (Export Individual DLC Bundles for CDN)]
 
 var packageName = "DlcPackage";
@@ -413,7 +416,7 @@ video_urlset 127.0.0.1/video/
 
 #### Default API
 
-```
+```C#
     public static int GetCurrentId()
     
     public static U GetStage<U>() where U : GSIBase
@@ -465,7 +468,7 @@ video_urlset 127.0.0.1/video/
 
 #### Default API
 
-```
+```C#
     public static void Add<UClass>() where UClass : TClass, new()
     
     public static void Add<UClass>(int id) where UClass : TClass, new()
@@ -475,6 +478,8 @@ video_urlset 127.0.0.1/video/
     public static void Delete<UClass>() where UClass : TClass
     		
     public static void Delete(int id)
+    	
+    public static void DeleteAll()
     	
     public static UClass Find<UClass>() where UClass : TClass
     

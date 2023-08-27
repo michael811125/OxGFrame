@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Cacher;
 using OxGFrame.AssetLoader.GroupCacher;
+using OxGKit.LoggingSystem;
 using System.Linq;
 using UnityEngine;
 
@@ -27,7 +28,7 @@ namespace OxGFrame.AssetLoader.GroupCahcer
                 if (CacheBundle.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
             }
 
-            Debug.Log($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         public void PreloadRawFile(int id, string packageName, string[] assetNames, Progression progression = null)
@@ -41,7 +42,7 @@ namespace OxGFrame.AssetLoader.GroupCahcer
                 if (CacheBundle.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
             }
 
-            Debug.Log($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         /// <summary>
@@ -64,7 +65,7 @@ namespace OxGFrame.AssetLoader.GroupCahcer
                 {
                     keyGroup.AddRef();
 
-                    Debug.Log($"【Load】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Load】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
 
@@ -85,7 +86,7 @@ namespace OxGFrame.AssetLoader.GroupCahcer
                 {
                     keyGroup.AddRef();
 
-                    Debug.Log($"【Load】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Load】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
 
@@ -99,21 +100,21 @@ namespace OxGFrame.AssetLoader.GroupCahcer
             {
                 keyGroup.DelRef();
 
-                Debug.Log($"【Unload】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                Logging.Print<Logger>($"【Unload】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
 
                 // 強制釋放
                 if (forceUnload)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
 
-                    Debug.Log($"【Force Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
                 }
                 // 使用引用計數釋放
                 else if (keyGroup.refCount <= 0)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
 
-                    Debug.Log($"【Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
                 }
 
                 CacheBundle.GetInstance().UnloadRawFile(keyGroup.assetName, forceUnload);
@@ -139,7 +140,7 @@ namespace OxGFrame.AssetLoader.GroupCahcer
                 }
             }
 
-            Debug.Log($"【Release Group RawFiles】 => Current << GroupBundle >> Cache Count: {this.Count}");
+            Logging.Print<Logger>($"【Release Group RawFiles】 => Current << GroupBundle >> Cache Count: {this.Count}");
         }
         #endregion
 
@@ -155,7 +156,7 @@ namespace OxGFrame.AssetLoader.GroupCahcer
                 if (CacheBundle.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
             }
 
-            Debug.Log($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         public void PreloadAsset<T>(int id, string packageName, string[] assetNames, Progression progression = null) where T : Object
@@ -169,7 +170,7 @@ namespace OxGFrame.AssetLoader.GroupCahcer
                 if (CacheBundle.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
             }
 
-            Debug.Log($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         /// <summary>
@@ -192,7 +193,7 @@ namespace OxGFrame.AssetLoader.GroupCahcer
                 {
                     keyGroup.AddRef();
 
-                    Debug.Log($"【Load】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Load】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
 
@@ -213,7 +214,7 @@ namespace OxGFrame.AssetLoader.GroupCahcer
                 {
                     keyGroup.AddRef();
 
-                    Debug.Log($"【Load】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Load】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
 
@@ -227,21 +228,21 @@ namespace OxGFrame.AssetLoader.GroupCahcer
             {
                 keyGroup.DelRef();
 
-                Debug.Log($"【Unload】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                Logging.Print<Logger>($"【Unload】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
 
                 // 強制釋放
                 if (forceUnload)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
 
-                    Debug.Log($"【Force Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
                 }
                 // 使用引用計數釋放
                 else if (keyGroup.refCount <= 0)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
 
-                    Debug.Log($"【Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
                 }
 
                 CacheBundle.GetInstance().UnloadAsset(keyGroup.assetName, forceUnload);
@@ -267,7 +268,7 @@ namespace OxGFrame.AssetLoader.GroupCahcer
                 }
             }
 
-            Debug.Log($"【Release Group Assets】 => Current << GroupBundle >> Cache Count: {this.Count}");
+            Logging.Print<Logger>($"【Release Group Assets】 => Current << GroupBundle >> Cache Count: {this.Count}");
         }
         #endregion
     }

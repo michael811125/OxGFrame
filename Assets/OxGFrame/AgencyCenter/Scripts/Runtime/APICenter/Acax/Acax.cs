@@ -10,7 +10,7 @@ namespace OxGFrame.AgencyCenter.APICenter
         public delegate void ResponseHandle(string response);
 
         /// <summary>
-        /// Synchronous C# and Xml = Acax
+        /// Callback C# and Xml = Acax
         /// </summary>
         /// <param name="url"></param>
         /// <param name="method"></param>
@@ -25,7 +25,7 @@ namespace OxGFrame.AgencyCenter.APICenter
         }
 
         /// <summary>
-        /// Asynchronous C# and Xml = Acax
+        /// Asynchronous with Callback C# and Xml = Acax
         /// </summary>
         /// <param name="url"></param>
         /// <param name="method"></param>

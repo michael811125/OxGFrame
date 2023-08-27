@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 using UnityEngine;
 using System.Threading;
 using System.Collections.Generic;
+using OxGKit.LoggingSystem;
 
 namespace OxGFrame.AssetLoader.Utility
 {
@@ -243,8 +244,8 @@ namespace OxGFrame.AssetLoader.Utility
 
                 if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
                 {
-                    Debug.Log("<color=#FF0000>Request failed. Cannot found file in StreamingAssets.</color>");
-                    Debug.Log(request.error);
+                    Logging.Print<Logger>("<color=#FF0000>Request failed. Cannot found file in StreamingAssets.</color>");
+                    Logging.Print<Logger>(request.error);
                 }
                 else
                 {

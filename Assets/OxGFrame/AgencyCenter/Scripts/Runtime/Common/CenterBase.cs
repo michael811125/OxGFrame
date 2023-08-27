@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using OxGKit.LoggingSystem;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace OxGFrame.AgencyCenter
@@ -45,6 +46,11 @@ namespace OxGFrame.AgencyCenter
         public static void Delete(int id)
         {
             GetInstance().Remove(id);
+        }
+
+        public static void DeleteAll()
+        {
+            GetInstance().RemoveAll();
         }
 
         public static UClass Find<UClass>() where UClass : TClass
@@ -105,7 +111,7 @@ namespace OxGFrame.AgencyCenter
         {
             if (this.HasInCache(id))
             {
-                Debug.Log(string.Format("<color=#FF0000>Repeat registration. Id: {0}, Reg: {1}</color>", id, @class.GetType().Name));
+                Logging.Print<Logger>(string.Format("<color=#FF0000>Repeat registration. Id: {0}, Reg: {1}</color>", id, @class.GetType().Name));
                 return;
             }
 
@@ -128,11 +134,16 @@ namespace OxGFrame.AgencyCenter
             }
         }
 
+        public void RemoveAll()
+        {
+            if (this._cache.Count > 0) this._cache.Clear();
+        }
+
         protected TClass GetFromCache(int id)
         {
             if (!this.HasInCache(id))
             {
-                Debug.Log(string.Format("<color=#FF0000>Cannot found. Id: {0}</color>", id));
+                Logging.Print<Logger>(string.Format("<color=#FF0000>Cannot found. Id: {0}</color>", id));
                 return default;
             }
 

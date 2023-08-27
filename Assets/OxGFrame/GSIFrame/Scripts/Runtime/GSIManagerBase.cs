@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using OxGKit.LoggingSystem;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace OxGFrame.GSIFrame
@@ -179,7 +180,7 @@ namespace OxGFrame.GSIFrame
             if (this._dictGameStage.ContainsKey(id))
             {
 #if UNITY_EDITOR
-                Debug.Log($"Failed to add GameStage ({gameStage.GetType().Name}). Already has same GameStageId in cache");
+                Logging.Print<Logger>($"Failed to add GameStage ({gameStage.GetType().Name}). Already has same GameStageId in cache");
 #endif
                 return;
             }
@@ -232,9 +233,9 @@ namespace OxGFrame.GSIFrame
 #if UNITY_EDITOR
             var gameStage = this.GetGameStage<GSIBase>(id);
             if (this._incomingId == this._currentId)
-                Debug.Log(string.Format("<color=#ff54ac> 【>>>>>> Same GameStage (Change Failed - <color=#ffb12a>Try Force</color>) <<<<<<】Id: {0}, Stage: {1}</color>", this._incomingId, gameStage?.GetType().Name));
+                Logging.Print<Logger>(string.Format("<color=#ff54ac> 【>>>>>> Same GameStage (Change Failed - <color=#ffb12a>Try Force</color>) <<<<<<】Id: {0}, Stage: {1}</color>", this._incomingId, gameStage?.GetType().Name));
             else
-                Debug.Log(string.Format("<color=#00B8FF> 【>>>>>> Change GameStage <<<<<<】Id: {0}, Stage: {1}</color>", this._incomingId, gameStage?.GetType().Name));
+                Logging.Print<Logger>(string.Format("<color=#00B8FF> 【>>>>>> Change GameStage <<<<<<】Id: {0}, Stage: {1}</color>", this._incomingId, gameStage?.GetType().Name));
 #endif
         }
 
@@ -258,7 +259,7 @@ namespace OxGFrame.GSIFrame
         {
 #if UNITY_EDITOR
             var gameStage = this.GetGameStage<GSIBase>(id);
-            Debug.Log(string.Format("<color=#00B8FF> 【>>>>>> Change GameStage <color=#ffb12a>Force</color> <<<<<<】Id: {0}, Stage: {1}</color>", id, gameStage?.GetType().Name));
+            Logging.Print<Logger>(string.Format("<color=#00B8FF> 【>>>>>> Change GameStage <color=#ffb12a>Force</color> <<<<<<】Id: {0}, Stage: {1}</color>", id, gameStage?.GetType().Name));
 #endif
 
             this.ReleaseGameStage();                 // 立即釋放原本的 GameStage
@@ -295,7 +296,7 @@ namespace OxGFrame.GSIFrame
             // 開始進行 GameStage 初始流程
             if (this._currentGameStage != null) this._currentGameStage.BeginInit().Forget();
 #if UNITY_EDITOR
-            else Debug.Log(string.Format("Cannot found GameStage. Id: {0}", this._currentId));
+            else Logging.Print<Logger>(string.Format("Cannot found GameStage. Id: {0}", this._currentId));
 #endif
         }
 

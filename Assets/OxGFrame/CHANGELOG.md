@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [2.7.7] - 2023-08-27
+- Updated YooAsset to 1.5.4-perview.
+- Installed OxGKit.LoggingSystem for all modules log print.
+  - Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager
+
+**Note: Must install OxGKit.LoggingSystem, becuase all modules log are dependent it.**
+
 ## [2.7.6] - 2023-08-24
 - Optimized AudioBase and VideoBase of MediaFrame update behaviour call by MediaManager.
 - Updated YooAsset new commit files.
@@ -8,7 +15,7 @@
 - Optimized UIBase and SRBase of CoreFrame update behaviour call by FrameManager.
 - Optimized CPBase of CoreFrame update behaviour, if need to update have to call by self to drive.
   - Added DriveSelfUpdate(float dt) method in CPBase (drive by self).
-```
+```C#
 public class NewTplCP : CPBase
 {
     private void Update()
@@ -27,7 +34,7 @@ public class NewTplCP : CPBase
 - Updated part of UniFramework.
 #### CoreFrames (UIFrame, SRFrame)
 - Added API.
-```
+```C#
     public static void SendRefreshData(string assetName, object data = null)
     
     public static void SendRefreshData(string[] assetNames, object[] data = null)	
@@ -35,7 +42,7 @@ public class NewTplCP : CPBase
 #### AssetPatcher
 - Added API.
 Common
-```
+```C#
     public struct DownloadInfo
     {
         public int totalCount;
@@ -47,7 +54,7 @@ Common
     public static async UniTask<bool> BeginDownloadWithCombineDownloaders(ResourceDownloaderOperation[] downloaders, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
 ```
 Get Downloader   
-```
+```C#
     // All
     public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackages(ResourcePackage[] packages)
     
@@ -69,7 +76,7 @@ Get Downloader
     public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackagesByAssetInfos(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, params AssetInfo[] assetInfos)
 ```
 Begin Download
-```
+```C#
     // All
     public static async UniTask<bool> BeginDownloadWithCombinePackages(ResourcePackage[] packages, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
     
@@ -91,7 +98,7 @@ Begin Download
     public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetInfos(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, AssetInfo[] assetInfos = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
 ```
 Get Download Info   
-```    
+```C#    
     // All
     public static DownloadInfo GetDownloadInfoWithCombinePackages(ResourcePackage[] packages)
     
@@ -111,7 +118,7 @@ Get Download Info
 
 ## [2.7.1] - 2023-08-05
 - Added Default API in GSIManagerBase (protected GetInstance() method).
-```
+```C#
     public static int GetCurrentId()
     
     public static U GetStage<U>() where U : GSIBase
@@ -120,7 +127,7 @@ Get Download Info
     
     public static void AddStage<U>() where U : GSIBase, new()
     
-    public void AddStage<U>(int id) where U : GSIBase, new()
+    public static void AddStage<U>(int id) where U : GSIBase, new()
     
     public static void AddStage(int id, GSIBase gameStage)
     
@@ -133,7 +140,7 @@ Get Download Info
     public static void Update(float dt = 0.0f)
 ```
 - Added Default API in CenterBase (removed Default API from subtype).
-```
+```C#
     public static void Add<UClass>() where UClass : TClass, new()
     
     public static void Add<UClass>(int id) where UClass : TClass, new()
@@ -256,7 +263,7 @@ Get Download Info
 
 ## [2.3.1] - 2023-06-19
 - Added bind collector can use GetNodeComponent(string nodeName) to get component.
-```
+```C#
 // Single
 collector.GetNodeComponent<TComponent>("BindName");
 
@@ -320,7 +327,7 @@ collector.GetNodeComponents<TComponent>("BindName");
 
 ## [2.1.4] - 2023-05-15
 - Added DownloadSpeedCalculator (using OxGFrame.AssetLoader.Utility).
-```
+```C#
 var packageName = "DlcPackage";
 bool isInitialized = await AssetPatcher.InitDlcPackage(packageName, "dlcVersion", true);
 if (isInitialized)
@@ -386,7 +393,7 @@ if (isInitialized)
 - Extended CoreFrames.USFrame methods (LoadSingleSceneAsync and LoadAdditiveSceneAsync).
 - Extended load asset and download from specific package.
 - Optimized code.
-```
+```C#
 // [Load asset and download from specific package]
 var packageName = "OtherPackage";
 await AssetPatcher.InitPackage(packageName, true, "127.0.0.1/package", "127.0.0.1/package");

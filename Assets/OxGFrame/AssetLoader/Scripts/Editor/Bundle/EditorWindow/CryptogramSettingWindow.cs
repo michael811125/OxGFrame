@@ -25,7 +25,7 @@ namespace OxGFrame.AssetLoader.Editor
         [SerializeField]
         public CryptogramType cryptogramType;
 
-        private CryptogramSetting _settings;
+        private CryptogramSetting _setting;
         private bool _isDirty = false;
 
         internal static string PROJECT_PATH;
@@ -48,7 +48,7 @@ namespace OxGFrame.AssetLoader.Editor
         private void OnEnable()
         {
             this._isDirty = false;
-            this._settings = EditorTool.LoadSettingData<CryptogramSetting>();
+            this._setting = EditorTool.LoadSettingData<CryptogramSetting>();
             this._LoadSettingsData();
             this.cryptogramType = (CryptogramType)Convert.ToInt32(EditorStorage.GetData(KEY_SAVER, "cryptogramType", "0"));
         }
@@ -74,14 +74,14 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void _LoadSettingsData()
         {
-            this.randomSeed = this._settings.randomSeed;
-            this.dummySize = this._settings.dummySize;
-            this.xorKey = this._settings.xorKey;
-            this.hXorKey = this._settings.hXorKey;
-            this.tXorKey = this._settings.tXorKey;
-            this.jXorKey = this._settings.jXorKey;
-            this.aesKey = this._settings.aesKey;
-            this.aesIv = this._settings.aesIv;
+            this.randomSeed = this._setting.randomSeed;
+            this.dummySize = this._setting.dummySize;
+            this.xorKey = this._setting.xorKey;
+            this.hXorKey = this._setting.hXorKey;
+            this.tXorKey = this._setting.tXorKey;
+            this.jXorKey = this._setting.jXorKey;
+            this.aesKey = this._setting.aesKey;
+            this.aesIv = this._setting.aesIv;
         }
 
         private void _CryptogramType(CryptogramType cryptogramType)
@@ -259,31 +259,31 @@ namespace OxGFrame.AssetLoader.Editor
             switch (cryptogramType)
             {
                 case CryptogramType.OFFSET:
-                    this._settings.randomSeed = this.randomSeed;
-                    this._settings.dummySize = this.dummySize;
+                    this._setting.randomSeed = this.randomSeed;
+                    this._setting.dummySize = this.dummySize;
 
                     this._isDirty = false;
-                    EditorUtility.SetDirty(this._settings);
+                    EditorUtility.SetDirty(this._setting);
                     AssetDatabase.SaveAssets();
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [OFFSET] Setting.", "OK");
                     break;
                 case CryptogramType.XOR:
-                    this._settings.xorKey = (byte)this.xorKey;
+                    this._setting.xorKey = (byte)this.xorKey;
 
                     this._isDirty = false;
-                    EditorUtility.SetDirty(this._settings);
+                    EditorUtility.SetDirty(this._setting);
                     AssetDatabase.SaveAssets();
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [XOR] Setting.", "OK");
                     break;
                 case CryptogramType.HT2XOR:
-                    this._settings.hXorKey = (byte)this.hXorKey;
-                    this._settings.tXorKey = (byte)this.tXorKey;
-                    this._settings.jXorKey = (byte)this.jXorKey;
+                    this._setting.hXorKey = (byte)this.hXorKey;
+                    this._setting.tXorKey = (byte)this.tXorKey;
+                    this._setting.jXorKey = (byte)this.jXorKey;
 
                     this._isDirty = false;
-                    EditorUtility.SetDirty(this._settings);
+                    EditorUtility.SetDirty(this._setting);
                     AssetDatabase.SaveAssets();
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [Head-Tail 2 XOR] Setting.", "OK");
@@ -295,11 +295,11 @@ namespace OxGFrame.AssetLoader.Editor
                         break;
                     }
 
-                    this._settings.aesKey = this.aesKey;
-                    this._settings.aesIv = this.aesIv;
+                    this._setting.aesKey = this.aesKey;
+                    this._setting.aesIv = this.aesIv;
 
                     this._isDirty = false;
-                    EditorUtility.SetDirty(this._settings);
+                    EditorUtility.SetDirty(this._setting);
                     AssetDatabase.SaveAssets();
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [AES] Setting.", "OK");

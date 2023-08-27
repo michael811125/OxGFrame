@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
+using OxGKit.LoggingSystem;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -161,7 +162,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             {
                 log += $"<color=#FFA8AF>{snapshots[i].name} : {weights[i]}</color>;  ";
             }
-            Debug.Log($"{log}");
+            Logging.Print<Logger>($"{log}");
         }
 
         /// <summary>
@@ -207,7 +208,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.LoadAndPlay(audBase, loops, volume);
 
-            Debug.Log(string.Format("Play Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));
+            Logging.Print<Logger>(string.Format("Play Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));
         }
 
         /// <summary>
@@ -293,7 +294,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.ExitAndStop(audBase, false, disableEndEvent);
 
-            Debug.Log(string.Format("Stop Audio: {0}", audBase?.mediaName));
+            Logging.Print<Logger>(string.Format("Stop Audio: {0}", audBase?.mediaName));
 
             // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
             if (audBase.isPrepared)
@@ -356,7 +357,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.ExitAndStop(audBase, true, false);
 
-            Debug.Log(string.Format("Pause Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));
+            Logging.Print<Logger>(string.Format("Pause Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));
         }
 
         /// <summary>

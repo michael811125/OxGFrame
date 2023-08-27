@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.PatchEvent;
 using OxGFrame.AssetLoader.Utility;
+using OxGKit.LoggingSystem;
 using OxGKit.Utilities.Request;
 using System;
 using System.Collections.Generic;
@@ -178,7 +179,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     }
                     else
                     {
-                        Debug.Log("<color=#FF0000>Cannot found bundle config from StreamingAssets.</color>");
+                        Logging.Print<Logger>("<color=#FF0000>Cannot found bundle config from StreamingAssets.</color>");
                         return;
                     }
                 }
@@ -241,7 +242,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     }
                     catch
                     {
-                        Debug.Log("<color=#FF0000>Read Local Config failed.</color>");
+                        Logging.Print<Logger>("<color=#FF0000>Read Local Config failed.</color>");
                     }
 
                     if (BundleConfig.semanticRule.patch)
@@ -256,8 +257,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             // remove last group name
                             PatchManager.DelLastGroupInfo();
 
-                            Debug.Log("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
-                            Debug.Log($"<color=#ff8c00>【App Version Unpassed (X.Y.Z)】LOCAL APP_VER: v{localCfg.APP_VERSION} != SERVER APP_VER: v{hostCfg.APP_VERSION}</color>");
+                            Logging.Print<Logger>("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
+                            Logging.Print<Logger>($"<color=#ff8c00>【App Version Unpassed (X.Y.Z)】LOCAL APP_VER: v{localCfg.APP_VERSION} != SERVER APP_VER: v{hostCfg.APP_VERSION}</color>");
                             return;
                         }
                         else
@@ -265,7 +266,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             PatchManager.appVersion = hostCfg.APP_VERSION;
                             this._machine.ChangeState<FsmInitPatchMode>();
 
-                            Debug.Log($"<color=#00ff00>【App Version Passed (X.Y.Z)】LOCAL APP_VER: v{localCfg.APP_VERSION} == SERVER APP_VER: v{hostCfg.APP_VERSION}</color>");
+                            Logging.Print<Logger>($"<color=#00ff00>【App Version Passed (X.Y.Z)】LOCAL APP_VER: v{localCfg.APP_VERSION} == SERVER APP_VER: v{hostCfg.APP_VERSION}</color>");
                         }
                     }
                     else
@@ -287,8 +288,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             // remove last group name
                             PatchManager.DelLastGroupInfo();
 
-                            Debug.Log("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
-                            Debug.Log($"<color=#ff8c00>【App Version Unpassed (X.Y)】LOCAL APP_VER: v{localVersion} ({localCfg.APP_VERSION}) != SERVER APP_VER: v{hostVersion} ({hostCfg.APP_VERSION})</color>");
+                            Logging.Print<Logger>("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
+                            Logging.Print<Logger>($"<color=#ff8c00>【App Version Unpassed (X.Y)】LOCAL APP_VER: v{localVersion} ({localCfg.APP_VERSION}) != SERVER APP_VER: v{hostVersion} ({hostCfg.APP_VERSION})</color>");
                             return;
                         }
                         else
@@ -304,7 +305,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             PatchManager.appVersion = hostCfg.APP_VERSION;
                             this._machine.ChangeState<FsmInitPatchMode>();
 
-                            Debug.Log($"<color=#00ff00>【App Version Passed (X.Y)】LOCAL APP_VER: v{localVersion} ({localCfg.APP_VERSION}) == SERVER APP_VER: v{hostVersion} ({hostCfg.APP_VERSION})</color>");
+                            Logging.Print<Logger>($"<color=#00ff00>【App Version Passed (X.Y)】LOCAL APP_VER: v{localVersion} ({localCfg.APP_VERSION}) == SERVER APP_VER: v{hostVersion} ({hostCfg.APP_VERSION})</color>");
                         }
                     }
                 }
@@ -356,13 +357,13 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     }
 
                     this._machine.ChangeState<FsmPatchVersionUpdate>();
-                    Debug.Log("<color=#ffcf67>(Repair) Repair Patch</color>");
+                    Logging.Print<Logger>("<color=#ffcf67>(Repair) Repair Patch</color>");
                     return;
                 }
                 else if (PackageManager.isInitialized)
                 {
                     this._machine.ChangeState<FsmPatchVersionUpdate>();
-                    Debug.Log("<color=#ffcf67>(Check) Check Patch</color>");
+                    Logging.Print<Logger>("<color=#ffcf67>(Check) Check Patch</color>");
                     return;
                 }
 
@@ -370,7 +371,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 if (isInitialized)
                 {
                     this._machine.ChangeState<FsmPatchVersionUpdate>();
-                    Debug.Log("<color=#ffcf67>(Init) Init Patch</color>");
+                    Logging.Print<Logger>("<color=#ffcf67>(Init) Init Patch</color>");
                 }
                 else
                 {
@@ -430,7 +431,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     {
                         succeed = false;
                         PatchEvents.PatchVersionUpdateFailed.SendEventMessage();
-                        Debug.Log($"<color=#ff3696>Package: {package.PackageName} update version failed.</color>");
+                        Logging.Print<Logger>($"<color=#ff3696>Package: {package.PackageName} update version failed.</color>");
                         break;
                     }
                 }
@@ -488,13 +489,13 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     {
                         succeed = true;
                         operation.SavePackageVersion();
-                        Debug.Log($"<color=#85cf0f>Package: {packages[i].PackageName} <color=#00c1ff>Update</color> completed successfully.</color>");
+                        Logging.Print<Logger>($"<color=#85cf0f>Package: {packages[i].PackageName} <color=#00c1ff>Update</color> completed successfully.</color>");
                     }
                     else
                     {
                         succeed = false;
                         PatchEvents.PatchManifestUpdateFailed.SendEventMessage();
-                        Debug.Log($"<color=#ff3696>Package: {packages[i].PackageName} update manifest failed.</color>");
+                        Logging.Print<Logger>($"<color=#ff3696>Package: {packages[i].PackageName} update manifest failed.</color>");
                         break;
                     }
                 }
@@ -551,7 +552,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 string defaultGroupTag = PatchManager.DEFAULT_GROUP_TAG;
 
                 GroupInfo lastGroupInfo = PatchManager.GetLastGroupInfo();
-                Debug.Log($"<color=#ffce54>Get last GroupName: {lastGroupInfo?.groupName}</color>");
+                Logging.Print<Logger>($"<color=#ffce54>Get last GroupName: {lastGroupInfo?.groupName}</color>");
 
                 #region Create Downaloder by Tags
                 string url = await BundleConfig.GetHostServerPatchConfigPath();
@@ -708,9 +709,9 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 if (newGroupInfos.Count > 0)
                 {
-                    Debug.Log($"<color=#ffce54>Auto check last GroupName: {lastGroupInfo?.groupName}</color>");
+                    Logging.Print<Logger>($"<color=#ffce54>Auto check last GroupName: {lastGroupInfo?.groupName}</color>");
 
-                    Debug.Log($"<color=#54beff>Found total group {newGroupInfos.Count} to choose download =>\n{JsonConvert.SerializeObject(newGroupInfos)}</color>");
+                    Logging.Print<Logger>($"<color=#54beff>Found total group {newGroupInfos.Count} to choose download =>\n{JsonConvert.SerializeObject(newGroupInfos)}</color>");
 
                     PatchEvents.PatchCreateDownloader.SendEventMessage(newGroupInfos.Values.ToArray());
 
@@ -718,7 +719,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 }
                 else
                 {
-                    Debug.Log($"<color=#54ff75><color=#ffce54>GroupName: {lastGroupInfo?.groupName}</color> not found any download files!!!</color>");
+                    Logging.Print<Logger>($"<color=#54ff75><color=#ffce54>GroupName: {lastGroupInfo?.groupName}</color> not found any download files!!!</color>");
 
                     this._machine.ChangeState<FsmDownloadOver>();
                 }
@@ -761,7 +762,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 // Get last GroupInfo by UserEvent Set
                 GroupInfo lastGroupInfo = PatchManager.GetLastGroupInfo();
 
-                Debug.Log($"<color=#54ffad>Start Download Group Name: {lastGroupInfo?.groupName}, Tags: {JsonConvert.SerializeObject(lastGroupInfo?.tags)}</color>");
+                Logging.Print<Logger>($"<color=#54ffad>Start Download Group Name: {lastGroupInfo?.groupName}, Tags: {JsonConvert.SerializeObject(lastGroupInfo?.tags)}</color>");
 
                 List<ResourceDownloaderOperation> mainDownloaders = new List<ResourceDownloaderOperation>();
                 foreach (var package in packages)
