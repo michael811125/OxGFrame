@@ -6,7 +6,7 @@
 
 ---
 
-## 安裝 OxGFrame with YooAsset + HybridCLR
+## 安裝 OxGFrame with [YooAsset](https://github.com/tuyoogame/YooAsset) + [HybridCLR](https://github.com/focus-creative-games/hybridclr)
 
 [![version](https://img.shields.io/badge/version-2.7.7-yellow.svg)](https://github.com/michael811125/OxGFrame/releases/tag/v2.7.7) 各模組的日誌打印可以自由控制開關，皆依賴 [OxGKit.LoggingSystem](https://github.com/michael811125/OxGKit)，安裝後需要 Import LoggingLauncher from Samples，再拖曳至場景上並且加載 LoggerSetting 才能成功激活日誌系統的配置 (**Build 激活標籤 OXGKIT_LOGGER_ON**)。
 
@@ -76,7 +76,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 ### Sub-ThirdParty
 
 - 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案) **特別推薦**
-- 使用 [YooAsset v1.5.3-preview](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
+- 使用 [YooAsset v1.5.4-preview](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
 
 ※備註 : 會持續更新內建第三方庫。
 
@@ -139,7 +139,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
   - AB 包體積增加 OFFSET > AES > HT2XOR = XOR
   - 破解難度 AES > HT2XOR > XOR > OFFSET
 
-### 資源熱更新方案【[YooAsset](https://github.com/tuyoogame/YooAsset)】
+### 資源熱更新方案
 
 使用 YooAsset Collector 進行資源收集 (可以使用 ActiveRule 決定哪些群組需要打包，進行 Built-in 跟 Patch 資源的區分)，再使用 YooAsset Builder 進行打包 **(不需要手動更改資源日期版號)**，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
 
