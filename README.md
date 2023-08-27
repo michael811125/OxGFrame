@@ -8,7 +8,7 @@
 
 ## 安裝 OxGFrame with YooAsset + HybridCLR
 
-各模組的日誌打印可以自由控制開關，皆依賴 [OxGKit.LoggingSystem](https://github.com/michael811125/OxGKit)，安裝後需要 Import LoggingLauncher from Samples，再拖曳至場景上並且加載 LoggerSetting 才能成功激活日誌系統的配置。
+[![version](https://img.shields.io/badge/version-2.7.7-yellow.svg)](https://github.com/michael811125/OxGFrame/releases/tag/v2.7.7) 各模組的日誌打印可以自由控制開關，皆依賴 [OxGKit.LoggingSystem](https://github.com/michael811125/OxGKit)，安裝後需要 Import LoggingLauncher from Samples，再拖曳至場景上並且加載 LoggerSetting 才能成功激活日誌系統的配置。
 
 | **需先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
