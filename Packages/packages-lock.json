@@ -28,14 +28,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "c101c04050fd47012b0aa3a255bcfefa52f19fed"
+      "hash": "8d6ec9f9b97a9a42532d2cc65ec4800df07191be"
     },
     "com.michaelo.oxgkit.utilities": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "c101c04050fd47012b0aa3a255bcfefa52f19fed"
+      "hash": "8d6ec9f9b97a9a42532d2cc65ec4800df07191be"
     },
     "com.unity.2d.animation": {
       "version": "7.0.10",
