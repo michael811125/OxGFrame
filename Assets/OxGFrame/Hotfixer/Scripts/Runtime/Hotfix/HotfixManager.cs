@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using UniFramework.Event;
 using UniFramework.Machine;
-using UnityEngine;
 using YooAsset;
 
 namespace OxGFrame.Hotfixer
@@ -18,8 +17,8 @@ namespace OxGFrame.Hotfixer
         private bool _isCheck = false;
         private bool _isDone = false;
 
-        private List<string> _listAOTAssemblies;
-        private List<string> _listHotfixAssemblies;
+        private string[] _aotAssemblies;
+        private string[] _hotfixAssemblies;
         private Dictionary<string, Assembly> _dictHotfixAssemblies;
 
         private EventGroup _userEvents;
@@ -34,8 +33,6 @@ namespace OxGFrame.Hotfixer
 
         public HotfixManager()
         {
-            this._listAOTAssemblies = new List<string>();
-            this._listHotfixAssemblies = new List<string>();
             this._dictHotfixAssemblies = new Dictionary<string, Assembly>();
 
 #if UNITY_EDITOR
@@ -106,24 +103,22 @@ namespace OxGFrame.Hotfixer
 
         public string[] GetAOTAssemblyNames()
         {
-            return this._listAOTAssemblies.ToArray();
+            return this._aotAssemblies;
         }
 
         public void ReleaseAOTAssemblyNames()
         {
-            this._listAOTAssemblies.Clear();
-            this._listAOTAssemblies = null;
+            this._aotAssemblies = null;
         }
 
         public string[] GetHotfixAssemblyNames()
         {
-            return this._listHotfixAssemblies.ToArray();
+            return this._hotfixAssemblies;
         }
 
         public void ReleaseHotfixAssemblyNames()
         {
-            this._listHotfixAssemblies.Clear();
-            this._listHotfixAssemblies = null;
+            this._hotfixAssemblies = null;
         }
 
         public void AddHotfixAssembly(string assemblyName, Assembly assembly)
@@ -153,23 +148,14 @@ namespace OxGFrame.Hotfixer
             {
                 this._isCheck = true;
 
-                this._listAOTAssemblies.Clear();
-                this._listHotfixAssemblies.Clear();
-
                 // Hotfix package name
                 this.packageName = packageName;
 
                 // Add AOT assemblies
-                for (int i = 0; i < aotAssemblies.Length; i++)
-                {
-                    this._listAOTAssemblies.Add(aotAssemblies[i]);
-                }
+                this._aotAssemblies = aotAssemblies;
 
                 // Add Hotfix assemblies
-                for (int i = 0; i < hotfixAssemblies.Length; i++)
-                {
-                    this._listHotfixAssemblies.Add(hotfixAssemblies[i]);
-                }
+                this._hotfixAssemblies = hotfixAssemblies;
 
                 // Run hotfix procedure
                 this._hotfixFsm.Run<HotfixFsmStates.FsmHotfixPrepare>();
@@ -184,6 +170,7 @@ namespace OxGFrame.Hotfixer
         #region Hotfix Flag
         public void MarkAsDone()
         {
+            this._isCheck = false;
             this._isDone = true;
         }
 

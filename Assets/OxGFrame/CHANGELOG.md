@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2.7.8] - 2023-09-09
+- Added retry counter for AssetLoader (can set maxRetryCount via API).
+- Modified AcaxAsync can return text.
+- Optimized Hotfixer.
+- Optimized code.
+
 ## [2.7.7] - 2023-08-27
 - Updated YooAsset to 1.5.4-perview.
 - Installed OxGKit.LoggingSystem for all modules log print.

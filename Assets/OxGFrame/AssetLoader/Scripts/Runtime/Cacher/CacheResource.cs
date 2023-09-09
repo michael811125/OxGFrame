@@ -30,12 +30,7 @@ namespace OxGFrame.AssetLoader.Cacher
         }
 
         #region Asset
-        public async UniTask PreloadAssetAsync<T>(string assetName, Progression progression = null) where T : Object
-        {
-            await this.PreloadAssetAsync<T>(new string[] { assetName }, progression);
-        }
-
-        public async UniTask PreloadAssetAsync<T>(string[] assetNames, Progression progression = null) where T : Object
+        public async UniTask PreloadAssetAsync<T>(string[] assetNames, Progression progression, byte maxRetryCount) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
@@ -50,21 +45,22 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (string.IsNullOrEmpty(assetName)) continue;
 
                 // 如果有進行 Loading 標記後, 直接 return
-                if (this.HasInLoadingFlags(assetName))
+                if (this.HasInLoadingFlags(assetName) && !this.GetRetryCounter(assetName).IsRetryValid())
                 {
-                    Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                    this.RemoveLoadingFlags(assetName);
+                    Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Load failed and cannot retry anymore!!! Please to checke asset is existing.</color>");
                     return;
                 }
 
                 // Loading 標記
-                this._loadingFlags.Add(assetName);
+                this.AddLoadingFlags(assetName, maxRetryCount);
 
                 // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
                     this.reqSize++;
                     progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                    this._loadingFlags.Remove(assetName);
+                    this.RemoveLoadingFlags(assetName);
                     continue;
                 }
 
@@ -105,18 +101,20 @@ namespace OxGFrame.AssetLoader.Cacher
                         Logging.Print<Logger>($"<color=#ff9600>【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
                 }
+                else
+                {
+                    this.GetRetryCounter(assetName).AddRetryCount();
+                    Logging.Print<Logger>($"<color=#ff9600>【Preload】 => << CacheResource >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
+                    await this.PreloadAssetAsync<T>(new string[] { assetName }, progression, maxRetryCount);
+                    continue;
+                }
 
                 // 移除標記
-                this._loadingFlags.Remove(assetName);
+                this.RemoveLoadingFlags(assetName);
             }
         }
 
-        public void PreloadAsset<T>(string assetName, Progression progression = null) where T : Object
-        {
-            this.PreloadAsset<T>(new string[] { assetName }, progression);
-        }
-
-        public void PreloadAsset<T>(string[] assetNames, Progression progression = null) where T : Object
+        public void PreloadAsset<T>(string[] assetNames, Progression progression, byte maxRetryCount) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
@@ -131,21 +129,22 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (string.IsNullOrEmpty(assetName)) continue;
 
                 // 如果有進行 Loading 標記後, 直接 return
-                if (this.HasInLoadingFlags(assetName))
+                if (this.HasInLoadingFlags(assetName) && !this.GetRetryCounter(assetName).IsRetryValid())
                 {
-                    Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                    this.RemoveLoadingFlags(assetName);
+                    Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Load failed and cannot retry anymore!!! Please to checke asset is existing.</color>");
                     return;
                 }
 
                 // Loading 標記
-                this._loadingFlags.Add(assetName);
+                this.AddLoadingFlags(assetName, maxRetryCount);
 
                 // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
                     this.reqSize++;
                     progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
-                    this._loadingFlags.Remove(assetName);
+                    this.RemoveLoadingFlags(assetName);
                     continue;
                 }
 
@@ -172,20 +171,28 @@ namespace OxGFrame.AssetLoader.Cacher
                         Logging.Print<Logger>($"<color=#ff9600>【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
                 }
+                else
+                {
+                    this.GetRetryCounter(assetName).AddRetryCount();
+                    Logging.Print<Logger>($"<color=#ff9600>【Preload】 => << CacheResource >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
+                    this.PreloadAsset<T>(new string[] { assetName }, progression, maxRetryCount);
+                    continue;
+                }
 
                 // 移除標記
-                this._loadingFlags.Remove(assetName);
+                this.RemoveLoadingFlags(assetName);
             }
         }
 
-        public async UniTask<T> LoadAssetAsync<T>(string assetName, Progression progression = null) where T : Object
+        public async UniTask<T> LoadAssetAsync<T>(string assetName, Progression progression, byte maxRetryCount) where T : Object
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
             // 如果有進行 Loading 標記後, 直接 return
-            if (this.HasInLoadingFlags(assetName))
+            if (this.HasInLoadingFlags(assetName) && !this.GetRetryCounter(assetName).IsRetryValid())
             {
-                Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                this.RemoveLoadingFlags(assetName);
+                Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Load failed and cannot retry anymore!!! Please to checke asset is existing.</color>");
                 return null;
             }
 
@@ -194,7 +201,7 @@ namespace OxGFrame.AssetLoader.Cacher
             this.totalSize = 1;
 
             // Loading 標記
-            this._loadingFlags.Add(assetName);
+            this.AddLoadingFlags(assetName, maxRetryCount);
 
             // 先從緩存拿
             ResourcePack pack = this.GetFromCache(assetName);
@@ -248,20 +255,28 @@ namespace OxGFrame.AssetLoader.Cacher
                 pack.AddRef();
                 Logging.Print<Logger>($"<color=#90FF71>【Load】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
             }
+            else
+            {
+                this.UnloadAsset(assetName, true);
+                this.GetRetryCounter(assetName).AddRetryCount();
+                Logging.Print<Logger>($"<color=#90FF71>【Load】 => << CacheResource >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
+                return await this.LoadAssetAsync<T>(assetName, progression, maxRetryCount);
+            }
 
-            this._loadingFlags.Remove(assetName);
+            this.RemoveLoadingFlags(assetName);
 
             return asset;
         }
 
-        public T LoadAsset<T>(string assetName, Progression progression = null) where T : Object
+        public T LoadAsset<T>(string assetName, Progression progression, byte maxRetryCount) where T : Object
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
             // 如果有進行 Loading 標記後, 直接 return
-            if (this.HasInLoadingFlags(assetName))
+            if (this.HasInLoadingFlags(assetName) && !this.GetRetryCounter(assetName).IsRetryValid())
             {
-                Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
+                this.RemoveLoadingFlags(assetName);
+                Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Load failed and cannot retry anymore!!! Please to checke asset is existing.</color>");
                 return null;
             }
 
@@ -270,7 +285,7 @@ namespace OxGFrame.AssetLoader.Cacher
             this.totalSize = 1;
 
             // Loading 標記
-            this._loadingFlags.Add(assetName);
+            this.AddLoadingFlags(assetName, maxRetryCount);
 
             // 先從緩存拿
             ResourcePack pack = this.GetFromCache(assetName);
@@ -311,17 +326,24 @@ namespace OxGFrame.AssetLoader.Cacher
                 pack.AddRef();
                 Logging.Print<Logger>($"<color=#90FF71>【Load】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
             }
+            else
+            {
+                this.UnloadAsset(assetName, true);
+                this.GetRetryCounter(assetName).AddRetryCount();
+                Logging.Print<Logger>($"<color=#90FF71>【Load】 => << CacheResource >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
+                return this.LoadAsset<T>(assetName, progression, maxRetryCount);
+            }
 
-            this._loadingFlags.Remove(assetName);
+            this.RemoveLoadingFlags(assetName);
 
             return asset;
         }
 
-        public void UnloadAsset(string assetName, bool forceUnload = false)
+        public void UnloadAsset(string assetName, bool forceUnload)
         {
             if (string.IsNullOrEmpty(assetName)) return;
 
-            if (this.HasInLoadingFlags(assetName))
+            if (this.HasInLoadingFlags(assetName) && !this.GetRetryCounter(assetName).IsRetryValid())
             {
                 Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
                 return;
@@ -362,16 +384,9 @@ namespace OxGFrame.AssetLoader.Cacher
             // 強制釋放緩存與資源
             foreach (var assetName in this._cacher.Keys.ToArray())
             {
-                if (this.HasInLoadingFlags(assetName))
-                {
-                    Logging.Print<Logger>($"<color=#FFDC8A>asset: {assetName} Loading...</color>");
-                    continue;
-                }
-
                 if (this.HasInCache(assetName))
                 {
-                    this._cacher[assetName] = null;
-                    this._cacher.Remove(assetName);
+                    this.UnloadAsset(assetName, true);
                 }
             }
 

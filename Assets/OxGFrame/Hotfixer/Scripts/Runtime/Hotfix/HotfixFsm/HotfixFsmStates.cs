@@ -9,6 +9,7 @@ using YooAsset;
 using OxGFrame.Hotfixer.HotfixEvent;
 using OxGFrame.AssetLoader;
 using OxGKit.LoggingSystem;
+using System;
 
 namespace OxGFrame.Hotfixer.HotfixFsm
 {
@@ -316,21 +317,25 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
                 try
                 {
-                    // 注意, 補充元數據是給 AOT dll 補充元數據, 而不是給熱更新 dll 補充元數據
-                    // 熱更新 dll 不缺元數據, 不需要補充, 如果調用 LoadMetadataForAOTAssembly 會返回錯誤
-                    HomologousImageMode mode = HomologousImageMode.SuperSet;
-                    foreach (var dllName in aotMetaAssemblyFiles)
+                    if (aotMetaAssemblyFiles != null)
                     {
-                        var dll = await AssetLoaders.LoadAssetAsync<TextAsset>(HotfixManager.GetInstance().packageName, dllName);
-                        // 加載 assembly 對應的 dll, 會自動為它 hook, 一旦 aot 泛型函數的 native 函數不存在, 用解釋器版本代碼
-                        LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dll.bytes, mode);
-                        // Unload after load
-                        AssetLoaders.UnloadAsset(dllName);
-                        Logging.Print<Logger>($"<color=#32fff5>Load <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}, ret: {err}</color>");
+                        // 注意, 補充元數據是給 AOT dll 補充元數據, 而不是給熱更新 dll 補充元數據
+                        // 熱更新 dll 不缺元數據, 不需要補充, 如果調用 LoadMetadataForAOTAssembly 會返回錯誤
+                        HomologousImageMode mode = HomologousImageMode.SuperSet;
+                        foreach (var dllName in aotMetaAssemblyFiles)
+                        {
+                            var dll = await AssetLoaders.LoadAssetAsync<TextAsset>(HotfixManager.GetInstance().packageName, dllName);
+                            // 加載 assembly 對應的 dll, 會自動為它 hook, 一旦 aot 泛型函數的 native 函數不存在, 用解釋器版本代碼
+                            LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dll.bytes, mode);
+                            // Unload after load
+                            AssetLoaders.UnloadAsset(dllName);
+                            Logging.Print<Logger>($"<color=#32fff5>Load <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}, ret: {err}</color>");
+                        }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logging.PrintException<Logger>(ex);
                 }
 
                 this._machine.ChangeState<FsmLoadHotfixAssemblies>();
@@ -372,29 +377,33 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
                 try
                 {
-                    foreach (var dllName in hotfixAssemblyFiles)
+                    if (hotfixAssemblyFiles != null)
                     {
-                        Assembly hotfixAsm;
-                        if (Application.isEditor ||
-                            BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
+                        foreach (var dllName in hotfixAssemblyFiles)
                         {
-                            // Editor 或 Simulate 下無需加載, 直接查找獲得 Hotfix 程序集
-                            hotfixAsm = System.AppDomain.CurrentDomain.GetAssemblies().First(a => a.GetName().Name == dllName);
-                        }
-                        else
-                        {
-                            var dll = await AssetLoaders.LoadAssetAsync<TextAsset>(HotfixManager.GetInstance().packageName, dllName);
-                            hotfixAsm = Assembly.Load(dll.bytes);
-                            // Unload after load
-                            AssetLoaders.UnloadAsset(dllName);
-                        }
+                            Assembly hotfixAsm;
+                            if (Application.isEditor ||
+                                BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
+                            {
+                                // Editor 或 Simulate 下無需加載, 直接查找獲得 Hotfix 程序集
+                                hotfixAsm = System.AppDomain.CurrentDomain.GetAssemblies().First(a => a.GetName().Name == dllName);
+                            }
+                            else
+                            {
+                                var dll = await AssetLoaders.LoadAssetAsync<TextAsset>(HotfixManager.GetInstance().packageName, dllName);
+                                hotfixAsm = Assembly.Load(dll.bytes);
+                                // Unload after load
+                                AssetLoaders.UnloadAsset(dllName);
+                            }
 
-                        HotfixManager.GetInstance().AddHotfixAssembly(dllName, hotfixAsm);
-                        Logging.Print<Logger>($"<color=#32fff5>Load <color=#ffde4c>Hotfix Assembly</color>: <color=#e2b3ff>{dllName}</color></color>");
+                            HotfixManager.GetInstance().AddHotfixAssembly(dllName, hotfixAsm);
+                            Logging.Print<Logger>($"<color=#32fff5>Load <color=#ffde4c>Hotfix Assembly</color>: <color=#e2b3ff>{dllName}</color></color>");
+                        }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logging.PrintException<Logger>(ex);
                 }
 
                 this._machine.ChangeState<FsmHotfixDone>();

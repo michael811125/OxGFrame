@@ -34,13 +34,13 @@ namespace OxGFrame.AgencyCenter.APICenter
         /// <param name="success"></param>
         /// <param name="error"></param>
         /// <returns></returns>
-        public async static UniTask AcaxAsync(string url, string method, string[,] headers, object[,] body, ResponseHandle success = null, ResponseHandle error = null)
+        public async static UniTask<string> AcaxAsync(string url, string method, string[,] headers, object[,] body, ResponseHandle success = null, ResponseHandle error = null)
         {
             method = method.ToUpper();
-            await RequestAPI(url, method, headers, body, success, error);
+            return await RequestAPI(url, method, headers, body, success, error);
         }
 
-        internal static async UniTask RequestAPI(string url, string method, string[,] headers, object[,] body, ResponseHandle success, ResponseHandle error)
+        internal static async UniTask<string> RequestAPI(string url, string method, string[,] headers, object[,] body, ResponseHandle success, ResponseHandle error)
         {
             using (UnityWebRequest request = new UnityWebRequest(url, method))
             {
@@ -73,10 +73,12 @@ namespace OxGFrame.AgencyCenter.APICenter
                 if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
                 {
                     if (error != null) error(request.error);
+                    return null;
                 }
                 else
                 {
                     if (success != null) success(request.downloadHandler.text);
+                    return request.downloadHandler.text;
                 }
             }
         }

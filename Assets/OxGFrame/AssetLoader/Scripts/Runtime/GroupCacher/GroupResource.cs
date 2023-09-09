@@ -16,21 +16,11 @@ namespace OxGFrame.AssetLoader.GroupChacer
             return _instance;
         }
 
-        public async UniTask PreloadAssetAsync<T>(int id, string assetName, Progression progression = null) where T : Object
-        {
-            if (string.IsNullOrEmpty(assetName)) return;
-
-            await CacheResource.GetInstance().PreloadAssetAsync<T>(assetName, progression);
-            if (CacheResource.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
-
-            Logging.Print<Logger>($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
-        }
-
-        public async UniTask PreloadAssetAsync<T>(int id, string[] assetNames, Progression progression = null) where T : Object
+        public async UniTask PreloadAssetAsync<T>(int id, string[] assetNames, Progression progression, byte maxRetryCount) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
-            await CacheResource.GetInstance().PreloadAssetAsync<T>(assetNames, progression);
+            await CacheResource.GetInstance().PreloadAssetAsync<T>(assetNames, progression, maxRetryCount);
             foreach (string assetName in assetNames)
             {
                 if (string.IsNullOrEmpty(assetName)) continue;
@@ -40,21 +30,11 @@ namespace OxGFrame.AssetLoader.GroupChacer
             Logging.Print<Logger>($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
-        public void PreloadAsset<T>(int id, string assetName, Progression progression = null) where T : Object
-        {
-            if (string.IsNullOrEmpty(assetName)) return;
-
-            CacheResource.GetInstance().PreloadAsset<T>(assetName, progression);
-            if (CacheResource.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
-
-            Logging.Print<Logger>($"【Preload】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
-        }
-
-        public void PreloadAsset<T>(int id, string[] assetNames, Progression progression = null) where T : Object
+        public void PreloadAsset<T>(int id, string[] assetNames, Progression progression, byte maxRetryCount) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
-            CacheResource.GetInstance().PreloadAsset<T>(assetNames, progression);
+            CacheResource.GetInstance().PreloadAsset<T>(assetNames, progression, maxRetryCount);
             foreach (string assetName in assetNames)
             {
                 if (string.IsNullOrEmpty(assetName)) continue;
@@ -70,11 +50,11 @@ namespace OxGFrame.AssetLoader.GroupChacer
         /// <param name="id"></param>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        public async UniTask<T> LoadAssetAsync<T>(int id, string assetName, Progression progression = null) where T : Object
+        public async UniTask<T> LoadAssetAsync<T>(int id, string assetName, Progression progression, byte maxRetryCount) where T : Object
         {
             T asset = null;
 
-            asset = await CacheResource.GetInstance().LoadAssetAsync<T>(assetName, progression);
+            asset = await CacheResource.GetInstance().LoadAssetAsync<T>(assetName, progression, maxRetryCount);
 
             if (asset != null)
             {
@@ -91,11 +71,11 @@ namespace OxGFrame.AssetLoader.GroupChacer
             return asset;
         }
 
-        public T LoadAsset<T>(int id, string assetName, Progression progression = null) where T : Object
+        public T LoadAsset<T>(int id, string assetName, Progression progression, byte maxRetryCount) where T : Object
         {
             T asset = null;
 
-            asset = CacheResource.GetInstance().LoadAsset<T>(assetName, progression);
+            asset = CacheResource.GetInstance().LoadAsset<T>(assetName, progression, maxRetryCount);
 
             if (asset != null)
             {
@@ -112,7 +92,7 @@ namespace OxGFrame.AssetLoader.GroupChacer
             return asset;
         }
 
-        public void UnloadAsset(int id, string assetName, bool forceUnload = false)
+        public void UnloadAsset(int id, string assetName, bool forceUnload)
         {
             var keyGroup = this.GetFromCache(id, assetName);
             if (keyGroup != null)
@@ -151,7 +131,7 @@ namespace OxGFrame.AssetLoader.GroupChacer
                     // 依照計數次數釋放
                     for (int i = keyGroup.refCount; i > 0; i--)
                     {
-                        CacheResource.GetInstance().UnloadAsset(keyGroup.assetName);
+                        CacheResource.GetInstance().UnloadAsset(keyGroup.assetName, false);
                     }
 
                     // 完成後, 直接刪除緩存
