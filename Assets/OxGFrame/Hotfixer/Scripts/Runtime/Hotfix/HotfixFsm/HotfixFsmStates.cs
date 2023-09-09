@@ -385,8 +385,10 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                             if (Application.isEditor ||
                                 BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
                             {
+                                // 移除 .dll 副檔名
+                                var newDllName = dllName.Replace(".dll", string.Empty);
                                 // Editor 或 Simulate 下無需加載, 直接查找獲得 Hotfix 程序集
-                                hotfixAsm = System.AppDomain.CurrentDomain.GetAssemblies().First(a => a.GetName().Name == dllName);
+                                hotfixAsm = System.AppDomain.CurrentDomain.GetAssemblies().First(a => a.GetName().Name == newDllName);
                             }
                             else
                             {
