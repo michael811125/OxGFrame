@@ -13,7 +13,7 @@
 | **需先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
 | [OxGKit.LoggingSystem v0.0.3-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
-| [OxGKit.Utilities v0.0.6-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
+| [OxGKit.Utilities v0.0.7-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
 | [LWMyBox v1.1.3 or higher](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager **(建議改成輕量版的 MyBox 改進編譯效率)** |
 | [HybirdCLR v3.4.2 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
