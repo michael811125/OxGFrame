@@ -63,7 +63,6 @@ namespace OxGFrame.AssetLoader.GroupChacer
                 if (keyGroup != null)
                 {
                     keyGroup.AddRef();
-
                     Logging.Print<Logger>($"【Load】 => Current << GroupResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
@@ -84,7 +83,6 @@ namespace OxGFrame.AssetLoader.GroupChacer
                 if (keyGroup != null)
                 {
                     keyGroup.AddRef();
-
                     Logging.Print<Logger>($"【Load】 => Current << GroupResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
@@ -98,21 +96,18 @@ namespace OxGFrame.AssetLoader.GroupChacer
             if (keyGroup != null)
             {
                 keyGroup.DelRef();
-
                 Logging.Print<Logger>($"【Unload】 => Current << GroupResource >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
 
                 // 強制釋放
                 if (forceUnload)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-
                     Logging.Print<Logger>($"【Force Unload Completes】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
                 }
                 // 使用引用計數釋放
                 else if (keyGroup.refCount <= 0)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-
                     Logging.Print<Logger>($"【Unload Completes】 => Current << GroupResource >> Cache Count: {this.Count}, GroupId: {id}");
                 }
 

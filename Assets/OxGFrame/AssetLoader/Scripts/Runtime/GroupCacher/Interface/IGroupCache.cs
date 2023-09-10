@@ -1,4 +1,4 @@
-﻿namespace OxGFrame.AssetLoader
+﻿namespace OxGFrame.AssetLoader.GroupCacher
 {
     public interface IGroupCache<T>
     {

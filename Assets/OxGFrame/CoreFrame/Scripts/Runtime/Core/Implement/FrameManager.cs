@@ -91,8 +91,8 @@ namespace OxGFrame.CoreFrame
             }
         }
 
-        public float reqSize { get; protected set; }   // [計算進度條用] 加載數量
-        public float totalSize { get; protected set; } // [計算進度條用] 總加載數量
+        public float currentCount { get; protected set; }                                                     // [計算進度條用] 加載數量
+        public float totalCount { get; protected set; }                                                       // [計算進度條用] 總加載數量
 
         protected Dictionary<string, FrameStack<T>> _dictAllCache = new Dictionary<string, FrameStack<T>>();  // 【常駐】所有緩存 (只會在 Destroy 時, Remove 對應的緩存)
         protected HashSet<string> _loadingFlags = new HashSet<string>();                                      // 用來標記正在加載中的資源 (暫存緩存)
@@ -414,8 +414,8 @@ namespace OxGFrame.CoreFrame
         {
             if (assetNames.Length > 0)
             {
-                this.reqSize = 0;
-                this.totalSize = assetNames.Length;
+                this.currentCount = 0;
+                this.totalCount = assetNames.Length;
 
                 for (int i = 0; i < assetNames.Length; i++)
                 {
@@ -424,12 +424,12 @@ namespace OxGFrame.CoreFrame
                         continue;
                     }
 
-                    float lastSize = 0;
-                    await this.LoadIntoAllCache(packageName, assetNames[i], (float progress, float reqSize, float totalSize) =>
+                    float lastCount = 0;
+                    await this.LoadIntoAllCache(packageName, assetNames[i], (float progress, float currentCount, float totalCount) =>
                     {
-                        this.reqSize += reqSize - lastSize;
-                        lastSize = reqSize;
-                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                        this.currentCount += currentCount - lastCount;
+                        lastCount = currentCount;
+                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                     }, true);
                 }
             }

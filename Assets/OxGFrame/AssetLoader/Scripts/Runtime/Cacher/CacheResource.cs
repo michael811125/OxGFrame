@@ -35,8 +35,8 @@ namespace OxGFrame.AssetLoader.Cacher
             if (assetNames == null || assetNames.Length == 0) return;
 
             // 先初始加載進度
-            this.reqSize = 0;
-            this.totalSize = assetNames.Length;
+            this.currentCount = 0;
+            this.totalCount = assetNames.Length;
 
             for (int i = 0; i < assetNames.Length; i++)
             {
@@ -58,8 +58,8 @@ namespace OxGFrame.AssetLoader.Cacher
                 // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
-                    this.reqSize++;
-                    progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                    this.currentCount++;
+                    progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                     this.RemoveLoadingFlags(assetName);
                     continue;
                 }
@@ -71,14 +71,14 @@ namespace OxGFrame.AssetLoader.Cacher
 
                     if (req != null)
                     {
-                        float lastSize = 0;
+                        float lastCount = 0;
                         do
                         {
                             if (progression != null)
                             {
-                                this.reqSize += (req.progress - lastSize);
-                                lastSize = req.progress;
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                                this.currentCount += (req.progress - lastCount);
+                                lastCount = req.progress;
+                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                             }
 
                             if (req.isDone)
@@ -119,8 +119,8 @@ namespace OxGFrame.AssetLoader.Cacher
             if (assetNames == null || assetNames.Length == 0) return;
 
             // 先初始加載進度
-            this.reqSize = 0;
-            this.totalSize = assetNames.Length;
+            this.currentCount = 0;
+            this.totalCount = assetNames.Length;
 
             for (int i = 0; i < assetNames.Length; i++)
             {
@@ -142,8 +142,8 @@ namespace OxGFrame.AssetLoader.Cacher
                 // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
-                    this.reqSize++;
-                    progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                    this.currentCount++;
+                    progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                     this.RemoveLoadingFlags(assetName);
                     continue;
                 }
@@ -154,8 +154,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     var asset = Resources.Load<T>(assetName);
                     if (asset != null)
                     {
-                        this.reqSize++;
-                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                        this.currentCount++;
+                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
                         loaded = true;
                         pack.SetPack(assetName, asset);
@@ -197,8 +197,8 @@ namespace OxGFrame.AssetLoader.Cacher
             }
 
             // 初始加載進度
-            this.reqSize = 0;
-            this.totalSize = 1;
+            this.currentCount = 0;
+            this.totalCount = 1;
 
             // Loading 標記
             this.AddLoadingFlags(assetName, maxRetryCount);
@@ -215,14 +215,14 @@ namespace OxGFrame.AssetLoader.Cacher
 
                     if (req != null)
                     {
-                        float lastSize = 0;
+                        float lastCount = 0;
                         do
                         {
                             if (progression != null)
                             {
-                                this.reqSize += (req.progress - lastSize);
-                                lastSize = req.progress;
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                                this.currentCount += (req.progress - lastCount);
+                                lastCount = req.progress;
+                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                             }
 
                             if (req.isDone)
@@ -244,8 +244,8 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                this.reqSize = this.totalSize;
-                progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                this.currentCount = this.totalCount;
+                progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
             }
 
             var asset = pack.GetAsset<T>();
@@ -281,8 +281,8 @@ namespace OxGFrame.AssetLoader.Cacher
             }
 
             // 初始加載進度
-            this.reqSize = 0;
-            this.totalSize = 1;
+            this.currentCount = 0;
+            this.totalCount = 1;
 
             // Loading 標記
             this.AddLoadingFlags(assetName, maxRetryCount);
@@ -299,8 +299,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     asset = Resources.Load<T>(assetName);
                     if (asset != null)
                     {
-                        this.reqSize = this.totalSize;
-                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                        this.currentCount = this.totalCount;
+                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
                         loaded = true;
                         pack.SetPack(assetName, asset);
@@ -315,8 +315,8 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                this.reqSize = this.totalSize;
-                progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                this.currentCount = this.totalCount;
+                progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
             }
 
             asset = pack.GetAsset<T>();

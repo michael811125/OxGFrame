@@ -479,29 +479,29 @@ public class BundleDemo : MonoBehaviour
     public async void LoadBundle()
     {
         // Async LoadAsset
-        GameObject go = await AssetLoaders.LoadAssetAsync<GameObject>(this.assetName, (p, r, t) =>
+        GameObject go = await AssetLoaders.LoadAssetAsync<GameObject>(this.assetName, (progress, currentCount, totalCount) =>
         {
-            Debug.Log($"Load: {p}, {r}, {t}");
+            Debug.Log($"Load => Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
         });
         if (go != null) Instantiate(go, this.container.transform);
 
         // Sync LoadAsset
-        //GameObject go = AssetLoaders.LoadAsset<GameObject>(this.assetName, (p, r, t) =>
+        //GameObject go = AssetLoaders.LoadAsset<GameObject>(this.assetName, (progress, currentCount, totalCount) =>
         //{
-        //    Debug.Log($"Load: {p}, {r}, {t}");
+        //    Debug.Log($"Load => Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
         //});
         //if (go != null) Instantiate(go, this.container.transform);
 
         // Async InstantiateAsset
-        //await AssetLoaders.InstantiateAssetAsync<GameObject>(this.assetName, this.container.transform, (p, r, t) =>
+        //await AssetLoaders.InstantiateAssetAsync<GameObject>(this.assetName, this.container.transform, (progress, currentCount, totalCount) =>
         //{
-        //    Debug.Log($"Load: {p}, {r}, {t}");
+        //    Debug.Log($"Load => Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
         //});
 
         // Sync InstantiateAsset
-        //AssetLoaders.InstantiateAsset<GameObject>(this.assetName, this.container.transform, (p, r, t) =>
+        //AssetLoaders.InstantiateAsset<GameObject>(this.assetName, this.container.transform, (progress, currentCount, totalCount) =>
         //{
-        //    Debug.Log($"Load: {p}, {r}, {t}");
+        //    Debug.Log($"Load => Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
         //});
     }
 
@@ -514,6 +514,15 @@ public class BundleDemo : MonoBehaviour
             Destroy(t.gameObject);
             // Unload
             AssetLoaders.UnloadAsset(this.assetName);
+        }
+
+        // Unload for preload
+        if (this.container.transform.childCount == 0)
+        {
+            if (AssetLoaders.HasInCache(this.assetName))
+            {
+                AssetLoaders.UnloadAsset(this.assetName);
+            }
         }
     }
 

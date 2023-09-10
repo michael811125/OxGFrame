@@ -102,42 +102,45 @@ namespace OxGFrame.AssetLoader.Cacher
         #region Raw
         public string GetRawFileText()
         {
-            return this.GetOperationHandle<RawFileOperationHandle>()?.GetRawFileText();
+            if (!this.IsValid()) return null;
+            return this.GetOperationHandle<RawFileOperationHandle>().GetRawFileText();
         }
 
         public byte[] GetRawFileData()
         {
-            return this.GetOperationHandle<RawFileOperationHandle>()?.GetRawFileData();
+            if (!this.IsValid()) return null;
+            return this.GetOperationHandle<RawFileOperationHandle>().GetRawFileData();
         }
 
         public void UnloadRawFile()
         {
-            if (this.IsValid()) this.GetOperationHandle<RawFileOperationHandle>()?.Release();
+            if (this.IsValid()) this.GetOperationHandle<RawFileOperationHandle>().Release();
         }
         #endregion
 
         #region Scene
         public Scene GetScene()
         {
-            if (this.operationHandle == null) return new Scene();
+            if (!this.IsValid()) return new Scene();
             return this.GetOperationHandle<SceneOperationHandle>().SceneObject;
         }
 
         public void UnloadScene()
         {
-            if (this.IsValid()) this.GetOperationHandle<SceneOperationHandle>()?.UnloadAsync();
+            if (this.IsValid()) this.GetOperationHandle<SceneOperationHandle>().UnloadAsync();
         }
         #endregion
 
         #region Asset
         public T GetAsset<T>() where T : Object
         {
+            if (!this.IsValid()) return null;
             return this.GetOperationHandle<AssetOperationHandle>()?.AssetObject as T;
         }
 
         public void UnloadAsset()
         {
-            if (this.IsValid()) this.GetOperationHandle<AssetOperationHandle>()?.Release();
+            if (this.IsValid()) this.GetOperationHandle<AssetOperationHandle>().Release();
         }
         #endregion
 

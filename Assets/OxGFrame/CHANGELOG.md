@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.7.9] - 2023-09-10
+- Fixed AssetLoader retry counter determine bug issue.
+- Fixed CacheBundle wrong unload type while doing retry.
+- Modified Progression name of params (corrected reqSize to currentCount, totalSize to totalCount).
+
 ## [2.7.8] - 2023-09-09
 - Added retry counter for AssetLoader (can set maxRetryCount via API).
 - Modified AcaxAsync can return text.
@@ -581,7 +586,7 @@ await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName);
 - Modified right-click feature to group CoreFrame and GSIFrame in OxGFrame path.
 
 ## [1.0.1] - 2022-07-11
-- Fixed CacheBundle has parameter namin error issue lead to cannot found reference.
+- Fixed CacheBundle has parameter naming error issue lead to cannot found reference.
 
 ## [1.0.0] - 2022-07-10
 - Initial submission for package distribution.

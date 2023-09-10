@@ -12,8 +12,8 @@ namespace OxGFrame.CoreFrame.USFrame
     {
         public static int sceneCount { get { return SceneManager.sceneCount; } }
 
-        private float _reqSize;
-        private float _totalSize;
+        private float _currentCount;
+        private float _totalCount;
 
         private static readonly object _locker = new object();
         private static USManager _instance = null;
@@ -135,8 +135,8 @@ namespace OxGFrame.CoreFrame.USFrame
         #region Build
         public async UniTask<AsyncOperation> LoadFromBuildAsync(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
-            this._reqSize = 0;
-            this._totalSize = 1; // 初始 1 = 必有一場景
+            this._currentCount = 0;
+            this._totalCount = 1; // 初始 1 = 必有一場景
 
             var scene = this.GetSceneByName(sceneName);
             if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
@@ -150,15 +150,15 @@ namespace OxGFrame.CoreFrame.USFrame
             {
                 req.allowSceneActivation = false;
 
-                float lastSize = 0;
+                float lastCount = 0;
                 while (!req.isDone)
                 {
                     if (progression != null)
                     {
-                        this._reqSize += (req.progress - lastSize);
-                        lastSize = req.progress;
-                        if (this._reqSize >= 0.9f) this._reqSize = 1f;
-                        progression.Invoke(this._reqSize / this._totalSize, this._reqSize, this._totalSize);
+                        this._currentCount += (req.progress - lastCount);
+                        lastCount = req.progress;
+                        if (this._currentCount >= 0.9f) this._currentCount = 1f;
+                        progression.Invoke(this._currentCount / this._totalCount, this._currentCount, this._totalCount);
                     }
                     if (req.progress >= 0.9f) req.allowSceneActivation = true;
                     await UniTask.Yield();
@@ -172,8 +172,8 @@ namespace OxGFrame.CoreFrame.USFrame
 
         public async UniTask<AsyncOperation> LoadFromBuildAsync(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
-            this._reqSize = 0;
-            this._totalSize = 1; // 初始 1 = 必有一場景
+            this._currentCount = 0;
+            this._totalCount = 1; // 初始 1 = 必有一場景
 
             var scene = this.GetSceneByBuildIndex(buildIndex);
             string sceneName = scene.name;
@@ -188,15 +188,15 @@ namespace OxGFrame.CoreFrame.USFrame
             {
                 req.allowSceneActivation = false;
 
-                float lastSize = 0;
+                float lastCount = 0;
                 while (!req.isDone)
                 {
                     if (progression != null)
                     {
-                        this._reqSize += (req.progress - lastSize);
-                        lastSize = req.progress;
-                        if (this._reqSize >= 0.9f) this._reqSize = 1f;
-                        progression.Invoke(this._reqSize / this._totalSize, this._reqSize, this._totalSize);
+                        this._currentCount += (req.progress - lastCount);
+                        lastCount = req.progress;
+                        if (this._currentCount >= 0.9f) this._currentCount = 1f;
+                        progression.Invoke(this._currentCount / this._totalCount, this._currentCount, this._totalCount);
                     }
                     if (req.progress >= 0.9f) req.allowSceneActivation = true;
                     await UniTask.Yield();

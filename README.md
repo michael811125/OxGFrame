@@ -103,6 +103,14 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 
 ## 模塊框架介紹
 
+- Hotfixer
+- AssetLoader
+- CoreFrame
+- MediaFrame
+- GSIFrame
+- NetFrame
+- AgencyCenter
+
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_9.png)
 
 ### Hotfixer (dependence HybridCLR, AssetLoader)

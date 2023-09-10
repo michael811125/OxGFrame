@@ -17,7 +17,8 @@ namespace OxGFrame.AssetLoader.Cacher
 
             public bool IsRetryValid()
             {
-                return this.retryCount < maxRetryCount;
+                // 嘗試次數先++, 後判斷, 所以需使用 <= 進行判斷
+                return this.retryCount <= maxRetryCount;
             }
 
             public void AddRetryCount()
@@ -30,9 +31,9 @@ namespace OxGFrame.AssetLoader.Cacher
 
         protected Dictionary<string, RetryCounter> _loadingFlags;
 
-        public float reqSize { get; protected set; }
+        public float currentCount { get; protected set; }
 
-        public float totalSize { get; protected set; }
+        public float totalCount { get; protected set; }
 
         public int Count { get { return this._cacher.Count; } }
 

@@ -48,8 +48,8 @@ namespace OxGFrame.AssetLoader.Cacher
             if (assetNames == null || assetNames.Length == 0) return;
 
             // 先初始加載進度
-            this.reqSize = 0;
-            this.totalSize = assetNames.Length;
+            this.currentCount = 0;
+            this.totalCount = assetNames.Length;
 
             for (int i = 0; i < assetNames.Length; i++)
             {
@@ -74,15 +74,15 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     if (pack.IsValid())
                     {
-                        this.reqSize++;
-                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                        this.currentCount++;
+                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         this.RemoveLoadingFlags(assetName);
                         Logging.Print<Logger>($"<color=#fff6ba>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: [{assetName}] already preloaded!!!</color>");
                         continue;
                     }
                     else
                     {
-                        this.UnloadAsset(assetName, true);
+                        this.UnloadRawFile(assetName, true);
                         this.GetRetryCounter(assetName).AddRetryCount();
                         Logging.Print<Logger>($"<color=#ff9600>【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                         await this.PreloadRawFileAsync(packageName, new string[] { assetName }, progression, maxRetryCount);
@@ -100,14 +100,14 @@ namespace OxGFrame.AssetLoader.Cacher
 
                     if (req != null)
                     {
-                        float lastSize = 0;
+                        float lastCount = 0;
                         do
                         {
                             if (progression != null)
                             {
-                                this.reqSize += (req.Progress - lastSize);
-                                lastSize = req.Progress;
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                                this.currentCount += (req.Progress - lastCount);
+                                lastCount = req.Progress;
+                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                             }
 
                             if (req.IsDone)
@@ -148,8 +148,8 @@ namespace OxGFrame.AssetLoader.Cacher
             if (assetNames == null || assetNames.Length == 0) return;
 
             // 先初始加載進度
-            this.reqSize = 0;
-            this.totalSize = assetNames.Length;
+            this.currentCount = 0;
+            this.totalCount = assetNames.Length;
 
             for (int i = 0; i < assetNames.Length; i++)
             {
@@ -174,15 +174,15 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     if (pack.IsValid())
                     {
-                        this.reqSize++;
-                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                        this.currentCount++;
+                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         this.RemoveLoadingFlags(assetName);
                         Logging.Print<Logger>($"<color=#fff6ba>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: [{assetName}] already preloaded!!!</color>");
                         continue;
                     }
                     else
                     {
-                        this.UnloadAsset(assetName, true);
+                        this.UnloadRawFile(assetName, true);
                         this.GetRetryCounter(assetName).AddRetryCount();
                         Logging.Print<Logger>($"<color=#ff9600>【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                         this.PreloadRawFile(packageName, new string[] { assetName }, progression, maxRetryCount);
@@ -204,8 +204,8 @@ namespace OxGFrame.AssetLoader.Cacher
                         {
                             if (progression != null)
                             {
-                                this.reqSize++;
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                                this.currentCount++;
+                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                             }
 
                             loaded = true;
@@ -249,8 +249,8 @@ namespace OxGFrame.AssetLoader.Cacher
             }
 
             // 初始加載進度
-            this.reqSize = 0;
-            this.totalSize = 1;
+            this.currentCount = 0;
+            this.totalCount = 1;
 
             // Loading 標記
             this.AddLoadingFlags(assetName, maxRetryCount);
@@ -269,14 +269,14 @@ namespace OxGFrame.AssetLoader.Cacher
 
                     if (req != null)
                     {
-                        float lastSize = 0;
+                        float lastCount = 0;
                         do
                         {
                             if (progression != null)
                             {
-                                this.reqSize += (req.Progress - lastSize);
-                                lastSize = req.Progress;
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                                this.currentCount += (req.Progress - lastCount);
+                                lastCount = req.Progress;
+                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                             }
 
                             if (req.IsDone)
@@ -290,7 +290,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                 }
 
-                if (pack != null && loaded)
+                if (loaded)
                 {
                     // skipping duplicate keys
                     if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
@@ -298,8 +298,8 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                this.reqSize = this.totalSize;
-                progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                this.currentCount = this.totalCount;
+                progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
             }
 
             object data;
@@ -321,7 +321,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                this.UnloadAsset(assetName, true);
+                this.UnloadRawFile(assetName, true);
                 this.GetRetryCounter(assetName).AddRetryCount();
                 Logging.Print<Logger>($"<color=#90FF71>【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                 return await this.LoadRawFileAsync<T>(packageName, assetName, progression, maxRetryCount);
@@ -345,8 +345,8 @@ namespace OxGFrame.AssetLoader.Cacher
             }
 
             // 初始加載進度
-            this.reqSize = 0;
-            this.totalSize = 1;
+            this.currentCount = 0;
+            this.totalCount = 1;
 
             // Loading 標記
             this.AddLoadingFlags(assetName, maxRetryCount);
@@ -369,8 +369,8 @@ namespace OxGFrame.AssetLoader.Cacher
                         {
                             if (progression != null)
                             {
-                                this.reqSize++;
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                                this.currentCount++;
+                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                             }
 
                             loaded = true;
@@ -379,7 +379,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                 }
 
-                if (pack != null && loaded)
+                if (loaded)
                 {
                     // skipping duplicate keys
                     if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
@@ -387,8 +387,8 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                this.reqSize = this.totalSize;
-                progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                this.currentCount = this.totalCount;
+                progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
             }
 
             object data;
@@ -410,7 +410,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                this.UnloadAsset(assetName, true);
+                this.UnloadRawFile(assetName, true);
                 this.GetRetryCounter(assetName).AddRetryCount();
                 Logging.Print<Logger>($"<color=#90FF71>【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                 return this.LoadRawFile<T>(packageName, assetName, progression, maxRetryCount);
@@ -511,11 +511,13 @@ namespace OxGFrame.AssetLoader.Cacher
             }
 
             // 初始加載進度
-            this.reqSize = 0;
-            this.totalSize = 1;
+            this.currentCount = 0;
+            this.totalCount = 1;
 
+            // 場景最多嘗試 1 次
+            byte maxRetryCount = 1;
             // Loading 標記
-            this.AddLoadingFlags(assetName, 0);
+            this.AddLoadingFlags(assetName, maxRetryCount);
 
             var package = PackageManager.GetPackage(packageName);
             if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
@@ -525,15 +527,15 @@ namespace OxGFrame.AssetLoader.Cacher
 
             if (req != null)
             {
-                float lastSize = 0;
+                float lastCount = 0;
                 do
                 {
                     if (progression != null)
                     {
-                        this.reqSize += (req.Progress - lastSize);
-                        lastSize = req.Progress;
-                        if (this.reqSize >= 0.9f) this.reqSize = 1f;
-                        progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                        this.currentCount += (req.Progress - lastCount);
+                        lastCount = req.Progress;
+                        if (this.currentCount >= 0.9f) this.currentCount = 1f;
+                        progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                     }
 
                     if (req.IsDone)
@@ -581,8 +583,13 @@ namespace OxGFrame.AssetLoader.Cacher
             this.RemoveLoadingFlags(assetName);
 
             if (pack.GetScene().isLoaded) return pack;
-
-            return null;
+            else
+            {
+                this.UnloadScene(assetName, true);
+                this.GetRetryCounter(assetName).AddRetryCount();
+                Logging.Print<Logger>($"<color=#90FF71>【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
+                return await this.LoadSceneAsync(packageName, assetName, loadSceneMode, activateOnLoad, priority, progression);
+            }
         }
 
         public void UnloadScene(string assetName, bool recursively)
@@ -642,7 +649,7 @@ namespace OxGFrame.AssetLoader.Cacher
                             if (this._sceneCache.ContainsKey(key))
                             {
                                 var pack = this._sceneCache[key];
-                                if (package == null) package = PackageManager.GetPackage(pack.packageName);
+                                package = PackageManager.GetPackage(pack.packageName);
                                 if (pack.IsSceneOperationHandle())
                                 {
                                     pack.UnloadScene();
@@ -699,8 +706,8 @@ namespace OxGFrame.AssetLoader.Cacher
             if (assetNames == null || assetNames.Length == 0) return;
 
             // 先初始加載進度
-            this.reqSize = 0;
-            this.totalSize = assetNames.Length;
+            this.currentCount = 0;
+            this.totalCount = assetNames.Length;
 
             for (int i = 0; i < assetNames.Length; i++)
             {
@@ -725,8 +732,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     if (pack.IsValid())
                     {
-                        this.reqSize++;
-                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                        this.currentCount++;
+                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         this.RemoveLoadingFlags(assetName);
                         Logging.Print<Logger>($"<color=#fff6ba>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: [{assetName}] already preloaded!!!</color>");
                         continue;
@@ -751,14 +758,14 @@ namespace OxGFrame.AssetLoader.Cacher
 
                     if (req != null)
                     {
-                        float lastSize = 0;
+                        float lastCount = 0;
                         do
                         {
                             if (progression != null)
                             {
-                                this.reqSize += (req.Progress - lastSize);
-                                lastSize = req.Progress;
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                                this.currentCount += (req.Progress - lastCount);
+                                lastCount = req.Progress;
+                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                             }
 
                             if (req.IsDone)
@@ -771,7 +778,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         } while (true);
                     }
 
-                    if (pack != null && loaded)
+                    if (loaded)
                     {
                         // skipping duplicate keys
                         if (!this.HasInCache(assetName))
@@ -799,8 +806,8 @@ namespace OxGFrame.AssetLoader.Cacher
             if (assetNames == null || assetNames.Length == 0) return;
 
             // 先初始加載進度
-            this.reqSize = 0;
-            this.totalSize = assetNames.Length;
+            this.currentCount = 0;
+            this.totalCount = assetNames.Length;
 
             for (int i = 0; i < assetNames.Length; i++)
             {
@@ -825,8 +832,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     if (pack.IsValid())
                     {
-                        this.reqSize++;
-                        progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                        this.currentCount++;
+                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         this.RemoveLoadingFlags(assetName);
                         Logging.Print<Logger>($"<color=#fff6ba>【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: [{assetName}] already preloaded!!!</color>");
                         continue;
@@ -855,8 +862,8 @@ namespace OxGFrame.AssetLoader.Cacher
                         {
                             if (progression != null)
                             {
-                                this.reqSize++;
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                                this.currentCount++;
+                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                             }
 
                             loaded = true;
@@ -864,7 +871,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         }
                     }
 
-                    if (pack != null && loaded)
+                    if (loaded)
                     {
                         // skipping duplicate keys
                         if (!this.HasInCache(assetName))
@@ -900,8 +907,8 @@ namespace OxGFrame.AssetLoader.Cacher
             }
 
             // 初始加載進度
-            this.reqSize = 0;
-            this.totalSize = 1;
+            this.currentCount = 0;
+            this.totalCount = 1;
 
             // Loading 標記
             this.AddLoadingFlags(assetName, maxRetryCount);
@@ -920,14 +927,14 @@ namespace OxGFrame.AssetLoader.Cacher
 
                     if (req != null)
                     {
-                        float lastSize = 0;
+                        float lastCount = 0;
                         do
                         {
                             if (progression != null)
                             {
-                                this.reqSize += (req.Progress - lastSize);
-                                lastSize = req.Progress;
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                                this.currentCount += (req.Progress - lastCount);
+                                lastCount = req.Progress;
+                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                             }
 
                             if (req.IsDone)
@@ -941,7 +948,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                 }
 
-                if (pack != null && loaded)
+                if (loaded)
                 {
                     // skipping duplicate keys
                     if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
@@ -949,8 +956,8 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                this.reqSize = this.totalSize;
-                progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                this.currentCount = this.totalCount;
+                progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
             }
 
             var asset = pack.GetAsset<T>();
@@ -986,8 +993,8 @@ namespace OxGFrame.AssetLoader.Cacher
             }
 
             // 初始加載進度
-            this.reqSize = 0;
-            this.totalSize = 1;
+            this.currentCount = 0;
+            this.totalCount = 1;
 
             // Loading 標記
             this.AddLoadingFlags(assetName, maxRetryCount);
@@ -1010,8 +1017,8 @@ namespace OxGFrame.AssetLoader.Cacher
                         {
                             if (progression != null)
                             {
-                                this.reqSize++;
-                                progression.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                                this.currentCount++;
+                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                             }
 
                             loaded = true;
@@ -1020,7 +1027,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                 }
 
-                if (pack != null && loaded)
+                if (loaded)
                 {
                     // skipping duplicate keys
                     if (!this.HasInCache(assetName)) this._cacher.Add(assetName, pack);
@@ -1028,8 +1035,8 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                this.reqSize = this.totalSize;
-                progression?.Invoke(this.reqSize / this.totalSize, this.reqSize, this.totalSize);
+                this.currentCount = this.totalCount;
+                progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
             }
 
             var asset = pack.GetAsset<T>();

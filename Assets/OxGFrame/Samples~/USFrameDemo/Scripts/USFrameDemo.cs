@@ -50,9 +50,9 @@ public class USFrameDemo : MonoBehaviour
         {
             Action asyncHandler = async () =>
             {
-                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Build.LevelDemo01, LoadSceneMode.Single, true, 100, (float progress, float reqSize, float totalSize) =>
+                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Build.LevelDemo01, LoadSceneMode.Single, true, 100, (float progress, float currentCount, float totalCount) =>
                 {
-                    Debug.Log($"Progress: {progress}, ReqSize: {reqSize}, TotalSize: {totalSize}");
+                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
                 });
             };
             asyncHandler.Invoke();
@@ -62,9 +62,9 @@ public class USFrameDemo : MonoBehaviour
         {
             Action asyncHandler = async () =>
             {
-                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Build.LevelDemo02, LoadSceneMode.Single, true, 100, (float progress, float reqSize, float totalSize) =>
+                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Build.LevelDemo02, LoadSceneMode.Single, true, 100, (float progress, float currentCount, float totalCount) =>
                 {
-                    Debug.Log($"Progress: {progress}, ReqSize: {reqSize}, TotalSize: {totalSize}");
+                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
                 });
             };
             asyncHandler.Invoke();
@@ -74,9 +74,9 @@ public class USFrameDemo : MonoBehaviour
         {
             Action asyncHandler = async () =>
             {
-                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Build.LevelDemo03, LoadSceneMode.Additive, true, 100, (float progress, float reqSize, float totalSize) =>
+                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Build.LevelDemo03, LoadSceneMode.Additive, true, 100, (float progress, float currentCount, float totalCount) =>
                 {
-                    Debug.Log($"Progress: {progress}, ReqSize: {reqSize}, TotalSize: {totalSize}");
+                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
                 });
             };
             asyncHandler.Invoke();
@@ -88,9 +88,9 @@ public class USFrameDemo : MonoBehaviour
         {
             Action asyncHandler = async () =>
             {
-                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Bundle.LevelDemo01, LoadSceneMode.Single, true, 100, (float progress, float reqSize, float totalSize) =>
+                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Bundle.LevelDemo01, LoadSceneMode.Single, true, 100, (float progress, float currentCount, float totalCount) =>
                 {
-                    Debug.Log($"Progress: {progress}, ReqSize: {reqSize}, TotalSize: {totalSize}");
+                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
                 });
             };
             asyncHandler.Invoke();
@@ -100,9 +100,9 @@ public class USFrameDemo : MonoBehaviour
         {
             Action asyncHandler = async () =>
             {
-                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Bundle.LevelDemo02, LoadSceneMode.Single, true, 100, (float progress, float reqSize, float totalSize) =>
+                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Bundle.LevelDemo02, LoadSceneMode.Single, true, 100, (float progress, float currentCount, float totalCount) =>
                 {
-                    Debug.Log($"Progress: {progress}, ReqSize: {reqSize}, TotalSize: {totalSize}");
+                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
                 });
             };
             asyncHandler.Invoke();
@@ -112,9 +112,9 @@ public class USFrameDemo : MonoBehaviour
         {
             Action asyncHandler = async () =>
             {
-                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Bundle.LevelDemo03, LoadSceneMode.Additive, true, 100, (float progress, float reqSize, float totalSize) =>
+                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Bundle.LevelDemo03, LoadSceneMode.Additive, true, 100, (float progress, float currentCount, float totalCount) =>
                 {
-                    Debug.Log($"Progress: {progress}, ReqSize: {reqSize}, TotalSize: {totalSize}");
+                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
                 });
             };
             asyncHandler.Invoke();

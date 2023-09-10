@@ -6,8 +6,8 @@ namespace OxGFrame.CoreFrame.CPFrame
 {
     internal class CPManager
     {
-        public float reqSize { get; protected set; }   // [計算進度條用] 加載數量
-        public float totalSize { get; protected set; } // [計算進度條用] 總加載數量
+        public float currentCount { get; protected set; } // [計算進度條用] 加載數量
+        public float totalCount { get; protected set; }   // [計算進度條用] 總加載數量
 
         private static readonly object _locker = new object();
         private static CPManager _instance = null;
