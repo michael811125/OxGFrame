@@ -761,14 +761,16 @@ namespace OxGFrame.CoreFrame
 
             internal static bool RefineBuildScenePath(ref string sceneName)
             {
+                if (string.IsNullOrEmpty(sceneName)) return false;
                 string prefix = "build#";
-
-                if (sceneName.IndexOf(prefix) != -1)
+                if (sceneName.Length > prefix.Length)
                 {
-                    sceneName = sceneName.Replace(prefix, string.Empty);
-                    return true;
+                    if (sceneName.Substring(0, prefix.Length).Equals(prefix))
+                    {
+                        sceneName = sceneName.Replace(prefix, string.Empty);
+                        return true;
+                    }
                 }
-
                 return false;
             }
         }

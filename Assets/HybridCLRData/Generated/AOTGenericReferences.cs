@@ -128,10 +128,10 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 
 	public void RefMethods()
 	{
-		// System.Void Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder<object>.Start<OxGFrame.AssetLoader.AssetLoaders.<InstantiateAssetAsync>d__39<object>>(OxGFrame.AssetLoader.AssetLoaders.<InstantiateAssetAsync>d__39<object>&)
+		// System.Void Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder<object>.Start<OxGFrame.AssetLoader.AssetLoaders.<InstantiateAssetAsync>d__40<object>>(OxGFrame.AssetLoader.AssetLoaders.<InstantiateAssetAsync>d__40<object>&)
 		// System.Void Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskVoidMethodBuilder.AwaitUnsafeOnCompleted<Cysharp.Threading.Tasks.UniTask.Awaiter<object>,HotfixTester.<>c__DisplayClass4_0.<<Update>b__0>d>(Cysharp.Threading.Tasks.UniTask.Awaiter<object>&,HotfixTester.<>c__DisplayClass4_0.<<Update>b__0>d&)
 		// System.Void Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskVoidMethodBuilder.Start<HotfixTester.<>c__DisplayClass4_0.<<Update>b__0>d>(HotfixTester.<>c__DisplayClass4_0.<<Update>b__0>d&)
-		// Cysharp.Threading.Tasks.UniTask<object> OxGFrame.AssetLoader.AssetLoaders.InstantiateAssetAsync<object>(string,OxGFrame.AssetLoader.Progression)
+		// Cysharp.Threading.Tasks.UniTask<object> OxGFrame.AssetLoader.AssetLoaders.InstantiateAssetAsync<object>(string,OxGFrame.AssetLoader.Progression,byte)
 		// object UnityEngine.GameObject.AddComponent<object>()
 		// object UnityEngine.GameObject.GetComponent<object>()
 	}

@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [2.7.10] - 2023-09-11
+- Added more check methods for AssetObject.
+```C#
+    public bool IsRawFileOperationHandleValid()
+    public bool IsSceneOperationHandleValid()
+    public bool IsAssetOperationHandleValid()
+```
+
+- Modified RefineResourcesPath and RefineBuildScenePath solution.
+- Modified AssetObject to optmize determines.
+- Modified CacheBundle determines and use package.CheckLocationValid of YooAsset to make sure asset does exist.
+- Optimized AssetLoaders (CacheResource and CacheBundle).
+
 ## [2.7.9] - 2023-09-10
 - Fixed AssetLoader retry counter determine bug issue.
 - Fixed CacheBundle wrong unload type while doing retry.

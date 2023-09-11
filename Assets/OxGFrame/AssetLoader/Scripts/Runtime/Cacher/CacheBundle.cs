@@ -72,7 +72,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.HasInCache(assetName))
                 {
                     BundlePack pack = this.GetFromCache(assetName);
-                    if (pack.IsValid())
+                    if (pack.IsRawFileOperationHandleValid())
                     {
                         this.currentCount++;
                         progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
@@ -95,29 +95,34 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = new BundlePack();
 
                     var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-                    var req = package?.LoadRawFileAsync(assetName);
-
-                    if (req != null)
+                    if (package != null && package.CheckLocationValid(assetName))
                     {
-                        float lastCount = 0;
-                        do
+                        var req = package.LoadRawFileAsync(assetName);
+                        if (req != null)
                         {
-                            if (progression != null)
+                            float lastCount = 0;
+                            do
                             {
-                                this.currentCount += (req.Progress - lastCount);
-                                lastCount = req.Progress;
-                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                            }
+                                if (progression != null)
+                                {
+                                    this.currentCount += (req.Progress - lastCount);
+                                    lastCount = req.Progress;
+                                    progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+                                }
 
-                            if (req.IsDone)
-                            {
-                                loaded = true;
-                                pack.SetPack(packageName, assetName, req);
-                                break;
-                            }
-                            await UniTask.Yield();
-                        } while (true);
+                                if (req.IsDone)
+                                {
+                                    loaded = true;
+                                    pack.SetPack(packageName, assetName, req);
+                                    break;
+                                }
+                                await UniTask.Yield();
+                            } while (true);
+                        }
+                    }
+                    else
+                    {
+                        Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
                     }
 
                     if (loaded)
@@ -172,7 +177,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.HasInCache(assetName))
                 {
                     BundlePack pack = this.GetFromCache(assetName);
-                    if (pack.IsValid())
+                    if (pack.IsRawFileOperationHandleValid())
                     {
                         this.currentCount++;
                         progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
@@ -195,22 +200,27 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = new BundlePack();
 
                     var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-                    var req = package?.LoadRawFileSync(assetName);
-
-                    if (req != null)
+                    if (package != null && package.CheckLocationValid(assetName))
                     {
-                        if (req.IsDone)
+                        var req = package.LoadRawFileSync(assetName);
+                        if (req != null)
                         {
-                            if (progression != null)
+                            if (req.IsDone)
                             {
-                                this.currentCount++;
-                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                            }
+                                if (progression != null)
+                                {
+                                    this.currentCount++;
+                                    progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+                                }
 
-                            loaded = true;
-                            pack.SetPack(packageName, assetName, req);
+                                loaded = true;
+                                pack.SetPack(packageName, assetName, req);
+                            }
                         }
+                    }
+                    else
+                    {
+                        Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
                     }
 
                     if (loaded)
@@ -262,11 +272,11 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 bool loaded = false;
                 pack = new BundlePack();
-                {
-                    var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-                    var req = package?.LoadRawFileAsync(assetName);
 
+                var package = PackageManager.GetPackage(packageName);
+                if (package != null && package.CheckLocationValid(assetName))
+                {
+                    var req = package.LoadRawFileAsync(assetName);
                     if (req != null)
                     {
                         float lastCount = 0;
@@ -288,6 +298,10 @@ namespace OxGFrame.AssetLoader.Cacher
                             await UniTask.Yield();
                         } while (true);
                     }
+                }
+                else
+                {
+                    Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
                 }
 
                 if (loaded)
@@ -313,7 +327,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else data = null;
 
-            if (pack.IsValid() && data != null)
+            if (data != null)
             {
                 // 引用計數++
                 pack.AddRef();
@@ -358,11 +372,11 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 bool loaded = false;
                 pack = new BundlePack();
-                {
-                    var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-                    var req = package?.LoadRawFileSync(assetName);
 
+                var package = PackageManager.GetPackage(packageName);
+                if (package != null && package.CheckLocationValid(assetName))
+                {
+                    var req = package.LoadRawFileSync(assetName);
                     if (req != null)
                     {
                         if (req.IsDone)
@@ -377,6 +391,10 @@ namespace OxGFrame.AssetLoader.Cacher
                             pack.SetPack(packageName, assetName, req);
                         }
                     }
+                }
+                else
+                {
+                    Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
                 }
 
                 if (loaded)
@@ -402,7 +420,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else data = null;
 
-            if (pack.IsValid() && data != null)
+            if (data != null)
             {
                 // 引用計數++
                 pack.AddRef();
@@ -484,7 +502,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     var package = PackageManager.GetPackage(pack.packageName);
                     if (!packages.Contains(package)) packages.Add(package);
-                    if (pack.IsRawFileOperationHandle()) this.UnloadRawFile(assetName, true);
+                    this.UnloadRawFile(assetName, true);
                 }
             }
 
@@ -519,77 +537,86 @@ namespace OxGFrame.AssetLoader.Cacher
             // Loading 標記
             this.AddLoadingFlags(assetName, maxRetryCount);
 
-            var package = PackageManager.GetPackage(packageName);
-            if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-            var req = package?.LoadSceneAsync(assetName, loadSceneMode, !activateOnLoad, priority);
-
+            bool loaded = false;
             var pack = new BundlePack();
 
-            if (req != null)
+            // 場景需特殊處理
+            var package = PackageManager.GetPackage(packageName);
+            if (package != null && package.CheckLocationValid(assetName))
             {
-                float lastCount = 0;
-                do
+                var req = package.LoadSceneAsync(assetName, loadSceneMode, !activateOnLoad, priority);
+                if (req != null)
                 {
-                    if (progression != null)
+                    float lastCount = 0;
+                    do
                     {
-                        this.currentCount += (req.Progress - lastCount);
-                        lastCount = req.Progress;
-                        if (this.currentCount >= 0.9f) this.currentCount = 1f;
-                        progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                    }
-
-                    if (req.IsDone)
-                    {
-                        switch (loadSceneMode)
+                        if (progression != null)
                         {
-                            case LoadSceneMode.Single:
-                                {
-                                    pack.SetPack(packageName, assetName, req);
-
-                                    // 清除 Additive 計數緩存 (主場景無需緩存, 因為會自動釋放子場景)
-                                    this._sceneCache.Clear();
-                                    this._sceneCounter.Clear();
-                                }
-                                break;
-                            case LoadSceneMode.Additive:
-                                {
-                                    pack.SetPack(packageName, assetName, req);
-
-                                    // 加載場景的計數緩存 (Additive 需要進行計數, 要手動卸載子場景)
-                                    if (!this._sceneCounter.ContainsKey(assetName))
-                                    {
-                                        this._sceneCounter.Add(assetName, 1);
-                                        var count = this._sceneCounter[assetName];
-                                        string key = $"{assetName}#{count}";
-                                        this._sceneCache.Add(key, pack);
-                                        Logging.Print<Logger>($"<color=#90FF71>【Load Scene Additive】 => << CacheBundle >> scene: {key}</color>");
-                                    }
-                                    else
-                                    {
-                                        var count = ++this._sceneCounter[assetName];
-                                        string key = $"{assetName}#{count}";
-                                        this._sceneCache.Add(key, pack);
-                                        Logging.Print<Logger>($"<color=#90FF71>【Load Scene Additive】 => << CacheBundle >> scene: {key}</color>");
-                                    }
-                                }
-                                break;
+                            this.currentCount += (req.Progress - lastCount);
+                            lastCount = req.Progress;
+                            if (this.currentCount >= 0.9f) this.currentCount = 1f;
+                            progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         }
-                        break;
-                    }
-                    await UniTask.Yield();
-                } while (true);
+
+                        if (req.IsDone)
+                        {
+                            loaded = true;
+                            switch (loadSceneMode)
+                            {
+                                case LoadSceneMode.Single:
+                                    {
+                                        pack.SetPack(packageName, assetName, req);
+
+                                        // 清除 Additive 計數緩存 (主場景無需緩存, 因為會自動釋放子場景)
+                                        this._sceneCache.Clear();
+                                        this._sceneCounter.Clear();
+                                    }
+                                    break;
+                                case LoadSceneMode.Additive:
+                                    {
+                                        pack.SetPack(packageName, assetName, req);
+
+                                        // 加載場景的計數緩存 (Additive 需要進行計數, 要手動卸載子場景)
+                                        if (!this._sceneCounter.ContainsKey(assetName))
+                                        {
+                                            this._sceneCounter.Add(assetName, 1);
+                                            var count = this._sceneCounter[assetName];
+                                            string key = $"{assetName}#{count}";
+                                            this._sceneCache.Add(key, pack);
+                                            Logging.Print<Logger>($"<color=#90FF71>【Load Scene Additive】 => << CacheBundle >> scene: {key}</color>");
+                                        }
+                                        else
+                                        {
+                                            var count = ++this._sceneCounter[assetName];
+                                            string key = $"{assetName}#{count}";
+                                            this._sceneCache.Add(key, pack);
+                                            Logging.Print<Logger>($"<color=#90FF71>【Load Scene Additive】 => << CacheBundle >> scene: {key}</color>");
+                                        }
+                                    }
+                                    break;
+                            }
+                            break;
+                        }
+                        await UniTask.Yield();
+                    } while (true);
+                }
+            }
+            else
+            {
+                Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
             }
 
-            this.RemoveLoadingFlags(assetName);
-
-            if (pack.GetScene().isLoaded) return pack;
-            else
+            if (!loaded || !pack.GetScene().isLoaded)
             {
                 this.UnloadScene(assetName, true);
                 this.GetRetryCounter(assetName).AddRetryCount();
                 Logging.Print<Logger>($"<color=#90FF71>【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                 return await this.LoadSceneAsync(packageName, assetName, loadSceneMode, activateOnLoad, priority, progression);
             }
+
+            this.RemoveLoadingFlags(assetName);
+
+            return pack;
         }
 
         public void UnloadScene(string assetName, bool recursively)
@@ -730,7 +757,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.HasInCache(assetName))
                 {
                     BundlePack pack = this.GetFromCache(assetName);
-                    if (pack.IsValid())
+                    if (pack.IsAssetOperationHandleValid())
                     {
                         this.currentCount++;
                         progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
@@ -753,29 +780,34 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = new BundlePack();
 
                     var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-                    var req = package?.LoadAssetAsync<T>(assetName);
-
-                    if (req != null)
+                    if (package != null && package.CheckLocationValid(assetName))
                     {
-                        float lastCount = 0;
-                        do
+                        var req = package.LoadAssetAsync<T>(assetName);
+                        if (req != null)
                         {
-                            if (progression != null)
+                            float lastCount = 0;
+                            do
                             {
-                                this.currentCount += (req.Progress - lastCount);
-                                lastCount = req.Progress;
-                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                            }
+                                if (progression != null)
+                                {
+                                    this.currentCount += (req.Progress - lastCount);
+                                    lastCount = req.Progress;
+                                    progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+                                }
 
-                            if (req.IsDone)
-                            {
-                                loaded = true;
-                                pack.SetPack(packageName, assetName, req);
-                                break;
-                            }
-                            await UniTask.Yield();
-                        } while (true);
+                                if (req.IsDone)
+                                {
+                                    loaded = true;
+                                    pack.SetPack(packageName, assetName, req);
+                                    break;
+                                }
+                                await UniTask.Yield();
+                            } while (true);
+                        }
+                    }
+                    else
+                    {
+                        Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
                     }
 
                     if (loaded)
@@ -830,7 +862,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.HasInCache(assetName))
                 {
                     BundlePack pack = this.GetFromCache(assetName);
-                    if (pack.IsValid())
+                    if (pack.IsAssetOperationHandleValid())
                     {
                         this.currentCount++;
                         progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
@@ -853,22 +885,27 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = new BundlePack();
 
                     var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-                    var req = package?.LoadAssetSync<T>(assetName);
-
-                    if (req != null)
+                    if (package != null && package.CheckLocationValid(assetName))
                     {
-                        if (req.IsDone)
+                        var req = package.LoadAssetSync<T>(assetName);
+                        if (req != null)
                         {
-                            if (progression != null)
+                            if (req.IsDone)
                             {
-                                this.currentCount++;
-                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                            }
+                                if (progression != null)
+                                {
+                                    this.currentCount++;
+                                    progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+                                }
 
-                            loaded = true;
-                            pack.SetPack(packageName, assetName, req);
+                                loaded = true;
+                                pack.SetPack(packageName, assetName, req);
+                            }
                         }
+                    }
+                    else
+                    {
+                        Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
                     }
 
                     if (loaded)
@@ -920,11 +957,11 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 bool loaded = false;
                 pack = new BundlePack();
-                {
-                    var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-                    var req = package?.LoadAssetAsync<T>(assetName);
 
+                var package = PackageManager.GetPackage(packageName);
+                if (package != null && package.CheckLocationValid(assetName))
+                {
+                    var req = package.LoadAssetAsync<T>(assetName);
                     if (req != null)
                     {
                         float lastCount = 0;
@@ -947,6 +984,10 @@ namespace OxGFrame.AssetLoader.Cacher
                         } while (true);
                     }
                 }
+                else
+                {
+                    Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+                }
 
                 if (loaded)
                 {
@@ -961,7 +1002,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
 
             var asset = pack.GetAsset<T>();
-            if (pack.IsValid() && asset != null)
+            if (asset != null)
             {
                 // 引用計數++
                 pack.AddRef();
@@ -1006,11 +1047,11 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 bool loaded = false;
                 pack = new BundlePack();
-                {
-                    var package = PackageManager.GetPackage(packageName);
-                    if (package == null) Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} is not exist.</color>");
-                    var req = package?.LoadAssetSync<T>(assetName);
 
+                var package = PackageManager.GetPackage(packageName);
+                if (package != null && package.CheckLocationValid(assetName))
+                {
+                    var req = package.LoadAssetSync<T>(assetName);
                     if (req != null)
                     {
                         if (req.IsDone)
@@ -1026,6 +1067,10 @@ namespace OxGFrame.AssetLoader.Cacher
                         }
                     }
                 }
+                else
+                {
+                    Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+                }
 
                 if (loaded)
                 {
@@ -1040,7 +1085,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
 
             var asset = pack.GetAsset<T>();
-            if (pack.IsValid() && asset != null)
+            if (asset != null)
             {
                 // 引用計數++
                 pack.AddRef();
@@ -1122,7 +1167,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     var package = PackageManager.GetPackage(pack.packageName);
                     if (!packages.Contains(package)) packages.Add(package);
-                    if (pack.IsAssetOperationHandle()) this.UnloadAsset(assetName, true);
+                    this.UnloadAsset(assetName, true);
                 }
             }
 

@@ -66,30 +66,28 @@ namespace OxGFrame.AssetLoader.Cacher
 
                 bool loaded = false;
                 ResourcePack pack = new ResourcePack();
+
+                var req = Resources.LoadAsync<T>(assetName);
+                if (req != null)
                 {
-                    var req = Resources.LoadAsync<T>(assetName);
-
-                    if (req != null)
+                    float lastCount = 0;
+                    do
                     {
-                        float lastCount = 0;
-                        do
+                        if (progression != null)
                         {
-                            if (progression != null)
-                            {
-                                this.currentCount += (req.progress - lastCount);
-                                lastCount = req.progress;
-                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                            }
+                            this.currentCount += (req.progress - lastCount);
+                            lastCount = req.progress;
+                            progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+                        }
 
-                            if (req.isDone)
-                            {
-                                loaded = true;
-                                pack.SetPack(assetName, req.asset);
-                                break;
-                            }
-                            await UniTask.Yield();
-                        } while (true);
-                    }
+                        if (req.isDone)
+                        {
+                            loaded = true;
+                            pack.SetPack(assetName, req.asset);
+                            break;
+                        }
+                        await UniTask.Yield();
+                    } while (true);
                 }
 
                 if (loaded)
@@ -150,16 +148,15 @@ namespace OxGFrame.AssetLoader.Cacher
 
                 bool loaded = false;
                 ResourcePack pack = new ResourcePack();
-                {
-                    var asset = Resources.Load<T>(assetName);
-                    if (asset != null)
-                    {
-                        this.currentCount++;
-                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
-                        loaded = true;
-                        pack.SetPack(assetName, asset);
-                    }
+                var asset = Resources.Load<T>(assetName);
+                if (asset != null)
+                {
+                    this.currentCount++;
+                    progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+
+                    loaded = true;
+                    pack.SetPack(assetName, asset);
                 }
 
                 if (loaded)
@@ -210,30 +207,28 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 bool loaded = false;
                 pack = new ResourcePack();
+
+                var req = Resources.LoadAsync<T>(assetName);
+                if (req != null)
                 {
-                    var req = Resources.LoadAsync<T>(assetName);
-
-                    if (req != null)
+                    float lastCount = 0;
+                    do
                     {
-                        float lastCount = 0;
-                        do
+                        if (progression != null)
                         {
-                            if (progression != null)
-                            {
-                                this.currentCount += (req.progress - lastCount);
-                                lastCount = req.progress;
-                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                            }
+                            this.currentCount += (req.progress - lastCount);
+                            lastCount = req.progress;
+                            progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+                        }
 
-                            if (req.isDone)
-                            {
-                                loaded = true;
-                                pack.SetPack(assetName, req.asset);
-                                break;
-                            }
-                            await UniTask.Yield();
-                        } while (true);
-                    }
+                        if (req.isDone)
+                        {
+                            loaded = true;
+                            pack.SetPack(assetName, req.asset);
+                            break;
+                        }
+                        await UniTask.Yield();
+                    } while (true);
                 }
 
                 if (loaded)
@@ -295,16 +290,15 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 bool loaded = false;
                 pack = new ResourcePack();
-                {
-                    asset = Resources.Load<T>(assetName);
-                    if (asset != null)
-                    {
-                        this.currentCount = this.totalCount;
-                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
-                        loaded = true;
-                        pack.SetPack(assetName, asset);
-                    }
+                asset = Resources.Load<T>(assetName);
+                if (asset != null)
+                {
+                    this.currentCount = this.totalCount;
+                    progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+
+                    loaded = true;
+                    pack.SetPack(assetName, asset);
                 }
 
                 if (loaded)

@@ -1587,14 +1587,16 @@ namespace OxGFrame.AssetLoader
 
         internal static bool RefineResourcesPath(ref string assetName)
         {
+            if (string.IsNullOrEmpty(assetName)) return false;
             string prefix = "res#";
-
-            if (assetName.IndexOf(prefix) != -1)
+            if (assetName.Length > prefix.Length)
             {
-                assetName = assetName.Replace(prefix, string.Empty);
-                return true;
+                if (assetName.Substring(0, prefix.Length).Equals(prefix))
+                {
+                    assetName = assetName.Replace(prefix, string.Empty);
+                    return true;
+                }
             }
-
             return false;
         }
     }
