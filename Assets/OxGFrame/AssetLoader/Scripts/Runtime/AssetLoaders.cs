@@ -1593,7 +1593,8 @@ namespace OxGFrame.AssetLoader
             {
                 if (assetName.Substring(0, prefix.Length).Equals(prefix))
                 {
-                    assetName = assetName.Replace(prefix, string.Empty);
+                    var count = assetName.Length - prefix.Length;
+                    assetName = assetName.Substring(prefix.Length, count);
                     return true;
                 }
             }

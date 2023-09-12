@@ -14,7 +14,7 @@
       "dependencies": {
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "e89d9a715429ea2c306532f574c70d281404e6c0"
+      "hash": "382a0675d4cb7019b563d90bd10b93f53d9b9a53"
     },
     "com.jeffjadulco.guidregenerator": {
       "version": "https://github.com/jeffjadulco/unity-guid-regenerator.git",

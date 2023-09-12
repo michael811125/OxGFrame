@@ -9,6 +9,18 @@ using UnityEngine;
 
 namespace OxGFrame.CoreFrame
 {
+    public struct RefreshInfo
+    {
+        public string assetName;
+        public object data;
+
+        public RefreshInfo(string assetName, object data)
+        {
+            this.assetName = assetName;
+            this.data = data;
+        }
+    }
+
     [DisallowMultipleComponent]
     internal abstract class FrameManager<T> : MonoBehaviour where T : FrameBase
     {
@@ -588,15 +600,17 @@ namespace OxGFrame.CoreFrame
         /// </summary>
         /// <param name="assetNames"></param>
         /// <param name="objs"></param>
-        public void SendRefreshData(string[] assetNames, object[] objs)
+        public void SendRefreshData(RefreshInfo[] refreshInfos)
         {
-            if (assetNames != null)
+            if (refreshInfos != null)
             {
-                for (int i = 0; i < assetNames.Length; i++)
+                for (int i = 0; i < refreshInfos.Length; i++)
                 {
-                    if (this.HasStackInAllCache(assetNames[i]))
+                    string assetName = refreshInfos[i].assetName;
+                    object data = refreshInfos[i].data;
+                    if (this.HasStackInAllCache(assetName))
                     {
-                        FrameStack<T> stack = this.GetStackFromAllCache(assetNames[i]);
+                        FrameStack<T> stack = this.GetStackFromAllCache(assetName);
                         if (stack != null)
                         {
                             if (this.CheckIsShowing(stack.Peek()) ||
@@ -604,8 +618,7 @@ namespace OxGFrame.CoreFrame
                             {
                                 foreach (var fBase in stack.cache)
                                 {
-                                    if (objs != null && objs.Length > 0) fBase.OnReceiveAndRefresh(objs[i]);
-                                    else fBase.OnReceiveAndRefresh(objs);
+                                    fBase.OnReceiveAndRefresh(data);
                                 }
                             }
                         }
@@ -618,18 +631,43 @@ namespace OxGFrame.CoreFrame
         /// 【特殊方法】刷新特定物件
         /// </summary>
         /// <param name="obj"></param>
-        public void SendRefreshData(object obj)
+        public void SendRefreshDataToAll(RefreshInfo[] specificRefreshInfos)
         {
             foreach (FrameStack<T> stack in this._dictAllCache.Values)
             {
                 if (stack != null)
                 {
+                    // 特定刷新與傳遞數據
+                    bool doSpecific = false;
+                    if (specificRefreshInfos != null)
+                    {
+                        for (int i = 0; i < specificRefreshInfos.Length; i++)
+                        {
+                            if (stack.assetName.Equals(specificRefreshInfos[i].assetName))
+                            {
+                                if (this.CheckIsShowing(stack.Peek()) ||
+                                    this.CheckIsHiding(stack.Peek()))
+                                {
+                                    foreach (var fBase in stack.cache)
+                                    {
+                                        fBase.OnReceiveAndRefresh(specificRefreshInfos[i].data);
+                                    }
+                                }
+                                doSpecific = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (doSpecific) continue;
+
+                    // 單純刷新
                     if (this.CheckIsShowing(stack.Peek()) ||
                         this.CheckIsHiding(stack.Peek()))
                     {
                         foreach (var fBase in stack.cache)
                         {
-                            fBase.OnReceiveAndRefresh(obj);
+                            fBase.OnReceiveAndRefresh();
                         }
                     }
                 }

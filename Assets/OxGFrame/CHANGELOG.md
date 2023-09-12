@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [2.7.11] - 2023-09-12
+- Added IsRetryActive for RetryCounter (retryCount > 0).
+- Fixed RetryCounter reference bug issue.
+- Modified RefinePath methods use SubString to process.
+- Modified params of SendRefreshData method (use RefreshInfo struct).
+```C#
+    // CoreFrames.UIFrame & CoreFrames.SRFrame
+    public static void SendRefreshData(RefreshInfo refreshInfo)
+    public static void SendRefreshData(RefreshInfo[] refreshInfos)
+    public static void SendRefreshDataToAll(RefreshInfo[] specificRefreshInfos = null)
+```
+
 ## [2.7.10] - 2023-09-11
 - Added more check methods for AssetObject.
 ```C#

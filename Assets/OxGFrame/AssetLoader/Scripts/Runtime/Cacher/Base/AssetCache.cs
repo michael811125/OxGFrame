@@ -4,7 +4,7 @@ namespace OxGFrame.AssetLoader.Cacher
 {
     public abstract class AssetCache<T> : ICache<T>
     {
-        public struct RetryCounter
+        public class RetryCounter
         {
             public byte retryCount;
             public byte maxRetryCount;
@@ -13,6 +13,11 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 this.retryCount = 0;
                 this.maxRetryCount = maxRetryCount;
+            }
+
+            public bool IsRetryActive()
+            {
+                return this.retryCount > 0;
             }
 
             public bool IsRetryValid()

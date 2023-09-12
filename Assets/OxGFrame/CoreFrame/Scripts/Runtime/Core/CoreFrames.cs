@@ -51,30 +51,28 @@ namespace OxGFrame.CoreFrame
             /// <summary>
             /// Send refresh message to specific with data
             /// </summary>
-            /// <param name="assetName"></param>
-            /// <param name="data"></param>
-            public static void SendRefreshData(string assetName, object data = null)
+            /// <param name="refreshInfo"></param>
+            public static void SendRefreshData(RefreshInfo refreshInfo)
             {
-                UIManager.GetInstance().SendRefreshData(new string[] { assetName }, new object[] { data });
+                UIManager.GetInstance().SendRefreshData(new RefreshInfo[] { refreshInfo });
             }
 
             /// <summary>
-            /// Send refresh message to specific with data (array pairs)
+            /// Send refresh message to specific with data
             /// </summary>
-            /// <param name="assetNames"></param>
-            /// <param name="data"></param>
-            public static void SendRefreshData(string[] assetNames, object[] data = null)
+            /// <param name="refreshInfos"></param>
+            public static void SendRefreshData(RefreshInfo[] refreshInfos)
             {
-                UIManager.GetInstance().SendRefreshData(assetNames, data);
+                UIManager.GetInstance().SendRefreshData(refreshInfos);
             }
 
             /// <summary>
-            /// Send refresh message to all
+            /// Send refresh message to all (If specificRefreshInfos = null, only refresh without specific asset and data)
             /// </summary>
-            /// <param name="data"></param>
-            public static void SendRefreshData(object data = null)
+            /// <param name="specificRefreshInfos"></param>
+            public static void SendRefreshDataToAll(RefreshInfo[] specificRefreshInfos = null)
             {
-                UIManager.GetInstance().SendRefreshData(data);
+                UIManager.GetInstance().SendRefreshDataToAll(specificRefreshInfos);
             }
 
             #region Canvas
@@ -278,30 +276,28 @@ namespace OxGFrame.CoreFrame
             /// <summary>
             /// Send refresh message to specific with data
             /// </summary>
-            /// <param name="assetName"></param>
-            /// <param name="data"></param>
-            public static void SendRefreshData(string assetName, object data = null)
+            /// <param name="refreshInfo"></param>
+            public static void SendRefreshData(RefreshInfo refreshInfo)
             {
-                SRManager.GetInstance().SendRefreshData(new string[] { assetName }, new object[] { data });
+                SRManager.GetInstance().SendRefreshData(new RefreshInfo[] { refreshInfo });
             }
 
             /// <summary>
-            /// Send refresh message to specific with data (array pairs)
+            /// Send refresh message to specific with data
             /// </summary>
-            /// <param name="assetNames"></param>
-            /// <param name="data"></param>
-            public static void SendRefreshData(string[] assetNames, object[] data = null)
+            /// <param name="refreshInfos"></param>
+            public static void SendRefreshData(RefreshInfo[] refreshInfos)
             {
-                SRManager.GetInstance().SendRefreshData(assetNames, data);
+                SRManager.GetInstance().SendRefreshData(refreshInfos);
             }
 
             /// <summary>
-            /// Send refresh message to all
+            /// Send refresh message to all (If specificRefreshInfos = null, only refresh without specific asset and data)
             /// </summary>
-            /// <param name="data"></param>
-            public static void SendRefreshData(object data = null)
+            /// <param name="specificRefreshInfos"></param>
+            public static void SendRefreshDataToAll(RefreshInfo[] specificRefreshInfos = null)
             {
-                SRManager.GetInstance().SendRefreshData(data);
+                SRManager.GetInstance().SendRefreshDataToAll(specificRefreshInfos);
             }
 
             #region GetComponent
@@ -767,7 +763,8 @@ namespace OxGFrame.CoreFrame
                 {
                     if (sceneName.Substring(0, prefix.Length).Equals(prefix))
                     {
-                        sceneName = sceneName.Replace(prefix, string.Empty);
+                        var count = sceneName.Length - prefix.Length;
+                        sceneName = sceneName.Substring(prefix.Length, count);
                         return true;
                     }
                 }
