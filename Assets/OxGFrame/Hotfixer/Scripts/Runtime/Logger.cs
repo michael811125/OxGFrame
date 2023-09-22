@@ -3,5 +3,8 @@
 namespace OxGFrame.Hotfixer
 {
     [LoggerName("OxGFrame.Hotfixer.Logger")]
-    public class Logger : Logging { }
+    public class Logger : Logging
+    {
+        public Logger() { }
+    }
 }

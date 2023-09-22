@@ -526,10 +526,6 @@ video_urlset 127.0.0.1/video/
 
 ---
 
-### 歡迎加入一起交流 (QQ 315262286)
-
----
-
 ## License
 
 This library is under the MIT License.
