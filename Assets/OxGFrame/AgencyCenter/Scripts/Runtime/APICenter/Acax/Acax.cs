@@ -5,10 +5,10 @@ using UnityEngine.Networking;
 
 namespace OxGFrame.AgencyCenter.APICenter
 {
+    public delegate void ResponseHandle(string response);
+
     public static class Http
     {
-        public delegate void ResponseHandle(string response);
-
         /// <summary>
         /// Callback C# and Xml = Acax
         /// </summary>
@@ -44,22 +44,8 @@ namespace OxGFrame.AgencyCenter.APICenter
         {
             using (UnityWebRequest request = new UnityWebRequest(url, method))
             {
-                if (body.Length > 0)
-                {
-                    Dictionary<string, object> jsonObj = new Dictionary<string, object>();
-                    for (int row = 0; row < body.GetLength(0); row++)
-                    {
-                        if (body.GetLength(1) != 2) continue;
-                        jsonObj.Add((string)body[row, 0], body[row, 1]);
-                    }
-                    string json = JsonConvert.SerializeObject(jsonObj);
-
-                    byte[] jsonBinary = System.Text.Encoding.Default.GetBytes(json);
-                    request.uploadHandler = new UploadHandlerRaw(jsonBinary);
-                    request.downloadHandler = new DownloadHandlerBuffer();
-                }
-
-                if (headers.Length > 0)
+                // Header args
+                if (headers != null && headers.Length > 0)
                 {
                     for (int row = 0; row < headers.GetLength(0); row++)
                     {
@@ -68,6 +54,24 @@ namespace OxGFrame.AgencyCenter.APICenter
                     }
                 }
 
+                // Body args
+                if (body != null && body.Length > 0)
+                {
+                    Dictionary<string, object> jsonArgs = new Dictionary<string, object>();
+                    for (int row = 0; row < body.GetLength(0); row++)
+                    {
+                        if (body.GetLength(1) != 2) continue;
+                        jsonArgs.Add((string)body[row, 0], body[row, 1]);
+                    }
+                    string json = JsonConvert.SerializeObject(jsonArgs);
+                    byte[] jsonBinary = System.Text.Encoding.Default.GetBytes(json);
+                    request.uploadHandler = new UploadHandlerRaw(jsonBinary);
+                }
+
+                // Response download buffer
+                request.downloadHandler = new DownloadHandlerBuffer();
+
+                // Start send request
                 await request.SendWebRequest();
 
                 if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)

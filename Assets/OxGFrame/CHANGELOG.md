@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.7.12] - 2023-09-22
+- Fixed Acax GET method bug issue, download buffer is null reference if without body data.
+- Modified Acax header args and body args can be null.
+
 ## [2.7.11] - 2023-09-12
 - Added IsRetryActive for RetryCounter (retryCount > 0).
 - Fixed RetryCounter reference bug issue.

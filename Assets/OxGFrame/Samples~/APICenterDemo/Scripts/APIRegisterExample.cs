@@ -7,7 +7,7 @@ public class APIQueryTest : APIBase
     // Custom your response handler
     public delegate void ResponseHandler(object obj);
 
-    public void Req(string[] guids, ResponseHandler rh)
+    public void ReqPost(string[] guids, ResponseHandler rh)
     {
         Http.Acax(
              "url",
@@ -34,7 +34,7 @@ public class APIQueryTest : APIBase
         );
     }
 
-    public async UniTask ReqAsync(string[] guids, ResponseHandler rh)
+    public async UniTask ReqPostAsync(string[] guids, ResponseHandler rh)
     {
         await Http.AcaxAsync(
              "url",

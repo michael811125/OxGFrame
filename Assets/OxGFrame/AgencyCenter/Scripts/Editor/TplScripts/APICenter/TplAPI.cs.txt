@@ -5,7 +5,69 @@ public class #SCRIPTNAME# : APIBase
 {
     /* Declare Your Delegate (Callback) */
 	
-    public void Req(/* Custom Your Parameters */)
+    public void ReqGet(/* Custom Your Parameters */)
+    {
+        Http.Acax(
+             "url" + "?"
+			 // + $"key={value}&"
+			 ,
+             // Method
+             "GET",
+             // Header
+             new string[,] {
+                 { "Content-Type", "application/json"}
+             },
+             // Body
+             null,
+             // Response
+             (json) =>
+             {
+                 // Response Json Example: 
+                 // {   
+                 //     "status": true,
+                 //     "message": "success",
+                 //     "data": []
+                 // }
+    
+                 /*
+    			 Do Data Callback
+    			 */				 
+             }
+        );
+    }
+    
+    public async UniTask ReqGetAsync(/* Custom Your Parameters */)
+    {
+        await Http.AcaxAsync(
+             "url" + "?"
+			 // + $"key={value}&"
+			 ,
+             // Method
+             "GET",
+             // Header
+             new string[,] {
+                 { "Content-Type", "application/json"}
+             },
+             // Body
+             null,
+             // Response
+             (json) =>
+             {
+                 // Response Json Example: 
+                 // {   
+                 //     "status": true,
+                 //     "message": "success",
+                 //     "data": []
+                 // }
+    
+                 /*
+    			 Do Data Callback
+    			 */
+             }
+        );
+    }
+    
+    public void ReqPost(/* Custom Your Parameters */)
     {
         Http.Acax(
              "url",
@@ -28,15 +90,15 @@ public class #SCRIPTNAME# : APIBase
                  //     "message": "success",
                  //     "data": []
                  // }
-
+    
                  /*
-				 Do Data Callback
-				 */				 
+    			 Do Data Callback
+    			 */				 
              }
         );
     }
 	
-	public async UniTask ReqAsync(/* Custom Your Parameters */)
+	public async UniTask ReqPostAsync(/* Custom Your Parameters */)
     {
         await Http.AcaxAsync(
              "url",

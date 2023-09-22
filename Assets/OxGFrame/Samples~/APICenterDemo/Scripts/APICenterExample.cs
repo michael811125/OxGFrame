@@ -20,8 +20,8 @@ public class APICenterExample : CenterBase<APICenterExample, APIBase>
     /*
     public async void UseExample()
     {
-        // Get API and Request Callback
-        APICenterExample.Find<APIQueryTest>()?.Req
+        // Find API and Request Callback
+        APICenterExample.Find<APIQueryTest>()?.ReqPost
         (
              new string[] { "id1", "id2" },
              (data) =>
@@ -30,11 +30,11 @@ public class APICenterExample : CenterBase<APICenterExample, APIBase>
              }
         );
 
-        // Get API and Request Async
+        // Find API and Request Async
         var api = APICenterExample.Find<APIQueryTest>();
         if (api != null)
         {
-            await APICenterExample.Find<APIQueryTest>().ReqAsync
+            await APICenterExample.Find<APIQueryTest>().ReqPostAsync
             (
                  new string[] { "id1", "id2" },
                  (data) =>
