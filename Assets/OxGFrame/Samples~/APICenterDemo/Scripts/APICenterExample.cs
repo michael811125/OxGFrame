@@ -1,5 +1,5 @@
-﻿using OxGFrame.AgencyCenter;
-using OxGFrame.AgencyCenter.APICenter;
+﻿using OxGFrame.CenterFrame;
+using OxGFrame.CenterFrame.APICenter;
 
 public class APICenterExample : CenterBase<APICenterExample, APIBase>
 {

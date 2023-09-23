@@ -100,7 +100,8 @@ namespace OxGFrame.CoreFrame.Editor
         }
 
         #region ContextMenus
-        [ButtonClicker(nameof(SortTailRules), "Sort Tail Rules (A-Z)")]
+        [Space(2.5f)]
+        [ButtonClicker(nameof(SortTailRules), "Sort Tail Rules (A-Z)", "#00ffd1")]
         public bool sortTailRules;
 
         [ContextMenu("Sort Tail Rules (A-Z)", false, 0)]

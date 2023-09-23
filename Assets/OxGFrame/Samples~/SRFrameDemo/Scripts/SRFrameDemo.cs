@@ -3,16 +3,12 @@ using UnityEngine;
 
 public static class ScenePrefs
 {
-    /**
-     * SC = Scene (Sc)
-     */
-
     // If use prefix "res#" will load from resource else will from bundle
     private const string _prefix = "res#";
     private const string _path = "Example/ScenePrefabs/";
 
     // Assets
-    public static readonly string DemoSC = $"{_prefix}{_path}DemoSC";
+    public static readonly string CubeSceneSR = $"{_prefix}{_path}CubeSceneSR";
 
     // Group Id
     public const int Id = 1;
@@ -20,16 +16,12 @@ public static class ScenePrefs
 
 public static class ResPrefs
 {
-    /**
-     * RS = Resource (Res)
-     */
-
     // If use prefix "res#" will load from resource else will from bundle
     private const string _prefix = "res#";
     private const string _path = "Example/ResPrefabs/";
 
     // Assets
-    public static readonly string DemoRS = $"{_prefix}{_path}DemoRS";
+    public static readonly string MeshResSR = $"{_prefix}{_path}MeshResSR";
 
     // Group Id
     public const int Id = 2;
@@ -46,71 +38,78 @@ public class SRFrameDemo : MonoBehaviour
     }
 
     #region Scene
-    public async void PreloadDemoSC()
+    public async void PreloadCubeSceneSR()
     {
-        await CoreFrames.SRFrame.Preload(ScenePrefs.DemoSC);
+        await CoreFrames.SRFrame.Preload(ScenePrefs.CubeSceneSR);
     }
 
-    public async void ShowDemoSC()
+    public async void ShowCubeSceneSR()
     {
-        await CoreFrames.SRFrame.Show(ScenePrefs.Id, ScenePrefs.DemoSC);
+        await CoreFrames.SRFrame.Show(ScenePrefs.Id, ScenePrefs.CubeSceneSR);
     }
 
-    public async void ShowDemoSCAndSetParent()
+    public async void ShowCubeSceneSRAndSetParent()
     {
-        await CoreFrames.SRFrame.Show(ScenePrefs.Id, ScenePrefs.DemoSC, null, null, null, this.parent);
+        await CoreFrames.SRFrame.Show(ScenePrefs.Id, ScenePrefs.CubeSceneSR, null, null, null, this.parent);
     }
 
-    public void HideDemoSC()
+    public void HideCubeSceneSR()
     {
-        CoreFrames.SRFrame.Hide(ScenePrefs.DemoSC);
+        CoreFrames.SRFrame.Hide(ScenePrefs.CubeSceneSR);
     }
 
-    public void RevealDemoSC()
+    public void RevealCubeSceneSR()
     {
-        CoreFrames.SRFrame.Reveal(ScenePrefs.DemoSC);
+        CoreFrames.SRFrame.Reveal(ScenePrefs.CubeSceneSR);
     }
 
-    public void CloseDemoSC()
+    public void CloseCubeSceneSR()
     {
-        CoreFrames.SRFrame.Close(ScenePrefs.DemoSC);
+        CoreFrames.SRFrame.Close(ScenePrefs.CubeSceneSR);
     }
 
-    public void CloseWithDestroyDemoSC()
+    public void CloseWithDestroyCubeSceneSR()
     {
-        CoreFrames.SRFrame.Close(ScenePrefs.DemoSC, false, true);
+        CoreFrames.SRFrame.Close(ScenePrefs.CubeSceneSR, false, true);
     }
     #endregion
 
     #region Res
-    public async void PreloadDemoRS()
+    public async void PreloadMeshResSR()
     {
-        await CoreFrames.SRFrame.Preload(ResPrefs.DemoRS);
+        await CoreFrames.SRFrame.Preload(ResPrefs.MeshResSR);
     }
 
-    public async void ShowDemoRS()
+    public async void ShowMeshResSR()
     {
-        await CoreFrames.SRFrame.Show(ResPrefs.Id, ResPrefs.DemoRS);
+        var sr = await CoreFrames.SRFrame.Show<MeshResSR>(ResPrefs.Id, ResPrefs.MeshResSR);
+        if (sr == null) sr = CoreFrames.SRFrame.GetComponent<MeshResSR>(ResPrefs.MeshResSR);
+        if (sr != null)
+        {
+            // Get mesh res
+            Debug.Log($"Get Cube Mesh => vertexCount: {sr.GetCubeMesh().vertexCount}");
+            Debug.Log($"Get Sphere Mesh => vertexCount: {sr.GetSphereMesh().vertexCount}");
+        }
     }
 
-    public void HideDemoRS()
+    public void HideMeshResSR()
     {
-        CoreFrames.SRFrame.Hide(ResPrefs.DemoRS);
+        CoreFrames.SRFrame.Hide(ResPrefs.MeshResSR);
     }
 
-    public void RevealDemoRS()
+    public void RevealMeshResSR()
     {
-        CoreFrames.SRFrame.Reveal(ResPrefs.DemoRS);
+        CoreFrames.SRFrame.Reveal(ResPrefs.MeshResSR);
     }
 
-    public void CloseDemoRS()
+    public void CloseMeshResSR()
     {
-        CoreFrames.SRFrame.Close(ResPrefs.DemoRS);
+        CoreFrames.SRFrame.Close(ResPrefs.MeshResSR);
     }
 
-    public void CloseWithDestroyDemoRS()
+    public void CloseWithDestroyMeshResSR()
     {
-        CoreFrames.SRFrame.Close(ResPrefs.DemoRS, false, true);
+        CoreFrames.SRFrame.Close(ResPrefs.MeshResSR, false, true);
     }
     #endregion
 

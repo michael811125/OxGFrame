@@ -1,7 +1,11 @@
 # CHANGELOG
 
-## [2.7.14] - 2023-09-23
-- Renamed AgencyCenter to CenterFrame (replace all AgencyCenter to CenterFrame).
+## [2.8.0] - 2023-09-24
+- Upgraded UniTask to v2.4.1.
+- Added BundlePlan for Export Bundle And Config Generator editor (can save bundle plans).
+- Modified SRFrameDemo.
+- Modified CPFrameDemo (added Factory mode example).
+- Renamed AgencyCenter to CenterFrame (**If already use must replace all AgencyCenter to CenterFrame and recompile**).
 
 ## [2.7.13] - 2023-09-22
 - Added default constructor for Loggers.

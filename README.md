@@ -12,7 +12,7 @@
 
 | **需先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
-| [OxGKit.LoggingSystem v0.0.5-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
+| [OxGKit.LoggingSystem v0.0.6-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
 | [OxGKit.Utilities v0.0.7-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
 | [LWMyBox v1.1.4 or higher](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager **(建議改成輕量版的 MyBox 改進編譯效率)** |
 | [HybirdCLR v4.0.4 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
@@ -70,7 +70,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 
 ### Main-ThirdParty
 
-- 使用 [UnitTask v2.3.3](https://github.com/Cysharp/UniTask) (最佳異步處理方案)
+- 使用 [UnitTask v2.4.1](https://github.com/Cysharp/UniTask) (最佳異步處理方案)
 - 使用部分 [UniFramework](https://github.com/gmhevinci/UniFramework) (輕量級框架) **特別推薦**
 
 ### Sub-ThirdParty
@@ -109,7 +109,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 - MediaFrame
 - GSIFrame
 - NetFrame
-- AgencyCenter
+- CenterFrame
 
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_9.png)
 
@@ -151,7 +151,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 
 使用 YooAsset Collector 進行資源收集 (可以使用 ActiveRule 決定哪些群組需要打包，進行 Built-in 跟 Patch 資源的區分)，再使用 YooAsset Builder 進行打包 **(不需要手動更改資源日期版號)**，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
 
-再使用 OxGFrame/AssetLoader/Bundle And Config Generator 進行配置檔建立。
+再使用 OxGFrame/AssetLoader/Export Bundle And Config Generator 進行配置檔建立。
 
 1. 先進行 Export App Config To StreamingAssets 建立 appconfig.json 至 StreamingAssets 中 (主要用於 App Version 比對)。
 2. 再選擇 Export Configs And App Bundles for CDN 輸出上傳資源，Source Folder 選擇剛剛使用 YooAsset 輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行預設包的群組分包，輸出後將 CDN 資料夾直接上傳至 Server。
@@ -170,7 +170,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 - Offline Mode (單機模式)，需將 AB 打包至 Built-in，並且產出相關配置，需注意 PatchLauncher 的解密設定。
 - Host Mode (聯機模式)，需將 AB 打包區分 Built-in 跟 Patch，並且產出相關配置，需注意 PatchLauncher 的解密設定。
   - 允許選擇 Semantic Version 版號檢查規則 (比對完整版號 X.Y.Z 或比對大小版號 X.Y)。
-  - 允許跳過 Default Package 主下載器的下載階段 (強制邊玩邊下載)。
+  - 允許跳過 Preset App Packages 主下載階段 (強制邊玩邊下載)。
 - WebGL Mode (僅支援 WebGL 平台)，需將 AB 全部打包至 Built-in (StreamingAssets)。
   - 不支援事先下載，主要是因為 WebGL 是邊玩邊下載。
 
@@ -202,7 +202,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 - App Packages (.../CDN/\<ProductName\>/\<Platform\>/\<Version\>/Packages)
   - 手動進行 AssetPatcher.InitAppPackage 的初始 (如果 autoUpdate = false，則需要自行另外調用 AssetPatcher.UpdatePackage 進行 Manifest 的更新)。
 - DLC Packages (.../CDN/\<ProductName\>/\<Platform\>/DLC/Packages)
-  - 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion，變成只要 DLC 有更新就可以使用固定路徑進行更新。
+  - 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion (ex: "latest")，變成只要 DLC 有更新就可以使用固定路徑進行更新。
 
 **App Package**
 ```C#
@@ -318,7 +318,7 @@ Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (Eve
 
 #### 自動生成停止綁定標籤 (Hotkey: Shift+E, E: End)
 
-能夠縮短 Runtime 在綁定的向下查找次數，時間複雜度為 O(N)，N = StopEndIdx。
+能夠縮短 Runtime 在綁定的向下查找次數，時間複雜度為 O(N)，N = StopEndIdx (**如有大量節點物件建議使用**)。
   - 如果有特殊使用 Transform.Find 查找子物件時，剛好子物件名稱有 # 標籤，可以無視 (在 Runtime 時，會 Replace 標籤，還原字串)。
 
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_8.png)
@@ -417,7 +417,7 @@ video_urlset 127.0.0.1/video/
 
 ### GSIFrame
 
-遊戲階段整合模塊 (FSM 概念)，而 GSI 為 Game Stage Integration 的縮寫，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商標階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), GamingStage (遊玩階段), FightStage (戰鬥階段) 等，以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
+遊戲階段整合模塊 (FSM 概念)，而 GSI 為 **Game Stage Integration** 的縮寫，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商標階段), HotfixStage (熱修復階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), LobbyStage (大廳階段), FightStage (戰鬥階段) 等，以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
 
 - GSIBase，遊戲階段基類，在透過 Update 切換當前階段自定義的狀態流程 (Enum) 時，可透過 StopUpdate & RunUpdate 方法進行開關設置，即可停止或繼續 Update 的每幀調用，需建立實作 => 右鍵創建
 - GSIManagerBase，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建
@@ -470,9 +470,9 @@ video_urlset 127.0.0.1/video/
 
 ---
 
-### AgencyCenter
+### CenterFrame
 
-事件代管中心，可以自行實現 TClass 註冊類型，再由自定義管理類統一繼承 CenterBase<TCenter, TClass>，實現簡易事件代管派送 (集中式管理)，預設提供以下。
+事件委派中心，可以自行實現 TClass 註冊類型，再由自定義管理類統一繼承 CenterBase<TCenter, TClass>，實現簡易事件派送，預設提供以下。
 
 #### Default API
 
@@ -496,7 +496,7 @@ video_urlset 127.0.0.1/video/
 
 #### EventCenter
 
-集中式 Event 整合模塊 (非多監聽式)，如要多監聽式需要自行定義 handler 使用 event (access modifier)，另外可以自定義每個 Event 的格式進行派送 (也可列出事件 ID 交由企劃填表填入已註冊的 ID，就能讀表取出事件 ID 進行派送)。
+集中式 Event 整合模塊，可以自定義每個 Event 的格式進行派送 (也可列出事件 ID 交由企劃填表填入已註冊的 ID，就能讀表取出事件 ID 進行派送)。
 - TClass: EventBase，單個 Event 基類，需建立實作 => 右鍵創建
 - TCenter: EventCenter，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
   - 使用 Default API 進行調用 (Add, Find)
@@ -508,9 +508,9 @@ video_urlset 127.0.0.1/video/
 - TCenter: APICenter，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
   - 使用 Default API 進行調用 (Add, Find)
 
-**如果沒有要使用 AgencyCenter 事件模塊，可以直接刪除整個 AgencyCenter。**
+**如果沒有要使用 CenterFrame 事件模塊，可以直接刪除整個 CenterFrame。**
   
-※備註 : Right-Click Create/OxGFrame/Agency Center... (Template cs)
+※備註 : Right-Click Create/OxGFrame/Center Frame... (Template cs)
 
 ---
 

@@ -205,7 +205,7 @@ GameObject:
   - component: {fileID: 1538527438146867253}
   - component: {fileID: 8029545526938205450}
   m_Layer: 0
-  m_Name: DemoSC
+  m_Name: CubeSceneSR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

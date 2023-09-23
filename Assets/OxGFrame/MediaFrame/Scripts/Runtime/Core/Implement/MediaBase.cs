@@ -225,7 +225,7 @@ namespace OxGFrame.MediaFrame
             {
                 Logging.Print<Logger>($"readline: {readLine}");
                 if (readLine.IndexOf('#') != -1 && readLine[0] == '#') continue;
-                var args = readLine.Split(' ');
+                var args = readLine.Split(' ', 2);
                 if (args.Length >= 2)
                 {
                     Logging.Print<Logger>($"args => key: {args[0]}, value: {args[1]}");

@@ -8,8 +8,8 @@ public static class TplPrefs
     private const string _path = "Example/Prefabs/";
 
     // Assets
-    public static readonly string DemoCP1 = $"{_prefix}{_path}DemoCP1";
-    public static readonly string DemoCP2 = $"{_prefix}{_path}DemoCP2";
+    public static readonly string Demo1CP = $"{_prefix}{_path}Demo1CP";
+    public static readonly string Demo2CP = $"{_prefix}{_path}Demo2CP";
 }
 
 public class CPFrameDemo : MonoBehaviour
@@ -24,13 +24,20 @@ public class CPFrameDemo : MonoBehaviour
 
     public void LoadDemoPref1()
     {
-        var pref = CoreFrames.CPFrame.LoadWithClone<DemoCP1>(TplPrefs.DemoCP1);
+        // Just clone CP without Factory Mode
+        var pref = CoreFrames.CPFrame.LoadWithClone<Demo1CP>(TplPrefs.Demo1CP);
         if (pref != null) pref.MyMethod();
     }
 
+    private int _price = 10;
     public async void LoadDemoPref2()
     {
-        var pref = await CoreFrames.CPFrame.LoadWithCloneAsync<DemoCP2>(TplPrefs.DemoCP2, this.container);
-        if (pref != null) pref.MyMethod();
+        // Clone template CP with Factory Mode (can make ItemIcon, enemyModel, and so on.)
+        var pref = await Demo2CP.CloneParsedDemo2CP(this._price, this.container);
+        if (pref != null)
+        {
+            pref.PrintPrice();
+            this._price++;
+        }
     }
 }

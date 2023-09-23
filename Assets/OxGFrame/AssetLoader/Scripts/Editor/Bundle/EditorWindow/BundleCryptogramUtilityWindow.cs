@@ -134,7 +134,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             GUIStyle style = new GUIStyle();
             var bg = new Texture2D(1, 1);
-            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
             Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             bg.SetPixels(pixels);
             bg.Apply();
@@ -164,7 +164,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             GUIStyle style = new GUIStyle();
             var bg = new Texture2D(1, 1);
-            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
             Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             bg.SetPixels(pixels);
             bg.Apply();
@@ -196,7 +196,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             GUIStyle style = new GUIStyle();
             var bg = new Texture2D(1, 1);
-            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
             Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             bg.SetPixels(pixels);
             bg.Apply();
@@ -232,7 +232,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             GUIStyle style = new GUIStyle();
             var bg = new Texture2D(1, 1);
-            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
             Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             bg.SetPixels(pixels);
             bg.Apply();
@@ -256,7 +256,7 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             Color bc = GUI.backgroundColor;
-            GUI.backgroundColor = new Color32(255, 185, 83, 255);
+            GUI.backgroundColor = new Color32(255, 220, 0, 255);
             if (GUILayout.Button("Decrypt", GUILayout.MaxWidth(100f)))
             {
                 switch (cryptogramType)
@@ -287,7 +287,7 @@ namespace OxGFrame.AssetLoader.Editor
             GUI.backgroundColor = bc;
 
             bc = GUI.backgroundColor;
-            GUI.backgroundColor = new Color32(255, 74, 218, 255);
+            GUI.backgroundColor = new Color32(0, 249, 255, 255);
             if (GUILayout.Button("Encrypt", GUILayout.MaxWidth(100f)))
             {
                 switch (cryptogramType)

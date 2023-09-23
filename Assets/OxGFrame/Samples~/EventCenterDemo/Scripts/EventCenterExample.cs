@@ -1,5 +1,5 @@
-﻿using OxGFrame.AgencyCenter;
-using OxGFrame.AgencyCenter.EventCenter;
+﻿using OxGFrame.CenterFrame;
+using OxGFrame.CenterFrame.EventCenter;
 
 public class EventCenterExample : CenterBase<EventCenterExample, EventBase>
 {

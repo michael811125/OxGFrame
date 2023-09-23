@@ -150,7 +150,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 foreach (var readLine in lines)
                 {
                     if (readLine.IndexOf('#') != -1 && readLine[0] == '#') continue;
-                    var args = readLine.Split(' ');
+                    var args = readLine.Split(' ', 2);
                     if (args.Length >= 2)
                     {
                         if (!_urlCfgFileMap.ContainsKey(args[0])) _urlCfgFileMap.Add(args[0], args[1].Replace("\n", "").Replace("\r", ""));

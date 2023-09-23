@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using Cysharp.Threading.Tasks;
-using OxGFrame.AgencyCenter.APICenter;
+using OxGFrame.CenterFrame.APICenter;
 
 public class APIQueryTest : APIBase
 {
@@ -13,9 +13,9 @@ public class APIQueryTest : APIBase
              "url",
              "POST",
              new string[,] {
-                 { "Content-Type", "application/json"},
-                 { "Ticket", "none"},
-                 { "Account", "none"}
+                 { "Content-Type", "application/json" },
+                 { "Ticket", "none" },
+                 { "Account", "none" }
              },
              new object[,] {
                  { "guids", guids},
@@ -40,9 +40,9 @@ public class APIQueryTest : APIBase
              "url",
              "POST",
              new string[,] {
-                 { "Content-Type", "application/json"},
-                 { "Ticket", "none"},
-                 { "Account", "none"}
+                 { "Content-Type", "application/json" },
+                 { "Ticket", "none" },
+                 { "Account", "none" }
              },
              new object[,] {
                  { "guids", guids},

@@ -1,7 +1,7 @@
 ﻿using OxGFrame.CoreFrame.CPFrame;
 using UnityEngine;
 
-public class DemoCP2 : CPBase
+public class Demo1CP : CPBase
 {
     public override void OnInit()
     {
@@ -10,8 +10,15 @@ public class DemoCP2 : CPBase
 
     protected override void OnBind()
     {
+        // Single Bind
         Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {this.collector.GetNode("B1").name}");
-        Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {this.collector.GetNode("B2").name}");
+
+        // Multi Bind (Same Name)
+        Debug.Log($"<color=#FFA720>Found Array Binds:</color> {this.gameObject.name} => {this.collector.GetNodes("B2").Length}");
+        foreach (var node in this.collector.GetNodes("B2"))
+        {
+            Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {node.name}");
+        }
     }
 
     protected override void OnShow()
@@ -37,6 +44,7 @@ public class DemoCP2 : CPBase
          * Update
          */
     }
+
     public void MyMethod()
     {
         Debug.Log($"<color=#E553FF>MyMethod:</color> {this.gameObject.name}");

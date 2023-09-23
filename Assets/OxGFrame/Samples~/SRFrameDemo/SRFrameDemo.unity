@@ -359,7 +359,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &261037023
 MonoBehaviour:
@@ -406,8 +406,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: PreloadDemoSC
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: PreloadCubeSceneSR
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -468,7 +468,7 @@ GameObject:
   - component: {fileID: 349156244}
   - component: {fileID: 349156243}
   m_Layer: 5
-  m_Name: Btn_05 (4)
+  m_Name: Btn_17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -493,7 +493,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &349156243
 MonoBehaviour:
@@ -602,7 +602,7 @@ GameObject:
   - component: {fileID: 354708001}
   - component: {fileID: 354708000}
   m_Layer: 5
-  m_Name: Btn_01
+  m_Name: Btn_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -627,7 +627,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &354708000
 MonoBehaviour:
@@ -674,8 +674,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: PreloadDemoRS
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: PreloadMeshResSR
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -794,7 +794,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Hide DemoSC
+  m_Text: Hide CubeSceneSR
 --- !u!222 &355562321
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -926,7 +926,7 @@ GameObject:
   - component: {fileID: 406454664}
   - component: {fileID: 406454663}
   m_Layer: 5
-  m_Name: Btn_05 (3)
+  m_Name: Btn_16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -951,7 +951,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &406454663
 MonoBehaviour:
@@ -1085,7 +1085,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &452834934
 MonoBehaviour:
@@ -1132,8 +1132,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: ShowDemoSC
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: ShowCubeSceneSR
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1252,7 +1252,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Preload DemoSC
+  m_Text: Preload CubeSceneSR
 --- !u!222 &453122748
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1474,7 +1474,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Close DemoSC with Destroy
+  m_Text: Close CubeSceneSR with Destroy
 --- !u!222 &592920172
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1554,7 +1554,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Show DemoSC
+  m_Text: Show CubeSceneSR
 --- !u!222 &665290608
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1876,7 +1876,7 @@ Transform:
   m_GameObject: {fileID: 821368427}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1953,7 +1953,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Show DemoRS
+  m_Text: Show MeshResSR
 --- !u!222 &867653831
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1975,7 +1975,7 @@ GameObject:
   - component: {fileID: 896592507}
   - component: {fileID: 896592506}
   m_Layer: 5
-  m_Name: Btn_05 (2)
+  m_Name: Btn_15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2000,7 +2000,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &896592506
 MonoBehaviour:
@@ -2432,7 +2432,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Close DemoSC
+  m_Text: Close CubeSceneSR
 --- !u!222 &1057165838
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2530,7 +2530,7 @@ GameObject:
   - component: {fileID: 1118296264}
   - component: {fileID: 1118296263}
   m_Layer: 5
-  m_Name: Btn_05 (1)
+  m_Name: Btn_14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2555,7 +2555,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1118296263
 MonoBehaviour:
@@ -2701,7 +2701,7 @@ GameObject:
   - component: {fileID: 1165033625}
   - component: {fileID: 1165033624}
   m_Layer: 5
-  m_Name: Btn_03
+  m_Name: Btn_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2726,7 +2726,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1165033624
 MonoBehaviour:
@@ -2773,8 +2773,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: CloseDemoRS
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: CloseMeshResSR
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2962,7 +2962,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Reveal DemoRS
+  m_Text: Reveal MeshResSR
 --- !u!222 &1312587523
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3029,7 +3029,7 @@ GameObject:
   - component: {fileID: 1347338885}
   - component: {fileID: 1347338884}
   m_Layer: 5
-  m_Name: Btn_03 (4)
+  m_Name: Btn_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3054,7 +3054,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1347338884
 MonoBehaviour:
@@ -3101,8 +3101,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: RevealDemoRS
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: RevealMeshResSR
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3221,7 +3221,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Reveal DemoSC
+  m_Text: Reveal CubeSceneSR
 --- !u!222 &1349511923
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3301,7 +3301,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Hide DemoRS
+  m_Text: Hide MeshResSR
 --- !u!222 &1353084152
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3508,7 +3508,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Close DemoRS with Destroy
+  m_Text: Close MeshResSR with Destroy
 --- !u!222 &1454641295
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3588,7 +3588,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Preload DemoRS
+  m_Text: Preload MeshResSR
 --- !u!222 &1478276158
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3711,7 +3711,7 @@ GameObject:
   - component: {fileID: 1495389486}
   - component: {fileID: 1495389485}
   m_Layer: 5
-  m_Name: Btn_02
+  m_Name: Btn_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3736,7 +3736,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1495389485
 MonoBehaviour:
@@ -3783,8 +3783,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: ShowDemoRS
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: ShowMeshResSR
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3845,7 +3845,7 @@ GameObject:
   - component: {fileID: 1510584436}
   - component: {fileID: 1510584435}
   m_Layer: 5
-  m_Name: Btn_03 (1)
+  m_Name: Btn_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3870,7 +3870,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1510584435
 MonoBehaviour:
@@ -3917,8 +3917,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: HideDemoSC
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: HideCubeSceneSR
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4037,7 +4037,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Show DemoSC And Set Parent
+  m_Text: Show CubeSceneSR And Set Parent
 --- !u!222 &1532434288
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4310,7 +4310,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Close DemoRS
+  m_Text: Close MeshResSR
 --- !u!222 &1602995941
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4332,7 +4332,7 @@ GameObject:
   - component: {fileID: 1646080861}
   - component: {fileID: 1646080860}
   m_Layer: 5
-  m_Name: Btn_02 (1)
+  m_Name: Btn_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4357,7 +4357,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1646080860
 MonoBehaviour:
@@ -4404,8 +4404,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: ShowDemoSCAndSetParent
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: ShowCubeSceneSRAndSetParent
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4466,7 +4466,7 @@ GameObject:
   - component: {fileID: 1925384177}
   - component: {fileID: 1925384176}
   m_Layer: 5
-  m_Name: Btn_05
+  m_Name: Btn_13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4491,7 +4491,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1925384176
 MonoBehaviour:
@@ -4538,8 +4538,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: CloseWithDestroyDemoRS
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: CloseWithDestroyMeshResSR
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4600,7 +4600,7 @@ GameObject:
   - component: {fileID: 1989372080}
   - component: {fileID: 1989372079}
   m_Layer: 5
-  m_Name: Btn_03 (2)
+  m_Name: Btn_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4625,7 +4625,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1989372079
 MonoBehaviour:
@@ -4672,8 +4672,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: RevealDemoSC
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: RevealCubeSceneSR
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4823,7 +4823,7 @@ GameObject:
   - component: {fileID: 2089179625}
   - component: {fileID: 2089179624}
   m_Layer: 5
-  m_Name: Btn_05
+  m_Name: Btn_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4848,7 +4848,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2089179624
 MonoBehaviour:
@@ -4895,8 +4895,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: CloseWithDestroyDemoSC
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: CloseWithDestroyCubeSceneSR
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4957,7 +4957,7 @@ GameObject:
   - component: {fileID: 2105957954}
   - component: {fileID: 2105957953}
   m_Layer: 5
-  m_Name: Btn_03 (3)
+  m_Name: Btn_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4982,7 +4982,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2105957953
 MonoBehaviour:
@@ -5029,8 +5029,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: HideDemoRS
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: HideMeshResSR
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5091,7 +5091,7 @@ GameObject:
   - component: {fileID: 2116091029}
   - component: {fileID: 2116091028}
   m_Layer: 5
-  m_Name: Btn_03
+  m_Name: Btn_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5116,7 +5116,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 75}
+  m_SizeDelta: {x: 550, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2116091028
 MonoBehaviour:
@@ -5163,8 +5163,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320044409}
-        m_TargetAssemblyTypeName: GSFrameDemo, Assembly-CSharp
-        m_MethodName: CloseDemoSC
+        m_TargetAssemblyTypeName: SRFrameDemo, Assembly-CSharp
+        m_MethodName: CloseCubeSceneSR
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -1,14 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Cysharp.Threading.Tasks;
 using OxGFrame.CoreFrame.SRFrame;
 
-public class DemoRS : SRBase
+public class CubeSceneSR : SRBase
 {
     public override void OnInit()
     {
-
     }
 
     protected override async UniTask OnPreShow()
@@ -27,7 +24,7 @@ public class DemoRS : SRBase
 
     protected override void OnShow(object obj)
     {
-        Debug.Log("DemoRS OnShow");
+        Debug.Log("CubeSceneSR OnShow");
     }
 
     protected override void OnBind()

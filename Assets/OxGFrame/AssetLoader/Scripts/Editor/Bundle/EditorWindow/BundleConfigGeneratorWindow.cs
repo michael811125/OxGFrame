@@ -53,26 +53,32 @@ namespace OxGFrame.AssetLoader.Editor
         [SerializeField]
         public bool autoReveal;
 
-        private Vector2 _scrollview;
+        // Preset Plan
+        public List<BundlePlan> bundlePlans = new List<BundlePlan>();
+        private int _choicePlanIndex = 0;
+
+        private Vector2 _scrollview1;
+        private Vector2 _scrollview2;
 
         private SerializedObject _serObj;
         private SerializedProperty _groupInfosPty;
         private SerializedProperty _exportAppPackagesPty;
         private SerializedProperty _exportIndividualPackagesPty;
+        private SerializedProperty _bundlePlansPty;
 
         internal static string PROJECT_PATH;
         internal static string KEY_SAVER;
 
         private static Vector2 _windowSize = new Vector2(800f, 400f);
 
-        [MenuItem(BundleHelper.MenuRoot + "Bundle And Config Generator", false, 899)]
+        [MenuItem(BundleHelper.MenuRoot + "Export Bundle And Config Generator", false, 899)]
         public static void ShowWindow()
         {
             PROJECT_PATH = Application.dataPath;
             KEY_SAVER = $"{PROJECT_PATH}_{nameof(BundleConfigGeneratorWindow)}";
 
             _instance = null;
-            GetInstance().titleContent = new GUIContent("Bundle And Config Generator");
+            GetInstance().titleContent = new GUIContent("Export Bundle And Config Generator");
             GetInstance().Show();
             GetInstance().minSize = _windowSize;
         }
@@ -83,6 +89,7 @@ namespace OxGFrame.AssetLoader.Editor
             this._groupInfosPty = this._serObj.FindProperty("groupInfos");
             this._exportAppPackagesPty = this._serObj.FindProperty("exportAppPackages");
             this._exportIndividualPackagesPty = this._serObj.FindProperty("exportIndividualPackages");
+            this._bundlePlansPty = this._serObj.FindProperty("bundlePlans");
 
             int operationTypeCount = Enum.GetNames(typeof(OperationType)).Length;
             for (int i = 0; i < operationTypeCount; i++)
@@ -106,6 +113,11 @@ namespace OxGFrame.AssetLoader.Editor
             this.activeBuildTarget = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVER, "activeBuildTarget", "true"));
 
             this.autoReveal = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVER, "autoReveal", "true"));
+
+            // Preset Bundle Plans
+            string jsonBundlePlans = EditorStorage.GetData(KEY_SAVER, "bundlePlans", string.Empty);
+            if (!string.IsNullOrEmpty(jsonBundlePlans)) this.bundlePlans = JsonConvert.DeserializeObject<List<BundlePlan>>(jsonBundlePlans);
+            this._choicePlanIndex = Convert.ToInt32(EditorStorage.GetData(KEY_SAVER, "_choicePlanIndex", "0"));
         }
 
         private void OnGUI()
@@ -160,16 +172,19 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void _DrawExportAppConfigToStreamingAssetsView()
         {
+            this._scrollview1 = EditorGUILayout.BeginScrollView(this._scrollview1, true, true);
+
             EditorGUILayout.Space();
 
             GUIStyle style = new GUIStyle();
             var bg = new Texture2D(1, 1);
-            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
             Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             bg.SetPixels(pixels);
             bg.Apply();
             style.normal.background = bg;
             EditorGUILayout.BeginVertical(style);
+
             var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
             centeredStyle.alignment = TextAnchor.UpperCenter;
             GUILayout.Label(new GUIContent("Export AppConfig To StreamingAssets"), centeredStyle);
@@ -182,22 +197,25 @@ namespace OxGFrame.AssetLoader.Editor
             this._DrawProcessButtonView(this.operationType);
 
             EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndScrollView();
         }
 
         private void _DrawExportConfigsAndAppBundlesForCDNView()
         {
-            this._scrollview = EditorGUILayout.BeginScrollView(this._scrollview, true, true);
+            this._scrollview1 = EditorGUILayout.BeginScrollView(this._scrollview1, true, true);
 
             EditorGUILayout.Space();
 
             GUIStyle style = new GUIStyle();
             var bg = new Texture2D(1, 1);
-            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
             Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             bg.SetPixels(pixels);
             bg.Apply();
             style.normal.background = bg;
             EditorGUILayout.BeginVertical(style);
+
             var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
             centeredStyle.alignment = TextAnchor.UpperCenter;
             GUILayout.Label(new GUIContent("Export Configs And App Bundles For CDN"), centeredStyle);
@@ -216,22 +234,25 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.EndScrollView();
+
+            this._DrawBundlePlansView();
         }
 
         private void _DrawExportAppBundlesWithoutConfigsForCDNView()
         {
-            this._scrollview = EditorGUILayout.BeginScrollView(this._scrollview, true, true);
+            this._scrollview1 = EditorGUILayout.BeginScrollView(this._scrollview1, true, true);
 
             EditorGUILayout.Space();
 
             GUIStyle style = new GUIStyle();
             var bg = new Texture2D(1, 1);
-            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
             Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             bg.SetPixels(pixels);
             bg.Apply();
             style.normal.background = bg;
             EditorGUILayout.BeginVertical(style);
+
             var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
             centeredStyle.alignment = TextAnchor.UpperCenter;
             GUILayout.Label(new GUIContent("Export App Bundles Without Configs For CDN"), centeredStyle);
@@ -249,22 +270,25 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.EndScrollView();
+
+            this._DrawBundlePlansView();
         }
 
         private void _DrawExportIndividualDlcBundlesForCDNView()
         {
-            this._scrollview = EditorGUILayout.BeginScrollView(this._scrollview, true, true);
+            this._scrollview1 = EditorGUILayout.BeginScrollView(this._scrollview1, true, true);
 
             EditorGUILayout.Space();
 
             GUIStyle style = new GUIStyle();
             var bg = new Texture2D(1, 1);
-            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
             Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             bg.SetPixels(pixels);
             bg.Apply();
             style.normal.background = bg;
             EditorGUILayout.BeginVertical(style);
+
             var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
             centeredStyle.alignment = TextAnchor.UpperCenter;
             GUILayout.Label(new GUIContent("Export Individual DLC Bundles For CDN"), centeredStyle);
@@ -281,6 +305,8 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.EndScrollView();
+
+            this._DrawBundlePlansView();
         }
 
         private void _DrawSourceFolderView()
@@ -581,6 +607,138 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.EndHorizontal();
         }
 
+        #region Preset Bundle Plans
+        private void _DrawBundlePlansView()
+        {
+            this._scrollview2 = EditorGUILayout.BeginScrollView(this._scrollview2, true, true);
+
+            EditorGUILayout.Space();
+
+            GUIStyle style = new GUIStyle();
+            var bg = new Texture2D(1, 1);
+            ColorUtility.TryParseHtmlString("#263840", out Color color);
+            Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+            bg.SetPixels(pixels);
+            bg.Apply();
+            style.normal.background = bg;
+            EditorGUILayout.BeginVertical(style);
+
+            var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+            centeredStyle.alignment = TextAnchor.UpperCenter;
+            GUILayout.Label(new GUIContent("Preset Bundle Plans"), centeredStyle);
+            EditorGUILayout.Space();
+
+            EditorGUILayout.BeginHorizontal();
+            // Add popup selection
+            List<string> planNames = new List<string>();
+            if (this.bundlePlans.Count > 0)
+            {
+                foreach (var bundlePlan in this.bundlePlans)
+                {
+                    planNames.Add(bundlePlan.planName);
+                }
+            }
+            EditorGUI.BeginChangeCheck();
+            this._choicePlanIndex = EditorGUILayout.Popup("Plan Selection", this._choicePlanIndex, planNames.ToArray());
+            if (this._choicePlanIndex < 0) this._choicePlanIndex = 0;
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorStorage.SaveData(KEY_SAVER, "_choicePlanIndex", this._choicePlanIndex.ToString());
+            }
+
+            // Load selection button
+            Color bc = GUI.backgroundColor;
+            GUI.backgroundColor = new Color32(83, 152, 255, 255);
+            if (GUILayout.Button("Copy Current", GUILayout.MaxWidth(100f)))
+            {
+                bool confirmation = EditorUtility.DisplayDialog
+                (
+                    $"Copy Current Notification",
+                    $"The plan selection is [{this.bundlePlans[this._choicePlanIndex].planName}]\nDo you want to copy current all values?",
+                    "copy current and override",
+                    "cancel"
+                );
+
+                if (confirmation) this._CopyCurrentToBundlePlan();
+            }
+            GUI.backgroundColor = bc;
+            bc = GUI.backgroundColor;
+            GUI.backgroundColor = new Color32(0, 255, 128, 255);
+            if (GUILayout.Button("Load Plan", GUILayout.MaxWidth(100f)))
+            {
+                this._LoadBundlePlanToCurrent();
+            }
+            GUI.backgroundColor = bc;
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.BeginHorizontal();
+            this._serObj.Update();
+            EditorGUI.BeginChangeCheck();
+            EditorGUILayout.PropertyField(this._bundlePlansPty, true);
+            if (EditorGUI.EndChangeCheck())
+            {
+                this._serObj.ApplyModifiedProperties();
+                string json = JsonConvert.SerializeObject(this.bundlePlans);
+                EditorStorage.SaveData(KEY_SAVER, "bundlePlans", json);
+            }
+
+            bc = GUI.backgroundColor;
+            GUI.backgroundColor = new Color32(255, 151, 240, 255);
+            if (GUILayout.Button("Reset", GUILayout.MaxWidth(100f)))
+            {
+                bool confirmation = EditorUtility.DisplayDialog
+                (
+                    $"Reset Bundle Plans Notification",
+                    $"Do you want to reset bundle plans?",
+                    "reset",
+                    "cancel"
+                );
+
+                if (confirmation)
+                {
+                    // Reset bundle plans
+                    this.bundlePlans = new List<BundlePlan>() { new BundlePlan() };
+                    string json = JsonConvert.SerializeObject(this.bundlePlans);
+                    EditorStorage.SaveData(KEY_SAVER, "bundlePlans", json);
+
+                    // Reset index
+                    this._choicePlanIndex = 0;
+                    EditorStorage.SaveData(KEY_SAVER, "_choicePlanIndex", this._choicePlanIndex.ToString());
+                }
+            }
+            GUI.backgroundColor = bc;
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            // Save File
+            bc = GUI.backgroundColor;
+            GUI.backgroundColor = new Color32(255, 220, 0, 255);
+            if (GUILayout.Button("Save File", GUILayout.MaxWidth(100f)))
+            {
+                this._ExportBundlePlans();
+            }
+            GUI.backgroundColor = bc;
+            // Load File
+            bc = GUI.backgroundColor;
+            GUI.backgroundColor = new Color32(0, 249, 255, 255);
+            if (GUILayout.Button("Load File", GUILayout.MaxWidth(100f)))
+            {
+                this._ImportBundlePlans();
+            }
+            GUI.backgroundColor = bc;
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndScrollView();
+        }
+        #endregion
+
         private void _OpenSourceFolder()
         {
             string folderPath = EditorStorage.GetData(KEY_SAVER, $"sourceFolder{(int)this.operationType}", Application.dataPath);
@@ -593,6 +751,80 @@ namespace OxGFrame.AssetLoader.Editor
             string folderPath = EditorStorage.GetData(KEY_SAVER, $"exportFolder{(int)this.operationType}", Application.dataPath);
             this.exportFolder[(int)this.operationType] = EditorUtility.OpenFolderPanel("Open Export Folder", folderPath, string.Empty);
             if (!string.IsNullOrEmpty(this.exportFolder[(int)this.operationType])) EditorStorage.SaveData(KEY_SAVER, $"exportFolder{(int)this.operationType}", this.exportFolder[(int)this.operationType]);
+        }
+
+        private void _LoadBundlePlanToCurrent()
+        {
+            if (this.bundlePlans.Count == 0) return;
+
+            var bundlePlan = this.bundlePlans[this._choicePlanIndex];
+
+            this.exportAppPackages = bundlePlan.appPackages.ToList();
+            this.groupInfoArgs = bundlePlan.groupInfoArgs;
+            this.groupInfos = bundlePlan.groupInfos.ToList();
+            this.exportIndividualPackages = bundlePlan.individualPackages.ToList();
+
+            // Save
+            string json = JsonConvert.SerializeObject(this.exportAppPackages);
+            EditorStorage.SaveData(KEY_SAVER, "exportAppPackages", json);
+            EditorStorage.SaveData(KEY_SAVER, "groupInfoArgs", this.groupInfoArgs);
+            json = JsonConvert.SerializeObject(this.groupInfos);
+            EditorStorage.SaveData(KEY_SAVER, "groupInfos", json);
+            json = JsonConvert.SerializeObject(this.exportIndividualPackages);
+            EditorStorage.SaveData(KEY_SAVER, "exportIndividualPackages", json);
+        }
+
+        private void _CopyCurrentToBundlePlan()
+        {
+            if (this.bundlePlans.Count == 0) return;
+
+            var bundlePlan = this.bundlePlans[this._choicePlanIndex];
+
+            // Copy
+            bundlePlan.appPackages = this.exportAppPackages.ToList();
+            bundlePlan.groupInfoArgs = this.groupInfoArgs;
+            bundlePlan.groupInfos = this.groupInfos.ToList();
+            bundlePlan.individualPackages = this.exportIndividualPackages.ToList();
+
+            this.bundlePlans[this._choicePlanIndex] = bundlePlan;
+
+            // Save
+            string json = JsonConvert.SerializeObject(this.bundlePlans);
+            EditorStorage.SaveData(KEY_SAVER, "bundlePlans", json);
+        }
+
+        private void _ExportBundlePlans()
+        {
+            string savePath = EditorStorage.GetData(KEY_SAVER, $"bundlePlanFIlePath", Application.dataPath);
+            var filePath = EditorUtility.SaveFilePanel("Save Bundle Plan Json File", savePath, "BundlePlan", "json");
+
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                EditorStorage.SaveData(KEY_SAVER, $"bundlePlanFIlePath", Path.GetDirectoryName(filePath));
+                string json = JsonConvert.SerializeObject(this.bundlePlans, Formatting.Indented);
+                BundleHelper.WriteTxt(json, filePath);
+            }
+        }
+
+        private void _ImportBundlePlans()
+        {
+            string loadPath = EditorStorage.GetData(KEY_SAVER, $"bundlePlanFIlePath", Application.dataPath);
+            string filePath = EditorUtility.OpenFilePanel("Select Bundle Plan Json File", !string.IsNullOrEmpty(loadPath) ? loadPath : Application.dataPath, "json");
+
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                EditorStorage.SaveData(KEY_SAVER, $"bundlePlanFIlePath", Path.GetDirectoryName(filePath));
+                string json = File.ReadAllText(filePath);
+                this.bundlePlans = JsonConvert.DeserializeObject<List<BundlePlan>>(json);
+
+                // Resave bundle plans without format
+                json = JsonConvert.SerializeObject(this.bundlePlans);
+                EditorStorage.SaveData(KEY_SAVER, "bundlePlans", json);
+
+                // Reset index
+                this._choicePlanIndex = 0;
+                EditorStorage.SaveData(KEY_SAVER, "_choicePlanIndex", this._choicePlanIndex.ToString());
+            }
         }
     }
 }

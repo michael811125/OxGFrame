@@ -328,7 +328,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: DemoCP_1
+  m_Text: Demo1CP
 --- !u!222 &451014376
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -650,7 +650,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: DemoCP_2
+  m_Text: Demo2CP
 --- !u!222 &1097121102
 CanvasRenderer:
   m_ObjectHideFlags: 0

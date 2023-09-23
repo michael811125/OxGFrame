@@ -65,7 +65,7 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 //Debug.Log($"save readline: {readLine}");
                 if (readLine.IndexOf('#') != -1 && readLine[0] == '#') continue;
-                var args = readLine.Split(' ');
+                var args = readLine.Split(' ', 2);
                 if (args.Length >= 2)
                 {
                     //Debug.Log($"save args => key: {args[0]}, value: {args[1]}");
@@ -103,7 +103,7 @@ namespace OxGFrame.AssetLoader.Editor
             foreach (var readLine in lines)
             {
                 if (readLine.IndexOf('#') != -1 && readLine[0] == '#') continue;
-                var args = readLine.Split(' ');
+                var args = readLine.Split(' ', 2);
                 if (args.Length >= 2)
                 {
                     if (!dataMap.ContainsKey(args[0])) dataMap.Add(args[0], args[1].Replace("\n", "").Replace("\r", ""));
@@ -131,7 +131,7 @@ namespace OxGFrame.AssetLoader.Editor
             foreach (var readLine in lines)
             {
                 if (readLine.IndexOf('#') != -1 && readLine[0] == '#') continue;
-                var args = readLine.Split(' ');
+                var args = readLine.Split(' ', 2);
                 if (args.Length >= 2)
                 {
                     if (!dataMap.ContainsKey(args[0])) dataMap.Add(args[0], args[1].Replace("\n", "").Replace("\r", ""));

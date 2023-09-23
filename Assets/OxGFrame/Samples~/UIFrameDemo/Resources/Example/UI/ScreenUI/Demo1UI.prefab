@@ -451,7 +451,7 @@ MonoBehaviour:
   onCloseAndDestroy: 0
   canvas: {fileID: 0}
   graphicRaycaster: {fileID: 0}
-  reverseChanges: 1
+  reverseChanges: 0
   uiSetting:
     canvasName: CanvasCamera
     nodeType: 2
@@ -463,6 +463,7 @@ MonoBehaviour:
   maskSetting:
     color: {r: 0, g: 0.40392157, b: 0.32156864, a: 0.5019608}
     sprite: {fileID: 0}
+    material: {fileID: 0}
     isClickMaskToClose: 1
 --- !u!1 &8326820277654019497
 GameObject:

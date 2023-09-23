@@ -113,7 +113,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             GUIStyle style = new GUIStyle();
             var bg = new Texture2D(1, 1);
-            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
             Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             bg.SetPixels(pixels);
             bg.Apply();
@@ -144,7 +144,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             GUIStyle style = new GUIStyle();
             var bg = new Texture2D(1, 1);
-            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
             Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             bg.SetPixels(pixels);
             bg.Apply();
@@ -178,7 +178,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             GUIStyle style = new GUIStyle();
             var bg = new Texture2D(1, 1);
-            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
             Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             bg.SetPixels(pixels);
             bg.Apply();
@@ -216,7 +216,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             GUIStyle style = new GUIStyle();
             var bg = new Texture2D(1, 1);
-            ColorUtility.TryParseHtmlString("#1c589c", out Color color);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
             Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             bg.SetPixels(pixels);
             bg.Apply();

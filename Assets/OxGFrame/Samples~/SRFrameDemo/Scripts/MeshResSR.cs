@@ -1,13 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Cysharp.Threading.Tasks;
 using OxGFrame.CoreFrame.SRFrame;
 
-public class DemoSC : SRBase
+public class MeshResSR : SRBase
 {
     public override void OnInit()
     {
+
     }
 
     protected override async UniTask OnPreShow()
@@ -26,7 +25,7 @@ public class DemoSC : SRBase
 
     protected override void OnShow(object obj)
     {
-        Debug.Log("DemoSC OnShow");
+        Debug.Log("MeshResSR OnShow");
     }
 
     protected override void OnBind()
@@ -53,5 +52,15 @@ public class DemoSC : SRBase
     protected override void OnClose()
     {
 
+    }
+
+    public Mesh GetCubeMesh()
+    {
+        return this.collector.GetNode("Cube").GetComponent<MeshFilter>().mesh;
+    }
+
+    public Mesh GetSphereMesh()
+    {
+        return this.collector.GetNode("Sphere").GetComponent<MeshFilter>().mesh;
     }
 }
