@@ -1,5 +1,5 @@
 {
-    "name": "OxGFrame.AgencyCenter.Runtime",
+    "name": "OxGFrame.CenterFrame.Runtime",
     "rootNamespace": "",
     "references": [
         "GUID:f51ebe6a0ceec4240a699833d6309b23",

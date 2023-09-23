@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.7.14] - 2023-09-23
+- Renamed AgencyCenter to CenterFrame (replace all AgencyCenter to CenterFrame).
+
 ## [2.7.13] - 2023-09-22
 - Added default constructor for Loggers.
 

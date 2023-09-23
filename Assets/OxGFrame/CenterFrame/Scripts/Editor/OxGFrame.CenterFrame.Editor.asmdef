@@ -1,5 +1,5 @@
 {
-    "name": "OxGFrame.AgencyCenter.Editor",
+    "name": "OxGFrame.CenterFrame.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:a24dbf7565faccf4bbaa3b675e168c4f"

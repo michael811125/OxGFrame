@@ -1,6 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 
-namespace OxGFrame.AgencyCenter.EventCenter
+namespace OxGFrame.CenterFrame.EventCenter
 {
     public abstract class EventBase
     {

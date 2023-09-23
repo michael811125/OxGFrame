@@ -1,5 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
-using OxGFrame.AgencyCenter.EventCenter;
+using OxGFrame.CenterFrame.EventCenter;
 
 public class #SCRIPTNAME# : EventBase
 {

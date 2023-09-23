@@ -20,13 +20,13 @@ MonoBehaviour:
     logActive: 1
   - loggerName: OxGFrame.AssetLoader.Logger
     logActive: 1
-  - loggerName: OxGFrame.AgencyCenter.Logger
-    logActive: 1
   - loggerName: OxGFrame.CoreFrame.Logger
     logActive: 1
   - loggerName: OxGFrame.NetFrame.Logger
     logActive: 1
   - loggerName: OxGFrame.Hotfixer.Logger
+    logActive: 1
+  - loggerName: OxGFrame.CenterFrame.Logger
     logActive: 1
   loadLoggers: 0
   resetLoggers: 0

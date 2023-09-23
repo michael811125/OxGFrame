@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace OxGFrame.AgencyCenter
+namespace OxGFrame.CenterFrame
 {
     public class CenterBase<TCenter, TClass> where TCenter : CenterBase<TCenter, TClass>, new()
     {

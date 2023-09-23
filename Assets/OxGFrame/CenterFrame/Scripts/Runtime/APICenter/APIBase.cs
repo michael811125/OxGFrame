@@ -1,4 +1,4 @@
-﻿namespace OxGFrame.AgencyCenter.APICenter
+﻿namespace OxGFrame.CenterFrame.APICenter
 {
     public abstract class APIBase
     {
