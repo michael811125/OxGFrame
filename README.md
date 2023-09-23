@@ -151,12 +151,19 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 
 使用 YooAsset Collector 進行資源收集 (可以使用 ActiveRule 決定哪些群組需要打包，進行 Built-in 跟 Patch 資源的區分)，再使用 YooAsset Builder 進行打包 **(不需要手動更改資源日期版號)**，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
 
-再使用 OxGFrame/AssetLoader/Export Bundle And Config Generator 進行配置檔建立。
+YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config Generator 視窗進行 Bundle 上傳檔輸出 + 配置檔建立 (**步驟如下**)。
 
-1. 先進行 Export App Config To StreamingAssets 建立 appconfig.json 至 StreamingAssets 中 (主要用於 App Version 比對)。
-2. 再選擇 Export Configs And App Bundles for CDN 輸出上傳資源，Source Folder 選擇剛剛使用 YooAsset 輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行預設包的群組分包，輸出後將 CDN 資料夾直接上傳至 Server。
+1. 先選擇 Export App Config To StreamingAssets 頁籤，建立 appconfig.json 至 StreamingAssets 中 (主要用於 App Version 比對)。
+
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_10.png)
+
+2. 再選擇 Export Configs And App Bundles for CDN 頁籤，輸出上傳資源，Source Folder 選擇剛剛使用 YooAsset 輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行預設包的群組分包，輸出後將 CDN 資料夾直接上傳至 Server。
    
-- 群組分包舉例
+  ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_11.png) 
+  
+---
+  
+群組分包舉例
   - 最小運行包
   - 標準運行包
   - 全部運行包 (預設 #all)
