@@ -5,6 +5,6 @@ namespace OxGFrame.GSIFrame
     [LoggerName("OxGFrame.GSIFrame.Logger")]
     public class Logger : Logging
     {
-        public Logger() { }
+        public Logger() : base() { }
     }
 }

@@ -5,6 +5,6 @@ namespace OxGFrame.CoreFrame
     [LoggerName("OxGFrame.CoreFrame.Logger")]
     public class Logger : Logging
     {
-        public Logger() { }
+        public Logger() : base() { }
     }
 }
