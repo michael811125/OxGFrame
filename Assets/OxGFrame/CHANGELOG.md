@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.8.1] - 2023-09-25
+- Upgraded YooAsset to v1.5.5-preview.
+
 ## [2.8.0] - 2023-09-24
 - Upgraded UniTask to v2.4.1.
 - Added BundlePlan for Export Bundle And Config Generator editor (can save bundle plans).
