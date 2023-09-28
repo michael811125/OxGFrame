@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.8.2] - 2023-09-28
+- Upgraded YooAsset to v1.5.6-preview ([CHANGELOG](https://github.com/tuyoogame/YooAsset/releases/tag/1.5.6-preview)).
+
 ## [2.8.1] - 2023-09-25
 - Upgraded YooAsset to v1.5.5-preview.
 
