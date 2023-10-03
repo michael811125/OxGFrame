@@ -8,12 +8,12 @@
 
 ## 安裝 OxGFrame with [YooAsset](https://github.com/tuyoogame/YooAsset) + [HybridCLR](https://github.com/focus-creative-games/hybridclr)
 
-[![version](https://img.shields.io/badge/version-2.7.7-yellow.svg)](https://github.com/michael811125/OxGFrame/releases/tag/v2.7.7) 以上各模組的日誌打印可以自由控制開關，皆依賴 [OxGKit.LoggingSystem](https://github.com/michael811125/OxGKit)，安裝後需要 Import LoggingLauncher from Samples，再拖曳至場景上並且加載 LoggerSetting 才能成功激活日誌系統的配置 (**Build 激活標籤 OXGKIT_LOGGER_ON**)。
+[![version](https://img.shields.io/badge/version-2.7.7-yellow.svg)](https://github.com/michael811125/OxGFrame/releases/tag/v2.7.7) 以上各模組的日誌打印可以自由控制開關，皆依賴 [OxGKit.LoggingSystem](https://github.com/michael811125/OxGKit#loggingsystem-dependence-lwmybox)，安裝後需要 Import LoggingLauncher from Samples，再拖曳至場景上並且加載 LoggerSetting 才能成功激活日誌系統的配置 (**Build 激活標籤 OXGKIT_LOGGER_ON**)。
 
 | **需先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
-| [OxGKit.LoggingSystem v0.0.9-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
-| [OxGKit.Utilities v0.0.7-preview or higher](https://github.com/michael811125/OxGKit), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
+| [OxGKit.LoggingSystem v0.0.9-preview or higher](https://github.com/michael811125/OxGKit#loggingsystem-dependence-lwmybox), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
+| [OxGKit.Utilities v0.0.7-preview or higher](https://github.com/michael811125/OxGKit#utilities-dependence-unitask), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
 | [LWMyBox v1.1.4 or higher](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager **(建議改成輕量版的 MyBox 改進編譯效率)** |
 | [HybirdCLR v4.0.6 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
