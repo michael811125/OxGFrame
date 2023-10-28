@@ -54,7 +54,6 @@
     public static string GetPresetAppPackageNameByIdx(int idx)
 ```
 
-
 ## [2.8.2] - 2023-09-28
 - Upgraded YooAsset to v1.5.6-preview ([CHANGELOG](https://github.com/tuyoogame/YooAsset/releases/tag/1.5.6-preview)).
 
