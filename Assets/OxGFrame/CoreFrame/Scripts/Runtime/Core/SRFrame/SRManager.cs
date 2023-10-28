@@ -54,7 +54,7 @@ namespace OxGFrame.CoreFrame.SRFrame
 
             srBase.SetNames(assetName);
             // Clone 取得 SRBase 組件後, 也初始 SRBase 相關設定
-            srBase.OnInit();
+            srBase.OnCreate();
             // Clone 取得 SRBase 組件後, 也初始 SRBase 相關綁定組件設定
             srBase.InitFirst();
 
@@ -92,7 +92,7 @@ namespace OxGFrame.CoreFrame.SRFrame
         #endregion
 
         #region Show
-        public override async UniTask<SRBase> Show(int groupId, string packageName, string assetName, object obj = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
+        public override async UniTask<SRBase> Show(int groupId, string packageName, string assetName, object obj = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
@@ -109,9 +109,9 @@ namespace OxGFrame.CoreFrame.SRFrame
                 }
             }
 
-            await this.ShowAwaiting(groupId, packageName, awaitingUIAssetName); // 開啟預顯加載 UI
+            await this.ShowAwaiting(groupId, packageName, awaitingUIAssetName, priority); // 開啟預顯加載 UI
 
-            var srBase = await this.LoadIntoAllCache(packageName, assetName, progression, false, parent);
+            var srBase = await this.LoadIntoAllCache(packageName, assetName, priority, progression, false, parent);
             if (srBase == null)
             {
                 Debug.LogWarning($"SR: {assetName} => Asset not found at this path!!!");

@@ -92,7 +92,6 @@ namespace YooAsset.Editor
 				List<Type> types = new List<Type>(100)
 				{
 					typeof(AddressByFileName),
-					typeof(AddressByFilePath),
 					typeof(AddressByFolderAndFileName),
 					typeof(AddressByGroupAndFileName),
 					typeof(AddressDisable)
@@ -266,7 +265,7 @@ namespace YooAsset.Editor
 			}
 			else
 			{
-				throw new Exception($"{nameof(IActiveRule)}类型无效：{ruleName}");
+				throw new Exception($"{nameof(IActiveRule)} is invalid：{ruleName}");
 			}
 		}
 		public static IAddressRule GetAddressRuleInstance(string ruleName)
@@ -283,7 +282,7 @@ namespace YooAsset.Editor
 			}
 			else
 			{
-				throw new Exception($"{nameof(IAddressRule)}类型无效：{ruleName}");
+				throw new Exception($"{nameof(IAddressRule)} is invalid：{ruleName}");
 			}
 		}
 		public static IPackRule GetPackRuleInstance(string ruleName)
@@ -300,7 +299,7 @@ namespace YooAsset.Editor
 			}
 			else
 			{
-				throw new Exception($"{nameof(IPackRule)}类型无效：{ruleName}");
+				throw new Exception($"{nameof(IPackRule)} is invalid：{ruleName}");
 			}
 		}
 		public static IFilterRule GetFilterRuleInstance(string ruleName)
@@ -317,39 +316,24 @@ namespace YooAsset.Editor
 			}
 			else
 			{
-				throw new Exception($"{nameof(IFilterRule)}类型无效：{ruleName}");
+				throw new Exception($"{nameof(IFilterRule)} is invalid：{ruleName}");
 			}
 		}
 
 		// 公共参数编辑相关
-		public static void ModifyPackageView(bool showPackageView)
+		public static void ModifyShowPackageView(bool showPackageView)
 		{
 			Setting.ShowPackageView = showPackageView;
-			IsDirty = true;
-		}
-		public static void ModifyAddressable(bool enableAddressable)
-		{
-			Setting.EnableAddressable = enableAddressable;
-			IsDirty = true;
-		}
-		public static void ModifyLocationToLower(bool locationToLower)
-		{
-			Setting.LocationToLower = locationToLower;
-			IsDirty = true;
-		}
-		public static void ModifyIncludeAssetGUID(bool includeAssetGUID)
-		{
-			Setting.IncludeAssetGUID = includeAssetGUID;
-			IsDirty = true;
-		}
-		public static void ModifyUniqueBundleName(bool uniqueBundleName)
-		{
-			Setting.UniqueBundleName = uniqueBundleName;
 			IsDirty = true;
 		}
 		public static void ModifyShowEditorAlias(bool showAlias)
 		{
 			Setting.ShowEditorAlias = showAlias;
+			IsDirty = true;
+		}
+		public static void ModifyUniqueBundleName(bool uniqueBundleName)
+		{
+			Setting.UniqueBundleName = uniqueBundleName;
 			IsDirty = true;
 		}
 

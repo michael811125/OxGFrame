@@ -7,7 +7,7 @@ namespace YooAsset.Editor
 		public string CollectPath;
 		public string GroupName;
 		public string UserData;
-		
+
 		public FilterRuleData(string assetPath, string collectPath, string groupName, string userData)
 		{
 			AssetPath = assetPath;

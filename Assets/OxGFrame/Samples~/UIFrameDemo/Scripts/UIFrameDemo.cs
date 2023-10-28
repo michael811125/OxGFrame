@@ -80,18 +80,34 @@ public class UIFrameDemo : MonoBehaviour
         {
             CoreFrames.UIFrame.Close(WorldUIs.Demo3UI, true, true);
         }
+        else if (Keyboard.current.numpad8Key.wasReleasedThisFrame)
+        {
+            CoreFrames.UIFrame.CloseStackByStack(ScreenUIs.Id, "CanvasCamera");
+        }
+        else if (Keyboard.current.numpad9Key.wasReleasedThisFrame)
+        {
+            CoreFrames.UIFrame.Close(ScreenUIs.Demo2UI);
+        }
+        else if (Keyboard.current.numpadPlusKey.wasReleasedThisFrame)
+        {
+            CoreFrames.UIFrame.CloseAll(ScreenUIs.Id);
+        }
+        else if (Keyboard.current.numpadMinusKey.wasReleasedThisFrame)
+        {
+            CoreFrames.UIFrame.CloseAll(WorldUIs.Id);
+        }
     }
 
     public async void ShowFirstScreenUI()
     {
-        await CoreFrames.UIFrame.Show(ScreenUIs.Id, ScreenUIs.Demo1UI, null, ScreenUIs.DemoLoadingUI, null, null);
+        await CoreFrames.UIFrame.Show(ScreenUIs.Id, ScreenUIs.Demo1UI, null, ScreenUIs.DemoLoadingUI, 0);
     }
 
     private int _dataCount = 0;
     public async void ShowFirstWorldUI()
     {
         if (!CoreFrames.UIFrame.CheckIsShowing(WorldUIs.Demo1UI)) this._dataCount++;
-        await CoreFrames.UIFrame.Show(WorldUIs.Id, WorldUIs.Demo1UI, $"Send Msg Data: {this._dataCount}", WorldUIs.DemoLoadingUI, null, null);
+        await CoreFrames.UIFrame.Show(WorldUIs.Id, WorldUIs.Demo1UI, $"Send Msg Data: {this._dataCount}", WorldUIs.DemoLoadingUI, 0);
     }
 
     public async void PreloadFirstWorldUI()

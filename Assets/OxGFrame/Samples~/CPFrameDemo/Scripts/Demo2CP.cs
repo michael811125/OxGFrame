@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Demo2CP : CPBase
 {
-    public override void OnInit()
+    public override void OnCreate()
     {
         Debug.Log($"<color=#FF2A20>InitThis:</color> {this.gameObject.name}");
     }

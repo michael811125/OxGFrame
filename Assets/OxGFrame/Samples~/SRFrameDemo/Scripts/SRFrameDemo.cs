@@ -50,7 +50,7 @@ public class SRFrameDemo : MonoBehaviour
 
     public async void ShowCubeSceneSRAndSetParent()
     {
-        await CoreFrames.SRFrame.Show(ScenePrefs.Id, ScenePrefs.CubeSceneSR, null, null, null, this.parent);
+        await CoreFrames.SRFrame.Show(ScenePrefs.Id, ScenePrefs.CubeSceneSR, null, null, 0, null, this.parent);
     }
 
     public void HideCubeSceneSR()

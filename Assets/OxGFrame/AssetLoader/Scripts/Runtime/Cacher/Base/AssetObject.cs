@@ -61,14 +61,14 @@ namespace OxGFrame.AssetLoader.Cacher
     public class BundlePack : AssetObject
     {
         public string packageName { get; protected set; }
-        public OperationHandleBase operationHandle { get; protected set; } = null;
+        public HandleBase operationHandle { get; protected set; } = null;
 
         /// <summary>
         /// Set pack info
         /// </summary>
         /// <param name="packageName"></param>
         /// <param name="operationHandle"></param>
-        public void SetPack(string packageName, string assetName, OperationHandleBase operationHandle)
+        public void SetPack(string packageName, string assetName, HandleBase operationHandle)
         {
             this.packageName = packageName;
             this.assetName = assetName;
@@ -88,7 +88,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public bool IsRawFileOperationHandle()
         {
-            return typeof(RawFileOperationHandle).IsInstanceOfType(this.operationHandle);
+            return typeof(RawFileHandle).IsInstanceOfType(this.operationHandle);
         }
 
         public bool IsRawFileOperationHandleValid()
@@ -98,7 +98,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public bool IsSceneOperationHandle()
         {
-            return typeof(SceneOperationHandle).IsInstanceOfType(this.operationHandle);
+            return typeof(SceneHandle).IsInstanceOfType(this.operationHandle);
         }
 
         public bool IsSceneOperationHandleValid()
@@ -108,7 +108,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public bool IsAssetOperationHandle()
         {
-            return typeof(AssetOperationHandle).IsInstanceOfType(this.operationHandle);
+            return typeof(AssetHandle).IsInstanceOfType(this.operationHandle);
         }
 
         public bool IsAssetOperationHandleValid()
@@ -118,7 +118,7 @@ namespace OxGFrame.AssetLoader.Cacher
         #endregion
 
         #region Handle
-        public T GetOperationHandle<T>() where T : OperationHandleBase
+        public T GetOperationHandle<T>() where T : HandleBase
         {
             return this.operationHandle as T;
         }
@@ -128,18 +128,18 @@ namespace OxGFrame.AssetLoader.Cacher
         public string GetRawFileText()
         {
             if (!this.IsRawFileOperationHandleValid()) return null;
-            return this.GetOperationHandle<RawFileOperationHandle>().GetRawFileText();
+            return this.GetOperationHandle<RawFileHandle>().GetRawFileText();
         }
 
         public byte[] GetRawFileData()
         {
             if (!this.IsRawFileOperationHandleValid()) return null;
-            return this.GetOperationHandle<RawFileOperationHandle>().GetRawFileData();
+            return this.GetOperationHandle<RawFileHandle>().GetRawFileData();
         }
 
         public void UnloadRawFile()
         {
-            if (this.IsRawFileOperationHandleValid()) this.GetOperationHandle<RawFileOperationHandle>().Release();
+            if (this.IsRawFileOperationHandleValid()) this.GetOperationHandle<RawFileHandle>().Release();
         }
         #endregion
 
@@ -147,12 +147,12 @@ namespace OxGFrame.AssetLoader.Cacher
         public Scene GetScene()
         {
             if (!this.IsSceneOperationHandleValid()) return new Scene();
-            return this.GetOperationHandle<SceneOperationHandle>().SceneObject;
+            return this.GetOperationHandle<SceneHandle>().SceneObject;
         }
 
         public void UnloadScene()
         {
-            if (this.IsSceneOperationHandleValid()) this.GetOperationHandle<SceneOperationHandle>().UnloadAsync();
+            if (this.IsSceneOperationHandleValid()) this.GetOperationHandle<SceneHandle>().UnloadAsync();
         }
         #endregion
 
@@ -160,12 +160,12 @@ namespace OxGFrame.AssetLoader.Cacher
         public T GetAsset<T>() where T : Object
         {
             if (!this.IsAssetOperationHandleValid()) return null;
-            return this.GetOperationHandle<AssetOperationHandle>().AssetObject as T;
+            return this.GetOperationHandle<AssetHandle>().AssetObject as T;
         }
 
         public void UnloadAsset()
         {
-            if (this.IsAssetOperationHandleValid()) this.GetOperationHandle<AssetOperationHandle>().Release();
+            if (this.IsAssetOperationHandleValid()) this.GetOperationHandle<AssetHandle>().Release();
         }
         #endregion
 

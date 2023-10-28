@@ -4,7 +4,7 @@ using OxGFrame.CoreFrame.SRFrame;
 
 public class CubeSceneSR : SRBase
 {
-    public override void OnInit()
+    public override void OnCreate()
     {
     }
 

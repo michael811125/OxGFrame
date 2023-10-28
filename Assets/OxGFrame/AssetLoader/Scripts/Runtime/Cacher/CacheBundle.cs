@@ -43,7 +43,7 @@ namespace OxGFrame.AssetLoader.Cacher
         }
 
         #region RawFile
-        public async UniTask PreloadRawFileAsync(string packageName, string[] assetNames, Progression progression, byte maxRetryCount)
+        public async UniTask PreloadRawFileAsync(string packageName, string[] assetNames, uint priority, Progression progression, byte maxRetryCount)
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
@@ -90,7 +90,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                         else Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                         this.GetRetryCounter(assetName).AddRetryCount();
-                        await this.PreloadRawFileAsync(packageName, new string[] { assetName }, progression, maxRetryCount);
+                        await this.PreloadRawFileAsync(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
                         continue;
                     }
                 }
@@ -102,7 +102,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     var package = PackageManager.GetPackage(packageName);
                     if (package != null && package.CheckLocationValid(assetName))
                     {
-                        var req = package.LoadRawFileAsync(assetName);
+                        var req = package.LoadRawFileAsync(assetName, priority);
                         if (req != null)
                         {
                             float lastCount = 0;
@@ -144,7 +144,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                         else Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                         this.GetRetryCounter(assetName).AddRetryCount();
-                        await this.PreloadRawFileAsync(packageName, new string[] { assetName }, progression, maxRetryCount);
+                        await this.PreloadRawFileAsync(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
                         continue;
                     }
                 }
@@ -258,7 +258,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
         }
 
-        public async UniTask<T> LoadRawFileAsync<T>(string packageName, string assetName, Progression progression, byte maxRetryCount)
+        public async UniTask<T> LoadRawFileAsync<T>(string packageName, string assetName, uint priority, Progression progression, byte maxRetryCount)
         {
             if (string.IsNullOrEmpty(assetName)) return default;
 
@@ -292,7 +292,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 var package = PackageManager.GetPackage(packageName);
                 if (package != null && package.CheckLocationValid(assetName))
                 {
-                    var req = package.LoadRawFileAsync(assetName);
+                    var req = package.LoadRawFileAsync(assetName, priority);
                     if (req != null)
                     {
                         float lastCount = 0;
@@ -355,7 +355,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                 else Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                 this.GetRetryCounter(assetName).AddRetryCount();
-                return await this.LoadRawFileAsync<T>(packageName, assetName, progression, maxRetryCount);
+                return await this.LoadRawFileAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
             }
 
             this.RemoveLoadingFlags(assetName);
@@ -538,7 +538,7 @@ namespace OxGFrame.AssetLoader.Cacher
         #endregion
 
         #region Scene
-        public async UniTask<BundlePack> LoadSceneAsync(string packageName, string assetName, LoadSceneMode loadSceneMode, bool activateOnLoad, int priority, Progression progression)
+        public async UniTask<BundlePack> LoadSceneAsync(string packageName, string assetName, LoadSceneMode loadSceneMode, bool activateOnLoad, uint priority, Progression progression)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
@@ -755,7 +755,7 @@ namespace OxGFrame.AssetLoader.Cacher
         #endregion
 
         #region Asset
-        public async UniTask PreloadAssetAsync<T>(string packageName, string[] assetNames, Progression progression, byte maxRetryCount) where T : Object
+        public async UniTask PreloadAssetAsync<T>(string packageName, string[] assetNames, uint priority, Progression progression, byte maxRetryCount) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
@@ -802,7 +802,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                         else Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                         this.GetRetryCounter(assetName).AddRetryCount();
-                        await this.PreloadAssetAsync<T>(packageName, new string[] { assetName }, progression, maxRetryCount);
+                        await this.PreloadAssetAsync<T>(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
                         continue;
                     }
                 }
@@ -814,7 +814,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     var package = PackageManager.GetPackage(packageName);
                     if (package != null && package.CheckLocationValid(assetName))
                     {
-                        var req = package.LoadAssetAsync<T>(assetName);
+                        var req = package.LoadAssetAsync<T>(assetName, priority);
                         if (req != null)
                         {
                             float lastCount = 0;
@@ -856,7 +856,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                         else Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                         this.GetRetryCounter(assetName).AddRetryCount();
-                        await this.PreloadAssetAsync<T>(packageName, new string[] { assetName }, progression, maxRetryCount);
+                        await this.PreloadAssetAsync<T>(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
                         continue;
                     }
                 }
@@ -970,7 +970,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
         }
 
-        public async UniTask<T> LoadAssetAsync<T>(string packageName, string assetName, Progression progression, byte maxRetryCount) where T : Object
+        public async UniTask<T> LoadAssetAsync<T>(string packageName, string assetName, uint priority, Progression progression, byte maxRetryCount) where T : Object
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
@@ -1004,7 +1004,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 var package = PackageManager.GetPackage(packageName);
                 if (package != null && package.CheckLocationValid(assetName))
                 {
-                    var req = package.LoadAssetAsync<T>(assetName);
+                    var req = package.LoadAssetAsync<T>(assetName, priority);
                     if (req != null)
                     {
                         float lastCount = 0;
@@ -1057,7 +1057,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                 else Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                 this.GetRetryCounter(assetName).AddRetryCount();
-                return await this.LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+                return await this.LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
             }
 
             this.RemoveLoadingFlags(assetName);

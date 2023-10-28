@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEngine;
 using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
@@ -52,11 +51,13 @@ namespace OxGFrame.AssetLoader.Bundle
             #endregion
 
             #region Init Preset App Packages
-            isInitialized = await InitPresetAppPackages();
+            bool appInitialized = await InitPresetAppPackages();
+            bool dlcInitialized = await InitPresetDlcPackages();
+            isInitialized = dlcInitialized && appInitialized;
             #endregion
 
             #region Set Default Package
-            // Set default package by first element
+            // Set default package by first element (only app preset packages)
             SetDefaultPackage(0);
             #endregion
         }
@@ -67,34 +68,50 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<bool> InitPresetAppPackages()
         {
-            if (BundleConfig.listPackages != null && BundleConfig.listPackages.Count > 0)
+            try
             {
-                foreach (var packageName in BundleConfig.listPackages)
+                var presetAppPackageNames = GetPresetAppPackageNames();
+                if (presetAppPackageNames != null)
                 {
-                    // Register first
-                    RegisterPackage(packageName);
-
-                    // Init preset app package
-                    string hostServer = null;
-                    string fallbackHostServer = null;
-                    IBuildinQueryServices builtinQueryService = null;
-                    IDeliveryQueryServices deliveryQueryService = null;
-
-                    // Host Mode or WebGL Mode
-                    if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
-                        BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
+                    foreach (var packageName in presetAppPackageNames)
                     {
-                        hostServer = await BundleConfig.GetHostServerUrl(packageName);
-                        fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
-                        builtinQueryService = new RequestBuiltinQuery();
-                        deliveryQueryService = new RequestDeliveryQuery();
+                        bool isInitialized = await AssetPatcher.InitAppPackage(packageName, false);
+                        if (!isInitialized) return false;
                     }
-                    bool isInitialized = await InitPackage(packageName, false, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService);
-                    if (!isInitialized) return false;
                 }
+                return true;
             }
+            catch (Exception ex)
+            {
+                Logging.PrintException<Logger>(ex);
+                return false;
+            }
+        }
 
-            return true;
+        /// <summary>
+        /// Init preset dlc packages from PatchLauncher
+        /// </summary>
+        /// <returns></returns>
+        public static async UniTask<bool> InitPresetDlcPackages()
+        {
+            try
+            {
+                var presetDlcPackageInfos = GetPresetDlcPackageInfos();
+                if (presetDlcPackageInfos != null)
+                {
+                    foreach (var packageInfo in presetDlcPackageInfos)
+                    {
+                        bool isInitialized = await AssetPatcher.InitDlcPackage(packageInfo.packageName, packageInfo.dlcVersion, false, packageInfo.withoutPlatform);
+                        if (!isInitialized) return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logging.PrintException<Logger>(ex);
+                return false;
+            }
         }
 
         /// <summary>
@@ -106,8 +123,9 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <param name="fallbackHostServer"></param>
         /// <param name="builtinQueryService"></param>
         /// <param name="deliveryQueryService"></param>
+        /// <param name="deliveryLoadService"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitPackage(string packageName, bool autoUpdate, string hostServer, string fallbackHostServer, IBuildinQueryServices builtinQueryService, IDeliveryQueryServices deliveryQueryService)
+        public static async UniTask<bool> InitPackage(string packageName, bool autoUpdate, string hostServer, string fallbackHostServer, IBuildinQueryServices builtinQueryService, IDeliveryQueryServices deliveryQueryService, IDeliveryLoadServices deliveryLoadService)
         {
             var package = RegisterPackage(packageName);
             if (package.InitializeStatus == EOperationStatus.Succeed)
@@ -122,7 +140,7 @@ namespace OxGFrame.AssetLoader.Bundle
             if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
             {
                 var createParameters = new EditorSimulateModeParameters();
-                createParameters.SimulateManifestFilePath = EditorSimulateModeHelper.SimulateBuild(packageName);
+                createParameters.SimulateManifestFilePath = EditorSimulateModeHelper.SimulateBuild("ScriptableBuildPipeline", packageName);
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 
@@ -131,6 +149,7 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 var createParameters = new OfflinePlayModeParameters();
                 createParameters.DecryptionServices = _decryption;
+                createParameters.BreakpointResumeFileSize = BundleConfig.breakpointFileSizeThreshold;
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 
@@ -139,8 +158,10 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 var createParameters = new HostPlayModeParameters();
                 createParameters.DecryptionServices = _decryption;
+                createParameters.BreakpointResumeFileSize = BundleConfig.breakpointFileSizeThreshold;
                 createParameters.BuildinQueryServices = builtinQueryService;
                 createParameters.DeliveryQueryServices = deliveryQueryService;
+                createParameters.DeliveryLoadServices = deliveryLoadService;
                 createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);
                 initializationOperation = package.InitializeAsync(createParameters);
             }
@@ -150,6 +171,7 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 var createParameters = new WebPlayModeParameters();
                 createParameters.DecryptionServices = _decryption;
+                createParameters.BreakpointResumeFileSize = BundleConfig.breakpointFileSizeThreshold;
                 createParameters.BuildinQueryServices = builtinQueryService;
                 createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);
                 initializationOperation = package.InitializeAsync(createParameters);
@@ -308,7 +330,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// Set default package by package list idx
+        /// Set default package by preset app package list idx
         /// </summary>
         /// <param name="idx"></param>
         internal static void SetDefaultPackage(int idx)
@@ -332,6 +354,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 _currentPackageName = package.PackageName;
                 _currentPackage = package;
             }
+            else Logging.Print<Logger>($"<color=#ff2478>Switch default package failed! Cannot found package: {packageName}.</color>");
         }
 
         /// <summary>
@@ -374,7 +397,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// Register package by package list idx
+        /// Register package by preset app package list idx
         /// </summary>
         /// <param name="idx"></param>
         /// <returns></returns>
@@ -423,10 +446,10 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static ResourcePackage[] GetPresetAppPackages()
         {
-            if (BundleConfig.listPackages != null && BundleConfig.listPackages.Count > 0)
+            if (BundleConfig.listAppPackages != null && BundleConfig.listAppPackages.Count > 0)
             {
                 List<ResourcePackage> packages = new List<ResourcePackage>();
-                foreach (var packageName in BundleConfig.listPackages)
+                foreach (var packageName in BundleConfig.listAppPackages)
                 {
                     var package = GetPackage(packageName);
                     if (package != null) packages.Add(package);
@@ -435,7 +458,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 return packages.ToArray();
             }
 
-            return null;
+            return new ResourcePackage[] { };
         }
 
         /// <summary>
@@ -450,12 +473,33 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
+        /// Get preset dlc packages
+        /// </summary>
+        /// <returns></returns>
+        public static ResourcePackage[] GetPresetDlcPackages()
+        {
+            if (BundleConfig.listDlcPackages != null && BundleConfig.listDlcPackages.Count > 0)
+            {
+                List<ResourcePackage> packages = new List<ResourcePackage>();
+                foreach (var packageInfo in BundleConfig.listDlcPackages)
+                {
+                    var package = GetPackage(packageInfo.packageName);
+                    if (package != null) packages.Add(package);
+                }
+
+                return packages.ToArray();
+            }
+
+            return new ResourcePackage[] { };
+        }
+
+        /// <summary>
         /// Get preset app package name list from PatchLauncher
         /// </summary>
         /// <returns></returns>
         public static string[] GetPresetAppPackageNames()
         {
-            return BundleConfig.listPackages.ToArray();
+            return BundleConfig.listAppPackages.ToArray();
         }
 
         /// <summary>
@@ -465,16 +509,39 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetPresetAppPackageNameByIdx(int idx)
         {
-            if (BundleConfig.listPackages.Count == 0) return null;
+            if (BundleConfig.listAppPackages.Count == 0) return null;
 
-            if (idx >= BundleConfig.listPackages.Count)
+            if (idx >= BundleConfig.listAppPackages.Count)
             {
-                idx = BundleConfig.listPackages.Count - 1;
+                idx = BundleConfig.listAppPackages.Count - 1;
                 Logging.Print<Logger>($"<color=#ff41d5>Package Idx Warning: {idx} is out of range will be auto set last idx.</color>");
             }
             else if (idx < 0) idx = 0;
 
-            return BundleConfig.listPackages[idx];
+            return BundleConfig.listAppPackages[idx];
+        }
+
+        /// <summary>
+        /// Get preset dlc package name list from PatchLauncher
+        /// </summary>
+        /// <returns></returns>
+        public static string[] GetPresetDlcPackageNames()
+        {
+            List<string> packageNames = new List<string>();
+            foreach (var packageInfo in BundleConfig.listDlcPackages)
+            {
+                packageNames.Add(packageInfo.packageName);
+            }
+            return packageNames.ToArray();
+        }
+
+        /// <summary>
+        /// Get preset dlc package info list from PatchLauncher
+        /// </summary>
+        /// <returns></returns>
+        public static DlcInfo[] GetPresetDlcPackageInfos()
+        {
+            return BundleConfig.listDlcPackages.ToArray();
         }
 
         /// <summary>

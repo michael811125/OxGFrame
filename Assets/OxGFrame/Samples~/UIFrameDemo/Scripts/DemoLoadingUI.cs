@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 
 public class DemoLoadingUI : UIBase
 {
-    public override void OnInit()
+    public override void OnCreate()
     {
     }
 

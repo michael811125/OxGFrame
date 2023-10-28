@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<root Version="2.4">
-  <Common AutoAddressable="True" UniqueBundleName="False" ShowPackageView="True" ShowEditorAlias="False" />
-  <Package PackageName="DefaultPackage" PackageDesc="">
+<root Version="v2.0.0">
+  <Common ShowPackageView="True" ShowEditorAlias="False" UniqueBundleName="True" />
+  <Package PackageName="DefaultPackage" PackageDesc="" AutoAddressable="True" LocationToLower="False" IncludeAssetGUID="False" IgnoreDefaultType="True">
     <Group GroupActiveRule="EnableGroup" GroupName="ModelGroup" GroupDesc="" AssetTags="models">
       <Collector CollectPath="Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab" CollectGUID="b4ea3356cddbd8b41926c28adefdfbc5" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
     </Group>
@@ -14,7 +14,7 @@
       <Collector CollectPath="Assets/OxGFrame/Samples/HotfixerDemo/Prefabs" CollectGUID="c24c14d4ff838c84dbc48cc507fd01aa" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
     </Group>
   </Package>
-  <Package PackageName="OtherPackage" PackageDesc="">
+  <Package PackageName="OtherPackage" PackageDesc="" AutoAddressable="True" LocationToLower="False" IncludeAssetGUID="False" IgnoreDefaultType="True">
     <Group GroupActiveRule="EnableGroup" GroupName="ModelGroup" GroupDesc="" AssetTags="models">
       <Collector CollectPath="Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab" CollectGUID="b4ea3356cddbd8b41926c28adefdfbc5" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
     </Group>
@@ -24,12 +24,12 @@
       <Collector CollectPath="Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo03.unity" CollectGUID="42b42b7f9b5995748ba85a54431669b3" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
     </Group>
   </Package>
-  <Package PackageName="DlcPackage" PackageDesc="">
+  <Package PackageName="DlcPackage" PackageDesc="" AutoAddressable="True" LocationToLower="False" IncludeAssetGUID="False" IgnoreDefaultType="True">
     <Group GroupActiveRule="EnableGroup" GroupName="ModelGroup" GroupDesc="" AssetTags="models">
       <Collector CollectPath="Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab" CollectGUID="b4ea3356cddbd8b41926c28adefdfbc5" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
     </Group>
   </Package>
-  <Package PackageName="HotfixPackage" PackageDesc="">
+  <Package PackageName="HotfixPackage" PackageDesc="" AutoAddressable="True" LocationToLower="False" IncludeAssetGUID="False" IgnoreDefaultType="True">
     <Group GroupActiveRule="EnableGroup" GroupName="Scene" GroupDesc="Hotfix Main Scene" AssetTags="">
       <Collector CollectPath="Assets/OxGFrame/Samples/HotfixerDemo/Scenes/Hotfix" CollectGUID="0ee84d5e2ddb7394ea79ac4b9ac7efec" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
     </Group>

@@ -14,7 +14,7 @@ namespace YooAsset.Editor
 		[MenuItem("YooAsset/AssetBundle Collector", false, 101)]
 		public static void OpenWindow()
 		{
-			AssetBundleCollectorWindow window = GetWindow<AssetBundleCollectorWindow>("资源包收集工具", true, WindowsDefine.DockedWindowTypes);
+			AssetBundleCollectorWindow window = GetWindow<AssetBundleCollectorWindow>("AssetBundle Collector", true, WindowsDefine.DockedWindowTypes);
 			window.minSize = new Vector2(800, 600);
 		}
 
@@ -25,16 +25,22 @@ namespace YooAsset.Editor
 		private List<RuleDisplayName> _packRuleList;
 		private List<RuleDisplayName> _filterRuleList;
 
-		private Button _settingsButton;
 		private VisualElement _helpBoxContainer;
+
+		private Button _globalSettingsButton;
+		private Button _packageSettingsButton;
+
 		private VisualElement _setting1Container;
-		private VisualElement _setting2Container;
 		private Toggle _showPackageToogle;
+		private Toggle _showEditorAliasToggle;
+		private Toggle _uniqueBundleNameToogle;
+
+		private VisualElement _setting2Container;
 		private Toggle _enableAddressableToogle;
 		private Toggle _locationToLowerToogle;
 		private Toggle _includeAssetGUIDToogle;
-		private Toggle _uniqueBundleNameToogle;
-		private Toggle _showEditorAliasToggle;
+		private Toggle _ignoreDefaultTypeToogle;
+		private Toggle _autoCollectShadersToogle;
 
 		private VisualElement _packageContainer;
 		private ListView _packageListView;
@@ -45,7 +51,7 @@ namespace YooAsset.Editor
 		private ListView _groupListView;
 		private TextField _groupNameTxt;
 		private TextField _groupDescTxt;
-		private TextField _groupAssetTagsTxt;
+		private TextField _groupTagsTxt;
 
 		private VisualElement _collectorContainer;
 		private ScrollView _collectorScrollView;
@@ -53,7 +59,8 @@ namespace YooAsset.Editor
 
 		private int _lastModifyPackageIndex = 0;
 		private int _lastModifyGroupIndex = 0;
-		private bool _showSettings = false;
+		private bool _showGlobalSettings = false;
+		private bool _showPackageSettings = false;
 
 
 		public void CreateGUI()
@@ -86,33 +93,23 @@ namespace YooAsset.Editor
 				// 警示栏
 				_helpBoxContainer = root.Q("HelpBoxContainer");
 
+				_globalSettingsButton = root.Q<Button>("GlobalSettingsButton");
+				_globalSettingsButton.clicked += GlobalSettingsBtn_clicked;
+				_packageSettingsButton = root.Q<Button>("PackageSettingsButton");
+				_packageSettingsButton.clicked += PackageSettingsBtn_clicked;
+
 				// 公共设置相关
-				_settingsButton = root.Q<Button>("SettingsButton");
-				_settingsButton.clicked += SettingsBtn_clicked;
 				_setting1Container = root.Q("PublicContainer1");
-				_setting2Container = root.Q("PublicContainer2");
 				_showPackageToogle = root.Q<Toggle>("ShowPackages");
 				_showPackageToogle.RegisterValueChangedCallback(evt =>
 				{
-					AssetBundleCollectorSettingData.ModifyPackageView(evt.newValue);
+					AssetBundleCollectorSettingData.ModifyShowPackageView(evt.newValue);
 					RefreshWindow();
 				});
-				_enableAddressableToogle = root.Q<Toggle>("EnableAddressable");
-				_enableAddressableToogle.RegisterValueChangedCallback(evt =>
+				_showEditorAliasToggle = root.Q<Toggle>("ShowRuleAlias");
+				_showEditorAliasToggle.RegisterValueChangedCallback(evt =>
 				{
-					AssetBundleCollectorSettingData.ModifyAddressable(evt.newValue);
-					RefreshWindow();
-				});
-				_locationToLowerToogle = root.Q<Toggle>("LocationToLower");
-				_locationToLowerToogle.RegisterValueChangedCallback(evt =>
-				{
-					AssetBundleCollectorSettingData.ModifyLocationToLower(evt.newValue);
-					RefreshWindow();
-				});
-				_includeAssetGUIDToogle = root.Q<Toggle>("IncludeAssetGUID");
-				_includeAssetGUIDToogle.RegisterValueChangedCallback(evt =>
-				{
-					AssetBundleCollectorSettingData.ModifyIncludeAssetGUID(evt.newValue);
+					AssetBundleCollectorSettingData.ModifyShowEditorAlias(evt.newValue);
 					RefreshWindow();
 				});
 				_uniqueBundleNameToogle = root.Q<Toggle>("UniqueBundleName");
@@ -121,11 +118,63 @@ namespace YooAsset.Editor
 					AssetBundleCollectorSettingData.ModifyUniqueBundleName(evt.newValue);
 					RefreshWindow();
 				});
-				_showEditorAliasToggle = root.Q<Toggle>("ShowEditorAlias");
-				_showEditorAliasToggle.RegisterValueChangedCallback(evt =>
+
+				// 包裹设置相关
+				_setting2Container = root.Q("PublicContainer2");
+				_enableAddressableToogle = root.Q<Toggle>("EnableAddressable");
+				_enableAddressableToogle.RegisterValueChangedCallback(evt =>
 				{
-					AssetBundleCollectorSettingData.ModifyShowEditorAlias(evt.newValue);
-					RefreshWindow();
+					var selectPackage = _packageListView.selectedItem as AssetBundleCollectorPackage;
+					if (selectPackage != null)
+					{
+						selectPackage.EnableAddressable = evt.newValue;
+						AssetBundleCollectorSettingData.ModifyPackage(selectPackage);
+						RefreshWindow();
+					}
+				});
+				_locationToLowerToogle = root.Q<Toggle>("LocationToLower");
+				_locationToLowerToogle.RegisterValueChangedCallback(evt =>
+				{
+					var selectPackage = _packageListView.selectedItem as AssetBundleCollectorPackage;
+					if (selectPackage != null)
+					{
+						selectPackage.LocationToLower = evt.newValue;
+						AssetBundleCollectorSettingData.ModifyPackage(selectPackage);
+						RefreshWindow();
+					}
+				});
+				_includeAssetGUIDToogle = root.Q<Toggle>("IncludeAssetGUID");
+				_includeAssetGUIDToogle.RegisterValueChangedCallback(evt =>
+				{
+					var selectPackage = _packageListView.selectedItem as AssetBundleCollectorPackage;
+					if (selectPackage != null)
+					{
+						selectPackage.IncludeAssetGUID = evt.newValue;
+						AssetBundleCollectorSettingData.ModifyPackage(selectPackage);
+						RefreshWindow();
+					}
+				});
+				_ignoreDefaultTypeToogle = root.Q<Toggle>("IgnoreDefaultType");
+				_ignoreDefaultTypeToogle.RegisterValueChangedCallback(evt =>
+				{
+					var selectPackage = _packageListView.selectedItem as AssetBundleCollectorPackage;
+					if (selectPackage != null)
+					{
+						selectPackage.IgnoreDefaultType = evt.newValue;
+						AssetBundleCollectorSettingData.ModifyPackage(selectPackage);
+						RefreshWindow();
+					}
+				});
+				_autoCollectShadersToogle = root.Q<Toggle>("AutoCollectShaders");
+				_autoCollectShadersToogle.RegisterValueChangedCallback(evt =>
+				{
+					var selectPackage = _packageListView.selectedItem as AssetBundleCollectorPackage;
+					if (selectPackage != null)
+					{
+						selectPackage.AutoCollectShaders = evt.newValue;
+						AssetBundleCollectorSettingData.ModifyPackage(selectPackage);
+						RefreshWindow();
+					}
 				});
 
 				// 配置修复按钮
@@ -241,8 +290,8 @@ namespace YooAsset.Editor
 				});
 
 				// 分组的资源标签
-				_groupAssetTagsTxt = root.Q<TextField>("GroupAssetTags");
-				_groupAssetTagsTxt.RegisterValueChangedCallback(evt =>
+				_groupTagsTxt = root.Q<TextField>("GroupTags");
+				_groupTagsTxt.RegisterValueChangedCallback(evt =>
 				{
 					var selectPackage = _packageListView.selectedItem as AssetBundleCollectorPackage;
 					var selectGroup = _groupListView.selectedItem as AssetBundleCollectorGroup;
@@ -271,7 +320,7 @@ namespace YooAsset.Editor
 				// 分组激活规则
 				var activeRuleContainer = root.Q("ActiveRuleContainer");
 				{
-					_activeRulePopupField = new PopupField<RuleDisplayName>("Active Rule", _activeRuleList, 0);
+					_activeRulePopupField = new PopupField<RuleDisplayName>("Group Active", _activeRuleList, 0);
 					_activeRulePopupField.name = "ActiveRuleMaskField";
 					_activeRulePopupField.style.unityTextAlign = TextAnchor.MiddleLeft;
 					_activeRulePopupField.formatListItemCallback = FormatListItemCallback;
@@ -325,48 +374,11 @@ namespace YooAsset.Editor
 
 		private void RefreshWindow()
 		{
-			_showPackageToogle.SetValueWithoutNotify(AssetBundleCollectorSettingData.Setting.ShowPackageView);
-			_enableAddressableToogle.SetValueWithoutNotify(AssetBundleCollectorSettingData.Setting.EnableAddressable);
-			_locationToLowerToogle.SetValueWithoutNotify(AssetBundleCollectorSettingData.Setting.LocationToLower);
-			_includeAssetGUIDToogle.SetValueWithoutNotify(AssetBundleCollectorSettingData.Setting.IncludeAssetGUID);
-			_uniqueBundleNameToogle.SetValueWithoutNotify(AssetBundleCollectorSettingData.Setting.UniqueBundleName);
-			_showEditorAliasToggle.SetValueWithoutNotify(AssetBundleCollectorSettingData.Setting.ShowEditorAlias);
-
-			// 警示框
-#if UNITY_2020_3_OR_NEWER
-			_helpBoxContainer.Clear();
-			if (_enableAddressableToogle.value && _locationToLowerToogle.value)
-			{
-				var helpBox = new HelpBox("无法同时开启[Enable Addressable]选项和[Location To Lower]选项", HelpBoxMessageType.Error);
-				_helpBoxContainer.Add(helpBox);
-			}
-			if (AssetBundleCollectorSettingData.Setting.Packages.Count > 1 && _uniqueBundleNameToogle.value == false)
-			{
-				var helpBox = new HelpBox("检测到当前配置存在多个Package，建议开启[Unique Bundle Name]选项", HelpBoxMessageType.Warning);
-				_helpBoxContainer.Add(helpBox);
-			}
-			if (_helpBoxContainer.childCount > 0)
-				_helpBoxContainer.style.display = DisplayStyle.Flex;
-			else
-				_helpBoxContainer.style.display = DisplayStyle.None;
-#endif
-
-			// 设置栏
-			if (_showSettings)
-			{
-				_setting1Container.style.display = DisplayStyle.Flex;
-				_setting2Container.style.display = DisplayStyle.Flex;
-			}
-			else
-			{
-				_setting1Container.style.display = DisplayStyle.None;
-				_setting2Container.style.display = DisplayStyle.None;
-			}
-
 			_groupContainer.visible = false;
 			_collectorContainer.visible = false;
 
 			FillPackageViewData();
+			RefreshSettings();
 		}
 		private void FixBtn_clicked()
 		{
@@ -394,10 +406,15 @@ namespace YooAsset.Editor
 		{
 			AssetBundleCollectorSettingData.SaveFile();
 		}
-		private void SettingsBtn_clicked()
+		private void GlobalSettingsBtn_clicked()
 		{
-			_showSettings = !_showSettings;
-			RefreshWindow();
+			_showGlobalSettings = !_showGlobalSettings;
+			RefreshGlobalSetting();
+		}
+		private void PackageSettingsBtn_clicked()
+		{
+			_showPackageSettings = !_showPackageSettings;
+			RefreshPackageSetting();
 		}
 		private string FormatListItemCallback(RuleDisplayName ruleDisplayName)
 		{
@@ -414,6 +431,91 @@ namespace YooAsset.Editor
 				return ruleDisplayName.ClassName;
 		}
 
+		// 设置栏相关
+		private void RefreshSettings()
+		{
+			RefreshGlobalSetting();
+			RefreshPackageSetting();
+			RefreshHelpBoxTips();
+		}
+		private void RefreshGlobalSetting()
+		{
+			_showPackageToogle.SetValueWithoutNotify(AssetBundleCollectorSettingData.Setting.ShowPackageView);
+			_showEditorAliasToggle.SetValueWithoutNotify(AssetBundleCollectorSettingData.Setting.ShowEditorAlias);
+			_uniqueBundleNameToogle.SetValueWithoutNotify(AssetBundleCollectorSettingData.Setting.UniqueBundleName);
+
+			if (_showGlobalSettings)
+			{
+				_setting1Container.style.display = DisplayStyle.Flex;
+			}
+			else
+			{
+				_setting1Container.style.display = DisplayStyle.None;
+			}
+
+			if (_showPackageToogle.value)
+				_packageContainer.style.display = DisplayStyle.Flex;
+			else
+				_packageContainer.style.display = DisplayStyle.None;
+		}
+		private void RefreshPackageSetting()
+		{
+			var selectPackage = _packageListView.selectedItem as AssetBundleCollectorPackage;
+			if (selectPackage != null)
+			{
+				string packageSettingName = "Package Settings";
+				_packageSettingsButton.SetEnabled(true);
+				_packageSettingsButton.text = $"{packageSettingName} ({selectPackage.PackageName})";
+				_enableAddressableToogle.SetValueWithoutNotify(selectPackage.EnableAddressable);
+				_locationToLowerToogle.SetValueWithoutNotify(selectPackage.LocationToLower);
+				_includeAssetGUIDToogle.SetValueWithoutNotify(selectPackage.IncludeAssetGUID);
+				_ignoreDefaultTypeToogle.SetValueWithoutNotify(selectPackage.IgnoreDefaultType);
+			}
+			else
+			{
+				_showPackageSettings = false;
+				_packageSettingsButton.SetEnabled(false);
+				if (_packageListView.itemsSource.Count == 0)
+					_packageSettingsButton.text = $"Not Found Any Package !";
+				else
+					_packageSettingsButton.text = $"Package Setting";
+			}
+
+			if (_showPackageSettings)
+			{
+				_setting2Container.style.display = DisplayStyle.Flex;
+			}
+			else
+			{
+				_setting2Container.style.display = DisplayStyle.None;
+			}
+		}
+		private void RefreshHelpBoxTips()
+		{
+#if UNITY_2020_3_OR_NEWER
+			_helpBoxContainer.Clear();
+
+			if (_enableAddressableToogle.value && _locationToLowerToogle.value)
+			{
+				string tips = "The [Enable Addressable] option and [Location To Lower] option cannot be enabled at the same time.";
+				var helpBox = new HelpBox(tips, HelpBoxMessageType.Error);
+				_helpBoxContainer.Add(helpBox);
+			}
+
+			if (AssetBundleCollectorSettingData.Setting.Packages.Count > 1 && _uniqueBundleNameToogle.value == false)
+			{
+				string tips = "There are multiple Packages in the current config, Recommended to enable the [Unique Bundle Name] option.";
+				var helpBox = new HelpBox(tips, HelpBoxMessageType.Warning);
+				_helpBoxContainer.Add(helpBox);
+			}
+
+			if (_helpBoxContainer.childCount > 0)
+				_helpBoxContainer.style.display = DisplayStyle.Flex;
+			else
+				_helpBoxContainer.style.display = DisplayStyle.None;
+#endif
+		}
+
 		// 包裹列表相关
 		private void FillPackageViewData()
 		{
@@ -426,11 +528,6 @@ namespace YooAsset.Editor
 			{
 				_packageListView.selectedIndex = _lastModifyPackageIndex;
 			}
-
-			if (_showPackageToogle.value)
-				_packageContainer.style.display = DisplayStyle.Flex;
-			else
-				_packageContainer.style.display = DisplayStyle.None;
 		}
 		private VisualElement MakePackageListViewItem()
 		{
@@ -464,20 +561,24 @@ namespace YooAsset.Editor
 			{
 				_groupContainer.visible = false;
 				_collectorContainer.visible = false;
-				return;
 			}
+			else
+			{
+				_groupContainer.visible = true;
+				_lastModifyPackageIndex = _packageListView.selectedIndex;
+				_packageNameTxt.SetValueWithoutNotify(selectPackage.PackageName);
+				_packageDescTxt.SetValueWithoutNotify(selectPackage.PackageDesc);
 
-			_groupContainer.visible = true;
-			_lastModifyPackageIndex = _packageListView.selectedIndex;
-			_packageNameTxt.SetValueWithoutNotify(selectPackage.PackageName);
-			_packageDescTxt.SetValueWithoutNotify(selectPackage.PackageDesc);
-			FillGroupViewData();
+				RefreshSettings();
+				FillGroupViewData();
+			}
 		}
 		private void AddPackageBtn_clicked()
 		{
 			Undo.RecordObject(AssetBundleCollectorSettingData.Setting, "YooAsset.AssetBundleCollectorWindow AddPackage");
 			AssetBundleCollectorSettingData.CreatePackage("DefaultPackage");
 			FillPackageViewData();
+			RefreshSettings();
 		}
 		private void RemovePackageBtn_clicked()
 		{
@@ -488,6 +589,7 @@ namespace YooAsset.Editor
 			Undo.RecordObject(AssetBundleCollectorSettingData.Setting, "YooAsset.AssetBundleCollectorWindow RemovePackage");
 			AssetBundleCollectorSettingData.RemovePackage(selectPackage);
 			FillPackageViewData();
+			RefreshSettings();
 		}
 
 		// 分组列表相关
@@ -555,7 +657,7 @@ namespace YooAsset.Editor
 			_activeRulePopupField.SetValueWithoutNotify(GetActiveRuleIndex(selectGroup.ActiveRuleName));
 			_groupNameTxt.SetValueWithoutNotify(selectGroup.GroupName);
 			_groupDescTxt.SetValueWithoutNotify(selectGroup.GroupDesc);
-			_groupAssetTagsTxt.SetValueWithoutNotify(selectGroup.AssetTags);
+			_groupTagsTxt.SetValueWithoutNotify(selectGroup.AssetTags);
 
 			FillCollectorViewData();
 		}
@@ -679,7 +781,7 @@ namespace YooAsset.Editor
 			{
 				var textField = new TextField();
 				textField.name = "TextField0";
-				textField.label = "UserData";
+				textField.label = "User Data";
 				textField.style.width = 200;
 				elementBottom.Add(textField);
 				var label = textField.Q<Label>();
@@ -688,7 +790,7 @@ namespace YooAsset.Editor
 			{
 				var textField = new TextField();
 				textField.name = "TextField1";
-				textField.label = "Tags";
+				textField.label = "Asset Tags";
 				textField.style.width = 100;
 				textField.style.marginLeft = 20;
 				textField.style.flexGrow = 1;
@@ -730,6 +832,13 @@ namespace YooAsset.Editor
 			var collectObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(collector.CollectPath);
 			if (collectObject != null)
 				collectObject.name = collector.CollectPath;
+
+			// 注意：非主资源收集器的标签栏需要被冻结
+			var textTags = element.Q<TextField>("TextField1");
+			if (collector.CollectorType == ECollectorType.MainAssetCollector)
+				textTags.SetEnabled(true);
+			else
+				textTags.SetEnabled(false);
 
 			// Foldout
 			var foldout = element.Q<Foldout>("Foldout1");
@@ -774,6 +883,11 @@ namespace YooAsset.Editor
 				{
 					RefreshFoldout(foldout, selectGroup, collector);
 				}
+
+				if (collector.CollectorType == ECollectorType.MainAssetCollector)
+					textTags.SetEnabled(true);
+				else
+					textTags.SetEnabled(false);
 			});
 
 			// Address Rule
@@ -859,8 +973,15 @@ namespace YooAsset.Editor
 
 				try
 				{
-					CollectCommand command = new CollectCommand(EBuildMode.SimulateBuild, _packageNameTxt.value,
-						_enableAddressableToogle.value, _locationToLowerToogle.value, _includeAssetGUIDToogle.value, _uniqueBundleNameToogle.value);
+					CollectCommand command = new CollectCommand(EBuildMode.SimulateBuild,
+						_packageNameTxt.value,
+						_enableAddressableToogle.value,
+						_locationToLowerToogle.value,
+						_includeAssetGUIDToogle.value,
+						_ignoreDefaultTypeToogle.value,
+						_autoCollectShadersToogle.value,
+						_uniqueBundleNameToogle.value);
+					collector.CheckConfigError();
 					collectAssetInfos = collector.GetAllCollectAssets(command, group);
 				}
 				catch (System.Exception e)

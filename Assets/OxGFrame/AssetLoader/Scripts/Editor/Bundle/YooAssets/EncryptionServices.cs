@@ -34,14 +34,14 @@ namespace OxGFrame.AssetLoader.Editor
                 Debug.Log($"OffsetCryptogram => randomSeed: {randomSeed}, dummySize: {dummySize}");
 
                 EncryptResult result = new EncryptResult();
-                result.LoadMethod = EBundleLoadMethod.LoadFromStream;
+                result.Encrypted = true;
                 result.EncryptedData = fileData;
                 return result;
             }
             else
             {
                 EncryptResult result = new EncryptResult();
-                result.LoadMethod = EBundleLoadMethod.Normal;
+                result.Encrypted = false;
                 return result;
             }
         }
@@ -64,14 +64,14 @@ namespace OxGFrame.AssetLoader.Editor
                 Debug.Log($"XorCryptogram => xorKey: {xorKey}");
 
                 EncryptResult result = new EncryptResult();
-                result.LoadMethod = EBundleLoadMethod.LoadFromStream;
+                result.Encrypted = true;
                 result.EncryptedData = fileData;
                 return result;
             }
             else
             {
                 EncryptResult result = new EncryptResult();
-                result.LoadMethod = EBundleLoadMethod.Normal;
+                result.Encrypted = false;
                 return result;
             }
         }
@@ -96,14 +96,14 @@ namespace OxGFrame.AssetLoader.Editor
                 Debug.Log($"HT2XorCryptogram => hXorKey: {hXorKey}, tXorKey: {tXorKey}, jXorKey: {jXorKey}");
 
                 EncryptResult result = new EncryptResult();
-                result.LoadMethod = EBundleLoadMethod.LoadFromStream;
+                result.Encrypted = true;
                 result.EncryptedData = fileData;
                 return result;
             }
             else
             {
                 EncryptResult result = new EncryptResult();
-                result.LoadMethod = EBundleLoadMethod.Normal;
+                result.Encrypted = false;
                 return result;
             }
         }
@@ -127,14 +127,14 @@ namespace OxGFrame.AssetLoader.Editor
                 Debug.Log($"AesCryptogram => aesKey: {aesKey}, aesIv: {aesIv}");
 
                 EncryptResult result = new EncryptResult();
-                result.LoadMethod = EBundleLoadMethod.LoadFromStream;
+                result.Encrypted = true;
                 result.EncryptedData = fileData;
                 return result;
             }
             else
             {
                 EncryptResult result = new EncryptResult();
-                result.LoadMethod = EBundleLoadMethod.Normal;
+                result.Encrypted = false;
                 return result;
             }
         }

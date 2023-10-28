@@ -35,9 +35,11 @@ namespace OxGFrame.CoreFrame.UIFrame
         public bool stack = false;
         [ConditionalField(nameof(stack), inverse: true), Tooltip("Fixed rendering order without stack mode"), Range(0, UIConfig.ORDER_DIFFERENCE)]
         public int order = 0;
-        [Tooltip("If checked when call CloseAll method will auto skip process (If ReverseChanges or Stack is enabled, it will not work)")]
+        [Tooltip("If checked, allow close stack by stack")]
+        public bool allowCloseStackByStack = false;
+        [Tooltip("If checked, when call CloseAll method will auto skip process (If ReverseChanges or Stack is enabled, it will not work)")]
         public bool whenCloseAllToSkip = false;
-        [Tooltip("If checked when call HideAll method will auto skip process (If ReverseChanges or Stack is enabled, it will not work)")]
+        [Tooltip("If checked, when call HideAll method will auto skip process (If ReverseChanges or Stack is enabled, it will not work)")]
         public bool whenHideAllToSkip = false;
     }
 
@@ -50,7 +52,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         public Sprite sprite;
         [Tooltip("Mask material")]
         public Material material;
-        [Tooltip("If checked when click mask will close self")]
+        [Tooltip("If checked, when click mask will close self")]
         public bool isClickMaskToClose = true;
     }
 

@@ -10,7 +10,7 @@ public class Demo1UI : UIBase
     private Button oepnBtn;
     private Image myImage2;
 
-    public override void OnInit()
+    public override void OnCreate()
     {
     }
 
@@ -85,8 +85,8 @@ public class Demo1UI : UIBase
     private async void _ShowDemoPopup2UI()
     {
         if (this.uiSetting.canvasName == UIFrameDemo.CanvasCamera)
-            await CoreFrames.UIFrame.Show(ScreenUIs.Id, ScreenUIs.Demo2UI, null, ScreenUIs.DemoLoadingUI, null, null);
+            await CoreFrames.UIFrame.Show(ScreenUIs.Id, ScreenUIs.Demo2UI, null, ScreenUIs.DemoLoadingUI, 0);
         else if (this.uiSetting.canvasName == UIFrameDemo.CanvasWorld)
-            await CoreFrames.UIFrame.Show(WorldUIs.Id, WorldUIs.Demo2UI, null, WorldUIs.DemoLoadingUI, null, null);
+            await CoreFrames.UIFrame.Show(WorldUIs.Id, WorldUIs.Demo2UI, null, WorldUIs.DemoLoadingUI, 0);
     }
 }

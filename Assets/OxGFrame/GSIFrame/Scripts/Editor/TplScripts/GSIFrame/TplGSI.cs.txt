@@ -3,11 +3,11 @@ using OxGFrame.GSIFrame;
 
 public class #SCRIPTNAME# : GSIBase
 {
-    // Execution Order: OnInit (Once) > OnEnter (Every Change) > OnUpdate
+    // Execution Order: OnCreate (Once) > OnEnter (Every Change) > OnUpdate
 
-    public async override UniTask OnInit()
+    public async override UniTask OnCreate()
     {
-        /* Do Somethings OnInit once in here */
+        /* Do Somethings OnCreate once in here */
     }
 
     public async override UniTask OnEnter()

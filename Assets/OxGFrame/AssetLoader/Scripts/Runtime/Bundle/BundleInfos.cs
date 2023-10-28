@@ -19,6 +19,7 @@ namespace OxGFrame.AssetLoader.Bundle
     [Serializable]
     public class DlcInfo
     {
+        public bool withoutPlatform = false;
         public string packageName;
         [Tooltip("If version is null or empty will auto set newset package version by date")]
         public string dlcVersion;

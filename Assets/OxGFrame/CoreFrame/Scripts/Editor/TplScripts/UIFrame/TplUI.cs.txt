@@ -5,7 +5,7 @@ public class #SCRIPTNAME# : UIBase
 {
     // Use _Node@XXX to Bind
 
-    public override void OnInit()
+    public override void OnCreate()
     {
         /**
          * Do Somethings Init Once In Here
@@ -26,6 +26,16 @@ public class #SCRIPTNAME# : UIBase
          */
     }
 
+    protected override void ShowAnime(AnimeEndCb animeEndCb)
+    {
+        animeEndCb(); // Must Keep, Because Parent Already Set AnimeCallback
+    }
+
+    protected override void HideAnime(AnimeEndCb animeEndCb)
+    {
+        animeEndCb(); // Must Keep, Because Parent Already Set AnimeCallback
+    }
+
     protected override void OnBind()
     {
         /**
@@ -40,6 +50,27 @@ public class #SCRIPTNAME# : UIBase
          */
     }
 
+    protected override void OnClose()
+    {
+        /**
+         * Do Somethings On Close
+         */
+    }
+
+    protected override void OnReveal()
+    {
+        /**
+         * Do Somethings On Reveal
+         */
+    }
+
+    protected override void OnHide()
+    {
+        /**
+         * Do Somethings On Hide
+         */
+    }
+
     protected override void OnUpdate(float dt)
     {
         /**
@@ -51,23 +82,6 @@ public class #SCRIPTNAME# : UIBase
     {
         /**
          * Do Refresh Once After Data Receive
-         */
-    }
-
-    protected override void ShowAnime(AnimeEndCb animeEndCb)
-    {
-        animeEndCb(); // Must Keep, Because Parent Already Set AnimeCallback
-    }
-
-    protected override void HideAnime(AnimeEndCb animeEndCb)
-    {
-        animeEndCb(); // Must Keep, Because Parent Already Set AnimeCallback
-    }
-
-    protected override void OnClose()
-    {
-        /**
-         * Do Somethings On Close (Close)
          */
     }
 

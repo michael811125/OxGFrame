@@ -15,20 +15,23 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         [Separator("Patch Options")]
         public BundleConfig.PlayMode playMode = BundleConfig.PlayMode.EditorSimulateMode;
-        [Tooltip("If checker patch field will compare whole version"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WebGLMode)]
+        [Tooltip("If checked, the patch field will compare whole version"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WebGLMode)]
         public BundleConfig.SemanticRule semanticRule = new BundleConfig.SemanticRule();
-        [Tooltip("If checked will skip preset app packages download step of the patch (force download while playing)"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
+        [Tooltip("If checked, will skip preset app packages download step of the patch (force download while playing)"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
         public bool skipMainDownload = false;
 
         [Separator("Preset App Packages")]
         [Tooltip("The first element will be default app package\n\nNote: The presets will combine in main download of the patch")]
-        public List<string> listPackages = new List<string>() { "DefaultPackage" };
+        public List<string> listAppPackages = new List<string>() { "DefaultPackage" };
+
+        [Separator("Preset DLC Packages"), Tooltip("Preset DLC packages must be fixed versions.\n\nNote: The presets will combine in main download of the patch")]
+        public List<DlcInfo> listDlcPackages = new List<DlcInfo>();
 
         [Separator("Download Options")]
         public int maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
         public int failedRetryCount = BundleConfig.failedRetryCount;
         [Tooltip("If file size >= [BreakpointFileSizeThreshold] that file will enable breakpoint mechanism (for all downloaders)")]
-        public int breakpointFileSizeThreshold = 20 << 20;
+        public uint breakpointFileSizeThreshold = BundleConfig.breakpointFileSizeThreshold;
 
         [Separator("Cryptogram Options")]
         [Tooltip("Bundle decryption (case-insensitive)\n\n[NONE], \n[OFFSET, dummySize], \n[XOR, key], \n[HT2XOR, headKey, tailKey, jumpKey], \n[AES, key, iv]\n\nex: \n\"none\" \n\"offset, 12\" \n\"xor, 23\" \n\"ht2xor, 34, 45, 56\" \n\"aes, key, iv\"")]
@@ -70,14 +73,15 @@ namespace OxGFrame.AssetLoader.Bundle
             #endregion
 
             #region Package List
-            BundleConfig.listPackages = this.listPackages;
+            BundleConfig.listAppPackages = this.listAppPackages;
+            BundleConfig.listDlcPackages = this.listDlcPackages;
             #endregion
 
             #region Download Options
             BundleConfig.maxConcurrencyDownloadCount = this.maxConcurrencyDownloadCount <= 0 ? BundleConfig.defaultMaxConcurrencyDownloadCount : this.maxConcurrencyDownloadCount;
             BundleConfig.failedRetryCount = this.failedRetryCount <= 0 ? BundleConfig.defaultFailedRetryCount : this.failedRetryCount;
             // Set download breakpoint size threshold
-            YooAssets.SetDownloadSystemBreakpointResumeFileSize(this.breakpointFileSizeThreshold);
+            BundleConfig.breakpointFileSizeThreshold = this.breakpointFileSizeThreshold;
             #endregion
 
             #region Cryptogram Options
@@ -109,7 +113,6 @@ namespace OxGFrame.AssetLoader.Bundle
             switch (this.playMode)
             {
                 case BundleConfig.PlayMode.OfflineMode:
-
                     Logging.Print<Logger>($"<color=#ff1f4c>[Offline Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
                     break;
                 case BundleConfig.PlayMode.HostMode:
@@ -120,7 +123,6 @@ namespace OxGFrame.AssetLoader.Bundle
             switch (this.playMode)
             {
                 case BundleConfig.PlayMode.WebGLMode:
-
                     Logging.Print<Logger>($"<color=#ff1f4c>[WebGL Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
                     break;
             }

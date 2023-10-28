@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OxGKit.LoggingSystem;
+using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
@@ -16,7 +17,8 @@ namespace OxGFrame.AssetLoader.Bundle
         public static void Init() { }
         public static bool FileExists(string packageName, string fileName)
         {
-            string filePath = Path.Combine(Application.streamingAssetsPath, BundleConfig.yooDefaultFolderName, packageName, fileName);
+            var yooDefaultFolderName = PatchSetting.yooSetting.DefaultYooFolderName;
+            string filePath = Path.Combine(Application.streamingAssetsPath, yooDefaultFolderName, packageName, fileName);
             if (File.Exists(filePath))
             {
                 Logging.Print<Logger>($"<color=#00FF00>【Query】Request succeeded. File: {filePath}</color>");
@@ -88,7 +90,8 @@ namespace OxGFrame.AssetLoader.Bundle
             if (File.Exists(saveFilePath))
                 File.Delete(saveFilePath);
 
-            string folderPath = $"{Application.dataPath}/StreamingAssets/{BundleConfig.yooDefaultFolderName}";
+            var yooDefaultFolderName = PatchSetting.yooSetting.DefaultYooFolderName;
+            string folderPath = $"{Application.dataPath}/StreamingAssets/{yooDefaultFolderName}";
             DirectoryInfo root = new DirectoryInfo(folderPath);
             if (root.Exists == false)
             {

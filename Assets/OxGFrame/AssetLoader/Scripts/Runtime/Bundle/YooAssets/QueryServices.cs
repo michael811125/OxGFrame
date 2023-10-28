@@ -7,23 +7,35 @@ using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
-    public abstract class RequestQueryBase : IBuildinQueryServices, IDeliveryQueryServices
+    public abstract class RequestQueryBase : IBuildinQueryServices, IDeliveryQueryServices, IDeliveryLoadServices
     {
-        public virtual bool QueryDeliveryFiles(string packageName, string fileName)
+        #region IBuildinQueryServices, IDeliveryQueryServices
+        public virtual bool Query(string packageName, string fileName)
         {
             return false;
         }
+        #endregion
 
-        public virtual DeliveryFileInfo GetDeliveryFileInfo(string packageName, string fileName)
+        #region IDeliveryQueryServices
+        public string GetFilePath(string packageName, string fileName)
         {
-            throw new System.NotImplementedException();
+            return null;
+        }
+        #endregion
+
+        #region IDeliveryLoadServices
+        public virtual AssetBundle LoadAssetBundle(DeliveryFileInfo fileInfo)
+        {
+            return null;
         }
 
-        public virtual bool QueryStreamingAssets(string packageName, string fileName)
+        public virtual AssetBundleCreateRequest LoadAssetBundleAsync(DeliveryFileInfo fileInfo)
         {
-            return false;
+            return null;
         }
+        #endregion
 
+        #region RequestQueryBase
         protected IEnumerator WebRequest(string url)
         {
             UnityWebRequest request = UnityWebRequest.Get(url);
@@ -63,20 +75,23 @@ namespace OxGFrame.AssetLoader.Bundle
         {
 #if UNITY_EDITOR
             return string.Format("file:///{0}", path);
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE             
             return string.Format("file://{0}", path);
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID              
             return path;
-#elif UNITY_STANDALONE
+#elif UNITY_STANDALONE                 
             return string.Format("file:///{0}", path);
+#else
+            return path;
 #endif
         }
+        #endregion
     }
 
     #region Builtin Services
     public class RequestBuiltinQuery : RequestQueryBase
     {
-        public override bool QueryStreamingAssets(string packageName, string fileName)
+        public override bool Query(string packageName, string fileName)
         {
 #if UNITY_WEBGL
             return StreamingAssetsHelper.FileExists(packageName, fileName);

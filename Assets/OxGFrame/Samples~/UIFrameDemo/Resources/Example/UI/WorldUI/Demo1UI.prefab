@@ -457,11 +457,14 @@ MonoBehaviour:
     nodeType: 2
     stack: 1
     order: 1000
+    allowCloseStackByStack: 0
     whenCloseAllToSkip: 0
     whenHideAllToSkip: 0
   autoMask: 1
   maskSetting:
     color: {r: 0, g: 0.4056604, b: 0.3231732, a: 0.5019608}
+    sprite: {fileID: 0}
+    material: {fileID: 0}
     isClickMaskToClose: 1
 --- !u!1 &8326820277654019497
 GameObject:

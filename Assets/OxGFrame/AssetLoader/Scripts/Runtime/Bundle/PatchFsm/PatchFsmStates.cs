@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UniFramework.Machine;
-using UnityEngine;
 using YooAsset;
 
 namespace OxGFrame.AssetLoader.PatchFsm
@@ -53,7 +52,12 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 // Get preset app package names
                 bool isCleared = false;
-                var packageNames = PackageManager.GetPresetAppPackageNames();
+
+                // Combine packages
+                var appPackageNames = PackageManager.GetPresetAppPackageNames();
+                var dlcPackageNames = PackageManager.GetPresetDlcPackageNames();
+                var packageNames = appPackageNames.Concat(dlcPackageNames).ToArray();
+
                 foreach (var packageName in packageNames)
                 {
                     // Clear cache and files of package
@@ -413,7 +417,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
 
-                var packages = PackageManager.GetPresetAppPackages();
+                // Combine packages
+                var appPackages = PackageManager.GetPresetAppPackages();
+                var dlcPackages = PackageManager.GetPresetDlcPackages();
+                var packages = appPackages.Concat(dlcPackages).ToArray();
 
                 bool succeed = false;
                 List<string> patchVersions = new List<string>();
@@ -477,7 +484,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
 
-                var packages = PackageManager.GetPresetAppPackages();
+                // Combine packages
+                var appPackages = PackageManager.GetPresetAppPackages();
+                var dlcPackages = PackageManager.GetPresetDlcPackages();
+                var packages = appPackages.Concat(dlcPackages).ToArray();
 
                 bool succeed = false;
                 for (int i = 0; i < packages.Length; i++)
@@ -560,7 +570,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 PatchConfig patchCfg = JsonConvert.DeserializeObject<PatchConfig>(hostCfgJson);
                 List<GroupInfo> patchGroupInfos = patchCfg.GROUP_INFOS;
 
-                var packages = PackageManager.GetPresetAppPackages();
+                // Combine packages
+                var appPackages = PackageManager.GetPresetAppPackages();
+                var dlcPackages = PackageManager.GetPresetDlcPackages();
+                var packages = appPackages.Concat(dlcPackages).ToArray();
 
                 string key;
                 int totalDownloadCount;
@@ -757,7 +770,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
             private async UniTask _StartDownload()
             {
-                var packages = PackageManager.GetPresetAppPackages();
+                // Combine packages
+                var appPackages = PackageManager.GetPresetAppPackages();
+                var dlcPackages = PackageManager.GetPresetDlcPackages();
+                var packages = appPackages.Concat(dlcPackages).ToArray();
 
                 // Get last GroupInfo by UserEvent Set
                 GroupInfo lastGroupInfo = PatchManager.GetLastGroupInfo();
@@ -890,7 +906,11 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
 
-                var packages = PackageManager.GetPresetAppPackages();
+                // Combine packages
+                var appPackages = PackageManager.GetPresetAppPackages();
+                var dlcPackages = PackageManager.GetPresetDlcPackages();
+                var packages = appPackages.Concat(dlcPackages).ToArray();
+
                 foreach (var package in packages)
                 {
                     var operation = package.ClearUnusedCacheFilesAsync();

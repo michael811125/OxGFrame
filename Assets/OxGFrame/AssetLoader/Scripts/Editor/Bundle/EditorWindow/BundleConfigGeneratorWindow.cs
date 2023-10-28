@@ -363,7 +363,7 @@ namespace OxGFrame.AssetLoader.Editor
             }
 
             // active build target toggle
-            this.activeBuildTarget = GUILayout.Toggle(this.activeBuildTarget, new GUIContent("Use Active Build Target", "If checked will use active build target."));
+            this.activeBuildTarget = GUILayout.Toggle(this.activeBuildTarget, new GUIContent("Use Active Build Target", "If checked, will use active build target."));
             EditorStorage.SaveData(KEY_SAVER, "activeBuildTarget", this.activeBuildTarget.ToString());
 
             EditorGUILayout.EndHorizontal();
@@ -377,6 +377,23 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUI.BeginChangeCheck();
             this.productName = EditorGUILayout.TextField("Product Name", this.productName);
             if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "productName", this.productName);
+
+            // Sync button
+            Color bc = GUI.backgroundColor;
+            GUI.backgroundColor = new Color32(255, 238, 36, 255);
+            if (GUILayout.Button("Sync to Player Settings", GUILayout.MaxWidth(202f)))
+            {
+                bool confirmation = EditorUtility.DisplayDialog
+                (
+                    $"Sync Product Name Notification",
+                    $"Do you want to sync Product Name: {this.productName} to Player Settings?",
+                    "yes",
+                    "cancel"
+                );
+
+                if (confirmation) PlayerSettings.productName = this.productName;
+            }
+            GUI.backgroundColor = bc;
             EditorGUILayout.EndHorizontal();
         }
 
@@ -388,6 +405,23 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUI.BeginChangeCheck();
             this.appVersion = EditorGUILayout.TextField("App Version", this.appVersion);
             if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "appVersion", this.appVersion);
+
+            // Sync button
+            Color bc = GUI.backgroundColor;
+            GUI.backgroundColor = new Color32(255, 238, 36, 255);
+            if (GUILayout.Button("Sync to Player Settings", GUILayout.MaxWidth(202f)))
+            {
+                bool confirmation = EditorUtility.DisplayDialog
+                (
+                    $"Sync App Version Notification",
+                    $"Do you want to sync App Version: {this.appVersion} to Player Settings?",
+                    "yes",
+                    "cancel"
+                );
+
+                if (confirmation) PlayerSettings.bundleVersion = this.appVersion;
+            }
+            GUI.backgroundColor = bc;
             EditorGUILayout.EndHorizontal();
         }
 
@@ -559,7 +593,7 @@ namespace OxGFrame.AssetLoader.Editor
             GUILayout.FlexibleSpace();
 
             // auto reveal toggle
-            this.autoReveal = GUILayout.Toggle(this.autoReveal, new GUIContent("Auto Reveal", "If checked after process will reveal folder."));
+            this.autoReveal = GUILayout.Toggle(this.autoReveal, new GUIContent("Auto Reveal", "If checked, after process will reveal folder."));
             EditorStorage.SaveData(KEY_SAVER, "autoReveal", this.autoReveal.ToString());
 
             string inputPath;
@@ -577,25 +611,26 @@ namespace OxGFrame.AssetLoader.Editor
                         BundleHelper.ExportAppConfig(this.productName, this.appVersion, outputPath, this.activeBuildTarget, this.buildTarget);
                         EditorUtility.DisplayDialog("Process Message", "Export AppConfig To StreamingAssets.", "OK");
                         AssetDatabase.Refresh();
-                        if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{BundleConfig.appCfgName}{BundleConfig.appCfgExtension}");
+                        string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.appCfgExtension}";
+                        if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{appCfgFileName}");
                         break;
                     case OperationType.ExportConfigsAndAppBundlesForCDN:
                         inputPath = this.sourceFolder[(int)this.operationType];
-                        outputPath = $"{this.exportFolder[(int)this.operationType]}/{BundleConfig.rootFolderName}";
+                        outputPath = $"{this.exportFolder[(int)this.operationType]}/{PatchSetting.setting.rootFolderName}";
                         BundleHelper.ExportConfigsAndAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.groupInfos, this.exportAppPackages.ToArray(), this.activeBuildTarget, this.buildTarget);
                         EditorUtility.DisplayDialog("Process Message", "Export Configs And App Bundles For CDN.", "OK");
                         if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
                         break;
                     case OperationType.ExportAppBundlesWithoutConfigsForCDN:
                         inputPath = this.sourceFolder[(int)this.operationType];
-                        outputPath = $"{this.exportFolder[(int)this.operationType]}/{BundleConfig.rootFolderName}";
+                        outputPath = $"{this.exportFolder[(int)this.operationType]}/{PatchSetting.setting.rootFolderName}";
                         BundleHelper.ExportAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.exportAppPackages.ToArray(), this.activeBuildTarget, this.buildTarget);
                         EditorUtility.DisplayDialog("Process Message", "Export App Bundles For CDN Without Configs.", "OK");
                         if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
                         break;
                     case OperationType.ExportIndividualDLCBundlesForCDN:
                         inputPath = this.sourceFolder[(int)this.operationType];
-                        outputPath = $"{this.exportFolder[(int)this.operationType]}/{BundleConfig.rootFolderName}";
+                        outputPath = $"{this.exportFolder[(int)this.operationType]}/{PatchSetting.setting.rootFolderName}";
                         BundleHelper.ExportIndividualDlcBundles(inputPath, outputPath, this.productName, this.exportIndividualPackages, this.activeBuildTarget, this.buildTarget);
                         EditorUtility.DisplayDialog("Process Message", "Export Individual DLC Bundles For CDN.", "OK");
                         if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);

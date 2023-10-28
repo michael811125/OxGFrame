@@ -16,7 +16,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         public bool reverseChanges = false;
         [Tooltip("UI Settings")]
         public UISetting uiSetting = new UISetting();       // 定義 UI 類型, 用於取決於要新增至 UIRoot 中哪個對應的節點
-        [Tooltip("If checked will auto create a mask")]
+        [Tooltip("If checked, will auto create a mask")]
         public bool autoMask = false;                       // 是否自動生成 Mask
         [ConditionalField(nameof(autoMask)), Tooltip("Mask Settings")]
         public MaskSetting maskSetting = new MaskSetting(); // Mask 設定
@@ -26,7 +26,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         {
             if (this.allowInstantiate) this.onCloseAndDestroy = false;
             if (this.onCloseAndDestroy) this.reverseChanges = false;
-            if (this.reverseChanges || this.uiSetting.stack)
+            if (this.reverseChanges || this.uiSetting.stack || this.uiSetting.allowCloseStackByStack)
             {
                 this.uiSetting.whenCloseAllToSkip = false;
                 this.uiSetting.whenHideAllToSkip = false;
@@ -43,7 +43,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         /// 僅執行一次, 只交由 UIManager 加載資源時呼叫初始參數
         /// </summary>
-        public override void OnInit() { }
+        public override void OnCreate() { }
 
         /// <summary>
         /// 僅執行一次, 只交由 UIManager 加載資源時呼叫初始相關綁定組件

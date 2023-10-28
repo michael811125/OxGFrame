@@ -12,10 +12,10 @@
 
 | **需先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
-| [OxGKit.LoggingSystem v0.0.9-preview or higher](https://github.com/michael811125/OxGKit#loggingsystem-dependence-lwmybox), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
-| [OxGKit.Utilities v0.0.7-preview or higher](https://github.com/michael811125/OxGKit#utilities-dependence-unitask), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
+| [OxGKit.LoggingSystem v0.0.10-preview or higher](https://github.com/michael811125/OxGKit#loggingsystem-dependence-lwmybox), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
+| [OxGKit.Utilities v0.0.11-preview or higher](https://github.com/michael811125/OxGKit#utilities-dependence-unitask), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
 | [LWMyBox v1.1.4 or higher](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager **(建議改成輕量版的 MyBox 改進編譯效率)** |
-| [HybirdCLR v4.0.6 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
+| [HybirdCLR v4.0.10 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 **OxGKit.Utilities 遇到 UniTask 引用問題請無視，因為最後完成 OxGFrame 的安裝後，就會自動引用內建的 UniTask 了**
 
@@ -76,7 +76,7 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 ### Sub-ThirdParty
 
 - 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案) **特別推薦**
-- 使用 [YooAsset v1.5.6-preview](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
+- 使用 [YooAsset v2.0.3-preview](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
 
 ※備註 : 會持續更新內建第三方庫。
 
@@ -96,6 +96,9 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 **額外有需要編寫 BuildTool 的可以調用**
 - HotfixHelper (using OxGFrame.Hotfix.Editor)
 - BundleConfig (using OxGFrame.AssetLoader.Bundle)
+- PatchSetting (using OxGFrame.AssetLoader)
+  - PatchSetting.setting (**Singleton instance**)
+  - PatchSetting.yooSetting (**Singleton instance**)
 - BundleHelper (using OxGFrame.AssetLoader.Editor)
 - MediaHelper (using OxGFrame.MediaFrame.Editor)
 
@@ -186,14 +189,20 @@ YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config 
   - 備註 : 區分 Built-in 跟 Patch (視情況自行訂定運作流程)
     1. 需自己拆分 Patch 更新前用到的資源 (例如 : LogoUI, PatchUI 等...)，需要先打包至 Built-in 作為內置資源。
 	2. 後續執行 AssetPatcher.Check() 檢查 Patch 更新完成後，就可以讀取更新資源了。
-      - 執行 AssetPatcher.Check() 檢查流程時，**會將 Preset App Packages 進行 Main Download 的合併**。  
+      - 執行 AssetPatcher.Check() 檢查流程時，**會將 Preset App Packages 與 Preset DLC Packages 進行 Main Download 的合併**。  
 
-| **Preset App Packages** |
+| **Preset App Packages & Preset DLC Packages** |
 |:-|
-| Pkg_01 (TotalCount = 3, TotalSize = 600 KB) |
-| Pkg_02 (TotalCount = 6, TotalSize = 1200 KB) |
+| Preset_App_Pkg_01 (TotalCount = 3, TotalSize = 600 KB) |
+| Preset_App_Pkg_02 (TotalCount = 6, TotalSize = 1200 KB) |
+| Preset_DLC_Pkg_01 (TotalCount = 2, TotalSize = 200 KB) |
+| Preset_DLC_Pkg_02 (TotalCount = 4, TotalSize = 400 KB) |
 | **Combination** |
-| Pkg_01 + Pkg_02 (TotalCount = 9, TotalSize = 1800 KB) |
+| Preset_App_Pkg_01 + Preset_App_Pkg_02 + Preset_DLC_Pkg_01 + Preset_DLC_Pkg_02 (TotalCount = 15, TotalSize = 2400 KB) |
+
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_12.png)
+
+備註：通過 Preset 設置的 DLC Packages 必須是**固定版號** (ex: "latest")。
 
 **檢查 Patch 是否更新完成**
 - 判斷檢查 AssetPatcher.IsDone() 是否更新完成。
@@ -208,7 +217,7 @@ YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config 
 分別區分 App Packages 跟 DLC Packages，注意路徑不同。
 - App Packages (.../CDN/\<ProductName\>/\<Platform\>/\<Version\>/Packages)
   - 手動進行 AssetPatcher.InitAppPackage 的初始 (如果 autoUpdate = false，則需要自行另外調用 AssetPatcher.UpdatePackage 進行 Manifest 的更新)。
-- DLC Packages (.../CDN/\<ProductName\>/\<Platform\>/DLC/Packages)
+- DLC Packages with platform (.../CDN/\<ProductName\>/\<Platform\>/DLC/Packages), without platform (.../CDN/\<ProductName\>/DLC/Packages)
   - 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion (ex: "latest")，變成只要 DLC 有更新就可以使用固定路徑進行更新。
 
 **App Package**
@@ -292,7 +301,7 @@ store_link http://
 
 #### 常用方法說明
 
-- OnInit : 初始 Member Params (建構式概念)，另外如果採用拖曳式指定組件，也可以直接在此初始 (不過不建議，建議還是在 OnBind 執行)。
+- OnCreate : 初始 Member Params (建構式概念)，另外如果採用拖曳式指定組件，也可以直接在此初始 (不過不建議，建議還是在 OnBind 執行)。
 - OnBind : 初始綁定組件與事件 (After Bind)。
 - OnPreShow : 當有異步處理或者附屬物件控制時，可以在此處理。例如 : TopUI 附屬連動開啟 LeftUI & RightUI，那麼就可以在 TopUI 中的 OnPreShow 方法實現 Show LeftUI & RightUI。
   - **不建議在 OnPreClose 時進行相關 Show 的處理，如果有進行的話也沒關係，因為針對 CloseAll 的 API 有提供 disablePreClose 的開關。**
@@ -302,7 +311,7 @@ store_link http://
 
 #### 初始順序說明
 
-Init Order : OnInit (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
+Init Order : OnCreate (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
 
 #### 物件綁定說明 (OnBind)
 

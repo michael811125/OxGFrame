@@ -1,133 +1,154 @@
 ﻿using System;
 using System.IO;
+using UnityEngine;
 using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
-    public class OffsetDecryption : IDecryptionServices
+    internal interface IDecryptStream
     {
+        Stream DecryptStream(DecryptFileInfo fileInfo);
+    }
+
+    public class NoneDecryption : IDecryptionServices, IDecryptStream
+    {
+        public Stream DecryptStream(DecryptFileInfo fileInfo)
+        {
+            string filePath = fileInfo.FileLoadPath;
+            var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None);
+            return fs;
+        }
+
         public uint GetManagedReadBufferSize()
         {
             return 1024;
         }
 
-        public ulong LoadFromFileOffset(DecryptFileInfo fileInfo)
+        public AssetBundle LoadAssetBundle(DecryptFileInfo fileInfo, out Stream managedStream)
         {
-            throw new NotImplementedException();
+            managedStream = this.DecryptStream(fileInfo);
+            return AssetBundle.LoadFromStream(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
 
-        public byte[] LoadFromMemory(DecryptFileInfo fileInfo)
+        public AssetBundleCreateRequest LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream)
         {
-            throw new NotImplementedException();
+            managedStream = this.DecryptStream(fileInfo);
+            return AssetBundle.LoadFromStreamAsync(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
+    }
 
-        public Stream LoadFromStream(DecryptFileInfo fileInfo)
+    public class OffsetDecryption : IDecryptionServices, IDecryptStream
+    {
+        public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
             string[] cryptogramArgs = BundleConfig.cryptogramArgs;
-
-            string filePath = fileInfo.FilePath;
-
+            string filePath = fileInfo.FileLoadPath;
             int dummySize = Convert.ToInt32(cryptogramArgs[1]);
-
-            Stream fs = FileCryptogram.Offset.OffsetDecryptStream(filePath, dummySize);
-
-            return fs;
+            return FileCryptogram.Offset.OffsetDecryptStream(filePath, dummySize);
         }
-    }
 
-    public class XorDecryption : IDecryptionServices
-    {
         public uint GetManagedReadBufferSize()
         {
             return 1024;
         }
 
-        public ulong LoadFromFileOffset(DecryptFileInfo fileInfo)
+        public AssetBundle LoadAssetBundle(DecryptFileInfo fileInfo, out Stream managedStream)
         {
-            throw new NotImplementedException();
+            managedStream = this.DecryptStream(fileInfo);
+            return AssetBundle.LoadFromStream(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
 
-        public byte[] LoadFromMemory(DecryptFileInfo fileInfo)
+        public AssetBundleCreateRequest LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream)
         {
-            throw new NotImplementedException();
+            managedStream = this.DecryptStream(fileInfo);
+            return AssetBundle.LoadFromStreamAsync(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
+    }
 
-        public Stream LoadFromStream(DecryptFileInfo fileInfo)
+    public class XorDecryption : IDecryptionServices, IDecryptStream
+    {
+        public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
             string[] cryptogramArgs = BundleConfig.cryptogramArgs;
-
-            string filePath = fileInfo.FilePath;
-
+            string filePath = fileInfo.FileLoadPath;
             byte xorKey = Convert.ToByte(cryptogramArgs[1]);
-
-            Stream fs = FileCryptogram.XOR.XorDecryptStream(filePath, xorKey);
-
-            return fs;
+            return FileCryptogram.XOR.XorDecryptStream(filePath, xorKey);
         }
-    }
 
-    public class HT2XorDecryption : IDecryptionServices
-    {
         public uint GetManagedReadBufferSize()
         {
             return 1024;
         }
 
-        public ulong LoadFromFileOffset(DecryptFileInfo fileInfo)
+        public AssetBundle LoadAssetBundle(DecryptFileInfo fileInfo, out Stream managedStream)
         {
-            throw new NotImplementedException();
+            managedStream = this.DecryptStream(fileInfo);
+            return AssetBundle.LoadFromStream(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
 
-        public byte[] LoadFromMemory(DecryptFileInfo fileInfo)
+        public AssetBundleCreateRequest LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream)
         {
-            throw new NotImplementedException();
+            managedStream = this.DecryptStream(fileInfo);
+            return AssetBundle.LoadFromStreamAsync(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
+    }
 
-        public Stream LoadFromStream(DecryptFileInfo fileInfo)
+    public class HT2XorDecryption : IDecryptionServices, IDecryptStream
+    {
+        public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
             string[] cryptogramArgs = BundleConfig.cryptogramArgs;
-
-            string filePath = fileInfo.FilePath;
-
+            string filePath = fileInfo.FileLoadPath;
             byte hXorkey = Convert.ToByte(cryptogramArgs[1]);
             byte tXorkey = Convert.ToByte(cryptogramArgs[2]);
             byte jXorKey = Convert.ToByte(cryptogramArgs[3]);
-
-            Stream fs = FileCryptogram.HT2XOR.HT2XorDecryptStream(filePath, hXorkey, tXorkey, jXorKey);
-
-            return fs;
+            return FileCryptogram.HT2XOR.HT2XorDecryptStream(filePath, hXorkey, tXorkey, jXorKey);
         }
-    }
 
-    public class AesDecryption : IDecryptionServices
-    {
         public uint GetManagedReadBufferSize()
         {
             return 1024;
         }
 
-        public ulong LoadFromFileOffset(DecryptFileInfo fileInfo)
+        public AssetBundle LoadAssetBundle(DecryptFileInfo fileInfo, out Stream managedStream)
         {
-            throw new NotImplementedException();
+            managedStream = this.DecryptStream(fileInfo);
+            return AssetBundle.LoadFromStream(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
 
-        public byte[] LoadFromMemory(DecryptFileInfo fileInfo)
+        public AssetBundleCreateRequest LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream)
         {
-            throw new NotImplementedException();
+            managedStream = this.DecryptStream(fileInfo);
+            return AssetBundle.LoadFromStreamAsync(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
+    }
 
-        public Stream LoadFromStream(DecryptFileInfo fileInfo)
+    public class AesDecryption : IDecryptionServices, IDecryptStream
+    {
+        public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
             string[] cryptogramArgs = BundleConfig.cryptogramArgs;
-
-            string filePath = fileInfo.FilePath;
-
+            string filePath = fileInfo.FileLoadPath;
             string aesKey = cryptogramArgs[1];
             string aesIv = cryptogramArgs[2];
+            return FileCryptogram.AES.AesDecryptStream(filePath, aesKey, aesIv);
+        }
 
-            Stream fs = FileCryptogram.AES.AesDecryptStream(filePath, aesKey, aesIv);
+        public uint GetManagedReadBufferSize()
+        {
+            return 1024;
+        }
 
-            return fs;
+        public AssetBundle LoadAssetBundle(DecryptFileInfo fileInfo, out Stream managedStream)
+        {
+            managedStream = this.DecryptStream(fileInfo);
+            return AssetBundle.LoadFromStream(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
+        }
+
+        public AssetBundleCreateRequest LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream)
+        {
+            managedStream = this.DecryptStream(fileInfo);
+            return AssetBundle.LoadFromStreamAsync(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
     }
 }

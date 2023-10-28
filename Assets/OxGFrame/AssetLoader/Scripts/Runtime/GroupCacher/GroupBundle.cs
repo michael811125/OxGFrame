@@ -17,11 +17,11 @@ namespace OxGFrame.AssetLoader.GroupCahcer
         }
 
         #region RawFile
-        public async UniTask PreloadRawFileAsync(int id, string packageName, string[] assetNames, Progression progression, byte maxRetryCount)
+        public async UniTask PreloadRawFileAsync(int id, string packageName, string[] assetNames, uint priority, Progression progression, byte maxRetryCount)
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
-            await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, progression, maxRetryCount);
+            await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, priority, progression, maxRetryCount);
             foreach (string assetName in assetNames)
             {
                 if (string.IsNullOrEmpty(assetName)) continue;
@@ -48,14 +48,19 @@ namespace OxGFrame.AssetLoader.GroupCahcer
         /// <summary>
         /// 【GroupBundle】資源加載
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="id"></param>
+        /// <param name="packageName"></param>
         /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        public async UniTask<T> LoadRawFileAsync<T>(int id, string packageName, string assetName, Progression progression, byte maxRetryCount)
+        public async UniTask<T> LoadRawFileAsync<T>(int id, string packageName, string assetName, uint priority, Progression progression, byte maxRetryCount)
         {
             T asset = default;
 
-            asset = await CacheBundle.GetInstance().LoadRawFileAsync<T>(packageName, assetName, progression, maxRetryCount);
+            asset = await CacheBundle.GetInstance().LoadRawFileAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
 
             if (asset != null)
             {
@@ -140,11 +145,11 @@ namespace OxGFrame.AssetLoader.GroupCahcer
         #endregion
 
         #region Asset
-        public async UniTask PreloadAssetAsync<T>(int id, string packageName, string[] assetNames, Progression progression, byte maxRetryCount) where T : Object
+        public async UniTask PreloadAssetAsync<T>(int id, string packageName, string[] assetNames, uint priority, Progression progression, byte maxRetryCount) where T : Object
         {
             if (assetNames == null || assetNames.Length == 0) return;
 
-            await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, assetNames, progression, maxRetryCount);
+            await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, assetNames, priority, progression, maxRetryCount);
             foreach (string assetName in assetNames)
             {
                 if (string.IsNullOrEmpty(assetName)) continue;
@@ -171,14 +176,19 @@ namespace OxGFrame.AssetLoader.GroupCahcer
         /// <summary>
         /// 【GroupBundle】資源加載
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="id"></param>
+        /// <param name="packageName"></param>
         /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        public async UniTask<T> LoadAssetAsync<T>(int id, string packageName, string assetName, Progression progression, byte maxRetryCount) where T : Object
+        public async UniTask<T> LoadAssetAsync<T>(int id, string packageName, string assetName, uint priority, Progression progression, byte maxRetryCount) where T : Object
         {
             T asset = null;
 
-            asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+            asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
 
             if (asset != null)
             {

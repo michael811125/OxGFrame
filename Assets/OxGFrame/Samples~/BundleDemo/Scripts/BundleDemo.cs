@@ -479,7 +479,7 @@ public class BundleDemo : MonoBehaviour
     public async void LoadBundle()
     {
         // Async LoadAsset
-        GameObject go = await AssetLoaders.LoadAssetAsync<GameObject>(this.assetName, (progress, currentCount, totalCount) =>
+        GameObject go = await AssetLoaders.LoadAssetAsync<GameObject>(this.assetName, 0, (progress, currentCount, totalCount) =>
         {
             Debug.Log($"Load => Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
         });

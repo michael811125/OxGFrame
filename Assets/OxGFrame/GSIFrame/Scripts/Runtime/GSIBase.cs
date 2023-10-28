@@ -26,7 +26,7 @@ namespace OxGFrame.GSIFrame
             if (!this._isInitialized)
             {
                 this._isInitialized = true;
-                await this.OnInit();
+                await this.OnCreate();
             }
 
             this.StopUpdate();    // >> Step 1 << 暫停 Stage 刷新
@@ -52,10 +52,10 @@ namespace OxGFrame.GSIFrame
 
         #region Implementation Methods
         /// <summary>
-        /// 子類實作 OnInit 方法
+        /// 子類實作 OnCreate 方法
         /// </summary>
         /// <returns></returns>
-        public abstract UniTask OnInit();
+        public abstract UniTask OnCreate();
 
         /// <summary>
         /// 子類實作 OnEnter 方法

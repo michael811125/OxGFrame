@@ -7,7 +7,7 @@ namespace OxGFrame.CoreFrame
 {
     /// <summary>
     /// <para>
-    /// Init Order: Awake (Once) > OnInit (Once) > OnBind (Once) > PreInit (EveryOpen) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
+    /// Init Order: Awake (Once) > OnCreate (Once) > OnBind (Once) > PreInit (EveryOpen) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
     /// </para>
     /// </summary>
     [DisallowMultipleComponent]
@@ -113,7 +113,7 @@ namespace OxGFrame.CoreFrame
 
         [Tooltip("Allow instantiate, but when close will destroy directly")]
         public bool allowInstantiate = false;                                                 // 是否允許多實例            
-        [Tooltip("If checked will destroy on close"), ConditionalField(nameof(allowInstantiate), true)]
+        [Tooltip("If checked, will destroy on close"), ConditionalField(nameof(allowInstantiate), true)]
         public bool onCloseAndDestroy = false;                                                // 是否關閉時就 DestroyUI
 
         internal virtual void DriveUpdate(float dt)
@@ -132,7 +132,7 @@ namespace OxGFrame.CoreFrame
         /// <summary>
         /// 起始初始 (僅執行一次)
         /// </summary>
-        public abstract void OnInit();
+        public abstract void OnCreate();
 
         /// <summary>
         /// 綁定與初次初始

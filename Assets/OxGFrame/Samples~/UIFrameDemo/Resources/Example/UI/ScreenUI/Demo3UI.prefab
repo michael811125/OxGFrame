@@ -5071,6 +5071,7 @@ MonoBehaviour:
     nodeType: 2
     stack: 1
     order: 0
+    allowCloseStackByStack: 1
     whenCloseAllToSkip: 0
     whenHideAllToSkip: 0
   autoMask: 1

@@ -26,7 +26,7 @@ namespace OxGFrame.CoreFrame.CPFrame
             AssetLoaders.UnloadAsset(this.assetName);
         }
 
-        public override void OnInit() { }
+        public override void OnCreate() { }
 
         public sealed override void InitFirst()
         {

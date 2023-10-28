@@ -4,7 +4,7 @@ namespace OxGFrame.CoreFrame
 {
     public interface IFrameBase
     {
-        void OnInit();
+        void OnCreate();
 
         void InitFirst();
 

@@ -5,10 +5,23 @@ using System.Threading.Tasks;
 
 namespace YooAsset
 {
-	public abstract class AsyncOperationBase : IEnumerator
+	public abstract class AsyncOperationBase : IEnumerator, IComparable<AsyncOperationBase>
 	{
 		// 用户请求的回调
 		private Action<AsyncOperationBase> _callback;
+
+		// 是否已经完成
+		internal bool IsFinish = false;
+		
+		/// <summary>
+		/// 所属包裹
+		/// </summary>
+		public string PackageName { private set; get; }
+
+		/// <summary>
+		/// 优先级
+		/// </summary>
+		public uint Priority { set; get; } = 0;
 
 		/// <summary>
 		/// 状态
@@ -71,19 +84,41 @@ namespace YooAsset
 			}
 		}
 
-		internal abstract void Start();
-		internal abstract void Update();
+		internal abstract void InternalOnStart();
+		internal abstract void InternalOnUpdate();
+		internal virtual void InternalOnAbort() { }
 
-		internal void SetFinish()
+		internal void Init(string packageName)
 		{
-			Progress = 1f;
-			_callback?.Invoke(this); //注意：如果完成回调内发生异常，会导致Task无限期等待
-			if (_taskCompletionSource != null)
-				_taskCompletionSource.TrySetResult(null);
+			PackageName = packageName;
 		}
 		internal void SetStart()
 		{
 			Status = EOperationStatus.Processing;
+			InternalOnStart();
+		}
+		internal void SetFinish()
+		{
+			IsFinish = true;
+
+			// 进度百分百完成
+			Progress = 1f;
+
+			//注意：如果完成回调内发生异常，会导致Task无限期等待
+			_callback?.Invoke(this);
+
+			if (_taskCompletionSource != null)
+				_taskCompletionSource.TrySetResult(null);
+		}
+		internal void SetAbort()
+		{
+			if (IsDone == false)
+			{
+				Status = EOperationStatus.Failed;
+				Error = "user abort";
+				YooLogger.Warning($"Async operaiton has been abort : {this.GetType().Name}");
+				InternalOnAbort();
+			}
 		}
 
 		/// <summary>
@@ -93,6 +128,13 @@ namespace YooAsset
 		{
 			_callback = null;
 		}
+
+		#region 排序接口实现
+		public int CompareTo(AsyncOperationBase other)
+		{
+			return other.Priority.CompareTo(this.Priority);
+		}
+		#endregion
 
 		#region 异步编程相关
 		bool IEnumerator.MoveNext()

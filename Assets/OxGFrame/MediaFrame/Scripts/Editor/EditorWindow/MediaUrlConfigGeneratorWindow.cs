@@ -110,7 +110,7 @@ namespace OxGFrame.MediaFrame.Editor
             GUILayout.FlexibleSpace();
 
             // auto reveal toggle
-            this.autoReveal = GUILayout.Toggle(this.autoReveal, new GUIContent("Auto Reveal", "If checked after process will reveal destination folder."));
+            this.autoReveal = GUILayout.Toggle(this.autoReveal, new GUIContent("Auto Reveal", "If checked, after process will reveal destination folder."));
             EditorStorage.SaveData(KEY_SAVER, "autoReveal", this.autoReveal.ToString());
 
             // process button

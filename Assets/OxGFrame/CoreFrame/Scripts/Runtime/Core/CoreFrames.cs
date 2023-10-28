@@ -104,28 +104,29 @@ namespace OxGFrame.CoreFrame
             /// If use prefix "res#" will load from resources else will load from bundle
             /// </summary>
             /// <param name="assetName"></param>
+            /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask Preload(string assetName, Progression progression = null)
+            public static async UniTask Preload(string assetName, uint priority = 0, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                await UIManager.GetInstance().Preload(packageName, new string[] { assetName }, progression);
+                await UIManager.GetInstance().Preload(packageName, new string[] { assetName }, priority, progression);
             }
 
-            public static async UniTask Preload(string packageName, string assetName, Progression progression = null)
+            public static async UniTask Preload(string packageName, string assetName, uint priority = 0, Progression progression = null)
             {
-                await UIManager.GetInstance().Preload(packageName, new string[] { assetName }, progression);
+                await UIManager.GetInstance().Preload(packageName, new string[] { assetName }, priority, progression);
             }
 
-            public static async UniTask Preload(string[] assetNames, Progression progression = null)
+            public static async UniTask Preload(string[] assetNames, uint priority = 0, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                await UIManager.GetInstance().Preload(packageName, assetNames, progression);
+                await UIManager.GetInstance().Preload(packageName, assetNames, priority, progression);
             }
 
-            public static async UniTask Preload(string packageName, string[] assetNames, Progression progression = null)
+            public static async UniTask Preload(string packageName, string[] assetNames, uint priority = 0, Progression progression = null)
             {
-                await UIManager.GetInstance().Preload(packageName, assetNames, progression);
+                await UIManager.GetInstance().Preload(packageName, assetNames, priority, progression);
             }
             #endregion
 
@@ -136,51 +137,52 @@ namespace OxGFrame.CoreFrame
             /// <param name="assetName"></param>
             /// <param name="data"></param>
             /// <param name="awaitingUIAssetName"></param>
+            /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <param name="parent"></param>
             /// <returns></returns>
-            public static async UniTask<UIBase> Show(string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
+            public static async UniTask<UIBase> Show(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, progression, parent);
+                return await UIManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
             }
 
-            public static async UniTask<UIBase> Show(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
+            public static async UniTask<UIBase> Show(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
             {
-                return await UIManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, progression, parent);
+                return await UIManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
             }
 
-            public static async UniTask<UIBase> Show(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
-            {
-                var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, progression, parent);
-            }
-
-            public static async UniTask<UIBase> Show(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
-            {
-                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, progression, parent);
-            }
-
-            public static async UniTask<T> Show<T>(string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
+            public static async UniTask<UIBase> Show(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, progression, parent) as T;
+                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
+            public static async UniTask<UIBase> Show(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
             {
-                return await UIManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, progression, parent) as T;
+                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
+            public static async UniTask<T> Show<T>(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : UIBase
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, progression, parent) as T;
+                return await UIManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null) where T : UIBase
+            public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : UIBase
             {
-                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, progression, parent) as T;
+                return await UIManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : UIBase
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : UIBase
+            {
+                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
             }
             #endregion
 
@@ -198,6 +200,29 @@ namespace OxGFrame.CoreFrame
             public static void CloseAll(int groupId, bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
                 UIManager.GetInstance().CloseAll(groupId, disablePreClose, forceDestroy, withoutAssetNames);
+            }
+
+            /// <summary>
+            /// Only allow close stack by stack
+            /// </summary>
+            /// <param name="canvasName"></param>
+            /// <param name="disablePreClose"></param>
+            /// <param name="forceDestroy"></param>
+            public static void CloseStackByStack(string canvasName, bool disablePreClose = false, bool forceDestroy = false)
+            {
+                UIManager.GetInstance().CloseStackByStack(0, canvasName, disablePreClose, forceDestroy);
+            }
+
+            /// <summary>
+            /// Only allow close stack by stack
+            /// </summary>
+            /// <param name="groupId"></param>
+            /// <param name="canvasName"></param>
+            /// <param name="disablePreClose"></param>
+            /// <param name="forceDestroy"></param>
+            public static void CloseStackByStack(int groupId, string canvasName, bool disablePreClose = false, bool forceDestroy = false)
+            {
+                UIManager.GetInstance().CloseStackByStack(groupId, canvasName, disablePreClose, forceDestroy);
             }
             #endregion
 
@@ -317,28 +342,29 @@ namespace OxGFrame.CoreFrame
             /// If use prefix "res#" will load from resources else will load from bundle
             /// </summary>
             /// <param name="assetName"></param>
+            /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask Preload(string assetName, Progression progression = null)
+            public static async UniTask Preload(string assetName, uint priority = 0, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                await SRManager.GetInstance().Preload(packageName, new string[] { assetName }, progression);
+                await SRManager.GetInstance().Preload(packageName, new string[] { assetName }, priority, progression);
             }
 
-            public static async UniTask Preload(string packageName, string assetName, Progression progression = null)
+            public static async UniTask Preload(string packageName, string assetName, uint priority = 0, Progression progression = null)
             {
-                await SRManager.GetInstance().Preload(packageName, new string[] { assetName }, progression);
+                await SRManager.GetInstance().Preload(packageName, new string[] { assetName }, priority, progression);
             }
 
-            public static async UniTask Preload(string[] assetNames, Progression progression = null)
+            public static async UniTask Preload(string[] assetNames, uint priority = 0, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                await SRManager.GetInstance().Preload(packageName, assetNames, progression);
+                await SRManager.GetInstance().Preload(packageName, assetNames, priority, progression);
             }
 
-            public static async UniTask Preload(string packageName, string[] assetNames, Progression progression = null)
+            public static async UniTask Preload(string packageName, string[] assetNames, uint priority = 0, Progression progression = null)
             {
-                await SRManager.GetInstance().Preload(packageName, assetNames, progression);
+                await SRManager.GetInstance().Preload(packageName, assetNames, priority, progression);
             }
             #endregion
 
@@ -349,51 +375,52 @@ namespace OxGFrame.CoreFrame
             /// <param name="assetName"></param>
             /// <param name="data"></param>
             /// <param name="awaitingUIAssetName"></param>
+            /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <param name="parent"></param>
             /// <returns></returns>
-            public static async UniTask<SRBase> Show(string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
+            public static async UniTask<SRBase> Show(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await SRManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, progression, parent);
+                return await SRManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
             }
 
-            public static async UniTask<SRBase> Show(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
+            public static async UniTask<SRBase> Show(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
             {
-                return await SRManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, progression, parent);
+                return await SRManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
             }
 
-            public static async UniTask<SRBase> Show(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
-            {
-                var packageName = AssetPatcher.GetDefaultPackageName();
-                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, progression, parent);
-            }
-
-            public static async UniTask<SRBase> Show(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
-            {
-                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, progression, parent);
-            }
-
-            public static async UniTask<T> Show<T>(string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null) where T : SRBase
+            public static async UniTask<SRBase> Show(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await SRManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, progression, parent) as T;
+                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null) where T : SRBase
+            public static async UniTask<SRBase> Show(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
             {
-                return await SRManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, progression, parent) as T;
+                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null) where T : SRBase
+            public static async UniTask<T> Show<T>(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : SRBase
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, progression, parent) as T;
+                return await SRManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null) where T : SRBase
+            public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : SRBase
             {
-                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, progression, parent) as T;
+                return await SRManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : SRBase
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : SRBase
+            {
+                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
             }
             #endregion
 
@@ -566,7 +593,7 @@ namespace OxGFrame.CoreFrame
             /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask LoadAdditiveSceneAsync(string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+            public static async UniTask LoadAdditiveSceneAsync(string sceneName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 if (RefineBuildScenePath(ref sceneName))
@@ -585,7 +612,7 @@ namespace OxGFrame.CoreFrame
             /// <para>From Build is &lt;AsyncOperation&gt;</para>
             /// <para>From Bundle is &lt;BundlePack&gt;</para>
             /// </returns>
-            public static async UniTask<T> LoadAdditiveSceneAsync<T>(string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null) where T : class
+            public static async UniTask<T> LoadAdditiveSceneAsync<T>(string sceneName, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 if (RefineBuildScenePath(ref sceneName))
@@ -604,7 +631,7 @@ namespace OxGFrame.CoreFrame
             /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask LoadAdditiveSceneAsync(string packageName, string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+            public static async UniTask LoadAdditiveSceneAsync(string packageName, string sceneName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
             {
                 if (RefineBuildScenePath(ref sceneName))
                 {
@@ -626,7 +653,7 @@ namespace OxGFrame.CoreFrame
             /// <para>From Build is &lt;AsyncOperation&gt;</para>
             /// <para>From Bundle is &lt;BundlePack&gt;</para>
             /// </returns>
-            public static async UniTask<T> LoadAdditiveSceneAsync<T>(string packageName, string sceneName, bool activateOnLoad = true, int priority = 100, Progression progression = null) where T : class
+            public static async UniTask<T> LoadAdditiveSceneAsync<T>(string packageName, string sceneName, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
             {
                 if (RefineBuildScenePath(ref sceneName))
                 {
@@ -644,7 +671,7 @@ namespace OxGFrame.CoreFrame
             /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+            public static async UniTask LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 if (RefineBuildScenePath(ref sceneName))
@@ -666,7 +693,7 @@ namespace OxGFrame.CoreFrame
             /// <para>From Build is &lt;AsyncOperation&gt;</para>
             /// <para>From Bundle is &lt;BundlePack&gt;</para>
             /// </returns>
-            public static async UniTask<T> LoadSceneAsync<T>(string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, int priority = 100, Progression progression = null) where T : class
+            public static async UniTask<T> LoadSceneAsync<T>(string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 if (RefineBuildScenePath(ref sceneName))
@@ -686,7 +713,7 @@ namespace OxGFrame.CoreFrame
             /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask LoadSceneAsync(string packageName, string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+            public static async UniTask LoadSceneAsync(string packageName, string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
             {
                 if (RefineBuildScenePath(ref sceneName))
                 {
@@ -709,7 +736,7 @@ namespace OxGFrame.CoreFrame
             /// <para>From Build is &lt;AsyncOperation&gt;</para>
             /// <para>From Bundle is &lt;BundlePack&gt;</para>
             /// </returns>
-            public static async UniTask<T> LoadSceneAsync<T>(string packageName, string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, int priority = 100, Progression progression = null) where T : class
+            public static async UniTask<T> LoadSceneAsync<T>(string packageName, string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
             {
                 if (RefineBuildScenePath(ref sceneName))
                 {
@@ -783,50 +810,51 @@ namespace OxGFrame.CoreFrame
             /// If use prefix "res#" will load from resources else will load from bundle
             /// </summary>
             /// <param name="assetName"></param>
+            /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask PreloadAsync(string assetName, Progression progression = null)
+            public static async UniTask PreloadAsync(string assetName, uint priority = 0, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                await CPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, progression);
+                await CPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, priority, progression);
             }
 
-            public static async UniTask PreloadAsync(string packageName, string assetName, Progression progression = null)
+            public static async UniTask PreloadAsync(string packageName, string assetName, uint priority = 0, Progression progression = null)
             {
-                await CPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, progression);
+                await CPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, priority, progression);
             }
 
-            public static async UniTask PreloadAsync(string[] assetNames, Progression progression = null)
-            {
-                var packageName = AssetPatcher.GetDefaultPackageName();
-                await CPManager.GetInstance().PreloadAsync(packageName, assetNames, progression);
-            }
-
-            public static async UniTask PreloadAsync(string packageName, string[] assetNames, Progression progression = null)
-            {
-                await CPManager.GetInstance().PreloadAsync(packageName, assetNames, progression);
-            }
-
-            public static async UniTask PreloadAsync<T>(string assetName, Progression progression = null) where T : Object
+            public static async UniTask PreloadAsync(string[] assetNames, uint priority = 0, Progression progression = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                await CPManager.GetInstance().PreloadAsync<T>(packageName, new string[] { assetName }, progression);
+                await CPManager.GetInstance().PreloadAsync(packageName, assetNames, priority, progression);
             }
 
-            public static async UniTask PreloadAsync<T>(string packageName, string assetName, Progression progression = null) where T : Object
+            public static async UniTask PreloadAsync(string packageName, string[] assetNames, uint priority = 0, Progression progression = null)
             {
-                await CPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, progression);
+                await CPManager.GetInstance().PreloadAsync(packageName, assetNames, priority, progression);
             }
 
-            public static async UniTask PreloadAsync<T>(string[] assetNames, Progression progression = null) where T : Object
+            public static async UniTask PreloadAsync<T>(string assetName, uint priority = 0, Progression progression = null) where T : Object
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                await CPManager.GetInstance().PreloadAsync<T>(packageName, assetNames, progression);
+                await CPManager.GetInstance().PreloadAsync<T>(packageName, new string[] { assetName }, priority, progression);
             }
 
-            public static async UniTask PreloadAsync<T>(string packageName, string[] assetNames, Progression progression = null) where T : Object
+            public static async UniTask PreloadAsync<T>(string packageName, string assetName, uint priority = 0, Progression progression = null) where T : Object
             {
-                await CPManager.GetInstance().PreloadAsync<T>(packageName, assetNames, progression);
+                await CPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, priority, progression);
+            }
+
+            public static async UniTask PreloadAsync<T>(string[] assetNames, uint priority = 0, Progression progression = null) where T : Object
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                await CPManager.GetInstance().PreloadAsync<T>(packageName, assetNames, priority, progression);
+            }
+
+            public static async UniTask PreloadAsync<T>(string packageName, string[] assetNames, uint priority = 0, Progression progression = null) where T : Object
+            {
+                await CPManager.GetInstance().PreloadAsync<T>(packageName, assetNames, priority, progression);
             }
 
             /// <summary>
@@ -884,39 +912,40 @@ namespace OxGFrame.CoreFrame
             /// <typeparam name="T"></typeparam>
             /// <param name="assetName"></param>
             /// <param name="parent"></param>
+            /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns></returns>
-            public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Transform parent = null, Progression progression = null) where T : CPBase, new()
+            public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Transform parent = null, uint priority = 0, Progression progression = null) where T : CPBase, new()
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, progression);
+                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, priority, progression);
             }
 
-            public static async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent = null, Progression progression = null) where T : CPBase, new()
+            public static async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent = null, uint priority = 0, Progression progression = null) where T : CPBase, new()
             {
-                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, progression);
+                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, priority, progression);
             }
 
-            public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : CPBase, new()
-            {
-                var packageName = AssetPatcher.GetDefaultPackageName();
-                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, worldPositionStays, progression);
-            }
-
-            public static async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : CPBase, new()
-            {
-                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, worldPositionStays, progression);
-            }
-
-            public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : CPBase, new()
+            public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null) where T : CPBase, new()
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, position, rotation, parent, scale, progression);
+                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, worldPositionStays, priority, progression);
             }
 
-            public static async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : CPBase, new()
+            public static async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null) where T : CPBase, new()
             {
-                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, position, rotation, parent, scale, progression);
+                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, parent, worldPositionStays, priority, progression);
+            }
+
+            public static async UniTask<T> LoadWithCloneAsync<T>(string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, uint priority = 0, Progression progression = null) where T : CPBase, new()
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, position, rotation, parent, scale, priority, progression);
+            }
+
+            public static async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, uint priority = 0, Progression progression = null) where T : CPBase, new()
+            {
+                return await CPManager.GetInstance().LoadWithCloneAsync<T>(packageName, assetName, position, rotation, parent, scale, priority, progression);
             }
 
             /// <summary>

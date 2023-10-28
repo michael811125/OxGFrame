@@ -7,7 +7,7 @@ public class Demo3UI : UIBase
 {
     private Image myImage;
 
-    public override void OnInit()
+    public override void OnCreate()
     {
     }
 

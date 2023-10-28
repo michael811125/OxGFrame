@@ -4,7 +4,7 @@ public class #SCRIPTNAME# : CPBase
 {
     // Use ~Node@XXX to Bind
 
-    public override void OnInit()
+    public override void OnCreate()
     {
         /**
          * Do Somethings Init Once In Here

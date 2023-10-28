@@ -243,6 +243,7 @@ namespace OxGFrame.AssetLoader
             string fallbackHostServer = null;
             IBuildinQueryServices builtinQueryService = null;
             IDeliveryQueryServices deliveryQueryService = null;
+            IDeliveryLoadServices deliveryLoadService = null;
 
             // Host Mode or WebGL Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
@@ -252,9 +253,10 @@ namespace OxGFrame.AssetLoader
                 fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageName);
                 builtinQueryService = new RequestBuiltinQuery();
                 deliveryQueryService = new RequestDeliveryQuery();
+                deliveryLoadService = new RequestDeliveryQuery();
             }
 
-            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService);
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
         }
         #endregion
 
@@ -266,24 +268,26 @@ namespace OxGFrame.AssetLoader
         /// <param name="dlcVersion"></param>
         /// <param name="autoUpdate"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitDlcPackage(string packageName, string dlcVersion, bool autoUpdate = false)
+        public static async UniTask<bool> InitDlcPackage(string packageName, string dlcVersion, bool autoUpdate = false, bool withoutPlatform = false)
         {
             string hostServer = null;
             string fallbackHostServer = null;
             IBuildinQueryServices builtinQueryService = null;
             IDeliveryQueryServices deliveryQueryService = null;
+            IDeliveryLoadServices deliveryLoadService = null;
 
             // Host Mode or WebGL Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
                 BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
             {
-                hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
-                fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
+                hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion, withoutPlatform);
+                fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion, withoutPlatform);
                 builtinQueryService = new RequestBuiltinQuery();
                 deliveryQueryService = new RequestDeliveryQuery();
+                deliveryLoadService = new RequestDeliveryQuery();
             }
 
-            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService);
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
         }
 
         /// <summary>
@@ -292,10 +296,12 @@ namespace OxGFrame.AssetLoader
         /// <param name="packageName"></param>
         /// <param name="dlcVersion"></param>
         /// <param name="autoUpdate"></param>
+        /// <param name="withoutPlatform"></param>
         /// <param name="builtinQueryService"></param>
         /// <param name="deliveryQueryService"></param>
+        /// <param name="deliveryLoadService"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitDlcPackage(string packageName, string dlcVersion, bool autoUpdate = false, IBuildinQueryServices builtinQueryService = null, IDeliveryQueryServices deliveryQueryService = null)
+        public static async UniTask<bool> InitDlcPackage(string packageName, string dlcVersion, bool autoUpdate = false, bool withoutPlatform = false, IBuildinQueryServices builtinQueryService = null, IDeliveryQueryServices deliveryQueryService = null, IDeliveryLoadServices deliveryLoadService = null)
         {
             string hostServer = null;
             string fallbackHostServer = null;
@@ -304,13 +310,14 @@ namespace OxGFrame.AssetLoader
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
                 BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
             {
-                hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion);
-                fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion);
+                hostServer = await BundleConfig.GetDlcHostServerUrl(packageName, dlcVersion, withoutPlatform);
+                fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageName, dlcVersion, withoutPlatform);
                 builtinQueryService = builtinQueryService == null ? new RequestBuiltinQuery() : builtinQueryService;
                 deliveryQueryService = deliveryQueryService == null ? new RequestDeliveryQuery() : deliveryQueryService;
+                deliveryLoadService = deliveryLoadService == null ? new RequestDeliveryQuery() : deliveryLoadService;
             }
 
-            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService);
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
         }
         #endregion
 
@@ -321,16 +328,18 @@ namespace OxGFrame.AssetLoader
         /// <param name="packageName"></param>
         /// <param name="hostServer"></param>
         /// <param name="fallbackHostServer"></param>
+        /// <param name="autoUpdate"></param>
         /// <param name="builtinQueryService"></param>
         /// <param name="deliveryQueryService"></param>
-        /// <param name="autoUpdate"></param>
+        /// <param name="deliveryLoadService"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitCustomPackage(string packageName, string hostServer, string fallbackHostServer, IBuildinQueryServices builtinQueryService, IDeliveryQueryServices deliveryQueryService, bool autoUpdate = false)
+        public static async UniTask<bool> InitCustomPackage(string packageName, string hostServer, string fallbackHostServer, bool autoUpdate, IBuildinQueryServices builtinQueryService, IDeliveryQueryServices deliveryQueryService, IDeliveryLoadServices deliveryLoadService)
         {
-            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService);
+            return await PackageManager.InitPackage(packageName, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
         }
         #endregion
 
+        #region Update Package
         /// <summary>
         /// Update package manifest by package name
         /// </summary>
@@ -340,7 +349,9 @@ namespace OxGFrame.AssetLoader
         {
             return await PackageManager.UpdatePackage(packageName);
         }
+        #endregion
 
+        #region Default Package
         /// <summary>
         /// Set default package. If is not exist will auto register and set it be default
         /// </summary>
@@ -367,6 +378,7 @@ namespace OxGFrame.AssetLoader
         {
             return PackageManager.GetDefaultPackageName();
         }
+        #endregion
 
         #region Get Package
         /// <summary>
@@ -397,7 +409,9 @@ namespace OxGFrame.AssetLoader
         {
             return PackageManager.GetPackages(packageNames);
         }
+        #endregion
 
+        #region Get Preset Package
         /// <summary>
         /// Get preset app packages
         /// </summary>
@@ -406,9 +420,18 @@ namespace OxGFrame.AssetLoader
         {
             return PackageManager.GetPresetAppPackages();
         }
+
+        /// <summary>
+        /// Get preset dlc packages
+        /// </summary>
+        /// <returns></returns>
+        public static ResourcePackage[] GetPresetDlcPackages()
+        {
+            return PackageManager.GetPresetDlcPackages();
+        }
         #endregion
 
-        #region Preset App Package Name
+        #region Get Preset Package Name
         /// <summary>
         /// Get preset app package name list from PatchLauncher
         /// </summary>
@@ -419,13 +442,21 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get preset app package name from PatchLauncher by package list idx 
+        /// Get preset dlc package name list from PatchLauncher
         /// </summary>
-        /// <param name="idx"></param>
         /// <returns></returns>
-        public static string GetPresetAppPackageNameByIdx(int idx)
+        public static string[] GetPresetDlcPackageNames()
         {
-            return PackageManager.GetPresetAppPackageNameByIdx(idx);
+            return PackageManager.GetPresetDlcPackageNames();
+        }
+
+        /// <summary>
+        /// Get preset dlc package info list from PatchLauncher
+        /// </summary>
+        /// <returns></returns>
+        public static DlcInfo[] GetPresetDlcPackageInfos()
+        {
+            return PackageManager.GetPresetDlcPackageInfos();
         }
         #endregion
 

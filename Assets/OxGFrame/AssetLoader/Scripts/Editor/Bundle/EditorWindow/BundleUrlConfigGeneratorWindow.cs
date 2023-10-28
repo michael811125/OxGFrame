@@ -29,7 +29,7 @@ namespace OxGFrame.AssetLoader.Editor
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
-        [MenuItem(BundleHelper.MenuRoot + "Bundle Url Config Generator (" + BundleConfig.bundleUrlFileName + ")", false, 899)]
+        [MenuItem(BundleHelper.MenuRoot + "Bundle Url Config Generator (burlconfig.conf)", false, 899)]
         public static void ShowWindow()
         {
             PROJECT_PATH = Application.dataPath;
@@ -126,7 +126,7 @@ namespace OxGFrame.AssetLoader.Editor
             GUILayout.FlexibleSpace();
 
             // auto reveal toggle
-            this.autoReveal = GUILayout.Toggle(this.autoReveal, new GUIContent("Auto Reveal", "If checked after process will reveal destination folder."));
+            this.autoReveal = GUILayout.Toggle(this.autoReveal, new GUIContent("Auto Reveal", "If checked, after process will reveal destination folder."));
             EditorStorage.SaveData(KEY_SAVER, "autoReveal", this.autoReveal.ToString());
 
             // process button
@@ -138,7 +138,8 @@ namespace OxGFrame.AssetLoader.Editor
                 BundleHelper.ExportBundleUrlConfig(this.bundleIp, this.bundleFallbackIp, this.storeLink, outputPath);
                 EditorUtility.DisplayDialog("Process Message", "Export BundleUrlConfig To StreamingAssets.", "OK");
                 AssetDatabase.Refresh();
-                if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{BundleConfig.bundleUrlFileName}");
+                string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.bundleUrlCfgExtension}";
+                if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{bundleUrlFileName}");
             }
             GUI.backgroundColor = bc;
             EditorGUILayout.EndHorizontal();

@@ -177,6 +177,7 @@ namespace OxGFrame.CoreFrame.Editor
             }
             #endregion
 
+            _builder += "#region Binding Components\n";
             #region 變數宣告生成
             foreach (var bindInfo in _collectBindInfos)
             {
@@ -214,6 +215,9 @@ namespace OxGFrame.CoreFrame.Editor
 
             #region 方法定義生成
             _builder += "\n";
+            _builder += "/// <summary>\n";
+            _builder += "/// Don't forget to call via OnBind method\n";
+            _builder += "/// </summary>\n";
             _builder += $"{_settings.methodAccessModifier} void {_settings.methodPrefix}{_settings.methodName}()\n";
             _builder += "{\n";
             foreach (var bindInfo in _collectBindInfos)
@@ -260,6 +264,7 @@ namespace OxGFrame.CoreFrame.Editor
             }
             _builder += "}";
             #endregion
+            _builder += "\n#endregion";
 
             // 顯示 Clipboard
             BindCodeClipboardWindow.ShowWindow(_builder);

@@ -24,13 +24,13 @@ namespace OxGFrame.AssetLoader
         /// <param name="priority"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public static async UniTask<BundlePack> LoadSceneAsync(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+        public static async UniTask<BundlePack> LoadSceneAsync(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, loadSceneMode, activateOnLoad, priority, progression);
         }
 
-        public static async UniTask<BundlePack> LoadSceneAsync(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+        public static async UniTask<BundlePack> LoadSceneAsync(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, loadSceneMode, activateOnLoad, priority, progression);
         }
@@ -43,13 +43,13 @@ namespace OxGFrame.AssetLoader
         /// <param name="priority"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public static async UniTask<BundlePack> LoadSingleSceneAsync(string assetName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+        public static async UniTask<BundlePack> LoadSingleSceneAsync(string assetName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Single, activateOnLoad, priority, progression);
         }
 
-        public static async UniTask<BundlePack> LoadSingleSceneAsync(string packageName, string assetName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+        public static async UniTask<BundlePack> LoadSingleSceneAsync(string packageName, string assetName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Single, activateOnLoad, priority, progression);
         }
@@ -62,13 +62,13 @@ namespace OxGFrame.AssetLoader
         /// <param name="priority"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public static async UniTask<BundlePack> LoadAdditiveSceneAsync(string assetName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+        public static async UniTask<BundlePack> LoadAdditiveSceneAsync(string assetName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
         }
 
-        public static async UniTask<BundlePack> LoadAdditiveSceneAsync(string packageName, string assetName, bool activateOnLoad = true, int priority = 100, Progression progression = null)
+        public static async UniTask<BundlePack> LoadAdditiveSceneAsync(string packageName, string assetName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
         }
@@ -120,7 +120,7 @@ namespace OxGFrame.AssetLoader
             if (pack != null)
             {
                 // Get path from operation handle
-                var operation = pack.GetOperationHandle<RawFileOperationHandle>();
+                var operation = pack.GetOperationHandle<RawFileHandle>();
                 string filePath = operation.GetRawFilePath();
                 UnloadRawFile(assetName, true);
                 return filePath;
@@ -143,7 +143,7 @@ namespace OxGFrame.AssetLoader
             if (pack != null)
             {
                 // Get path from operation handle
-                var operation = pack.GetOperationHandle<RawFileOperationHandle>();
+                var operation = pack.GetOperationHandle<RawFileHandle>();
                 string filePath = operation.GetRawFilePath();
                 UnloadRawFile(assetName, true);
                 return filePath;
@@ -164,7 +164,7 @@ namespace OxGFrame.AssetLoader
             var pack = GetFromCache<BundlePack>(assetName);
             if (pack != null)
             {
-                var operation = pack.GetOperationHandle<RawFileOperationHandle>();
+                var operation = pack.GetOperationHandle<RawFileHandle>();
                 // Get path from operation handle
                 string filePath = operation.GetRawFilePath();
                 UnloadRawFile(assetName, true);
@@ -187,7 +187,7 @@ namespace OxGFrame.AssetLoader
             var pack = GetFromCache<BundlePack>(assetName);
             if (pack != null)
             {
-                var operation = pack.GetOperationHandle<RawFileOperationHandle>();
+                var operation = pack.GetOperationHandle<RawFileHandle>();
                 // Get path from operation handle
                 string filePath = operation.GetRawFilePath();
                 UnloadRawFile(assetName, true);
@@ -197,20 +197,20 @@ namespace OxGFrame.AssetLoader
             return null;
         }
 
-        public static async UniTask PreloadRawFileAsync(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
+        public static async UniTask PreloadRawFileAsync(string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
-            else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, new string[] { assetName }, progression, maxRetryCount);
+            else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask PreloadRawFileAsync(string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
+        public static async UniTask PreloadRawFileAsync(string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
-            else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, new string[] { assetName }, progression, maxRetryCount);
+            else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask PreloadRawFileAsync(string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
+        public static async UniTask PreloadRawFileAsync(string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
 
@@ -227,10 +227,10 @@ namespace OxGFrame.AssetLoader
             }
 
             if (refineAssetNames.Count > 0) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
-            else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, progression, maxRetryCount);
+            else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask PreloadRawFileAsync(string packageName, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
+        public static async UniTask PreloadRawFileAsync(string packageName, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             List<string> refineAssetNames = new List<string>();
 
@@ -245,7 +245,7 @@ namespace OxGFrame.AssetLoader
             }
 
             if (refineAssetNames.Count > 0) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
-            else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, progression, maxRetryCount);
+            else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, priority, progression, maxRetryCount);
         }
 
         public static void PreloadRawFile(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
@@ -304,9 +304,11 @@ namespace OxGFrame.AssetLoader
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="assetName"></param>
+        /// <param name="priority"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        public static async UniTask<T> LoadRawFileAsync<T>(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
+        public static async UniTask<T> LoadRawFileAsync<T>(string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
@@ -314,17 +316,17 @@ namespace OxGFrame.AssetLoader
                 Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
-            return await CacheBundle.GetInstance().LoadRawFileAsync<T>(packageName, assetName, progression, maxRetryCount);
+            return await CacheBundle.GetInstance().LoadRawFileAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask<T> LoadRawFileAsync<T>(string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
+        public static async UniTask<T> LoadRawFileAsync<T>(string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             if (RefineResourcesPath(ref assetName))
             {
                 Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
-            return await CacheBundle.GetInstance().LoadRawFileAsync<T>(packageName, assetName, progression, maxRetryCount);
+            return await CacheBundle.GetInstance().LoadRawFileAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
         }
 
         /// <summary>
@@ -333,6 +335,7 @@ namespace OxGFrame.AssetLoader
         /// <typeparam name="T"></typeparam>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
         public static T LoadRawFile<T>(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
@@ -371,23 +374,26 @@ namespace OxGFrame.AssetLoader
         /// <summary>
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="assetName"></param>
+        /// <param name="priority"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        public static async UniTask PreloadAssetAsync<T>(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask PreloadAssetAsync<T>(string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName)) await CacheResource.GetInstance().PreloadAssetAsync<T>(new string[] { assetName }, progression, maxRetryCount);
-            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, new string[] { assetName }, progression, maxRetryCount);
+            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask PreloadAssetAsync<T>(string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask PreloadAssetAsync<T>(string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName)) await CacheResource.GetInstance().PreloadAssetAsync<T>(new string[] { assetName }, progression, maxRetryCount);
-            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, new string[] { assetName }, progression, maxRetryCount);
+            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask PreloadAssetAsync<T>(string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask PreloadAssetAsync<T>(string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
 
@@ -404,10 +410,10 @@ namespace OxGFrame.AssetLoader
             }
 
             if (refineAssetNames.Count > 0) await CacheResource.GetInstance().PreloadAssetAsync<T>(assetNames, progression, maxRetryCount);
-            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, assetNames, progression, maxRetryCount);
+            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, assetNames, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask PreloadAssetAsync<T>(string packageName, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask PreloadAssetAsync<T>(string packageName, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             List<string> refineAssetNames = new List<string>();
 
@@ -422,14 +428,16 @@ namespace OxGFrame.AssetLoader
             }
 
             if (refineAssetNames.Count > 0) await CacheResource.GetInstance().PreloadAssetAsync<T>(assetNames, progression, maxRetryCount);
-            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, assetNames, progression, maxRetryCount);
+            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, assetNames, priority, progression, maxRetryCount);
         }
 
         /// <summary>
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadAsset<T>(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -486,19 +494,21 @@ namespace OxGFrame.AssetLoader
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="assetName"></param>
+        /// <param name="priority"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        public static async UniTask<T> LoadAssetAsync<T>(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> LoadAssetAsync<T>(string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName)) return await CacheResource.GetInstance().LoadAssetAsync<T>(assetName, progression, maxRetryCount);
-            else return await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+            else return await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask<T> LoadAssetAsync<T>(string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> LoadAssetAsync<T>(string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName)) return await CacheResource.GetInstance().LoadAssetAsync<T>(assetName, progression, maxRetryCount);
-            else return await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+            else return await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
         }
 
         /// <summary>
@@ -507,6 +517,7 @@ namespace OxGFrame.AssetLoader
         /// <typeparam name="T"></typeparam>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
         public static T LoadAsset<T>(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
@@ -526,9 +537,11 @@ namespace OxGFrame.AssetLoader
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="assetName"></param>
+        /// <param name="priority"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
@@ -539,13 +552,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
@@ -555,13 +568,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Vector3 position, Quaternion rotation, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Vector3 position, Quaternion rotation, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
@@ -572,13 +585,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
@@ -588,13 +601,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Vector3 position, Quaternion rotation, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Vector3 position, Quaternion rotation, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
@@ -605,13 +618,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation, parent);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
@@ -621,13 +634,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation, parent);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
@@ -638,13 +651,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
@@ -654,13 +667,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Transform parent, bool worldPositionStays, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
@@ -671,13 +684,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent, worldPositionStays);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
@@ -687,7 +700,7 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, progression, maxRetryCount);
+                var asset = await CacheBundle.GetInstance().LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent, worldPositionStays);
                 return cloneAsset;
             }
@@ -699,6 +712,7 @@ namespace OxGFrame.AssetLoader
         /// <typeparam name="T"></typeparam>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
         public static T InstantiateAsset<T>(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
@@ -891,20 +905,20 @@ namespace OxGFrame.AssetLoader
         }
 
         #region RawFile
-        public static async UniTask PreloadRawFileAsync(int groupId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
+        public static async UniTask PreloadRawFileAsync(int groupId, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
-            else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, new string[] { assetName }, progression, maxRetryCount);
+            else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, new string[] { assetName }, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask PreloadRawFileAsync(int groupId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
+        public static async UniTask PreloadRawFileAsync(int groupId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
-            else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, new string[] { assetName }, progression, maxRetryCount);
+            else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, new string[] { assetName }, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask PreloadRawFileAsync(int groupId, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
+        public static async UniTask PreloadRawFileAsync(int groupId, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
 
@@ -921,10 +935,10 @@ namespace OxGFrame.AssetLoader
             }
 
             if (refineAssetNames.Count > 0) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
-            else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, assetNames, progression, maxRetryCount);
+            else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, assetNames, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask PreloadRawFileAsync(int groupId, string packageName, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
+        public static async UniTask PreloadRawFileAsync(int groupId, string packageName, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             List<string> refineAssetNames = new List<string>();
 
@@ -939,7 +953,7 @@ namespace OxGFrame.AssetLoader
             }
 
             if (refineAssetNames.Count > 0) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
-            else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, assetNames, progression, maxRetryCount);
+            else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, assetNames, priority, progression, maxRetryCount);
         }
 
         public static void PreloadRawFile(int groupId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
@@ -999,9 +1013,11 @@ namespace OxGFrame.AssetLoader
         /// <typeparam name="T"></typeparam>
         /// <param name="groupId"></param>
         /// <param name="assetName"></param>
+        /// <param name="priority"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        public static async UniTask<T> LoadRawFileAsync<T>(int groupId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
+        public static async UniTask<T> LoadRawFileAsync<T>(int groupId, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
@@ -1009,17 +1025,17 @@ namespace OxGFrame.AssetLoader
                 Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
-            else return await GroupBundle.GetInstance().LoadRawFileAsync<T>(groupId, packageName, assetName, progression, maxRetryCount);
+            else return await GroupBundle.GetInstance().LoadRawFileAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask<T> LoadRawFileAsync<T>(int groupId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
+        public static async UniTask<T> LoadRawFileAsync<T>(int groupId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             if (RefineResourcesPath(ref assetName))
             {
                 Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
                 return default;
             }
-            else return await GroupBundle.GetInstance().LoadRawFileAsync<T>(groupId, packageName, assetName, progression, maxRetryCount);
+            else return await GroupBundle.GetInstance().LoadRawFileAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
         }
 
         /// <summary>
@@ -1029,6 +1045,7 @@ namespace OxGFrame.AssetLoader
         /// <param name="groupId"></param>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
         public static T LoadRawFile<T>(int groupId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
@@ -1067,24 +1084,27 @@ namespace OxGFrame.AssetLoader
         /// <summary>
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="groupId"></param>
         /// <param name="assetName"></param>
+        /// <param name="priority"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        public static async UniTask PreloadAssetAsync<T>(int groupId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask PreloadAssetAsync<T>(int groupId, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName)) await GroupResource.GetInstance().PreloadAssetAsync<T>(groupId, new string[] { assetName }, progression, maxRetryCount);
-            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, new string[] { assetName }, progression, maxRetryCount);
+            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, new string[] { assetName }, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask PreloadAssetAsync<T>(int groupId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask PreloadAssetAsync<T>(int groupId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName)) await GroupResource.GetInstance().PreloadAssetAsync<T>(groupId, new string[] { assetName }, progression, maxRetryCount);
-            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, new string[] { assetName }, progression, maxRetryCount);
+            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, new string[] { assetName }, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask PreloadAssetAsync<T>(int groupId, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask PreloadAssetAsync<T>(int groupId, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
 
@@ -1101,10 +1121,10 @@ namespace OxGFrame.AssetLoader
             }
 
             if (refineAssetNames.Count > 0) await GroupResource.GetInstance().PreloadAssetAsync<T>(groupId, assetNames, progression, maxRetryCount);
-            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, assetNames, progression, maxRetryCount);
+            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, assetNames, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask PreloadAssetAsync<T>(int groupId, string packageName, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask PreloadAssetAsync<T>(int groupId, string packageName, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             List<string> refineAssetNames = new List<string>();
 
@@ -1119,15 +1139,17 @@ namespace OxGFrame.AssetLoader
             }
 
             if (refineAssetNames.Count > 0) await GroupResource.GetInstance().PreloadAssetAsync<T>(groupId, assetNames, progression, maxRetryCount);
-            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, assetNames, progression, maxRetryCount);
+            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, assetNames, priority, progression, maxRetryCount);
         }
 
         /// <summary>
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="groupId"></param>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadAsset<T>(int groupId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1185,19 +1207,21 @@ namespace OxGFrame.AssetLoader
         /// <typeparam name="T"></typeparam>
         /// <param name="groupId"></param>
         /// <param name="assetName"></param>
+        /// <param name="priority"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        public static async UniTask<T> LoadAssetAsync<T>(int groupId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> LoadAssetAsync<T>(int groupId, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName)) return await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression, maxRetryCount);
-            else return await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, progression, maxRetryCount);
+            else return await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
         }
 
-        public static async UniTask<T> LoadAssetAsync<T>(int groupId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> LoadAssetAsync<T>(int groupId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName)) return await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression, maxRetryCount);
-            else return await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, progression, maxRetryCount);
+            else return await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
         }
 
         /// <summary>
@@ -1227,9 +1251,11 @@ namespace OxGFrame.AssetLoader
         /// <typeparam name="T"></typeparam>
         /// <param name="groupdId"></param>
         /// <param name="assetName"></param>
+        /// <param name="priority"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
@@ -1240,13 +1266,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
@@ -1256,13 +1282,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Vector3 position, Quaternion rotation, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Vector3 position, Quaternion rotation, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
@@ -1273,13 +1299,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Vector3 position, Quaternion rotation, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Vector3 position, Quaternion rotation, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
@@ -1289,13 +1315,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Vector3 position, Quaternion rotation, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Vector3 position, Quaternion rotation, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
@@ -1306,13 +1332,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation, parent);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
@@ -1322,13 +1348,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation, parent);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
@@ -1339,13 +1365,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
@@ -1355,13 +1381,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Transform parent, bool worldPositionStays, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
@@ -1372,13 +1398,13 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent, worldPositionStays);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
@@ -1388,7 +1414,7 @@ namespace OxGFrame.AssetLoader
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent, worldPositionStays);
                 return cloneAsset;
             }
@@ -1401,6 +1427,7 @@ namespace OxGFrame.AssetLoader
         /// <param name="groupdId"></param>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
         public static T InstantiateAsset<T>(int groupdId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {

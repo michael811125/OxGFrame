@@ -54,7 +54,7 @@ namespace OxGFrame.CoreFrame.Editor
         [Separator("Method Setting")]
         public string methodAccessModifier = "protected";
         public string methodPrefix = "";
-        public string methodName = "InitComponents";
+        public string methodName = "InitBindingComponents";
 
         [Separator("Indicate Modifier Setting")]
         public IndicateModifier indicateModifier = IndicateModifier.This;

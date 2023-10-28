@@ -32,7 +32,7 @@ namespace YooAsset
 			{
 				Directory.Delete(FileRootPath, true);
 			}
-			catch (System.Exception e)
+			catch(System.Exception e)
 			{
 				YooLogger.Warning($"Failed delete cache bundle folder : {e}");
 			}

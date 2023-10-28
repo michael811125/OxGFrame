@@ -23,11 +23,11 @@ namespace OxGFrame.CoreFrame.CPFrame
             return _instance;
         }
 
-        protected async UniTask<GameObject> LoadGameObjectAsync(string packageName, string assetName, Progression progression)
+        protected async UniTask<GameObject> LoadGameObjectAsync(string packageName, string assetName, uint priority, Progression progression)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
-            GameObject obj = await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName, progression);
+            GameObject obj = await AssetLoaders.LoadAssetAsync<GameObject>(packageName, assetName, priority, progression);
 
             if (obj == null)
             {
@@ -53,14 +53,14 @@ namespace OxGFrame.CoreFrame.CPFrame
             return obj;
         }
 
-        public async UniTask PreloadAsync(string packageName, string[] assetNames, Progression progression = null)
+        public async UniTask PreloadAsync(string packageName, string[] assetNames, uint priority = 0, Progression progression = null)
         {
-            await AssetLoaders.PreloadAssetAsync<Object>(packageName, assetNames, progression);
+            await AssetLoaders.PreloadAssetAsync<Object>(packageName, assetNames, priority, progression);
         }
 
-        public async UniTask PreloadAsync<T>(string packageName, string[] assetNames, Progression progression = null) where T : Object
+        public async UniTask PreloadAsync<T>(string packageName, string[] assetNames, uint priority = 0, Progression progression = null) where T : Object
         {
-            await AssetLoaders.PreloadAssetAsync<T>(packageName, assetNames, progression);
+            await AssetLoaders.PreloadAssetAsync<T>(packageName, assetNames, priority, progression);
         }
 
         public void Preload(string packageName, string[] assetNames, Progression progression = null)
@@ -73,9 +73,9 @@ namespace OxGFrame.CoreFrame.CPFrame
             AssetLoaders.PreloadAsset<T>(packageName, assetNames, progression);
         }
 
-        public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent = null, Progression progression = null) where T : CPBase, new()
+        public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent = null, uint priority = 0, Progression progression = null) where T : CPBase, new()
         {
-            GameObject go = await this.LoadGameObjectAsync(packageName, assetName, progression);
+            GameObject go = await this.LoadGameObjectAsync(packageName, assetName, priority, progression);
             if (go == null) return null;
 
             GameObject instGo = GameObject.Instantiate(go, parent);
@@ -93,7 +93,7 @@ namespace OxGFrame.CoreFrame.CPFrame
             if (cpBase == null) return null;
 
             cpBase.SetNames(assetName);
-            cpBase.OnInit();
+            cpBase.OnCreate();
             cpBase.InitFirst();
             // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
             if (active) cpBase.Display(null);
@@ -104,9 +104,9 @@ namespace OxGFrame.CoreFrame.CPFrame
             return cpBase;
         }
 
-        public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : CPBase, new()
+        public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null) where T : CPBase, new()
         {
-            GameObject go = await this.LoadGameObjectAsync(packageName, assetName, progression);
+            GameObject go = await this.LoadGameObjectAsync(packageName, assetName, priority, progression);
             if (go == null) return null;
 
             GameObject instGo = GameObject.Instantiate(go, parent, worldPositionStays);
@@ -124,7 +124,7 @@ namespace OxGFrame.CoreFrame.CPFrame
             if (cpBase == null) return null;
 
             cpBase.SetNames(assetName);
-            cpBase.OnInit();
+            cpBase.OnCreate();
             cpBase.InitFirst();
             // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
             if (active) cpBase.Display(null);
@@ -135,9 +135,9 @@ namespace OxGFrame.CoreFrame.CPFrame
             return cpBase;
         }
 
-        public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : CPBase, new()
+        public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, uint priority = 0, Progression progression = null) where T : CPBase, new()
         {
-            GameObject go = await this.LoadGameObjectAsync(packageName, assetName, progression);
+            GameObject go = await this.LoadGameObjectAsync(packageName, assetName, priority, progression);
             if (go == null) return null;
 
             GameObject instGo = GameObject.Instantiate(go, position, rotation, parent);
@@ -158,7 +158,7 @@ namespace OxGFrame.CoreFrame.CPFrame
             if (cpBase == null) return null;
 
             cpBase.SetNames(assetName);
-            cpBase.OnInit();
+            cpBase.OnCreate();
             cpBase.InitFirst();
             // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
             if (active) cpBase.Display(null);
@@ -189,7 +189,7 @@ namespace OxGFrame.CoreFrame.CPFrame
             if (cpBase == null) return null;
 
             cpBase.SetNames(assetName);
-            cpBase.OnInit();
+            cpBase.OnCreate();
             cpBase.InitFirst();
             // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
             if (active) cpBase.Display(null);
@@ -220,7 +220,7 @@ namespace OxGFrame.CoreFrame.CPFrame
             if (cpBase == null) return null;
 
             cpBase.SetNames(assetName);
-            cpBase.OnInit();
+            cpBase.OnCreate();
             cpBase.InitFirst();
             // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
             if (active) cpBase.Display(null);
@@ -254,7 +254,7 @@ namespace OxGFrame.CoreFrame.CPFrame
             if (cpBase == null) return null;
 
             cpBase.SetNames(assetName);
-            cpBase.OnInit();
+            cpBase.OnCreate();
             cpBase.InitFirst();
             // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
             if (active) cpBase.Display(null);

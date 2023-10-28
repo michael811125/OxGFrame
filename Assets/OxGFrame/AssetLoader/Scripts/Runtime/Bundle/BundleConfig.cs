@@ -57,9 +57,14 @@ namespace OxGFrame.AssetLoader.Bundle
         public static bool skipCreateMainDownloder = false;
 
         /// <summary>
-        /// Package 設置清單
+        /// App Preset Package 清單
         /// </summary>
-        public static List<string> listPackages;
+        public static List<string> listAppPackages;
+
+        /// <summary>
+        /// DLC Preset Package 清單
+        /// </summary>
+        public static List<DlcInfo> listDlcPackages;
 
         /// <summary>
         /// 預設同時併發下載數量
@@ -80,16 +85,21 @@ namespace OxGFrame.AssetLoader.Bundle
         public static int failedRetryCount = defaultFailedRetryCount;
 
         /// <summary>
+        /// 斷點續傳門檻
+        /// </summary>
+        public static uint breakpointFileSizeThreshold = 20 * 1 << 20;
+
+        /// <summary>
         /// 解密 Key, [NONE], [OFFSET, dummySize], [XOR, key], [HT2XOR, hKey, tKey, jKey], [AES, key, iv]
         /// </summary>
         private static string[] _cryptogramArgs = null;
-        public static string[] cryptogramArgs => _cryptogramArgs;
+        internal static string[] cryptogramArgs => _cryptogramArgs;
 
         /// <summary>
         /// Init Decryption args
         /// </summary>
         /// <param name="args"></param>
-        public static void InitCryptogram(string args)
+        internal static void InitCryptogram(string args)
         {
             _cryptogramArgs = args.Trim().Split(',');
             for (int i = 0; i < _cryptogramArgs.Length; i++)
@@ -99,37 +109,15 @@ namespace OxGFrame.AssetLoader.Bundle
         }
         #endregion
 
-        #region 常數配置
-        // AppConfig 配置檔
-        public const string appCfgBakExtension = ".bak";            // 主程式配置檔副檔名 (Backup)
-        public const string appCfgExtension = ".json";              // 主程式配置檔副檔名
-        public readonly static string appCfgName = "appconfig";     // 主程式配置檔的名稱 
-
-        // PatchConfig 配置檔
-        public const string patchCfgBakExtension = ".bak";          // 補丁配置檔副檔名 (Backup)
-        public const string patchCfgExtension = ".json";            // 補丁配置檔副檔名
-        public readonly static string patchCfgName = "patchconfig"; // 補丁配置檔的名稱 
-
-        // 佈署配置檔中的 KEY
-        public const string BUNDLE_IP = "bundle_ip";
-        public const string BUNDLE_FALLBACK_IP = "bundle_fallback_ip";
-        public const string STORE_LINK = "store_link";
-
-        // 佈署配置檔
-        public const string bundleUrlFileName = "burlconfig.conf";
-
-        // Bundle 輸出歸類名稱
-        public const string rootFolderName = "CDN"; // Root 資料夾名稱
-        public const string dlcFolderName = "DLC";  // DLC 資料夾名稱
-
-        // YooAsset 歸類名稱
-        public const string yooDefaultFolderName = "yoo";
-        public const string yooCacheBundleFolderName = "CacheBundleFiles";
-        public const string yooCacheRawFolderName = "CacheRawFiles";
-        public const string yooBundleFileName = "__data";
-        #endregion
-
+        /// <summary>
+        /// 緩存 url config
+        /// </summary>
         private static Dictionary<string, string> _urlCfgFileMap = null;
+
+        /// <summary>
+        /// 緩存 app config
+        /// </summary>
+        private static AppConfig _appConfig = null;
 
         /// <summary>
         /// 取得 burlconfig 佈署配置檔的數據
@@ -140,6 +128,7 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             if (_urlCfgFileMap == null)
             {
+                string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.bundleUrlCfgExtension}";
                 string pathName = Path.Combine(GetRequestStreamingAssetsPath(), bundleUrlFileName);
                 var content = await Requester.RequestText(pathName, null, null, null, false);
                 if (string.IsNullOrEmpty(content)) return string.Empty;
@@ -168,10 +157,12 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<AppConfig> GetAppConfigFromStreamingAssets()
         {
-            string cfgJson = await Requester.RequestText(GetStreamingAssetsAppConfigPath(), null, null, null, false);
-            if (!string.IsNullOrEmpty(cfgJson)) return JsonConvert.DeserializeObject<AppConfig>(cfgJson);
-
-            return null;
+            if (_appConfig == null)
+            {
+                string cfgJson = await Requester.RequestText(GetStreamingAssetsAppConfigPath(), null, null, null, false);
+                if (!string.IsNullOrEmpty(cfgJson)) _appConfig = JsonConvert.DeserializeObject<AppConfig>(cfgJson);
+            }
+            return _appConfig;
         }
 
         /// <summary>
@@ -181,11 +172,12 @@ namespace OxGFrame.AssetLoader.Bundle
         public static async UniTask<string> GetHostServerUrl(string packageName)
         {
             var appConfig = await GetAppConfigFromStreamingAssets();
-            string host = await GetValueFromUrlCfg(BUNDLE_IP);
+            string host = await GetValueFromUrlCfg(PatchSetting.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
             string appVersion = appConfig.APP_VERSION;
             string refineAppVersion = $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
+            string rootFolderName = PatchSetting.setting.rootFolderName;
 
             // 預設組合路徑
             return $"{host}/{rootFolderName}/{productName}/{platform}/{refineAppVersion}/{packageName}";
@@ -198,11 +190,12 @@ namespace OxGFrame.AssetLoader.Bundle
         public static async UniTask<string> GetFallbackHostServerUrl(string packageName)
         {
             var appConfig = await GetAppConfigFromStreamingAssets();
-            string host = await GetValueFromUrlCfg(BUNDLE_FALLBACK_IP);
+            string host = await GetValueFromUrlCfg(PatchSetting.BUNDLE_FALLBACK_IP);
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
             string appVersion = appConfig.APP_VERSION;
             string refineAppVersion = $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
+            string rootFolderName = PatchSetting.setting.rootFolderName;
 
             // 預設組合路徑
             return $"{host}/{rootFolderName}/{productName}/{platform}/{refineAppVersion}/{packageName}";
@@ -214,30 +207,36 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <param name="packageName"></param>
         /// <param name="dlcVersion"></param>
         /// <returns></returns>
-        public static async UniTask<string> GetDlcHostServerUrl(string packageName, string dlcVersion)
+        public static async UniTask<string> GetDlcHostServerUrl(string packageName, string dlcVersion, bool withoutPlatform = false)
         {
             var appConfig = await GetAppConfigFromStreamingAssets();
-            string host = await GetValueFromUrlCfg(BUNDLE_IP);
+            string host = await GetValueFromUrlCfg(PatchSetting.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
+            string rootFolderName = PatchSetting.setting.rootFolderName;
+            string dlcFolderName = PatchSetting.setting.dlcFolderName;
 
             // 預設 DLC 組合路徑
-            return $"{host}/{rootFolderName}/{productName}/{platform}/{dlcFolderName}/{packageName}/{dlcVersion}";
+            if (withoutPlatform) return $"{host}/{rootFolderName}/{productName}/{dlcFolderName}/{packageName}/{dlcVersion}";
+            else return $"{host}/{rootFolderName}/{productName}/{platform}/{dlcFolderName}/{packageName}/{dlcVersion}";
         }
 
         /// <summary>
         /// 取得 StreamingAssets 中的 Bundle Fallback URL (DLC)
         /// </summary>
         /// <returns></returns>
-        public static async UniTask<string> GetDlcFallbackHostServerUrl(string packageName, string dlcVersion)
+        public static async UniTask<string> GetDlcFallbackHostServerUrl(string packageName, string dlcVersion, bool withoutPlatform = false)
         {
             var appConfig = await GetAppConfigFromStreamingAssets();
-            string host = await GetValueFromUrlCfg(BUNDLE_FALLBACK_IP);
+            string host = await GetValueFromUrlCfg(PatchSetting.BUNDLE_FALLBACK_IP);
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
+            string rootFolderName = PatchSetting.setting.rootFolderName;
+            string dlcFolderName = PatchSetting.setting.dlcFolderName;
 
             // 預設 DLC 組合路徑
-            return $"{host}/{rootFolderName}/{productName}/{platform}/{dlcFolderName}/{packageName}/{dlcVersion}";
+            if (withoutPlatform) return $"{host}/{rootFolderName}/{productName}/{dlcFolderName}/{packageName}/{dlcVersion}";
+            else return $"{host}/{rootFolderName}/{productName}/{platform}/{dlcFolderName}/{packageName}/{dlcVersion}";
         }
 
         /// <summary>
@@ -246,7 +245,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetAppStoreLink()
         {
-            return await GetValueFromUrlCfg(STORE_LINK);
+            return await GetValueFromUrlCfg(PatchSetting.STORE_LINK);
         }
 
         /// <summary>
@@ -264,6 +263,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetLocalSandboxRootPath()
         {
+            var yooDefaultFolderName = PatchSetting.yooSetting.DefaultYooFolderName;
 #if UNITY_EDITOR
             string projectPath = Path.GetDirectoryName(Application.dataPath);
             projectPath = projectPath.Replace('\\', '/').Replace("\\", "/");
@@ -304,7 +304,8 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetLocalSandboxAppConfigPath()
         {
-            return Path.Combine(GetLocalSandboxRootPath(), $"{appCfgName}{appCfgExtension}");
+            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.appCfgExtension}";
+            return Path.Combine(GetLocalSandboxRootPath(), appCfgFileName);
         }
 
         /// <summary>
@@ -313,7 +314,8 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetStreamingAssetsAppConfigPath()
         {
-            return Path.Combine(GetRequestStreamingAssetsPath(), $"{appCfgName}{appCfgExtension}");
+            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.appCfgExtension}";
+            return Path.Combine(GetRequestStreamingAssetsPath(), appCfgFileName);
         }
 
         /// <summary>
@@ -323,11 +325,13 @@ namespace OxGFrame.AssetLoader.Bundle
         public static async UniTask<string> GetHostServerAppConfigPath()
         {
             var appConfig = await GetAppConfigFromStreamingAssets();
-            string host = await GetValueFromUrlCfg(BUNDLE_IP);
+            string host = await GetValueFromUrlCfg(PatchSetting.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
+            string rootFolderName = PatchSetting.setting.rootFolderName;
+            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.appCfgExtension}";
 
-            return Path.Combine($"{host}/{rootFolderName}/{productName}/{platform}", $"{appCfgName}{appCfgExtension}");
+            return Path.Combine($"{host}/{rootFolderName}/{productName}/{platform}", appCfgFileName);
         }
 
         /// <summary>
@@ -337,11 +341,13 @@ namespace OxGFrame.AssetLoader.Bundle
         public static async UniTask<string> GetHostServerPatchConfigPath()
         {
             var appConfig = await GetAppConfigFromStreamingAssets();
-            string host = await GetValueFromUrlCfg(BUNDLE_IP);
+            string host = await GetValueFromUrlCfg(PatchSetting.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
+            string rootFolderName = PatchSetting.setting.rootFolderName;
+            string patchCfgFileName = $"{PatchSetting.setting.patchCfgName}{PatchSetting.patchCfgExtension}";
 
-            return Path.Combine($"{host}/{rootFolderName}/{productName}/{platform}", $"{patchCfgName}{patchCfgExtension}");
+            return Path.Combine($"{host}/{rootFolderName}/{productName}/{platform}", patchCfgFileName);
         }
 
         /// <summary>

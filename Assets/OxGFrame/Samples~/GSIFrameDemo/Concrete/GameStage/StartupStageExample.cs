@@ -3,9 +3,9 @@ using Cysharp.Threading.Tasks;
 
 public class StartupStageExample : GSIBase
 {
-    public async override UniTask OnInit()
+    public async override UniTask OnCreate()
     {
-        /* Do Somethings OnInit once in here */
+        /* Do Somethings OnCreate once in here */
     }
 
     public async override UniTask OnEnter()

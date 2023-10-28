@@ -8,7 +8,7 @@ namespace OxGFrame.CoreFrame.SRFrame
         [Tooltip("SceneResource Settings")]
         public SRSetting srSetting = new SRSetting();
 
-        public override void OnInit() { }
+        public override void OnCreate() { }
 
         public sealed override void InitFirst()
         {

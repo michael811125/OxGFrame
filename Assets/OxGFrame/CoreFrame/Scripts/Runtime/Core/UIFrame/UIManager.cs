@@ -20,6 +20,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         private Dictionary<string, UICanvas> _dictUICanvas = new Dictionary<string, UICanvas>();                    // Canvas 物件節點
         private Dictionary<string, int> _dictStackCounter = new Dictionary<string, int>();                          // 堆疊式計數緩存 (Key = id + NodeType)
         private Dictionary<string, List<ReverseCache>> _dictReverse = new Dictionary<string, List<ReverseCache>>(); // 反切緩存
+        private Dictionary<string, List<string>> _dictStackByStack = new Dictionary<string, List<string>>();        // 逐步堆關閉
 
         private static readonly object _locker = new object();
         private static UIManager _instance = null;
@@ -239,7 +240,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             uiBase.SetNames(assetName);
             // Clone 取得 UIBase 組件後, 也需要初始 UI 相關配置, 不然後面無法正常運作
-            uiBase.OnInit();
+            uiBase.OnCreate();
             // Clone 取得 UIBase 組件後, 也需要初始 UI 相關綁定組件設定
             uiBase.InitFirst();
 
@@ -380,7 +381,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         #endregion
 
         #region Show
-        public override async UniTask<UIBase> Show(int groupId, string packageName, string assetName, object obj = null, string awaitingUIAssetName = null, Progression progression = null, Transform parent = null)
+        public override async UniTask<UIBase> Show(int groupId, string packageName, string assetName, object obj = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
         {
             if (string.IsNullOrEmpty(assetName)) return null;
 
@@ -397,9 +398,9 @@ namespace OxGFrame.CoreFrame.UIFrame
                 }
             }
 
-            await this.ShowAwaiting(groupId, packageName, awaitingUIAssetName); // 開啟預顯加載 UI
+            await this.ShowAwaiting(groupId, packageName, awaitingUIAssetName, priority); // 開啟預顯加載 UI
 
-            var uiBase = await this.LoadIntoAllCache(packageName, assetName, progression, false);
+            var uiBase = await this.LoadIntoAllCache(packageName, assetName, priority, progression, false);
             if (uiBase == null)
             {
                 Debug.LogWarning($"UI: {assetName} => Asset not found at this path!!!");
@@ -409,6 +410,9 @@ namespace OxGFrame.CoreFrame.UIFrame
             uiBase.SetGroupId(groupId);
             uiBase.SetHidden(false);
             await this.LoadAndDisplay(uiBase, obj);
+            // StackByStack
+            this.PushStackByStack(uiBase);
+            // Reverse
             this.LoadAndDisplayReverse(uiBase, obj);
 
             Logging.Print<Logger>($"<color=#1effad>Show UI: <color=#ffdb1e>{assetName}</color></color>");
@@ -421,7 +425,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         #region Reverse Operation
         /// <summary>
-        /// 針對 Close 時, 如果有遇到 Destroy 狀況需要進行反切換緩存安全處理
+        /// 針對 Close 時, 如果有遇到 Destroy 狀況需要進行反切緩存安全處理
         /// </summary>
         /// <param name="doRemoveSafety"></param>
         /// <param name="uiBase"></param>
@@ -434,33 +438,36 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             if (doRemoveSafety)
             {
-                // 透過 CanvasName 當作 Reverse 緩存 Key (主要是獨立切出不同 Canvas 的反切緩存)
-                var key = uiBase.uiSetting.canvasName;
-
-                int topIdx = this._dictReverse[key].Count - 1;
-                var top = this._dictReverse[key][topIdx];
-                UIBase equalsTop = null;
-                for (int i = topIdx; i > 0; i--)
+                // 透過 GroupId + CanvasName 當作 Reverse 緩存 Key (主要是獨立切出不同 Canvas 的反切緩存)
+                var key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
+                if (this._dictReverse.ContainsKey(key) &&
+                    this._dictReverse[key].Count > 0)
                 {
-                    // 僅取出 Top == 該 UI 的 Reverse 緩存
-                    if (i == topIdx && top.uiBase.Equals(uiBase))
+                    int topIdx = this._dictReverse[key].Count - 1;
+                    var top = this._dictReverse[key][topIdx];
+                    UIBase equalsTop = null;
+                    for (int i = topIdx; i > 0; i--)
                     {
-                        equalsTop = top.uiBase;
-                        // 額外計算堆疊數 (用於校正堆疊計數)
-                        reverseCache.extraStack++;
-                        continue;
-                    }
+                        // 僅取出 Top == 該 UI 的 Reverse 緩存
+                        if (i == topIdx && top.uiBase.Equals(uiBase))
+                        {
+                            equalsTop = top.uiBase;
+                            // 額外計算堆疊數 (用於校正堆疊計數)
+                            reverseCache.extraStack++;
+                            continue;
+                        }
 
-                    // 移除所有 Top 以下有關於被銷毀該 UI 的 Reverse 緩存
-                    if (uiBase.assetName == this._dictReverse[key][i].uiBase.assetName)
-                    {
-                        this._dictReverse[key].RemoveAt(i);
-                        // 額外計算堆疊數 (用於校正堆疊計數)
-                        reverseCache.extraStack++;
-                        Logging.Print<Logger>($"[pre-forceDestroy process] Remove {uiBase.assetName} from reverse cache.");
+                        // 移除所有 Top 以下有關於被銷毀該 UI 的 Reverse 緩存
+                        if (uiBase.assetName == this._dictReverse[key][i].uiBase.assetName)
+                        {
+                            this._dictReverse[key].RemoveAt(i);
+                            // 額外計算堆疊數 (用於校正堆疊計數)
+                            reverseCache.extraStack++;
+                            Logging.Print<Logger>($"<color=#ebff6d>[Pre-ForceDestroy Process] Remove {uiBase.assetName} from >> Reverse cache <<.</color>");
+                        }
                     }
+                    reverseCache.uiBase = equalsTop;
                 }
-                reverseCache.uiBase = equalsTop;
             }
 
             return reverseCache;
@@ -473,7 +480,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <returns></returns>
         private bool _IsEqualsReverseTop(UIBase uiBase)
         {
-            var key = uiBase.uiSetting.canvasName;
+            var key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
             if (this._dictReverse.ContainsKey(key))
             {
                 if (this._dictReverse[key].Count > 0 && uiBase.reverseChanges)
@@ -485,6 +492,39 @@ namespace OxGFrame.CoreFrame.UIFrame
             }
 
             return true;
+        }
+        #endregion
+
+        #region StackByStack Operation
+        /// <summary>
+        /// 針對 Close 時, 如果有遇到 Destroy 狀況需要進行 StackByStack 緩存安全處理
+        /// </summary>
+        /// <param name="doRemoveSafety"></param>
+        /// <param name="uiBase"></param>
+        /// <returns></returns>
+        private void _PreprocessRemovStackByStackSafety(bool doRemoveSafety, UIBase uiBase)
+        {
+            if (this._dictStackByStack.Count == 0) return;
+
+            if (doRemoveSafety)
+            {
+                // 透過 GroupId + CanvasName 當作 StackByStack 緩存 Key (主要是獨立切出不同 Canvas 的 StackByStack 緩存)
+                var key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
+                if (this._dictStackByStack.ContainsKey(key) &&
+                    this._dictStackByStack[key].Count > 0)
+                {
+                    int topIdx = this._dictStackByStack[key].Count - 1;
+                    for (int i = topIdx; i > 0; i--)
+                    {
+                        // 移除所有 Top 以下有關於被銷毀該 UI 的 StackByStack 緩存
+                        if (uiBase.assetName == this._dictStackByStack[key][i])
+                        {
+                            this._dictStackByStack[key].RemoveAt(i);
+                            Logging.Print<Logger>($"<color=#ebff6d>[Pre-ForceDestroy Process] Remove {uiBase.assetName} from >> StackByStack cache <<.</color>");
+                        }
+                    }
+                }
+            }
         }
         #endregion
 
@@ -508,23 +548,35 @@ namespace OxGFrame.CoreFrame.UIFrame
                     uiBase.SetHidden(false);
                     this.ExitAndHide(uiBase, disablePreClose);
 
+                    // 清除相同 groupId + canvasName 的緩存 (主要是為了校正)
+                    string key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
+                    if (this._dictReverse.ContainsKey(key)) this._dictReverse.Remove(key);
+                    if (this._dictStackByStack.ContainsKey(key)) this._dictStackByStack.Remove(key);
+                    key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}{uiBase.uiSetting.nodeType}";
+                    if (this._dictStackCounter.ContainsKey(key)) this._dictStackCounter.Remove(key);
+
                     if (forceDestroy) this.Destroy(uiBase, assetName);
                     else if (uiBase.allowInstantiate) this.Destroy(uiBase, assetName);
                     else if (uiBase.onCloseAndDestroy) this.Destroy(uiBase, assetName);
                 }
-
-                // 清除 ReverseChanges 跟 Stack 緩存 (主要是為了校正)
-                if (this._dictReverse.Count > 0) this._dictReverse.Clear();
-                if (this._dictStackCounter.Count > 0) this._dictStackCounter.Clear();
             }
             else
             {
                 UIBase uiBase = this.PeekStackFromAllCache(assetName);
                 if (uiBase == null) return;
 
+                #region StackByStack Process
+                // 如果強制關閉 UI, 需要處理原本柱列在 StackByStack 中的 UI 緩存 
+                this._PreprocessRemovStackByStackSafety(forceDestroy, uiBase);
+                // 從 StackByStack 緩存中移除
+                if (!forceDestroy) this.PopStackByStack(uiBase);
+                #endregion
+
                 // 如果強制關閉 UI, 需要處理原本柱列在 Reverse 中的 UI 緩存
                 ReverseCache equalsTop = this._PreprocessRemoveReserveSafety(forceDestroy, uiBase);
+                // 標記 Hidden = false
                 uiBase.SetHidden(false);
+                // equalsTop.extraStack 用於校正堆疊層數
                 this.ExitAndHide(uiBase, disablePreClose, equalsTop.extraStack);
                 // 如果檢測到 equalsTop.uiBase != null 則需要進行反切還原
                 this.ExitAndHideReverse(uiBase, !forceDestroy || (equalsTop.uiBase != null));
@@ -623,6 +675,21 @@ namespace OxGFrame.CoreFrame.UIFrame
                 if (uiBase.uiSetting.whenCloseAllToSkip) continue;
 
                 this._Close(assetName, disablePreClose, forceDestroy, true);
+            }
+        }
+
+        public void CloseStackByStack(int groupId, string canvasName, bool disablePreClose = false, bool forceDestroy = false)
+        {
+            if (this._dictStackByStack.Count == 0) return;
+
+            string key = $"{groupId}{canvasName}";
+            if (this._dictStackByStack.ContainsKey(key) &&
+                this._dictStackByStack[key].Count > 0)
+            {
+                // 取得 top item
+                string assetName = this._dictStackByStack[key][this._dictStackByStack[key].Count - 1];
+                // 關閉 top
+                this.Close(assetName, disablePreClose, forceDestroy);
             }
         }
         #endregion
@@ -818,8 +885,8 @@ namespace OxGFrame.CoreFrame.UIFrame
             // 堆疊式管理 (只有非隱藏才進行堆疊計數管理)
             if (uiBase.uiSetting.stack && !uiBase.isHidden && doStack)
             {
-                // canvasType + nodeType (進行歸類處理, 同屬一個 canvas 並且在同一個 node)
-                string key = $"{uiBase.uiSetting.canvasName}{uiBase.uiSetting.nodeType}";
+                // groupId + canvasType + nodeType (進行歸類處理, 同屬一個 canvas 並且在同一個 node)
+                string key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}{uiBase.uiSetting.nodeType}";
                 NodeType nodeType = uiBase.uiSetting.nodeType;
 
                 if (!this._dictStackCounter.ContainsKey(key)) this._dictStackCounter.Add(key, 0);
@@ -860,8 +927,8 @@ namespace OxGFrame.CoreFrame.UIFrame
             // 堆疊式管理 (只有非隱藏才進行堆疊計數管理)
             if (uiBase.uiSetting.stack && !uiBase.isHidden)
             {
-                // canvasType + nodeType (進行歸類處理, 同屬一個 canvas 並且在同一個 node)
-                string key = $"{uiBase.uiSetting.canvasName}{uiBase.uiSetting.nodeType}";
+                // groupId + canvasType + nodeType (進行歸類處理, 同屬一個 canvas 並且在同一個 node)
+                string key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}{uiBase.uiSetting.nodeType}";
 
                 if (this._dictStackCounter.ContainsKey(key))
                 {
@@ -882,8 +949,8 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 如果屬於多實例 UI 則不需儲存數據 (節省內存)
                 if (uiBase.allowInstantiate) data = null;
 
-                // 使用 CanvasName 作為 Reverse 緩存的 Key (主要是獨立切出不同 Canvas 的反切緩存)
-                var key = uiBase.uiSetting.canvasName;
+                // 使用 GroupId + CanvasName 作為 Reverse 緩存的 Key (主要是獨立切出不同 Canvas 的反切緩存)
+                var key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
                 if (this._dictReverse.ContainsKey(key))
                 {
                     if (this._dictReverse[key].Count > 0)
@@ -912,8 +979,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         {
             if (doReverse && uiBase.reverseChanges)
             {
-                // 使用 CanvasName 作為 Reverse 緩存的 Key (主要是獨立切出不同 Canvas 的反切緩存)
-                var key = uiBase.uiSetting.canvasName;
+                // 使用 GroupId + CanvasName 作為 Reverse 緩存的 Key (主要是獨立切出不同 Canvas 的反切緩存)
+                var key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
                 if (this._dictReverse[key].Count > 1)
                 {
                     // 如果當前 UI 是 Reverse 模式, 將會直接移除最上層的緩存
@@ -928,6 +995,61 @@ namespace OxGFrame.CoreFrame.UIFrame
                 {
                     this._dictReverse[key].RemoveAt(this._dictReverse[key].Count - 1);
                     this._dictReverse.Remove(key);
+                }
+            }
+        }
+        #endregion
+
+        #region 逐步堆緩存處理
+        protected void PushStackByStack(UIBase uiBase)
+        {
+            if (uiBase.uiSetting.allowCloseStackByStack)
+            {
+                // 以 GroupId + CanvasName 作為 key
+                var key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
+                if (this._dictStackByStack.ContainsKey(key))
+                {
+                    if (this._dictStackByStack[key].Count > 0)
+                    {
+                        // 如果當前 UI 是 StackByStack 模式, 則加入緩存
+                        this._dictStackByStack[key].Add(uiBase.assetName);
+                    }
+                }
+                else
+                {
+                    // 如果當前 UI 是 StackByStack 模式, 則加入緩存
+                    this._dictStackByStack.Add(key, new List<string>());
+                    this._dictStackByStack[key].Add(uiBase.assetName);
+                }
+            }
+        }
+
+        protected void PopStackByStack(UIBase uiBase)
+        {
+            if (uiBase.uiSetting.allowCloseStackByStack)
+            {
+                // 以 GroupId + CanvasName 作為 key
+                var key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
+                string currentAssetName = uiBase.assetName;
+                if (this._dictStackByStack[key].Count > 1)
+                {
+                    int count = 1;
+                    string assetName = this._dictStackByStack[key][this._dictStackByStack[key].Count - count];
+                    // 如果 currentAssetName != assetName 表示被特別關閉
+                    while (currentAssetName != assetName)
+                    {
+                        // 往下查找直到匹配
+                        ++count;
+                        if (count > this._dictStackByStack[key].Count) break;
+                        assetName = this._dictStackByStack[key][this._dictStackByStack[key].Count - count];
+                    }
+                    // 如果當前 UI 是 StackByStack 模式, 將會直接移除最上層的緩存
+                    this._dictStackByStack[key].RemoveAt(this._dictStackByStack[key].Count - count);
+                }
+                else if (this._dictStackByStack[key].Count > 0 && this._dictStackByStack[key].Count < 2)
+                {
+                    this._dictStackByStack[key].RemoveAt(this._dictStackByStack[key].Count - 1);
+                    this._dictStackByStack.Remove(key);
                 }
             }
         }

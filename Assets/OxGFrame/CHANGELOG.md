@@ -1,5 +1,60 @@
 # CHANGELOG
 
+## [2.9.0] - 2023-10-29
+- Upgraded YooAsset to v2.0.3-preview ([CHANGELOG](https://github.com/tuyoogame/YooAsset/releases/tag/2.0.3-preview)).
+- Fixed DefaultYooFolderName issue.
+- Fixed UIManager CloseAll with groupId bug issue.
+- Added [AllowCloseStackByStack] setting for UI.
+- Added CloseStackByStack method in CoreFrames.UIFrame.
+```C#
+    // Only allow close stack by stack
+    public static void CloseStackByStack(string canvasName, bool disablePreClose = false, bool forceDestroy = false)
+    public static void CloseStackByStack(int groupId, string canvasName, bool disablePreClose = false, bool forceDestroy = false)
+```
+- Added Preset DLC packages list to PatchLauncher (can set preset DLC packages).
+- Added **withoutPlatform** param to DlcInfo class (can export default dlc request path wihtout platform).
+- Added PatchSetting ScriptableObject for Bundle (can modify configs name by self).
+- Added Priority param for any load async methods (can controls loading priority by YooAsset).
+- Optimized cached AppConfig in Runtime.
+- Modified BindCodeSetting init param and use region to group binding code (more clear).
+```C#
+    #region Binding Components
+    protected GameObject _openBtn;
+    
+    /// <summary>
+    /// Don't forget to call via OnBind method
+    /// </summary>
+    protected void InitBindingComponents()
+    {
+        this._openBtn = this.collector.GetNode("OpenBtn");
+    }
+    #endregion
+```
+- Changed CoreFrame.FrameBase method name (OnInit change to OnCreate).
+```C#
+    // Replace all OnInit() to OnCreate()
+    public override void OnCreate()
+    {
+        /**
+         * Do Somethings Init Once In Here
+         */
+    }
+```
+- Chagned GSIFrame.GSIBase method name (OnInit change to OnCreate).
+```C#
+    // Replace all OnInit() to OnCreate()
+    public async override UniTask OnCreate()
+    {
+        /* Do Somethings OnCreate once in here */
+    }
+```
+- Removed methods from AssetPatcher.
+```C#
+    // Removed
+    public static string GetPresetAppPackageNameByIdx(int idx)
+```
+
+
 ## [2.8.2] - 2023-09-28
 - Upgraded YooAsset to v1.5.6-preview ([CHANGELOG](https://github.com/tuyoogame/YooAsset/releases/tag/1.5.6-preview)).
 
