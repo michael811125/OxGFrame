@@ -16,7 +16,7 @@ MonoBehaviour:
   dummySize: 1
   xorKey: 1
   hXorKey: 1
-  tXorKey: 2
-  jXorKey: 3
-  aesKey: aes_key_michaelO_birthday1125
-  aesIv: birthday1125
+  tXorKey: 1
+  jXorKey: 1
+  aesKey: aes_key
+  aesIv: aes_iv
