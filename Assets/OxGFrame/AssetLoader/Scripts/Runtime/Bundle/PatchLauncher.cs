@@ -1,7 +1,6 @@
 ﻿using MyBox;
 using System.Collections.Generic;
 using UnityEngine;
-using YooAsset;
 using OxGKit.LoggingSystem;
 
 #if UNITY_EDITOR
@@ -15,27 +14,26 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         [Separator("Patch Options")]
         public BundleConfig.PlayMode playMode = BundleConfig.PlayMode.EditorSimulateMode;
-        [Tooltip("If checked, the patch field will compare whole version"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WebGLMode)]
+        [Tooltip("If checked, the patch field will compare whole version."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WebGLMode)]
         public BundleConfig.SemanticRule semanticRule = new BundleConfig.SemanticRule();
-        [Tooltip("If checked, will skip preset app packages download step of the patch (force download while playing)"), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
+        [Tooltip("If checked, will skip preset app packages download step of the patch (force download while playing)."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
         public bool skipMainDownload = false;
 
         [Separator("Preset App Packages")]
-        [Tooltip("The first element will be default app package\n\nNote: The presets will combine in main download of the patch")]
+        [Tooltip("The first element will be default app package.\n\nNote: The presets will combine in main download of the patch.")]
         public List<string> listAppPackages = new List<string>() { "DefaultPackage" };
 
-        [Separator("Preset DLC Packages"), Tooltip("Preset DLC packages must be fixed versions.\n\nNote: The presets will combine in main download of the patch")]
+        [Separator("Preset DLC Packages"), Tooltip("Preset DLC packages must be fixed versions.\n\nNote: The presets will combine in main download of the patch.")]
         public List<DlcInfo> listDlcPackages = new List<DlcInfo>();
 
         [Separator("Download Options")]
         public int maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
         public int failedRetryCount = BundleConfig.failedRetryCount;
-        [Tooltip("If file size >= [BreakpointFileSizeThreshold] that file will enable breakpoint mechanism (for all downloaders)")]
+        [Tooltip("If file size >= [BreakpointFileSizeThreshold] that file will enable breakpoint mechanism (for all downloaders).")]
         public uint breakpointFileSizeThreshold = BundleConfig.breakpointFileSizeThreshold;
 
         [Separator("Cryptogram Options")]
-        [Tooltip("Bundle decryption (case-insensitive)\n\n[NONE], \n[OFFSET, dummySize], \n[XOR, key], \n[HT2XOR, headKey, tailKey, jumpKey], \n[AES, key, iv]\n\nex: \n\"none\" \n\"offset, 12\" \n\"xor, 23\" \n\"ht2xor, 34, 45, 56\" \n\"aes, key, iv\"")]
-        public string decryptArgs = BundleConfig.CryptogramType.NONE;
+        [SerializeField] private DecryptInfo _decryptInfo = new DecryptInfo();
 
         private async void Awake()
         {
@@ -85,7 +83,7 @@ namespace OxGFrame.AssetLoader.Bundle
             #endregion
 
             #region Cryptogram Options
-            BundleConfig.InitCryptogram(string.IsNullOrEmpty(this.decryptArgs) ? BundleConfig.CryptogramType.NONE : this.decryptArgs);
+            BundleConfig.InitCryptogram(this._decryptInfo.GetDecryptArgs(), this._decryptInfo.secureString, this._decryptInfo.GetSaltSize(), this._decryptInfo.GetDummySize());
             #endregion
 
             // Init Settings and Setup Preset App Packages
@@ -104,6 +102,7 @@ namespace OxGFrame.AssetLoader.Bundle
             PackageManager.Release();
             Logging.Print<Logger>("<color=#ff84d1>(Powered by YooAsset) Release Packages Completes.</color>");
 #endif
+            BundleConfig.ReleaseSecureString();
         }
 
 #if UNITY_EDITOR

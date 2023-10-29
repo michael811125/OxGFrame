@@ -1794,7 +1794,7 @@ PrefabInstance:
     - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
         type: 3}
       propertyPath: decryptArgs
-      value: NONE
+      value: aes,aes_key_michaelO_birthday1125,birthday1125
       objectReference: {fileID: 0}
     - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
         type: 3}
@@ -1829,6 +1829,16 @@ PrefabInstance:
     - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
         type: 3}
       propertyPath: skipCreateMainDownloder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
+        type: 3}
+      propertyPath: _decryptInfo._decryptArgs
+      value: NONE
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
+        type: 3}
+      propertyPath: _decryptInfo.secureMemory
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.9.1] - 2023-10-29
+- Added SecrueString, StringWithDummy for DecryptArgs (SecureMemory).
+- Added DecryptInfo class (You can decide whether to do memory encryption).
+- Modified PatchLauncher.
+
 ## [2.9.0] - 2023-10-29
 - Upgraded YooAsset to v2.0.3-preview ([CHANGELOG](https://github.com/tuyoogame/YooAsset/releases/tag/2.0.3-preview)).
 - Fixed DefaultYooFolderName issue.

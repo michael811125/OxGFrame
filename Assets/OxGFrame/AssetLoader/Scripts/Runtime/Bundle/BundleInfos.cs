@@ -1,9 +1,38 @@
-﻿using System;
+﻿using MyBox;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
+    [Serializable]
+    public class DecryptInfo
+    {
+        [SerializeField, Tooltip("Bundle decryption (case-insensitive).\n\n[NONE], \n[OFFSET, dummySize], \n[XOR, key], \n[HT2XOR, headKey, tailKey, jumpKey], \n[AES, key, iv]\n\nex: \n\"none\" \n\"offset, 12\" \n\"xor, 23\" \n\"ht2xor, 34, 45, 56\" \n\"aes, key, iv\"")]
+        private string _decryptArgs = BundleConfig.CryptogramType.NONE;
+        [SerializeField, Tooltip("Can encrypt string data in memroy.")]
+        public bool secureString = true;
+        [SerializeField, ConditionalField(nameof(secureString))]
+        private int _saltSize = 1 << 4;
+        [SerializeField, ConditionalField(nameof(secureString))]
+        private int _dummySize = 1 << 5;
+
+        public string GetDecryptArgs()
+        {
+            return string.IsNullOrEmpty(this._decryptArgs) ? BundleConfig.CryptogramType.NONE : this._decryptArgs;
+        }
+
+        public int GetSaltSize()
+        {
+            return this._saltSize;
+        }
+
+        public int GetDummySize()
+        {
+            return this._dummySize;
+        }
+    }
+
     [Serializable]
     public class GroupInfo
     {

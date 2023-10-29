@@ -142,7 +142,6 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             public class WriteFile
             {
-
                 /// <summary>
                 /// XOR 加密檔案 【檢測OK】
                 /// </summary>

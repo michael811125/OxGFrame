@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
 using Newtonsoft.Json;
+using OxGFrame.AssetLoader.Utility.SecureMemory;
 using OxGKit.Utilities.Request;
 using System;
 using System.Collections.Generic;
@@ -92,20 +93,40 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// 解密 Key, [NONE], [OFFSET, dummySize], [XOR, key], [HT2XOR, hKey, tKey, jKey], [AES, key, iv]
         /// </summary>
-        private static string[] _cryptogramArgs = null;
-        internal static string[] cryptogramArgs => _cryptogramArgs;
+        private static SecureString _cryptogramArgs = null;
+        internal static string[] cryptogramArgs
+        {
+            get
+            {
+                if (_cryptogramArgs == null) return null;
+                string decrypt = _cryptogramArgs.Decrypt();
+                if (decrypt == null) return null;
+                string[] args = decrypt.Trim().Split(',');
+                for (int i = 0; i < args.Length; i++)
+                {
+                    args[i] = args[i].Trim();
+                }
+                return args;
+            }
+        }
 
         /// <summary>
-        /// Init Decryption args
+        /// Init decryption args
         /// </summary>
         /// <param name="args"></param>
-        internal static void InitCryptogram(string args)
+        internal static void InitCryptogram(string args, bool secured, int saltSize, int dummySize)
         {
-            _cryptogramArgs = args.Trim().Split(',');
-            for (int i = 0; i < _cryptogramArgs.Length; i++)
-            {
-                _cryptogramArgs[i] = _cryptogramArgs[i].Trim();
-            }
+            // Check args first, if is none don't need to secure memeory
+            bool isNone = args.Substring(0, CryptogramType.NONE.Length).ToUpper().Equals(CryptogramType.NONE);
+            _cryptogramArgs = new SecureString(args, !isNone && secured, saltSize, dummySize);
+        }
+
+        /// <summary>
+        /// Release secure string
+        /// </summary>
+        internal static void ReleaseSecureString()
+        {
+            if (_cryptogramArgs != null) _cryptogramArgs.Dispose();
         }
         #endregion
 
