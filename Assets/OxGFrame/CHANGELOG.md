@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## [2.9.1] - 2023-10-29
-- Added SecrueString, StringWithDummy for DecryptArgs (SecureMemory).
+- Added SecureString, StringWithDummy for DecryptArgs (SecureMemory).
 - Added DecryptInfo class (You can decide whether to do memory encryption).
 - Modified PatchLauncher.
 
