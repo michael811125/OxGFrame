@@ -6,12 +6,11 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
 {
     internal class SecureString : IDisposable
     {
+        // Secrued
+        private bool _secured = true;
+
         // Opaque Data
         private byte[] _opaqueData = null;
-
-        // Encrypt Data
-        private byte[] _encryptedData = null;
-        private bool _secured = true;
 
         // Salt
         private byte[] _salt = null;
@@ -24,27 +23,26 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
         {
             // Enabled encrypt
             this._secured = secured;
+
+            // Dummy
+            if (dummySize < 1 << 1) dummySize = 1 << 1;
+
+            // Random dummy size
+            Random rnd = new Random();
+            this._l1 = rnd.Next(dummySize >> 1, dummySize + 1);
+            this._l2 = rnd.Next(dummySize >> 1, dummySize + 1);
+
             if (this._secured)
             {
-                // Dummy
-                if (dummySize < 1 << 1) dummySize = 1 << 1;
-
-                // Random dummy size
-                Random rnd = new Random();
-                this._l1 = rnd.Next(dummySize >> 1, dummySize + 1);
-                this._l2 = rnd.Next(dummySize >> 1, dummySize + 1);
-
-                // Get opaque data
-                this._opaqueData = StringWithDummy.StringToBytesWithDummy(input, this._l1, this._l2);
-
                 // Salt
                 if (saltSize < 1 << 1) saltSize = 1 << 1;
-
                 this._GenerateSalt(saltSize);
-                this._encryptedData = this._Encrypt();
+
+                // Encrypt data with aes
+                this._opaqueData = this._Encrypt(input);
             }
-            // String to bytes without secured
-            else this._opaqueData = StringWithDummy.StringToBytes(input);
+            // String to bytes with dummy
+            else this._opaqueData = StringWithDummy.StringToBytesWithDummy(input, this._l1, this._l2);
         }
 
         private void _GenerateSalt(int saltSize)
@@ -56,7 +54,7 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
             }
         }
 
-        private byte[] _Encrypt()
+        private byte[] _Encrypt(string input)
         {
             if (!this._secured) return null;
 
@@ -82,7 +80,7 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
                         using (var swEncrypt = new StreamWriter(csEncrypt))
                         {
                             //Write all data to the stream.
-                            swEncrypt.Write(StringWithDummy.BytesWithDummyToString(this._opaqueData, this._l1, this._l2));
+                            swEncrypt.Write(input);
                         }
                         encrypted = msEncrypt.ToArray();
                     }
@@ -100,7 +98,7 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
 
         public string Decrypt()
         {
-            if (!this._secured) return StringWithDummy.BytesToString(this._opaqueData);
+            if (!this._secured) return StringWithDummy.BytesWithDummyToString(this._opaqueData, this._l1, this._l2);
 
             // Declare the string used to hold 
             // the decrypted text. 
@@ -113,10 +111,10 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
                 aesAlg.Key = this._salt;
 
                 byte[] IV = new byte[aesAlg.BlockSize / 8];
-                byte[] cipherText = new byte[this._encryptedData.Length - IV.Length];
+                byte[] cipherText = new byte[this._opaqueData.Length - IV.Length];
 
-                Array.Copy(this._encryptedData, IV, IV.Length);
-                Array.Copy(this._encryptedData, IV.Length, cipherText, 0, cipherText.Length);
+                Array.Copy(this._opaqueData, IV, IV.Length);
+                Array.Copy(this._opaqueData, IV.Length, cipherText, 0, cipherText.Length);
 
                 aesAlg.IV = IV;
 
@@ -147,8 +145,6 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
         {
             if (this._opaqueData != null) Array.Clear(this._opaqueData, 0, this._opaqueData.Length);
             this._opaqueData = null;
-            if (this._encryptedData != null) Array.Clear(this._encryptedData, 0, this._encryptedData.Length);
-            this._encryptedData = null;
             if (this._salt != null) Array.Clear(this._salt, 0, this._salt.Length);
             this._salt = null;
         }
