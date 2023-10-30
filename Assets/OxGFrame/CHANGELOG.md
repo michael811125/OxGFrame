@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.9.2] - 2023-10-30
+- Improved DecryptArgs safety.
+- Modified SecureString saltSize and dummySize minimum (at least 2 bytes).
+- Optimized DecryptArgs parsing.
+
 ## [2.9.1] - 2023-10-29
 - Added SecureString, StringWithDummy for DecryptArgs (SecureMemory).
 - Added DecryptInfo class (You can decide whether to do memory encryption).

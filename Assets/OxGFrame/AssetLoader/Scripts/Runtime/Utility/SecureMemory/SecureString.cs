@@ -27,7 +27,7 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
             if (this._secured)
             {
                 // Dummy
-                if (dummySize < 1 << 5) dummySize = 1 << 5;
+                if (dummySize < 1 << 1) dummySize = 1 << 1;
 
                 // Random dummy size
                 Random rnd = new Random();
@@ -38,7 +38,7 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
                 this._opaqueData = StringWithDummy.StringToBytesWithDummy(input, this._l1, this._l2);
 
                 // Salt
-                if (saltSize < 1 << 4) saltSize = 1 << 4;
+                if (saltSize < 1 << 1) saltSize = 1 << 1;
 
                 this._GenerateSalt(saltSize);
                 this._encryptedData = this._Encrypt();

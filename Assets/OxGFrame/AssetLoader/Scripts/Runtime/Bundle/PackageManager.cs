@@ -29,8 +29,8 @@ namespace OxGFrame.AssetLoader.Bundle
 
             #region Init Decryption Type
             // Init decryption type
-            var cryptogramType = BundleConfig.cryptogramArgs[0].ToUpper();
-            switch (cryptogramType)
+            var decryptType = BundleConfig.decryptArgs[0].Decrypt().ToUpper();
+            switch (decryptType)
             {
                 case BundleConfig.CryptogramType.NONE:
                     break;
@@ -47,7 +47,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     _decryption = new AesDecryption();
                     break;
             }
-            Logging.Print<Logger>($"<color=#ffe45a>Init Bundle Decryption: {cryptogramType}</color>");
+            Logging.Print<Logger>($"<color=#ffe45a>Init Bundle Decryption: {decryptType}</color>");
             #endregion
 
             #region Init Preset App Packages

@@ -93,32 +93,34 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// 解密 Key, [NONE], [OFFSET, dummySize], [XOR, key], [HT2XOR, hKey, tKey, jKey], [AES, key, iv]
         /// </summary>
-        private static SecureString _cryptogramArgs = null;
-        internal static string[] cryptogramArgs
-        {
-            get
-            {
-                if (_cryptogramArgs == null) return null;
-                string decrypt = _cryptogramArgs.Decrypt();
-                if (decrypt == null) return null;
-                string[] args = decrypt.Trim().Split(',');
-                for (int i = 0; i < args.Length; i++)
-                {
-                    args[i] = args[i].Trim();
-                }
-                return args;
-            }
-        }
+        private static SecureString[] _decryptArgs = null;
+        internal static SecureString[] decryptArgs => _decryptArgs;
 
         /// <summary>
         /// Init decryption args
         /// </summary>
         /// <param name="args"></param>
-        internal static void InitCryptogram(string args, bool secured, int saltSize, int dummySize)
+        /// <param name="secured"></param>
+        /// <param name="saltSize"></param>
+        /// <param name="dummySize"></param>
+        internal static void InitDecryptInfo(string args, bool secured, int saltSize, int dummySize)
         {
-            // Check args first, if is none don't need to secure memeory
-            bool isNone = args.Substring(0, CryptogramType.NONE.Length).ToUpper().Equals(CryptogramType.NONE);
-            _cryptogramArgs = new SecureString(args, !isNone && secured, saltSize, dummySize);
+            if (_decryptArgs == null)
+            {
+                // Check args first, if is none don't need to secure memeory
+                bool isNone = args.Substring(0, CryptogramType.NONE.Length).ToUpper().Equals(CryptogramType.NONE);
+                secured = !isNone && secured;
+
+                // Parsing decrypt keys
+                string[] decryptKeys = args.Trim().Split(',');
+                _decryptArgs = new SecureString[decryptKeys.Length];
+                for (int i = 0; i < decryptKeys.Length; i++)
+                {
+                    decryptKeys[i] = decryptKeys[i].Trim();
+                    _decryptArgs[i] = new SecureString(decryptKeys[i], secured, saltSize, dummySize);
+                    decryptKeys[i] = null;
+                }
+            }
         }
 
         /// <summary>
@@ -126,7 +128,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         internal static void ReleaseSecureString()
         {
-            if (_cryptogramArgs != null) _cryptogramArgs.Dispose();
+            if (_decryptArgs != null) foreach (var decryptArg in _decryptArgs) decryptArg.Dispose();
         }
         #endregion
 

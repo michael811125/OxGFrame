@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security;
 using UnityEngine;
 using YooAsset;
 
@@ -41,9 +42,9 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            string[] cryptogramArgs = BundleConfig.cryptogramArgs;
+            OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
             string filePath = fileInfo.FileLoadPath;
-            int dummySize = Convert.ToInt32(cryptogramArgs[1]);
+            int dummySize = Convert.ToInt32(decryptArgs[1].Decrypt());
             return FileCryptogram.Offset.OffsetDecryptStream(filePath, dummySize);
         }
 
@@ -69,9 +70,9 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            string[] cryptogramArgs = BundleConfig.cryptogramArgs;
+            OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
             string filePath = fileInfo.FileLoadPath;
-            byte xorKey = Convert.ToByte(cryptogramArgs[1]);
+            byte xorKey = Convert.ToByte(decryptArgs[1].Decrypt());
             return FileCryptogram.XOR.XorDecryptStream(filePath, xorKey);
         }
 
@@ -97,11 +98,11 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            string[] cryptogramArgs = BundleConfig.cryptogramArgs;
+            OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
             string filePath = fileInfo.FileLoadPath;
-            byte hXorkey = Convert.ToByte(cryptogramArgs[1]);
-            byte tXorkey = Convert.ToByte(cryptogramArgs[2]);
-            byte jXorKey = Convert.ToByte(cryptogramArgs[3]);
+            byte hXorkey = Convert.ToByte(decryptArgs[1].Decrypt());
+            byte tXorkey = Convert.ToByte(decryptArgs[2].Decrypt());
+            byte jXorKey = Convert.ToByte(decryptArgs[3].Decrypt());
             return FileCryptogram.HT2XOR.HT2XorDecryptStream(filePath, hXorkey, tXorkey, jXorKey);
         }
 
@@ -127,10 +128,10 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            string[] cryptogramArgs = BundleConfig.cryptogramArgs;
+            OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
             string filePath = fileInfo.FileLoadPath;
-            string aesKey = cryptogramArgs[1];
-            string aesIv = cryptogramArgs[2];
+            string aesKey = decryptArgs[1].Decrypt();
+            string aesIv = decryptArgs[2].Decrypt();
             return FileCryptogram.AES.AesDecryptStream(filePath, aesKey, aesIv);
         }
 

@@ -12,9 +12,9 @@ namespace OxGFrame.AssetLoader.Bundle
         private string _decryptArgs = BundleConfig.CryptogramType.NONE;
         [SerializeField, Tooltip("Can encrypt string data in memroy.")]
         public bool secureString = true;
-        [SerializeField, ConditionalField(nameof(secureString))]
+        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)"), ConditionalField(nameof(secureString))]
         private int _saltSize = 1 << 4;
-        [SerializeField, ConditionalField(nameof(secureString))]
+        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)"), ConditionalField(nameof(secureString))]
         private int _dummySize = 1 << 5;
 
         public string GetDecryptArgs()

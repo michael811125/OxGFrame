@@ -83,7 +83,7 @@ namespace OxGFrame.AssetLoader.Bundle
             #endregion
 
             #region Cryptogram Options
-            BundleConfig.InitCryptogram(this._decryptInfo.GetDecryptArgs(), this._decryptInfo.secureString, this._decryptInfo.GetSaltSize(), this._decryptInfo.GetDummySize());
+            BundleConfig.InitDecryptInfo(this._decryptInfo.GetDecryptArgs(), this._decryptInfo.secureString, this._decryptInfo.GetSaltSize(), this._decryptInfo.GetDummySize());
             #endregion
 
             // Init Settings and Setup Preset App Packages
