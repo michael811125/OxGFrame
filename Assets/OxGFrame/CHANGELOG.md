@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.9.3] - 2023-10-31
+- Optimized SecureString.
+- Added disposable interface for DecryptInfo.
+
 ## [2.9.2] - 2023-10-30
 - Improved DecryptArgs safety.
 - Modified SecureString saltSize and dummySize minimum (at least 2 bytes).
