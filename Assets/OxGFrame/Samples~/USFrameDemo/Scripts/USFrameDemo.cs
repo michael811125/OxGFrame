@@ -121,6 +121,18 @@ public class USFrameDemo : MonoBehaviour
         }
         #endregion
 
+        #region Active Root GameObjects In Scene
+        if (Keyboard.current.numpadPlusKey.wasReleasedThisFrame)
+        {
+            CoreFrames.USFrame.SetActiveSceneRootGameObjects(UnityScene.Bundle.LevelDemo03, true);
+        }
+
+        if (Keyboard.current.numpadMinusKey.wasReleasedThisFrame)
+        {
+            CoreFrames.USFrame.SetActiveSceneRootGameObjects(UnityScene.Bundle.LevelDemo03, false);
+        }
+        #endregion
+
         if (Keyboard.current.numpad7Key.wasReleasedThisFrame)
         {
             CoreFrames.USFrame.Unload(true, UnityScene.Bundle.LevelDemo01);

@@ -587,7 +587,11 @@ MonoBehaviour:
     4, 5, 6 (Load Scene From Bundle)
 
 
-    Press NumPad 7, 8, 9 (Unload Scene)'
+    Press NumPad 7, 8, 9 (Unload Scene)
+
+
+    Press
+    NumPad +, - (Control LevelDemo03 Active)'
 --- !u!222 &1432751642
 CanvasRenderer:
   m_ObjectHideFlags: 0

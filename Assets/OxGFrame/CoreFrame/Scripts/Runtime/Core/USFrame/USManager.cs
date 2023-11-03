@@ -2,6 +2,7 @@
 using OxGFrame.AssetLoader;
 using OxGFrame.AssetLoader.Cacher;
 using OxGKit.LoggingSystem;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -98,6 +99,44 @@ namespace OxGFrame.CoreFrame.USFrame
             }
 
             return scenes.ToArray();
+        }
+
+        public void SetActiveSceneRootGameObjects(string sceneName, bool active, string[] withoutRootGameObjectNames = null)
+        {
+            Scene[] filterScenes = this.GetAllScene(sceneName);
+            foreach (var scene in filterScenes)
+            {
+                this.SetActiveSceneRootGameObjects(scene, active, withoutRootGameObjectNames);
+            }
+        }
+
+        public void SetActiveSceneRootGameObjects(Scene scene, bool active, string[] withoutRootGameObjectNames = null)
+        {
+            if (scene.IsValid() && scene.isLoaded)
+            {
+                if (scene.isLoaded)
+                {
+                    foreach (var go in scene.GetRootGameObjects())
+                    {
+                        if (withoutRootGameObjectNames != null && withoutRootGameObjectNames.Length > 0)
+                        {
+                            bool without = false;
+                            for (int i = 0; i < withoutRootGameObjectNames.Length; i++)
+                            {
+                                if (go.name == withoutRootGameObjectNames[i])
+                                {
+                                    without = true;
+                                    break;
+                                }
+                            }
+                            if (!without) go.SetActive(active);
+                        }
+                        else go.SetActive(active);
+                    }
+                }
+                else Logging.Print<Logger>($"<color=#ff8233>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...</color>");
+            }
+            else Logging.Print<Logger>($"<color=#ff33ae>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene not is valid!!!</color>");
         }
 
         #region Bundle

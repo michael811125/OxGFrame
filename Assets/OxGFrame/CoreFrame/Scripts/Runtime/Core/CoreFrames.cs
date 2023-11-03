@@ -514,6 +514,28 @@ namespace OxGFrame.CoreFrame
             }
 
             /// <summary>
+            /// Set active all root game objects in scene (If there are many scenes are same name, will process to find all scenes with same name)
+            /// </summary>
+            /// <param name="sceneName"></param>
+            /// <param name="active"></param>
+            /// <param name="withoutRootGameObjectNames"></param>
+            public static void SetActiveSceneRootGameObjects(string sceneName, bool active, params string[] withoutRootGameObjectNames)
+            {
+                USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, active, withoutRootGameObjectNames);
+            }
+
+            /// <summary>
+            /// Set active all root game objects in scene
+            /// </summary>
+            /// <param name="scene"></param>
+            /// <param name="active"></param>
+            /// <param name="withoutRootGameObjectNames"></param>
+            public static void SetActiveSceneRootGameObjects(Scene scene, bool active, string[] withoutRootGameObjectNames = null)
+            {
+                USManager.GetInstance().SetActiveSceneRootGameObjects(scene, active, withoutRootGameObjectNames);
+            }
+
+            /// <summary>
             /// (Single) If use prefix "build#" will load from build and else will load from bundle
             /// </summary>
             /// <param name="sceneName"></param>
@@ -603,6 +625,17 @@ namespace OxGFrame.CoreFrame
                 else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
             }
 
+            public static async UniTask LoadAdditiveSceneAsync(string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Additive, progression);
+                }
+                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
+                if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
+            }
+
             /// <summary>
             /// (Additive) If use prefix "build#" will load from build and else will load from bundle
             /// </summary>
@@ -622,6 +655,23 @@ namespace OxGFrame.CoreFrame
                 else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression) as T;
             }
 
+            public static async UniTask<T> LoadAdditiveSceneAsync<T>(string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    var handler = await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Additive, progression) as T;
+                    if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
+                    return handler;
+                }
+                else
+                {
+                    var handler = await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression) as T;
+                    if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
+                    return handler;
+                }
+            }
+
             /// <summary>
             /// (Additive) If use prefix "build#" will load from build and else will load from bundle
             /// </summary>
@@ -638,6 +688,16 @@ namespace OxGFrame.CoreFrame
                     await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Additive, progression);
                 }
                 else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
+            }
+
+            public static async UniTask LoadAdditiveSceneAsync(string packageName, string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
+            {
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Additive, progression);
+                }
+                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
+                if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
             }
 
             /// <summary>
@@ -660,6 +720,22 @@ namespace OxGFrame.CoreFrame
                     return await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Additive, progression) as T;
                 }
                 else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression) as T;
+            }
+
+            public static async UniTask<T> LoadAdditiveSceneAsync<T>(string packageName, string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
+            {
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    var handler = await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Additive, progression) as T;
+                    if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
+                    return handler;
+                }
+                else
+                {
+                    var handler = await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression) as T;
+                    if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
+                    return handler;
+                }
             }
 
             /// <summary>

@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## [2.9.4]
+- Added SetActiveSceneRootGameObjects method in CoreFrames.USFrame (Can control the active of scene root GameObjects).
+```C#
+    public static void SetActiveSceneRootGameObjects(string sceneName, bool active, string[] withoutRootGameObjectNames = null)
+    public static void SetActiveSceneRootGameObjects(Scene scene, bool active, string[] withoutRootGameObjectNames = null)
+```
+- 
+- Added overload methods in CoreFrames.USFrame (LoadAdditiveSceneAsync has activeRootGameObjects param, can control the active of root GameObjects after the scene is loaded).
+```C#
+    public static async UniTask LoadAdditiveSceneAsync(string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
+    public static async UniTask<T> LoadAdditiveSceneAsync<T>(string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
+    public static async UniTask LoadAdditiveSceneAsync(string packageName, string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
+    public static async UniTask<T> LoadAdditiveSceneAsync<T>(string packageName, string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
+```
+
 ## [2.9.3] - 2023-10-31
 - Optimized SecureString.
 - Added disposable interface for DecryptInfo.
