@@ -503,14 +503,14 @@ namespace OxGFrame.CoreFrame
                 return USManager.GetInstance().GetSceneByBuildIndex(buildIndex);
             }
 
-            public static Scene[] GetAllScene(params string[] sceneNames)
+            public static Scene[] GetAllScenes(params string[] sceneNames)
             {
-                return USManager.GetInstance().GetAllScene(sceneNames);
+                return USManager.GetInstance().GetAllScenes(sceneNames);
             }
 
-            public static Scene[] GetAllScene(params int[] buildIndexes)
+            public static Scene[] GetAllScenes(params int[] buildIndexes)
             {
-                return USManager.GetInstance().GetAllScene(buildIndexes);
+                return USManager.GetInstance().GetAllScenes(buildIndexes);
             }
 
             /// <summary>

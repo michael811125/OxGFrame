@@ -1,6 +1,11 @@
 # CHANGELOG
 
 ## [2.9.4]
+- Renamed GetAllScene to GetAllScenes in CoreFrames.USFrame.
+```C#
+    public static Scene[] GetAllScenes(params string[] sceneNames)
+    public static Scene[] GetAllScenes(params int[] buildIndexes)
+```
 - Added SetActiveSceneRootGameObjects method in CoreFrames.USFrame (Can control the active of scene root GameObjects).
 ```C#
     public static void SetActiveSceneRootGameObjects(string sceneName, bool active, string[] withoutRootGameObjectNames = null)

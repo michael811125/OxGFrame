@@ -45,7 +45,7 @@ namespace OxGFrame.CoreFrame.USFrame
             return SceneManager.GetSceneByBuildIndex(buildIndex);
         }
 
-        public Scene[] GetAllScene(params string[] sceneNames)
+        public Scene[] GetAllScenes(params string[] sceneNames)
         {
             List<Scene> scenes = new List<Scene>();
             if (sceneNames.Length > 0)
@@ -73,7 +73,7 @@ namespace OxGFrame.CoreFrame.USFrame
             return scenes.ToArray();
         }
 
-        public Scene[] GetAllScene(params int[] buildIndexes)
+        public Scene[] GetAllScenes(params int[] buildIndexes)
         {
             List<Scene> scenes = new List<Scene>();
             if (buildIndexes.Length > 0)
@@ -103,7 +103,7 @@ namespace OxGFrame.CoreFrame.USFrame
 
         public void SetActiveSceneRootGameObjects(string sceneName, bool active, string[] withoutRootGameObjectNames = null)
         {
-            Scene[] filterScenes = this.GetAllScene(sceneName);
+            Scene[] filterScenes = this.GetAllScenes(sceneName);
             foreach (var scene in filterScenes)
             {
                 this.SetActiveSceneRootGameObjects(scene, active, withoutRootGameObjectNames);
