@@ -11,25 +11,9 @@
 - Added CoreFrames.UIFrame, CoreFrames.SRFrame can control updates (**enabledUpdate defaults is true, else are false**).
 ```C#
     public static bool ignoreTimeScale
-    {
-        get { return UIManager.GetInstance().ignoreTimeScale; }
-        set { UIManager.GetInstance().ignoreTimeScale = value; }
-    }
     public static bool enabledUpdate
-    {
-        get { return UIManager.GetInstance().enabledUpdate; }
-        set { UIManager.GetInstance().enabledUpdate = value; }
-    }
     public static bool enabledFixedUpdate
-    {
-        get { return UIManager.GetInstance().enabledFixedUpdate; }
-        set { UIManager.GetInstance().enabledFixedUpdate = value; }
-    }
     public static bool enabledLateUpdate
-    {
-        get { return UIManager.GetInstance().enabledLateUpdate; }
-        set { UIManager.GetInstance().enabledLateUpdate = value; }
-    }
 ```
 - Added FixedUpdate, LateUpdate behaviour to FrameBase (UIBase, SRBase, CPBase).
 ```C#
