@@ -1,10 +1,41 @@
 # CHANGELOG
 
-## [2.9.4]
+## [2.9.4] - 2023-11-06
+- Updated UniMachine ([Blackboard](https://github.com/gmhevinci/UniFramework/commit/3ea882c2fc8d5314c51e66fa35579324d0c7a73c)).
+- Updated UniTask to [v2.5.0](https://github.com/Cysharp/UniTask/releases/tag/2.5.0).
 - Renamed GetAllScene to GetAllScenes in CoreFrames.USFrame.
 ```C#
     public static Scene[] GetAllScenes(params string[] sceneNames)
     public static Scene[] GetAllScenes(params int[] buildIndexes)
+```
+- Added CoreFrames.UIFrame, CoreFrames.SRFrame can control updates (**enabledUpdate defaults is true, else are false**).
+```C#
+    public static bool ignoreTimeScale
+    {
+        get { return UIManager.GetInstance().ignoreTimeScale; }
+        set { UIManager.GetInstance().ignoreTimeScale = value; }
+    }
+    public static bool enabledUpdate
+    {
+        get { return UIManager.GetInstance().enabledUpdate; }
+        set { UIManager.GetInstance().enabledUpdate = value; }
+    }
+    public static bool enabledFixedUpdate
+    {
+        get { return UIManager.GetInstance().enabledFixedUpdate; }
+        set { UIManager.GetInstance().enabledFixedUpdate = value; }
+    }
+    public static bool enabledLateUpdate
+    {
+        get { return UIManager.GetInstance().enabledLateUpdate; }
+        set { UIManager.GetInstance().enabledLateUpdate = value; }
+    }
+```
+- Added FixedUpdate, LateUpdate behaviour to FrameBase (UIBase, SRBase, CPBase).
+```C#
+    protected override void OnFixedUpdate(float dt) { }
+    
+    protected override void OnLateUpdate(float dt) { }
 ```
 - Added SetActiveSceneRootGameObjects method in CoreFrames.USFrame (Can control the active of scene root GameObjects).
 ```C#
@@ -19,6 +50,7 @@
     public static async UniTask LoadAdditiveSceneAsync(string packageName, string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
     public static async UniTask<T> LoadAdditiveSceneAsync<T>(string packageName, string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
 ```
+- Optmized code.
 
 ## [2.9.3] - 2023-10-31
 - Optimized SecureString.

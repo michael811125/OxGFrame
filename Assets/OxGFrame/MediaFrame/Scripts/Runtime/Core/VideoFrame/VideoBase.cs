@@ -181,7 +181,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this._videoPlayer.targetCameraAlpha = this._targetCamera.alpha;
         }
 
-        protected override void OnFixedUpdate(float dt = 0)
+        protected override void OnFixedUpdate(float dt = 0f)
         {
             if (this._videoPlayer == null) return;
 

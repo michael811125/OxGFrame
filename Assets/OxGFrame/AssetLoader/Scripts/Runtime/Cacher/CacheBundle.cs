@@ -11,13 +11,13 @@ namespace OxGFrame.AssetLoader.Cacher
 {
     internal class CacheBundle : AssetCache<BundlePack>
     {
-        private Dictionary<string, BundlePack> _sceneCache; // 緩存 Scene BundlePack
-        private Dictionary<string, int> _sceneCounter;      // 子場景堆疊式計數緩存
+        private Dictionary<string, BundlePack> _additiveScenes; // 緩存 Scene BundlePack
+        private Dictionary<string, int> _additiveSceneCounter;  // 子場景堆疊式計數緩存
 
         public CacheBundle() : base()
         {
-            this._sceneCache = new Dictionary<string, BundlePack>();
-            this._sceneCounter = new Dictionary<string, int>();
+            this._additiveScenes = new Dictionary<string, BundlePack>();
+            this._additiveSceneCounter = new Dictionary<string, int>();
         }
 
         private static CacheBundle _instance = null;
@@ -540,6 +540,10 @@ namespace OxGFrame.AssetLoader.Cacher
         #region Scene
         public async UniTask<BundlePack> LoadSceneAsync(string packageName, string assetName, LoadSceneMode loadSceneMode, bool activateOnLoad, uint priority, Progression progression)
         {
+            /**
+             * Single Scene will auto unload and release
+             */
+
             if (string.IsNullOrEmpty(assetName)) return null;
 
             // 如果有進行 Loading 標記後, 直接 return
@@ -594,8 +598,8 @@ namespace OxGFrame.AssetLoader.Cacher
                                         pack.SetPack(packageName, assetName, req);
 
                                         // 清除 Additive 計數緩存 (主場景無需緩存, 因為會自動釋放子場景)
-                                        this._sceneCache.Clear();
-                                        this._sceneCounter.Clear();
+                                        this._additiveScenes.Clear();
+                                        this._additiveSceneCounter.Clear();
                                     }
                                     break;
                                 case LoadSceneMode.Additive:
@@ -603,19 +607,19 @@ namespace OxGFrame.AssetLoader.Cacher
                                         pack.SetPack(packageName, assetName, req);
 
                                         // 加載場景的計數緩存 (Additive 需要進行計數, 要手動卸載子場景)
-                                        if (!this._sceneCounter.ContainsKey(assetName))
+                                        if (!this._additiveSceneCounter.ContainsKey(assetName))
                                         {
-                                            this._sceneCounter.Add(assetName, 1);
-                                            var count = this._sceneCounter[assetName];
+                                            this._additiveSceneCounter.Add(assetName, 1);
+                                            var count = this._additiveSceneCounter[assetName];
                                             string key = $"{assetName}#{count}";
-                                            this._sceneCache.Add(key, pack);
+                                            this._additiveScenes.Add(key, pack);
                                             Logging.Print<Logger>($"<color=#90FF71>【Load Scene Additive】 => << CacheBundle >> scene: {key}</color>");
                                         }
                                         else
                                         {
-                                            var count = ++this._sceneCounter[assetName];
+                                            var count = ++this._additiveSceneCounter[assetName];
                                             string key = $"{assetName}#{count}";
-                                            this._sceneCache.Add(key, pack);
+                                            this._additiveScenes.Add(key, pack);
                                             Logging.Print<Logger>($"<color=#90FF71>【Load Scene Additive】 => << CacheBundle >> scene: {key}</color>");
                                         }
                                     }
@@ -648,21 +652,27 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public void UnloadScene(string assetName, bool recursively)
         {
-            if (this._sceneCounter.ContainsKey(assetName))
+            /**
+             * Single Scene will auto unload and release
+             */
+
+            if (string.IsNullOrEmpty(assetName)) return;
+
+            if (this._additiveSceneCounter.ContainsKey(assetName))
             {
                 if (recursively)
                 {
-                    for (int topCount = this._sceneCounter[assetName]; topCount >= 1; --topCount)
+                    for (int topCount = this._additiveSceneCounter[assetName]; topCount >= 1; --topCount)
                     {
                         string key = $"{assetName}#{topCount}";
-                        if (this._sceneCache.ContainsKey(key))
+                        if (this._additiveScenes.ContainsKey(key))
                         {
-                            var pack = this._sceneCache[key];
+                            var pack = this._additiveScenes[key];
                             if (pack.IsSceneOperationHandle())
                             {
                                 pack.UnloadScene();
-                                this._sceneCache[key] = null;
-                                this._sceneCache.Remove(key);
+                                this._additiveScenes[key] = null;
+                                this._additiveScenes.Remove(key);
 
                                 Logging.Print<Logger>($"<color=#00e5ff>【Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
                             }
@@ -670,7 +680,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
 
                     // 遞迴完, 移除計數緩存
-                    this._sceneCounter.Remove(assetName);
+                    this._additiveSceneCounter.Remove(assetName);
 
                     Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
                 }
@@ -679,10 +689,10 @@ namespace OxGFrame.AssetLoader.Cacher
                     bool saftyChecker = false;
 
                     // 安全檢測無效場景卸載 (有可能被 Build 方法卸載掉)
-                    for (int topCount = this._sceneCounter[assetName]; topCount >= 1; --topCount)
+                    for (int topCount = this._additiveSceneCounter[assetName]; topCount >= 1; --topCount)
                     {
                         string key = $"{assetName}#{topCount}";
-                        var pack = this._sceneCache[key];
+                        var pack = this._additiveScenes[key];
                         if (pack.IsSceneOperationHandle())
                         {
                             if (pack.GetScene().isLoaded)
@@ -697,18 +707,18 @@ namespace OxGFrame.AssetLoader.Cacher
                     if (saftyChecker)
                     {
                         ResourcePackage package = null;
-                        for (int topCount = this._sceneCounter[assetName]; topCount >= 1; --topCount)
+                        for (int topCount = this._additiveSceneCounter[assetName]; topCount >= 1; --topCount)
                         {
                             string key = $"{assetName}#{topCount}";
-                            if (this._sceneCache.ContainsKey(key))
+                            if (this._additiveScenes.ContainsKey(key))
                             {
-                                var pack = this._sceneCache[key];
+                                var pack = this._additiveScenes[key];
                                 package = PackageManager.GetPackage(pack.packageName);
                                 if (pack.IsSceneOperationHandle())
                                 {
                                     pack.UnloadScene();
-                                    this._sceneCache[key] = null;
-                                    this._sceneCache.Remove(key);
+                                    this._additiveScenes[key] = null;
+                                    this._additiveScenes.Remove(key);
 
                                     Logging.Print<Logger>($"<color=#00e5ff>【<color=#97ff3e>Safty</color> Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
                                 }
@@ -716,33 +726,33 @@ namespace OxGFrame.AssetLoader.Cacher
                         }
 
                         // 遞迴完, 移除計數緩存
-                        this._sceneCounter.Remove(assetName);
+                        this._additiveSceneCounter.Remove(assetName);
                         package?.UnloadUnusedAssets();
 
                         Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef><color=#97ff3e>Safty</color> Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
                     }
                     else
                     {
-                        int topCount = this._sceneCounter[assetName];
+                        int topCount = this._additiveSceneCounter[assetName];
                         string key = $"{assetName}#{topCount}";
-                        var pack = this._sceneCache[key];
+                        var pack = this._additiveScenes[key];
                         string packageName = pack.packageName;
 
                         if (pack.IsSceneOperationHandle())
                         {
                             pack.UnloadScene();
-                            this._sceneCache[key] = null;
-                            this._sceneCache.Remove(key);
+                            this._additiveScenes[key] = null;
+                            this._additiveScenes.Remove(key);
 
                             Logging.Print<Logger>($"<color=#00e5ff>【Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
 
-                            topCount = --this._sceneCounter[assetName];
+                            topCount = --this._additiveSceneCounter[assetName];
 
                             // 移除計數緩存
                             if (topCount <= 0)
                             {
                                 var package = PackageManager.GetPackage(packageName);
-                                this._sceneCounter.Remove(assetName);
+                                this._additiveSceneCounter.Remove(assetName);
                                 package?.UnloadUnusedAssets();
                                 Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
                             }
@@ -1231,10 +1241,10 @@ namespace OxGFrame.AssetLoader.Cacher
 
         ~CacheBundle()
         {
-            this._sceneCache.Clear();
-            this._sceneCache = null;
-            this._sceneCounter.Clear();
-            this._sceneCounter = null;
+            this._additiveScenes.Clear();
+            this._additiveScenes = null;
+            this._additiveSceneCounter.Clear();
+            this._additiveSceneCounter = null;
         }
     }
 }

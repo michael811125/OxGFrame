@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "216d09f7b65fadc5d8fcd0bba82e5ac50ca58f06"
+      "hash": "febff1c658fa9d76726f3aa25f26ec6d35c1e2e6"
     },
     "com.domybest.lwmybox": {
       "version": "https://github.com/michael811125/LWMyBox.git",
@@ -35,7 +35,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "8ed8e6a92f6e2797ca59d8f68917f79aec7258e9"
+      "hash": "a6a128c838262c6df092d51700b536ba9e5787cc"
     },
     "com.unity.2d.animation": {
       "version": "7.0.10",

@@ -112,7 +112,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             return audioClip;
         }
 
-        protected override void OnFixedUpdate(float dt = 0)
+        protected override void OnFixedUpdate(float dt = 0f)
         {
             if (this._audioSource == null) return;
 

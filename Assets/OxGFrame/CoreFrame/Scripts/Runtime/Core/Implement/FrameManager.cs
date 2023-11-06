@@ -24,6 +24,13 @@ namespace OxGFrame.CoreFrame
     [DisallowMultipleComponent]
     internal abstract class FrameManager<T> : MonoBehaviour where T : FrameBase
     {
+        internal enum UpdateType
+        {
+            Update,
+            FixedUpdate,
+            LateUpdate
+        }
+
         protected delegate void AddIntoCache(T fBase);
 
         protected class FrameStack<U> where U : T
@@ -103,6 +110,11 @@ namespace OxGFrame.CoreFrame
             }
         }
 
+        public bool ignoreTimeScale = false;
+        public bool enabledUpdate = true;
+        public bool enabledFixedUpdate = false;
+        public bool enabledLateUpdate = false;
+
         public float currentCount { get; protected set; }                                                     // [計算進度條用] 加載數量
         public float totalCount { get; protected set; }                                                       // [計算進度條用] 總加載數量
 
@@ -115,12 +127,31 @@ namespace OxGFrame.CoreFrame
             this._loadingFlags = null;
         }
 
+        private static float _dt;
+        private static float _fdt;
+
         private void Update()
+        {
+            if (!this.enabledUpdate) return;
+            this.DriveUpdates(UpdateType.Update);
+        }
+
+        private void FixedUpdate()
+        {
+            if (!this.enabledFixedUpdate) return;
+            this.DriveUpdates(UpdateType.FixedUpdate);
+        }
+
+        private void LateUpdate()
+        {
+            if (!this.enabledLateUpdate) return;
+            this.DriveUpdates(UpdateType.LateUpdate);
+        }
+
+        public void DriveUpdates(UpdateType updateType)
         {
             if (this._dictAllCache.Count > 0)
             {
-                float dt = Time.deltaTime;
-
                 var fStacks = this._dictAllCache.Values.ToArray();
                 foreach (var fStack in fStacks)
                 {
@@ -133,7 +164,34 @@ namespace OxGFrame.CoreFrame
                         if (fStack.Count() != fBases.Length) break;
 
                         // 僅刷新激活的物件
-                        if (this.CheckIsShowing(fBase)) fBase.DriveUpdate(dt);
+                        if (this.CheckIsShowing(fBase))
+                        {
+                            switch (updateType)
+                            {
+                                case UpdateType.Update:
+                                case UpdateType.LateUpdate:
+                                    if (!this.ignoreTimeScale) _dt = Time.deltaTime;
+                                    else _dt = Time.unscaledDeltaTime;
+                                    break;
+                                case UpdateType.FixedUpdate:
+                                    if (!this.ignoreTimeScale) _fdt = Time.fixedDeltaTime;
+                                    else _fdt = Time.fixedUnscaledDeltaTime;
+                                    break;
+                            }
+
+                            switch (updateType)
+                            {
+                                case UpdateType.Update:
+                                    fBase.DriveUpdate(_dt);
+                                    break;
+                                case UpdateType.FixedUpdate:
+                                    fBase.DriveFixedUpdate(_fdt);
+                                    break;
+                                case UpdateType.LateUpdate:
+                                    fBase.DriveLateUpdate(_dt);
+                                    break;
+                            }
+                        }
                     }
                 }
             }

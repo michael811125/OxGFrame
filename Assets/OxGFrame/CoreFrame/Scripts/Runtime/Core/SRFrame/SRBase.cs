@@ -27,6 +27,10 @@ namespace OxGFrame.CoreFrame.SRFrame
 
         protected override void OnUpdate(float dt) { }
 
+        protected override void OnFixedUpdate(float dt) { }
+
+        protected override void OnLateUpdate(float dt) { }
+
         public sealed override void Display(object obj)
         {
             this.gameObject.SetActive(true);

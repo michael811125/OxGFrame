@@ -94,8 +94,7 @@ namespace OxGFrame.MediaFrame
         internal void DriveFixedUpdate(float dt)
         {
             if (!this._isInit) return;
-            if (!this.ignoreTimeScale) this.OnFixedUpdate(dt);
-            else this.OnFixedUpdate(dt);
+            this.OnFixedUpdate(dt);
         }
 
         #region IMediaBase

@@ -7,7 +7,23 @@ namespace OxGFrame.CoreFrame.CPFrame
     [HidePropertiesInInspector("onCloseAndDestroy", "allowInstantiate")]
     public class CPBase : FrameBase
     {
+        /// <summary>
+        /// Drive by MonoBehaviour Update
+        /// </summary>
+        /// <param name="dt"></param>
         protected void DriveSelfUpdate(float dt) => this.DriveUpdate(dt);
+
+        /// <summary>
+        /// Drive by MonoBehaviour FixedUpdate
+        /// </summary>
+        /// <param name="dt"></param>
+        protected void DriveSelfFixedUpdate(float dt) => this.DriveFixedUpdate(dt);
+
+        /// <summary>
+        /// Drive by MonoBehaviour LateUpdate
+        /// </summary>
+        /// <param name="dt"></param>
+        protected void DriveSelfLateUpdate(float dt) => this.DriveLateUpdate(dt);
 
         private void OnEnable()
         {
@@ -38,6 +54,10 @@ namespace OxGFrame.CoreFrame.CPFrame
         protected virtual void OnShow() { }
 
         protected override void OnUpdate(float dt) { }
+
+        protected override void OnFixedUpdate(float dt) { }
+
+        protected override void OnLateUpdate(float dt) { }
 
         public sealed override void Display(object obj)
         {

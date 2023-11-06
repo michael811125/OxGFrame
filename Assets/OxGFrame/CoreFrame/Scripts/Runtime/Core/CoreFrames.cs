@@ -13,6 +13,27 @@ namespace OxGFrame.CoreFrame
     {
         public static class UIFrame
         {
+            public static bool ignoreTimeScale
+            {
+                get { return UIManager.GetInstance().ignoreTimeScale; }
+                set { UIManager.GetInstance().ignoreTimeScale = value; }
+            }
+            public static bool enabledUpdate
+            {
+                get { return UIManager.GetInstance().enabledUpdate; }
+                set { UIManager.GetInstance().enabledUpdate = value; }
+            }
+            public static bool enabledFixedUpdate
+            {
+                get { return UIManager.GetInstance().enabledFixedUpdate; }
+                set { UIManager.GetInstance().enabledFixedUpdate = value; }
+            }
+            public static bool enabledLateUpdate
+            {
+                get { return UIManager.GetInstance().enabledLateUpdate; }
+                set { UIManager.GetInstance().enabledLateUpdate = value; }
+            }
+
             public static void InitInstance()
             {
                 UIManager.GetInstance();
@@ -263,6 +284,27 @@ namespace OxGFrame.CoreFrame
 
         public static class SRFrame
         {
+            public static bool ignoreTimeScale
+            {
+                get { return SRManager.GetInstance().ignoreTimeScale; }
+                set { SRManager.GetInstance().ignoreTimeScale = value; }
+            }
+            public static bool enabledUpdate
+            {
+                get { return SRManager.GetInstance().enabledUpdate; }
+                set { SRManager.GetInstance().enabledUpdate = value; }
+            }
+            public static bool enabledFixedUpdate
+            {
+                get { return SRManager.GetInstance().enabledFixedUpdate; }
+                set { SRManager.GetInstance().enabledFixedUpdate = value; }
+            }
+            public static bool enabledLateUpdate
+            {
+                get { return SRManager.GetInstance().enabledLateUpdate; }
+                set { SRManager.GetInstance().enabledLateUpdate = value; }
+            }
+
             public static void InitInstance()
             {
                 SRManager.GetInstance();

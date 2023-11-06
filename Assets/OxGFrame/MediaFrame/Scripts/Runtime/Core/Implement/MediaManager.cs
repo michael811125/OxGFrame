@@ -12,13 +12,12 @@ namespace OxGFrame.MediaFrame
         protected HashSet<string> _loadingFlags = new HashSet<string>();                                  // 用來標記正在加載中的資源 (暫存緩存)
         protected List<T> _listAllCache = new List<T>();                                                  // 【常駐】所有進入播放的影音柱列緩存 (只會在 Destroy 時, Remove 對應的緩存)
 
+        private static float _fdt;
+
         private void FixedUpdate()
         {
             if (this._listAllCache.Count > 0)
             {
-                float dt1 = Time.fixedDeltaTime;
-                float dt2 = Time.fixedUnscaledDeltaTime;
-
                 int count = this._listAllCache.Count;
                 for (int i = 0; i < count; i++)
                 {
@@ -27,8 +26,9 @@ namespace OxGFrame.MediaFrame
                     // 僅刷新激活的物件
                     if (this._listAllCache[i].gameObject.activeSelf)
                     {
-                        if (this._listAllCache[i].ignoreTimeScale) this._listAllCache[i].DriveFixedUpdate(dt2);
-                        else this._listAllCache[i].DriveFixedUpdate(dt1);
+                        if (this._listAllCache[i].ignoreTimeScale) _fdt = Time.fixedDeltaTime;
+                        else _fdt = Time.fixedUnscaledDeltaTime;
+                        this._listAllCache[i].DriveFixedUpdate(_fdt);
                     }
                 }
             }

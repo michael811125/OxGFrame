@@ -76,6 +76,10 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         protected override void OnUpdate(float dt) { }
 
+        protected override void OnFixedUpdate(float dt) { }
+
+        protected override void OnLateUpdate(float dt) { }
+
         /// <summary>
         /// UIManager 控制調用 Display
         /// </summary>

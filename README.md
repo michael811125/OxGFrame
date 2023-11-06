@@ -15,7 +15,7 @@
 | [OxGKit.LoggingSystem v0.0.10-preview or higher](https://github.com/michael811125/OxGKit#loggingsystem-dependence-lwmybox), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
 | [OxGKit.Utilities v0.0.11-preview or higher](https://github.com/michael811125/OxGKit#utilities-dependence-unitask), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
 | [LWMyBox v1.1.4 or higher](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager **(建議改成輕量版的 MyBox 改進編譯效率)** |
-| [HybirdCLR v4.0.10 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
+| [HybirdCLR v4.0.12 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 **OxGKit.Utilities 遇到 UniTask 引用問題請無視，因為最後完成 OxGFrame 的安裝後，就會自動引用內建的 UniTask 了**
 
@@ -74,7 +74,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 
 ### Main-ThirdParty
 
-- 使用 [UnitTask v2.4.1](https://github.com/Cysharp/UniTask) (最佳異步處理方案)
+- 使用 [UnitTask v2.5.0](https://github.com/Cysharp/UniTask) (最佳異步處理方案)
 - 使用部分 [UniFramework](https://github.com/gmhevinci/UniFramework) (輕量級框架) **特別推薦**
 
 ### Sub-ThirdParty

@@ -122,6 +122,18 @@ namespace OxGFrame.CoreFrame
             this.OnUpdate(dt);
         }
 
+        internal virtual void DriveFixedUpdate(float dt)
+        {
+            if (!this._isInitFirst) return;
+            this.OnFixedUpdate(dt);
+        }
+
+        internal virtual void DriveLateUpdate(float dt)
+        {
+            if (!this._isInitFirst) return;
+            this.OnLateUpdate(dt);
+        }
+
 #if UNITY_EDITOR
         private void OnValidate()
         {
@@ -209,10 +221,22 @@ namespace OxGFrame.CoreFrame
         public abstract void OnReceiveAndRefresh(object obj = null);
 
         /// <summary>
-        /// 每幀被調用
+        /// 每幀被調用 (預設啟用)
         /// </summary>
         /// <param name="dt"></param>
         protected abstract void OnUpdate(float dt);
+
+        /// <summary>
+        /// 每幀被調用 (預設關閉)
+        /// </summary>
+        /// <param name="dt"></param>
+        protected abstract void OnFixedUpdate(float dt);
+
+        /// <summary>
+        /// 每幀被調用 (預設關閉)
+        /// </summary>
+        /// <param name="dt"></param>
+        protected abstract void OnLateUpdate(float dt);
 
         /// <summary>
         /// 關閉時每次都會被呼叫
