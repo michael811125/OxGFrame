@@ -113,7 +113,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         ///  UIManager 控制調用 Hide
         /// </summary>
-        public sealed override void Hide(bool disablePreClose = false)
+        public sealed override void Hide(bool disabledPreClose = false)
         {
             if (!this.gameObject.activeSelf) return;
 
@@ -127,7 +127,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 {
                     // 如果有啟用 Mask, 則需要回收 Mask
                     if (this.autoMask) this._RemoveMask();
-                    if (!disablePreClose) this.OnPreClose();
+                    if (!disabledPreClose) this.OnPreClose();
                     this.OnClose();
                 }
                 else this.OnHide();

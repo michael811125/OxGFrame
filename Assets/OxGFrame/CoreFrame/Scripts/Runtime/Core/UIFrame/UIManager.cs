@@ -533,10 +533,10 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// 將 Close 方法封裝 (由接口 Close 與 CloseAll 統一調用)
         /// </summary>
         /// <param name="assetName"></param>
-        /// <param name="disablePreClose"></param>
+        /// <param name="disabledPreClose"></param>
         /// <param name="forceDestroy"></param>
         /// <param name="doAll"></param>
-        private void _Close(string assetName, bool disablePreClose, bool forceDestroy, bool doAll)
+        private void _Close(string assetName, bool disabledPreClose, bool forceDestroy, bool doAll)
         {
             if (string.IsNullOrEmpty(assetName) || !this.HasStackInAllCache(assetName)) return;
 
@@ -546,7 +546,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 foreach (var uiBase in stack.cache.ToArray())
                 {
                     uiBase.SetHidden(false);
-                    this.ExitAndHide(uiBase, disablePreClose);
+                    this.ExitAndHide(uiBase, disabledPreClose);
 
                     // 清除相同 groupId + canvasName 的緩存 (主要是為了校正)
                     string key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
@@ -577,7 +577,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 標記 Hidden = false
                 uiBase.SetHidden(false);
                 // equalsTop.extraStack 用於校正堆疊層數
-                this.ExitAndHide(uiBase, disablePreClose, equalsTop.extraStack);
+                this.ExitAndHide(uiBase, disabledPreClose, equalsTop.extraStack);
                 // 如果檢測到 equalsTop.uiBase != null 則需要進行反切還原
                 this.ExitAndHideReverse(uiBase, !forceDestroy || (equalsTop.uiBase != null));
 
@@ -589,14 +589,14 @@ namespace OxGFrame.CoreFrame.UIFrame
             Logging.Print<Logger>($"<color=#1effad>Close UI: <color=#ffdb1e>{assetName}</color></color>");
         }
 
-        public override void Close(string assetName, bool disablePreClose = false, bool forceDestroy = false)
+        public override void Close(string assetName, bool disabledPreClose = false, bool forceDestroy = false)
         {
             // 如果沒有強制 Destroy + 不是顯示狀態則直接 return
             if (!forceDestroy && !this.CheckIsShowing(assetName)) return;
-            this._Close(assetName, disablePreClose, forceDestroy, false);
+            this._Close(assetName, disabledPreClose, forceDestroy, false);
         }
 
-        public override void CloseAll(bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -632,11 +632,11 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
                 if (uiBase.uiSetting.whenCloseAllToSkip) continue;
 
-                this._Close(assetName, disablePreClose, forceDestroy, true);
+                this._Close(assetName, disabledPreClose, forceDestroy, true);
             }
         }
 
-        public override void CloseAll(int groupId, bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -674,11 +674,11 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
                 if (uiBase.uiSetting.whenCloseAllToSkip) continue;
 
-                this._Close(assetName, disablePreClose, forceDestroy, true);
+                this._Close(assetName, disabledPreClose, forceDestroy, true);
             }
         }
 
-        public void CloseStackByStack(int groupId, string canvasName, bool disablePreClose = false, bool forceDestroy = false)
+        public void CloseStackByStack(int groupId, string canvasName, bool disabledPreClose = false, bool forceDestroy = false)
         {
             if (this._dictStackByStack.Count == 0) return;
 
@@ -689,7 +689,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 取得 top item
                 string assetName = this._dictStackByStack[key][this._dictStackByStack[key].Count - 1];
                 // 關閉 top
-                this.Close(assetName, disablePreClose, forceDestroy);
+                this.Close(assetName, disabledPreClose, forceDestroy);
             }
         }
         #endregion
@@ -920,9 +920,9 @@ namespace OxGFrame.CoreFrame.UIFrame
             }
         }
 
-        protected void ExitAndHide(UIBase uiBase, bool disablePreClose = false, int extraStack = 0)
+        protected void ExitAndHide(UIBase uiBase, bool disabledPreClose = false, int extraStack = 0)
         {
-            uiBase.Hide(disablePreClose);
+            uiBase.Hide(disabledPreClose);
 
             // 堆疊式管理 (只有非隱藏才進行堆疊計數管理)
             if (uiBase.uiSetting.stack && !uiBase.isHidden)

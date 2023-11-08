@@ -288,11 +288,11 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// </summary>
         /// <param name="audBase"></param>
         /// <param name="forceDestroy"></param>
-        private void _Stop(AudioBase audBase, bool disableEndEvent = false, bool forceDestroy = false)
+        private void _Stop(AudioBase audBase, bool disabledEndEvent = false, bool forceDestroy = false)
         {
             if (audBase == null) return;
 
-            this.ExitAndStop(audBase, false, disableEndEvent);
+            this.ExitAndStop(audBase, false, disabledEndEvent);
 
             Logging.Print<Logger>(string.Format("Stop Audio: {0}", audBase?.mediaName));
 
@@ -309,9 +309,9 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// </summary>
         /// <param name="audBase"></param>
         /// <param name="forceDestroy"></param>
-        public void Stop(AudioBase audBase, bool disableEndEvent = false, bool forceDestroy = false)
+        public void Stop(AudioBase audBase, bool disabledEndEvent = false, bool forceDestroy = false)
         {
-            this._Stop(audBase, disableEndEvent, forceDestroy);
+            this._Stop(audBase, disabledEndEvent, forceDestroy);
         }
 
         /// <summary>
@@ -319,14 +319,14 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="forceDestroy"></param>
-        public override void Stop(string assetName, bool disableEndEvent = false, bool forceDestroy = false)
+        public override void Stop(string assetName, bool disabledEndEvent = false, bool forceDestroy = false)
         {
             AudioBase[] audBases = this.GetMediaComponents<AudioBase>(assetName);
             if (audBases.Length == 0) return;
 
             foreach (var audBase in audBases)
             {
-                this._Stop(audBase, disableEndEvent, forceDestroy);
+                this._Stop(audBase, disabledEndEvent, forceDestroy);
             }
         }
 
@@ -335,13 +335,13 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// </summary>
         /// <param name="forceDestroy"></param>
         /// <returns></returns>
-        public override void StopAll(bool disableEndEvent = false, bool forceDestroy = false)
+        public override void StopAll(bool disabledEndEvent = false, bool forceDestroy = false)
         {
             if (this._listAllCache.Count == 0) return;
 
             foreach (var audBase in this._listAllCache.ToArray())
             {
-                this._Stop(audBase, disableEndEvent, forceDestroy);
+                this._Stop(audBase, disabledEndEvent, forceDestroy);
             }
         }
         #endregion
@@ -396,11 +396,11 @@ namespace OxGFrame.MediaFrame.AudioFrame
             audBase.Play(loops, volume);
         }
 
-        protected override void ExitAndStop(AudioBase audBase, bool pause, bool disableEndEvent)
+        protected override void ExitAndStop(AudioBase audBase, bool pause, bool disabledEndEvent)
         {
             if (!pause)
             {
-                if (disableEndEvent) audBase.SetEndEvent(null);
+                if (disabledEndEvent) audBase.SetEndEvent(null);
                 audBase.Stop();
             }
             else audBase.Pause();

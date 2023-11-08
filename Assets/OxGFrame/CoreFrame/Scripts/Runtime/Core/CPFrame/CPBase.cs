@@ -115,7 +115,7 @@ namespace OxGFrame.CoreFrame.CPFrame
         public override void OnReceiveAndRefresh(object obj = null) { }
 
         [System.Obsolete("This is not supported in this class.")]
-        public sealed override void Hide(bool disablePreClose = false) { }
+        public sealed override void Hide(bool disabledPreClose = false) { }
 
         [System.Obsolete("This is not supported in this class.")]
         protected sealed override void CloseSelf() { }

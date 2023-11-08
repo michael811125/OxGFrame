@@ -229,8 +229,8 @@ namespace OxGFrame.MediaFrame
         #endregion
 
         #region Stop & Pause
-        public abstract void Stop(string assetName, bool disableEndEvent = false, bool forceDestroy = false);
-        public abstract void StopAll(bool disableEndEvent = false, bool forceDestroy = false);
+        public abstract void Stop(string assetName, bool disabledEndEvent = false, bool forceDestroy = false);
+        public abstract void StopAll(bool disabledEndEvent = false, bool forceDestroy = false);
         public abstract void Pause(string assetName);
         public abstract void PauseAll();
         #endregion
@@ -238,7 +238,7 @@ namespace OxGFrame.MediaFrame
         #region Load Play & Exit Stop
         protected virtual void LoadAndPlay(T mBase, int loops, float volume) { }
 
-        protected virtual void ExitAndStop(T mBase, bool pause, bool disableEndEvent) { }
+        protected virtual void ExitAndStop(T mBase, bool pause, bool disabledEndEvent) { }
         #endregion
 
         /// <summary>

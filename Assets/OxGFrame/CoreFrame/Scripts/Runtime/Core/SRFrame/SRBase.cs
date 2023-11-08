@@ -39,13 +39,13 @@ namespace OxGFrame.CoreFrame.SRFrame
             else this.OnReveal();
         }
 
-        public sealed override void Hide(bool disablePreClose = false)
+        public sealed override void Hide(bool disabledPreClose = false)
         {
             if (!this.gameObject.activeSelf) return;
 
             if (!this.isHidden)
             {
-                if (!disablePreClose) this.OnPreClose();
+                if (!disabledPreClose) this.OnPreClose();
                 this.OnClose();
             }
             else this.OnHide();

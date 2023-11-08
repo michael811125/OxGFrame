@@ -12,7 +12,7 @@ namespace OxGFrame.CoreFrame
 
         void Display(object obj);
 
-        void Hide(bool disablePreClose);
+        void Hide(bool disabledPreClose);
 
         void OnRelease();
 

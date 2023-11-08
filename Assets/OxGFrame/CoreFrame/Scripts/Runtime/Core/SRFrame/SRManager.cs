@@ -135,10 +135,10 @@ namespace OxGFrame.CoreFrame.SRFrame
         /// 將 Close 方法封裝 (由接口 Close 與 CloseAll 統一調用)
         /// </summary>
         /// <param name="assetName"></param>
-        /// <param name="disablePreClose"></param>
+        /// <param name="disabledPreClose"></param>
         /// <param name="forceDestroy"></param>
         /// <param name="doAll"></param>
-        private void _Close(string assetName, bool disablePreClose, bool forceDestroy, bool doAll)
+        private void _Close(string assetName, bool disabledPreClose, bool forceDestroy, bool doAll)
         {
             if (string.IsNullOrEmpty(assetName) || !this.HasStackInAllCache(assetName)) return;
 
@@ -148,7 +148,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 foreach (var srBase in stack.cache.ToArray())
                 {
                     srBase.SetHidden(false);
-                    this.ExitAndHide(srBase, disablePreClose);
+                    this.ExitAndHide(srBase, disabledPreClose);
 
                     if (forceDestroy) this.Destroy(srBase, assetName);
                     else if (srBase.allowInstantiate) this.Destroy(srBase, assetName);
@@ -161,7 +161,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 if (srBase == null) return;
 
                 srBase.SetHidden(false);
-                this.ExitAndHide(srBase, disablePreClose);
+                this.ExitAndHide(srBase, disabledPreClose);
 
                 if (forceDestroy) this.Destroy(srBase, assetName);
                 else if (srBase.allowInstantiate) this.Destroy(srBase, assetName);
@@ -171,14 +171,14 @@ namespace OxGFrame.CoreFrame.SRFrame
             Logging.Print<Logger>($"<color=#1effad>Close SR: <color=#ffdb1e>{assetName}</color></color>");
         }
 
-        public override void Close(string assetName, bool disablePreClose = false, bool forceDestroy = false)
+        public override void Close(string assetName, bool disabledPreClose = false, bool forceDestroy = false)
         {
             // 如果沒有強制 Destroy + 不是顯示狀態則直接 return
             if (!forceDestroy && !this.CheckIsShowing(assetName)) return;
-            this._Close(assetName, disablePreClose, forceDestroy, false);
+            this._Close(assetName, disabledPreClose, forceDestroy, false);
         }
 
-        public override void CloseAll(bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -214,11 +214,11 @@ namespace OxGFrame.CoreFrame.SRFrame
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
                 if (srBase.srSetting.whenCloseAllToSkip) continue;
 
-                this._Close(assetName, disablePreClose, forceDestroy, true);
+                this._Close(assetName, disabledPreClose, forceDestroy, true);
             }
         }
 
-        public override void CloseAll(int groupId, bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -256,7 +256,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
                 if (srBase.srSetting.whenCloseAllToSkip) continue;
 
-                this._Close(assetName, disablePreClose, forceDestroy, true);
+                this._Close(assetName, disabledPreClose, forceDestroy, true);
             }
         }
         #endregion
@@ -444,9 +444,9 @@ namespace OxGFrame.CoreFrame.SRFrame
             srBase.Display(obj);
         }
 
-        protected void ExitAndHide(SRBase srBase, bool disablePreClose = false)
+        protected void ExitAndHide(SRBase srBase, bool disabledPreClose = false)
         {
-            srBase.Hide(disablePreClose);
+            srBase.Hide(disabledPreClose);
         }
         #endregion
     }

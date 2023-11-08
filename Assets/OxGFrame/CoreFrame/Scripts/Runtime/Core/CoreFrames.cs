@@ -208,30 +208,30 @@ namespace OxGFrame.CoreFrame
             #endregion
 
             #region Close
-            public static void Close(string assetName, bool disablePreClose = false, bool forceDestroy = false)
+            public static void Close(string assetName, bool disabledPreClose = false, bool forceDestroy = false)
             {
-                UIManager.GetInstance().Close(assetName, disablePreClose, forceDestroy);
+                UIManager.GetInstance().Close(assetName, disabledPreClose, forceDestroy);
             }
 
-            public static void CloseAll(bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(disablePreClose, forceDestroy, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, withoutAssetNames);
             }
 
-            public static void CloseAll(int groupId, bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(groupId, disablePreClose, forceDestroy, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, withoutAssetNames);
             }
 
             /// <summary>
             /// Only allow close stack by stack
             /// </summary>
             /// <param name="canvasName"></param>
-            /// <param name="disablePreClose"></param>
+            /// <param name="disabledPreClose"></param>
             /// <param name="forceDestroy"></param>
-            public static void CloseStackByStack(string canvasName, bool disablePreClose = false, bool forceDestroy = false)
+            public static void CloseStackByStack(string canvasName, bool disabledPreClose = false, bool forceDestroy = false)
             {
-                UIManager.GetInstance().CloseStackByStack(0, canvasName, disablePreClose, forceDestroy);
+                UIManager.GetInstance().CloseStackByStack(0, canvasName, disabledPreClose, forceDestroy);
             }
 
             /// <summary>
@@ -239,11 +239,11 @@ namespace OxGFrame.CoreFrame
             /// </summary>
             /// <param name="groupId"></param>
             /// <param name="canvasName"></param>
-            /// <param name="disablePreClose"></param>
+            /// <param name="disabledPreClose"></param>
             /// <param name="forceDestroy"></param>
-            public static void CloseStackByStack(int groupId, string canvasName, bool disablePreClose = false, bool forceDestroy = false)
+            public static void CloseStackByStack(int groupId, string canvasName, bool disabledPreClose = false, bool forceDestroy = false)
             {
-                UIManager.GetInstance().CloseStackByStack(groupId, canvasName, disablePreClose, forceDestroy);
+                UIManager.GetInstance().CloseStackByStack(groupId, canvasName, disabledPreClose, forceDestroy);
             }
             #endregion
 
@@ -467,19 +467,19 @@ namespace OxGFrame.CoreFrame
             #endregion
 
             #region Close
-            public static void Close(string assetName, bool disablePreClose = false, bool forceDestroy = false)
+            public static void Close(string assetName, bool disabledPreClose = false, bool forceDestroy = false)
             {
-                SRManager.GetInstance().Close(assetName, disablePreClose, forceDestroy);
+                SRManager.GetInstance().Close(assetName, disabledPreClose, forceDestroy);
             }
 
-            public static void CloseAll(bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(disablePreClose, forceDestroy, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, withoutAssetNames);
             }
 
-            public static void CloseAll(int groupId, bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(groupId, disablePreClose, forceDestroy, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, withoutAssetNames);
             }
             #endregion
 

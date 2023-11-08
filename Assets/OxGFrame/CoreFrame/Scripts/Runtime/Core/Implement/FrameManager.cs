@@ -558,26 +558,26 @@ namespace OxGFrame.CoreFrame
         /// 單個關閉
         /// </summary>
         /// <param name="assetName"></param>
-        /// <param name="disablePreClose"></param>
+        /// <param name="disabledPreClose"></param>
         /// <param name="forceDestroy"></param>
-        public virtual void Close(string assetName, bool disablePreClose = false, bool forceDestroy = false) { }
+        public virtual void Close(string assetName, bool disabledPreClose = false, bool forceDestroy = false) { }
 
         /// <summary>
         /// 全部關閉
         /// </summary>
-        /// <param name="disablePreClose"></param>
+        /// <param name="disabledPreClose"></param>
         /// <param name="forceDestroy"></param>
         /// <param name="withoutAssetNames"></param>
-        public virtual void CloseAll(bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames) { }
+        public virtual void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames) { }
 
         /// <summary>
         /// 透過 id 群組進行全部關閉
         /// </summary>
         /// <param name="groupId"></param>
-        /// <param name="disablePreClose"></param>
+        /// <param name="disabledPreClose"></param>
         /// <param name="forceDestroy"></param>
         /// <param name="withoutAssetNames"></param>
-        public virtual void CloseAll(int groupId, bool disablePreClose = false, bool forceDestroy = false, params string[] withoutAssetNames) { }
+        public virtual void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames) { }
         #endregion
 
         #region Reveal

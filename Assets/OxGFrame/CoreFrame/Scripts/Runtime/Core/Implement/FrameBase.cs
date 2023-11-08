@@ -201,7 +201,7 @@ namespace OxGFrame.CoreFrame
         /// <summary>
         /// 隱藏相關流程
         /// </summary>
-        public abstract void Hide(bool disablePreClose);
+        public abstract void Hide(bool disabledPreClose);
 
         /// <summary>
         /// 開啟時每次都會被呼叫
