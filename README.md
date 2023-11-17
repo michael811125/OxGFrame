@@ -43,9 +43,9 @@ Copy Assets/OxGFrame to Unity New Project.
 
 ---
 
-## 舊版本更新 OxGFrame 注意
+### 基於 OxGFrame 實現的小遊戲
 
-將舊版 2 以下的 OxGFrame 全部移除，重新安裝 OxGFrame，並且重新串接新版的接口。
+[FlappyBird_OxGFrame 簡易版](https://github.com/michael811125/FlappyBird_OxGFrame)
 
 ---
 
@@ -536,13 +536,7 @@ video_urlset 127.0.0.1/video/
 
 ### Unity 版本
 
-建議使用 Unity 2021.3.26f1(LTS) or higher 版本 - [Unity Download](https://unity3d.com/get-unity/download/archive)
-
----
-
-### 基於 OxGFrame 實現的小遊戲
-
-[FlappyBird_OxGFrame 簡易版](https://github.com/michael811125/FlappyBird_OxGFrame)
+建議使用 Unity 2021.3.32f1(LTS) or higher 版本 - [Unity Download](https://unity3d.com/get-unity/download/archive)
 
 ---
 
