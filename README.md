@@ -43,9 +43,11 @@ Copy Assets/OxGFrame to Unity New Project.
 
 ---
 
-### 基於 OxGFrame 實現的小遊戲
+### 使用 OxGFrame 實現的 Demo 小遊戲
 
 [FlappyBird_OxGFrame 簡易版](https://github.com/michael811125/FlappyBird_OxGFrame)
+
+https://github.com/michael811125/OxGFrame/assets/30960759/5e41e84a-029d-4392-8142-7199ce45018c
 
 ---
 
@@ -221,7 +223,9 @@ YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config 
 分別區分 App Packages 跟 DLC Packages，注意路徑不同。
 - App Packages (.../CDN/\<ProductName\>/\<Platform\>/\<Version\>/Packages)
   - 手動進行 AssetPatcher.InitAppPackage 的初始 (如果 autoUpdate = false，則需要自行另外調用 AssetPatcher.UpdatePackage 進行 Manifest 的更新)。
-- DLC Packages with platform (.../CDN/\<ProductName\>/\<Platform\>/DLC/Packages), without platform (.../CDN/\<ProductName\>/DLC/Packages)
+- DLC Packages
+  - 路徑包含平台 (.../CDN/\<ProductName\>/\<Platform\>/DLC/Packages)
+  - 路徑不管平台 (.../CDN/\<ProductName\>/DLC/Packages)
   - 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion (ex: "latest")，變成只要 DLC 有更新就可以使用固定路徑進行更新。
 
 **App Package**
