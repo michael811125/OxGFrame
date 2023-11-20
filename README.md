@@ -45,7 +45,10 @@ Copy Assets/OxGFrame to Unity New Project.
 
 ### 使用 OxGFrame 實現的 Demo 小遊戲
 
-[FlappyBird_OxGFrame 簡易版](https://github.com/michael811125/FlappyBird_OxGFrame)
+[Github - FlappyBird_OxGFrame](https://github.com/michael811125/FlappyBird_OxGFrame)
+  - [Resources](https://github.com/michael811125/FlappyBird_OxGFrame/tree/resources)
+  - [AssetBundle](https://github.com/michael811125/FlappyBird_OxGFrame/tree/assetbundle)
+  - [AssetBundle + HybridCLR](https://github.com/michael811125/FlappyBird_OxGFrame/tree/assetbundle_clr)
 
 https://github.com/michael811125/OxGFrame/assets/30960759/5e41e84a-029d-4392-8142-7199ce45018c
 
