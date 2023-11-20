@@ -171,13 +171,14 @@ namespace OxGFrame.AssetLoader.Editor
 
             IEnumerable<string> contents = new string[]
             {
-            @$"# {PatchSetting.BUNDLE_IP} = First CDN Server IP (Plan A)",
-            @$"# {PatchSetting.BUNDLE_FALLBACK_IP} = Second CDN Server IP (Plan B)",
-            @$"# {PatchSetting.STORE_LINK} = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID) or Apple Store Link (itms-apps://itunes.apple.com/app/idYOUR_ID)",
-            "",
-            $"{PatchSetting.BUNDLE_IP} {bundleIp}",
-            $"{PatchSetting.BUNDLE_FALLBACK_IP} {bundleFallbackIp}",
-            $"{PatchSetting.STORE_LINK} {storeLink}",
+                @$"# {PatchSetting.BUNDLE_IP} = First CDN Server IP (Plan A)",
+                @$"# {PatchSetting.BUNDLE_FALLBACK_IP} = Second CDN Server IP (Plan B)",
+                @$"# {PatchSetting.STORE_LINK} = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID)",
+                @$"# {PatchSetting.STORE_LINK} = Apple Store Link (https://apps.apple.com/app/idYOUR_ID)",
+                "",
+                $"{PatchSetting.BUNDLE_IP} {bundleIp}",
+                $"{PatchSetting.BUNDLE_FALLBACK_IP} {bundleFallbackIp}",
+                $"{PatchSetting.STORE_LINK} {storeLink}",
             };
 
             string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.bundleUrlCfgExtension}";
