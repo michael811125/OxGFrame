@@ -71,7 +71,7 @@ namespace OxGFrame.AssetLoader.Editor
 
         private static Vector2 _windowSize = new Vector2(800f, 400f);
 
-        [MenuItem(BundleHelper.MenuRoot + "Export Bundle And Config Generator", false, 899)]
+        [MenuItem(BundleHelper.MenuRoot + "Export Bundle And Config Generator", false, 889)]
         public static void ShowWindow()
         {
             PROJECT_PATH = Application.dataPath;
