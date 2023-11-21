@@ -547,6 +547,14 @@ video_urlset 127.0.0.1/video/
 
 ---
 
+### 特別感謝
+
+[killop - anything_about_game](https://github.com/killop/anything_about_game#unity-framework)
+
+[UWA 開源庫](https://lab.uwa4d.com/lab/62d51e6fa8103dabd0cce57f)
+
+---
+
 ## License
 
 This library is under the MIT License.
