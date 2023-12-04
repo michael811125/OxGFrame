@@ -107,7 +107,7 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             if (_decryptArgs == null)
             {
-                // Check args first, if is none don't need to secure memeory
+                // Check args first, if is none don't need to secure memory
                 bool isNone = args.Substring(0, CryptogramType.NONE.Length).ToUpper().Equals(CryptogramType.NONE);
                 secured = !isNone && secured;
 

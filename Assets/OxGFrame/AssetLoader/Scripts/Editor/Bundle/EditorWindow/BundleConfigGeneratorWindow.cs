@@ -505,7 +505,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
             centeredStyle.alignment = TextAnchor.UpperCenter;
-            GUILayout.Label(new GUIContent("Group Tags For Preset App Packages (Main Download)"), centeredStyle);
+            GUILayout.Label(new GUIContent("Group Tags For Preset Packages (Main Download)"), centeredStyle);
             EditorGUILayout.Space();
 
             EditorGUILayout.BeginVertical();
