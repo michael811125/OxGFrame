@@ -56,6 +56,7 @@ namespace OxGFrame.AssetLoader.Bundle
     [Serializable]
     public class PackageInfoWithBuild
     {
+        [Tooltip("Only for EditorSimulateMode")]
         public BuildMode buildMode;
         public string packageName;
     }
