@@ -50,16 +50,17 @@ namespace OxGFrame.AssetLoader.Editor
         /// <param name="outputPath"></param>
         /// <param name="productName"></param>
         /// <param name="appVersion"></param>
-        /// <param name="groupInfos"></param>
         /// <param name="exportPackages"></param>
+        /// <param name="groupInfos"></param>
+        /// <param name="packageInfos"></param>
         /// <param name="activeBuildTarget"></param>
         /// <param name="buildTarget"></param>
         /// <param name="isClearOutputPath"></param>
-        public static void ExportConfigsAndAppBundles(string inputPath, string outputPath, string productName, string appVersion, List<GroupInfo> groupInfos, string[] exportPackages, bool activeBuildTarget, BuildTarget buildTarget, bool isClearOutputPath = true)
+        public static void ExportConfigsAndAppBundles(string inputPath, string outputPath, string productName, string appVersion, string[] exportPackages, List<GroupInfo> groupInfos, string[] packageInfos, bool activeBuildTarget, BuildTarget buildTarget, bool isClearOutputPath = true)
         {
             // 生成配置檔數據 (AppConfig)
             var appCfg = GenerateAppConfig(productName, appVersion, activeBuildTarget, buildTarget);
-            var patchCfg = GeneratePatchConfig(groupInfos, exportPackages, inputPath);
+            var patchCfg = GeneratePatchConfig(groupInfos, packageInfos, inputPath);
 
             // 清空輸出路徑
             if (isClearOutputPath && Directory.Exists(outputPath)) BundleUtility.DeleteFolder(outputPath);
@@ -470,53 +471,56 @@ namespace OxGFrame.AssetLoader.Editor
             var cfg = new PatchConfig();
 
             // 取得 Bundle 路徑
-            if (string.IsNullOrEmpty(inputPath)) inputPath = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
-
-            string inputPathWithPlatform = Path.Combine(inputPath, $"{EditorUserBuildSettings.activeBuildTarget}");
-
-            string[] packagePaths = Directory.GetDirectories(inputPathWithPlatform);
-
-            foreach (var packagePath in packagePaths)
+            if (exportPackages != null)
             {
-                bool isSkip = true;
-                string packageName = Path.GetFileNameWithoutExtension(packagePath);
-                foreach (var exportPackage in exportPackages)
+                if (string.IsNullOrEmpty(inputPath)) inputPath = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
+
+                string inputPathWithPlatform = Path.Combine(inputPath, $"{EditorUserBuildSettings.activeBuildTarget}");
+
+                string[] packagePaths = Directory.GetDirectories(inputPathWithPlatform);
+
+                foreach (var packagePath in packagePaths)
                 {
-                    if (packageName == exportPackage)
+                    bool isSkip = true;
+                    string packageName = Path.GetFileNameWithoutExtension(packagePath);
+                    foreach (var exportPackage in exportPackages)
                     {
-                        isSkip = false;
-                        break;
+                        if (packageName == exportPackage)
+                        {
+                            isSkip = false;
+                            break;
+                        }
                     }
+
+                    if (isSkip) continue;
+
+                    // 取得 NewestPackagePath
+                    string newestVersionPath = NewestPackagePathFilter(packagePath);
+
+                    // 建立 Package info
+                    Bundle.PackageInfo packageInfo = new Bundle.PackageInfo();
+                    // 生成 Package total size
+                    long packageSize = 0;
+
+                    FileInfo[] files = BundleUtility.GetFilesRecursively(newestVersionPath);
+                    foreach (var file in files)
+                    {
+                        // 累加檔案大小
+                        packageSize += file.Length;
+                    }
+
+                    {
+                        string versionName = Path.GetFileNameWithoutExtension(newestVersionPath);
+                        string refineVersionName = versionName.Replace("-", string.Empty);
+
+                        packageInfo.packageName = packageName;
+                        packageInfo.packageVersion = refineVersionName;
+                        packageInfo.packageSize = packageSize;
+                    }
+
+                    // 資源包清單
+                    cfg.AddPackageInfo(packageInfo);
                 }
-
-                if (isSkip) continue;
-
-                // 取得 NewestPackagePath
-                string newestVersionPath = NewestPackagePathFilter(packagePath);
-
-                // 建立 Package info
-                Bundle.PackageInfo packageInfo = new Bundle.PackageInfo();
-                // 生成 Package total size
-                long packageSize = 0;
-
-                FileInfo[] files = BundleUtility.GetFilesRecursively(newestVersionPath);
-                foreach (var file in files)
-                {
-                    // 累加檔案大小
-                    packageSize += file.Length;
-                }
-
-                {
-                    string versionName = Path.GetFileNameWithoutExtension(newestVersionPath);
-                    string refineVersionName = versionName.Replace("-", string.Empty);
-
-                    packageInfo.packageName = packageName;
-                    packageInfo.packageVersion = refineVersionName;
-                    packageInfo.packageSize = packageSize;
-                }
-
-                // 資源包清單
-                cfg.AddPackageInfo(packageInfo);
             }
 
             cfg.GROUP_INFOS = groupInfos;
