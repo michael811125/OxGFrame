@@ -259,8 +259,8 @@ AppPackageInfoWithBuild packageInfo = new AppPackageInfoWithBuild()
 {
     buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline,
     packageName = "DlcPackage",
-	dlcVersion = "dlcVersion",
-	withoutPlatform = false
+    dlcVersion = "dlcVersion",
+    withoutPlatform = false
 };
 
 bool isInitialized = await AssetPatcher.InitDlcPackage(packageInfo, true);
