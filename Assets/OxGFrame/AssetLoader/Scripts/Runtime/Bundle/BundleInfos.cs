@@ -54,14 +54,19 @@ namespace OxGFrame.AssetLoader.Bundle
     }
 
     [Serializable]
-    public class AppInfoWithBuild
+    public class PackageInfoWithBuild
     {
         public BuildMode buildMode;
         public string packageName;
     }
 
     [Serializable]
-    public class DlcInfoWithBuild : AppInfoWithBuild
+    public class AppPackageInfoWithBuild : PackageInfoWithBuild
+    {
+    }
+
+    [Serializable]
+    public class DlcPackageInfoWithBuild : PackageInfoWithBuild
     {
         public bool withoutPlatform = false;
         [Tooltip("If version is null or empty will auto set newset package version by date")]

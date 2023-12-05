@@ -235,8 +235,13 @@ YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config 
 ```C#
 // [Load asset and download from specific package (Export App Bundles for CDN)]
 
-var packageName = "OtherPackage";
-bool isInitialized = await AssetPatcher.InitAppPackage(packageName, true);
+AppPackageInfoWithBuild packageInfo = new AppPackageInfoWithBuild()
+{
+    buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline,
+    packageName = "OtherPackage"
+};
+
+bool isInitialized = await AssetPatcher.InitAppPackage(packageInfo, true);
 if (isInitialized)
 {
     var package = AssetPatcher.GetPackage(packageName);
@@ -250,8 +255,15 @@ if (isInitialized)
 ```C#
 // [Load asset and download from specific package (Export Individual DLC Bundles for CDN)]
 
-var packageName = "DlcPackage";
-bool isInitialized = await AssetPatcher.InitDlcPackage(packageName, "dlcVersion", true);
+AppPackageInfoWithBuild packageInfo = new AppPackageInfoWithBuild()
+{
+    buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline,
+    packageName = "DlcPackage",
+	dlcVersion = "dlcVersion",
+	withoutPlatform = false
+};
+
+bool isInitialized = await AssetPatcher.InitDlcPackage(packageInfo, true);
 if (isInitialized)
 {
     var package = AssetPatcher.GetPackage(packageName);

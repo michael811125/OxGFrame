@@ -67,12 +67,12 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// App Preset Package 清單
         /// </summary>
-        public static List<AppInfoWithBuild> listAppPackages;
+        public static List<AppPackageInfoWithBuild> listAppPackages;
 
         /// <summary>
         /// DLC Preset Package 清單
         /// </summary>
-        public static List<DlcInfoWithBuild> listDlcPackages;
+        public static List<DlcPackageInfoWithBuild> listDlcPackages;
 
         /// <summary>
         /// 預設同時併發下載數量

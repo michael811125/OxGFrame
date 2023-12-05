@@ -70,12 +70,12 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             try
             {
-                var presetAppPackageNames = GetPresetAppPackageNames();
-                if (presetAppPackageNames != null)
+                var presetAppPackageInfos = GetPresetAppPackageInfos();
+                if (presetAppPackageInfos != null)
                 {
-                    foreach (var packageName in presetAppPackageNames)
+                    foreach (var packageInfo in presetAppPackageInfos)
                     {
-                        bool isInitialized = await AssetPatcher.InitAppPackage(packageName, false);
+                        bool isInitialized = await AssetPatcher.InitAppPackage(packageInfo, false);
                         if (!isInitialized) return false;
                     }
                 }
@@ -101,7 +101,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     foreach (var packageInfo in presetDlcPackageInfos)
                     {
-                        bool isInitialized = await AssetPatcher.InitDlcPackage(packageInfo.packageName, packageInfo.dlcVersion, false, packageInfo.withoutPlatform);
+                        bool isInitialized = await AssetPatcher.InitDlcPackage(packageInfo, false);
                         if (!isInitialized) return false;
                     }
                 }
@@ -117,7 +117,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// Init package by package name
         /// </summary>
-        /// <param name="packageName"></param>
+        /// <param name="packageInfo"></param>
         /// <param name="autoUpdate"></param>
         /// <param name="hostServer"></param>
         /// <param name="fallbackHostServer"></param>
@@ -125,11 +125,12 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <param name="deliveryQueryService"></param>
         /// <param name="deliveryLoadService"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitPackage(string packageName, bool autoUpdate, string hostServer, string fallbackHostServer, IBuildinQueryServices builtinQueryService, IDeliveryQueryServices deliveryQueryService, IDeliveryLoadServices deliveryLoadService)
+        public static async UniTask<bool> InitPackage(PackageInfoWithBuild packageInfo, bool autoUpdate, string hostServer, string fallbackHostServer, IBuildinQueryServices builtinQueryService, IDeliveryQueryServices deliveryQueryService, IDeliveryLoadServices deliveryLoadService)
         {
+            var packageName = packageInfo.packageName;
+            var buildMode = packageInfo.buildMode.ToString();
+
             var package = RegisterPackage(packageName);
-            var packageInfo = GetPresetPackageInfo(packageName);
-            if (packageInfo == null) return false;
             if (package.InitializeStatus == EOperationStatus.Succeed)
             {
                 if (autoUpdate) await UpdatePackage(packageName);
@@ -142,7 +143,7 @@ namespace OxGFrame.AssetLoader.Bundle
             if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
             {
                 var createParameters = new EditorSimulateModeParameters();
-                createParameters.SimulateManifestFilePath = EditorSimulateModeHelper.SimulateBuild(packageInfo.buildMode.ToString(), packageName);
+                createParameters.SimulateManifestFilePath = EditorSimulateModeHelper.SimulateBuild(buildMode, packageName);
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 
@@ -495,9 +496,11 @@ namespace OxGFrame.AssetLoader.Bundle
             return new ResourcePackage[] { };
         }
 
-        internal static AppInfoWithBuild GetPresetPackageInfo(string packageName)
+        internal static PackageInfoWithBuild GetPresetPackageInfo(string packageName)
         {
-            AppInfoWithBuild[] packageInfos = BundleConfig.listAppPackages.Union(BundleConfig.listDlcPackages).ToArray();
+            List<PackageInfoWithBuild> l1 = BundleConfig.listAppPackages.Cast<PackageInfoWithBuild>().ToList();
+            List<PackageInfoWithBuild> l2 = BundleConfig.listDlcPackages.Cast<PackageInfoWithBuild>().ToList();
+            PackageInfoWithBuild[] packageInfos = l1.Union(l2).ToArray();
             foreach (var packageInfo in packageInfos)
             {
                 if (packageInfo.packageName.Equals(packageName))
@@ -512,7 +515,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// Get preset app package info list from PatchLauncher
         /// </summary>
         /// <returns></returns>
-        public static AppInfoWithBuild[] GetPresetAppPackageInfos()
+        public static AppPackageInfoWithBuild[] GetPresetAppPackageInfos()
         {
             return BundleConfig.listAppPackages.ToArray();
         }
@@ -568,7 +571,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// Get preset dlc package info list from PatchLauncher
         /// </summary>
         /// <returns></returns>
-        public static DlcInfoWithBuild[] GetPresetDlcPackageInfos()
+        public static DlcPackageInfoWithBuild[] GetPresetDlcPackageInfos()
         {
             return BundleConfig.listDlcPackages.ToArray();
         }

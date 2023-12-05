@@ -1,7 +1,28 @@
 # CHANGELOG
 
 ## [2.9.5] - 2023-12-05
-- Added AppInfoWithBuild and DlcInfoWithBuild (BuildMode can be selected when executing on SimulateMode).
+- Added AppPackageInfoWithBuild and DlcPackageInfoWithBuild (BuildMode can be selected when executing on SimulateMode).
+```C#
+    [Serializable]
+    public class PackageInfoWithBuild
+    {
+        public BuildMode buildMode;
+        public string packageName;
+    }
+    
+    [Serializable]
+    public class AppPackageInfoWithBuild : PackageInfoWithBuild
+    {
+    }
+    
+    [Serializable]
+    public class DlcPackageInfoWithBuild : PackageInfoWithBuild
+    {
+        public bool withoutPlatform = false;
+        [Tooltip("If version is null or empty will auto set newset package version by date")]
+        public string dlcVersion;
+    }
+```
 - Fixed unprocessed request error bug issue.
 
 ## [2.9.4] - 2023-11-06

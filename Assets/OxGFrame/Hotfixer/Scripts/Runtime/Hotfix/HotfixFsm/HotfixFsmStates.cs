@@ -75,7 +75,12 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
             private async UniTask _InitHotfixPackage()
             {
-                bool isInitialized = await AssetPatcher.InitAppPackage(HotfixManager.GetInstance().packageName);
+                AppPackageInfoWithBuild packageInfo = new AppPackageInfoWithBuild()
+                {
+                    buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline,
+                    packageName = HotfixManager.GetInstance().packageName
+                };
+                bool isInitialized = await AssetPatcher.InitAppPackage(packageInfo);
                 if (isInitialized) this._machine.ChangeState<FsmUpdateHotfixPackage>();
                 else HotfixEvents.HotfixInitFailed.SendEventMessage();
             }
