@@ -270,7 +270,8 @@ if (isInitialized)
 ```
 # bundle_ip = First CDN Server IP (Plan A)
 # bundle_fallback_ip = Second CDN Server IP (Plan B)
-# store_link = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID) or Apple Store Link (itms-apps://itunes.apple.com/app/idYOUR_ID)
+# store_link = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID)
+# store_link = Apple Store Link (https://apps.apple.com/app/idYOUR_ID)
 
 bundle_ip 127.0.0.1
 bundle_fallback_ip 127.0.0.1

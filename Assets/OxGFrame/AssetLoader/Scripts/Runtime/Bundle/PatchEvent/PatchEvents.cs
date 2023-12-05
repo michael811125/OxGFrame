@@ -153,6 +153,12 @@ namespace OxGFrame.AssetLoader.PatchEvent
             public string fileName;
             public string error;
 
+            public static void SendEventMessage()
+            {
+                var msg = new PatchDownloadFailed();
+                UniEvent.SendMessage(msg);
+            }
+
             public static void SendEventMessage(string fileName, string error)
             {
                 var msg = new PatchDownloadFailed();
