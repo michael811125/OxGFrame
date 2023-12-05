@@ -50,7 +50,7 @@ namespace OxGFrame.AssetLoader.Bundle
             Logging.Print<Logger>($"<color=#ffe45a>Init Bundle Decryption: {decryptType}</color>");
             #endregion
 
-            #region Init Preset App Packages
+            #region Init Preset Packages
             bool appInitialized = await InitPresetAppPackages();
             bool dlcInitialized = await InitPresetDlcPackages();
             isInitialized = dlcInitialized && appInitialized;
@@ -128,6 +128,8 @@ namespace OxGFrame.AssetLoader.Bundle
         public static async UniTask<bool> InitPackage(string packageName, bool autoUpdate, string hostServer, string fallbackHostServer, IBuildinQueryServices builtinQueryService, IDeliveryQueryServices deliveryQueryService, IDeliveryLoadServices deliveryLoadService)
         {
             var package = RegisterPackage(packageName);
+            var packageInfo = GetPresetPackageInfo(packageName);
+            if (packageInfo == null) return false;
             if (package.InitializeStatus == EOperationStatus.Succeed)
             {
                 if (autoUpdate) await UpdatePackage(packageName);
@@ -140,7 +142,7 @@ namespace OxGFrame.AssetLoader.Bundle
             if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
             {
                 var createParameters = new EditorSimulateModeParameters();
-                createParameters.SimulateManifestFilePath = EditorSimulateModeHelper.SimulateBuild("ScriptableBuildPipeline", packageName);
+                createParameters.SimulateManifestFilePath = EditorSimulateModeHelper.SimulateBuild(packageInfo.buildMode.ToString(), packageName);
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 
@@ -449,9 +451,9 @@ namespace OxGFrame.AssetLoader.Bundle
             if (BundleConfig.listAppPackages != null && BundleConfig.listAppPackages.Count > 0)
             {
                 List<ResourcePackage> packages = new List<ResourcePackage>();
-                foreach (var packageName in BundleConfig.listAppPackages)
+                foreach (var packageInfo in BundleConfig.listAppPackages)
                 {
-                    var package = GetPackage(packageName);
+                    var package = GetPackage(packageInfo.packageName);
                     if (package != null) packages.Add(package);
                 }
 
@@ -493,13 +495,40 @@ namespace OxGFrame.AssetLoader.Bundle
             return new ResourcePackage[] { };
         }
 
+        internal static AppInfoWithBuild GetPresetPackageInfo(string packageName)
+        {
+            AppInfoWithBuild[] packageInfos = BundleConfig.listAppPackages.Union(BundleConfig.listDlcPackages).ToArray();
+            foreach (var packageInfo in packageInfos)
+            {
+                if (packageInfo.packageName.Equals(packageName))
+                {
+                    return packageInfo;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Get preset app package info list from PatchLauncher
+        /// </summary>
+        /// <returns></returns>
+        public static AppInfoWithBuild[] GetPresetAppPackageInfos()
+        {
+            return BundleConfig.listAppPackages.ToArray();
+        }
+
         /// <summary>
         /// Get preset app package name list from PatchLauncher
         /// </summary>
         /// <returns></returns>
         public static string[] GetPresetAppPackageNames()
         {
-            return BundleConfig.listAppPackages.ToArray();
+            List<string> packageNames = new List<string>();
+            foreach (var packageInfo in BundleConfig.listAppPackages)
+            {
+                packageNames.Add(packageInfo.packageName);
+            }
+            return packageNames.ToArray();
         }
 
         /// <summary>
@@ -518,7 +547,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
             else if (idx < 0) idx = 0;
 
-            return BundleConfig.listAppPackages[idx];
+            return BundleConfig.listAppPackages[idx].packageName;
         }
 
         /// <summary>
@@ -539,7 +568,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// Get preset dlc package info list from PatchLauncher
         /// </summary>
         /// <returns></returns>
-        public static DlcInfo[] GetPresetDlcPackageInfos()
+        public static DlcInfoWithBuild[] GetPresetDlcPackageInfos()
         {
             return BundleConfig.listDlcPackages.ToArray();
         }

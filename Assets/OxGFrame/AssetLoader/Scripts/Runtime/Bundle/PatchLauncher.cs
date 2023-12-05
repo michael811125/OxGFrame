@@ -21,10 +21,10 @@ namespace OxGFrame.AssetLoader.Bundle
 
         [Separator("Preset App Packages")]
         [Tooltip("The first element will be default app package.\n\nNote: The presets will combine in main download of the patch.")]
-        public List<string> listAppPackages = new List<string>() { "DefaultPackage" };
+        public List<AppInfoWithBuild> listAppPackages = new List<AppInfoWithBuild>() { new AppInfoWithBuild() { packageName = "DefaultPackage" } };
 
         [Separator("Preset DLC Packages"), Tooltip("Preset DLC packages must be fixed versions.\n\nNote: The presets will combine in main download of the patch.")]
-        public List<DlcInfo> listDlcPackages = new List<DlcInfo>();
+        public List<DlcInfoWithBuild> listDlcPackages = new List<DlcInfoWithBuild>();
 
         [Separator("Download Options")]
         public int maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;

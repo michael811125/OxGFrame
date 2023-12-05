@@ -32,6 +32,13 @@ namespace OxGFrame.AssetLoader.Bundle
             WebGLMode
         }
 
+        public enum BuildMode
+        {
+            BuiltinBuildPipeline = 1,
+            ScriptableBuildPipeline = 0,
+            RawFileBuildPipeline = 2
+        }
+
         public class CryptogramType
         {
             public const string NONE = "NONE";
@@ -60,12 +67,12 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// App Preset Package 清單
         /// </summary>
-        public static List<string> listAppPackages;
+        public static List<AppInfoWithBuild> listAppPackages;
 
         /// <summary>
         /// DLC Preset Package 清單
         /// </summary>
-        public static List<DlcInfo> listDlcPackages;
+        public static List<DlcInfoWithBuild> listDlcPackages;
 
         /// <summary>
         /// 預設同時併發下載數量

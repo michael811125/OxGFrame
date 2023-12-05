@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static OxGFrame.AssetLoader.Bundle.BundleConfig;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
@@ -50,6 +51,21 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public string groupName;
         public string[] tags;
+    }
+
+    [Serializable]
+    public class AppInfoWithBuild
+    {
+        public BuildMode buildMode;
+        public string packageName;
+    }
+
+    [Serializable]
+    public class DlcInfoWithBuild : AppInfoWithBuild
+    {
+        public bool withoutPlatform = false;
+        [Tooltip("If version is null or empty will auto set newset package version by date")]
+        public string dlcVersion;
     }
 
     [Serializable]

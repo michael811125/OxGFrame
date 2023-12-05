@@ -433,6 +433,15 @@ namespace OxGFrame.AssetLoader
 
         #region Get Preset Package Name
         /// <summary>
+        /// Get preset app package info list from PatchLauncher
+        /// </summary>
+        /// <returns></returns>
+        public static AppInfoWithBuild[] GetPresetAppPackageInfos()
+        {
+            return PackageManager.GetPresetAppPackageInfos();
+        }
+
+        /// <summary>
         /// Get preset app package name list from PatchLauncher
         /// </summary>
         /// <returns></returns>
@@ -454,7 +463,7 @@ namespace OxGFrame.AssetLoader
         /// Get preset dlc package info list from PatchLauncher
         /// </summary>
         /// <returns></returns>
-        public static DlcInfo[] GetPresetDlcPackageInfos()
+        public static DlcInfoWithBuild[] GetPresetDlcPackageInfos()
         {
             return PackageManager.GetPresetDlcPackageInfos();
         }

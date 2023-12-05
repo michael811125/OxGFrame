@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.9.5] - 2023-12-05
+- Added AppInfoWithBuild and DlcInfoWithBuild (BuildMode can be selected when executing on SimulateMode).
+- Fixed unprocessed request error bug issue.
+
 ## [2.9.4] - 2023-11-06
 - Updated UniMachine ([Blackboard](https://github.com/gmhevinci/UniFramework/commit/3ea882c2fc8d5314c51e66fa35579324d0c7a73c)).
 - Updated UniTask to [v2.5.0](https://github.com/Cysharp/UniTask/releases/tag/2.5.0).
