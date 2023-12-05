@@ -255,7 +255,7 @@ if (isInitialized)
 ```C#
 // [Load asset and download from specific package (Export Individual DLC Bundles for CDN)]
 
-AppPackageInfoWithBuild packageInfo = new AppPackageInfoWithBuild()
+DlcPackageInfoWithBuild packageInfo = new DlcPackageInfoWithBuild()
 {
     buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline,
     packageName = "DlcPackage",
