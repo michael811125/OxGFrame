@@ -620,10 +620,10 @@ namespace OxGFrame.AssetLoader.Editor
                         {
                             inputPath = this.sourceFolder[(int)this.operationType];
                             outputPath = $"{this.exportFolder[(int)this.operationType]}/{PatchSetting.setting.rootFolderName}";
-                            List<string> exportDlcPackages = new List<string>();
-                            foreach (var dlcPackage in this.exportIndividualPackages) exportDlcPackages.Add(dlcPackage.packageName);
-                            string[] exportPackages = this.exportAppPackages.Union(exportDlcPackages).ToArray();
-                            BundleHelper.ExportConfigsAndAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.groupInfos, exportPackages, this.activeBuildTarget, this.buildTarget, true);
+                            //List<string> exportDlcPackages = new List<string>();
+                            //foreach (var dlcPackage in this.exportIndividualPackages) exportDlcPackages.Add(dlcPackage.packageName);
+                            //string[] exportPackages = this.exportAppPackages.Union(exportDlcPackages).ToArray();
+                            BundleHelper.ExportConfigsAndAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.groupInfos, this.exportAppPackages.ToArray(), this.activeBuildTarget, this.buildTarget, true);
                             BundleHelper.ExportIndividualDlcBundles(inputPath, outputPath, this.productName, this.exportIndividualPackages, this.activeBuildTarget, this.buildTarget, false);
                             EditorUtility.DisplayDialog("Process Message", "Export Configs And App Bundles For CDN.", "OK");
                             if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
@@ -633,10 +633,10 @@ namespace OxGFrame.AssetLoader.Editor
                         {
                             inputPath = this.sourceFolder[(int)this.operationType];
                             outputPath = $"{this.exportFolder[(int)this.operationType]}/{PatchSetting.setting.rootFolderName}";
-                            List<string> exportDlcPackages = new List<string>();
-                            foreach (var dlcPackage in this.exportIndividualPackages) exportDlcPackages.Add(dlcPackage.packageName);
-                            string[] exportPackages = this.exportAppPackages.Union(exportDlcPackages).ToArray();
-                            BundleHelper.ExportAppBundles(inputPath, outputPath, this.productName, this.appVersion, exportPackages, this.activeBuildTarget, this.buildTarget, true);
+                            //List<string> exportDlcPackages = new List<string>();
+                            //foreach (var dlcPackage in this.exportIndividualPackages) exportDlcPackages.Add(dlcPackage.packageName);
+                            //string[] exportPackages = this.exportAppPackages.Union(exportDlcPackages).ToArray();
+                            BundleHelper.ExportAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.exportAppPackages.ToArray(), this.activeBuildTarget, this.buildTarget, true);
                             BundleHelper.ExportIndividualDlcBundles(inputPath, outputPath, this.productName, this.exportIndividualPackages, this.activeBuildTarget, this.buildTarget, false);
                             EditorUtility.DisplayDialog("Process Message", "Export App Bundles For CDN Without Configs.", "OK");
                             if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
