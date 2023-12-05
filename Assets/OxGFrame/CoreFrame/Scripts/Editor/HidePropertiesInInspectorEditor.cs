@@ -37,7 +37,7 @@ namespace OxGFrame.CoreFrame.Editor
             //draw properties
             this.serializedObject.Update();
             var result = DrawDefaultInspectorExcept(this.serializedObject, this._hiddenProperties);
-            this.serializedObject.ApplyModifiedProperties();
+            if (result) this.serializedObject.ApplyModifiedProperties();
 
             return result;
         }
@@ -47,16 +47,23 @@ namespace OxGFrame.CoreFrame.Editor
         {
             if (serializedObject == null) throw new System.ArgumentNullException("serializedObject");
 
-            EditorGUI.BeginChangeCheck();
-            var iterator = serializedObject.GetIterator();
-            for (bool enterChildren = true; iterator.NextVisible(enterChildren); enterChildren = false)
+            try
             {
-                if (propsNotToDraw == null || !propsNotToDraw.Contains(iterator.name))
+                EditorGUI.BeginChangeCheck();
+                var iterator = serializedObject.GetIterator();
+                for (bool enterChildren = true; iterator.NextVisible(enterChildren); enterChildren = false)
                 {
-                    EditorGUILayout.PropertyField(iterator, true);
+                    if (propsNotToDraw == null || !propsNotToDraw.Contains(iterator.name))
+                    {
+                        EditorGUILayout.PropertyField(iterator, true);
+                    }
                 }
+                return EditorGUI.EndChangeCheck();
             }
-            return EditorGUI.EndChangeCheck();
+            catch
+            {
+                return false;
+            }
         }
         #endregion
     }
