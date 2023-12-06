@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using OxGKit.LoggingSystem;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace OxGFrame.CoreFrame.UIFrame
@@ -18,7 +19,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             freezeBtn.transition = Selectable.Transition.None;
             freezeBtn.onClick.AddListener(() =>
             {
-                Debug.LogWarning("<color=#42BBFF>UI has been frozen</color>");
+                Logging.PrintWarning<Logger>("<color=#42BBFF>UI has been frozen</color>");
             });
         }
 

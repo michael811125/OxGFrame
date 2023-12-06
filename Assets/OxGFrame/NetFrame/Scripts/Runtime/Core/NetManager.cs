@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using OxGKit.LoggingSystem;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace OxGFrame.NetFrame
@@ -80,7 +81,7 @@ namespace OxGFrame.NetFrame
             {
                 this._netNodes[nnId].Connect(netOption);
             }
-            else Debug.LogWarning(string.Format("The NodeId: {0} Can't Found !!! Connect Failed.", nnId));
+            else Logging.PrintWarning<Logger>(string.Format("The NodeId: {0} Can't Found !!! Connect Failed.", nnId));
         }
 
         /// <summary>
@@ -112,7 +113,7 @@ namespace OxGFrame.NetFrame
             }
             else
             {
-                Debug.LogWarning(string.Format("The NodeId: {0} Can't Found !!! Send Failed.", nnId));
+                Logging.PrintWarning<Logger>(string.Format("The NodeId: {0} Can't Found !!! Send Failed.", nnId));
                 return false;
             }
         }

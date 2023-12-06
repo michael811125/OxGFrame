@@ -123,7 +123,7 @@ namespace OxGFrame.MediaFrame
 
             if (obj == null)
             {
-                Debug.LogWarning(string.Format("【 path: {0} 】asset not found at this path!!!", assetName));
+                Logging.PrintWarning<Logger>(string.Format("【 path: {0} 】asset not found at this path!!!", assetName));
                 return null;
             }
 

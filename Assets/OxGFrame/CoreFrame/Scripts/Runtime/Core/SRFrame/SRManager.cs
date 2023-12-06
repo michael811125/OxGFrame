@@ -104,7 +104,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             {
                 if (this.CheckIsShowing(assetName))
                 {
-                    Debug.LogWarning($"SR: {assetName} already exists!!!");
+                    Logging.PrintWarning<Logger>($"SR: {assetName} already exists!!!");
                     return null;
                 }
             }
@@ -114,7 +114,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             var srBase = await this.LoadIntoAllCache(packageName, assetName, priority, progression, false, parent);
             if (srBase == null)
             {
-                Debug.LogWarning($"SR: {assetName} => Asset not found at this path!!!");
+                Logging.PrintWarning<Logger>($"SR: {assetName} => Asset not found at this path!!!");
                 return null;
             }
 
@@ -272,7 +272,7 @@ namespace OxGFrame.CoreFrame.SRFrame
 
             if (this.CheckIsShowing(assetName))
             {
-                Debug.LogWarning($"SR: {assetName} already reveal!!!");
+                Logging.PrintWarning<Logger>($"SR: {assetName} already reveal!!!");
                 return;
             }
 

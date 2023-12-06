@@ -393,7 +393,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             {
                 if (this.CheckIsShowing(assetName))
                 {
-                    Debug.LogWarning($"UI: {assetName} already exists!!!");
+                    Logging.PrintWarning<Logger>($"UI: {assetName} already exists!!!");
                     return null;
                 }
             }
@@ -403,7 +403,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             var uiBase = await this.LoadIntoAllCache(packageName, assetName, priority, progression, false);
             if (uiBase == null)
             {
-                Debug.LogWarning($"UI: {assetName} => Asset not found at this path!!!");
+                Logging.PrintWarning<Logger>($"UI: {assetName} => Asset not found at this path!!!");
                 return null;
             }
 
@@ -705,7 +705,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             if (this.CheckIsShowing(assetName))
             {
-                Debug.LogWarning($"UI: {assetName} already reveal!!!");
+                Logging.PrintWarning<Logger>($"UI: {assetName} already reveal!!!");
                 return;
             }
 

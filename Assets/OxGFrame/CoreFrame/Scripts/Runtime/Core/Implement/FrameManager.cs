@@ -380,7 +380,11 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         protected async UniTask<T> LoadIntoAllCache(string packageName, string assetName, uint priority, Progression progression, bool isPreloadMode, Transform parent = null)
         {
-            if (this.HasInLoadingFlags(assetName)) return null;
+            if (this.HasInLoadingFlags(assetName))
+            {
+                Logging.PrintWarning<Logger>($"Asset: {assetName} is loading...");
+                return null;
+            }
 
             GameObject asset;
             T fBase = null;
@@ -745,7 +749,7 @@ namespace OxGFrame.CoreFrame
             Type othersType = other.GetType();
             if (type != othersType)
             {
-                Debug.LogError($"The type \"{type.AssemblyQualifiedName}\" of \"{comp}\" does not match the type \"{othersType.AssemblyQualifiedName}\" of \"{other}\"!");
+                Logging.PrintError<Logger>($"The type \"{type.AssemblyQualifiedName}\" of \"{comp}\" does not match the type \"{othersType.AssemblyQualifiedName}\" of \"{other}\"!");
                 return null;
             }
 
@@ -787,11 +791,11 @@ namespace OxGFrame.CoreFrame
         /// <summary>
         /// Checks if a GameObject has been destroyed.
         /// </summary>
-        /// <param name="gameObject">GameObject reference to check for destructedness</param>
+        /// <param name="gameObject">GameObject reference to check for destructiveness</param>
         /// <returns>If the game object has been marked as destroyed by UnityEngine</returns>
         public static bool IsDestroyed(this GameObject gameObject)
         {
-            // UnityEngine overloads the == opeator for the GameObject type
+            // UnityEngine overloads the == operator for the GameObject type
             // and returns null when the object has been destroyed, but 
             // actually the object is still there but has not been cleaned up yet
             // if we test both we can determine if the object has been destroyed.

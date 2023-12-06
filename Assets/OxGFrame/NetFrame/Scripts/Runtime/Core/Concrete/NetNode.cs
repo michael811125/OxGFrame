@@ -131,7 +131,7 @@ namespace OxGFrame.NetFrame
         {
             if (this._socket == null)
             {
-                Debug.LogError("The socket cannot be null, Please init first.");
+                Logging.PrintError<Logger>("The socket cannot be null, Please init first.");
                 return;
             }
 

@@ -25,7 +25,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 lock (_locker)
                 {
                     _instance = FindObjectOfType<AudioManager>();
-                    if (_instance == null) Debug.LogWarning("<color=#FF0000>Connot found 【AudioManager Component】, Please to check your 【AudioManager GameObject】.</color>");
+                    if (_instance == null) Logging.PrintWarning<Logger>("<color=#FF0000>Cannot found 【AudioManager Component】, Please to check your 【AudioManager GameObject】.</color>");
                 }
             }
             return _instance;
@@ -232,7 +232,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                     switch (main.audioType.soundType)
                     {
                         case SoundType.Sole:
-                            Debug.LogWarning(string.Format("【Audio => SoundType: {0}】{1} already played!!!", main.audioType.soundType, assetName));
+                            Logging.PrintWarning<Logger>(string.Format("【Audio => SoundType: {0}】{1} already played!!!", main.audioType.soundType, assetName));
                             return audBases;
                     }
                 }
@@ -248,7 +248,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 AudioBase audBase = await this.CloneAsset<AudioBase>(assetName, go, parent, spawnParent);
                 if (audBase == null)
                 {
-                    Debug.LogWarning(string.Format("Asset not found at this path!!!【Audio】: {0}", assetName));
+                    Logging.PrintWarning<Logger>(string.Format("Asset not found at this path!!!【Audio】: {0}", assetName));
                     return new AudioBase[] { };
                 }
 

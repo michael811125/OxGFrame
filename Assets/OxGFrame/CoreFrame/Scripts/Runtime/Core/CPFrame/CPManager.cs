@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
+using OxGKit.LoggingSystem;
 using UnityEngine;
 
 namespace OxGFrame.CoreFrame.CPFrame
@@ -31,7 +32,7 @@ namespace OxGFrame.CoreFrame.CPFrame
 
             if (obj == null)
             {
-                Debug.LogWarning(string.Format("【 path: {0} 】asset not found at this path!!!", assetName));
+                Logging.PrintWarning<Logger>(string.Format("【 path: {0} 】asset not found at this path!!!", assetName));
                 return null;
             }
 
@@ -46,7 +47,7 @@ namespace OxGFrame.CoreFrame.CPFrame
 
             if (obj == null)
             {
-                Debug.LogWarning(string.Format("【 path: {0} 】asset not found at this path!!!", assetName));
+                Logging.PrintWarning<Logger>(string.Format("【 path: {0} 】asset not found at this path!!!", assetName));
                 return null;
             }
 
