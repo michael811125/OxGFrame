@@ -52,7 +52,7 @@ namespace OxGFrame.AssetLoader.Editor
         /// <param name="appVersion"></param>
         /// <param name="exportPackages"></param>
         /// <param name="groupInfos"></param>
-        /// <param name="packageInfos"></param>
+        /// <param name="packageInfos"> Set package names to export package infos </param>
         /// <param name="activeBuildTarget"></param>
         /// <param name="buildTarget"></param>
         /// <param name="isClearOutputPath"></param>

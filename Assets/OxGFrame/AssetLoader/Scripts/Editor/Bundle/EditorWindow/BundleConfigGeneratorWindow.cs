@@ -617,27 +617,23 @@ namespace OxGFrame.AssetLoader.Editor
                         if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{appCfgFileName}");
                         break;
                     case OperationType.ExportConfigsAndAppBundlesForCDN:
-                        {
-                            inputPath = this.sourceFolder[(int)this.operationType];
-                            outputPath = $"{this.exportFolder[(int)this.operationType]}/{PatchSetting.setting.rootFolderName}";
-                            List<string> exportDlcPackages = new List<string>();
-                            foreach (var dlcPackage in this.exportIndividualPackages) exportDlcPackages.Add(dlcPackage.packageName);
-                            string[] packageInfos = this.exportAppPackages.Union(exportDlcPackages).ToArray();
-                            BundleHelper.ExportConfigsAndAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.exportAppPackages.ToArray(), this.groupInfos, packageInfos, this.activeBuildTarget, this.buildTarget, true);
-                            BundleHelper.ExportIndividualDlcBundles(inputPath, outputPath, this.productName, this.exportIndividualPackages, this.activeBuildTarget, this.buildTarget, false);
-                            EditorUtility.DisplayDialog("Process Message", "Export Configs And App Bundles For CDN.", "OK");
-                            if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
-                        }
+                        inputPath = this.sourceFolder[(int)this.operationType];
+                        outputPath = $"{this.exportFolder[(int)this.operationType]}/{PatchSetting.setting.rootFolderName}";
+                        List<string> exportDlcPackages = new List<string>();
+                        foreach (var dlcPackage in this.exportIndividualPackages) exportDlcPackages.Add(dlcPackage.packageName);
+                        string[] packageInfos = this.exportAppPackages.Union(exportDlcPackages).ToArray();
+                        BundleHelper.ExportConfigsAndAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.exportAppPackages.ToArray(), this.groupInfos, packageInfos, this.activeBuildTarget, this.buildTarget, true);
+                        BundleHelper.ExportIndividualDlcBundles(inputPath, outputPath, this.productName, this.exportIndividualPackages, this.activeBuildTarget, this.buildTarget, false);
+                        EditorUtility.DisplayDialog("Process Message", "Export Configs And App Bundles For CDN.", "OK");
+                        if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
                         break;
                     case OperationType.ExportAppBundlesWithoutConfigsForCDN:
-                        {
-                            inputPath = this.sourceFolder[(int)this.operationType];
-                            outputPath = $"{this.exportFolder[(int)this.operationType]}/{PatchSetting.setting.rootFolderName}";
-                            BundleHelper.ExportAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.exportAppPackages.ToArray(), this.activeBuildTarget, this.buildTarget, true);
-                            BundleHelper.ExportIndividualDlcBundles(inputPath, outputPath, this.productName, this.exportIndividualPackages, this.activeBuildTarget, this.buildTarget, false);
-                            EditorUtility.DisplayDialog("Process Message", "Export App Bundles For CDN Without Configs.", "OK");
-                            if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
-                        }
+                        inputPath = this.sourceFolder[(int)this.operationType];
+                        outputPath = $"{this.exportFolder[(int)this.operationType]}/{PatchSetting.setting.rootFolderName}";
+                        BundleHelper.ExportAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.exportAppPackages.ToArray(), this.activeBuildTarget, this.buildTarget, true);
+                        BundleHelper.ExportIndividualDlcBundles(inputPath, outputPath, this.productName, this.exportIndividualPackages, this.activeBuildTarget, this.buildTarget, false);
+                        EditorUtility.DisplayDialog("Process Message", "Export App Bundles For CDN Without Configs.", "OK");
+                        if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
                         break;
                     case OperationType.ExportIndividualDLCBundlesForCDN:
                         inputPath = this.sourceFolder[(int)this.operationType];

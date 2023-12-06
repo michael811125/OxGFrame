@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.9.6] - 2023-12-06
+- Fixed a bug where the RawFileBuildPipeline download file was missing an extension.
+
 ## [2.9.5] - 2023-12-05
 - Added AppPackageInfoWithBuild and DlcPackageInfoWithBuild (BuildMode can be selected when executing on SimulateMode).
 ```C#

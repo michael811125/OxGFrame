@@ -153,6 +153,9 @@ namespace OxGFrame.AssetLoader.Bundle
                 var createParameters = new OfflinePlayModeParameters();
                 createParameters.DecryptionServices = _decryption;
                 createParameters.BreakpointResumeFileSize = BundleConfig.breakpointFileSizeThreshold;
+                // Only raw file build pipeline need to append extension
+                if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                    createParameters.CacheFileAppendExtension = true;
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 
@@ -166,6 +169,9 @@ namespace OxGFrame.AssetLoader.Bundle
                 createParameters.DeliveryQueryServices = deliveryQueryService;
                 createParameters.DeliveryLoadServices = deliveryLoadService;
                 createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);
+                // Only raw file build pipeline need to append extension
+                if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                    createParameters.CacheFileAppendExtension = true;
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 
@@ -177,6 +183,9 @@ namespace OxGFrame.AssetLoader.Bundle
                 createParameters.BreakpointResumeFileSize = BundleConfig.breakpointFileSizeThreshold;
                 createParameters.BuildinQueryServices = builtinQueryService;
                 createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);
+                // Only raw file build pipeline need to append extension
+                if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                    createParameters.CacheFileAppendExtension = true;
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 
