@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.9.7] - 2023-12-07
+- Modified repair procedure (Supports patch repair during download).
+- Modified BundleDemo in Samples.
+- Fixed AssetPatcher flags bug issue (IsCheck(), IsRepair(), IsDone()).
+
 ## [2.9.6] - 2023-12-06
 - Fixed a bug where the RawFileBuildPipeline download file was missing an extension.
 

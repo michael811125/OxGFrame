@@ -306,14 +306,18 @@ namespace OxGFrame.AssetLoader.Bundle
         public static async UniTask<bool> UnloadPackageAndClearCacheFiles(string packageName)
         {
             var package = GetPackage(packageName);
-            if (package == null) return false;
+            if (package == null)
+            {
+                Logging.PrintWarning<Logger>($"[Invalid unload] Package is null (return true). Package Name: {packageName}");
+                return true;
+            }
 
             try
             {
                 // delete local files first
                 package.ClearPackageSandbox();
 
-                await UniTask.Delay(TimeSpan.FromSeconds(1f));
+                await UniTask.NextFrame();
 
                 // after clear package cache files
                 var operation = package.ClearAllCacheFilesAsync();
@@ -321,8 +325,9 @@ namespace OxGFrame.AssetLoader.Bundle
 
                 if (operation.Status == EOperationStatus.Succeed) return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Logging.PrintWarning<Logger>(ex);
                 return false;
             }
 

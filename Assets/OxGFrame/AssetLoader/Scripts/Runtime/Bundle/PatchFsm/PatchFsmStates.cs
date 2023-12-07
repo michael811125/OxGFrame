@@ -22,6 +22,9 @@ namespace OxGFrame.AssetLoader.PatchFsm
         public class FsmPatchRepair : IStateNode
         {
             private StateMachine _machine;
+            private int _retryCount = _RETRY_COUNT;
+
+            private const int _RETRY_COUNT = 1;
 
             public FsmPatchRepair() { }
 
@@ -34,6 +37,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 // 流程準備
                 PatchEvents.PatchFsmState.SendEventMessage(this);
+                PatchManager.GetInstance().MarkRepairState();
                 this._DeleteLocalSaveFiles().Forget();
             }
 
@@ -47,26 +51,45 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
             private async UniTask _DeleteLocalSaveFiles()
             {
+                // EditorSimulateMode skip repair
+                if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
+                {
+                    this._machine.ChangeState<FsmPatchPrepare>();
+                    return;
+                }
+
+                // Cancel main download first
+                PatchManager.GetInstance().Cancel(false);
+
+                // Wait a frame
+                await UniTask.NextFrame();
+
                 // Delete Last Group Info record
                 PatchManager.DelLastGroupInfo();
 
-                // Get preset app package names
-                bool isCleared = false;
-
-                // Combine packages
+                // Get preset app package names and combine packages
                 var appPackageNames = PackageManager.GetPresetAppPackageNames();
                 var dlcPackageNames = PackageManager.GetPresetDlcPackageNames();
                 var packageNames = appPackageNames.Concat(dlcPackageNames).ToArray();
 
+                bool isCleared = false;
                 foreach (var packageName in packageNames)
                 {
                     // Clear cache and files of package
                     isCleared = await PackageManager.UnloadPackageAndClearCacheFiles(packageName);
-                    if (!isCleared) isCleared = false;
+                    if (!isCleared) break;
                 }
 
-                if (isCleared) this._machine.ChangeState<FsmPatchPrepare>();
-                else PatchEvents.PatchRepairFailed.SendEventMessage();
+                if (isCleared || this._retryCount <= 0)
+                {
+                    this._retryCount = _RETRY_COUNT;
+                    this._machine.ChangeState<FsmPatchPrepare>();
+                }
+                else
+                {
+                    this._retryCount--;
+                    PatchEvents.PatchRepairFailed.SendEventMessage();
+                }
             }
         }
 
@@ -88,6 +111,9 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 // 流程準備
                 PatchEvents.PatchFsmState.SendEventMessage(this);
+                // 不管怎樣都進行修復完成的標記
+                PatchManager.GetInstance().MarkRepairAsDone();
+                PatchManager.GetInstance().MarkCheckState();
                 this._machine.ChangeState<FsmAppVersionUpdate>();
             }
 
@@ -937,7 +963,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 // 更新完畢
                 PatchEvents.PatchFsmState.SendEventMessage(this);
                 // Patch 標記完成
-                PatchManager.GetInstance().MarkAsDone();
+                PatchManager.GetInstance().MarkPatchAsDone();
             }
 
             void IStateNode.OnUpdate()

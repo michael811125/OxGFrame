@@ -18,7 +18,13 @@ public class BundleDemo : MonoBehaviour
     public Text info = null;
     public Text versionTxt = null;
 
+    public Toggle checkState = null;
+    public Toggle repairState = null;
+    public Toggle doneState = null;
+
     public GameObject controlBtns = null;
+    public GameObject ctrlCheckBtn = null;
+    public GameObject ctrlRepairBtn = null;
     public GameObject downloadBtns = null;
     public GameObject bundleBtns = null;
     public GameObject progressGroup = null;
@@ -57,11 +63,21 @@ public class BundleDemo : MonoBehaviour
         // Wait Until IsInitialized
         while (!AssetPatcher.IsInitialized()) yield return null;
 
+        // Show control buttons
+        if (!this.controlBtns.activeSelf) this.controlBtns.SetActive(true);
+
         // Enable Buttons
         foreach (var btn in btns)
         {
             btn.interactable = true;
         }
+    }
+
+    private void Update()
+    {
+        this.checkState.isOn = AssetPatcher.IsCheck();
+        this.repairState.isOn = AssetPatcher.IsRepair();
+        this.doneState.isOn = AssetPatcher.IsDone();
     }
 
     #region Patch Event
@@ -140,7 +156,7 @@ public class BundleDemo : MonoBehaviour
                 case PatchFsmStates.FsmBeginDownload:
                     this.msg.text = "Begin Download Files";
                     if (!this.progressGroup.activeSelf) this.progressGroup.SetActive(true);
-                    //if (!this.downloadBtns.activeSelf) this.downloadBtns.SetActive(true);
+                    if (!this.downloadBtns.activeSelf) this.downloadBtns.SetActive(true);
                     break;
                 case PatchFsmStates.FsmDownloadOver:
                     this.msg.text = "Download Over";
@@ -160,7 +176,11 @@ public class BundleDemo : MonoBehaviour
                     string patchVersion = AssetPatcher.GetPatchVersion();
                     // show version text
                     this.versionTxt.text = $"version: {appVersion}<{encodePatchVersion}>\napp_version: {appVersion}\npatch_version (encoded): {encodePatchVersion}\npatch_version: {patchVersion}";
-                    if (!this.controlBtns.activeSelf) this.controlBtns.SetActive(true);
+                    if (!this.controlBtns.activeSelf)
+                    {
+                        this.controlBtns.SetActive(true);
+                        this.ctrlRepairBtn.SetActive(true);
+                    }
                     if (!this.bundleBtns.activeSelf) this.bundleBtns.SetActive(true);
                     if (this.progressGroup.activeSelf) this.progressGroup.SetActive(false);
                     if (!this.versionTxt.gameObject.activeSelf) this.versionTxt.gameObject.SetActive(true);
@@ -323,6 +343,8 @@ public class BundleDemo : MonoBehaviour
 
     public void RetryEvent()
     {
+        if (this.retryWindow.activeSelf) this.retryWindow.SetActive(false);
+
         #region Retry Event
         switch (this._retryType)
         {
@@ -357,8 +379,6 @@ public class BundleDemo : MonoBehaviour
                 break;
         }
         #endregion
-
-        if (this.retryWindow.activeSelf) this.retryWindow.SetActive(false);
     }
     #endregion
 

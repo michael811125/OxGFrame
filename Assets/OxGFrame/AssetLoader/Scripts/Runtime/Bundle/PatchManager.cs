@@ -132,14 +132,13 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         public void Check()
         {
-            if (!this._isCheck)
+            if (!this._isCheck && !this._isRepair)
             {
-                this._isCheck = true;
                 this._patchFsm.Run<PatchFsmStates.FsmPatchPrepare>();
             }
             else
             {
-                Debug.LogWarning("Patch Checking...");
+                Logging.PrintWarning<Logger>("Patch Checking...");
             }
         }
 
@@ -150,12 +149,11 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             if (!this._isRepair)
             {
-                this._isRepair = true;
                 this._patchFsm.Run<PatchFsmStates.FsmPatchRepair>();
             }
             else
             {
-                Debug.LogWarning("Patch Repairing...");
+                Logging.PrintWarning<Logger>("Patch Repairing...");
             }
         }
 
@@ -186,26 +184,52 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// 取消下載
         /// </summary>
-        public void Cancel()
+        public void Cancel(bool sendEvent = true)
         {
             if (this.mainDownloaders == null) return;
             foreach (var downloader in this.mainDownloaders)
             {
                 downloader.CancelDownload();
             }
-            PatchEvents.PatchDownloadCanceled.SendEventMessage();
+            if (sendEvent) PatchEvents.PatchDownloadCanceled.SendEventMessage();
         }
         #endregion
 
         #region Patch Flag
         /// <summary>
-        /// 標記更新結束
+        /// 標記 Check 狀態
         /// </summary>
-        public void MarkAsDone()
+        public void MarkCheckState()
+        {
+            this._isDone = false;
+            this._isCheck = true;
+        }
+
+        /// <summary>
+        /// 標記 Repair 狀態
+        /// </summary>
+        public void MarkRepairState()
+        {
+            this._isDone = false;
+            this._isRepair = true;
+        }
+
+        /// <summary>
+        /// 標記 Patch 結束
+        /// </summary>
+        public void MarkPatchAsDone()
         {
             this._isDone = true;
-
             this._isCheck = false;
+            this._isRepair = false;
+            this.mainDownloaders = null;
+        }
+
+        /// <summary>
+        /// 標記 Repair 結束
+        /// </summary>
+        public void MarkRepairAsDone()
+        {
             this._isRepair = false;
             this.mainDownloaders = null;
         }
