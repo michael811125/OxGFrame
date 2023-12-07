@@ -182,6 +182,10 @@ YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config 
 
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_1.png)
 
+資源更新過程 (支援下載途中直接進行修復功能)
+
+https://github.com/michael811125/OxGFrame/assets/30960759/d84de519-6afd-4f32-b9c6-8614100a2e81
+
 ---
 
 **將 PatchLauncher 拖曳至場景中後，可以設置 PlayMode**
