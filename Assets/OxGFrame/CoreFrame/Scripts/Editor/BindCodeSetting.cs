@@ -8,6 +8,12 @@ namespace OxGFrame.CoreFrame.Editor
     [CreateAssetMenu(fileName = nameof(BindCodeSetting), menuName = "OxGFrame/Create Settings/Create Bind Code Setting")]
     public class BindCodeSetting : ScriptableObject
     {
+        public enum MethodType
+        {
+            Manual = 1,
+            Auto = 0
+        }
+
         [Serializable]
         public struct Pluralize
         {
@@ -52,9 +58,13 @@ namespace OxGFrame.CoreFrame.Editor
         public string variablePrefix = "_";
 
         [Separator("Method Setting")]
+        public MethodType methodType = MethodType.Auto;
+        [ConditionalField(nameof(methodType), false, MethodType.Manual)]
         public string methodAccessModifier = "protected";
+        [ConditionalField(nameof(methodType), false, MethodType.Manual)]
         public string methodPrefix = "";
-        public string methodName = "InitBindingComponents";
+        [ConditionalField(nameof(methodType), false, MethodType.Manual)]
+        public string methodName = "InitBind";
 
         [Separator("Indicate Modifier Setting")]
         public IndicateModifier indicateModifier = IndicateModifier.This;
@@ -96,6 +106,28 @@ namespace OxGFrame.CoreFrame.Editor
                     return "this.";
                 default:
                     return string.Empty;
+            }
+        }
+
+        public string GetMethodAccessModifier()
+        {
+            switch (this.methodType)
+            {
+                case MethodType.Auto:
+                    return "protected";
+                default:
+                    return this.methodAccessModifier;
+            }
+        }
+
+        public string GetMethodName()
+        {
+            switch (this.methodType)
+            {
+                case MethodType.Auto:
+                    return "OnAutoBind";
+                default:
+                    return this.methodName;
             }
         }
 

@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## [2.9.8] - 2023-12-08
+- Added Generate binding code rule (MethodType: Manual, Auto, default is Auto).
+```C#
+    #region Binding Components
+    protected Image _bgImg;
+    protected Text _msgTxt;
+    
+    /// <summary>
+    /// Auto Binding Section
+    /// </summary>
+    protected override void OnAutoBind()
+    {
+        base.OnAutoBind();
+        this._bgImg = this.collector.GetNodeComponent<Image>("Bg*Img");
+        this._msgTxt = this.collector.GetNodeComponent<Text>("Msg*Txt");
+    }
+    #endregion
+```
+
 ## [2.9.7] - 2023-12-07
 - Modified repair procedure (Supports patch repair during download).
 - Modified BundleDemo in Samples.

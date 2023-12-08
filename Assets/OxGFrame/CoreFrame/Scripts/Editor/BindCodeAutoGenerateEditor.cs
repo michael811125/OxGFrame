@@ -214,12 +214,27 @@ namespace OxGFrame.CoreFrame.Editor
             #endregion
 
             #region 方法定義生成
-            _builder += "\n";
-            _builder += "/// <summary>\n";
-            _builder += "/// Don't forget to call via OnBind method\n";
-            _builder += "/// </summary>\n";
-            _builder += $"{_settings.methodAccessModifier} void {_settings.methodPrefix}{_settings.methodName}()\n";
-            _builder += "{\n";
+            switch (_settings.methodType)
+            {
+                case BindCodeSetting.MethodType.Auto:
+                    _builder += "\n";
+                    _builder += "/// <summary>\n";
+                    _builder += "/// Auto Binding Section\n";
+                    _builder += "/// </summary>\n";
+                    _builder += $"{_settings.GetMethodAccessModifier()} override void {_settings.GetMethodName()}()\n";
+                    _builder += "{\n";
+                    _builder += $"    base.{_settings.GetMethodName()}();\n";
+                    break;
+                default:
+                    _builder += "\n";
+                    _builder += "/// <summary>\n";
+                    _builder += "/// Don't forget to call via OnBind method\n";
+                    _builder += "/// </summary>\n";
+                    _builder += $"{_settings.GetMethodAccessModifier()} void {_settings.methodPrefix}{_settings.GetMethodName()}()\n";
+                    _builder += "{\n";
+                    break;
+            }
+
             foreach (var bindInfo in _collectBindInfos)
             {
                 // Array

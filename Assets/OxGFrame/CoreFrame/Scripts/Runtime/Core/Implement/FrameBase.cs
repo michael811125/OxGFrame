@@ -7,7 +7,7 @@ namespace OxGFrame.CoreFrame
 {
     /// <summary>
     /// <para>
-    /// Init Order: Awake (Once) > OnCreate (Once) > OnBind (Once) > PreInit (EveryOpen) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
+    /// Init Order: Awake (Once) > OnCreate (Once) > OnAutoBind (Once) > OnBind (Once) > PreInit (EveryOpen) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
     /// </para>
     /// </summary>
     [DisallowMultipleComponent]
@@ -161,6 +161,7 @@ namespace OxGFrame.CoreFrame
             // 初次初始相關綁定組件與事件
             if (!this._isInitFirst)
             {
+                this.OnAutoBind();
                 this.OnBind();
                 this._isInitFirst = true;
             }
@@ -186,6 +187,11 @@ namespace OxGFrame.CoreFrame
         /// 子類實現關閉附屬程序
         /// </summary>
         protected abstract void OnPreClose();
+
+        /// <summary>
+        /// 自動綁定初始區塊 (僅執行一次)
+        /// </summary>
+        protected virtual void OnAutoBind() { }
 
         /// <summary>
         /// 初始相關綁定組件與事件 (僅執行一次)
