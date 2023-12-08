@@ -165,13 +165,17 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 
 YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config Generator 視窗進行 Bundle 上傳檔輸出 + 配置檔建立 (**步驟如下**)。
 
-1. 先選擇 Export App Config To StreamingAssets 頁籤，建立 appconfig.json 至 StreamingAssets 中 (主要用於 App Version 比對)。
+1. 選擇 Export App Config To StreamingAssets 頁籤，建立 appconfig.json 至 StreamingAssets 中 (主要用於 App Version 比對)。
 
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_10.png)
 
-2. 再選擇 Export Configs And App Bundles for CDN 頁籤，輸出上傳資源，Source Folder 選擇剛剛使用 YooAsset 輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行預設包的群組分包，輸出後將 CDN 資料夾直接上傳至 Server。
-   
-  ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_11.png) 
+2. 再開啟 OxGFrame/AssetLoader/Bundle Url Generator (burlconfig.conf) 視窗，建立 burlconfig.conf 至 StreamgingAssets 中 (主要用於定位 CDN Server Domain 與 Store Link)。 
+
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_13.png)
+
+3. 最後返回 OxGFrame/AssetLoader/Export Bundle And Config Generator 視窗，選擇 Export Configs And App Bundles for CDN 頁籤，輸出上傳資源，Source Folder 選擇剛剛使用 YooAsset 輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行預設包的群組分包，輸出後將 CDN 資料夾直接上傳至 Server。
+
+![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_11.png) 
   
 ---
   
@@ -198,9 +202,9 @@ https://github.com/michael811125/OxGFrame/assets/30960759/d84de519-6afd-4f32-b9c
   - 不支援事先下載，主要是因為 WebGL 是邊玩邊下載。
 
 **檢查 PlayMode 是否初始完成**
-- 判斷檢查 AssetPatcher.IsInitialized() 是否完成 Preset App Packages 的初始，因為初始完成後，才能開始進行 Built-in Bundle 的加載與 AssetPatcher.Check() 檢查更新，又或者邊玩邊下載。
+- 判斷檢查 AssetPatcher.IsInitialized() 是否完成 Preset Packages 的初始，因為初始完成後，才能開始進行 Built-in Bundle 的加載與 AssetPatcher.Check() 檢查更新，又或者邊玩邊下載。
   - 備註 : 區分 Built-in 跟 Patch (視情況自行訂定運作流程)
-    1. 需自己拆分 Patch 更新前用到的資源 (例如 : LogoUI, PatchUI 等...)，需要先打包至 Built-in 作為內置資源。
+    1. 需自己拆分 Patch 更新前所用到的資源 (例如 : LogoUI 等...)，需要先打包至 Built-in 作為內置資源。
 	2. 後續執行 AssetPatcher.Check() 檢查 Patch 更新完成後，就可以讀取更新資源了。
       - 執行 AssetPatcher.Check() 檢查流程時，**會將 Preset App Packages 與 Preset DLC Packages 進行 Main Download 的合併**。  
 
@@ -404,8 +408,8 @@ Init Order : OnCreate (Once) > AutoBind (Once) > OnBind (Once) > OnPreShow (Ever
 | NodePool | NodePool | 0 | s |
 
 自動綁定產生器的功能有方法類型的區分，如下
-- 自動 (Auto)，只需要將區塊貼上至代碼中，將會自動 override。
-- 手動 (Manual)，將區塊貼上至代碼中後，需要手動交由 OnBind() 方法名稱的呼叫。
+- 自動 (Auto)，只需要將區塊貼上至代碼中，將會自動 override 與調用。
+- 手動 (Manual)，可自定義方法名稱，將區塊貼上至代碼中後，需要手動在 OnBind() 方法中進行調用。
 
 https://github.com/michael811125/OxGFrame/assets/30960759/8e4f63e9-b955-4f91-8ac7-be949677c54f
 
