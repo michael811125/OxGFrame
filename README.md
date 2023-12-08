@@ -56,7 +56,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/5e41e84a-029d-4392-814
 
 ## 基本介紹
 
-OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、場景資源 (SRFrame)、Unity 場景 (USFrame)、模板物件 (CPFrame)、音樂音效 (AudioFrame)、影片 (VideoFrame)、遊戲階段整合 (GSIFrame)、網路 (NetFrame)、集中式 Event 註冊 (EventCenter)、集中式 API 註冊 (APICenter)、Http.Acax (仿 Ajax 概念) 等都進行模組化設計，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
+OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、場景資源 (SRFrame)、Unity 場景 (USFrame)、模板物件 (CPFrame)、音樂音效 (AudioFrame)、影片 (VideoFrame)、遊戲階段整合 (GSIFrame)、網路 (NetFrame)、事件中心 (CenterFrame)，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
 
 **平台測試**
 - Windows (Passed)
@@ -339,7 +339,7 @@ store_link http://
 
 #### 初始順序說明
 
-Init Order : OnCreate (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
+Init Order : OnCreate (Once) > AutoBind (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
 
 #### 物件綁定說明 (OnBind)
 
@@ -403,7 +403,11 @@ Init Order : OnCreate (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (E
 | BtnPlus | ButtonPlus | 0 | es |
 | NodePool | NodePool | 0 | s |
 
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/gif_1.gif)
+自動綁定產生器的功能有方法類型的區分，如下
+- 自動 (Auto)，只需要將區塊貼上至代碼中，將會自動 override。
+- 手動 (Manual)，將區塊貼上至代碼中後，需要手動交由 OnBind() 方法名稱的呼叫。
+
+https://github.com/michael811125/OxGFrame/assets/30960759/8e4f63e9-b955-4f91-8ac7-be949677c54f
 
 **如果沒有要使用 CoreFrame 核心製作模塊，可以直接刪除整個 CoreFrame。**
 
