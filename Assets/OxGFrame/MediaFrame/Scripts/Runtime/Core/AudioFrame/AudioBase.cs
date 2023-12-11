@@ -22,7 +22,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         [Tooltip("Depends on Requester.InitCacheCapacityForAudio"), ConditionalField(nameof(sourceType), true, SourceType.Audio)]
         public bool requestCached = true;
         // SourceType => StreamingAssets
-        [Tooltip("Default path is [StreamingAssets]. Just set that inside path and file name, Don't forget file name must with extension, ex: Audio/example.mp3"), ConditionalField(nameof(sourceType), false, SourceType.Streaming)]
+        [Tooltip("Default path is [StreamingAssets]. Just set that inside path and file name, Don't forget file name must with extension, ex: Audio/example.mp3"), ConditionalField(nameof(sourceType), false, SourceType.StreamingAssets)]
         public string fullPathName = "";
         // SourceType => Url
         [ConditionalField(nameof(sourceType), false, SourceType.Url)]
@@ -57,7 +57,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             // Get Audio
             switch (this.sourceType)
             {
-                case SourceType.Streaming:
+                case SourceType.StreamingAssets:
                     this.audioClip = await this.GetAudioFromStreamingAssets(this.requestCached);
                     break;
                 case SourceType.Url:

@@ -6,7 +6,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
     public enum SourceType
     {
         Video,
-        Streaming,
+        StreamingAssets,
         Url
     }
 

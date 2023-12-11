@@ -6,7 +6,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
     public enum SourceType
     {
         Audio,
-        Streaming,
+        StreamingAssets,
         Url
     }
 
