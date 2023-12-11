@@ -6,7 +6,7 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
 {
     internal class SecureString : IDisposable
     {
-        // Secrued
+        // Secured
         private bool _secured = true;
 
         // Opaque Data
@@ -110,7 +110,7 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
             {
                 aesAlg.Key = this._salt;
 
-                byte[] IV = new byte[aesAlg.BlockSize / 8];
+                byte[] IV = new byte[aesAlg.BlockSize >> 3];
                 byte[] cipherText = new byte[this._opaqueData.Length - IV.Length];
 
                 Array.Copy(this._opaqueData, IV, IV.Length);
