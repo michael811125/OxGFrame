@@ -53,6 +53,7 @@ namespace OxGFrame.AssetLoader.Bundle
             #region Init Preset Packages
             bool appInitialized = await InitPresetAppPackages();
             bool dlcInitialized = await InitPresetDlcPackages();
+            Logging.Print<Logger>($"<color=#ffe45a>{appInitialized}     {dlcInitialized}</color>");
             isInitialized = dlcInitialized && appInitialized;
             #endregion
 
@@ -133,9 +134,11 @@ namespace OxGFrame.AssetLoader.Bundle
             var package = RegisterPackage(packageName);
             if (package.InitializeStatus == EOperationStatus.Succeed)
             {
-                if (autoUpdate) await UpdatePackage(packageName);
+                // updated state default is true
+                bool updated = true;
+                if (autoUpdate) updated = await UpdatePackage(packageName);
                 Logging.Print<Logger>($"<color=#e2ec00>Package: {packageName} is initialized. Status: {package.InitializeStatus}.</color>");
-                return true;
+                return updated;
             }
 
             // Simulate Mode
@@ -193,9 +196,11 @@ namespace OxGFrame.AssetLoader.Bundle
 
             if (initializationOperation.Status == EOperationStatus.Succeed)
             {
-                if (autoUpdate) await UpdatePackage(packageName);
+                // updated state default is true
+                bool updated = true;
+                if (autoUpdate) updated = await UpdatePackage(packageName);
                 Logging.Print<Logger>($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Init</color> completed successfully.</color>");
-                return true;
+                return updated;
             }
             else
             {
@@ -275,16 +280,16 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static ulong GetPackageSizeInLocal(string packageName)
         {
-            if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
-            {
-                Logging.Print<Logger>($"<color=#ffce00><color=#0fa>[{BundleConfig.PlayMode.EditorSimulateMode}]</color> Get Package Size In Local <color=#0fa>return 1</color></color>");
-                return 1;
-            }
-
             try
             {
                 var package = GetPackage(packageName);
                 if (package == null) return 0;
+
+                if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
+                {
+                    Logging.Print<Logger>($"<color=#ffce00><color=#0fa>[{BundleConfig.PlayMode.EditorSimulateMode}]</color> Get Package Size In Local <color=#0fa>return 1</color></color>");
+                    return 1;
+                }
 
                 string path = BundleConfig.GetLocalSandboxPackagePath(packageName);
                 if (!Directory.Exists(path)) return 0;

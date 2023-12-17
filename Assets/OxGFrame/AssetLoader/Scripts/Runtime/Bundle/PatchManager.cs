@@ -65,37 +65,37 @@ namespace OxGFrame.AssetLoader.Bundle
                 switch (msgData.stateNode)
                 {
                     case PatchFsmStates.FsmPatchRepair:
-                        Logging.Print<Logger>("<color=#00FF00> >>>> PatchFsmStates.FsmPatchRepair <<<< </color>");
+                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmPatchRepair <<<< </color>");
                         break;
                     case PatchFsmStates.FsmPatchPrepare:
-                        Logging.Print<Logger>("<color=#00FF00> >>>> PatchFsmStates.FsmPatchPrepare <<<< </color>");
+                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmPatchPrepare <<<< </color>");
                         break;
                     case PatchFsmStates.FsmAppVersionUpdate:
-                        Logging.Print<Logger>("<color=#00FF00> >>>> PatchFsmStates.FsmAppVersionUpdate <<<< </color>");
+                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmAppVersionUpdate <<<< </color>");
                         break;
                     case PatchFsmStates.FsmInitPatchMode:
-                        Logging.Print<Logger>("<color=#00FF00> >>>> PatchFsmStates.FsmInitPatchMode <<<< </color>");
+                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmInitPatchMode <<<< </color>");
                         break;
                     case PatchFsmStates.FsmPatchVersionUpdate:
-                        Logging.Print<Logger>("<color=#00FF00> >>>> PatchFsmStates.FsmPatchVersionUpdate <<<< </color>");
+                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmPatchVersionUpdate <<<< </color>");
                         break;
                     case PatchFsmStates.FsmPatchManifestUpdate:
-                        Logging.Print<Logger>("<color=#00FF00> >>>> PatchFsmStates.FsmPatchManifestUpdate <<<< </color>");
+                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmPatchManifestUpdate <<<< </color>");
                         break;
                     case PatchFsmStates.FsmCreateDownloader:
-                        Logging.Print<Logger>("<color=#00FF00> >>>> PatchFsmStates.FsmCreateDownloader <<<< </color>");
+                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmCreateDownloader <<<< </color>");
                         break;
                     case PatchFsmStates.FsmBeginDownload:
-                        Logging.Print<Logger>("<color=#00FF00> >>>> PatchFsmStates.FsmBeginDownloadFiles <<<< </color>");
+                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmBeginDownloadFiles <<<< </color>");
                         break;
                     case PatchFsmStates.FsmDownloadOver:
-                        Logging.Print<Logger>("<color=#00FF00> >>>> PatchFsmStates.FsmDownloadOver <<<< </color>");
+                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmDownloadOver <<<< </color>");
                         break;
                     case PatchFsmStates.FsmClearCache:
-                        Logging.Print<Logger>("<color=#00FF00> >>>> PatchFsmStates.FsmClearCache <<<< </color>");
+                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmClearCache <<<< </color>");
                         break;
                     case PatchFsmStates.FsmPatchDone:
-                        Logging.Print<Logger>("<color=#00FF00> >>>> PatchFsmStates.FsmPatchDone <<<< </color>");
+                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmPatchDone <<<< </color>");
                         break;
                 }
             });
@@ -126,6 +126,13 @@ namespace OxGFrame.AssetLoader.Bundle
             this._patchFsm.AddNode<PatchFsmStates.FsmPatchDone>();
         }
 
+        ~PatchManager()
+        {
+            this.Cancel();
+            this._userEvents.RemoveAllListener();
+            this._patchFsm = null;
+        }
+
         #region Patch Operation
         /// <summary>
         /// 開啟檢查流程
@@ -138,7 +145,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
             else
             {
-                Logging.PrintWarning<Logger>("Patch Checking...");
+                Logging.PrintWarning<Logger>("Patch checking...");
             }
         }
 
@@ -153,7 +160,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
             else
             {
-                Logging.PrintWarning<Logger>("Patch Repairing...");
+                Logging.PrintWarning<Logger>("Patch repairing...");
             }
         }
 
@@ -192,6 +199,8 @@ namespace OxGFrame.AssetLoader.Bundle
                 downloader.CancelDownload();
             }
             if (sendEvent) PatchEvents.PatchDownloadCanceled.SendEventMessage();
+            this.MarkCheckAsDone();
+            this.MarkRepairAsDone();
         }
         #endregion
 
@@ -206,6 +215,14 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
+        /// 標記 Check 結束
+        /// </summary>
+        public void MarkCheckAsDone()
+        {
+            this._isCheck = false;
+        }
+
+        /// <summary>
         /// 標記 Repair 狀態
         /// </summary>
         public void MarkRepairState()
@@ -215,21 +232,21 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
+        /// 標記 Repair 結束
+        /// </summary>
+        public void MarkRepairAsDone()
+        {
+            this._isRepair = false;
+            this.mainDownloaders = null;
+        }
+
+        /// <summary>
         /// 標記 Patch 結束
         /// </summary>
         public void MarkPatchAsDone()
         {
             this._isDone = true;
             this._isCheck = false;
-            this._isRepair = false;
-            this.mainDownloaders = null;
-        }
-
-        /// <summary>
-        /// 標記 Repair 結束
-        /// </summary>
-        public void MarkRepairAsDone()
-        {
             this._isRepair = false;
             this.mainDownloaders = null;
         }
@@ -299,11 +316,5 @@ namespace OxGFrame.AssetLoader.Bundle
             }
         }
         #endregion
-
-        ~PatchManager()
-        {
-            this._userEvents.RemoveAllListener();
-            this._patchFsm = null;
-        }
     }
 }

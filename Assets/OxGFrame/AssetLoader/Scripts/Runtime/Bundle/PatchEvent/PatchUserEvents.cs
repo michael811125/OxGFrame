@@ -54,7 +54,7 @@ namespace OxGFrame.AssetLoader.PatchEvent
         /// </summary>
         public class UserBeginDownload : IEventMessage
         {
-            public static void SendEventMessage(GroupInfo groupInfo = null)
+            public static void SendEventMessage(GroupInfo groupInfo)
             {
                 var msg = new UserBeginDownload();
                 PatchManager.SetLastGroupInfo(groupInfo);

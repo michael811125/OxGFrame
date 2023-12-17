@@ -239,6 +239,36 @@ https://github.com/michael811125/OxGFrame/assets/30960759/d84de519-6afd-4f32-b9c
   - 路徑不管平台 (.../CDN/\<ProductName\>/DLC/Packages)
   - 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion (ex: "latest")，變成只要 DLC 有更新就可以使用固定路徑進行更新。
 
+**使用 PackageOperation 進行 DLC 資源包的操作 (方便控管資源包)**
+```C#
+    // Use Example
+    var packageOperations = new PackageOperation[]
+    {
+        new PackageOperation
+        (
+            "DLC Package 1",
+            new DlcPackageInfoWithBuild()
+            {
+                buildMode = BuildMode.ScriptableBuildPipeline,
+                packageName = "DlcPackage",
+                dlcVersion = "latest"
+            },
+            false
+        ),
+        new PackageOperation
+        (
+            "DLC Pacakge 2",
+            new DlcPackageInfoWithBuild()
+            {
+                buildMode = BuildMode.ScriptableBuildPipeline,
+                packageName = "OtherPackage",
+                dlcVersion = "latest"
+            },
+            false
+        )
+    };
+```
+
 **App Package**
 ```C#
 // [Load asset and download from specific package (Export App Bundles for CDN)]

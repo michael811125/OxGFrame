@@ -1,5 +1,65 @@
 # CHANGELOG
 
+## [2.9.9] - 2023-12-18
+- Added PackageOperation feature, can download packages more easier (please checkout BundleDLCDemo).
+```C#
+    // Factory Mode
+    public static PackageOperation CreateOperation(string groupName, PackageInfoWithBuild packageInfo, bool skipDownload = false)
+    public static PackageOperation CreateOperation(string groupName, PackageInfoWithBuild[] packageInfos, bool skipDownload = false)
+
+    // Use Example
+    var packageOperations = new PackageOperation[]
+    {
+        new PackageOperation
+        (
+            "DLC Package 1",
+            new DlcPackageInfoWithBuild()
+            {
+                buildMode = BuildMode.ScriptableBuildPipeline,
+                packageName = "DlcPackage",
+                dlcVersion = "latest"
+            },
+            false
+        ),
+        new PackageOperation
+        (
+            "DLC Pacakge 2",
+            new DlcPackageInfoWithBuild()
+            {
+                buildMode = BuildMode.ScriptableBuildPipeline,
+                packageName = "OtherPackage",
+                dlcVersion = "latest"
+            },
+            false
+        )
+    };
+```
+- Added BundleDLCDemo for operate PackageOperation.
+- Modified params to PackageInfoWithBuild.
+```C#
+    public abstract class PackageInfoWithBuild
+    {
+        [Tooltip("Only for EditorSimulateMode")]
+        public BuildMode buildMode;
+        public string packageName;
+        
+        /// <summary>
+        /// Custom host server
+        /// </summary>
+        [HideInInspector]
+        public string hostServer = null;
+        /// <summary>
+        /// Custom fallback host server
+        /// </summary>
+        [HideInInspector]
+        public string fallbackHostServer = null;
+        public IBuildinQueryServices builtinQueryService = null;
+        public IDeliveryQueryServices deliveryQueryService = null;
+        public IDeliveryLoadServices deliveryLoadService = null;
+    }
+```
+- Removed method InitCustomPackage from AssetPatcher.
+
 ## [2.9.8] - 2023-12-08
 - Added Generate binding code rule (MethodType: Manual, Auto, default is Auto).
 ```C#

@@ -111,8 +111,6 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 // 流程準備
                 PatchEvents.PatchFsmState.SendEventMessage(this);
-                // 不管怎樣都進行修復完成的標記
-                PatchManager.GetInstance().MarkRepairAsDone();
                 PatchManager.GetInstance().MarkCheckState();
                 this._machine.ChangeState<FsmAppVersionUpdate>();
             }
@@ -375,22 +373,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
 
-                if (PatchManager.GetInstance().IsRepair() &&
-                    PackageManager.isInitialized)
-                {
-                    // SimulateMode and OfflineMode doesn't need to update patch version and manifest
-                    if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
-                        BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode)
-                    {
-                        this._machine.ChangeState<FsmPatchDone>();
-                        return;
-                    }
-
-                    this._machine.ChangeState<FsmPatchVersionUpdate>();
-                    Logging.Print<Logger>("<color=#ffcf67>(Repair) Repair Patch</color>");
-                    return;
-                }
-                else if (PackageManager.isInitialized)
+                if (PackageManager.isInitialized)
                 {
                     this._machine.ChangeState<FsmPatchVersionUpdate>();
                     Logging.Print<Logger>("<color=#ffcf67>(Check) Check Patch</color>");
@@ -428,6 +411,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 // 獲取最新的資源版本
                 PatchEvents.PatchFsmState.SendEventMessage(this);
+                PatchManager.GetInstance().MarkRepairAsDone();
                 this._UpdatePatchVersion().Forget();
             }
 
@@ -514,11 +498,12 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 var appPackages = PackageManager.GetPresetAppPackages();
                 var dlcPackages = PackageManager.GetPresetDlcPackages();
                 var packages = appPackages.Concat(dlcPackages).ToArray();
+                var packageVersions = PatchManager.patchVersions;
 
                 bool succeed = false;
                 for (int i = 0; i < packages.Length; i++)
                 {
-                    var operation = packages[i].UpdatePackageManifestAsync(PatchManager.patchVersions[i]);
+                    var operation = packages[i].UpdatePackageManifestAsync(packageVersions[i]);
                     await operation;
 
                     if (operation.Status == EOperationStatus.Succeed)
@@ -538,7 +523,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 if (succeed)
                 {
-                    if (BundleConfig.skipCreateMainDownloder) this._machine.ChangeState<FsmDownloadOver>();
+                    if (BundleConfig.skipMainDownload) this._machine.ChangeState<FsmDownloadOver>();
                     else this._machine.ChangeState<FsmCreateDownloader>();
                 }
             }
@@ -562,6 +547,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 // 創建資源下載器
                 PatchEvents.PatchFsmState.SendEventMessage(this);
+                if (!PatchManager.GetInstance().IsCheck()) PatchManager.GetInstance().MarkCheckState();
                 this._CreateDownloader().Forget();
             }
 
@@ -590,7 +576,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 GroupInfo lastGroupInfo = PatchManager.GetLastGroupInfo();
                 Logging.Print<Logger>($"<color=#ffce54>Get last GroupName: {lastGroupInfo?.groupName}</color>");
 
-                #region Create Downaloder by Tags
+                #region Create Downloader by Tags
                 string url = await BundleConfig.GetHostServerPatchConfigPath();
                 string hostCfgJson = await Requester.RequestText(url, null, PatchEvents.PatchDownloadFailed.SendEventMessage, null, false);
                 PatchConfig patchCfg = JsonConvert.DeserializeObject<PatchConfig>(hostCfgJson);
@@ -749,9 +735,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 if (newGroupInfos.Count > 0)
                 {
                     Logging.Print<Logger>($"<color=#ffce54>Auto check last GroupName: {lastGroupInfo?.groupName}</color>");
-
                     Logging.Print<Logger>($"<color=#54beff>Found total group {newGroupInfos.Count} to choose download =>\n{JsonConvert.SerializeObject(newGroupInfos)}</color>");
-
                     PatchEvents.PatchCreateDownloader.SendEventMessage(newGroupInfos.Values.ToArray());
 
                     // 開始等待使用者選擇是否開始下載
@@ -759,7 +743,6 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 else
                 {
                     Logging.Print<Logger>($"<color=#54ff75><color=#ffce54>GroupName: {lastGroupInfo?.groupName}</color> not found any download files!!!</color>");
-
                     this._machine.ChangeState<FsmDownloadOver>();
                 }
             }
@@ -816,7 +799,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     }
                 }
 
-                // Set Main Downloaders
+                // Set main downloaders
                 PatchManager.GetInstance().mainDownloaders = mainDownloaders.ToArray();
 
                 // Combine all main downloaders count and bytes
@@ -851,8 +834,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         lastBytes = currentDownloadBytes;
                         downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
                     };
-                    downloader.BeginDownload();
 
+                    downloader.BeginDownload();
                     await downloader;
 
                     if (downloader.Status != EOperationStatus.Succeed) return;

@@ -62,7 +62,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// 跳過 Patch 創建主要下載器階段 (強制邊玩邊下載) 
         /// </summary>
-        public static bool skipCreateMainDownloder = false;
+        public static bool skipMainDownload = false;
 
         /// <summary>
         /// App Preset Package 清單

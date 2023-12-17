@@ -61,7 +61,7 @@ namespace OxGFrame.AssetLoader.Bundle
             if (this.playMode == BundleConfig.PlayMode.HostMode)
             {
                 BundleConfig.semanticRule = this.semanticRule;
-                BundleConfig.skipCreateMainDownloder = this.skipMainDownload;
+                BundleConfig.skipMainDownload = this.skipMainDownload;
             }
             // For WebGL Mode
             else if (this.playMode == BundleConfig.PlayMode.WebGLMode)

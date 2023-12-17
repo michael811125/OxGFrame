@@ -2,6 +2,7 @@
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.Utility;
 using System.Collections.Generic;
+using UnityEngine;
 using YooAsset;
 using static OxGFrame.AssetLoader.Utility.DownloadSpeedCalculator;
 using static YooAsset.DownloaderOperation;
@@ -183,10 +184,9 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static string GetPatchVersion(bool encode = false, int encodeLength = 6, string separator = "-")
         {
-            string patchVersion = (PatchManager.patchVersions != null &&
-                PatchManager.patchVersions.Length > 0) ?
-                PatchManager.patchVersions[0] :
-                string.Empty;
+            string[] versions = PatchManager.patchVersions;
+            string newestVersion = BundleUtility.NewestPackageVersion(versions);
+            string patchVersion = string.IsNullOrEmpty(newestVersion) ? string.Empty : newestVersion;
 
             if (encode)
             {
@@ -269,69 +269,23 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static async UniTask<bool> InitDlcPackage(DlcPackageInfoWithBuild packageInfo, bool autoUpdate = false)
         {
-            string hostServer = null;
-            string fallbackHostServer = null;
-            IBuildinQueryServices builtinQueryService = null;
-            IDeliveryQueryServices deliveryQueryService = null;
-            IDeliveryLoadServices deliveryLoadService = null;
+            string hostServer = packageInfo.hostServer;
+            string fallbackHostServer = packageInfo.fallbackHostServer;
+            IBuildinQueryServices builtinQueryService = packageInfo.builtinQueryService;
+            IDeliveryQueryServices deliveryQueryService = packageInfo.deliveryQueryService;
+            IDeliveryLoadServices deliveryLoadService = packageInfo.deliveryLoadService;
 
             // Host Mode or WebGL Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
                 BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
             {
-                hostServer = await BundleConfig.GetDlcHostServerUrl(packageInfo.packageName, packageInfo.dlcVersion, packageInfo.withoutPlatform);
-                fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageInfo.packageName, packageInfo.dlcVersion, packageInfo.withoutPlatform);
-                builtinQueryService = new RequestBuiltinQuery();
-                deliveryQueryService = new RequestDeliveryQuery();
-                deliveryLoadService = new RequestDeliveryQuery();
-            }
-
-            return await PackageManager.InitPackage(packageInfo, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
-        }
-
-        /// <summary>
-        /// Init dlc package (If PlayMode is HostMode will request from default host dlc path)
-        /// </summary>
-        /// <param name="packageInfo"></param>
-        /// <param name="autoUpdate"></param>
-        /// <param name="builtinQueryService"></param>
-        /// <param name="deliveryQueryService"></param>
-        /// <param name="deliveryLoadService"></param>
-        /// <returns></returns>
-        public static async UniTask<bool> InitDlcPackage(DlcPackageInfoWithBuild packageInfo, bool autoUpdate = false, IBuildinQueryServices builtinQueryService = null, IDeliveryQueryServices deliveryQueryService = null, IDeliveryLoadServices deliveryLoadService = null)
-        {
-            string hostServer = null;
-            string fallbackHostServer = null;
-
-            // Host Mode or WebGL Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
-                BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
-            {
-                hostServer = await BundleConfig.GetDlcHostServerUrl(packageInfo.packageName, packageInfo.dlcVersion, packageInfo.withoutPlatform);
-                fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageInfo.packageName, packageInfo.dlcVersion, packageInfo.withoutPlatform);
+                hostServer = string.IsNullOrEmpty(hostServer) ? await BundleConfig.GetDlcHostServerUrl(packageInfo.packageName, packageInfo.dlcVersion, packageInfo.withoutPlatform) : hostServer;
+                fallbackHostServer = string.IsNullOrEmpty(fallbackHostServer) ? await BundleConfig.GetDlcFallbackHostServerUrl(packageInfo.packageName, packageInfo.dlcVersion, packageInfo.withoutPlatform) : fallbackHostServer;
                 builtinQueryService = builtinQueryService == null ? new RequestBuiltinQuery() : builtinQueryService;
                 deliveryQueryService = deliveryQueryService == null ? new RequestDeliveryQuery() : deliveryQueryService;
                 deliveryLoadService = deliveryLoadService == null ? new RequestDeliveryQuery() : deliveryLoadService;
             }
 
-            return await PackageManager.InitPackage(packageInfo, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
-        }
-        #endregion
-
-        #region Custom Package
-        /// <summary>
-        /// Init package by package name (Custom your host path and query service)
-        /// </summary>
-        /// <param name="packageInfo"></param>
-        /// <param name="hostServer"></param>
-        /// <param name="fallbackHostServer"></param>
-        /// <param name="autoUpdate"></param>
-        /// <param name="builtinQueryService"></param>
-        /// <param name="deliveryQueryService"></param>
-        /// <param name="deliveryLoadService"></param>
-        /// <returns></returns>
-        public static async UniTask<bool> InitCustomPackage(PackageInfoWithBuild packageInfo, string hostServer, string fallbackHostServer, bool autoUpdate, IBuildinQueryServices builtinQueryService, IDeliveryQueryServices deliveryQueryService, IDeliveryLoadServices deliveryLoadService)
-        {
             return await PackageManager.InitPackage(packageInfo, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
         }
         #endregion

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using YooAsset;
 using static OxGFrame.AssetLoader.Bundle.BundleConfig;
 
 namespace OxGFrame.AssetLoader.Bundle
@@ -54,11 +55,25 @@ namespace OxGFrame.AssetLoader.Bundle
     }
 
     [Serializable]
-    public class PackageInfoWithBuild
+    public abstract class PackageInfoWithBuild
     {
         [Tooltip("Only for EditorSimulateMode")]
         public BuildMode buildMode;
         public string packageName;
+
+        /// <summary>
+        /// Custom host server
+        /// </summary>
+        [HideInInspector]
+        public string hostServer = null;
+        /// <summary>
+        /// Custom fallback host server
+        /// </summary>
+        [HideInInspector]
+        public string fallbackHostServer = null;
+        public IBuildinQueryServices builtinQueryService = null;
+        public IDeliveryQueryServices deliveryQueryService = null;
+        public IDeliveryLoadServices deliveryLoadService = null;
     }
 
     [Serializable]

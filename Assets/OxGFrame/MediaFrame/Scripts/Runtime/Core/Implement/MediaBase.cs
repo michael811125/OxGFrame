@@ -167,9 +167,8 @@ namespace OxGFrame.MediaFrame
         /// </summary>
         public virtual void OnRelease()
         {
-            this.mediaName = null;
-            //this.bundleName = null;
             this.assetName = null;
+            this.mediaName = null;
             this._mediaLength = 0f;
             this._currentLength = 0f;
             this._endEvent = null;

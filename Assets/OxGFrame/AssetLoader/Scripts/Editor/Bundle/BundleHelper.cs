@@ -1,14 +1,13 @@
 ﻿using Newtonsoft.Json;
 using OxGFrame.AssetLoader.Bundle;
+using OxGFrame.AssetLoader.Utility;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using OxGFrame.AssetLoader.Utility;
 using YooAsset.Editor;
-using YooAsset;
-using System.Linq;
-using System;
 
 namespace OxGFrame.AssetLoader.Editor
 {

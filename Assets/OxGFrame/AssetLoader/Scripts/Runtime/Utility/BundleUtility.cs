@@ -7,6 +7,8 @@ using UnityEngine;
 using System.Threading;
 using System.Collections.Generic;
 using OxGKit.LoggingSystem;
+using System.Linq;
+using OxGFrame.AssetLoader.Bundle;
 
 namespace OxGFrame.AssetLoader.Utility
 {
@@ -257,6 +259,41 @@ namespace OxGFrame.AssetLoader.Utility
         #endregion
 
         #region Version
+        /// <summary>
+        /// Get newest version
+        /// </summary>
+        /// <param name="versions"></param>
+        /// <returns></returns>
+        public static string NewestPackageVersion(string[] versions)
+        {
+            if (versions == null || (versions != null && versions.Length == 0)) return string.Empty;
+
+            #region Newest Filter
+            Dictionary<string, decimal> packageVersions = new Dictionary<string, decimal>();
+            foreach (var version in versions)
+            {
+                if (string.IsNullOrEmpty(version) ||
+                    version.IndexOf('-') <= -1) continue;
+
+                string major = version.Substring(0, version.LastIndexOf("-"));
+                string minor = version.Substring(version.LastIndexOf("-") + 1, version.Length - version.LastIndexOf("-") - 1);
+
+                // yyyy-mm-dd
+                major = major.Trim().Replace("-", string.Empty);
+                // 24 h * 60 m = 1440 m (max is 4 num of digits)
+                minor = minor.Trim().PadLeft(4, '0');
+                //Debug.Log($"Major Date: {major}, Minor Minute: {minor} => {major}{minor}");
+
+                string refineVersionName = $"{major}{minor}";
+                if (decimal.TryParse(refineVersionName, out decimal value)) packageVersions.Add(version, value);
+            }
+
+            string newestVersion = packageVersions.Count > 0 ? packageVersions.Aggregate((x, y) => x.Value > y.Value ? x : y).Key : string.Empty;
+            #endregion
+
+            return newestVersion;
+        }
+
         /// <summary>
         /// Get version hash
         /// </summary>

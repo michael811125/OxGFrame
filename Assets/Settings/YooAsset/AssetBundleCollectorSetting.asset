@@ -197,3 +197,45 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
+  - PackageName: Dlc1Package
+    PackageDesc: 
+    EnableAddressable: 1
+    LocationToLower: 0
+    IncludeAssetGUID: 0
+    IgnoreDefaultType: 1
+    AutoCollectShaders: 1
+    Groups:
+    - GroupName: ModelGroup
+      GroupDesc: 
+      AssetTags: models
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab
+        CollectorGUID: b4ea3356cddbd8b41926c28adefdfbc5
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+  - PackageName: Dlc2Package
+    PackageDesc: 
+    EnableAddressable: 1
+    LocationToLower: 0
+    IncludeAssetGUID: 0
+    IgnoreDefaultType: 1
+    AutoCollectShaders: 1
+    Groups:
+    - GroupName: ModelGroup
+      GroupDesc: 
+      AssetTags: models
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab
+        CollectorGUID: b4ea3356cddbd8b41926c28adefdfbc5
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 

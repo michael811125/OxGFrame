@@ -15,10 +15,10 @@ MonoBehaviour:
   variableCaseType: 0
   variableAccessModifier: protected
   variablePrefix: _
-  methodType: 0
+  methodType: 1
   methodAccessModifier: protected
   methodPrefix: 
-  methodName: InitBindingComponents
+  methodName: InitBind
   indicateModifier: 1
   tailRules:
     list:
