@@ -16,7 +16,7 @@
             new DlcPackageInfoWithBuild()
             {
                 buildMode = BuildMode.ScriptableBuildPipeline,
-                packageName = "DlcPackage",
+                packageName = "Dlc1Package",
                 dlcVersion = "latest"
             },
             false
@@ -27,7 +27,7 @@
             new DlcPackageInfoWithBuild()
             {
                 buildMode = BuildMode.ScriptableBuildPipeline,
-                packageName = "OtherPackage",
+                packageName = "Dlc2Package",
                 dlcVersion = "latest"
             },
             false

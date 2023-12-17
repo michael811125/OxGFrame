@@ -23,8 +23,13 @@
     },
     {
       "displayName": "Bundle Demo",
-      "description": "Sample to use AssetLoader",
+      "description": "Sample to use Bundle",
       "path": "Samples~/BundleDemo"
+    },
+    {
+      "displayName": "Bundle DLC Demo",
+      "description": "Sample to use Bundle DLC",
+      "path": "Samples~/BundleDLCDemo"
     },
     {
       "displayName": "UIFrame Demo",
