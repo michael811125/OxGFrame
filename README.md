@@ -188,7 +188,7 @@ YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config 
 
 資源更新過程 (支援下載途中直接進行修復功能)
 
-https://github.com/michael811125/OxGFrame/assets/30960759/d84de519-6afd-4f32-b9c6-8614100a2e81
+https://github.com/michael811125/OxGFrame/assets/30960759/11dcf0d3-41bd-4a8d-af6b-7115374552f5
 
 ---
 
@@ -240,6 +240,9 @@ https://github.com/michael811125/OxGFrame/assets/30960759/d84de519-6afd-4f32-b9c
   - 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion (ex: "latest")，變成只要 DLC 有更新就可以使用固定路徑進行更新。
 
 **使用 PackageOperation 進行 DLC 資源包的操作 (方便控管資源包)**
+
+https://github.com/michael811125/OxGFrame/assets/30960759/976cbf79-4178-45d9-9724-49b59c862778
+
 ```C#
     // Use Example
     var packageOperations = new PackageOperation[]
@@ -250,7 +253,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/d84de519-6afd-4f32-b9c
             new DlcPackageInfoWithBuild()
             {
                 buildMode = BuildMode.ScriptableBuildPipeline,
-                packageName = "DlcPackage",
+                packageName = "Dlc1Package",
                 dlcVersion = "latest"
             },
             false
@@ -261,7 +264,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/d84de519-6afd-4f32-b9c
             new DlcPackageInfoWithBuild()
             {
                 buildMode = BuildMode.ScriptableBuildPipeline,
-                packageName = "OtherPackage",
+                packageName = "Dlc2Package",
                 dlcVersion = "latest"
             },
             false
