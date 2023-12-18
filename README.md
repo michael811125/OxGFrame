@@ -128,7 +128,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 ### Hotfixer (dependence HybridCLR, AssetLoader)
 
 代碼熱修復模塊，使用 [HybridCLR](https://github.com/focus-creative-games/hybridclr) (前身 Huatuo) 革命性的熱更新方案進行整合，相關建置請前往[官方文檔](https://hybridclr.doc.code-philosophy.com/)進行熟悉。
-- 如果相關建置完畢，前往點選 HybridCLR/OxGFrame With HybirdCLR/Complie And Copy To HotfixCollector，將會幫忙拷貝至 HotfixCollector 文件夾，再使用 YooAsset Collector 進行收集打包。
+- 如果相關建置完畢，前往點選 HybridCLR/OxGFrame With HybirdCLR/Complie And Copy To HotfixCollector，將會幫忙拷貝至 **HotfixCollector** 文件夾，再使用 YooAsset Collector 進行收集打包。
 
 **使用流程詳看 HotfixerDemo (Import frome Package Manager)**
 
@@ -369,14 +369,14 @@ store_link http://
 - OnCreate : 初始 Member Params (建構式概念)，另外如果採用拖曳式指定組件，也可以直接在此初始 (不過不建議，建議還是在 OnBind 執行)。
 - OnBind : 初始綁定組件與事件 (After Bind)。
 - OnPreShow : 當有異步處理或者附屬物件控制時，可以在此處理。例如 : TopUI 附屬連動開啟 LeftUI & RightUI，那麼就可以在 TopUI 中的 OnPreShow 方法實現 Show LeftUI & RightUI。
-  - **不建議在 OnPreClose 時進行相關 Show 的處理，如果有進行的話也沒關係，因為針對 CloseAll 的 API 有提供 disablePreClose 的開關。**
+  - **不建議在 OnPreClose 時進行相關 Show 的處理，如果有進行的話也沒關係，因為針對 CloseAll 的 API 有提供 disabledPreClose 的開關。**
 - OnShow : 調用 Show 時，此方法會被激活，並且可以透過帶入的 object 進行數據傳送。
 - OnClose : 調用 Close 時，此方法會被激活。
 - OnRelease : 當物件被 Destroy 時，此方法會被激活。
 
 #### 初始順序說明
 
-Init Order : OnCreate (Once) > AutoBind (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
+Init Order : OnCreate (Once) > OnAutoBind (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
 
 #### 物件綁定說明 (OnBind)
 
@@ -441,8 +441,8 @@ Init Order : OnCreate (Once) > AutoBind (Once) > OnBind (Once) > OnPreShow (Ever
 | NodePool | NodePool | 0 | s |
 
 自動綁定產生器的功能有方法類型的區分，如下
-- 自動 (Auto)，只需要將區塊貼上至代碼中，將會自動 override 與調用。
-- 手動 (Manual)，可自定義方法名稱，將區塊貼上至代碼中後，需要手動在 OnBind() 方法中進行調用。
+- 自動 (Auto) \[預設\]，只需要將區塊貼上至代碼中，將會自動 override OnAutoBind() 與調用。
+- 手動 (Manual) \[自選\]，可自定義方法名稱，將區塊貼上至代碼中後，需要手動在 OnBind() 方法中進行調用。
 
 https://github.com/michael811125/OxGFrame/assets/30960759/8e4f63e9-b955-4f91-8ac7-be949677c54f
 
