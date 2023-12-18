@@ -5171,7 +5171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pkgCtrlPanels:
-  - dlcName: {fileID: 1134013816}
+  - dlcName: {fileID: 1074202649}
     readyState: {fileID: 1955078290}
     beginState: {fileID: 1683851493}
     repairState: {fileID: 837204697}
@@ -5184,7 +5184,7 @@ MonoBehaviour:
     percentage: {fileID: 2064449107}
     patchInfo: {fileID: 639022568}
     dlcInfo: {fileID: 1267609144}
-  - dlcName: {fileID: 1074202649}
+  - dlcName: {fileID: 1134013816}
     readyState: {fileID: 1546549034}
     beginState: {fileID: 471363150}
     repairState: {fileID: 1909827315}
