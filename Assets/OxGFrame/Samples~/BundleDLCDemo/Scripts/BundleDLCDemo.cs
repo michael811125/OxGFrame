@@ -58,7 +58,7 @@ public class BundleDLCDemo : MonoBehaviour
             ),
             new PackageOperation
             (
-                "DLC Pacakge 2",
+                "DLC Package 2",
                 new DlcPackageInfoWithBuild()
                 {
                     buildMode = BuildMode.ScriptableBuildPipeline,
@@ -101,7 +101,7 @@ public class BundleDLCDemo : MonoBehaviour
             });
             #endregion
 
-            #region Pacakge events
+            #region Package events
             // Package state event
             packageOperation.eventGroup.AddListener<PackageEvents.PatchFsmState>((message) =>
             {

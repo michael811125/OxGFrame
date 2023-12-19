@@ -421,13 +421,28 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     var package = packages[i];
 
                     // all package
-                    var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
-                    totalDownloadCount = downloader.TotalDownloadCount;
-                    totalDownloadBytes = downloader.TotalDownloadBytes;
-                    if (totalDownloadCount > 0)
+                    if (groupInfo.tags == null || (groupInfo.tags != null && groupInfo.tags.Length == 0))
                     {
-                        groupInfo.totalCount += totalDownloadCount;
-                        groupInfo.totalBytes += totalDownloadBytes;
+                        var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+                        totalDownloadCount = downloader.TotalDownloadCount;
+                        totalDownloadBytes = downloader.TotalDownloadBytes;
+                        if (totalDownloadCount > 0)
+                        {
+                            groupInfo.totalCount += totalDownloadCount;
+                            groupInfo.totalBytes += totalDownloadBytes;
+                        }
+                    }
+                    // package by tags
+                    else
+                    {
+                        var downloader = package.CreateResourceDownloader(groupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+                        totalDownloadCount = downloader.TotalDownloadCount;
+                        totalDownloadBytes = downloader.TotalDownloadBytes;
+                        if (totalDownloadCount > 0)
+                        {
+                            groupInfo.totalCount += totalDownloadCount;
+                            groupInfo.totalBytes += totalDownloadBytes;
+                        }
                     }
                 }
                 #endregion
@@ -485,17 +500,17 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 // Get packages
                 var packages = (this._machine.Owner as PackageOperation).GetPackages();
 
-                // Get last GroupInfo by UserEvent Set
-                GroupInfo lastGroupInfo = (this._machine.Owner as PackageOperation).groupInfo;
+                // Get groupInfo
+                GroupInfo groupInfo = (this._machine.Owner as PackageOperation).groupInfo;
 
-                Logging.Print<Logger>($"<color=#54ffad>Start Download Group Name: {lastGroupInfo?.groupName}, Tags: {JsonConvert.SerializeObject(lastGroupInfo?.tags)}</color>");
+                Logging.Print<Logger>($"<color=#54ffad>Start Download Group Name: {groupInfo?.groupName}, Tags: {JsonConvert.SerializeObject(groupInfo?.tags)}</color>");
 
                 List<ResourceDownloaderOperation> downloaders = new List<ResourceDownloaderOperation>();
                 foreach (var package in packages)
                 {
-                    if (lastGroupInfo != null)
+                    if (groupInfo != null)
                     {
-                        if (lastGroupInfo.tags != null && lastGroupInfo.tags.Length > 0) downloaders.Add(package.CreateResourceDownloader(lastGroupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount));
+                        if (groupInfo.tags != null && groupInfo.tags.Length > 0) downloaders.Add(package.CreateResourceDownloader(groupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount));
                         else downloaders.Add(package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount));
                     }
                 }

@@ -51,7 +51,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         protected PackageOperation()
         {
-            // 註冊 Events 監聽事件
+            // Register Events
             this.eventGroup = new EventGroup(this.hashId);
             // Patch event receivers
             this.eventGroup.AddListener<PackageEvents.PatchRepairFailed>(this._OnHandleEventMessage);
@@ -67,7 +67,7 @@ namespace OxGFrame.AssetLoader.Bundle
             this.eventGroup.AddListener<PackageUserEvents.UserTryPatchManifestUpdate>(this._OnHandleEventMessage);
             this.eventGroup.AddListener<PackageUserEvents.UserTryCreateDownloader>(this._OnHandleEventMessage);
 
-            // 註冊 PatchFsm 處理流程
+            // Register PatchFsm
             this._patchFsm = new StateMachine(this);
             this._patchFsm.AddNode<PackageFsmStates.FsmPatchRepair>();
             this._patchFsm.AddNode<PackageFsmStates.FsmPatchPrepare>();
@@ -81,18 +81,27 @@ namespace OxGFrame.AssetLoader.Bundle
             this._patchFsm.AddNode<PackageFsmStates.FsmPatchDone>();
         }
 
-        public PackageOperation(string groupName, PackageInfoWithBuild packageInfo, bool skipDownload = false) : this(groupName, new PackageInfoWithBuild[] { packageInfo }, skipDownload)
+        public PackageOperation(string groupName, PackageInfoWithBuild packageInfo, bool skipDownload = false) : this(groupName, null, new PackageInfoWithBuild[] { packageInfo }, skipDownload)
         {
         }
 
-        public PackageOperation(string groupName, PackageInfoWithBuild[] packageInfos, bool skipDownload = false) : this()
+        public PackageOperation(string groupName, PackageInfoWithBuild[] packageInfos, bool skipDownload = false) : this(groupName, null, packageInfos, skipDownload)
+        {
+        }
+
+        public PackageOperation(string groupName, string[] tags, PackageInfoWithBuild packageInfo, bool skipDownload = false) : this(groupName, tags, new PackageInfoWithBuild[] { packageInfo }, skipDownload)
+        {
+        }
+
+        public PackageOperation(string groupName, string[] tags, PackageInfoWithBuild[] packageInfos, bool skipDownload = false) : this()
         {
             this.groupInfo = new GroupInfo();
             this.groupInfo.groupName = groupName;
+            this.groupInfo.tags = tags;
             this._packageInfos = packageInfos;
             this.skipDownload = skipDownload;
 
-            // 開始 Package 初始流程
+            // Start prepare node
             this._patchFsm.Run<PackageFsmStates.FsmPatchPrepare>();
         }
 
@@ -113,6 +122,18 @@ namespace OxGFrame.AssetLoader.Bundle
         public static PackageOperation CreateOperation(string groupName, PackageInfoWithBuild[] packageInfos, bool skipDownload = false)
         {
             var packageOperation = new PackageOperation(groupName, packageInfos, skipDownload);
+            return packageOperation;
+        }
+
+        public static PackageOperation CreateOperation(string groupName, string[] tags, PackageInfoWithBuild packageInfo, bool skipDownload = false)
+        {
+            var packageOperation = new PackageOperation(groupName, tags, packageInfo, skipDownload);
+            return packageOperation;
+        }
+
+        public static PackageOperation CreateOperation(string groupName, string[] tags, PackageInfoWithBuild[] packageInfos, bool skipDownload = false)
+        {
+            var packageOperation = new PackageOperation(groupName, tags, packageInfos, skipDownload);
             return packageOperation;
         }
         #endregion
@@ -372,7 +393,6 @@ namespace OxGFrame.AssetLoader.Bundle
                         Logging.Print<Logger>("<color=#2dff4e> >>>> PackageFsmStates.FsmPatchDone <<<< </color>");
                         break;
                 }
-
 #endif
             }
             else if (message is PackageEvents.PatchRepairFailed)
