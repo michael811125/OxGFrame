@@ -241,7 +241,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/11dcf0d3-41bd-4a8d-af6
 
 **使用 PackageOperation 進行 DLC 資源包的操作 (方便控管資源包)**
 
-https://github.com/michael811125/OxGFrame/assets/30960759/976cbf79-4178-45d9-9724-49b59c862778
+https://github.com/michael811125/OxGFrame/assets/30960759/694d1125-cf9f-42bb-85f4-df42041057c7
 
 ```C#
     // Use Example
