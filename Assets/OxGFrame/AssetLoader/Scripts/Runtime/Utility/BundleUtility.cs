@@ -285,7 +285,10 @@ namespace OxGFrame.AssetLoader.Utility
                 //Debug.Log($"Major Date: {major}, Minor Minute: {minor} => {major}{minor}");
 
                 string refineVersionName = $"{major}{minor}";
-                if (decimal.TryParse(refineVersionName, out decimal value)) packageVersions.Add(version, value);
+                if (decimal.TryParse(refineVersionName, out decimal value))
+                {
+                    if (!packageVersions.ContainsKey(version)) packageVersions.Add(version, value);
+                }
             }
 
             string newestVersion = packageVersions.Count > 0 ? packageVersions.Aggregate((x, y) => x.Value > y.Value ? x : y).Key : string.Empty;
