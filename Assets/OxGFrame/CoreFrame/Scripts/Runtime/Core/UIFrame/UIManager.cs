@@ -502,7 +502,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <param name="doRemoveSafety"></param>
         /// <param name="uiBase"></param>
         /// <returns></returns>
-        private void _PreprocessRemovStackByStackSafety(bool doRemoveSafety, UIBase uiBase)
+        private void _PreprocessRemoveStackByStackSafety(bool doRemoveSafety, UIBase uiBase)
         {
             if (this._dictStackByStack.Count == 0) return;
 
@@ -567,7 +567,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
                 #region StackByStack Process
                 // 如果強制關閉 UI, 需要處理原本柱列在 StackByStack 中的 UI 緩存 
-                this._PreprocessRemovStackByStackSafety(forceDestroy, uiBase);
+                this._PreprocessRemoveStackByStackSafety(forceDestroy, uiBase);
                 // 從 StackByStack 緩存中移除
                 if (!forceDestroy) this.PopStackByStack(uiBase);
                 #endregion

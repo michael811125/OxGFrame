@@ -77,12 +77,12 @@ namespace OxGFrame.MediaFrame
         [Tooltip("Repeat times 0 (equal to 1). But -1 = loop (Infinitely)")]
         public int loops = 0;                                                              // 循環次數
         protected int _loops = 0;                                                          // 當前循環次數
+        [Tooltip("When finished playing will auto to set stop (loops = -1 is invalid)")]
+        public bool autoEndToStop = true;                                                  // 是否結束時自動停止
         [Tooltip("when stop will destroy")]
         public bool onStopAndDestroy = true;                                               // 是否停止時銷毀
         [Tooltip("when destroy will unload asset (not recommend sound type is SoundEffect)")]
         public bool onDestroyAndUnload = false;
-        [Tooltip("When finished playing will auto to set stop (loops = -1 is invalid)")]
-        public bool autoEndToStop = true;                                                  // 是否結束時自動停止
 
         protected bool _isPaused = false;                                                  // 是否暫停
         protected bool _isInit = false;                                                    // 初始標記 (表示確認初始完畢)
