@@ -13,7 +13,7 @@
 | **需先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
 |:-|
 | [OxGKit.LoggingSystem v0.0.11-preview or higher](https://github.com/michael811125/OxGKit#loggingsystem-dependence-lwmybox), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
-| [OxGKit.Utilities v0.0.12-preview or higher](https://github.com/michael811125/OxGKit#utilities-dependence-unitask), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
+| [OxGKit.Utilities v0.0.13-preview or higher](https://github.com/michael811125/OxGKit#utilities-dependence-unitask), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
 | [LWMyBox v1.1.4 or higher](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager **(建議改成輕量版的 MyBox 改進編譯效率)** |
 | [HybirdCLR v4.0.14 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
@@ -72,6 +72,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_2.png)
 
 [Roadmap wiki](https://github.com/michael811125/OxGFrame/wiki/Roadmap)
+[Coding Style wiki](https://github.com/michael811125/OxGFrame/wiki/Coding-Style)
 
 ---
 
@@ -85,7 +86,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 ### Sub-ThirdParty
 
 - 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案) **特別推薦**
-- 使用 [YooAsset v2.0.3-preview](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
+- 使用 [YooAsset v2.1.0](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
 
 ※備註 : 會持續更新內建第三方庫。
 
@@ -321,8 +322,8 @@ if (isInitialized)
 格式如下 **(store_link 針對非 Android, iOS 平台的，可以設置主程式下載的 link)**
 
 ```
-# bundle_ip = First CDN Server IP (Plan A)
-# bundle_fallback_ip = Second CDN Server IP (Plan B)
+# bundle_ip = First CDN Server IP or Domain (Plan A)
+# bundle_fallback_ip = Second CDN Server IP or Domain (Plan B)
 # store_link = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID)
 # store_link = Apple Store Link (https://apps.apple.com/app/idYOUR_ID)
 

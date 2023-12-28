@@ -8,14 +8,14 @@ namespace OxGFrame.AssetLoader
     public class PatchSetting : ScriptableObject
     {
         // AppConfig 配置檔
-        public const string appCfgBakExtension = ".bak";               // 主程式配置檔副檔名 (Backup)
-        public const string appCfgExtension = ".json";                 // 主程式配置檔副檔名
-        public string appCfgName = "appconfig";                        // 主程式配置檔的名稱 
+        public const string APP_CFG_BAK_EXTENSION = ".bak";          // 主程式配置檔副檔名 (Backup)
+        public const string APP_CFG_EXTENSION = ".json";             // 主程式配置檔副檔名
+        public string appCfgName = "appconfig";                      // 主程式配置檔的名稱 
 
         // PatchConfig 配置檔                                           
-        public const string patchCfgBakExtension = ".bak";             // 補丁配置檔副檔名 (Backup)
-        public const string patchCfgExtension = ".json";               // 補丁配置檔副檔名
-        public string patchCfgName = "patchconfig";                    // 補丁配置檔的名稱 
+        public const string PATCH_CFG_BAK_EXTENSION = ".bak";        // 補丁配置檔副檔名 (Backup)
+        public const string PATCH_CFG_EXTENSION = ".json";           // 補丁配置檔副檔名
+        public string patchCfgName = "patchconfig";                  // 補丁配置檔的名稱 
 
         // 佈署配置檔中的 KEY
         public const string BUNDLE_IP = "bundle_ip";
@@ -23,12 +23,12 @@ namespace OxGFrame.AssetLoader
         public const string STORE_LINK = "store_link";
 
         // 佈署配置檔
-        public const string bundleUrlCfgExtension = ".conf";            // 主程式配置檔副檔名 (Backup)
+        public const string BUNDLE_URL_CFG_EXTENSION = ".conf";       // 主程式配置檔副檔名 (Backup)
         public string bundleUrlCfgName = "burlconfig";
 
         // Bundle 輸出歸類名稱
-        public string rootFolderName = "CDN";                           // Root 資料夾名稱
-        public string dlcFolderName = "DLC";                            // DLC 資料夾名稱
+        public string rootFolderName = "CDN";                         // Root 資料夾名稱
+        public string dlcFolderName = "DLC";                          // DLC 資料夾名稱
 
         private static PatchSetting _setting = null;
         public static PatchSetting setting

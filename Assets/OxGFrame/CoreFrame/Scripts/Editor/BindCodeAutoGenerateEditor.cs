@@ -23,7 +23,7 @@ namespace OxGFrame.CoreFrame.Editor
             }
         }
 
-        private const string _defComponentName = "GameObject";
+        private const string _DEF_COMPONENT_NAME = "GameObject";
 
         private static BindCodeSetting _settings;
         private static Dictionary<string, BindInfo> _collectBindInfos = new Dictionary<string, BindInfo>();
@@ -130,7 +130,7 @@ namespace OxGFrame.CoreFrame.Editor
             // 組件結尾檢測
             string[] tails = Binder.GetTailSplitNameBySeparator(bindName);
             string variableName = bindName.Replace(" ", string.Empty);
-            string componentName = _defComponentName;
+            string componentName = _DEF_COMPONENT_NAME;
 
             if (tails != null && tails.Length >= 2)
             {
@@ -185,7 +185,7 @@ namespace OxGFrame.CoreFrame.Editor
                 if (bindInfo.Value.count > 1)
                 {
                     // For GameObjects
-                    if (bindInfo.Value.componentName == _defComponentName)
+                    if (bindInfo.Value.componentName == _DEF_COMPONENT_NAME)
                     {
                         _builder += $"{_settings.variableAccessModifier} ";
                         _builder += $"{bindInfo.Value.componentName}[] ";
@@ -241,7 +241,7 @@ namespace OxGFrame.CoreFrame.Editor
                 if (bindInfo.Value.count > 1)
                 {
                     // For GameObjects
-                    if (bindInfo.Value.componentName == _defComponentName)
+                    if (bindInfo.Value.componentName == _DEF_COMPONENT_NAME)
                     {
                         _builder += $"    ";
                         _builder += $"{_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName}s = ";
@@ -263,7 +263,7 @@ namespace OxGFrame.CoreFrame.Editor
                 else
                 {
                     // For GameObject
-                    if (bindInfo.Value.componentName == _defComponentName)
+                    if (bindInfo.Value.componentName == _DEF_COMPONENT_NAME)
                     {
                         _builder += $"    ";
                         _builder += $"{_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName} = ";

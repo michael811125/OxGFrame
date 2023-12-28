@@ -547,7 +547,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 // 創建資源下載器
                 PatchEvents.PatchFsmState.SendEventMessage(this);
-                if (!PatchManager.GetInstance().IsCheck()) PatchManager.GetInstance().MarkCheckState();
+                if (!PatchManager.GetInstance().IsCheck())
+                    PatchManager.GetInstance().MarkCheckState();
                 this._CreateDownloader().Forget();
             }
 

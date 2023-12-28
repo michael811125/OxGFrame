@@ -8,9 +8,9 @@ namespace OxGFrame.Hotfixer.Editor
 {
     public static class HotfixHelper
     {
-        public const string hotfixCollectorDir = "HotfixCollector";
-        public const string aotDllsDir = "AOTDlls";
-        public const string hotfixDllsDir = "HotfixDlls";
+        internal const string HOTFIX_COLLECTOR_DIR = "HotfixCollector";
+        internal const string AOT_DLLS_DIR = "AOTDlls";
+        internal const string HOTFIX_DLLS_DIR = "HotfixDlls";
 
         public static string ToRelativeAssetPath(string s)
         {
@@ -46,7 +46,7 @@ namespace OxGFrame.Hotfixer.Editor
             var target = EditorUserBuildSettings.activeBuildTarget;
 
             string aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
-            string aotAssembliesDstDir = string.IsNullOrEmpty(dstDir) ? Path.Combine(Application.dataPath, hotfixCollectorDir, aotDllsDir) : dstDir;
+            string aotAssembliesDstDir = string.IsNullOrEmpty(dstDir) ? Path.Combine(Application.dataPath, HOTFIX_COLLECTOR_DIR, AOT_DLLS_DIR) : dstDir;
 
             if (Directory.Exists(aotAssembliesDstDir)) Directory.Delete(aotAssembliesDstDir, true);
             if (!Directory.Exists(aotAssembliesDstDir)) Directory.CreateDirectory(aotAssembliesDstDir);
@@ -81,7 +81,7 @@ namespace OxGFrame.Hotfixer.Editor
             var target = EditorUserBuildSettings.activeBuildTarget;
 
             string hotfixDllSrcDir = SettingsUtil.GetHotUpdateDllsOutputDirByTarget(target);
-            string hotfixAssembliesDstDir = string.IsNullOrEmpty(dstDir) ? Path.Combine(Application.dataPath, hotfixCollectorDir, hotfixDllsDir) : dstDir;
+            string hotfixAssembliesDstDir = string.IsNullOrEmpty(dstDir) ? Path.Combine(Application.dataPath, HOTFIX_COLLECTOR_DIR, HOTFIX_DLLS_DIR) : dstDir;
 
             if (Directory.Exists(hotfixAssembliesDstDir)) Directory.Delete(hotfixAssembliesDstDir, true);
             if (!Directory.Exists(hotfixAssembliesDstDir)) Directory.CreateDirectory(hotfixAssembliesDstDir);

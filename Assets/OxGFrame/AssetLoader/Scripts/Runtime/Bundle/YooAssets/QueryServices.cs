@@ -10,7 +10,7 @@ namespace OxGFrame.AssetLoader.Bundle
     public abstract class RequestQueryBase : IBuildinQueryServices, IDeliveryQueryServices, IDeliveryLoadServices
     {
         #region IBuildinQueryServices, IDeliveryQueryServices
-        public virtual bool Query(string packageName, string fileName)
+        public virtual bool Query(string packageName, string fileName, string fileCRC)
         {
             return false;
         }
@@ -91,7 +91,7 @@ namespace OxGFrame.AssetLoader.Bundle
     #region Builtin Services
     public class RequestBuiltinQuery : RequestQueryBase
     {
-        public override bool Query(string packageName, string fileName)
+        public override bool Query(string packageName, string fileName, string fileCRC)
         {
 #if UNITY_WEBGL
             return StreamingAssetsHelper.FileExists(packageName, fileName);

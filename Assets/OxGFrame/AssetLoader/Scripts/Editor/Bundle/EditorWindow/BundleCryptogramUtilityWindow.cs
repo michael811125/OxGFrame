@@ -12,10 +12,10 @@ namespace OxGFrame.AssetLoader.Editor
     {
         public enum CryptogramType
         {
-            OFFSET,
-            XOR,
-            HT2XOR,
-            AES
+            Offset,
+            Xor,
+            HT2Xor,
+            Aes
         }
 
         private static BundleCryptogramUtilityWindow _instance = null;
@@ -38,7 +38,7 @@ namespace OxGFrame.AssetLoader.Editor
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
-        [MenuItem(BundleHelper.MenuRoot + "Bundle Cryptogram Utility (For Verify)", false, 699)]
+        [MenuItem(BundleHelper.MENU_ROOT + "Bundle Cryptogram Utility (For Verify)", false, 699)]
         public static void ShowWindow()
         {
             PROJECT_PATH = Application.dataPath;
@@ -109,16 +109,16 @@ namespace OxGFrame.AssetLoader.Editor
         {
             switch (cryptogramType)
             {
-                case CryptogramType.OFFSET:
+                case CryptogramType.Offset:
                     this._DrawOffsetView();
                     break;
-                case CryptogramType.XOR:
+                case CryptogramType.Xor:
                     this._DrawXorView();
                     break;
-                case CryptogramType.HT2XOR:
+                case CryptogramType.HT2Xor:
                     this._DrawHT2XorView();
                     break;
-                case CryptogramType.AES:
+                case CryptogramType.Aes:
                     this._DrawAesView();
                     break;
             }
@@ -261,19 +261,19 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 switch (cryptogramType)
                 {
-                    case CryptogramType.OFFSET:
+                    case CryptogramType.Offset:
                         CryptogramUtility.OffsetDecryptBundleFiles(this.sourceFolder, this.dummySize);
                         EditorUtility.DisplayDialog("Crytogram Message", "[OFFSET] Decrypt Process.", "OK");
                         break;
-                    case CryptogramType.XOR:
+                    case CryptogramType.Xor:
                         CryptogramUtility.XorDecryptBundleFiles(this.sourceFolder, (byte)this.xorKey);
                         EditorUtility.DisplayDialog("Crytogram Message", "[XOR] Decrypt Process.", "OK");
                         break;
-                    case CryptogramType.HT2XOR:
+                    case CryptogramType.HT2Xor:
                         CryptogramUtility.HT2XorDecryptBundleFiles(this.sourceFolder, (byte)this.hXorKey, (byte)this.tXorKey, (byte)this.jXorKey);
                         EditorUtility.DisplayDialog("Crytogram Message", "[Head-Tail 2 XOR] Decrypt Process.", "OK");
                         break;
-                    case CryptogramType.AES:
+                    case CryptogramType.Aes:
                         if (string.IsNullOrEmpty(this.aesKey) || string.IsNullOrEmpty(this.aesIv))
                         {
                             EditorUtility.DisplayDialog("Crytogram Message", "[AES] KEY or IV is Empty!!! Can't process.", "OK");
@@ -292,19 +292,19 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 switch (cryptogramType)
                 {
-                    case CryptogramType.OFFSET:
+                    case CryptogramType.Offset:
                         CryptogramUtility.OffsetEncryptBundleFiles(this.sourceFolder, this.randomSeed, this.dummySize);
                         EditorUtility.DisplayDialog("Crytogram Message", "[OFFSET] Encrypt Process.", "OK");
                         break;
-                    case CryptogramType.XOR:
+                    case CryptogramType.Xor:
                         CryptogramUtility.XorEncryptBundleFiles(this.sourceFolder, (byte)this.xorKey);
                         EditorUtility.DisplayDialog("Crytogram Message", "[XOR] Encrypt Process.", "OK");
                         break;
-                    case CryptogramType.HT2XOR:
+                    case CryptogramType.HT2Xor:
                         CryptogramUtility.HT2XorEncryptBundleFiles(this.sourceFolder, (byte)this.hXorKey, (byte)this.tXorKey, (byte)this.jXorKey);
                         EditorUtility.DisplayDialog("Crytogram Message", "[Head-Tail 2 XOR] Encrypt Process.", "OK");
                         break;
-                    case CryptogramType.AES:
+                    case CryptogramType.Aes:
                         if (string.IsNullOrEmpty(this.aesKey) || string.IsNullOrEmpty(this.aesIv))
                         {
                             EditorUtility.DisplayDialog("Crytogram Message", "[AES] KEY or IV is Empty!!! Can't process.", "OK");

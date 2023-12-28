@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.9.10] - 2023-12-28
+- Updated YooAsset to v2.1.0 ([CHANGELOG](https://github.com/tuyoogame/YooAsset/releases/tag/2.1.0)).
+- Organized coding style ([Wiki](https://github.com/michael811125/OxGFrame/wiki/Coding-Style)).
+
 ## [2.9.9] - 2023-12-18
 - Added PackageOperation feature, can download packages more easier (please checkout BundleDLCDemo).
 ```C#

@@ -71,7 +71,7 @@ namespace OxGFrame.AssetLoader.Editor
 
         private static Vector2 _windowSize = new Vector2(800f, 400f);
 
-        [MenuItem(BundleHelper.MenuRoot + "Export Bundle And Config Generator", false, 889)]
+        [MenuItem(BundleHelper.MENU_ROOT + "Export Bundle And Config Generator", false, 889)]
         public static void ShowWindow()
         {
             PROJECT_PATH = Application.dataPath;
@@ -613,7 +613,7 @@ namespace OxGFrame.AssetLoader.Editor
                         BundleHelper.ExportAppConfig(this.productName, this.appVersion, outputPath, this.activeBuildTarget, this.buildTarget);
                         EditorUtility.DisplayDialog("Process Message", "Export AppConfig To StreamingAssets.", "OK");
                         AssetDatabase.Refresh();
-                        string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.appCfgExtension}";
+                        string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION}";
                         if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{appCfgFileName}");
                         break;
                     case OperationType.ExportConfigsAndAppBundlesForCDN:

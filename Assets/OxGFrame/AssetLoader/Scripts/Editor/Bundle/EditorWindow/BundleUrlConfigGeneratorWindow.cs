@@ -29,7 +29,7 @@ namespace OxGFrame.AssetLoader.Editor
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
-        [MenuItem(BundleHelper.MenuRoot + "Bundle Url Config Generator (burlconfig.conf)", false, 899)]
+        [MenuItem(BundleHelper.MENU_ROOT + "Bundle Url Config Generator (burlconfig.conf)", false, 899)]
         public static void ShowWindow()
         {
             PROJECT_PATH = Application.dataPath;
@@ -138,7 +138,7 @@ namespace OxGFrame.AssetLoader.Editor
                 BundleHelper.ExportBundleUrlConfig(this.bundleIp, this.bundleFallbackIp, this.storeLink, outputPath);
                 EditorUtility.DisplayDialog("Process Message", "Export BundleUrlConfig To StreamingAssets.", "OK");
                 AssetDatabase.Refresh();
-                string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.bundleUrlCfgExtension}";
+                string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.BUNDLE_URL_CFG_EXTENSION}";
                 if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{bundleUrlFileName}");
             }
             GUI.backgroundColor = bc;

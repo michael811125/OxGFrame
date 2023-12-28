@@ -13,7 +13,7 @@ namespace OxGFrame.AssetLoader.Editor
 {
     public static class BundleHelper
     {
-        internal const string MenuRoot = "OxGFrame/AssetLoader/";
+        internal const string MENU_ROOT = "OxGFrame/AssetLoader/";
 
         #region Public Methods
         #region Exporter
@@ -35,7 +35,7 @@ namespace OxGFrame.AssetLoader.Editor
             string jsonCfg = JsonConvert.SerializeObject(cfg, Formatting.Indented);
 
             // 寫入配置文件
-            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.appCfgExtension}";
+            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION}";
             string writePath = Path.Combine(outputPath, appCfgFileName);
             WriteTxt(jsonCfg, writePath);
 
@@ -74,12 +74,12 @@ namespace OxGFrame.AssetLoader.Editor
             string jsonCfg = JsonConvert.SerializeObject(appCfg, Formatting.Indented);
 
             // 寫入配置文件
-            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.appCfgExtension}";
+            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION}";
             string writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}", appCfgFileName);
             WriteTxt(jsonCfg, writePath);
 
             // 寫入配置文件 (BAK)
-            string appCfgBakFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.appCfgBakExtension}";
+            string appCfgBakFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_BAK_EXTENSION}";
             writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}" + $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}", appCfgBakFileName);
             WriteTxt(jsonCfg, writePath);
             #endregion
@@ -89,12 +89,12 @@ namespace OxGFrame.AssetLoader.Editor
             jsonCfg = JsonConvert.SerializeObject(patchCfg, Formatting.Indented);
 
             // 寫入配置文件
-            string patchCfgFileName = $"{PatchSetting.setting.patchCfgName}{PatchSetting.patchCfgExtension}";
+            string patchCfgFileName = $"{PatchSetting.setting.patchCfgName}{PatchSetting.PATCH_CFG_EXTENSION}";
             writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}", patchCfgFileName);
             WriteTxt(jsonCfg, writePath);
 
             // 寫入配置文件 (BAK)
-            string patchCfgBakFileName = $"{PatchSetting.setting.patchCfgName}{PatchSetting.patchCfgBakExtension}";
+            string patchCfgBakFileName = $"{PatchSetting.setting.patchCfgName}{PatchSetting.PATCH_CFG_BAK_EXTENSION}";
             writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}" + $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}", patchCfgBakFileName);
             WriteTxt(jsonCfg, writePath);
             #endregion
@@ -171,8 +171,8 @@ namespace OxGFrame.AssetLoader.Editor
 
             IEnumerable<string> contents = new string[]
             {
-                @$"# {PatchSetting.BUNDLE_IP} = First CDN Server IP (Plan A)",
-                @$"# {PatchSetting.BUNDLE_FALLBACK_IP} = Second CDN Server IP (Plan B)",
+                @$"# {PatchSetting.BUNDLE_IP} = First CDN Server IP or Domain (Plan A)",
+                @$"# {PatchSetting.BUNDLE_FALLBACK_IP} = Second CDN Server IP or Domain (Plan B)",
                 @$"# {PatchSetting.STORE_LINK} = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID)",
                 @$"# {PatchSetting.STORE_LINK} = Apple Store Link (https://apps.apple.com/app/idYOUR_ID)",
                 "",
@@ -181,7 +181,7 @@ namespace OxGFrame.AssetLoader.Editor
                 $"{PatchSetting.STORE_LINK} {storeLink}",
             };
 
-            string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.bundleUrlCfgExtension}";
+            string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.BUNDLE_URL_CFG_EXTENSION}";
             string fullOutputPath = Path.Combine(outputPath, bundleUrlFileName);
 
             // 寫入配置文件
@@ -459,7 +459,7 @@ namespace OxGFrame.AssetLoader.Editor
             // 主程式版本
             cfg.APP_VERSION = string.IsNullOrEmpty(appVersion) ? Application.version : appVersion;
 
-            Debug.Log($"<color=#00FF00>【Generate】{PatchSetting.setting.appCfgName}{PatchSetting.appCfgExtension} Completes.</color>");
+            Debug.Log($"<color=#00FF00>【Generate】{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION} Completes.</color>");
 
             return cfg;
         }
@@ -574,7 +574,7 @@ namespace OxGFrame.AssetLoader.Editor
         #endregion
 
         #region MenuItems
-        [MenuItem(MenuRoot + "Local Download Directory (Sandbox)/Open Download Directory", false, 197)]
+        [MenuItem(MENU_ROOT + "Local Download Directory (Sandbox)/Open Download Directory", false, 197)]
         internal static void OpenDownloadDir()
         {
             var dir = BundleConfig.GetLocalSandboxRootPath();
@@ -586,7 +586,7 @@ namespace OxGFrame.AssetLoader.Editor
             System.Diagnostics.Process.Start(dir);
         }
 
-        [MenuItem(MenuRoot + "Local Download Directory (Sandbox)/Clear Download Directory", false, 198)]
+        [MenuItem(MENU_ROOT + "Local Download Directory (Sandbox)/Clear Download Directory", false, 198)]
         internal static void ClearDownloadDir()
         {
             bool operate = EditorUtility.DisplayDialog(
@@ -606,7 +606,7 @@ namespace OxGFrame.AssetLoader.Editor
             }
         }
 
-        [MenuItem(MenuRoot + "Clear Last Group Info Record", false, 199)]
+        [MenuItem(MENU_ROOT + "Clear Last Group Info Record", false, 199)]
         internal static void ClearLastGroupRecord()
         {
             AssetPatcher.ClearLastGroupInfo();

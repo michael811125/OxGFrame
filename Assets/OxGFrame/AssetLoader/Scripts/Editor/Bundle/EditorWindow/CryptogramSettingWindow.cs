@@ -9,10 +9,10 @@ namespace OxGFrame.AssetLoader.Editor
     {
         public enum CryptogramType
         {
-            OFFSET,
-            XOR,
-            HT2XOR,
-            AES
+            Offset,
+            Xor,
+            HT2Xor,
+            Aes
         }
 
         private static CryptogramSettingWindow _instance = null;
@@ -88,16 +88,16 @@ namespace OxGFrame.AssetLoader.Editor
         {
             switch (cryptogramType)
             {
-                case CryptogramType.OFFSET:
+                case CryptogramType.Offset:
                     this._DrawOffsetView();
                     break;
-                case CryptogramType.XOR:
+                case CryptogramType.Xor:
                     this._DrawXorView();
                     break;
-                case CryptogramType.HT2XOR:
+                case CryptogramType.HT2Xor:
                     this._DrawHT2XorView();
                     break;
-                case CryptogramType.AES:
+                case CryptogramType.Aes:
                     this._DrawAesView();
                     break;
             }
@@ -258,7 +258,7 @@ namespace OxGFrame.AssetLoader.Editor
         {
             switch (cryptogramType)
             {
-                case CryptogramType.OFFSET:
+                case CryptogramType.Offset:
                     this._setting.randomSeed = this.randomSeed;
                     this._setting.dummySize = this.dummySize;
 
@@ -268,7 +268,7 @@ namespace OxGFrame.AssetLoader.Editor
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [OFFSET] Setting.", "OK");
                     break;
-                case CryptogramType.XOR:
+                case CryptogramType.Xor:
                     this._setting.xorKey = (byte)this.xorKey;
 
                     this._isDirty = false;
@@ -277,7 +277,7 @@ namespace OxGFrame.AssetLoader.Editor
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [XOR] Setting.", "OK");
                     break;
-                case CryptogramType.HT2XOR:
+                case CryptogramType.HT2Xor:
                     this._setting.hXorKey = (byte)this.hXorKey;
                     this._setting.tXorKey = (byte)this.tXorKey;
                     this._setting.jXorKey = (byte)this.jXorKey;
@@ -288,7 +288,7 @@ namespace OxGFrame.AssetLoader.Editor
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [Head-Tail 2 XOR] Setting.", "OK");
                     break;
-                case CryptogramType.AES:
+                case CryptogramType.Aes:
                     if (string.IsNullOrEmpty(this.aesKey) || string.IsNullOrEmpty(this.aesIv))
                     {
                         if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "[AES] KEY or IV is Empty!!! Can't process.", "OK");

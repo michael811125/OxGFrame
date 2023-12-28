@@ -12,7 +12,7 @@ namespace OxGFrame.NetFrame
     public class TcpSock : ISocket
     {
         public const int CONNECTING_TIMEOUT_MSEC = 10000;
-        private const int MAX_BUFFER_SIZE = 65536;
+        private const int _MAX_BUFFER_SIZE = 65536;
 
         private TcpClient _tcp = null;
         private NetOption _netOption = null;
@@ -34,8 +34,8 @@ namespace OxGFrame.NetFrame
             if (string.IsNullOrEmpty(netOption.host) || netOption.port == 0) return;
 
             this._tcp = new TcpClient();
-            this._tcp.ReceiveBufferSize = MAX_BUFFER_SIZE;
-            this._readBuffer = new byte[MAX_BUFFER_SIZE];
+            this._tcp.ReceiveBufferSize = _MAX_BUFFER_SIZE;
+            this._readBuffer = new byte[_MAX_BUFFER_SIZE];
 
             Interlocked.Exchange(ref this._failedConnectionCount, 0);
 

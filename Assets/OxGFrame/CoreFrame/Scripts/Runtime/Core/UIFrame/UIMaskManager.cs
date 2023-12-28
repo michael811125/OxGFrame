@@ -22,7 +22,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             {
                 for (int i = 0; i < this._initNum; i++)
                 {
-                    UIMask uiMask = new GameObject(nodeName).AddComponent<UIMask>();
+                    UIMask uiMask = new GameObject(NODE_NAME).AddComponent<UIMask>();
                     uiMask.gameObject.SetActive(false);
                     uiMask.gameObject.layer = this._uiMaskManager.layer;
                     uiMask.gameObject.transform.SetParent(this._uiMaskManager.uiMaskRoot);
@@ -51,12 +51,12 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             public bool RecycleUIMask(Transform parent)
             {
-                if (parent.Find(nodeName) == null) return false;
+                if (parent.Find(NODE_NAME) == null) return false;
 
-                GameObject uiMaskNode = parent.Find(nodeName).gameObject;
+                GameObject uiMaskNode = parent.Find(NODE_NAME).gameObject;
                 if (uiMaskNode == null || !uiMaskNode.GetComponent<UIMask>())
                 {
-                    Logging.Print<Logger>(string.Format("No matching object found: {0}, doesn't need to recycle!", nodeName));
+                    Logging.Print<Logger>(string.Format("No matching object found: {0}, doesn't need to recycle!", NODE_NAME));
                     return false;
                 }
 
@@ -79,7 +79,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         #endregion
 
         #region UIMaskManager, UIMask 相關控制
-        public const string nodeName = "_UIMaskNode";
+        internal const string NODE_NAME = "_UIMaskNode";
         public Transform uiMaskRoot { get; private set; } = null;
         public int layer { get; private set; } = 0;
         private MaskNodePool _maskNodePool = null;
@@ -98,7 +98,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <param name="maskClickEvent"></param>
         public void AddMask(Transform parent, Color color, Sprite sprite, Material material, MaskEventFunc maskClickEvent = null)
         {
-            if (parent.Find(nodeName) || !parent.GetComponent<UIBase>()) return;
+            if (parent.Find(NODE_NAME) || !parent.GetComponent<UIBase>()) return;
 
             var uiMask = this._maskNodePool.GetUIMask(parent);
             uiMask.SetMaskColor(color);

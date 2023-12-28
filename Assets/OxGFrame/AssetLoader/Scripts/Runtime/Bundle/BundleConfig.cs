@@ -77,20 +77,21 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// 預設同時併發下載數量
         /// </summary>
-        public const int defaultMaxConcurrencyDownloadCount = 10;
+        internal const int DEFAULT_MAX_CONCURRENCY_MAX_DOWNLOAD_COUNT = 10;
+
         /// <summary>
         /// 同時併發下載數量
         /// </summary>
-        public static int maxConcurrencyDownloadCount = defaultMaxConcurrencyDownloadCount;
+        public static int maxConcurrencyDownloadCount = DEFAULT_MAX_CONCURRENCY_MAX_DOWNLOAD_COUNT;
 
         /// <summary>
         /// 預設下載失敗重新嘗試次數
         /// </summary>
-        public const int defaultFailedRetryCount = 3;
+        internal const int DEFAULT_FAILED_RETRY_COUNT = 3;
         /// <summary>
         /// 下載失敗重新嘗試次數
         /// </summary>
-        public static int failedRetryCount = defaultFailedRetryCount;
+        public static int failedRetryCount = DEFAULT_FAILED_RETRY_COUNT;
 
         /// <summary>
         /// 斷點續傳門檻
@@ -158,7 +159,7 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             if (_urlCfgFileMap == null)
             {
-                string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.bundleUrlCfgExtension}";
+                string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.BUNDLE_URL_CFG_EXTENSION}";
                 string pathName = Path.Combine(GetRequestStreamingAssetsPath(), bundleUrlFileName);
                 var content = await Requester.RequestText(pathName, null, null, null, false);
                 if (string.IsNullOrEmpty(content)) return string.Empty;
@@ -334,7 +335,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetLocalSandboxAppConfigPath()
         {
-            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.appCfgExtension}";
+            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION}";
             return Path.Combine(GetLocalSandboxRootPath(), appCfgFileName);
         }
 
@@ -344,7 +345,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetStreamingAssetsAppConfigPath()
         {
-            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.appCfgExtension}";
+            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION}";
             return Path.Combine(GetRequestStreamingAssetsPath(), appCfgFileName);
         }
 
@@ -359,7 +360,7 @@ namespace OxGFrame.AssetLoader.Bundle
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
             string rootFolderName = PatchSetting.setting.rootFolderName;
-            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.appCfgExtension}";
+            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION}";
 
             return Path.Combine($"{host}/{rootFolderName}/{productName}/{platform}", appCfgFileName);
         }
@@ -375,7 +376,7 @@ namespace OxGFrame.AssetLoader.Bundle
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
             string rootFolderName = PatchSetting.setting.rootFolderName;
-            string patchCfgFileName = $"{PatchSetting.setting.patchCfgName}{PatchSetting.patchCfgExtension}";
+            string patchCfgFileName = $"{PatchSetting.setting.patchCfgName}{PatchSetting.PATCH_CFG_EXTENSION}";
 
             return Path.Combine($"{host}/{rootFolderName}/{productName}/{platform}", patchCfgFileName);
         }

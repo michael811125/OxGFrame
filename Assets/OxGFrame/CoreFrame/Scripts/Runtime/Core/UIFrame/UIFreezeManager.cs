@@ -23,7 +23,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             {
                 for (int i = 0; i < this._initNum; i++)
                 {
-                    UIFreeze uiFreeze = new GameObject(nodeName).AddComponent<UIFreeze>();
+                    UIFreeze uiFreeze = new GameObject(NODE_NAME).AddComponent<UIFreeze>();
                     uiFreeze.gameObject.SetActive(false);
                     uiFreeze.gameObject.layer = this._uiFreezeManager.layer;
                     uiFreeze.gameObject.transform.SetParent(this._uiFreezeManager.uiFreezeRoot);
@@ -52,12 +52,12 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             public bool RecycleUIFreeze(Transform parent)
             {
-                if (parent.Find(nodeName) == null) return false;
+                if (parent.Find(NODE_NAME) == null) return false;
 
-                GameObject uiFreezeNode = parent.Find(nodeName).gameObject;
+                GameObject uiFreezeNode = parent.Find(NODE_NAME).gameObject;
                 if (uiFreezeNode == null || !uiFreezeNode.GetComponent<UIFreeze>())
                 {
-                    Logging.Print<Logger>(string.Format("No matching object found: {0}, doesn't need to recycle!", nodeName));
+                    Logging.Print<Logger>(string.Format("No matching object found: {0}, doesn't need to recycle!", NODE_NAME));
                     return false;
                 }
 
@@ -80,7 +80,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         #endregion
 
         #region UIFreezeManager, UIFreeze 相關控制
-        public const string nodeName = "_UIFreezeNode";
+        internal const string NODE_NAME = "_UIFreezeNode";
         public Transform uiFreezeRoot { get; private set; } = null;
         public int layer { get; private set; } = 0;
 
@@ -99,7 +99,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <param name="parent"></param>
         public void AddFreeze(Transform parent)
         {
-            if (parent.Find(nodeName) || !parent.GetComponent<UIBase>()) return;
+            if (parent.Find(NODE_NAME) || !parent.GetComponent<UIBase>()) return;
 
             this._freezeNodePool.GetUIFreeze(parent);
         }

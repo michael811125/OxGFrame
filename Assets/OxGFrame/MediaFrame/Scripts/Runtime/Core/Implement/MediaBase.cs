@@ -41,7 +41,7 @@ namespace OxGFrame.MediaFrame
             [Tooltip("Get URL_PATH from UrlCfg .txt file (Assign a file, This is not supports [WebGL])"), ConditionalField(nameof(requestType), false, RequestType.Assign)]
             public TextAsset file = null;
             [Tooltip("Get URL_PATH from UrlCfg .txt file (StreamingAssets Request)"), ConditionalField(nameof(requestType), false, RequestType.StreamingAssets)]
-            public string fullPathName = MediaConfig.mediaUrlFileName;
+            public string fullPathName = MediaConfig.MEDIA_URL_CFG_NAME;
 
             #region Get UrlConfig File Content
             private static string _urlCfgContent = null;

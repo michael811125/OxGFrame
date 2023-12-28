@@ -6,7 +6,7 @@ namespace OxGFrame.MediaFrame.Editor
 {
     public static class MediaHelper
     {
-        internal const string MenuRoot = "OxGFrame/MediaFrame/";
+        internal const string MENU_ROOT = "OxGFrame/MediaFrame/";
 
         #region Public Methods
         #region Exporter
@@ -30,12 +30,12 @@ namespace OxGFrame.MediaFrame.Editor
             $"{MediaConfig.VIDEO_URLSET} {videoUrlset}",
             };
 
-            string fullOutputPath = Path.Combine(outputPath, MediaConfig.mediaUrlFileName);
+            string fullOutputPath = Path.Combine(outputPath, MediaConfig.MEDIA_URL_CFG_NAME);
 
             // 寫入配置文件
             File.WriteAllLines(fullOutputPath, contents, System.Text.Encoding.UTF8);
 
-            Debug.Log($"<color=#00FF00>【Export {MediaConfig.mediaUrlFileName} Completes】</color>");
+            Debug.Log($"<color=#00FF00>【Export {MediaConfig.MEDIA_URL_CFG_NAME} Completes】</color>");
         }
         #endregion
         #endregion

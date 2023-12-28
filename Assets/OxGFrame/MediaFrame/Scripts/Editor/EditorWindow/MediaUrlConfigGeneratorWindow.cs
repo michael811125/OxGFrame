@@ -26,7 +26,7 @@ namespace OxGFrame.MediaFrame.Editor
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
-        [MenuItem(MediaHelper.MenuRoot + "Media Url Config Generator (" + MediaConfig.mediaUrlFileName + ")", false, 899)]
+        [MenuItem(MediaHelper.MENU_ROOT + "Media Url Config Generator (" + MediaConfig.MEDIA_URL_CFG_NAME + ")", false, 899)]
         public static void ShowWindow()
         {
             PROJECT_PATH = Application.dataPath;
@@ -122,7 +122,7 @@ namespace OxGFrame.MediaFrame.Editor
                 MediaHelper.ExportMediaUrlConfig(this.audioUrlset, this.videoUrlset, outputPath);
                 EditorUtility.DisplayDialog("Process Message", "Export MediaUrlConfig To StreamingAssets.", "OK");
                 AssetDatabase.Refresh();
-                if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{MediaConfig.mediaUrlFileName}");
+                if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{MediaConfig.MEDIA_URL_CFG_NAME}");
             }
             GUI.backgroundColor = bc;
             EditorGUILayout.EndHorizontal();
