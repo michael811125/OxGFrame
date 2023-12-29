@@ -1,9 +1,8 @@
-﻿using System;
+﻿using OxGKit.LoggingSystem;
+using System;
 using System.Net;
 using System.Net.Sockets;
-using UnityEngine;
 using System.Threading;
-using OxGKit.LoggingSystem;
 
 namespace OxGFrame.NetFrame
 {

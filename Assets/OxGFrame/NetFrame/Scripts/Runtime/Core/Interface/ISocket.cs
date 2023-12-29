@@ -12,8 +12,8 @@ namespace OxGFrame.NetFrame
         /// <summary>
         /// 建立連線
         /// </summary>
-        /// <param name="netOpstion"></param>
-        void CreateConnect(NetOption netOpstion);
+        /// <param name="netOption"></param>
+        void CreateConnect(NetOption netOption);
         
         /// <summary>
         /// 是否已連線
