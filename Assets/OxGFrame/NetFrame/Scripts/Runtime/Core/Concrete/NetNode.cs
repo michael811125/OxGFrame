@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using OxGKit.LoggingSystem;
 using OxGKit.Utilities.Timer;
-using OxGKit.LoggingSystem;
+using System;
 
 namespace OxGFrame.NetFrame
 {
@@ -49,7 +48,7 @@ namespace OxGFrame.NetFrame
         RECONNECTING
     }
 
-    public class NetNode
+    public class NetNode : IDisposable
     {
         protected NetStatus _netStatus;                      // Net 狀態
         protected NetOption _netOption = null;               // 網路設置選項
@@ -86,7 +85,6 @@ namespace OxGFrame.NetFrame
             this._hearBeatTicker = new RealTimer();
             this._outReceiveTicker = new RealTimer();
             this._reconnectTicker = new RealTimer();
-
             this.Init(socket, netTips);
         }
 
@@ -215,9 +213,7 @@ namespace OxGFrame.NetFrame
             this._NetStatusHandler(code);
 
             this._StopTicker();
-
             if (this._isCloseForce) return;
-
             this._StartAutoReconnect();
         }
 
@@ -402,8 +398,10 @@ namespace OxGFrame.NetFrame
             if (this._reconnectTicker != null) this._reconnectTicker.Stop();
         }
 
-        ~NetNode()
+        public void Dispose()
         {
+            if (this._socket != null)
+                this._socket.Close();
             this._socket = null;
             this._netTips = null;
             this._netOption = null;
@@ -414,7 +412,11 @@ namespace OxGFrame.NetFrame
             this._reconnectTicker = null;
             this._reconnectAction = null;
             this._responseHandler = null;
-            this._firstSendHandler = null;
+        }
+
+        ~NetNode()
+        {
+            this.Dispose();
         }
     }
 }

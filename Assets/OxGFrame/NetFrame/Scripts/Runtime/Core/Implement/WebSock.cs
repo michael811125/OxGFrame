@@ -50,7 +50,6 @@ namespace OxGFrame.NetFrame
         public bool IsConnected()
         {
             if (this._ws == null) return false;
-
             if (this._ws.ReadyState == WebSocketState.Open) return true;
             return false;
         }
@@ -59,7 +58,7 @@ namespace OxGFrame.NetFrame
         {
             if (this.IsConnected())
             {
-                this._ws.SendAsync(buffer);
+                this._ws?.SendAsync(buffer);
                 Logging.Print<Logger>(string.Format("<color=#C9FF49>Websocket - SentSize: {0} bytes</color>", buffer.Length));
                 return true;
             }
@@ -69,7 +68,7 @@ namespace OxGFrame.NetFrame
 
         public void Close()
         {
-            this._ws.CloseAsync();
+            this._ws?.CloseAsync();
         }
     }
 }
