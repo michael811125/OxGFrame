@@ -53,7 +53,7 @@ namespace OxGFrame.AssetLoader.Bundle
             #region Init Preset Packages
             bool appInitialized = await InitPresetAppPackages();
             bool dlcInitialized = await InitPresetDlcPackages();
-            Logging.Print<Logger>($"<color=#ffe45a>{appInitialized}     {dlcInitialized}</color>");
+            Logging.Print<Logger>($"<color=#ffe45a>appInitialized: {appInitialized}, dlcInitialized: {dlcInitialized}</color>");
             isInitialized = dlcInitialized && appInitialized;
             #endregion
 
