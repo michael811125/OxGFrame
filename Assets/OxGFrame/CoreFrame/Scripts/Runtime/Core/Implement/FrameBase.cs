@@ -104,7 +104,7 @@ namespace OxGFrame.CoreFrame
         #endregion
 
         [HideInInspector] public Collector collector { get; private set; } = new Collector(); // 綁定物件收集器
-        [HideInInspector] public string assetName { get; protected set; } = string.Empty;     // (Bundle) AssetName = (Resouce) PathName
+        [HideInInspector] public string assetName { get; protected set; } = string.Empty;     // (Bundle) AssetName = (Resource) PathName
         [HideInInspector] public int groupId { get; protected set; } = 0;                     // 群組 id
         [HideInInspector] public bool isHidden { get; protected set; } = false;               // 檢查是否隱藏 (主要區分 Close & Hide 行為)
 
