@@ -11,20 +11,20 @@ public class NetworkExample
         var netTips = new NetTipsExample();
 
         #region Websocket Example
-        NetNode wsNetNode = new NetNode(new WebSock(), netTips);
+        NetNode wsNetNode = new NetNode(new WebsocketNetProvider(), netTips);
         // Set data receive callback
-        wsNetNode.SetResponseHandler(ProcessRecvData);
-        // Set first send callback (verification)
-        wsNetNode.SetFirstSendHandler(ProcessFirstSend);
+        wsNetNode.SetResponseBinaryHandler(ProcessRecvData);
+        // Set connecting callback
+        wsNetNode.SetConnectingHandler(ProcessConnectingEvent);
         // Set heart beat callback
         wsNetNode.SetHeartBeatAction(() =>
         {
             /* Process Heart Beat */
         });
         // Set out receive callback
-        wsNetNode.SetOutReciveAction(() =>
+        wsNetNode.SetOutReceiveAction(() =>
         {
-            /* Process Out Of Recive */
+            /* Process Out Of Receive */
         });
         // Set reconnect callback
         wsNetNode.SetReconnectAction(() =>
@@ -37,20 +37,20 @@ public class NetworkExample
         #endregion
 
         #region TCP/IP Example
-        NetNode tcpNetNode = new NetNode(new TcpSock(), netTips);
+        NetNode tcpNetNode = new NetNode(new TcpNetProvider(), netTips);
         // Set data receive callback
-        tcpNetNode.SetResponseHandler(ProcessRecvData);
-        // Set first send callback (verification)
-        tcpNetNode.SetFirstSendHandler(ProcessFirstSend);
+        tcpNetNode.SetResponseBinaryHandler(ProcessRecvData);
+        // Set connecting callback
+        tcpNetNode.SetConnectingHandler(ProcessConnectingEvent);
         // Set heart beat callback
         tcpNetNode.SetHeartBeatAction(() =>
         {
             /* Process Heart Beat */
         });
         // Set out receive callback
-        tcpNetNode.SetOutReciveAction(() =>
+        tcpNetNode.SetOutReceiveAction(() =>
         {
-            /* Process Out Of Recive */
+            /* Process Out Of Receive */
         });
         // Set reconnect callback
         tcpNetNode.SetReconnectAction(() =>
@@ -73,11 +73,15 @@ public class NetworkExample
     }
 
     /// <summary>
-    /// Protocol first send verification
+    /// Connecting handler
     /// </summary>
-    public static void ProcessFirstSend()
+    public static void ProcessConnectingEvent()
     {
-        Debug.Log("Init First Send");
+        /**
+         * If there is first verification can do somethings in here
+         */
+
+        Debug.Log("Process Connecting Event");
     }
 
     /// <summary>
@@ -95,7 +99,7 @@ public class NetworkExample
     /// </summary>
     public static void CloseConnection(byte nnid = 0)
     {
-        NetFrames.CloseSocket(nnid);
+        NetFrames.Close(nnid, true);
     }
 
     /// <summary>

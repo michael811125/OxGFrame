@@ -1,10 +1,9 @@
 ﻿using OxGFrame.NetFrame;
-using System;
 using UnityEngine;
 
 public class NetTipsExample : INetTips
 {
-    public void OnConnected(EventArgs e)
+    public void OnConnected(object status)
     {
         Debug.Log("OnConnected Message");
     }
@@ -19,7 +18,7 @@ public class NetTipsExample : INetTips
         Debug.Log("OnConnectionError");
     }
 
-    public void OnDisconnected(ushort code)
+    public void OnDisconnected(object status)
     {
         Debug.Log("OnDisconnected");
     }

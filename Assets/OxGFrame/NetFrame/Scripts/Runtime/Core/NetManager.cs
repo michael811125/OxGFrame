@@ -1,11 +1,14 @@
 ﻿using OxGKit.LoggingSystem;
+using OxGKit.Utilities.Timer;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OxGFrame.NetFrame
 {
     internal class NetManager
     {
         private Dictionary<byte, NetNode> _netNodes = null; // NetNode 緩存
+        private RTUpdater _rtUpdater = null;
 
         private static readonly object _locker = new object();
         private static NetManager _instance = null;
@@ -25,56 +28,74 @@ namespace OxGFrame.NetFrame
         public NetManager()
         {
             this._netNodes = new Dictionary<byte, NetNode>();
+            this._rtUpdater = new RTUpdater();
+            this._rtUpdater.onUpdate = this._OnUpdate;
+            this._rtUpdater.Start();
         }
 
-        public void OnUpdate()
+        private void _OnUpdate(float dt)
         {
-            if (this._netNodes.Count == 0) return;
-
-            foreach (NetNode netNode in this._netNodes.Values)
+            if (this._netNodes.Count > 0)
             {
-                if (netNode == null) continue;
-                netNode.OnUpdate();
+                var nodes = this._netNodes.Values.ToArray();
+                foreach (var node in nodes)
+                {
+                    if (this._netNodes.Count != nodes.Length) break;
+                    else if (node == null) continue;
+                    node.OnUpdate(dt);
+                }
             }
         }
 
         /// <summary>
-        /// 透過 NetNodeID 方式註冊新增 NetNode
+        /// Add net node
         /// </summary>
         /// <param name="netNode"></param>
-        /// <param name="nnId">預設 = 0</param>
-        public void AddNetNode(NetNode netNode, byte nnId = 0)
+        /// <param name="nnId"></param>
+        public void AddNetNode(NetNode netNode, byte nnId)
         {
-            if (!this._netNodes.ContainsKey(nnId)) this._netNodes.Add(nnId, netNode);
-            else this._netNodes[nnId] = netNode;
+            if (!this._netNodes.ContainsKey(nnId))
+            {
+                this._netNodes.Add(nnId, netNode);
+            }
+            else
+            {
+                this._netNodes[nnId].Dispose();
+                this._netNodes[nnId] = netNode;
+            }
         }
 
         /// <summary>
-        /// 透過 NetNodeID 移除 NetNode
+        /// Remove net node
         /// </summary>
-        /// <param name="nnId">預設 = 0</param>
-        public void RemoveNetNode(byte nnId = 0)
+        /// <param name="nnId"></param>
+        public void RemoveNetNode(byte nnId)
         {
-            if (this._netNodes.ContainsKey(nnId)) this._netNodes.Remove(nnId);
+            if (this._netNodes.ContainsKey(nnId))
+            {
+                this._netNodes[nnId].Dispose();
+                this._netNodes.Remove(nnId);
+            }
         }
 
         /// <summary>
-        /// 透過 NetNodeID 取得 NetNode
+        /// Get net node
         /// </summary>
-        /// <param name="nnId">預設 = 0</param>
+        /// <param name="nnId"></param>
         /// <returns></returns>
-        public NetNode GetNetNode(byte nnId = 0)
+        public NetNode GetNetNode(byte nnId)
         {
-            if (this._netNodes.ContainsKey(nnId)) return this._netNodes[nnId];
+            if (this._netNodes.ContainsKey(nnId))
+                return this._netNodes[nnId];
             return null;
         }
 
         /// <summary>
-        /// 設置 NetOption 並且透過 NetNodeID 指定 NetNode 進行連接
+        /// Open connection
         /// </summary>
         /// <param name="netOption"></param>
-        /// <param name="nnId">預設 = 0</param>
-        public void Connect(NetOption netOption, byte nnId = 0)
+        /// <param name="nnId"></param>
+        public void Connect(NetOption netOption, byte nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
             {
@@ -84,27 +105,27 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 透過 NetNodeID 取得 NetNode 的連線狀態
+        /// Connection state
         /// </summary>
-        /// <param name="nnId">預設 = 0</param>
+        /// <param name="nnId"></param>
         /// <returns></returns>
-        public bool IsConnected(byte nnId = 0)
+        public bool IsConnected(byte nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
             {
                 if (this._netNodes[nnId] == null) return false;
                 return this._netNodes[nnId].IsConnected();
             }
-
             return false;
         }
+
         /// <summary>
-        /// 透過 NetNodeID 指定 NetNode 傳送資料至 Server
+        /// Send binary data
         /// </summary>
         /// <param name="buffer"></param>
-        /// <param name="nnId">預設 = 0</param>
+        /// <param name="nnId"></param>
         /// <returns></returns>
-        public bool Send(byte[] buffer, byte nnId = 0)
+        public bool Send(byte[] buffer, byte nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
             {
@@ -118,15 +139,35 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 透過 NetNodeID 選擇要關閉的 NetNode
+        /// Send text data
         /// </summary>
-        /// <param name="nnId">預設 = 0</param>
-        public void CloseSocket(byte nnId = 0)
+        /// <param name="text"></param>
+        /// <param name="nnId"></param>
+        /// <returns></returns>
+        public bool Send(string text, byte nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
             {
-                this._netNodes[nnId].CloseSocket();
-                this._netNodes.Remove(nnId);
+                return this._netNodes[nnId].Send(text);
+            }
+            else
+            {
+                Logging.PrintWarning<Logger>(string.Format("The NodeId: {0} Can't Found !!! Send Failed.", nnId));
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Close network
+        /// </summary>
+        /// <param name="nnId"></param>
+        /// <param name="remove"></param>
+        public void Close(byte nnId, bool remove)
+        {
+            if (this._netNodes.ContainsKey(nnId))
+            {
+                this._netNodes[nnId].Close();
+                if (remove) this.RemoveNetNode(nnId);
             }
         }
     }

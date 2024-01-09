@@ -8,30 +8,42 @@ namespace OxGFrame.NetFrame
 {
     public delegate void WaitReadNetPacket();
 
-    public class TcpSock : ISocket
+    public class TcpNetProvider : INetProvider
     {
         private const int _CONNECTING_TIMEOUT_MSEC = 10000;
         private const int _MAX_BUFFER_SIZE = 65536;
         private const int _MAX_FAILED_CONNECTION_COUNT = 3;
 
         private TcpClient _tcp = null;
-        private NetOption _netOption = null;
         private int _failedConnectionCount;
 
         private int _readBufferOffset = 0;
         private byte[] _readBuffer = null;
 
-        public event EventHandler OnOpen;
-        public event EventHandler<byte[]> OnMessage;
+        public event EventHandler<object> OnOpen;
+        public event EventHandler<byte[]> OnBinary;
+        public event EventHandler<string> OnMessage;
         public event EventHandler<string> OnError;
-        public event EventHandler<ushort> OnClose;
+        public event EventHandler<object> OnClose;
 
         private WaitReadNetPacket _waitReadNetPacket = null;
 
         public void CreateConnect(NetOption netOption)
         {
-            this._netOption = netOption;
-            if (string.IsNullOrEmpty(netOption.host) || netOption.port == 0) return;
+            if (netOption == null)
+            {
+                Logging.Print<Logger>("<color=#ff2732>ERROR: Connect failed, NetOption cannot be null.</color>");
+                return;
+            }
+
+            string host = (netOption as TcpNetOption).host;
+            int port = (netOption as TcpNetOption).port;
+
+            if (string.IsNullOrEmpty(host))
+            {
+                Logging.Print<Logger>("<color=##FF0000>ERROR: TCP/IP Connect failed, NetOption Host cannot be null or empty.</color>");
+                return;
+            }
 
             this._tcp = new TcpClient();
             this._tcp.ReceiveBufferSize = _MAX_BUFFER_SIZE;
@@ -41,16 +53,16 @@ namespace OxGFrame.NetFrame
 
             try
             {
-                Logging.Print<Logger>($"<color=#9cd6ff>Connecting... Host {netOption.host}:{netOption.port}</color>");
-                IPAddress ipa = IPAddress.Parse(netOption.host);
-                IAsyncResult result = this._tcp.BeginConnect(ipa, netOption.port, this._ConnectedAction, null);
+                Logging.Print<Logger>($"<color=#9cd6ff>Connecting... Host {host}:{port}</color>");
+                IPAddress ipa = IPAddress.Parse(host);
+                IAsyncResult result = this._tcp.BeginConnect(ipa, port, this._ConnectedAction, null);
                 result.AsyncWaitHandle.WaitOne(_CONNECTING_TIMEOUT_MSEC);
 
                 if (!result.IsCompleted)
                 {
                     this._tcp.Close();
-                    this.OnClose(this, 0);
-                    Logging.PrintError<Logger>($"Begin Connect Failed!!! Host {netOption.host}:{netOption.port}");
+                    this.OnClose(this, -1);
+                    Logging.PrintError<Logger>($"Begin Connect Failed!!! Host {host}:{port}");
                 }
             }
             catch (Exception ex)
@@ -66,7 +78,7 @@ namespace OxGFrame.NetFrame
             try
             {
                 this._tcp?.EndConnect(result);
-                Logging.Print<Logger>($"<color=#5dff49>TcpSock Connected.</color>");
+                Logging.Print<Logger>($"<color=#5dff49>TCP/IP Connected.</color>");
             }
             catch (Exception ex)
             {
@@ -81,8 +93,7 @@ namespace OxGFrame.NetFrame
                 }
             }
 
-            this.OnOpen(this, EventArgs.Empty);
-
+            this.OnOpen(this, 0);
             NetworkStream ns = this._tcp.GetStream();
             this._readBufferOffset = 0;
             ns.BeginRead(this._readBuffer, this._readBufferOffset, this._readBuffer.Length, new AsyncCallback(this._ReadAction), ns);
@@ -134,7 +145,7 @@ namespace OxGFrame.NetFrame
             {
                 if (this._readBufferOffset > 0)
                 {
-                    this.OnMessage(this, this._readBuffer);
+                    this.OnBinary(this, this._readBuffer);
                     this._readBufferOffset = 0;
                 }
 
@@ -168,7 +179,7 @@ namespace OxGFrame.NetFrame
             Logging.Print<Logger>($"<color=#c9ff49>Sending Buffer End Time: {DateTime.Now}</color>");
         }
 
-        public bool Send(byte[] buffer)
+        public bool SendBinary(byte[] buffer)
         {
             if (this.IsConnected())
             {
@@ -176,7 +187,7 @@ namespace OxGFrame.NetFrame
                 {
                     NetworkStream ns = this._tcp?.GetStream();
                     ns.BeginWrite(buffer, 0, buffer.Length, new AsyncCallback(this._WriteAction), ns);
-                    Logging.Print<Logger>($"<color=#c9ff49>TcpSock - SentSize: {buffer.Length} bytes</color>");
+                    Logging.Print<Logger>($"<color=#c9ff49>[Binary] - Send Size: {buffer.Length} bytes.</color>");
                     return true;
                 }
                 catch (Exception ex)
@@ -190,6 +201,11 @@ namespace OxGFrame.NetFrame
             return false;
         }
 
+        public bool SendMessage(string text)
+        {
+            throw new Exception("[Text] TCP/IP not supports SendMessge!!! Please convert string to binary and send by binary.");
+        }
+
         public bool IsConnected()
         {
             if (this._tcp == null) return false;
@@ -199,13 +215,9 @@ namespace OxGFrame.NetFrame
         public void Close()
         {
             this._tcp?.Close();
-            this.OnClose(this, 0);
+            this.OnClose(this, -1);
         }
 
-        /// <summary>
-        /// 設置等待讀取封包 Callback
-        /// </summary>
-        /// <param name="wrnp"></param>
         public void SetWaitReadNetPacket(WaitReadNetPacket wrnp)
         {
             this._waitReadNetPacket = wrnp;

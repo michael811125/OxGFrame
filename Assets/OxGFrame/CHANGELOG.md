@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [2.9.11] - 2024-01-09
+- Optimized NetFrame.
+- Added TcpNetOption.
+- Added WebsocketNetOption.
+- Modified NetOption.
+- Modified SetResponseHandler to SetResponseBinaryHandler and SetResponseMessageHandler.
+- Modified typo SetOutReciveAction to SetOutReceiveAction.
+- Renamed TcpSock to TcpNetProvider.
+- Renamed WebSock to WebsocketNetProvider.
+- Renamed method CloseSocket to Close.
+- Renamed ISocket to INetProvider.
+
 ## [2.9.10] - 2023-12-28
 - Updated YooAsset to v2.1.0 ([CHANGELOG](https://github.com/tuyoogame/YooAsset/releases/tag/2.1.0)).
 - Organized coding style ([Wiki](https://github.com/michael811125/OxGFrame/wiki/Coding-Style)).

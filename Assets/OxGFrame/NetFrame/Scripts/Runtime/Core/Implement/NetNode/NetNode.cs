@@ -4,40 +4,8 @@ using System;
 
 namespace OxGFrame.NetFrame
 {
-    public delegate void ResponseHandler(byte[] data);
-    public delegate void FirstSendHandler();
-
-    public class NetOption
-    {
-        public string url { get; set; }
-        public string host { get; set; }
-        public int port { get; set; }
-        public int autoReconnectCount { get; set; }
-
-        /// <summary>
-        /// TCP/IP 初始連線位置參數
-        /// </summary>
-        /// <param name="host"></param>
-        /// <param name="port"></param>
-        /// <param name="autoReconnectCount"></param>
-        public NetOption(string host, int port, int autoReconnectCount = -1)
-        {
-            this.host = host;
-            this.port = port;
-            this.autoReconnectCount = autoReconnectCount;
-        }
-
-        /// <summary>
-        /// Websocket 初始連線位置參數
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="autoReconnectCount"></param>
-        public NetOption(string url, int autoReconnectCount = -1)
-        {
-            this.url = url;
-            this.autoReconnectCount = autoReconnectCount;
-        }
-    }
+    public delegate void ResponseHandler<T>(T data);
+    public delegate void ConnectingHandler();
 
     public enum NetStatus
     {
@@ -50,111 +18,109 @@ namespace OxGFrame.NetFrame
 
     public class NetNode : IDisposable
     {
-        protected NetStatus _netStatus;                      // Net 狀態
-        protected NetOption _netOption = null;               // 網路設置選項
-        protected ISocket _socket = null;                    // Socket 介面
-        protected INetTips _netTips = null;                  // 網路狀態提示介面
+        protected NetStatus _netStatus;                                   // Net 狀態
+        protected NetOption _netOption = null;                            // 網路設置選項
+        protected INetProvider _netProvider = null;                       // 網路供應者 (TCP/IP, websocket or other)
+        protected INetTips _netTips = null;                               // 網路狀態提示介面
 
-        private bool _isCloseForce = false;                  // 是否強制斷線
+        private bool _isCloseForce = false;                               // 是否強制斷線
 
-        protected RealTimer _hearBeatTicker = null;          // 心跳檢測計循環計時器
-        private float _heartBeatTick = 10f;                  // 心跳檢測時間, 預設 = 10秒
-        protected Action _heartBeatAction = null;            // 心跳檢測 Callback
+        protected RealTimer _hearBeatTicker = null;                       // 心跳檢測計循環計時器
+        private float _heartBeatTick = 10f;                               // 心跳檢測時間, 預設 = 10秒
+        protected Action _heartBeatAction = null;                         // 心跳檢測 Callback
 
-        protected RealTimer _outReceiveTicker = null;        // 超時檢測循環計時器
-        private float _outReceiveTick = 60f;                 // 超時檢測時間, 預設 = 60秒
-        protected Action _outReceiveAction = null;           // 超時檢測 Callback
+        protected RealTimer _outReceiveTicker = null;                     // 超時檢測循環計時器
+        private float _outReceiveTick = 60f;                              // 超時檢測時間, 預設 = 60秒
+        protected Action _outReceiveAction = null;                        // 超時檢測 Callback
 
-        protected RealTimer _reconnectTicker = null;         // 斷線重連循環計時器
-        private float _reconnectTick = 5f;                   // 斷線重連時間, 預設 = 5秒
-        private int _autoReconnectCount = 0;                 // 自動連線次數 (由 NetOption 帶入)
-        protected Action _reconnectAction = null;            // 斷線重連 Callback
+        protected RealTimer _reconnectTicker = null;                      // 斷線重連循環計時器
+        private float _reconnectTick = 5f;                                // 斷線重連時間, 預設 = 5秒
+        private int _autoReconnectCount = 0;                              // 自動連線次數
+        protected Action _reconnectAction = null;                         // 斷線重連 Callback
 
-        protected ResponseHandler _responseHandler = null;   // 接收的回調
-        protected FirstSendHandler _firstSendHandler = null; // 第一次封包的回調
+        protected ResponseHandler<byte[]> _responseBinaryHandler = null;  // 接收的回調 (Binary)
+        protected ResponseHandler<string> _responseMessageHandler;        // 接收的回調 (Text)
+        protected ConnectingHandler _connectingHandler = null;            // 連線中的回調
 
-        public NetNode()
+        protected NetNode()
+        {
+        }
+
+        public NetNode(INetProvider socket, INetTips netTips = null)
         {
             this._hearBeatTicker = new RealTimer();
             this._outReceiveTicker = new RealTimer();
             this._reconnectTicker = new RealTimer();
+            this._Initialize(socket, netTips);
         }
 
-        public NetNode(ISocket socket, INetTips netTips = null)
+        public T GetNetProvider<T>() where T : INetProvider
         {
-            this._hearBeatTicker = new RealTimer();
-            this._outReceiveTicker = new RealTimer();
-            this._reconnectTicker = new RealTimer();
-            this.Init(socket, netTips);
-        }
-
-        public T GetSocket<T>() where T : ISocket
-        {
-            T socket = (T)this._socket;
+            T socket = (T)this._netProvider;
             return socket;
         }
 
-        public void Init(ISocket socket, INetTips netTips = null)
+        private void _Initialize(INetProvider socket, INetTips netTips = null)
         {
-            this._socket = socket;
-            this._InitSocketEvents();
+            this._netProvider = socket;
+            this._InitNetEvents();
             this._netTips = netTips;
             this._netStatus = NetStatus.DISCONNECTED;
         }
 
-        private void _InitSocketEvents()
+        private void _InitNetEvents()
         {
-            this._socket.OnOpen += (sender, e) =>
+            this._netProvider.OnOpen += (sender, status) =>
             {
-                this._OnOpen(e);
+                this._OnOpen(status);
             };
 
-            this._socket.OnMessage += (sender, data) =>
+            this._netProvider.OnBinary += (sender, binary) =>
             {
-                this._OnMessage(data);
+                this._OnBinary(binary);
             };
 
-            this._socket.OnError += (sender, e) =>
+            this._netProvider.OnMessage += (sender, text) =>
             {
-                this._OnError(e);
+                this._OnMessage(text);
             };
 
-            this._socket.OnClose += (sender, e) =>
+            this._netProvider.OnError += (sender, error) =>
             {
-                this._OnClose(e);
+                this._OnError(error);
+            };
+
+            this._netProvider.OnClose += (sender, status) =>
+            {
+                this._OnClose(status);
             };
         }
 
         public void Connect(NetOption netOption)
         {
-            if (this._socket == null)
+            if (this._netProvider == null)
             {
                 Logging.PrintError<Logger>("The socket cannot be null, Please init first.");
                 return;
             }
 
-            if (this._netStatus == NetStatus.DISCONNECTED || this._netStatus == NetStatus.RECONNECTING)
+            if (this._netStatus == NetStatus.DISCONNECTED ||
+                this._netStatus == NetStatus.RECONNECTING)
             {
-                this._netStatus = NetStatus.CONNECTING; // 目前處於 CONNECTING 狀態
-                this._NetStatusHandler();
-
-                this._firstSendHandler?.Invoke();       // 重連時重新初始第一次封包
-
-                this._netOption = netOption;            // 設置 NetOption (連線配置)
-                this._socket.CreateConnect(netOption);  // 最後再建立 Socket 連線 (TCP/IP => 需先 InitNetSocket 註冊後才能 Handle, Websocket => 透過原先 EventHandler 再進行註冊)  
+                this._netStatus = NetStatus.CONNECTING;
+                this._NetStatusHandler(null);
+                this._netOption = netOption;
+                this._connectingHandler?.Invoke();
+                this._netProvider.CreateConnect(netOption);
             }
         }
 
-        /// <summary>
-        /// 設置 NetTips (設置其他實作的 NetTips)
-        /// </summary>
-        /// <param name="netTips"></param>
         public void SetNetTips(INetTips netTips)
         {
             this._netTips = netTips;
         }
 
-        private void _NetStatusHandler(object args = null)
+        private void _NetStatusHandler(object args)
         {
             switch (this._netStatus)
             {
@@ -162,13 +128,13 @@ namespace OxGFrame.NetFrame
                     this._netTips?.OnConnecting();
                     break;
                 case NetStatus.CONNECTED:
-                    this._netTips?.OnConnected(args as EventArgs);
+                    this._netTips?.OnConnected(args);
                     break;
                 case NetStatus.CONNECTION_ERROR:
                     this._netTips?.OnConnectionError(Convert.ToString(args));
                     break;
                 case NetStatus.DISCONNECTED:
-                    this._netTips?.OnDisconnected(Convert.ToUInt16(args));
+                    this._netTips?.OnDisconnected(args);
                     break;
                 case NetStatus.RECONNECTING:
                     this._netTips?.OnReconnecting();
@@ -176,17 +142,17 @@ namespace OxGFrame.NetFrame
             }
         }
 
-        public void OnUpdate()
+        public void OnUpdate(float dt)
         {
             this._ProcessOutReceive();
             this._ProcessHeartBeat();
             this._ProcessAutoReconnect();
         }
 
-        private void _OnOpen(EventArgs e)
+        private void _OnOpen(object status)
         {
             this._netStatus = NetStatus.CONNECTED;
-            this._NetStatusHandler(e);
+            this._NetStatusHandler(status);
 
             this._isCloseForce = false;
             this._ResetAutoReconnect();
@@ -194,11 +160,16 @@ namespace OxGFrame.NetFrame
             this._ResetHeartBeatTicker();
         }
 
-        private void _OnMessage(byte[] data)
+        private void _OnBinary(byte[] binary)
         {
             this._ResetOutReceiveTicker();
+            this._responseBinaryHandler?.Invoke(binary);
+        }
 
-            this._responseHandler?.Invoke(data);
+        private void _OnMessage(string text)
+        {
+            this._ResetOutReceiveTicker();
+            this._responseMessageHandler?.Invoke(text);
         }
 
         private void _OnError(string msg)
@@ -207,33 +178,31 @@ namespace OxGFrame.NetFrame
             this._NetStatusHandler(msg);
         }
 
-        private void _OnClose(ushort code)
+        private void _OnClose(object status)
         {
             this._netStatus = NetStatus.DISCONNECTED;
-            this._NetStatusHandler(code);
+            this._NetStatusHandler(status);
 
             this._StopTicker();
             if (this._isCloseForce) return;
             this._StartAutoReconnect();
         }
 
-        /// <summary>
-        /// 傳送 Binary Data 至 Server
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <returns></returns>
         public bool Send(byte[] buffer)
         {
-            return this._socket.Send(buffer);
+            return this._netProvider.SendBinary(buffer);
         }
 
-        /// <summary>
-        /// 關閉 Socket
-        /// </summary>
-        public void CloseSocket()
+        public bool Send(string text)
+        {
+            return this._netProvider.SendMessage(text);
+        }
+
+        public void Close()
         {
             this._isCloseForce = true;
-            if (this._socket != null) this._socket.Close();
+            if (this._netProvider != null)
+                this._netProvider.Close();
         }
 
         /// <summary>
@@ -242,32 +211,41 @@ namespace OxGFrame.NetFrame
         /// <returns></returns>
         public bool IsConnected()
         {
-            if (this._socket == null) return false;
-            return this._socket.IsConnected();
+            if (this._netProvider == null) return false;
+            return this._netProvider.IsConnected();
         }
 
         /// <summary>
-        /// 設置接收的 Handler
+        /// 設置接收的 Handler (Binary)
         /// </summary>
-        /// <param name="rh"></param>
-        public void SetResponseHandler(ResponseHandler rh)
+        /// <param name="handler"></param>
+        public void SetResponseBinaryHandler(ResponseHandler<byte[]> handler)
         {
-            this._responseHandler = rh;
+            this._responseBinaryHandler = handler;
         }
 
         /// <summary>
-        /// 設置第一次初始寄送封包的 Handler
+        /// 設置接收的 Handler (Text)
         /// </summary>
-        /// <param name="fsh"></param>
-        public void SetFirstSendHandler(FirstSendHandler fsh)
+        /// <param name="handler"></param>
+        public void SetResponseMessageHandler(ResponseHandler<string> handler)
         {
-            this._firstSendHandler = fsh;
+            this._responseMessageHandler = handler;
+        }
+
+        /// <summary>
+        /// 設置每次連線中的 Handler
+        /// </summary>
+        /// <param name="handler"></param>
+        public void SetConnectingHandler(ConnectingHandler handler)
+        {
+            this._connectingHandler = handler;
         }
 
         #region 超時 Ticker 處理
-        public void SetOutReciveAction(Action outReciveAction)
+        public void SetOutReceiveAction(Action outReceiveAction)
         {
-            this._outReceiveAction = outReciveAction;
+            this._outReceiveAction = outReceiveAction;
         }
 
         public void SetOutReceiveTickerTime(float time)
@@ -350,7 +328,7 @@ namespace OxGFrame.NetFrame
         private void _StartAutoReconnect()
         {
             this._netStatus = NetStatus.RECONNECTING;
-            this._NetStatusHandler();
+            this._NetStatusHandler(null);
 
             this._reconnectTicker.Play();
             this._reconnectTicker.SetTick(this._reconnectTick);
@@ -369,7 +347,7 @@ namespace OxGFrame.NetFrame
             {
                 if (this._reconnectTicker.IsTickTimeout())
                 {
-                    this._socket.Close();
+                    this._netProvider.Close();
 
                     this.Connect(this._netOption);
                     if (this._autoReconnectCount > 0) this._autoReconnectCount -= 1;
@@ -382,7 +360,7 @@ namespace OxGFrame.NetFrame
             else
             {
                 this._netStatus = NetStatus.DISCONNECTED;
-                this._NetStatusHandler();
+                this._NetStatusHandler(null);
                 this._reconnectTicker.Stop();
             }
         }
@@ -400,9 +378,9 @@ namespace OxGFrame.NetFrame
 
         public void Dispose()
         {
-            if (this._socket != null)
-                this._socket.Close();
-            this._socket = null;
+            if (this._netProvider != null)
+                this._netProvider.Close();
+            this._netProvider = null;
             this._netTips = null;
             this._netOption = null;
             this._hearBeatTicker = null;
@@ -411,7 +389,7 @@ namespace OxGFrame.NetFrame
             this._outReceiveAction = null;
             this._reconnectTicker = null;
             this._reconnectAction = null;
-            this._responseHandler = null;
+            this._responseBinaryHandler = null;
         }
 
         ~NetNode()
@@ -420,4 +398,3 @@ namespace OxGFrame.NetFrame
         }
     }
 }
-

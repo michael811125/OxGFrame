@@ -32,9 +32,14 @@ namespace OxGFrame.NetFrame
             return NetManager.GetInstance().Send(buffer, nnId);
         }
 
-        public static void CloseSocket(byte nnId = 0)
+        public static bool Send(string text, byte nnId = 0)
         {
-            NetManager.GetInstance().CloseSocket(nnId);
+            return NetManager.GetInstance().Send(text, nnId);
+        }
+
+        public static void Close(byte nnId = 0, bool remove = false)
+        {
+            NetManager.GetInstance().Close(nnId, remove);
         }
     }
 }
