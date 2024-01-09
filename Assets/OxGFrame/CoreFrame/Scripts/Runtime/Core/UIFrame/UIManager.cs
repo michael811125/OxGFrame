@@ -82,7 +82,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 uiCanvas.uiRoot = goUIRoot;
 
                 // 設置 UINode (parent = UIRoot)
-                foreach (var nodeType in UIConfig.UI_NODES.Keys)
+                foreach (var nodeType in UIConfig.uiNodes.Keys)
                 {
                     if (!uiCanvas.uiNodes.ContainsKey(nodeType.ToString()))
                     {
@@ -157,7 +157,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             uiNodeCanvas.pixelPerfect = true;
             uiNodeCanvas.overrideSorting = true;
             uiNodeCanvas.sortingLayerName = mainCanvas.sortingLayerName;
-            uiNodeCanvas.sortingOrder = UIConfig.UI_NODES[nodeType];
+            uiNodeCanvas.sortingOrder = UIConfig.uiNodes[nodeType];
             uiNodeCanvas.additionalShaderChannels = mainCanvas.additionalShaderChannels;
 
             return uiNodeGo;
@@ -347,7 +347,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             if ((uiBase.uiSetting.order -= 1) < 0) uiBase.uiSetting.order = 0;
             // ORDER_DIFFERENCE - 2 => 1 保留給下一個UI階層, 另外一個 1 保留給 Renderer
             int uiOrder = (uiBase.uiSetting.order >= (UIConfig.ORDER_DIFFERENCE - 2)) ? (UIConfig.ORDER_DIFFERENCE - 2) : uiBase.uiSetting.order;
-            int uiNodeOrder = UIConfig.UI_NODES[uiBase.uiSetting.nodeType];
+            int uiNodeOrder = UIConfig.uiNodes[uiBase.uiSetting.nodeType];
             // 判斷非 Stack, 則進行設置累加, 反之則不進行
             if (!uiBase.uiSetting.stack) uiBaseCanvas.sortingOrder = uiNodeOrder + uiOrder;
             else uiBaseCanvas.sortingOrder = uiNodeOrder;
@@ -909,7 +909,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 if (uiBaseCanvas != null)
                 {
                     // 需先還原原階層順序, 以下再進行堆疊層數計數的計算 (-1 是要後續保留給 Renderer +1 用)
-                    uiBaseCanvas.sortingOrder = UIConfig.UI_NODES[nodeType];
+                    uiBaseCanvas.sortingOrder = UIConfig.uiNodes[nodeType];
                     uiBaseCanvas.sortingOrder += this._dictStackCounter[key] - 1;
                     // 設置查找 UI 中 Renderer 的 SortingOrder 
                     this._SetRendererOrder(uiBase);

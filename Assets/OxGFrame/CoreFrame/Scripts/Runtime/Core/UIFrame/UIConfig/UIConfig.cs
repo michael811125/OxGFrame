@@ -1,4 +1,4 @@
-﻿#define ENABLE_AUTO_SET_LAYER_RECURSIVELY  // 啟用自動設置 UI 繼承主 Canvas 的 LayerMask (在每第一次加載資源會耗時設置, 後續緩存後如果不進行刪除則不影響)
+﻿#define ENABLED_AUTO_SET_LAYER_RECURSIVELY
 
 using UnityEngine;
 using System;
@@ -58,19 +58,19 @@ namespace OxGFrame.CoreFrame.UIFrame
 
     public class UIConfig
     {
-#if ENABLE_AUTO_SET_LAYER_RECURSIVELY
+#if ENABLED_AUTO_SET_LAYER_RECURSIVELY
         public static readonly bool autoSetLayerRecursively = true;
 #else
         public static readonly bool autoSetLayerRecursively = false;
 #endif
 
         /* 路徑常量 */
-        public static readonly string UI_ROOT_NAME = "UIRoot";
-        public static readonly string UI_MASK_NAME = "UIMaskPool";
-        public static readonly string UI_FREEZE_NAME = "UIFreezePool";
+        public const string UI_ROOT_NAME = "UIRoot";
+        public const string UI_MASK_NAME = "UIMaskPool";
+        public const string UI_FREEZE_NAME = "UIFreezePool";
 
         /* 節點常量, 可自行定義 NodeType 後, 並且在此新增 【NodeType + Order, 排序小 (後層) -> 大 (前層)】 */
-        public static readonly Dictionary<NodeType, int> UI_NODES = new Dictionary<NodeType, int>()
+        public static readonly Dictionary<NodeType, int> uiNodes = new Dictionary<NodeType, int>()
             {
                 { NodeType.Normal, 0},
                 { NodeType.Fixed, 1000},
