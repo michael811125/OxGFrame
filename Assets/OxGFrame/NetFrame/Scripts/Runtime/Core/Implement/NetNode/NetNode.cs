@@ -107,8 +107,7 @@ namespace OxGFrame.NetFrame
             if (this._netStatus == NetStatus.DISCONNECTED ||
                 this._netStatus == NetStatus.RECONNECTING)
             {
-                this._netStatus = NetStatus.CONNECTING;
-                this._NetStatusHandler(null);
+                this._NetStatusHandler(NetStatus.CONNECTING, null);
                 this._netOption = netOption;
                 this._connectingHandler?.Invoke();
                 this._netProvider.CreateConnect(netOption);
@@ -120,8 +119,9 @@ namespace OxGFrame.NetFrame
             this._netTips = netTips;
         }
 
-        private void _NetStatusHandler(object args)
+        private void _NetStatusHandler(NetStatus status, object args)
         {
+            this._netStatus = status;
             switch (this._netStatus)
             {
                 case NetStatus.CONNECTING:
@@ -142,7 +142,7 @@ namespace OxGFrame.NetFrame
             }
         }
 
-        public void OnUpdate(float dt)
+        internal void OnUpdate(float dt)
         {
             this._ProcessOutReceive();
             this._ProcessHeartBeat();
@@ -151,8 +151,7 @@ namespace OxGFrame.NetFrame
 
         private void _OnOpen(object status)
         {
-            this._netStatus = NetStatus.CONNECTED;
-            this._NetStatusHandler(status);
+            this._NetStatusHandler(NetStatus.CONNECTED, status);
 
             this._isCloseForce = false;
             this._ResetAutoReconnect();
@@ -174,14 +173,12 @@ namespace OxGFrame.NetFrame
 
         private void _OnError(string msg)
         {
-            this._netStatus = NetStatus.CONNECTION_ERROR;
-            this._NetStatusHandler(msg);
+            this._NetStatusHandler(NetStatus.CONNECTION_ERROR, msg);
         }
 
         private void _OnClose(object status)
         {
-            this._netStatus = NetStatus.DISCONNECTED;
-            this._NetStatusHandler(status);
+            this._NetStatusHandler(NetStatus.DISCONNECTED, status);
 
             this._StopTicker();
             if (this._isCloseForce) return;
@@ -327,8 +324,7 @@ namespace OxGFrame.NetFrame
 
         private void _StartAutoReconnect()
         {
-            this._netStatus = NetStatus.RECONNECTING;
-            this._NetStatusHandler(null);
+            this._NetStatusHandler(NetStatus.RECONNECTING, null);
 
             this._reconnectTicker.Play();
             this._reconnectTicker.SetTick(this._reconnectTick);
@@ -359,8 +355,7 @@ namespace OxGFrame.NetFrame
             }
             else
             {
-                this._netStatus = NetStatus.DISCONNECTED;
-                this._NetStatusHandler(null);
+                this._NetStatusHandler(NetStatus.DISCONNECTED, null);
                 this._reconnectTicker.Stop();
             }
         }
