@@ -12,7 +12,7 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         [SerializeField, Tooltip("Bundle decryption (case-insensitive).\n\n[NONE], \n[OFFSET, dummySize], \n[XOR, key], \n[HT2XOR, headKey, tailKey, jumpKey], \n[AES, key, iv]\n\nex: \n\"none\" \n\"offset, 12\" \n\"xor, 23\" \n\"ht2xor, 34, 45, 56\" \n\"aes, key, iv\"")]
         private string _decryptArgs = BundleConfig.CryptogramType.NONE;
-        [SerializeField, Tooltip("Can encrypt string data in memroy.")]
+        [SerializeField, Tooltip("Can encrypt string data in memory.")]
         public bool secureString = true;
         [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)"), ConditionalField(nameof(secureString))]
         private int _saltSize = 1 << 4;
@@ -85,7 +85,7 @@ namespace OxGFrame.AssetLoader.Bundle
     public class DlcPackageInfoWithBuild : PackageInfoWithBuild
     {
         public bool withoutPlatform = false;
-        [Tooltip("If version is null or empty will auto set newset package version by date")]
+        [Tooltip("If version is null or empty will auto set newest package version by date")]
         public string dlcVersion;
     }
 
@@ -94,7 +94,7 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         public bool withoutPlatform = false;
         public string packageName;
-        [Tooltip("If version is null or empty will auto set newset package version by date")]
+        [Tooltip("If version is null or empty will auto set newest package version by date")]
         public string dlcVersion;
     }
 

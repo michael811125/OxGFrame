@@ -79,7 +79,7 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
                     {
                         using (var swEncrypt = new StreamWriter(csEncrypt))
                         {
-                            //Write all data to the stream.
+                            // Write all data to the stream.
                             swEncrypt.Write(input);
                         }
                         encrypted = msEncrypt.ToArray();

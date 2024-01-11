@@ -686,7 +686,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
                 else
                 {
-                    bool saftyChecker = false;
+                    bool safetyChecker = false;
 
                     // 安全檢測無效場景卸載 (有可能被 Build 方法卸載掉)
                     for (int topCount = this._additiveSceneCounter[assetName]; topCount >= 1; --topCount)
@@ -697,14 +697,14 @@ namespace OxGFrame.AssetLoader.Cacher
                         {
                             if (pack.GetScene().isLoaded)
                             {
-                                saftyChecker = true;
+                                safetyChecker = true;
                                 break;
                             }
                         }
                     }
 
                     // 啟用安全檢測卸載方法 (直接遞迴強制全部卸載)
-                    if (saftyChecker)
+                    if (safetyChecker)
                     {
                         ResourcePackage package = null;
                         for (int topCount = this._additiveSceneCounter[assetName]; topCount >= 1; --topCount)
@@ -720,7 +720,7 @@ namespace OxGFrame.AssetLoader.Cacher
                                     this._additiveScenes[key] = null;
                                     this._additiveScenes.Remove(key);
 
-                                    Logging.Print<Logger>($"<color=#00e5ff>【<color=#97ff3e>Safty</color> Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
+                                    Logging.Print<Logger>($"<color=#00e5ff>【<color=#97ff3e>Safety</color> Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}</color>");
                                 }
                             }
                         }
@@ -729,7 +729,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._additiveSceneCounter.Remove(assetName);
                         package?.UnloadUnusedAssets();
 
-                        Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef><color=#97ff3e>Safty</color> Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
+                        Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef><color=#97ff3e>Safety</color> Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
                     }
                     else
                     {
