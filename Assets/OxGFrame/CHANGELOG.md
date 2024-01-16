@@ -10,13 +10,16 @@
 
 **How to use it**
 ```C#
-    if (CoreFrames.UIFrame.GetStackByStackCount(groupId, canvasName) > 0)
+    if (Keyboard.current.escapeKey.wasReleasedThisFrame)
     {
-        CoreFrames.UIFrame.CloseStackByStack(groupId, canvasName);
-    }
-    else
-    {
-        Debug.Log("Open Esc Menu!!!");
+        if (CoreFrames.UIFrame.GetStackByStackCount(groupId, canvasName) > 0)
+        {
+            CoreFrames.UIFrame.CloseStackByStack(groupId, canvasName);
+        }
+        else
+        {
+            Debug.Log("Open Esc Menu!!!");
+        }
     }
 ```
 - Modified UI NodeType name (the original settings will not be changed).
@@ -31,7 +34,7 @@
         SysPopup,     // Same
         TopSysPopup,  // Same
         AwaitingPopup // Same
-        
+    }
 ```
 
 ## [2.9.11] - 2024-01-09
