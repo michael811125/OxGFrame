@@ -14,8 +14,8 @@ namespace OxGFrame.CoreFrame.UIFrame
     /// </summary>
     public enum NodeType
     {
-        Normal,
         Fixed,
+        TopFixed,
         Popup,
         TopPopup,
         LoadingPopup,
@@ -30,8 +30,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         [Tooltip("Canvas name (will find same name of canvas on the scene)")]
         public string canvasName = "Canvas";
         [Tooltip("Node layer type")]
-        public NodeType nodeType = NodeType.Normal;
-        [Tooltip("Stack mode (will auto controll order in layer)")]
+        public NodeType nodeType = NodeType.Fixed;
+        [Tooltip("Stack mode (will auto control order in layer)")]
         public bool stack = false;
         [ConditionalField(nameof(stack), inverse: true), Tooltip("Fixed rendering order without stack mode"), Range(0, UIConfig.ORDER_DIFFERENCE)]
         public int order = 0;
@@ -72,8 +72,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         /* 節點常量, 可自行定義 NodeType 後, 並且在此新增 【NodeType + Order, 排序小 (後層) -> 大 (前層)】 */
         public static readonly Dictionary<NodeType, int> uiNodes = new Dictionary<NodeType, int>()
             {
-                { NodeType.Normal, 0},
-                { NodeType.Fixed, 1000},
+                { NodeType.Fixed, 0},
+                { NodeType.TopFixed, 1000},
                 { NodeType.Popup, 2000},
                 { NodeType.TopPopup, 3000},
                 { NodeType.LoadingPopup, 4000},

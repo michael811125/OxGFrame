@@ -497,6 +497,19 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         #region StackByStack Operation
         /// <summary>
+        /// 取得 Stack by stack count
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="canvasName"></param>
+        /// <returns></returns>
+        public int GetStackByStackCount(int groupId, string canvasName)
+        {
+            if (this._dictStackByStack.Count == 0) return 0;
+            string key = $"{groupId}{canvasName}";
+            return this._dictStackByStack[key].Count;
+        }
+
+        /// <summary>
         /// 針對 Close 時, 如果有遇到 Destroy 狀況需要進行 StackByStack 緩存安全處理
         /// </summary>
         /// <param name="doRemoveSafety"></param>

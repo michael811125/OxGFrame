@@ -82,7 +82,14 @@ public class UIFrameDemo : MonoBehaviour
         }
         else if (Keyboard.current.numpad8Key.wasReleasedThisFrame)
         {
-            CoreFrames.UIFrame.CloseStackByStack(ScreenUIs.Id, "CanvasCamera");
+            CoreFrames.UIFrame.Show(ScreenUIs.Id, ScreenUIs.Demo1UI).Forget();
+        }
+        else if (Keyboard.current.escapeKey.wasReleasedThisFrame)
+        {
+            if (CoreFrames.UIFrame.GetStackByStackCount(ScreenUIs.Id, CanvasCamera) > 0)
+                CoreFrames.UIFrame.CloseStackByStack(ScreenUIs.Id, CanvasCamera);
+            else
+                Debug.Log("Open Esc Menu!!!");
         }
         else if (Keyboard.current.numpad9Key.wasReleasedThisFrame)
         {
