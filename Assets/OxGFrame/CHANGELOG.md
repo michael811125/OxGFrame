@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## [2.9.12] - 2024-01-16
+- Added CoreFrames.UIFrame.GetStackByStackCount method.
+```C#
+    public static int GetStackByStackCount(string canvasName)
+    
+    public static int GetStackByStackCount(int groupId, string canvasName)
+```
+
+**How to use it**
+```C#
+    if (CoreFrames.UIFrame.GetStackByStackCount(groupId, canvasName) > 0)
+    {
+        CoreFrames.UIFrame.CloseStackByStack(groupId, canvasName);
+    }
+    else
+    {
+        Debug.Log("Open Esc Menu!!!");
+    }
+```
+- Modified UI NodeType name (the original settings will not be changed).
+```C#
+    public enum NodeType
+    {
+        Fixed,        // Normal => Fixed
+        TopFixed,     // Fixed => TopFixed
+        Popup,        // Same
+        TopPopup,     // Same
+        LoadingPopup, // Same
+        SysPopup,     // Same
+        TopSysPopup,  // Same
+        AwaitingPopup // Same
+        
+```
+
 ## [2.9.11] - 2024-01-09
 - Optimized NetFrame.
 - Added TcpNetOption.

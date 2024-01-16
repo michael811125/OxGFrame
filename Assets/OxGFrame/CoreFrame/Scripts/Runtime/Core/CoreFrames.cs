@@ -69,6 +69,16 @@ namespace OxGFrame.CoreFrame
                 return UIManager.GetInstance().CheckHasAnyHiding(groupId);
             }
 
+            public static int GetStackByStackCount(string canvasName)
+            {
+                return UIManager.GetInstance().GetStackByStackCount(0, canvasName);
+            }
+
+            public static int GetStackByStackCount(int groupId, string canvasName)
+            {
+                return UIManager.GetInstance().GetStackByStackCount(groupId, canvasName);
+            }
+
             /// <summary>
             /// Send refresh message to specific with data
             /// </summary>
