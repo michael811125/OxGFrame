@@ -547,10 +547,6 @@ video_urlset 127.0.0.1/video/
 
 網路模塊，網路事件分為 OnOpen, OnBinary, OnMessage, OnError, OnClose，進行事件註冊後就可以針對網路狀態進行監控，也實現多網路節點 (NetNode)，再由 NetManager 進行網路節點註冊進行管理操作，另外可以設置心跳檢測回調、超時處理回調、重新連接回調的各處理，並且也能實現 INetTips 接口網路訊息介面的實作。
 
-**目前有提供的 NetProvider (可自行擴展 KCP, UDP...)**
-- TCP/IP
-- Websocket
-
 - NetManager (網路節點管理器)
 - NetNode (網路節點)
 - INetProvider (網路供應者)
@@ -560,6 +556,10 @@ video_urlset 127.0.0.1/video/
   - TcpNetOption
   - WebsocketNetOption 
 - INetTips (網路狀態提示接口)
+
+**目前有提供的 NetProvider (可自行擴展 KCP, UDP...)**
+- TCP/IP
+- WebSocket
 
 **如果沒有要使用 NetFrame 網路模塊，可以直接刪除整個 NetFrame。**
 
