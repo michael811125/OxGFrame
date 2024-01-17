@@ -545,12 +545,20 @@ video_urlset 127.0.0.1/video/
 
 ### NetFrame (dependence OxGKit.Utilities)
 
-網路模塊，實現 WebSocket 跟 TCP/IP 統一接口，依照 WebSocket 狀態概念進行接口設計 (ISocket)，狀態分為 OnOpen, OnMessage, OnError, OnClose，進行事件註冊後就可以針對網路狀態進行監控，也實現多網路節點 (NetNode)，可以自行建立 WebSocket NetNode 或是 TCP/IP NetNode，再由 NetManager 進行網路節點註冊進行管理操作，另外可以設置心跳檢測回調、超時處理回調、重新連接回調的各處理，並且也能實現 INetTips 接口網路訊息介面的實作。
+網路模塊，網路事件分為 OnOpen, OnBinary, OnMessage, OnError, OnClose，進行事件註冊後就可以針對網路狀態進行監控，也實現多網路節點 (NetNode)，再由 NetManager 進行網路節點註冊進行管理操作，另外可以設置心跳檢測回調、超時處理回調、重新連接回調的各處理，並且也能實現 INetTips 接口網路訊息介面的實作。
+
+**目前有提供的 NetProvider (可自行擴展 KCP, UDP...)**
+- TCP/IP
+- Websocket
 
 - NetManager (網路節點管理器)
 - NetNode (網路節點)
-- TcpSock (TCP/IP)
-- WebSock (WebSocket)
+- INetProvider (網路供應者)
+  - TcpNetProvider (TCP/IP)
+  - WebsocketNetProvider (WebSocket)
+- NetOption (連線配置)
+  - TcpNetOption
+  - WebsocketNetOption 
 - INetTips (網路狀態提示接口)
 
 **如果沒有要使用 NetFrame 網路模塊，可以直接刪除整個 NetFrame。**
