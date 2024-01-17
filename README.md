@@ -615,6 +615,12 @@ video_urlset 127.0.0.1/video/
 
 ---
 
+### 討論區
+
+[Discord](https://discord.gg/euAgw8gM)
+
+---
+
 ### Donate
 [PayPal.Me](https://paypal.me/MichaelOthx?country.x=TW&locale.x=zh_TW)
 
