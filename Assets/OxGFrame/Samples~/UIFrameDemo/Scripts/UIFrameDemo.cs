@@ -13,6 +13,7 @@ public static class ScreenUIs
     public static readonly string Demo1UI = $"{_prefix}{_path}Demo1UI";
     public static readonly string Demo2UI = $"{_prefix}{_path}Demo2UI";
     public static readonly string Demo3UI = $"{_prefix}{_path}Demo3UI";
+    public static readonly string Demo4UI = $"{_prefix}{_path}Demo4UI";
     public static readonly string DemoLoadingUI = $"{_prefix}{_path}DemoLoadingUI";
 
     // Group Id
@@ -89,7 +90,10 @@ public class UIFrameDemo : MonoBehaviour
             if (CoreFrames.UIFrame.GetStackByStackCount(ScreenUIs.Id, CanvasCamera) > 0)
                 CoreFrames.UIFrame.CloseStackByStack(ScreenUIs.Id, CanvasCamera);
             else
+            {
+                CoreFrames.UIFrame.Show(ScreenUIs.Id, ScreenUIs.Demo4UI).Forget();
                 Debug.Log("Open Esc Menu!!!");
+            }
         }
         else if (Keyboard.current.numpad9Key.wasReleasedThisFrame)
         {
