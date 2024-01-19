@@ -27,11 +27,11 @@
 
 Add https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame to Package Manager.
 	
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_3.png)
+![](Docs/img_3.png)
 
 Import Prefabs from Samples
 
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_7.png)
+![](Docs/img_7.png)
 	
 ### 2. 透過 Github 下載 (Code Download ZIP)
 
@@ -69,7 +69,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 
 相關模板建立的選單 (Create menu items)
 
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_2.png)
+![](Docs/img_2.)
 
 [Roadmap wiki](https://github.com/michael811125/OxGFrame/wiki/Roadmap)
 
@@ -125,7 +125,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 - [NetFrame](https://github.com/michael811125/OxGFrame#netframe-dependence-oxgkitutilities)
 - [CenterFrame](https://github.com/michael811125/OxGFrame#centerframe)
 
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_9.png)
+![](Docs/img_9.)
 
 ### Hotfixer (dependence HybridCLR, AssetLoader)
 
@@ -134,9 +134,9 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 
 **使用流程詳看 HotfixerDemo (Import frome Package Manager)**
 
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_4.png)
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_5.png)
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_6.png)
+![](Docs/img_4.png)
+![](Docs/img_5.png)
+![](Docs/img_6.png)
 
 ※備註 : 運行打包 HotfixerDemo 需要 Import PatchLauncher from PackageManager
 
@@ -169,15 +169,15 @@ YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config 
 
 1. 選擇 Export App Config To StreamingAssets 頁籤，建立 appconfig.json 至 StreamingAssets 中 (主要用於 App Version 比對)。
 
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_10.png)
+![](Docs/img_10.png)
 
 2. 再開啟 OxGFrame/AssetLoader/Bundle Url Generator (burlconfig.conf) 視窗，建立 burlconfig.conf 至 StreamgingAssets 中 (主要用於定位 CDN Server Domain 與 Store Link)。 
 
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_13.png)
+![](Docs/img_13.png)
 
 3. 最後返回 OxGFrame/AssetLoader/Export Bundle And Config Generator 視窗，選擇 Export Configs And App Bundles for CDN 頁籤，輸出上傳資源，Source Folder 選擇剛剛使用 YooAsset 輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行預設包的群組分包，輸出後將 CDN 資料夾直接上傳至 Server。
 
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_11.png) 
+![](Docs/img_11.png) 
   
 ---
   
@@ -186,7 +186,7 @@ YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config 
   - 標準運行包
   - 全部運行包 (預設 #all)
 
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_1.png)
+![](Docs/img_1.png)
 
 資源更新過程 (支援下載途中直接進行修復功能)
 
@@ -219,7 +219,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/11dcf0d3-41bd-4a8d-af6
 | **Combination** |
 | Preset_App_Pkg_01 + Preset_App_Pkg_02 + Preset_DLC_Pkg_01 + Preset_DLC_Pkg_02 (TotalCount = 15, TotalSize = 2400 KB) |
 
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_12.png)
+![](Docs/img_12.png)
 
 備註：通過 Preset 設置的 DLC Packages 必須是**固定版號** (ex: "latest")。
 
@@ -355,11 +355,11 @@ store_link http://
 
 | UI 反切運用 (Reverse Changes)  | UI 反切運用 (Reverse Changes) |
 |:-|:-|
-| ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/gif_3.gif) | ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/gif_4.gif) |
+| ![](Docs/gif_3.gif) | ![](Docs/gif_4.gif) |
 
 | UI 堆疊關閉運用 (Close Stack By Stack)  | UI 堆疊關閉運用 (Close Stack By Stack) |
 |:-|:-|
-| ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/gif_5.gif) | ![](https://github.com/michael811125/OxGFrame/blob/master/Docs/gif_6.gif) |
+| ![](Docs/gif_5.gif) | ![](Docs/gif_6.gif) |
 
 #### SRFrame (Scene Resource)
 
@@ -412,9 +412,9 @@ Init Order : OnCreate (Once) > OnAutoBind (Once) > OnBind (Once) > OnPreShow (Ev
 能夠縮短 Runtime 在綁定的向下查找次數，時間複雜度為 O(N)，N = StopEndIdx (**如有大量節點物件建議使用**)。
   - 如果有特殊使用 Transform.Find 查找子物件時，剛好子物件名稱有 # 標籤，可以無視 (在 Runtime 時，會 Replace 標籤，還原字串)。
 
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/img_8.png)
+![](Docs/img_8.png)
 
-![](https://github.com/michael811125/OxGFrame/blob/master/Docs/gif_2.gif)
+![](Docs/gif_2.gif)
 
 #### 自動生成物件綁定代碼 (Hotkey: Shift+B, B: Bind)
 
