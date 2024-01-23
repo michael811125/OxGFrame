@@ -69,7 +69,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 
 相關模板建立的選單 (Create menu items)
 
-![](Docs/img_2.)
+![](Docs/img_2.png)
 
 [Roadmap wiki](https://github.com/michael811125/OxGFrame/wiki/Roadmap)
 
