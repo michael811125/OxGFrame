@@ -98,12 +98,38 @@ namespace OxGFrame.CoreFrame
             }
 
             /// <summary>
-            /// Send refresh message to all (If specificRefreshInfos = null, only refresh without specific asset and data)
+            /// Send refresh message to all without data
+            /// </summary>
+            public static void SendRefreshDataToAll()
+            {
+                UIManager.GetInstance().SendRefreshDataToAll(null, null);
+            }
+
+            /// <summary>
+            /// Send refresh message to all with same data
+            /// </summary>
+            /// <param name="data"></param>
+            public static void SendRefreshDataToAll(object data)
+            {
+                UIManager.GetInstance().SendRefreshDataToAll(data, null);
+            }
+
+            /// <summary>
+            /// Send refresh message to all without data except specificRefreshInfos
             /// </summary>
             /// <param name="specificRefreshInfos"></param>
-            public static void SendRefreshDataToAll(RefreshInfo[] specificRefreshInfos = null)
+            public static void SendRefreshDataToAll(RefreshInfo[] specificRefreshInfos)
             {
-                UIManager.GetInstance().SendRefreshDataToAll(specificRefreshInfos);
+                UIManager.GetInstance().SendRefreshDataToAll(null, specificRefreshInfos);
+            }
+
+            /// <summary>
+            /// Send refresh message to all with same data except specificRefreshInfos
+            /// </summary>
+            /// <param name="specificRefreshInfos"></param>
+            public static void SendRefreshDataToAll(object data, RefreshInfo[] specificRefreshInfos)
+            {
+                UIManager.GetInstance().SendRefreshDataToAll(data, specificRefreshInfos);
             }
 
             #region Canvas
@@ -369,12 +395,38 @@ namespace OxGFrame.CoreFrame
             }
 
             /// <summary>
-            /// Send refresh message to all (If specificRefreshInfos = null, only refresh without specific asset and data)
+            /// Send refresh message to all without data
+            /// </summary>
+            public static void SendRefreshDataToAll()
+            {
+                SRManager.GetInstance().SendRefreshDataToAll(null, null);
+            }
+
+            /// <summary>
+            /// Send refresh message to all with same data
+            /// </summary>
+            /// <param name="data"></param>
+            public static void SendRefreshDataToAll(object data)
+            {
+                SRManager.GetInstance().SendRefreshDataToAll(data, null);
+            }
+
+            /// <summary>
+            /// Send refresh message to all without data except specificRefreshInfos
             /// </summary>
             /// <param name="specificRefreshInfos"></param>
-            public static void SendRefreshDataToAll(RefreshInfo[] specificRefreshInfos = null)
+            public static void SendRefreshDataToAll(RefreshInfo[] specificRefreshInfos)
             {
-                SRManager.GetInstance().SendRefreshDataToAll(specificRefreshInfos);
+                SRManager.GetInstance().SendRefreshDataToAll(null, specificRefreshInfos);
+            }
+
+            /// <summary>
+            /// Send refresh message to all with same data except specificRefreshInfos
+            /// </summary>
+            /// <param name="specificRefreshInfos"></param>
+            public static void SendRefreshDataToAll(object data, RefreshInfo[] specificRefreshInfos)
+            {
+                SRManager.GetInstance().SendRefreshDataToAll(data, specificRefreshInfos);
             }
 
             #region GetComponent

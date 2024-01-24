@@ -697,7 +697,8 @@ namespace OxGFrame.CoreFrame
         /// 【特殊方法】刷新特定物件
         /// </summary>
         /// <param name="obj"></param>
-        public void SendRefreshDataToAll(RefreshInfo[] specificRefreshInfos)
+        /// <param name="specificRefreshInfos"></param>
+        public void SendRefreshDataToAll(object obj, RefreshInfo[] specificRefreshInfos)
         {
             foreach (FrameStack<T> stack in this._dictAllCache.Values)
             {
@@ -733,7 +734,7 @@ namespace OxGFrame.CoreFrame
                     {
                         foreach (var fBase in stack.cache)
                         {
-                            fBase.OnReceiveAndRefresh();
+                            fBase.OnReceiveAndRefresh(obj);
                         }
                     }
                 }
