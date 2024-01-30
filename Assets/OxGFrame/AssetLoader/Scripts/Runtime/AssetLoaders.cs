@@ -1249,172 +1249,172 @@ namespace OxGFrame.AssetLoader
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="groupdId"></param>
+        /// <param name="groupId"></param>
         /// <param name="assetName"></param>
         /// <param name="priority"></param>
         /// <param name="progression"></param>
         /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset);
                 return cloneAsset;
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset);
                 return cloneAsset;
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Vector3 position, Quaternion rotation, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string assetName, Vector3 position, Quaternion rotation, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation);
                 return cloneAsset;
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Vector3 position, Quaternion rotation, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string packageName, string assetName, Vector3 position, Quaternion rotation, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation);
                 return cloneAsset;
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Vector3 position, Quaternion rotation, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string assetName, Vector3 position, Quaternion rotation, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation, parent);
                 return cloneAsset;
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation, parent);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation, parent);
                 return cloneAsset;
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation, parent);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
-        {
-            var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName))
-            {
-                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupdId, assetName, progression, maxRetryCount);
-                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
-                return cloneAsset;
-            }
-            else
-            {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
-                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
-                return cloneAsset;
-            }
-        }
-
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
-        {
-            if (RefineResourcesPath(ref assetName))
-            {
-                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupdId, assetName, progression, maxRetryCount);
-                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
-                return cloneAsset;
-            }
-            else
-            {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
-                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
-                return cloneAsset;
-            }
-        }
-
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string assetName, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression, maxRetryCount);
+                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
+                return cloneAsset;
+            }
+            else
+            {
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
+                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
+                return cloneAsset;
+            }
+        }
+
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string packageName, string assetName, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        {
+            if (RefineResourcesPath(ref assetName))
+            {
+                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression, maxRetryCount);
+                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
+                return cloneAsset;
+            }
+            else
+            {
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
+                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
+                return cloneAsset;
+            }
+        }
+
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        {
+            var packageName = AssetPatcher.GetDefaultPackageName();
+            if (RefineResourcesPath(ref assetName))
+            {
+                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent, worldPositionStays);
                 return cloneAsset;
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent, worldPositionStays);
                 return cloneAsset;
             }
         }
 
-        public static async UniTask<T> InstantiateAssetAsync<T>(int groupdId, string packageName, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string packageName, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = await GroupResource.GetInstance().LoadAssetAsync<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent, worldPositionStays);
                 return cloneAsset;
             }
             else
             {
-                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupdId, packageName, assetName, priority, progression, maxRetryCount);
+                var asset = await GroupBundle.GetInstance().LoadAssetAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent, worldPositionStays);
                 return cloneAsset;
             }
@@ -1424,171 +1424,171 @@ namespace OxGFrame.AssetLoader
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="groupdId"></param>
+        /// <param name="groupId"></param>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
         /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        public static T InstantiateAsset<T>(int groupdId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static T InstantiateAsset<T>(int groupId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = GroupResource.GetInstance().LoadAsset<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = GroupResource.GetInstance().LoadAsset<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset);
                 return cloneAsset;
             }
             else
             {
-                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupId, packageName, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset);
                 return cloneAsset;
             }
         }
 
-        public static T InstantiateAsset<T>(int groupdId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static T InstantiateAsset<T>(int groupId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = GroupResource.GetInstance().LoadAsset<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = GroupResource.GetInstance().LoadAsset<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset);
                 return cloneAsset;
             }
             else
             {
-                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupId, packageName, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset);
                 return cloneAsset;
             }
         }
 
-        public static T InstantiateAsset<T>(int groupdId, string assetName, Vector3 position, Quaternion rotation, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static T InstantiateAsset<T>(int groupId, string assetName, Vector3 position, Quaternion rotation, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = GroupResource.GetInstance().LoadAsset<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = GroupResource.GetInstance().LoadAsset<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation);
                 return cloneAsset;
             }
             else
             {
-                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupId, packageName, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation);
                 return cloneAsset;
             }
         }
 
-        public static T InstantiateAsset<T>(int groupdId, string packageName, string assetName, Vector3 position, Quaternion rotation, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static T InstantiateAsset<T>(int groupId, string packageName, string assetName, Vector3 position, Quaternion rotation, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = GroupResource.GetInstance().LoadAsset<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = GroupResource.GetInstance().LoadAsset<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation);
                 return cloneAsset;
             }
             else
             {
-                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupId, packageName, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation);
                 return cloneAsset;
             }
         }
 
-        public static T InstantiateAsset<T>(int groupdId, string assetName, Vector3 position, Quaternion rotation, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static T InstantiateAsset<T>(int groupId, string assetName, Vector3 position, Quaternion rotation, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = GroupResource.GetInstance().LoadAsset<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = GroupResource.GetInstance().LoadAsset<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation, parent);
                 return cloneAsset;
             }
             else
             {
-                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupId, packageName, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation, parent);
                 return cloneAsset;
             }
         }
 
-        public static T InstantiateAsset<T>(int groupdId, string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static T InstantiateAsset<T>(int groupId, string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = GroupResource.GetInstance().LoadAsset<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = GroupResource.GetInstance().LoadAsset<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation, parent);
                 return cloneAsset;
             }
             else
             {
-                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupId, packageName, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, position, rotation, parent);
                 return cloneAsset;
             }
         }
 
-        public static T InstantiateAsset<T>(int groupdId, string assetName, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
-        {
-            var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName))
-            {
-                var asset = GroupResource.GetInstance().LoadAsset<T>(groupdId, assetName, progression, maxRetryCount);
-                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
-                return cloneAsset;
-            }
-            else
-            {
-                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupdId, packageName, assetName, progression, maxRetryCount);
-                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
-                return cloneAsset;
-            }
-        }
-
-        public static T InstantiateAsset<T>(int groupdId, string packageName, string assetName, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
-        {
-            if (RefineResourcesPath(ref assetName))
-            {
-                var asset = GroupResource.GetInstance().LoadAsset<T>(groupdId, assetName, progression, maxRetryCount);
-                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
-                return cloneAsset;
-            }
-            else
-            {
-                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupdId, packageName, assetName, progression, maxRetryCount);
-                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
-                return cloneAsset;
-            }
-        }
-
-        public static T InstantiateAsset<T>(int groupdId, string assetName, Transform parent, bool worldPositionStays, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static T InstantiateAsset<T>(int groupId, string assetName, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = GroupResource.GetInstance().LoadAsset<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = GroupResource.GetInstance().LoadAsset<T>(groupId, assetName, progression, maxRetryCount);
+                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
+                return cloneAsset;
+            }
+            else
+            {
+                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupId, packageName, assetName, progression, maxRetryCount);
+                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
+                return cloneAsset;
+            }
+        }
+
+        public static T InstantiateAsset<T>(int groupId, string packageName, string assetName, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        {
+            if (RefineResourcesPath(ref assetName))
+            {
+                var asset = GroupResource.GetInstance().LoadAsset<T>(groupId, assetName, progression, maxRetryCount);
+                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
+                return cloneAsset;
+            }
+            else
+            {
+                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupId, packageName, assetName, progression, maxRetryCount);
+                var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent);
+                return cloneAsset;
+            }
+        }
+
+        public static T InstantiateAsset<T>(int groupId, string assetName, Transform parent, bool worldPositionStays, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        {
+            var packageName = AssetPatcher.GetDefaultPackageName();
+            if (RefineResourcesPath(ref assetName))
+            {
+                var asset = GroupResource.GetInstance().LoadAsset<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent, worldPositionStays);
                 return cloneAsset;
             }
             else
             {
-                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupId, packageName, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent, worldPositionStays);
                 return cloneAsset;
             }
         }
 
-        public static T InstantiateAsset<T>(int groupdId, string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
+        public static T InstantiateAsset<T>(int groupId, string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : Object
         {
             if (RefineResourcesPath(ref assetName))
             {
-                var asset = GroupResource.GetInstance().LoadAsset<T>(groupdId, assetName, progression, maxRetryCount);
+                var asset = GroupResource.GetInstance().LoadAsset<T>(groupId, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent, worldPositionStays);
                 return cloneAsset;
             }
             else
             {
-                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupdId, packageName, assetName, progression, maxRetryCount);
+                var asset = GroupBundle.GetInstance().LoadAsset<T>(groupId, packageName, assetName, progression, maxRetryCount);
                 var cloneAsset = (asset == null) ? null : Object.Instantiate(asset, parent, worldPositionStays);
                 return cloneAsset;
             }
