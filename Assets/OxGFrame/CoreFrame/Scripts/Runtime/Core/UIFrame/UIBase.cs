@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace OxGFrame.CoreFrame.UIFrame
 {
-    public delegate void AnimeEndCb();
+    public delegate void AnimationEnd();
 
     public class UIBase : FrameBase
     {
@@ -104,7 +104,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             }
 
             this.Freeze();
-            this.ShowAnime(() =>
+            this.ShowAnimation(() =>
             {
                 this.UnFreeze();
             });
@@ -118,7 +118,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             if (!this.gameObject.activeSelf) return;
 
             this.Freeze();
-            this.HideAnime(() =>
+            this.HideAnimation(() =>
             {
                 this.UnFreeze();
 
@@ -181,15 +181,15 @@ namespace OxGFrame.CoreFrame.UIFrame
             if (this.maskSetting.isClickMaskToClose) UIManager.GetInstance().Close(this.assetName);
         }
 
-        #region UI Transition Anime
-        protected virtual void ShowAnime(AnimeEndCb animeEndCb)
+        #region UI Transition Animation
+        protected virtual void ShowAnimation(AnimationEnd animationEnd)
         {
-            animeEndCb();
+            animationEnd();
         }
 
-        protected virtual void HideAnime(AnimeEndCb animeEndCb)
+        protected virtual void HideAnimation(AnimationEnd animationEnd)
         {
-            animeEndCb();
+            animationEnd();
         }
         #endregion
     }
