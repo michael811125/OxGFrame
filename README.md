@@ -351,7 +351,7 @@ store_link http://
 
 #### UIFrame (User Interface)
 
-用於調度 UI Prefab，僅支援 UGUI，使用 UIManager 管理掛載 UIBase 的 Prefab，支援 UI 反切 (Reverse Changes)、UI 堆疊關閉 (Close Stack By Stack)，基本上 UI 有隱藏凍結功能，避免 UI 動畫尚未完成期間，能夠被點擊觸發事件。另外如需要製作 UI 動畫，可以在 ShowAnime 跟 HideAnime 覆寫執行相關過渡動畫 (DoTween, Animation...)，並且一定要在完成 UI 動畫後正確呼叫 animeEndCb() 回調。額外還有 UI 的 MaskEvent 也可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)。
+用於調度 UI Prefab，僅支援 UGUI，使用 UIManager 管理掛載 UIBase 的 Prefab，支援 UI 反切 (Reverse Changes)、UI 堆疊關閉 (Close Stack By Stack)，基本上 UI 有隱藏凍結功能，避免 UI 動畫尚未完成期間，能夠被點擊觸發事件。另外如需要製作 UI 動畫，可以在 ShowAnimation 跟 HideAnimation 覆寫執行相關過渡動畫 (DoTween, Animation...)，並且一定要在完成 UI 動畫後正確呼叫 animationEnd() 回調。額外還有 UI 的 MaskEvent 也可以 override 自定義事件 (使用 _Node@XXX 進行物件綁定)。
 
 | UI 反切運用 (Reverse Changes)  | UI 反切運用 (Reverse Changes) |
 |:-|:-|
