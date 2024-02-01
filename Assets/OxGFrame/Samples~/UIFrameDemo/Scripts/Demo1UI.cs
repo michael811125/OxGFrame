@@ -60,16 +60,16 @@ public class Demo1UI : UIBase
         */
     }
 
-    protected override void ShowAnime(AnimeEndCb animeEndCb)
+    protected override void ShowAnimation(AnimationEnd animationEnd)
     {
         Debug.Log($"UI: {this.gameObject.name}, Check Data: {this._msg}");
 
-        animeEndCb(); // Must Keep, Because Parent Already Set AnimeCallback
+        animationEnd(); // Must call if animation end
     }
 
-    protected override void HideAnime(AnimeEndCb animeEndCb)
+    protected override void HideAnimation(AnimationEnd animationEnd)
     {
-        animeEndCb(); // Must Keep, Because Parent Already Set AnimeCallback
+        animationEnd(); // Must call if animation end
     }
 
     protected override void OnClose()

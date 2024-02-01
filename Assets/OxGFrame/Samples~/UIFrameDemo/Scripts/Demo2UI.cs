@@ -57,14 +57,14 @@ public class Demo2UI : UIBase
         */
     }
 
-    protected override void ShowAnime(AnimeEndCb animeEndCb)
+    protected override void ShowAnimation(AnimationEnd animationEnd)
     {
-        animeEndCb(); // Must Keep, Because Parent Already Set AnimeCallback
+        animationEnd(); // Must call if animation end
     }
 
-    protected override void HideAnime(AnimeEndCb animeEndCb)
+    protected override void HideAnimation(AnimationEnd animationEnd)
     {
-        animeEndCb(); // Must Keep, Because Parent Already Set AnimeCallback
+        animationEnd(); // Must call if animation end
     }
 
     protected override void OnClose()
