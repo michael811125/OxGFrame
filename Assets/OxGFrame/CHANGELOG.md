@@ -2,7 +2,7 @@
 
 ## [2.9.13] - 2024-02-01
 - Updated yooasset to [v2.1.1](https://github.com/tuyoogame/YooAsset/releases/tag/2.1.1).
-- Added [DiskUtil by keerthik](https://github.com/keerthik/simple-disk-utils) third party in AssetLoader module (not supported WebGL).
+- Added [DiskUtils by keerthik](https://github.com/keerthik/simple-disk-utils) third party in AssetLoader module (not supported WebGL).
 - Added Check available disk space in patch and package download step (not supported WebGL).
   - Must add PatchEvents.PatchCheckDiskNotEnoughSpace in patchEvents to handle it (checkout BundleDemo).
 - Added CheckDiskSpace flag setting on PatchLauncher inspector.
