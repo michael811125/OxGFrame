@@ -1,14 +1,14 @@
-﻿using System.IO;
-using System.Text;
-using System;
-using Cysharp.Threading.Tasks;
-using UnityEngine.Networking;
-using UnityEngine;
-using System.Threading;
-using System.Collections.Generic;
-using OxGKit.LoggingSystem;
-using System.Linq;
+﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Bundle;
+using OxGKit.LoggingSystem;
+using SimpleDiskUtils;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using UnityEngine.Networking;
 
 namespace OxGFrame.AssetLoader.Utility
 {
@@ -54,6 +54,23 @@ namespace OxGFrame.AssetLoader.Utility
             else
             {
                 return (bytes / (1024 * 1024 * 1024 * 1f)).ToString("f2") + "GB";
+            }
+        }
+
+        /// <summary>
+        /// Megabytes ToString (MB, GB)
+        /// </summary>
+        /// <param name="megabytes"></param>
+        /// <returns></returns>
+        public static string GetMegabytesToString(int megabytes)
+        {
+            if (megabytes < (1024 * 1f))
+            {
+                return (megabytes).ToString("f2") + "MB";
+            }
+            else
+            {
+                return (megabytes / (1024 * 1f)).ToString("f2") + "GB";
             }
         }
         #endregion
@@ -344,6 +361,22 @@ namespace OxGFrame.AssetLoader.Utility
                 }
                 return versionString;
             }
+        }
+        #endregion
+
+        #region Disk Operation
+        public static int CheckAvailableDiskSpaceMegabytes()
+        {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN                                         
+            string rootPath = BundleConfig.GetLocalSandboxRootPath();
+            string diskLetter = rootPath.Substring(0, 3);
+            return DiskUtils.CheckAvailableSpace(diskLetter);
+#elif UNITY_ANDROID
+            string rootPath = BundleConfig.GetLocalSandboxRootPath();
+            return DiskUtils.CheckAvailableSpace(rootPath);
+#else
+            return DiskUtils.CheckAvailableSpace();
+#endif
         }
         #endregion
     }

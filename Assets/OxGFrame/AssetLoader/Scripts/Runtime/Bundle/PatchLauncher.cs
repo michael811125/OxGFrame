@@ -18,6 +18,8 @@ namespace OxGFrame.AssetLoader.Bundle
         public BundleConfig.SemanticRule semanticRule = new BundleConfig.SemanticRule();
         [Tooltip("If checked, will skip preset app packages download step of the patch (force download while playing)."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
         public bool skipMainDownload = false;
+        [Tooltip("If checked, will check disk space is it enough while patch checking."), ConditionalField(new string[] { nameof(playMode), nameof(skipMainDownload) }, new bool[] { false, true }, BundleConfig.PlayMode.HostMode)]
+        public bool checkDiskSpace = true;
 
         [Separator("Preset App Packages")]
         [Tooltip("The first element will be default app package.\n\nNote: The presets will combine in main download of the patch.")]
@@ -62,6 +64,7 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 BundleConfig.semanticRule = this.semanticRule;
                 BundleConfig.skipMainDownload = this.skipMainDownload;
+                BundleConfig.checkDiskSpace = this.checkDiskSpace;
             }
             // For WebGL Mode
             else if (this.playMode == BundleConfig.PlayMode.WebGLMode)

@@ -1,0 +1,20 @@
+{
+  "name": "com.activetheoryinc.diskutils",
+  "version": "1.2.2",
+  "displayName": "Simple Disk Utils",
+  "description": "Useful cross-platform analysis of device disk. Updated by Active Theory Inc for modern UPM support",
+  "unity": "2020.3",
+  "dependencies": {
+  },
+  "keywords": [
+    "Disk",
+    "Memory",
+    "Hard drive"
+  ],
+  "author": {
+    "name": "Active Theory Inc",
+    "email": "developers@bitgym.com",
+    "url": "https://github.com/keerthik/simple-disk-utils/"
+  },
+  "type": "library"
+}

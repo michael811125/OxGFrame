@@ -106,10 +106,10 @@ namespace OxGFrame.AssetLoader.Bundle
             this._userEvents.AddListener<PatchUserEvents.UserTryPatchRepair>(this._OnHandleEventMessage);
             this._userEvents.AddListener<PatchUserEvents.UserTryAppVersionUpdate>(this._OnHandleEventMessage);
             this._userEvents.AddListener<PatchUserEvents.UserTryInitPatchMode>(this._OnHandleEventMessage);
-            this._userEvents.AddListener<PatchUserEvents.UserBeginDownload>(this._OnHandleEventMessage);
             this._userEvents.AddListener<PatchUserEvents.UserTryPatchVersionUpdate>(this._OnHandleEventMessage);
             this._userEvents.AddListener<PatchUserEvents.UserTryPatchManifestUpdate>(this._OnHandleEventMessage);
             this._userEvents.AddListener<PatchUserEvents.UserTryCreateDownloader>(this._OnHandleEventMessage);
+            this._userEvents.AddListener<PatchUserEvents.UserBeginDownload>(this._OnHandleEventMessage);
 
             // 註冊 PatchFsm 處理流程
             this._patchFsm = new StateMachine(this);
@@ -294,10 +294,6 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 this._patchFsm.ChangeState<PatchFsmStates.FsmInitPatchMode>();
             }
-            else if (message is PatchUserEvents.UserBeginDownload)
-            {
-                this._patchFsm.ChangeState<PatchFsmStates.FsmBeginDownload>();
-            }
             else if (message is PatchUserEvents.UserTryPatchVersionUpdate)
             {
                 this._patchFsm.ChangeState<PatchFsmStates.FsmPatchVersionUpdate>();
@@ -309,6 +305,10 @@ namespace OxGFrame.AssetLoader.Bundle
             else if (message is PatchUserEvents.UserTryCreateDownloader)
             {
                 this._patchFsm.ChangeState<PatchFsmStates.FsmCreateDownloader>();
+            }
+            else if (message is PatchUserEvents.UserBeginDownload)
+            {
+                this._patchFsm.ChangeState<PatchFsmStates.FsmBeginDownload>();
             }
             else
             {

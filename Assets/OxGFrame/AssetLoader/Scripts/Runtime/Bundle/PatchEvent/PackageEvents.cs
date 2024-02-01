@@ -8,9 +8,10 @@ namespace OxGFrame.AssetLoader.PatchEvent
     // 2. PatchInitPatchModeFailed
     // 3. PatchVersionUpdateFailed
     // 4. PatchManifestUpdateFailed
-    // 5. PatchDownloadProgression
-    // 6. PatchDownloadFailed
-    // 7. PatchDownloadCanceled
+    // 5. PatchCheckDiskNotEnoughSpace
+    // 6. PatchDownloadProgression
+    // 7. PatchDownloadFailed
+    // 8. PatchDownloadCanceled
 
     public static class PackageEvents
     {
@@ -74,6 +75,23 @@ namespace OxGFrame.AssetLoader.PatchEvent
             {
                 var msg = new PatchManifestUpdateFailed();
                 UniEvent.SendMessage(groupId, msg);
+            }
+        }
+
+        /// <summary>
+        /// Patch check disk if not enough space
+        /// </summary>
+        public class PatchCheckDiskNotEnoughSpace : IEventMessage
+        {
+            public int availableMegabytes;
+            public ulong patchTotalBytes;
+
+            public static void SendEventMessage(int availableMegabytes, ulong patchTotalBytes)
+            {
+                var msg = new PatchCheckDiskNotEnoughSpace();
+                msg.availableMegabytes = availableMegabytes;
+                msg.patchTotalBytes = patchTotalBytes;
+                UniEvent.SendMessage(msg);
             }
         }
 

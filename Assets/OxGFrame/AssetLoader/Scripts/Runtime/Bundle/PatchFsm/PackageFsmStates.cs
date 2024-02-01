@@ -527,6 +527,23 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     totalBytes += downloader.TotalDownloadBytes;
                 }
 
+#if !UNITY_WEBGL
+                // Check flag if enabled
+                if ((this._machine.Owner as PackageOperation).checkDiskSpace)
+                {
+                    // Check disk space
+                    int availableDiskSpaceMegabytes = BundleUtility.CheckAvailableDiskSpaceMegabytes();
+                    int patchTotalMegabytes = (int)(totalBytes / (1 << 20));
+                    Logging.Print<Logger>($"<color=#2cff96>[Disk Space Check] Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}</color>, <color=#2cbbff>Total Patch Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}</color>");
+                    if (patchTotalMegabytes > availableDiskSpaceMegabytes)
+                    {
+                        PackageEvents.PatchCheckDiskNotEnoughSpace.SendEventMessage(availableDiskSpaceMegabytes, (ulong)totalBytes);
+                        Logging.Print<Logger>($"<color=#ff2c48>Disk Not Enough Space!!! Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}</color>, <color=#2cbbff>Total Patch Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}</color>");
+                        return;
+                    }
+                }
+#endif
+
                 // Begin Download
                 int currentCount = 0;
                 long currentBytes = 0;

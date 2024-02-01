@@ -15,7 +15,7 @@ MonoBehaviour:
   variableCaseType: 0
   variableAccessModifier: protected
   variablePrefix: _
-  methodType: 1
+  methodType: 0
   methodAccessModifier: protected
   methodPrefix: 
   methodName: InitBind

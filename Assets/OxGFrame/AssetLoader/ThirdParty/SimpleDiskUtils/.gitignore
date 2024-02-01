@@ -1,0 +1,4 @@
+# Mac OS X
+*.DS_Store
+*mono_crash.*
+*.idea

@@ -37,7 +37,6 @@ public class BundleDemo : MonoBehaviour
     public Toggle groupToggle = null;
 
     private EventGroup _patchEvents = new EventGroup();
-
     private int _retryType = 0;
 
     private IEnumerator Start()
@@ -88,12 +87,13 @@ public class BundleDemo : MonoBehaviour
         // 2. PatchGoToAppStore
         // 3. PatchAppVersionUpdateFailed
         // 4. PatchInitPatchModeFailed
-        // 5. PatchCreateDownloader
-        // 6. PatchDownloadProgression
-        // 7. PatchVersionUpdateFailed
-        // 8. PatchManifestUpdateFailed
-        // 9. PatchDownloadFailed
-        // 10. PatchDownloadCanceled
+        // 5. PatchVersionUpdateFailed
+        // 6. PatchManifestUpdateFailed
+        // 7. PatchCreateDownloader
+        // 8. PatchCheckDiskNotEnoughSpace
+        // 9. PatchDownloadProgression
+        // 10. PatchDownloadFailed
+        // 11. PatchDownloadCanceled
 
         #region Add PatchEvents Handle
         this._patchEvents.AddListener<PatchEvents.PatchRepairFailed>(this._OnHandleEventMessage);
@@ -101,10 +101,11 @@ public class BundleDemo : MonoBehaviour
         this._patchEvents.AddListener<PatchEvents.PatchGoToAppStore>(this._OnHandleEventMessage);
         this._patchEvents.AddListener<PatchEvents.PatchAppVersionUpdateFailed>(this._OnHandleEventMessage);
         this._patchEvents.AddListener<PatchEvents.PatchInitPatchModeFailed>(this._OnHandleEventMessage);
-        this._patchEvents.AddListener<PatchEvents.PatchCreateDownloader>(this._OnHandleEventMessage);
-        this._patchEvents.AddListener<PatchEvents.PatchDownloadProgression>(this._OnHandleEventMessage);
         this._patchEvents.AddListener<PatchEvents.PatchVersionUpdateFailed>(this._OnHandleEventMessage);
         this._patchEvents.AddListener<PatchEvents.PatchManifestUpdateFailed>(this._OnHandleEventMessage);
+        this._patchEvents.AddListener<PatchEvents.PatchCreateDownloader>(this._OnHandleEventMessage);
+        this._patchEvents.AddListener<PatchEvents.PatchCheckDiskNotEnoughSpace>(this._OnHandleEventMessage);
+        this._patchEvents.AddListener<PatchEvents.PatchDownloadProgression>(this._OnHandleEventMessage);
         this._patchEvents.AddListener<PatchEvents.PatchDownloadFailed>(this._OnHandleEventMessage);
         this._patchEvents.AddListener<PatchEvents.PatchDownloadCanceled>(this._OnHandleEventMessage);
         #endregion
@@ -208,6 +209,21 @@ public class BundleDemo : MonoBehaviour
             this._retryType = 2;
             this.ShowRetryWindow("Init Patch Mode Failed");
         }
+        else if (message is PatchEvents.PatchVersionUpdateFailed)
+        {
+            // Show Patch Version Update Failed Retry UI
+
+            this._retryType = 3;
+            this.ShowRetryWindow("Patch Version Update Failed");
+
+        }
+        else if (message is PatchEvents.PatchManifestUpdateFailed)
+        {
+            // Show Patch Manifest Update Failed Retry UI
+
+            this._retryType = 4;
+            this.ShowRetryWindow("Patch Manifest Update Failed");
+        }
         else if (message is PatchEvents.PatchCreateDownloader)
         {
             // Show GroupInfos UI for user to choose which one they want to download
@@ -220,6 +236,18 @@ public class BundleDemo : MonoBehaviour
             // show groupInfos option
             this.ShowConfirmWindow(msgData.groupInfos);
             #endregion
+        }
+        else if (message is PatchEvents.PatchCheckDiskNotEnoughSpace)
+        {
+            // Show Disk Not Enough Space Retry UI
+
+            // Note: You can retry create downloader again (unless, user frees up space) or submit Application.Quit event!!!
+
+            var msgData = message as PatchEvents.PatchCheckDiskNotEnoughSpace;
+
+            // Here use action type is 6 (Application.Quit)
+            this._retryType = 6; // 5 or 6
+            this.ShowRetryWindow($"Disk Not Enough Space!!!\nAvailable Disk Space Size: {BundleUtility.GetMegabytesToString(msgData.availableMegabytes)}\nTotal Patch Size: {BundleUtility.GetBytesToString((ulong)msgData.patchTotalBytes)}");
         }
         else if (message is PatchEvents.PatchDownloadProgression)
         {
@@ -246,21 +274,6 @@ public class BundleDemo : MonoBehaviour
                 downloadInfo.downloadSpeedBytes
             );
             #endregion
-        }
-        else if (message is PatchEvents.PatchVersionUpdateFailed)
-        {
-            // Show Patch Version Update Failed Retry UI
-
-            this._retryType = 3;
-            this.ShowRetryWindow("Patch Version Update Failed");
-
-        }
-        else if (message is PatchEvents.PatchManifestUpdateFailed)
-        {
-            // Show Patch Manifest Update Failed Retry UI
-
-            this._retryType = 4;
-            this.ShowRetryWindow("Patch Manifest Update Failed");
         }
         else if (message is PatchEvents.PatchDownloadFailed)
         {
@@ -376,6 +389,11 @@ public class BundleDemo : MonoBehaviour
             case 5:
                 // Add send event in Retry UI (click event)
                 PatchUserEvents.UserTryCreateDownloader.SendEventMessage();
+                break;
+
+            case 6:
+                // Application quit
+                Application.Quit();
                 break;
         }
         #endregion

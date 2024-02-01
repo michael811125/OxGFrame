@@ -10,6 +10,13 @@ namespace OxGFrame.AssetLoader.Bundle
 {
     public class PackageOperation
     {
+        public delegate void OnPatchRepairFailed();
+        public delegate void OnPatchInitPatchModeFailed();
+        public delegate void OnPatchVersionUpdateFailed();
+        public delegate void OnPatchManifestUpdateFailed();
+        public delegate void OnPatchCheckDiskNotEnoughSpace(int availableMegabytes, ulong patchTotalBytes);
+        public delegate void OnPatchDownloadFailed(string fileName, string error);
+
         /// <summary>
         /// Instance id
         /// </summary>
@@ -28,7 +35,7 @@ namespace OxGFrame.AssetLoader.Bundle
         public GroupInfo groupInfo { get; protected set; }
 
         /// <summary>
-        /// Package operaion event group
+        /// Package operation event group
         /// </summary>
         public EventGroup eventGroup { get; protected set; }
 
@@ -36,6 +43,18 @@ namespace OxGFrame.AssetLoader.Bundle
         /// Skip download step
         /// </summary>
         public bool skipDownload { get; protected set; }
+
+        /// <summary>
+        /// Enable or disable disk space check procedure (default is true)
+        /// </summary>
+        public bool checkDiskSpace = true;
+
+        public OnPatchRepairFailed onPatchRepairFailed;
+        public OnPatchInitPatchModeFailed onPatchInitPatchModeFailed;
+        public OnPatchVersionUpdateFailed onPatchVersionUpdateFailed;
+        public OnPatchManifestUpdateFailed onPatchManifestUpdateFailed;
+        public OnPatchCheckDiskNotEnoughSpace onPatchCheckDiskNotEnoughSpace;
+        public OnPatchDownloadFailed onPatchDownloadFailed;
 
         private ResourceDownloaderOperation[] _downloaders;
         private PackageInfoWithBuild[] _packageInfos;
@@ -58,14 +77,15 @@ namespace OxGFrame.AssetLoader.Bundle
             this.eventGroup.AddListener<PackageEvents.PatchInitPatchModeFailed>(this._OnHandleEventMessage);
             this.eventGroup.AddListener<PackageEvents.PatchVersionUpdateFailed>(this._OnHandleEventMessage);
             this.eventGroup.AddListener<PackageEvents.PatchManifestUpdateFailed>(this._OnHandleEventMessage);
+            this.eventGroup.AddListener<PackageEvents.PatchCheckDiskNotEnoughSpace>(this._OnHandleEventMessage);
             this.eventGroup.AddListener<PackageEvents.PatchDownloadFailed>(this._OnHandleEventMessage);
             // User event receivers
             this.eventGroup.AddListener<PackageUserEvents.UserTryPatchRepair>(this._OnHandleEventMessage);
             this.eventGroup.AddListener<PackageUserEvents.UserTryInitPatchMode>(this._OnHandleEventMessage);
-            this.eventGroup.AddListener<PackageUserEvents.UserBeginDownload>(this._OnHandleEventMessage);
             this.eventGroup.AddListener<PackageUserEvents.UserTryPatchVersionUpdate>(this._OnHandleEventMessage);
             this.eventGroup.AddListener<PackageUserEvents.UserTryPatchManifestUpdate>(this._OnHandleEventMessage);
             this.eventGroup.AddListener<PackageUserEvents.UserTryCreateDownloader>(this._OnHandleEventMessage);
+            this.eventGroup.AddListener<PackageUserEvents.UserBeginDownload>(this._OnHandleEventMessage);
 
             // Register PatchFsm
             this._patchFsm = new StateMachine(this);
@@ -351,6 +371,33 @@ namespace OxGFrame.AssetLoader.Bundle
         }
         #endregion
 
+        #region Retry Events
+        public void UserTryPatchRepair()
+        {
+            PackageUserEvents.UserTryPatchRepair.SendEventMessage(this.hashId);
+        }
+
+        public void UserTryInitPatchMode()
+        {
+            PackageUserEvents.UserTryInitPatchMode.SendEventMessage(this.hashId);
+        }
+
+        public void UserTryPatchVersionUpdate()
+        {
+            PackageUserEvents.UserTryPatchVersionUpdate.SendEventMessage(this.hashId);
+        }
+
+        public void UserTryPatchManifestUpdate()
+        {
+            PackageUserEvents.UserTryPatchManifestUpdate.SendEventMessage(this.hashId);
+        }
+
+        public void UserTryCreateDownloader()
+        {
+            PackageUserEvents.UserTryCreateDownloader.SendEventMessage(this.hashId);
+        }
+        #endregion
+
         #region Event Handle
         private void _OnHandleEventMessage(IEventMessage message)
         {
@@ -397,23 +444,51 @@ namespace OxGFrame.AssetLoader.Bundle
             }
             else if (message is PackageEvents.PatchRepairFailed)
             {
-                PackageUserEvents.UserTryPatchRepair.SendEventMessage(this.hashId);
+                if (this.onPatchRepairFailed != null)
+                    this.onPatchRepairFailed.Invoke();
+                else
+                    PackageUserEvents.UserTryPatchRepair.SendEventMessage(this.hashId);
             }
             else if (message is PackageEvents.PatchInitPatchModeFailed)
             {
-                PackageUserEvents.UserTryInitPatchMode.SendEventMessage(this.hashId);
+                if (this.onPatchInitPatchModeFailed != null)
+                    this.onPatchInitPatchModeFailed.Invoke();
+                else
+                    PackageUserEvents.UserTryInitPatchMode.SendEventMessage(this.hashId);
             }
             else if (message is PackageEvents.PatchVersionUpdateFailed)
             {
-                PackageUserEvents.UserTryPatchVersionUpdate.SendEventMessage(this.hashId);
+                if (this.onPatchVersionUpdateFailed != null)
+                    this.onPatchVersionUpdateFailed.Invoke();
+                else
+                    PackageUserEvents.UserTryPatchVersionUpdate.SendEventMessage(this.hashId);
             }
             else if (message is PackageEvents.PatchManifestUpdateFailed)
             {
-                PackageUserEvents.UserTryPatchManifestUpdate.SendEventMessage(this.hashId);
+                if (this.onPatchManifestUpdateFailed != null)
+                    this.onPatchManifestUpdateFailed.Invoke();
+                else
+                    PackageUserEvents.UserTryPatchManifestUpdate.SendEventMessage(this.hashId);
+            }
+            else if (message is PackageEvents.PatchCheckDiskNotEnoughSpace)
+            {
+                if (this.onPatchCheckDiskNotEnoughSpace != null)
+                {
+                    var msgData = message as PackageEvents.PatchCheckDiskNotEnoughSpace;
+                    this.onPatchCheckDiskNotEnoughSpace.Invoke(msgData.availableMegabytes, msgData.patchTotalBytes);
+                }
+                else
+                    PackageUserEvents.UserTryCreateDownloader.SendEventMessage(this.hashId);
             }
             else if (message is PackageEvents.PatchDownloadFailed)
             {
-                PackageUserEvents.UserTryCreateDownloader.SendEventMessage(this.hashId);
+                if (this.onPatchDownloadFailed != null)
+                {
+                    var msgData = message as PackageEvents.PatchDownloadFailed;
+                    this.onPatchDownloadFailed.Invoke(msgData.fileName, msgData.error);
+                }
+                else
+                    PackageUserEvents.UserTryCreateDownloader.SendEventMessage(this.hashId);
             }
             // Package user events
             else if (message is PackageUserEvents.UserTryPatchRepair)

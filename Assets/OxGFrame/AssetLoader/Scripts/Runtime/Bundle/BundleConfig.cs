@@ -65,6 +65,11 @@ namespace OxGFrame.AssetLoader.Bundle
         public static bool skipMainDownload = false;
 
         /// <summary>
+        /// 是否檢查磁碟空間
+        /// </summary>
+        public static bool checkDiskSpace = true;
+
+        /// <summary>
         /// App Preset Package 清單
         /// </summary>
         public static List<AppPackageInfoWithBuild> listAppPackages;

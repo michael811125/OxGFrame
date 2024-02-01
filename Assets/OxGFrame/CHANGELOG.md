@@ -1,5 +1,45 @@
 # CHANGELOG
 
+## [2.9.13] - 2024-02-01
+- Updated yooasset to [v2.1.1](https://github.com/tuyoogame/YooAsset/releases/tag/2.1.1).
+- Added [DiskUtil by keerthik](https://github.com/keerthik/simple-disk-utils) third party in AssetLoader module (not supported WebGL).
+- Added Check available disk space in patch and package download step (not supported WebGL).
+  - Must add PatchEvents.PatchCheckDiskNotEnoughSpace in patchEvents to handle it (checkout BundleDemo).
+- Added CheckDiskSpace flag setting on PatchLauncher inspector.
+- Added Can set user event handler to PackageOperation.
+```C#
+public class PackageOperation
+{
+    /// <summary>
+    /// Enable or disable disk space check procedure (default is true)
+    /// </summary>
+    public bool checkDiskSpace = true;
+
+    public OnPatchRepairFailed onPatchRepairFailed;
+    public OnPatchInitPatchModeFailed onPatchInitPatchModeFailed;
+    public OnPatchVersionUpdateFailed onPatchVersionUpdateFailed;
+    public OnPatchManifestUpdateFailed onPatchManifestUpdateFailed;
+    public OnPatchCheckDiskNotEnoughSpace onPatchCheckDiskNotEnoughSpace;
+    public OnPatchDownloadFailed onPatchDownloadFailed;
+    
+    public void UserTryPatchRepair()
+    public void UserTryInitPatchMode()
+    public void UserTryPatchVersionUpdate()
+    public void UserTryPatchManifestUpdate()
+    public void UserTryCreateDownloader()
+}
+```
+- Modified method name [#1adf602](https://github.com/michael811125/OxGFrame/commit/1adf6028aa980169732ea1a40f2d8df1b8c4584e) (Replace all below).
+```
+method ShowAnime => ShowAnimation
+
+method HideAnime => HideAnimation
+
+delegate AnimeEndCb => AnimationEnd
+
+param animeEndCb => animationEnd
+```
+
 ## [2.9.12] - 2024-01-16
 - Added CoreFrames.UIFrame.GetStackByStackCount method.
 ```C#

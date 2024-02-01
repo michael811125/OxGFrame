@@ -6,10 +6,10 @@ namespace OxGFrame.AssetLoader.PatchEvent
     // 0. UserTryPatchRepair
     // 1. UserTryAppVersionUpdate
     // 2. UserTryInitPatchMode
-    // 3. UserBeginDownload
-    // 4. UserTryPatchVersionUpdate
-    // 5. UserTryPatchManifestUpdate
-    // 6. UserTryCreateDownloader
+    // 3. UserTryPatchVersionUpdate
+    // 4. UserTryPatchManifestUpdate
+    // 5. UserTryCreateDownloader
+    // 6. UserBeginDownload
 
     public class PatchUserEvents
     {
@@ -26,7 +26,7 @@ namespace OxGFrame.AssetLoader.PatchEvent
         }
 
         /// <summary>
-        /// User retry update app verison again
+        /// User retry update app version again
         /// </summary>
         public class UserTryAppVersionUpdate : IEventMessage
         {
@@ -45,19 +45,6 @@ namespace OxGFrame.AssetLoader.PatchEvent
             public static void SendEventMessage()
             {
                 var msg = new UserTryInitPatchMode();
-                UniEvent.SendMessage(msg);
-            }
-        }
-
-        /// <summary>
-        /// User begin download
-        /// </summary>
-        public class UserBeginDownload : IEventMessage
-        {
-            public static void SendEventMessage(GroupInfo groupInfo)
-            {
-                var msg = new UserBeginDownload();
-                PatchManager.SetLastGroupInfo(groupInfo);
                 UniEvent.SendMessage(msg);
             }
         }
@@ -94,6 +81,19 @@ namespace OxGFrame.AssetLoader.PatchEvent
             public static void SendEventMessage()
             {
                 var msg = new UserTryCreateDownloader();
+                UniEvent.SendMessage(msg);
+            }
+        }
+
+        /// <summary>
+        /// User begin download
+        /// </summary>
+        public class UserBeginDownload : IEventMessage
+        {
+            public static void SendEventMessage(GroupInfo groupInfo)
+            {
+                var msg = new UserBeginDownload();
+                PatchManager.SetLastGroupInfo(groupInfo);
                 UniEvent.SendMessage(msg);
             }
         }
