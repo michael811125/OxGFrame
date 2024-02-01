@@ -15,7 +15,7 @@
 | [OxGKit.LoggingSystem v0.0.11-preview or higher](https://github.com/michael811125/OxGKit#loggingsystem-dependence-lwmybox), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
 | [OxGKit.Utilities v0.0.14-preview or higher](https://github.com/michael811125/OxGKit#utilities-dependence-unitask), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
 | [LWMyBox v1.1.4 or higher](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager **(建議改成輕量版的 MyBox 改進編譯效率)** |
-| [HybirdCLR v4.0.15 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
+| [HybirdCLR v5.0.0 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 **OxGKit.Utilities 遇到 UniTask 引用問題請無視，因為最後完成 OxGFrame 的安裝後，就會自動引用內建的 UniTask 了**
 
@@ -87,7 +87,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 ### Sub-ThirdParty
 
 - 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案) **特別推薦**
-- 使用 [YooAsset v2.1.0](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
+- 使用 [YooAsset v2.1.1](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
 
 ※備註 : 會持續更新內建第三方庫。
 
@@ -220,6 +220,10 @@ https://github.com/michael811125/OxGFrame/assets/30960759/11dcf0d3-41bd-4a8d-af6
 | Preset_App_Pkg_01 + Preset_App_Pkg_02 + Preset_DLC_Pkg_01 + Preset_DLC_Pkg_02 (TotalCount = 15, TotalSize = 2400 KB) |
 
 ![](Docs/img_12.png)
+
+是否啟用 Disk Space 檢查流程時
+
+![](Docs/img_14.png)
 
 備註：通過 Preset 設置的 DLC Packages 必須是**固定版號** (ex: "latest")。
 
