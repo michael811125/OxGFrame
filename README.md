@@ -225,6 +225,8 @@ https://github.com/michael811125/OxGFrame/assets/30960759/11dcf0d3-41bd-4a8d-af6
 
 ![](Docs/img_14.png)
 
+![](Docs/img_15.png)
+
 備註：通過 Preset 設置的 DLC Packages 必須是**固定版號** (ex: "latest")。
 
 **檢查 Patch 是否更新完成**
