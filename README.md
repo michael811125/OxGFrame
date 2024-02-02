@@ -221,13 +221,17 @@ https://github.com/michael811125/OxGFrame/assets/30960759/11dcf0d3-41bd-4a8d-af6
 
 ![](Docs/img_12.png)
 
+備註：通過 Preset 設置的 DLC Packages 必須是**固定版號** (ex: "latest")。
+
 是否啟用 Disk Space 檢查流程時
 
 ![](Docs/img_14.png)
 
 ![](Docs/img_15.png)
 
-備註：通過 Preset 設置的 DLC Packages 必須是**固定版號** (ex: "latest")。
+![](Docs/img_16.png)
+
+![](Docs/img_17.png)
 
 **檢查 Patch 是否更新完成**
 - 判斷檢查 AssetPatcher.IsDone() 是否更新完成。

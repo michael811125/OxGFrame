@@ -29,7 +29,7 @@ public class PackageOperation
     public void UserTryCreateDownloader()
 }
 ```
-- Modified method name [#1adf602](https://github.com/michael811125/OxGFrame/commit/1adf6028aa980169732ea1a40f2d8df1b8c4584e) (Replace all below).
+- Modified UIBase method name [#1adf602](https://github.com/michael811125/OxGFrame/commit/1adf6028aa980169732ea1a40f2d8df1b8c4584e) (Replace all below).
 ```
 method ShowAnime => ShowAnimation
 
