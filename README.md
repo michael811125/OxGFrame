@@ -643,7 +643,7 @@ video_urlset 127.0.0.1/video/
 
 ### 討論區
 
-[![dc_logo_x128](https://github.com/michael811125/OxGFrame/assets/30960759/b3bedd38-3c1d-4679-9417-d99a46f5b068)](https://discord.gg/euAgw8gM)
+[![dc_logo_x128](https://github.com/michael811125/OxGFrame/assets/30960759/b3bedd38-3c1d-4679-9417-d99a46f5b068)](https://discord.gg/jyJmWhRAv7)
 
 ---
 
