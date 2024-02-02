@@ -229,9 +229,9 @@ https://github.com/michael811125/OxGFrame/assets/30960759/11dcf0d3-41bd-4a8d-af6
 
 ![](Docs/img_15.png)
 
-![](Docs/img_16.png)
-
 ![](Docs/img_17.png)
+
+![](Docs/img_16.png)
 
 **檢查 Patch 是否更新完成**
 - 判斷檢查 AssetPatcher.IsDone() 是否更新完成。
