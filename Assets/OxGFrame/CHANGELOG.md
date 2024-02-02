@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [2.9.14] - 2024-02-02
+- Modified PackageOperation user callback events, can reference itself in callback.
+```C#
+public class PackageOperation
+{
+    public delegate void OnPatchRepairFailed(PackageOperation itself);
+    public delegate void OnPatchInitPatchModeFailed(PackageOperation itself);
+    public delegate void OnPatchVersionUpdateFailed(PackageOperation itself);
+    public delegate void OnPatchManifestUpdateFailed(PackageOperation itself);
+    public delegate void OnPatchCheckDiskNotEnoughSpace(PackageOperation itself, int availableMegabytes, ulong patchTotalBytes);
+    public delegate void OnPatchDownloadFailed(PackageOperation itself, string fileName, string error);
+}
+```
+
 ## [2.9.13] - 2024-02-01
 - Updated yooasset to [v2.1.1](https://github.com/tuyoogame/YooAsset/releases/tag/2.1.1).
 - Added [DiskUtils by keerthik](https://github.com/keerthik/simple-disk-utils) third party in AssetLoader module (not supported WebGL).
