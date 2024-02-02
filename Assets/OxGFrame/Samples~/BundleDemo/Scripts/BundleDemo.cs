@@ -247,7 +247,7 @@ public class BundleDemo : MonoBehaviour
 
             // Here use action type is 6 (Application.Quit)
             this._retryType = 6; // 5 or 6
-            this.ShowRetryWindow($"Disk Not Enough Space!!!\nAvailable Disk Space Size: {BundleUtility.GetMegabytesToString(msgData.availableMegabytes)}\nTotal Patch Size: {BundleUtility.GetBytesToString((ulong)msgData.patchTotalBytes)}");
+            this.ShowRetryWindow($"Disk Not Enough Space!!!\nAvailable Disk Space Size: {BundleUtility.GetMegabytesToString(msgData.availableMegabytes)}\nPatch Total Size: {BundleUtility.GetBytesToString((ulong)msgData.patchTotalBytes)}");
         }
         else if (message is PatchEvents.PatchDownloadProgression)
         {
@@ -393,7 +393,11 @@ public class BundleDemo : MonoBehaviour
 
             case 6:
                 // Application quit
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
                 Application.Quit();
+#endif
                 break;
         }
         #endregion
