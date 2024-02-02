@@ -56,7 +56,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/5e41e84a-029d-4392-814
 
 ## 基本介紹
 
-OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、場景資源 (SRFrame)、Unity 場景 (USFrame)、模板物件 (CPFrame)、音樂音效 (AudioFrame)、影片 (VideoFrame)、遊戲階段整合 (GSIFrame)、網路 (NetFrame)、事件中心 (CenterFrame)，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS，WebGL。
+OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、場景資源 (SRFrame)、Unity 場景 (USFrame)、模板物件 (CPFrame)、音樂音效 (AudioFrame)、影片 (VideoFrame)、遊戲階段整合 (GSIFrame)、網路 (NetFrame)、事件中心 (CenterFrame)，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS、WebGL。
 
 **平台測試**
 - Windows (Passed)
@@ -643,12 +643,13 @@ video_urlset 127.0.0.1/video/
 
 ### 討論區
 
-[Discord](https://discord.gg/euAgw8gM)
+[![dc_logo_x128](https://github.com/michael811125/OxGFrame/assets/30960759/b3bedd38-3c1d-4679-9417-d99a46f5b068)](https://discord.gg/euAgw8gM)
 
 ---
 
 ### Donate
-[PayPal.Me](https://paypal.me/MichaelOthx?country.x=TW&locale.x=zh_TW)
+
+[![paypal_logo_x128](https://github.com/michael811125/OxGFrame/assets/30960759/abe46416-b347-4cce-b41a-8004cbe52a5d)](https://paypal.me/MichaelOthx?country.x=TW&locale.x=zh_TW)
 
 ---
 
