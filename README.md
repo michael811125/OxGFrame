@@ -88,6 +88,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 
 - 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案) **特別推薦**
 - 使用 [YooAsset v2.1.1](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
+- 使用 [DiskUtils by keerthik](https://github.com/keerthik/simple-disk-utils)
 
 ※備註 : 會持續更新內建第三方庫。
 
@@ -163,7 +164,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 
 ### 資源熱更新方案
 
-使用 YooAsset Collector 進行資源收集 (可以使用 ActiveRule 決定哪些群組需要打包，進行 Built-in 跟 Patch 資源的區分)，再使用 YooAsset Builder 進行打包 **(不需要手動更改資源日期版號)**，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
+使用 YooAsset Collector 進行資源收集，建議進行 Built-in 跟 Patch 資源的區分 (打包粒度自行決定)，再使用 YooAsset Builder 執行打包 **(不需要手動更改資源日期版號)**，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
 
 YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config Generator 視窗進行 Bundle 上傳檔輸出 + 配置檔建立 (**步驟如下**)。
 
@@ -184,7 +185,7 @@ YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config 
 群組分包舉例
   - 最小運行包
   - 標準運行包
-  - 全部運行包 (預設 #all)
+  - 全部運行包 (預設索引標籤為 #all)
 
 ![](Docs/img_1.png)
 
@@ -223,7 +224,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/11dcf0d3-41bd-4a8d-af6
 
 備註：通過 Preset 設置的 DLC Packages 必須是**固定版號** (ex: "latest")。
 
-是否啟用 Disk Space 檢查流程時
+是否啟用 Disk Space 檢查流程
 
 ![](Docs/img_14.png)
 
@@ -237,7 +238,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/11dcf0d3-41bd-4a8d-af6
 - 判斷檢查 AssetPatcher.IsDone() 是否更新完成。
 
 **Patch 執行順序流程**
-- 判斷 AssetPathcer.IsInitialized() => 執行 AssetPatcher.Check() => 判斷 AssetPatcher.IsDone() => 完成
+- 輪詢判斷 AssetPathcer.IsInitialized() => 執行 AssetPatcher.Check() => 輪詢判斷 AssetPatcher.IsDone() => 完成更新。
 
 ---
 
@@ -248,7 +249,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/11dcf0d3-41bd-4a8d-af6
   - 手動進行 AssetPatcher.InitAppPackage 的初始 (如果 autoUpdate = false，則需要自行另外調用 AssetPatcher.UpdatePackage 進行 Manifest 的更新)。
 - DLC Packages
   - 路徑包含平台 (.../CDN/\<ProductName\>/\<Platform\>/DLC/Packages)
-  - 路徑不管平台 (.../CDN/\<ProductName\>/DLC/Packages)
+  - 路徑不含平台 **【屬於所有平台的共用資源】** (.../CDN/\<ProductName\>/DLC/Packages)
   - 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion (ex: "latest")，變成只要 DLC 有更新就可以使用固定路徑進行更新。
 
 **使用 PackageOperation 進行 DLC 資源包的操作 (方便控管資源包)**
