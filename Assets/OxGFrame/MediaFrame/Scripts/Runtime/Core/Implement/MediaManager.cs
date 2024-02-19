@@ -28,7 +28,7 @@ namespace OxGFrame.MediaFrame
                     {
                         if (this._listAllCache[i].ignoreTimeScale) _fdt = Time.fixedDeltaTime;
                         else _fdt = Time.fixedUnscaledDeltaTime;
-                        this._listAllCache[i].DriveFixedUpdate(_fdt);
+                        this._listAllCache[i].HandleFixedUpdate(_fdt);
                     }
                 }
             }

@@ -91,7 +91,7 @@ namespace OxGFrame.MediaFrame
         protected Action _endEvent = null;                                                 // 停止播放時的事件調用
         public bool isPrepared { get; protected set; } = false;                            // 影音準備好的標記
 
-        internal void DriveFixedUpdate(float dt)
+        internal void HandleFixedUpdate(float dt)
         {
             if (!this._isInit) return;
             this.OnFixedUpdate(dt);

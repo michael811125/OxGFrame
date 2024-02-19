@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [2.9.15] - 2024-02-19
+- Updated UniTask to v2.5.3.
+- Added DriveUpdate methods in CPBase (can call update by other PlayerLoop).
+```C#
+    public void DriveUpdate(float dt) => this.HandleUpdate(dt);
+    public void DriveFixedUpdate(float dt) => this.HandleFixedUpdate(dt);
+    public void DriveLateUpdate(float dt) => this.HandleLateUpdate(dt);
+```
+
 ## [2.9.14] - 2024-02-02
 - Modified PackageOperation user callback events, can reference itself in callback.
 ```C#

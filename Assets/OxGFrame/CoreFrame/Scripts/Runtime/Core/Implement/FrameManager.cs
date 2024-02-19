@@ -182,13 +182,13 @@ namespace OxGFrame.CoreFrame
                             switch (updateType)
                             {
                                 case UpdateType.Update:
-                                    fBase.DriveUpdate(_dt);
+                                    fBase.HandleUpdate(_dt);
                                     break;
                                 case UpdateType.FixedUpdate:
-                                    fBase.DriveFixedUpdate(_fdt);
+                                    fBase.HandleFixedUpdate(_fdt);
                                     break;
                                 case UpdateType.LateUpdate:
-                                    fBase.DriveLateUpdate(_dt);
+                                    fBase.HandleLateUpdate(_dt);
                                     break;
                             }
                         }

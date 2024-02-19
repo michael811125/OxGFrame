@@ -14,7 +14,7 @@
       "dependencies": {
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "382a0675d4cb7019b563d90bd10b93f53d9b9a53"
+      "hash": "9816f6cb6b3475b762488ba716d6953caab611d5"
     },
     "com.jeffjadulco.guidregenerator": {
       "version": "https://github.com/jeffjadulco/unity-guid-regenerator.git",
@@ -28,21 +28,21 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "2bc188758694c6ca6f54a5e3011e1bd9512816b6"
+      "hash": "79948ba60ee32a71558ef3b916844eff3913595f"
     },
     "com.michaelo.oxgkit.utilities": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "2bc188758694c6ca6f54a5e3011e1bd9512816b6"
+      "hash": "79948ba60ee32a71558ef3b916844eff3913595f"
     },
     "com.unity.2d.animation": {
-      "version": "7.0.12",
+      "version": "7.0.13",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "6.0.6",
+        "com.unity.2d.common": "6.0.7",
         "com.unity.2d.sprite": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.uielements": "1.0.0"
@@ -50,7 +50,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.common": {
-      "version": "6.0.6",
+      "version": "6.0.7",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -141,7 +141,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.21",
+      "version": "2.0.22",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -260,7 +260,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.textmeshpro": {
-      "version": "3.0.6",
+      "version": "3.0.8",
       "depth": 0,
       "source": "registry",
       "dependencies": {

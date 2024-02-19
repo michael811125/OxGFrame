@@ -8,22 +8,40 @@ namespace OxGFrame.CoreFrame.CPFrame
     public class CPBase : FrameBase
     {
         /// <summary>
-        /// Drive by MonoBehaviour Update
+        /// Drive by self MonoBehaviour Update
         /// </summary>
         /// <param name="dt"></param>
-        protected void DriveSelfUpdate(float dt) => this.DriveUpdate(dt);
+        protected void DriveSelfUpdate(float dt) => this.HandleUpdate(dt);
 
         /// <summary>
-        /// Drive by MonoBehaviour FixedUpdate
+        /// Drive by other MonoBehaviour Update
         /// </summary>
         /// <param name="dt"></param>
-        protected void DriveSelfFixedUpdate(float dt) => this.DriveFixedUpdate(dt);
+        public void DriveUpdate(float dt) => this.HandleUpdate(dt);
 
         /// <summary>
-        /// Drive by MonoBehaviour LateUpdate
+        /// Drive by self MonoBehaviour FixedUpdate
         /// </summary>
         /// <param name="dt"></param>
-        protected void DriveSelfLateUpdate(float dt) => this.DriveLateUpdate(dt);
+        protected void DriveSelfFixedUpdate(float dt) => this.HandleFixedUpdate(dt);
+
+        /// <summary>
+        /// Drive by other MonoBehaviour Update
+        /// </summary>
+        /// <param name="dt"></param>
+        public void DriveFixedUpdate(float dt) => this.HandleFixedUpdate(dt);
+
+        /// <summary>
+        /// Drive by self MonoBehaviour LateUpdate
+        /// </summary>
+        /// <param name="dt"></param>
+        protected void DriveSelfLateUpdate(float dt) => this.HandleLateUpdate(dt);
+
+        /// <summary>
+        /// Drive by other MonoBehaviour LateUpdate
+        /// </summary>
+        /// <param name="dt"></param>
+        public void DriveLateUpdate(float dt) => this.HandleLateUpdate(dt);
 
         private void OnEnable()
         {
