@@ -7,7 +7,7 @@ namespace OxGFrame.CoreFrame
 {
     /// <summary>
     /// <para>
-    /// Init Order: Awake (Once) > OnCreate (Once) > OnAutoBind (Once) > OnBind (Once) > PreInit (EveryOpen) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
+    /// Init Order: Awake (Once) > OnCreate (Once) > OnAutoBind (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
     /// </para>
     /// </summary>
     [DisallowMultipleComponent]
@@ -116,19 +116,19 @@ namespace OxGFrame.CoreFrame
         [Tooltip("If checked, will destroy on close"), ConditionalField(nameof(allowInstantiate), true)]
         public bool onCloseAndDestroy = false;                                                // 是否關閉時就 DestroyUI
 
-        internal virtual void DriveUpdate(float dt)
+        internal virtual void HandleUpdate(float dt)
         {
             if (!this._isInitFirst) return;
             this.OnUpdate(dt);
         }
 
-        internal virtual void DriveFixedUpdate(float dt)
+        internal virtual void HandleFixedUpdate(float dt)
         {
             if (!this._isInitFirst) return;
             this.OnFixedUpdate(dt);
         }
 
-        internal virtual void DriveLateUpdate(float dt)
+        internal virtual void HandleLateUpdate(float dt)
         {
             if (!this._isInitFirst) return;
             this.OnLateUpdate(dt);

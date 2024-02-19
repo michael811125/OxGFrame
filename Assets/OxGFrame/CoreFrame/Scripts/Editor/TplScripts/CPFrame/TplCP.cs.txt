@@ -42,7 +42,7 @@ public class #SCRIPTNAME# : CPBase
     protected override void OnUpdate(float dt)
     {
         /*
-         * OnUpdate
+         * OnUpdate (Must call DriveSelfUpdate in this Mono or DriveUpdate by other PlayerLoop)
          */
     }
 }

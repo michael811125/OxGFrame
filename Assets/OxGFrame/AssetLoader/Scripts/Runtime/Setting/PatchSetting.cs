@@ -48,12 +48,12 @@ namespace OxGFrame.AssetLoader
             _setting = Resources.Load<PatchSetting>("PatchSetting");
             if (_setting == null)
             {
-                Logging.Print<Logger>("<color=#84ffe5>[OxGFrame.AssetLoader] use default setting.color>");
+                Logging.Print<Logger>("<color=#84ffe5>[OxGFrame.AssetLoader] use default setting.</color>");
                 _setting = ScriptableObject.CreateInstance<PatchSetting>();
             }
             else
             {
-                Logging.Print<Logger>("<color=#84ffe5>[OxGFrame.AssetLoader] use user setting.color>");
+                Logging.Print<Logger>("<color=#84ffe5>[OxGFrame.AssetLoader] use user setting.</color>");
             }
         }
 

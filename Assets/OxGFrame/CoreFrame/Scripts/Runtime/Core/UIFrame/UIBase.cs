@@ -104,10 +104,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             }
 
             this.Freeze();
-            this.ShowAnimation(() =>
-            {
-                this.UnFreeze();
-            });
+            this.ShowAnimation(this.UnFreeze);
         }
 
         /// <summary>
