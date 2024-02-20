@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## [2.9.16] - 2024-02-20
+- Updated YooAsset commits.
+- Added InitPackage in AssetPatcher.
+```C#
+    /// <summary>
+    /// Init package by type
+    /// </summary>
+    /// <param name="packageInfo"></param>
+    /// <param name="autoUpdate"></param>
+    /// <returns></returns>
+    public static async UniTask<bool> InitPackage(PackageInfoWithBuild packageInfo, bool autoUpdate = false)
+```
+- Modified PackageOperation initialize procedure by manual.
+```C#
+public class PackageOperation
+{
+    /// <summary>
+    /// Ready operation for initialize (after events added)
+    /// </summary>
+    public void Ready()
+}
+```
+- Modified BundleDLCDemo sample.
+- Modified SetDefaultPackage determine.
+- Removed unuse samples from DiskUtils.
+
 ## [2.9.15] - 2024-02-19
 - Updated UniTask to v2.5.3.
 - Added DriveUpdate methods in CPBase (can call update by other PlayerLoop).

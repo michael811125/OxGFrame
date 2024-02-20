@@ -120,9 +120,6 @@ namespace OxGFrame.AssetLoader.Bundle
             this.groupInfo.tags = tags;
             this._packageInfos = packageInfos;
             this.skipDownload = skipDownload;
-
-            // Start prepare node
-            this._patchFsm.Run<PackageFsmStates.FsmPatchPrepare>();
         }
 
         ~PackageOperation()
@@ -201,7 +198,16 @@ namespace OxGFrame.AssetLoader.Bundle
 
         #region Patch Operation
         /// <summary>
-        /// 開啟下載流程
+        /// Ready operation for initialize (after events added)
+        /// </summary>
+        public void Ready()
+        {
+            // Start prepare node
+            this._patchFsm.Run<PackageFsmStates.FsmPatchPrepare>();
+        }
+
+        /// <summary>
+        /// Begin download
         /// </summary>
         public void Begin()
         {
@@ -217,7 +223,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 刪除所有緩存數據跟配置檔 (即清空下載目錄)
+        /// Delete all cache files to repair
         /// </summary>
         public void Repair()
         {
@@ -232,7 +238,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 暫停下載
+        /// Pause download
         /// </summary>
         public void Pause()
         {
@@ -244,7 +250,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 繼續下載
+        /// Resume download
         /// </summary>
         public void Resume()
         {
@@ -256,7 +262,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取消下載
+        /// Cancel download
         /// </summary>
         public void Cancel(bool sendEvent = true)
         {
@@ -273,7 +279,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         #region Patch Flag
         /// <summary>
-        /// 標記 Ready 狀態
+        /// Mark Ready state
         /// </summary>
         internal void MarkReadyState()
         {
@@ -281,7 +287,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 標記 Ready 結束
+        /// Mark Ready state is done
         /// </summary>
         internal void MarkReadyAsDone()
         {
@@ -289,7 +295,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 標記 Begin 狀態
+        /// Mark Begin state
         /// </summary>
         internal void MarkBeginState()
         {
@@ -298,7 +304,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 標記 Begin 結束
+        /// Mark Begin is done
         /// </summary>
         internal void MarkBeginAsDone()
         {
@@ -306,7 +312,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 標記 Repair 狀態
+        /// Mark Repair state
         /// </summary>
         internal void MarkRepairState()
         {
@@ -315,7 +321,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 標記 Repair 結束
+        /// Mark Repair is done
         /// </summary>
         internal void MarkRepairAsDone()
         {
@@ -324,7 +330,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 標記 Patch 結束
+        /// Mark Patch is done
         /// </summary>
         internal void MarkPatchAsDone()
         {
@@ -335,7 +341,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 是否更新結束
+        /// Is all done
         /// </summary>
         /// <returns></returns>
         public bool IsDone()
@@ -344,7 +350,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 是否開始準備
+        /// Is ready to download
         /// </summary>
         /// <returns></returns>
         public bool IsReady()
@@ -353,7 +359,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 是否開始下載
+        /// Is begin downloading
         /// </summary>
         /// <returns></returns>
         public bool IsBegin()
@@ -362,7 +368,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 是否開始修復
+        /// Is Repairing
         /// </summary>
         /// <returns></returns>
         public bool IsRepair()

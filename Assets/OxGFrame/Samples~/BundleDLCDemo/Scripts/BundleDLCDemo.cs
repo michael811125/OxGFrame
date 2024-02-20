@@ -6,6 +6,7 @@ using OxGFrame.AssetLoader.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static OxGFrame.AssetLoader.Bundle.BundleConfig;
@@ -30,9 +31,11 @@ public class BundleDLCDemo : MonoBehaviour
         public Text dlcInfo;
     }
 
+    public bool autoBeginDownloadOnce = false;
     public List<PkgCtrlPanel> pkgCtrlPanels = new List<PkgCtrlPanel>();
 
     private PackageOperation[] _packageOperations;
+    private bool _begined = false;
     private bool _isInitialized = false;
 
     private IEnumerator Start()
@@ -42,12 +45,14 @@ public class BundleDLCDemo : MonoBehaviour
         // Wait Until IsInitialized
         while (!AssetPatcher.IsInitialized()) yield return null;
 
-        // Create package operations
+        #region 1. Create package operations
         this._packageOperations = new PackageOperation[]
         {
             new PackageOperation
             (
+                // Custom your name for display
                 "DLC Package 1",
+                // Set package info
                 new DlcPackageInfoWithBuild()
                 {
                     buildMode = BuildMode.ScriptableBuildPipeline,
@@ -58,7 +63,9 @@ public class BundleDLCDemo : MonoBehaviour
             ),
             new PackageOperation
             (
+                // Custom your name for display
                 "DLC Package 2",
+                // Set package info
                 new DlcPackageInfoWithBuild()
                 {
                     buildMode = BuildMode.ScriptableBuildPipeline,
@@ -68,8 +75,9 @@ public class BundleDLCDemo : MonoBehaviour
                 false
             )
         };
+        #endregion
 
-        // Init events and display
+        #region 2. Init events and display
         for (int i = 0; i < this._packageOperations.Length; i++)
         {
             int idx = i;
@@ -164,7 +172,107 @@ public class BundleDLCDemo : MonoBehaviour
                 }
             });
             #endregion
+
+            #region Package user events
+            packageOperation.onPatchRepairFailed = (itself) =>
+            {
+                // Do somethings onPatchRepairFailed
+
+                /**
+                 * 
+                 * Can show your confirmation window to user for retry
+                 * 
+                 **/
+
+                // User action
+                itself.UserTryPatchRepair();
+            };
+
+            packageOperation.onPatchInitPatchModeFailed = (itselfs) =>
+            {
+                // Do somethings onPatchInitPatchModeFailed
+
+                /**
+                 * 
+                 * Can show your confirmation window to user for retry
+                 * 
+                 **/
+
+                // User action
+                itselfs.UserTryInitPatchMode();
+            };
+
+            packageOperation.onPatchVersionUpdateFailed = (itself) =>
+            {
+                // Do somethings onPatchVersionUpdateFailed
+
+                /**
+                 * 
+                 * Can show your confirmation window to user for retry
+                 * 
+                 **/
+
+                // User action
+                itself.UserTryPatchVersionUpdate();
+            };
+
+            packageOperation.onPatchManifestUpdateFailed = (itself) =>
+            {
+                // Do somethings onPatchManifestUpdateFailed
+
+                /**
+                 * 
+                 * Can show your confirmation window to user for retry
+                 * 
+                 **/
+
+                // User action
+                itself.UserTryPatchManifestUpdate();
+            };
+
+            packageOperation.onPatchCheckDiskNotEnoughSpace = (itself, availableMegabytes, patchTotalBytes) =>
+            {
+                // Do somethings onPatchCheckDiskNotEnoughSpace
+
+                /**
+                 * 
+                 * Can show your confirmation window to user for retry
+                 * 
+                 **/
+
+                // User action
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+            };
+
+            packageOperation.onPatchDownloadFailed = (itself, fileName, error) =>
+            {
+                // Do somethings onPatchDownloadFailed
+
+                /**
+                 * 
+                 * Can show your confirmation window to user for retry
+                 * 
+                 **/
+
+                // User action
+                itself.UserTryCreateDownloader();
+            };
+            #endregion
         }
+        #endregion
+
+        #region 3. Ready package operations after events added
+        for (int i = 0; i < this._packageOperations.Length; i++)
+        {
+            int idx = i;
+            var packageOperation = this._packageOperations[idx];
+            packageOperation.Ready();
+        }
+        #endregion
 
         this._isInitialized = true;
     }
@@ -180,6 +288,22 @@ public class BundleDLCDemo : MonoBehaviour
             this.pkgCtrlPanels[i].beginState.isOn = this._packageOperations[i].IsBegin();
             this.pkgCtrlPanels[i].repairState.isOn = this._packageOperations[i].IsRepair();
             this.pkgCtrlPanels[i].doneState.isOn = this._packageOperations[i].IsDone();
+        }
+
+        // For auto begin
+        if (this.autoBeginDownloadOnce)
+        {
+            // Keep determine packages are ready (polling)
+            if (this._packageOperations.All(pkg => pkg.IsReady()) && !this._begined)
+            {
+                this._begined = true;
+                for (int i = 0; i < this._packageOperations.Length; i++)
+                {
+                    int idx = i;
+                    var packageOperation = this._packageOperations[idx];
+                    packageOperation.Begin();
+                }
+            }
         }
     }
 }

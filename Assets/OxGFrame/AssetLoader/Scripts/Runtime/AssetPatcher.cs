@@ -230,11 +230,32 @@ namespace OxGFrame.AssetLoader
             return await PackageManager.UnloadPackageAndClearCacheFiles(packageName);
         }
 
+        #region Init Package
+        /// <summary>
+        /// Init package by type
+        /// </summary>
+        /// <param name="packageInfo"></param>
+        /// <param name="autoUpdate"></param>
+        /// <returns></returns>
+        public static async UniTask<bool> InitPackage(PackageInfoWithBuild packageInfo, bool autoUpdate = false)
+        {
+            if (packageInfo is AppPackageInfoWithBuild)
+            {
+                return await InitAppPackage(packageInfo as AppPackageInfoWithBuild, autoUpdate);
+            }
+            else if (packageInfo is DlcPackageInfoWithBuild)
+            {
+                return await InitDlcPackage(packageInfo as DlcPackageInfoWithBuild, autoUpdate);
+            }
+
+            return false;
+        }
+
         #region App Package
         /// <summary>
-        /// Init app package by package name (If PlayMode is HostMode will request from default host path)
+        /// Init app package (If PlayMode is HostMode will request from default host path)
         /// </summary>
-        /// <param name="packageName"></param>
+        /// <param name="packageInfo"></param>
         /// <param name="autoUpdate"></param>
         /// <returns></returns>
         public static async UniTask<bool> InitAppPackage(AppPackageInfoWithBuild packageInfo, bool autoUpdate = false)
@@ -288,6 +309,7 @@ namespace OxGFrame.AssetLoader
 
             return await PackageManager.InitPackage(packageInfo, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
         }
+        #endregion
         #endregion
 
         #region Update Package

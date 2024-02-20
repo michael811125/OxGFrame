@@ -58,7 +58,7 @@ namespace OxGFrame.AssetLoader.Bundle
             #endregion
 
             #region Set Default Package
-            // Set default package by first element (only app preset packages)
+            // Set default package by first element (only for preset app packages)
             SetDefaultPackage(0);
             #endregion
         }
@@ -346,9 +346,12 @@ namespace OxGFrame.AssetLoader.Bundle
         public static void SetDefaultPackage(string packageName)
         {
             var package = RegisterPackage(packageName);
-            YooAssets.SetDefaultPackage(package);
-            _currentPackageName = package.PackageName;
-            _currentPackage = package;
+            if (package != null)
+            {
+                YooAssets.SetDefaultPackage(package);
+                _currentPackageName = package.PackageName;
+                _currentPackage = package;
+            }
         }
 
         /// <summary>
@@ -358,9 +361,12 @@ namespace OxGFrame.AssetLoader.Bundle
         internal static void SetDefaultPackage(int idx)
         {
             var package = RegisterPackage(idx);
-            YooAssets.SetDefaultPackage(package);
-            _currentPackageName = package.PackageName;
-            _currentPackage = package;
+            if (package != null)
+            {
+                YooAssets.SetDefaultPackage(package);
+                _currentPackageName = package.PackageName;
+                _currentPackage = package;
+            }
         }
 
         /// <summary>
@@ -414,7 +420,11 @@ namespace OxGFrame.AssetLoader.Bundle
         public static ResourcePackage RegisterPackage(string packageName)
         {
             var package = GetPackage(packageName);
-            if (package == null) package = YooAssets.CreatePackage(packageName);
+            if (package == null)
+            {
+                if (!string.IsNullOrEmpty(packageName))
+                    package = YooAssets.CreatePackage(packageName);
+            }
             return package;
         }
 
@@ -426,7 +436,12 @@ namespace OxGFrame.AssetLoader.Bundle
         internal static ResourcePackage RegisterPackage(int idx)
         {
             var package = GetPresetAppPackage(idx);
-            if (package == null) package = YooAssets.CreatePackage(GetPresetAppPackageNameByIdx(idx));
+            if (package == null)
+            {
+                var packageName = GetPresetAppPackageNameByIdx(idx);
+                if (!string.IsNullOrEmpty(packageName))
+                    package = YooAssets.CreatePackage(packageName);
+            }
             return package;
         }
 
@@ -437,6 +452,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static ResourcePackage GetPackage(string packageName)
         {
+            if (string.IsNullOrEmpty(packageName)) return null;
             return YooAssets.TryGetPackage(packageName);
         }
 
