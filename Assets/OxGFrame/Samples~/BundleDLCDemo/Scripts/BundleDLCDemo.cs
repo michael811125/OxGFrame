@@ -188,7 +188,7 @@ public class BundleDLCDemo : MonoBehaviour
                 itself.UserTryPatchRepair();
             };
 
-            packageOperation.onPatchInitPatchModeFailed = (itselfs) =>
+            packageOperation.onPatchInitPatchModeFailed = (itself) =>
             {
                 // Do somethings onPatchInitPatchModeFailed
 
@@ -199,7 +199,7 @@ public class BundleDLCDemo : MonoBehaviour
                  **/
 
                 // User action
-                itselfs.UserTryInitPatchMode();
+                itself.UserTryInitPatchMode();
             };
 
             packageOperation.onPatchVersionUpdateFailed = (itself) =>
