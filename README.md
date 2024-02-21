@@ -128,7 +128,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 - [NetFrame](https://github.com/michael811125/OxGFrame#netframe-dependence-oxgkitutilities)
 - [CenterFrame](https://github.com/michael811125/OxGFrame#centerframe)
 
-![](Docs/img_9.)
+![](Docs/img_9.png)
 
 ### Hotfixer (dependence HybridCLR, AssetLoader)
 
