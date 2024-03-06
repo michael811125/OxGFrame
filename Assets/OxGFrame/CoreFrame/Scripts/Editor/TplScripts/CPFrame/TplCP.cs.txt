@@ -4,6 +4,9 @@ public class #SCRIPTNAME# : CPBase
 {
     // Use ~Node@XXX to Bind
 
+    #region Binding Components
+    #endregion
+
     public override void OnCreate()
     {
         /**

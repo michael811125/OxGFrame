@@ -16,9 +16,6 @@ MonoBehaviour:
   variableAccessModifier: protected
   variablePrefix: _
   methodType: 0
-  methodAccessModifier: protected
-  methodPrefix: 
-  methodName: InitBind
   indicateModifier: 1
   tailRules:
     list:

@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using OxGKit.LoggingSystem;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 namespace OxGFrame.AssetLoader.Bundle
 {
     [DisallowMultipleComponent]
@@ -16,7 +12,7 @@ namespace OxGFrame.AssetLoader.Bundle
         public BundleConfig.PlayMode playMode = BundleConfig.PlayMode.EditorSimulateMode;
         [Tooltip("If checked, the patch field will compare whole version."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WebGLMode)]
         public BundleConfig.SemanticRule semanticRule = new BundleConfig.SemanticRule();
-        [Tooltip("If checked, will skip preset app packages download step of the patch (force download while playing)."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
+        [Tooltip("If checked, will skip preset packages download step of the patch (force download while playing)."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
         public bool skipMainDownload = false;
         [Tooltip("If checked, will check disk space is it enough while patch checking."), ConditionalField(new string[] { nameof(playMode), nameof(skipMainDownload) }, new bool[] { false, true }, BundleConfig.PlayMode.HostMode)]
         public bool checkDiskSpace = true;
@@ -25,10 +21,12 @@ namespace OxGFrame.AssetLoader.Bundle
         [Tooltip("The first element will be default app package.\n\nNote: The presets will combine in main download of the patch.")]
         public List<AppPackageInfoWithBuild> listAppPackages = new List<AppPackageInfoWithBuild>() { new AppPackageInfoWithBuild() { packageName = "DefaultPackage" } };
 
-        [Separator("Preset DLC Packages"), Tooltip("Preset DLC packages must be fixed versions.\n\nNote: The presets will combine in main download of the patch.")]
+        [Separator("Preset DLC Packages"), Tooltip("The preset DLC packages must be fixed versions.\n\nNote: The presets will combine in main download of the patch.")]
         public List<DlcPackageInfoWithBuild> listDlcPackages = new List<DlcPackageInfoWithBuild>();
 
         [Separator("Download Options")]
+        [Tooltip("* [WebRequest] supports dynamic query built-in files (Some memory will be used, but will be released at next GC).\n\n* [BuiltinFileManifest] query built-in files from manifest (setup at build-time or manual export).\n\n* [BuiltinFileManifest with CRC] query built-in files and check CRC from manifest (setup at build-time or manual export).")]
+        public BundleConfig.BuiltinQueryMode builtinQueryMode = BundleConfig.BuiltinQueryMode.WebRequest;
         public int maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
         public int failedRetryCount = BundleConfig.failedRetryCount;
         [Tooltip("If file size >= [BreakpointFileSizeThreshold] that file will enable breakpoint mechanism (for all downloaders).")]
@@ -79,6 +77,8 @@ namespace OxGFrame.AssetLoader.Bundle
             #endregion
 
             #region Download Options
+            // Set built-in files query mode
+            BundleConfig.builtinQueryMode = this.builtinQueryMode;
             BundleConfig.maxConcurrencyDownloadCount = this.maxConcurrencyDownloadCount <= 0 ? BundleConfig.DEFAULT_MAX_CONCURRENCY_MAX_DOWNLOAD_COUNT : this.maxConcurrencyDownloadCount;
             BundleConfig.failedRetryCount = this.failedRetryCount <= 0 ? BundleConfig.DEFAULT_FAILED_RETRY_COUNT : this.failedRetryCount;
             // Set download breakpoint size threshold
@@ -102,7 +102,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         private void OnApplicationQuit()
         {
-#if !UNITY_WEBGL  
+#if !UNITY_WEBGL
             PackageManager.Release();
             Logging.Print<Logger>("<color=#ff84d1>(Powered by YooAsset) Release Packages Completes.</color>");
 #endif
@@ -116,17 +116,28 @@ namespace OxGFrame.AssetLoader.Bundle
             switch (this.playMode)
             {
                 case BundleConfig.PlayMode.OfflineMode:
-                    Logging.Print<Logger>($"<color=#ff1f4c>[Offline Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    this.playMode = BundleConfig.PlayMode.EditorSimulateMode;
+                    Debug.Log($"<color=#ff1f4c>[Offline Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
                     break;
                 case BundleConfig.PlayMode.HostMode:
-                    Logging.Print<Logger>($"<color=#ff1f4c>[Host Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    this.playMode = BundleConfig.PlayMode.EditorSimulateMode;
+                    Debug.Log($"<color=#ff1f4c>[Host Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    break;
+            }
+
+            switch (this.builtinQueryMode)
+            {
+                case BundleConfig.BuiltinQueryMode.WebRequest:
+                    this.builtinQueryMode = BundleConfig.BuiltinQueryMode.BuiltinFileManifest;
+                    Debug.Log($"<color=#ff1f4c>[WebRequest QueryMode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
                     break;
             }
 #else
             switch (this.playMode)
             {
                 case BundleConfig.PlayMode.WebGLMode:
-                    Logging.Print<Logger>($"<color=#ff1f4c>[WebGL Mode] is not supported on {EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    this.playMode = BundleConfig.PlayMode.EditorSimulateMode;
+                    Debug.Log($"<color=#ff1f4c>[WebGL Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
                     break;
             }
 #endif

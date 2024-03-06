@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## [2.10.0] - 2024-03-07
+- Added BuiltinQueryMode option on PatchLauncher, can switch built-in query mode.
+```C#
+    public enum BuiltinQueryMode
+    {
+        WebRequest,
+        BuiltinFileManifest,
+        BuiltinFileManifestWithCRC
+    }
+```
+- Added Auto save binding content to script for UIBase, SRBase, CPBase.
+```C#
+	// Specific pattern
+    #region Binding Components
+    #endregion
+```
+
 ## [2.9.16] - 2024-02-20
 - Updated YooAsset commits.
 - Added InitPackage in AssetPatcher.

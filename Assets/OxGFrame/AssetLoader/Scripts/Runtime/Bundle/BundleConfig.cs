@@ -39,6 +39,13 @@ namespace OxGFrame.AssetLoader.Bundle
             RawFileBuildPipeline = 2
         }
 
+        public enum BuiltinQueryMode
+        {
+            WebRequest,
+            BuiltinFileManifest,
+            BuiltinFileManifestWithCRC
+        }
+
         public class CryptogramType
         {
             public const string NONE = "NONE";
@@ -93,6 +100,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// 預設下載失敗重新嘗試次數
         /// </summary>
         internal const int DEFAULT_FAILED_RETRY_COUNT = 3;
+
         /// <summary>
         /// 下載失敗重新嘗試次數
         /// </summary>
@@ -102,6 +110,11 @@ namespace OxGFrame.AssetLoader.Bundle
         /// 斷點續傳門檻
         /// </summary>
         public static uint breakpointFileSizeThreshold = 20 * 1 << 20;
+
+        /// <summary>
+        /// 查找內置資源方式
+        /// </summary>
+        public static BuiltinQueryMode builtinQueryMode = BuiltinQueryMode.WebRequest;
 
         /// <summary>
         /// 解密 Key, [NONE], [OFFSET, dummySize], [XOR, key], [HT2XOR, hKey, tKey, jKey], [AES, key, iv]
@@ -141,7 +154,9 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         internal static void ReleaseSecureString()
         {
-            if (_decryptArgs != null) foreach (var decryptArg in _decryptArgs) decryptArg.Dispose();
+            if (_decryptArgs != null)
+                foreach (var decryptArg in _decryptArgs)
+                    decryptArg.Dispose();
         }
         #endregion
 
