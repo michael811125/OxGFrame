@@ -12,7 +12,7 @@
 ```
 - Added Auto save binding content to script for UIBase, SRBase, CPBase.
 ```C#
-	// Specific pattern
+    // Specific pattern
     #region Binding Components
     #endregion
 ```
