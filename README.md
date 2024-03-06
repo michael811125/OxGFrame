@@ -465,6 +465,9 @@ Init Order : OnCreate (Once) > OnAutoBind (Once) > OnBind (Once) > OnPreShow (Ev
 
 自動綁定產生器的功能有方法類型的區分，如下
 - 自動 (Auto) \[預設\]，只需要將區塊貼上至代碼中，將會自動 override OnAutoBind() 與調用。
+
+https://github.com/michael811125/OxGFrame/assets/30960759/4c61bede-0bbc-4cae-baba-4a9bc7274c2e
+
 - 手動 (Manual) \[自選\]，可自定義方法名稱，將區塊貼上至代碼中後，需要手動在 OnBind() 方法中進行調用。
 
 https://github.com/michael811125/OxGFrame/assets/30960759/8e4f63e9-b955-4f91-8ac7-be949677c54f
