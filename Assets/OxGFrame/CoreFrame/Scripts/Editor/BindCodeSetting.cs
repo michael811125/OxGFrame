@@ -58,13 +58,8 @@ namespace OxGFrame.CoreFrame.Editor
         public string variablePrefix = "_";
 
         [Separator("Method Setting")]
+        [Tooltip("*[Auto] Automatically save binding content to script.\n\n*[Manual] Manually copy the binding content from the clipboard to the script.")]
         public MethodType methodType = MethodType.Auto;
-        [ConditionalField(nameof(methodType), false, MethodType.Manual)]
-        public string methodAccessModifier = "protected";
-        [ConditionalField(nameof(methodType), false, MethodType.Manual)]
-        public string methodPrefix = "";
-        [ConditionalField(nameof(methodType), false, MethodType.Manual)]
-        public string methodName = "InitBind";
 
         [Separator("Indicate Modifier Setting")]
         public IndicateModifier indicateModifier = IndicateModifier.This;
@@ -111,24 +106,12 @@ namespace OxGFrame.CoreFrame.Editor
 
         public string GetMethodAccessModifier()
         {
-            switch (this.methodType)
-            {
-                case MethodType.Auto:
-                    return "protected";
-                default:
-                    return this.methodAccessModifier;
-            }
+            return "protected";
         }
 
         public string GetMethodName()
         {
-            switch (this.methodType)
-            {
-                case MethodType.Auto:
-                    return "OnAutoBind";
-                default:
-                    return this.methodName;
-            }
+            return "OnAutoBind";
         }
 
         #region ContextMenus

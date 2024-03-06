@@ -75,11 +75,11 @@ namespace OxGFrame.AssetLoader.Bundle
         {
 #if UNITY_EDITOR
             return string.Format("file:///{0}", path);
-#elif UNITY_IPHONE             
+#elif UNITY_IPHONE
             return string.Format("file://{0}", path);
-#elif UNITY_ANDROID              
+#elif UNITY_ANDROID
             return path;
-#elif UNITY_STANDALONE                 
+#elif UNITY_STANDALONE
             return string.Format("file:///{0}", path);
 #else
             return path;
@@ -93,22 +93,33 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         public override bool Query(string packageName, string fileName, string fileCRC)
         {
+            // Safety check
 #if UNITY_WEBGL
-            return StreamingAssetsHelper.FileExists(packageName, fileName);
-#else
-            #region Builtin (StreamingAssets)
-            string builtinPackagePath = BundleConfig.GetBuiltinPackagePath(packageName);
-            string url = Path.Combine(builtinPackagePath, fileName);
-            #endregion
+            if (BundleConfig.builtinQueryMode == BundleConfig.BuiltinQueryMode.WebRequest)
+                BundleConfig.builtinQueryMode = BundleConfig.BuiltinQueryMode.BuiltinFileManifest;
+#endif
 
-            // Convert url to www path
-            var e = this.WebRequest(this.ConvertToWWWPath(url));
-            while (e.MoveNext())
-                if (e.Current != null)
-                    return (bool)e.Current;
+            switch (BundleConfig.builtinQueryMode)
+            {
+                case BundleConfig.BuiltinQueryMode.WebRequest:
+                    // Builtin (StreamingAssets)
+                    string builtinPackagePath = BundleConfig.GetBuiltinPackagePath(packageName);
+                    string url = Path.Combine(builtinPackagePath, fileName);
+                    // Convert url to www path
+                    var e = this.WebRequest(this.ConvertToWWWPath(url));
+                    while (e.MoveNext())
+                        if (e.Current != null)
+                            return (bool)e.Current;
+                    return false;
+
+                case BundleConfig.BuiltinQueryMode.BuiltinFileManifest:
+                    return StreamingAssetsHelper.FileExists(packageName, fileName, null);
+
+                case BundleConfig.BuiltinQueryMode.BuiltinFileManifestWithCRC:
+                    return StreamingAssetsHelper.FileExists(packageName, fileName, fileCRC);
+            }
 
             return false;
-#endif
         }
     }
     #endregion

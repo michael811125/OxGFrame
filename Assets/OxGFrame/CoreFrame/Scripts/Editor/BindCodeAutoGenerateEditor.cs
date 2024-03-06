@@ -25,7 +25,12 @@ namespace OxGFrame.CoreFrame.Editor
 
         private const string _DEF_COMPONENT_NAME = "GameObject";
 
+        private const string _REPLACEMENT_PATTERN = @"#region Binding Components(.*?)#endregion";
+        private const string _REPLACEMENT_PATTERN_HEAD = "#region Binding Components";
+        private const string _REPLACEMENT_PATTERN_END = "#endregion";
+
         private static BindCodeSetting _settings;
+        private static FrameBase _script;
         private static Dictionary<string, BindInfo> _collectBindInfos = new Dictionary<string, BindInfo>();
         private static string _builder = string.Empty;
 
@@ -86,6 +91,7 @@ namespace OxGFrame.CoreFrame.Editor
         #region Collect
         private static void _StartCollect()
         {
+            _script = null;
             _builder = string.Empty;
             _collectBindInfos.Clear();
             foreach (var go in Selection.gameObjects) _Collect(go);
@@ -93,6 +99,10 @@ namespace OxGFrame.CoreFrame.Editor
 
         private static bool _Collect(GameObject go)
         {
+            // Get script component
+            if (_script == null)
+                _script = go.GetComponent<FrameBase>();
+
             string name = go.name;
 
             // 檢查是否要結束綁定, 有檢查到【BIND_END】時, 則停止繼續搜尋綁定物件
@@ -177,7 +187,10 @@ namespace OxGFrame.CoreFrame.Editor
             }
             #endregion
 
-            _builder += "#region Binding Components\n";
+            // Head of content ↓↓↓
+            string space = _settings.methodType == BindCodeSetting.MethodType.Auto ? "    " : "";
+            _builder += _REPLACEMENT_PATTERN_HEAD + "\n";
+
             #region 變數宣告生成
             foreach (var bindInfo in _collectBindInfos)
             {
@@ -187,13 +200,13 @@ namespace OxGFrame.CoreFrame.Editor
                     // For GameObjects
                     if (bindInfo.Value.componentName == _DEF_COMPONENT_NAME)
                     {
-                        _builder += $"{_settings.variableAccessModifier} ";
+                        _builder += space + $"{_settings.variableAccessModifier} ";
                         _builder += $"{bindInfo.Value.componentName}[] ";
                         _builder += $"{_settings.variablePrefix}{bindInfo.Value.variableName}s;\n";
                     }
                     else
                     {
-                        _builder += $"{_settings.variableAccessModifier} ";
+                        _builder += space + $"{_settings.variableAccessModifier} ";
                         _builder += $"{bindInfo.Value.componentName}[] ";
                         int varNameLength = bindInfo.Value.variableName.Length;
                         int endRemoveCount = (bindInfo.Value.pluralize.endRemoveCount > varNameLength) ? 0 : bindInfo.Value.pluralize.endRemoveCount;
@@ -206,7 +219,7 @@ namespace OxGFrame.CoreFrame.Editor
                 // Single
                 else
                 {
-                    _builder += $"{_settings.variableAccessModifier} ";
+                    _builder += space + $"{_settings.variableAccessModifier} ";
                     _builder += $"{bindInfo.Value.componentName} ";
                     _builder += $"{_settings.variablePrefix}{bindInfo.Value.variableName};\n";
                 }
@@ -214,26 +227,14 @@ namespace OxGFrame.CoreFrame.Editor
             #endregion
 
             #region 方法定義生成
-            switch (_settings.methodType)
-            {
-                case BindCodeSetting.MethodType.Auto:
-                    _builder += "\n";
-                    _builder += "/// <summary>\n";
-                    _builder += "/// Auto Binding Section\n";
-                    _builder += "/// </summary>\n";
-                    _builder += $"{_settings.GetMethodAccessModifier()} override void {_settings.GetMethodName()}()\n";
-                    _builder += "{\n";
-                    _builder += $"    base.{_settings.GetMethodName()}();\n";
-                    break;
-                default:
-                    _builder += "\n";
-                    _builder += "/// <summary>\n";
-                    _builder += "/// Don't forget to call via OnBind method\n";
-                    _builder += "/// </summary>\n";
-                    _builder += $"{_settings.GetMethodAccessModifier()} void {_settings.methodPrefix}{_settings.GetMethodName()}()\n";
-                    _builder += "{\n";
-                    break;
-            }
+            _builder += "\n";
+            _builder += space + "/// <summary>\n";
+            _builder += space + "/// Auto Binding Section\n";
+            _builder += space + "/// </summary>\n";
+            _builder += space + $"{_settings.GetMethodAccessModifier()} override void {_settings.GetMethodName()}()\n";
+            _builder += space + "{";
+            _builder += "\n";
+            _builder += space + $"    base.{_settings.GetMethodName()}();\n";
 
             foreach (var bindInfo in _collectBindInfos)
             {
@@ -243,8 +244,7 @@ namespace OxGFrame.CoreFrame.Editor
                     // For GameObjects
                     if (bindInfo.Value.componentName == _DEF_COMPONENT_NAME)
                     {
-                        _builder += $"    ";
-                        _builder += $"{_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName}s = ";
+                        _builder += space + $"    {_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName}s = ";
                         _builder += $"{_settings.GetIndicateModifier()}collector.GetNodes(\"{bindInfo.Value.bindName}\");\n";
                     }
                     else
@@ -255,7 +255,7 @@ namespace OxGFrame.CoreFrame.Editor
                         string varName = bindInfo.Value.variableName.Substring(0, varNameLength - endRemoveCount);
                         string endPluralTxt = bindInfo.Value.pluralize.endPluralTxt;
                         string newVarName = $"{varName}{endPluralTxt}";
-                        _builder += $"{_settings.GetIndicateModifier()}{_settings.variablePrefix}{newVarName} = ";
+                        _builder += space + $"{_settings.GetIndicateModifier()}{_settings.variablePrefix}{newVarName} = ";
                         _builder += $"{_settings.GetIndicateModifier()}collector.GetNodeComponents<{bindInfo.Value.componentName}>(\"{bindInfo.Value.bindName}\");\n";
                     }
                 }
@@ -265,24 +265,91 @@ namespace OxGFrame.CoreFrame.Editor
                     // For GameObject
                     if (bindInfo.Value.componentName == _DEF_COMPONENT_NAME)
                     {
-                        _builder += $"    ";
-                        _builder += $"{_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName} = ";
+                        _builder += space + $"    {_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName} = ";
                         _builder += $"{_settings.GetIndicateModifier()}collector.GetNode(\"{bindInfo.Value.bindName}\");\n";
                     }
                     else
                     {
-                        _builder += $"    ";
-                        _builder += $"{_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName} = ";
+                        _builder += space + $"    {_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName} = ";
                         _builder += $"{_settings.GetIndicateModifier()}collector.GetNodeComponent<{bindInfo.Value.componentName}>(\"{bindInfo.Value.bindName}\");\n";
                     }
                 }
             }
-            _builder += "}";
+            _builder += space + "}";
             #endregion
-            _builder += "\n#endregion";
 
-            // 顯示 Clipboard
-            BindCodeClipboardWindow.ShowWindow(_builder);
+            _builder += "\n";
+            _builder += space + _REPLACEMENT_PATTERN_END;
+            // End of content ↑↑↑
+
+            switch (_settings.methodType)
+            {
+                case BindCodeSetting.MethodType.Auto:
+                    // Save to script
+                    _InsertCodes(_builder);
+                    break;
+                default:
+                    // Show on clipboard
+                    _ShowClipboard(_builder);
+                    break;
+            }
+        }
+
+        private static void _ShowClipboard(string content)
+        {
+            BindCodeClipboardWindow.ShowWindow(content);
+            Debug.Log("<color=#02ff8e>[Manual] Copy binding content to script!!!</color>");
+        }
+
+        private static void _InsertCodes(string content)
+        {
+            if (_script == null)
+            {
+                Debug.Log("<color=#ff026e>Cannot find script (FrameBase => UIBase, SRBase, CPBase). Please drag the script onto the object!!!</color>");
+                return;
+            }
+
+            string scriptPath = _GetScriptPath(_script);
+
+            // Read all script content
+            string scriptContent = System.IO.File.ReadAllText(scriptPath);
+
+            // Expression pattern
+            string pattern = _REPLACEMENT_PATTERN;
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.Singleline);
+            System.Text.RegularExpressions.Match match = regex.Match(scriptContent);
+
+            if (match.Success)
+            {
+                // Replace binding content into the script
+                scriptContent = scriptContent.Remove(match.Groups[0].Index, match.Groups[0].Length);
+                scriptContent = scriptContent.Insert(match.Groups[0].Index, content);
+
+                // To Unix style "\n"
+                scriptContent = scriptContent.Replace("\r\n", "\n").Replace("\r", "\n");
+
+                // Write file
+                System.IO.File.WriteAllText(scriptPath, scriptContent);
+
+                AssetDatabase.Refresh();
+                EditorUtility.SetDirty(_script);
+
+                Debug.Log("<color=#02ff8e>[Auto] Completed automatically binding content to script!!!</color>", _script);
+            }
+            else
+            {
+                Debug.Log($"<color=#ff026e>Unable to find specific replacement string in script. <color=#ffbc02>Script Name:{_script.name}</color></color>", _script);
+                Debug.Log($"<color=#ff026e>The pattern is ↓↓↓ (Copy the following into the script) ↓↓↓</color>", _script);
+                Debug.Log($"<color=#ffbc02>{_REPLACEMENT_PATTERN_HEAD}\n{_REPLACEMENT_PATTERN_END}</color>");
+            }
+        }
+
+        private static string _GetScriptPath(MonoBehaviour script)
+        {
+            MonoScript monoScript = MonoScript.FromMonoBehaviour(script);
+            string scriptRelativePath = AssetDatabase.GetAssetPath(monoScript);
+            string scriptPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, "..", scriptRelativePath));
+            return scriptPath;
         }
         #endregion
     }

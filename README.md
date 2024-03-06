@@ -15,7 +15,7 @@
 | [OxGKit.LoggingSystem v1.0.0 or higher](https://github.com/michael811125/OxGKit#loggingsystem-dependence-lwmybox), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
 | [OxGKit.Utilities v1.0.0 or higher](https://github.com/michael811125/OxGKit#utilities-dependence-unitask), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
 | [LWMyBox v1.2.2 or higher](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager **(建議改成輕量版的 MyBox 改進編譯效率)** |
-| [HybirdCLR v5.0.0 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
+| [HybirdCLR v5.1.0 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
 
 **OxGKit.Utilities 遇到 UniTask 引用問題請無視，因為最後完成 OxGFrame 的安裝後，就會自動引用內建的 UniTask 了**
 
@@ -436,6 +436,8 @@ Init Order : OnCreate (Once) > OnAutoBind (Once) > OnBind (Once) > OnPreShow (Ev
   - _Node@XXX*Btn (以此類推)
 - CPBase
   - ~Node@XXX*Btn (以此類推)
+
+![](Docs/img_18.png)
 
 預設組件綁定表 (可從 BindCodeSetting 中自行新增或修改 TailName 對應綁定組件類型)
 
