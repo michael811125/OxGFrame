@@ -14,9 +14,9 @@ namespace OxGFrame.CoreFrame.Editor
             public BindCodeSetting.Pluralize pluralize;
             public int count;
 
-            public BindInfo(string bindeName, string variableName, string componentName, int count)
+            public BindInfo(string bindName, string variableName, string componentName, int count)
             {
-                this.bindName = bindeName;
+                this.bindName = bindName;
                 this.variableName = variableName;
                 this.componentName = componentName;
                 this.count = count;
