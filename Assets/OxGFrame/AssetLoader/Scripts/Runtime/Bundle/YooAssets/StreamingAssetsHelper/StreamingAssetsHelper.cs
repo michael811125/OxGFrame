@@ -44,7 +44,7 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             // Initialized
             {
-                if (_isInit == false)
+                if (!_isInit)
                 {
                     _isInit = true;
 
@@ -56,7 +56,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     {
                         foreach (var element in manifest.BuiltinFiles)
                         {
-                            if (_packages.TryGetValue(element.PackageName, out PackageQuery package) == false)
+                            if (!_packages.TryGetValue(element.PackageName, out PackageQuery package))
                             {
                                 package = new PackageQuery();
                                 _packages.Add(element.PackageName, package);
@@ -64,6 +64,10 @@ namespace OxGFrame.AssetLoader.Bundle
                             package.Elements.Add(element.FileName, element);
                         }
                     }
+
+                    // Unload manifest (already cached)
+                    Resources.UnloadAsset(manifest);
+                    Resources.UnloadUnusedAssets();
                 }
             }
 
