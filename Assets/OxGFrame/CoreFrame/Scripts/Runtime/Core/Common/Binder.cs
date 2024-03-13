@@ -55,7 +55,7 @@ namespace OxGFrame.CoreFrame
             string[] heads = GetHeadSplitNameBySeparator(name);
 
             string bindType = heads[0]; // 綁定類型(會去查找 dictComponentFinder 裡面有沒有符合的類型)
-            string bindInfo = heads[1]; // 要成為取得綁定物件後的Key
+            string bindInfo = heads[1]; // 要成為取得綁定物件後的 Key
 
             #region Common
             // 變數存取權檢測
