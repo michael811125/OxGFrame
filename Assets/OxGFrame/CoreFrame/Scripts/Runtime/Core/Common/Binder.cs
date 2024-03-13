@@ -1,5 +1,6 @@
 ﻿using OxGFrame.CoreFrame.CPFrame;
 using OxGKit.LoggingSystem;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace OxGFrame.CoreFrame
@@ -54,10 +55,29 @@ namespace OxGFrame.CoreFrame
             string[] heads = GetHeadSplitNameBySeparator(name);
 
             string bindType = heads[0]; // 綁定類型(會去查找 dictComponentFinder 裡面有沒有符合的類型)
-            string bindName = heads[1]; // 要成為取得綁定物件後的Key
+            string bindInfo = heads[1]; // 要成為取得綁定物件後的Key
+
+            #region Common
+            // 變數存取權檢測
+            string[] bindArgs = GetAccessModifierSplitNameBySeparator(bindInfo);
+
+            // MyObj*Txt$public => ["MyObj*Txt", "public"]
+            string bindName = bindArgs[0];
+
+            // 匹配 Attr []
+            string pattern = @"\[(.*?)\]";
+            MatchCollection attrMatches = Regex.Matches(bindName, pattern);
+            if (attrMatches.Count > 0)
+            {
+                // 將所有方括號替換為空字串
+                bindName = Regex.Replace(bindName, pattern, "");
+            }
+            #endregion
 
             // 再去判斷取得後的字串陣列是否綁定格式資格
-            if (heads == null || heads.Length < 2 || !FrameConfig.BIND_COMPONENTS.ContainsKey(bindType))
+            if (heads == null ||
+                heads.Length < 2 ||
+                !FrameConfig.BIND_COMPONENTS.ContainsKey(bindType))
             {
                 Logging.Print<Logger>($"{name} => Naming format error. Please check the bind name.");
                 return;
@@ -113,8 +133,8 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 透過【BIND_HEAD_SEPARATOR】去 Split 字串, 返回取得字串陣列
-        /// ※備註: (Example) _Node@MyObj => ["_Node", "MyObj"]
+        /// 透過【BIND_HEAD_SEPARATOR】執行 Split 字串, 返回取得字串陣列
+        /// ※備註: (Example) _Node@MyObj*Txt => ["_Node", "MyObj*Txt"]
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -126,8 +146,8 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 透過【BIND_TAIL_SEPARATOR】去 Split 字串, 返回取得字串陣列
-        /// ※備註: (Example) _Node@MyObj*Txt => ["MyObj", "Txt"]
+        /// 透過【BIND_TAIL_SEPARATOR】執行 Split 字串, 返回取得字串陣列
+        /// ※備註: (Example) MyObj*Txt => ["MyObj", "Txt"]
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -136,6 +156,19 @@ namespace OxGFrame.CoreFrame
             if (string.IsNullOrEmpty(name)) return null;
 
             return name.Split(FrameConfig.BIND_TAIL_SEPARATOR);
+        }
+
+        /// <summary>
+        /// 透過【BIND_ACCESS_MODIFIER_SEPARATOR】執行 Split 字串, 返回取得字串陣列
+        /// ※備註: (Example) MyObj*Txt$public => ["MyObj*Txt", "public"]
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static string[] GetAccessModifierSplitNameBySeparator(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return null;
+
+            return name.Split(FrameConfig.BIND_ACCESS_MODIFIER_SEPARATOR);
         }
         #endregion
     }

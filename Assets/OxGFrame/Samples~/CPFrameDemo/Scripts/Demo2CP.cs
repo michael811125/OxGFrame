@@ -1,10 +1,27 @@
-﻿using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using OxGFrame.CoreFrame;
 using OxGFrame.CoreFrame.CPFrame;
 using UnityEngine;
 
 public class Demo2CP : CPBase
 {
+    // Use ~Node@XXX to Bind
+
+    #region Binding Components
+    protected GameObject _b1;
+    protected GameObject _b2;
+
+    /// <summary>
+    /// Auto Binding Section
+    /// </summary>
+    protected override void OnAutoBind()
+    {
+        base.OnAutoBind();
+        this._b1 = this.collector.GetNode("B1");
+        this._b2 = this.collector.GetNode("B2");
+    }
+    #endregion
+
     public override void OnCreate()
     {
         Debug.Log($"<color=#FF2A20>InitThis:</color> {this.gameObject.name}");
@@ -12,8 +29,8 @@ public class Demo2CP : CPBase
 
     protected override void OnBind()
     {
-        Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {this.collector.GetNode("B1").name}");
-        Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {this.collector.GetNode("B2").name}");
+        Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {this._b1.name}");
+        Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {this._b1.name}");
     }
 
     protected override void OnShow()

@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 6060700927929970216}
   - component: {fileID: 9120905121253565105}
   m_Layer: 0
-  m_Name: _Node@Image2
+  m_Name: _Node@View*Img
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5174,7 +5174,7 @@ GameObject:
   - component: {fileID: 5066250251986725119}
   - component: {fileID: 2536554217800717421}
   m_Layer: 0
-  m_Name: _Node@OpenBtn
+  m_Name: _Node@Open*Btn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

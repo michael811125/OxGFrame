@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 8844711520655062969}
   - component: {fileID: 6792892691383569100}
   m_Layer: 0
-  m_Name: _Node@OpenBtn
+  m_Name: _Node@Open*Btn$private
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -214,7 +214,7 @@ GameObject:
   - component: {fileID: 2537838258604403230}
   - component: {fileID: 7219099323406835009}
   m_Layer: 0
-  m_Name: Image
+  m_Name: _Node@Decor*Img$public[hi]
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -290,7 +290,7 @@ GameObject:
   - component: {fileID: 1110609142422051904}
   - component: {fileID: 3295446933826572382}
   m_Layer: 0
-  m_Name: _Node@Image1
+  m_Name: _Node@View*Img[sf]
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -466,6 +466,8 @@ MonoBehaviour:
     sprite: {fileID: 0}
     material: {fileID: 0}
     isClickMaskToClose: 1
+  decorImg: {fileID: 0}
+  _viewImg: {fileID: 0}
 --- !u!1 &8326820277654019497
 GameObject:
   m_ObjectHideFlags: 0

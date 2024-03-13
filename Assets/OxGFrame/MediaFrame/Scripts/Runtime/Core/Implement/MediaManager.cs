@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
+using OxGFrame.MediaFrame.Cacher;
 using OxGKit.LoggingSystem;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace OxGFrame.MediaFrame
         protected Dictionary<string, GameObject> _dictAssetCache = new Dictionary<string, GameObject>();  // 【常駐】所有資源緩存
         protected HashSet<string> _loadingFlags = new HashSet<string>();                                  // 用來標記正在加載中的資源 (暫存緩存)
         protected List<T> _listAllCache = new List<T>();                                                  // 【常駐】所有進入播放的影音柱列緩存 (只會在 Destroy 時, Remove 對應的緩存)
+        protected MediaLRUCache _mediaLruCache = new MediaLRUCache(128);
 
         private static float _fdt;
 
@@ -54,6 +56,19 @@ namespace OxGFrame.MediaFrame
         {
             if (string.IsNullOrEmpty(assetName)) return false;
             return this._loadingFlags.Contains(assetName);
+        }
+
+        /// <summary>
+        /// 處理不常用的影音, 僅針對沒有啟用 onDestroyAndUnload 的設置
+        /// </summary>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="assetName"></param>
+        protected void TryLRUCache<U>(string assetName) where U : T
+        {
+            string key = $"{typeof(U).Name}_{assetName}";
+            if (!this._mediaLruCache.Contains(key))
+                this._mediaLruCache.Add(key, assetName);
+            this._mediaLruCache.Get(key);
         }
 
         /// <summary>
@@ -254,7 +269,11 @@ namespace OxGFrame.MediaFrame
             mBase.OnRelease();
 
             // 刪除物件
-            if (!mBase.gameObject.IsDestroyed()) Destroy(mBase.gameObject);
+            if (!mBase.gameObject.IsDestroyed())
+            {
+                mBase.isDestroying = true;
+                Destroy(mBase.gameObject);
+            }
 
             // 刪除柱列緩存
             this._listAllCache.Remove(mBase);

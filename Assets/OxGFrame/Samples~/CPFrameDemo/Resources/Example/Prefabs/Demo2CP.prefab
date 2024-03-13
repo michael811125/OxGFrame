@@ -45,7 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8eab09c4e9c40c4f83660a4b158a58d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCloseAndDestroy: 0
+  allowInstantiate: 0
+  onCloseAndDestroy: 0
+  price: 0
 --- !u!1 &7108754004220404273
 GameObject:
   m_ObjectHideFlags: 0

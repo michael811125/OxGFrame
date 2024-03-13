@@ -314,7 +314,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             try
             {
-                VideoManager.GetInstance().Stop(this, true, true);
+                if (!this.isDestroying)
+                    VideoManager.GetInstance().Stop(this, true, true);
             }
             catch
             {

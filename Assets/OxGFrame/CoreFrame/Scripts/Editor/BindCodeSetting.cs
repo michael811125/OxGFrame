@@ -1,7 +1,8 @@
-﻿using System;
-using UnityEngine;
-using MyBox;
+﻿using MyBox;
+using System;
+using System.Linq;
 using UnityEditor;
+using UnityEngine;
 
 namespace OxGFrame.CoreFrame.Editor
 {
@@ -52,14 +53,26 @@ namespace OxGFrame.CoreFrame.Editor
             This
         }
 
-        [Separator("Variable Setting")]
-        public CaseType variableCaseType = CaseType.CamelCase;
-        public string variableAccessModifier = "protected";
-        public string variablePrefix = "_";
-
-        [Separator("Method Setting")]
+        [Separator("Binding Method Setting")]
         [Tooltip("*[Auto] Automatically save binding content to script.\n\n*[Manual] Manually copy the binding content from the clipboard to the script.")]
         public MethodType methodType = MethodType.Auto;
+
+        [Separator("Attribute Setting")]
+        public AttrGenericDictionary<string, string> attrReferenceRules = new AttrGenericDictionary<string, string>()
+        {
+            { "[hi]", "[HideInInspector]" },
+            { "[sf]", "[SerializeField]"}
+        };
+
+        [Separator("Variable Setting")]
+        public CaseType variableCaseType = CaseType.CamelCase;
+        [Tooltip("The first element will be default")]
+        public VariableGenericDictionary<string, string> variableAccessRules = new VariableGenericDictionary<string, string>()
+        {
+            { "protected", "_" },
+            { "private", "_" },
+            { "public" , "" }
+        };
 
         [Separator("Indicate Modifier Setting")]
         public IndicateModifier indicateModifier = IndicateModifier.This;
@@ -102,6 +115,46 @@ namespace OxGFrame.CoreFrame.Editor
                 default:
                     return string.Empty;
             }
+        }
+
+        public string GetAttrReference(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+                return string.Empty;
+
+            this.attrReferenceRules.TryGetValue(key, out var result);
+            if (result == null)
+                return string.Empty;
+
+            return result;
+        }
+
+        public string[] GetVariableAccessPairs(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                return new string[]
+                {
+                    this.variableAccessRules.Keys.First(),
+                    this.variableAccessRules.Values.First()
+                };
+            }
+
+            this.variableAccessRules.TryGetValue(key, out var result);
+            if (result == null)
+            {
+                return new string[]
+                {
+                    this.variableAccessRules.Keys.First(),
+                    this.variableAccessRules.Values.First()
+                };
+            }
+
+            return new string[]
+            {
+                key,
+                result
+            };
         }
 
         public string GetMethodAccessModifier()

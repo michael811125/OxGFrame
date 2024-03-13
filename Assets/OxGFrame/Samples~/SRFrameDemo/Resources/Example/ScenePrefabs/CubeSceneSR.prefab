@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8899546002309488419}
   - component: {fileID: 5922267057065990076}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: _Node@Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 8701044861067494743}
   - component: {fileID: 5177086667333995691}
   m_Layer: 0
-  m_Name: Cube (3)
+  m_Name: _Node@Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -244,7 +244,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowInstantiate: 1
   onCloseAndDestroy: 0
-  gsSetting:
+  srSetting:
     whenCloseAllToSkip: 0
     whenHideAllToSkip: 0
 --- !u!1 &7655318841875574380
@@ -260,7 +260,7 @@ GameObject:
   - component: {fileID: 3496350111037615807}
   - component: {fileID: 4142412492571997849}
   m_Layer: 0
-  m_Name: Cube (2)
+  m_Name: _Node@Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -357,7 +357,7 @@ GameObject:
   - component: {fileID: 8117388445162294548}
   - component: {fileID: 3455565230967714968}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: _Node@Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

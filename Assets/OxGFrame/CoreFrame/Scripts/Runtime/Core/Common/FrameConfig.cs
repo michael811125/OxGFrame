@@ -7,6 +7,7 @@ namespace OxGFrame.CoreFrame
         /* 規範符號 */
         public static readonly string BIND_HEAD_SEPARATOR = "@";
         public static readonly string BIND_TAIL_SEPARATOR = "*";
+        public static readonly string BIND_ACCESS_MODIFIER_SEPARATOR = "$";
         public static readonly string BIND_STOP_END = "#";
 
         /* 綁定規範前墜 */

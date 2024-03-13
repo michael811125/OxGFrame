@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using OxGFrame.CoreFrame.UIFrame;
 using Cysharp.Threading.Tasks;
 using UnityEngine.UI;
@@ -6,9 +6,26 @@ using OxGFrame.CoreFrame;
 
 public class Demo1UI : UIBase
 {
-    private Image myImage;
-    private Button oepnBtn;
-    private Image myImage2;
+    // Use _Node@XXX to Bind
+
+    #region Binding Components
+    private Button _openBtn;
+    [HideInInspector]
+    public Image decorImg;
+    [SerializeField]
+    protected Image _viewImg;
+
+    /// <summary>
+    /// Auto Binding Section
+    /// </summary>
+    protected override void OnAutoBind()
+    {
+        base.OnAutoBind();
+        this._openBtn = this.collector.GetNodeComponent<Button>("Open*Btn");
+        this.decorImg = this.collector.GetNodeComponent<Image>("Decor*Img");
+        this._viewImg = this.collector.GetNodeComponent<Image>("View*Img");
+    }
+    #endregion
 
     public override void OnCreate()
     {
@@ -37,13 +54,7 @@ public class Demo1UI : UIBase
 
     protected override void OnBind()
     {
-        this.myImage = this.collector.GetNode("Image1")?.GetComponent<Image>();
-        if (this.myImage != null) Debug.Log(string.Format("Binded GameObject: {0}", this.myImage.name));
-
-        this.oepnBtn = this.collector.GetNode("OpenBtn")?.GetComponent<Button>();
-        if (this.oepnBtn != null) Debug.Log(string.Format("Binded GameObject: {0}", this.oepnBtn.name));
-
-        this.oepnBtn.onClick.AddListener(this._ShowDemoPopup2UI);
+        this._openBtn.onClick.AddListener(this._ShowDemoPopup2UI);
     }
 
     protected override void OnUpdate(float dt)

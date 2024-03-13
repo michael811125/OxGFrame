@@ -437,6 +437,12 @@ Init Order : OnCreate (Once) > OnAutoBind (Once) > OnBind (Once) > OnPreShow (Ev
 - CPBase
   - ~Node@XXX*Btn (以此類推)
 
+綁定說明
+
+![](Docs/img_19.png)
+
+綁定配置
+
 ![](Docs/img_18.png)
 
 預設組件綁定表 (可從 BindCodeSetting 中自行新增或修改 TailName 對應綁定組件類型)

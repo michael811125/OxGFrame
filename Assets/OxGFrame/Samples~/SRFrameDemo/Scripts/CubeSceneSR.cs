@@ -1,9 +1,24 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Cysharp.Threading.Tasks;
 using OxGFrame.CoreFrame.SRFrame;
 
 public class CubeSceneSR : SRBase
 {
+    // Use _Node@XXX to Bind
+
+    #region Binding Components
+    protected GameObject[] _cubes;
+
+    /// <summary>
+    /// Auto Binding Section
+    /// </summary>
+    protected override void OnAutoBind()
+    {
+        base.OnAutoBind();
+        this._cubes = this.collector.GetNodes("Cube");
+    }
+    #endregion
+
     public override void OnCreate()
     {
     }

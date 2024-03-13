@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using OxGFrame.MediaFrame.AudioFrame;
 using OxGKit.LoggingSystem;
 using UnityEngine;
 
@@ -51,6 +52,10 @@ namespace OxGFrame.MediaFrame.VideoFrame
         private void _Play(VideoBase vidBase, int loops, float volume)
         {
             if (vidBase == null) return;
+
+            // 處理長期沒有被 Unload 的 Video
+            if (!vidBase.onDestroyAndUnload)
+                this.TryLRUCache<VideoBase>(vidBase.assetName);
 
             this.LoadAndPlay(vidBase, loops, volume);
 

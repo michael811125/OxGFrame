@@ -5,6 +5,9 @@ public class Demo4UI : UIBase
 {
     // Use _Node@XXX to Bind
 
+    #region Binding Components
+    #endregion
+
     public override void OnCreate()
     {
         /**

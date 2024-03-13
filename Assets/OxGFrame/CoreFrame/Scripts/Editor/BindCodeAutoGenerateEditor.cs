@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,14 +10,18 @@ namespace OxGFrame.CoreFrame.Editor
     {
         private class BindInfo
         {
+            public string[] attrNames;
+            public string variableAccessModifier;
             public string bindName;
             public string variableName;
             public string componentName;
             public BindCodeSetting.Pluralize pluralize;
             public int count;
 
-            public BindInfo(string bindName, string variableName, string componentName, int count)
+            public BindInfo(string[] attrNames, string variableAccessModifier, string bindName, string variableName, string componentName, int count)
             {
+                this.attrNames = attrNames;
+                this.variableAccessModifier = variableAccessModifier;
                 this.bindName = bindName;
                 this.variableName = variableName;
                 this.componentName = componentName;
@@ -129,24 +135,67 @@ namespace OxGFrame.CoreFrame.Editor
             string[] heads = Binder.GetHeadSplitNameBySeparator(name);
 
             string bindType = heads[0]; // 綁定類型(會去查找 dictComponentFinder 裡面有沒有符合的類型)
-            string bindName = heads[1]; // 要成為取得綁定物件後的Key
+            string bindInfo = heads[1]; // 要成為取得綁定物件後的 Key
 
             // 再去判斷取得後的字串陣列是否綁定格式資格
-            if (heads == null || heads.Length < 2 || !FrameConfig.BIND_COMPONENTS.ContainsKey(bindType))
+            if (heads == null ||
+                heads.Length < 2 ||
+                !FrameConfig.BIND_COMPONENTS.ContainsKey(bindType))
             {
                 return;
             }
 
+            #region Common with Binder
+            // 變數存取權檢測
+            string[] bindArgs = Binder.GetAccessModifierSplitNameBySeparator(bindInfo);
+
+            // MyObj*Txt$public => ["MyObj*Txt", "public"]
+            string bindName = bindArgs[0];
+            string variableAccessModifier = (bindArgs.Length > 1) ? bindArgs[1] : null;
+
+            // 匹配 Attr []
+            string pattern = @"\[(.*?)\]";
+            string[] attrNames = new string[] { };
+            if (!string.IsNullOrEmpty(variableAccessModifier))
+            {
+                MatchCollection attrMatches = Regex.Matches(variableAccessModifier, pattern);
+                if (attrMatches.Count > 0)
+                {
+                    // 將匹配的子字符串存入陣列
+                    attrNames = attrMatches.Cast<Match>().Select(m => m.Value).ToArray();
+                    // 將所有方括號替換為空字串
+                    variableAccessModifier = Regex.Replace(variableAccessModifier, pattern, "");
+                }
+            }
+            else
+            {
+                MatchCollection attrMatches = Regex.Matches(bindName, pattern);
+                if (attrMatches.Count > 0)
+                {
+                    // 將匹配的子字符串存入陣列
+                    attrNames = attrMatches.Cast<Match>().Select(m => m.Value).ToArray();
+                    // 將所有方括號替換為空字串
+                    bindName = Regex.Replace(bindName, pattern, "");
+                }
+            }
+            #endregion
+
             // 組件結尾檢測
             string[] tails = Binder.GetTailSplitNameBySeparator(bindName);
-            string variableName = bindName.Replace(" ", string.Empty);
-            string componentName = _DEF_COMPONENT_NAME;
+            string variableName, componentName;
 
-            if (tails != null && tails.Length >= 2)
+            if (tails != null &&
+                tails.Length >= 2)
+            // Component
             {
                 variableName = tails[0] + tails[1];
-                variableName.Replace(" ", string.Empty);
                 componentName = tails[1];
+            }
+            // GameObject
+            else
+            {
+                variableName = bindName;
+                componentName = _DEF_COMPONENT_NAME;
             }
 
             // 修正 Case
@@ -165,7 +214,7 @@ namespace OxGFrame.CoreFrame.Editor
             {
                 _collectBindInfos[bindName].count++;
             }
-            else _collectBindInfos.Add(bindName, new BindInfo(bindName, variableName, componentName, 1));
+            else _collectBindInfos.Add(bindName, new BindInfo(attrNames, variableAccessModifier, bindName, variableName, componentName, 1));
         }
         #endregion
 
@@ -200,28 +249,34 @@ namespace OxGFrame.CoreFrame.Editor
                     // For GameObjects
                     if (bindInfo.Value.componentName == _DEF_COMPONENT_NAME)
                     {
-                        _builder += space + $"{_settings.variableAccessModifier} ";
+                        for (int i = 0; i < bindInfo.Value.attrNames.Length; i++)
+                            _builder += space + $"{_settings.GetAttrReference(bindInfo.Value.attrNames[i])}\n";
+                        _builder += space + $"{_settings.GetVariableAccessPairs(bindInfo.Value.variableAccessModifier)[0]} ";
                         _builder += $"{bindInfo.Value.componentName}[] ";
-                        _builder += $"{_settings.variablePrefix}{bindInfo.Value.variableName}s;\n";
+                        _builder += $"{_settings.GetVariableAccessPairs(bindInfo.Value.variableAccessModifier)[1]}{bindInfo.Value.variableName}s;\n";
                     }
                     else
                     {
-                        _builder += space + $"{_settings.variableAccessModifier} ";
+                        for (int i = 0; i < bindInfo.Value.attrNames.Length; i++)
+                            _builder += space + $"{_settings.GetAttrReference(bindInfo.Value.attrNames[i])}\n";
+                        _builder += space + $"{_settings.GetVariableAccessPairs(bindInfo.Value.variableAccessModifier)[0]} ";
                         _builder += $"{bindInfo.Value.componentName}[] ";
                         int varNameLength = bindInfo.Value.variableName.Length;
                         int endRemoveCount = (bindInfo.Value.pluralize.endRemoveCount > varNameLength) ? 0 : bindInfo.Value.pluralize.endRemoveCount;
                         string varName = bindInfo.Value.variableName.Substring(0, varNameLength - endRemoveCount);
                         string endPluralTxt = bindInfo.Value.pluralize.endPluralTxt;
                         string newVarName = $"{varName}{endPluralTxt}";
-                        _builder += $"{_settings.variablePrefix}{newVarName};\n";
+                        _builder += $"{_settings.GetVariableAccessPairs(bindInfo.Value.variableAccessModifier)[1]}{newVarName};\n";
                     }
                 }
                 // Single
                 else
                 {
-                    _builder += space + $"{_settings.variableAccessModifier} ";
+                    for (int i = 0; i < bindInfo.Value.attrNames.Length; i++)
+                        _builder += space + $"{_settings.GetAttrReference(bindInfo.Value.attrNames[i])}\n";
+                    _builder += space + $"{_settings.GetVariableAccessPairs(bindInfo.Value.variableAccessModifier)[0]} ";
                     _builder += $"{bindInfo.Value.componentName} ";
-                    _builder += $"{_settings.variablePrefix}{bindInfo.Value.variableName};\n";
+                    _builder += $"{_settings.GetVariableAccessPairs(bindInfo.Value.variableAccessModifier)[1]}{bindInfo.Value.variableName};\n";
                 }
             }
             #endregion
@@ -244,7 +299,7 @@ namespace OxGFrame.CoreFrame.Editor
                     // For GameObjects
                     if (bindInfo.Value.componentName == _DEF_COMPONENT_NAME)
                     {
-                        _builder += space + $"    {_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName}s = ";
+                        _builder += space + $"    {_settings.GetIndicateModifier()}{_settings.GetVariableAccessPairs(bindInfo.Value.variableAccessModifier)[1]}{bindInfo.Value.variableName}s = ";
                         _builder += $"{_settings.GetIndicateModifier()}collector.GetNodes(\"{bindInfo.Value.bindName}\");\n";
                     }
                     else
@@ -255,7 +310,7 @@ namespace OxGFrame.CoreFrame.Editor
                         string varName = bindInfo.Value.variableName.Substring(0, varNameLength - endRemoveCount);
                         string endPluralTxt = bindInfo.Value.pluralize.endPluralTxt;
                         string newVarName = $"{varName}{endPluralTxt}";
-                        _builder += space + $"{_settings.GetIndicateModifier()}{_settings.variablePrefix}{newVarName} = ";
+                        _builder += space + $"{_settings.GetIndicateModifier()}{_settings.GetVariableAccessPairs(bindInfo.Value.variableAccessModifier)[1]}{newVarName} = ";
                         _builder += $"{_settings.GetIndicateModifier()}collector.GetNodeComponents<{bindInfo.Value.componentName}>(\"{bindInfo.Value.bindName}\");\n";
                     }
                 }
@@ -265,12 +320,12 @@ namespace OxGFrame.CoreFrame.Editor
                     // For GameObject
                     if (bindInfo.Value.componentName == _DEF_COMPONENT_NAME)
                     {
-                        _builder += space + $"    {_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName} = ";
+                        _builder += space + $"    {_settings.GetIndicateModifier()}{_settings.GetVariableAccessPairs(bindInfo.Value.variableAccessModifier)[1]}{bindInfo.Value.variableName} = ";
                         _builder += $"{_settings.GetIndicateModifier()}collector.GetNode(\"{bindInfo.Value.bindName}\");\n";
                     }
                     else
                     {
-                        _builder += space + $"    {_settings.GetIndicateModifier()}{_settings.variablePrefix}{bindInfo.Value.variableName} = ";
+                        _builder += space + $"    {_settings.GetIndicateModifier()}{_settings.GetVariableAccessPairs(bindInfo.Value.variableAccessModifier)[1]}{bindInfo.Value.variableName} = ";
                         _builder += $"{_settings.GetIndicateModifier()}collector.GetNodeComponent<{bindInfo.Value.componentName}>(\"{bindInfo.Value.bindName}\");\n";
                     }
                 }

@@ -4,6 +4,11 @@ using OxGFrame.CoreFrame.SRFrame;
 
 public class MeshResSR : SRBase
 {
+    // Use _Node@XXX to Bind
+
+    #region Binding Components
+    #endregion
+
     public override void OnCreate()
     {
 

@@ -247,7 +247,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             try
             {
-                AudioManager.GetInstance().Stop(this, true, true);
+                if (!this.isDestroying)
+                    AudioManager.GetInstance().Stop(this, true, true);
             }
             catch
             {

@@ -1,11 +1,24 @@
-﻿using UnityEngine;
+using UnityEngine;
 using OxGFrame.CoreFrame.UIFrame;
 using Cysharp.Threading.Tasks;
 using UnityEngine.UI;
 
 public class Demo3UI : UIBase
 {
-    private Image myImage;
+    // Use _Node@XXX to Bind
+
+    #region Binding Components
+    protected Image _viewImg;
+
+    /// <summary>
+    /// Auto Binding Section
+    /// </summary>
+    protected override void OnAutoBind()
+    {
+        base.OnAutoBind();
+        this._viewImg = this.collector.GetNodeComponent<Image>("View*Img");
+    }
+    #endregion
 
     public override void OnCreate()
     {
@@ -32,8 +45,6 @@ public class Demo3UI : UIBase
 
     protected override void OnBind()
     {
-        this.myImage = this.collector.GetNode("Image3")?.GetComponent<Image>();
-        if (this.myImage != null) Debug.Log(string.Format("Binded GameObject: {0}", this.myImage.gameObject.name));
     }
 
     protected override void OnUpdate(float dt)

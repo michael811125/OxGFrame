@@ -90,6 +90,7 @@ namespace OxGFrame.MediaFrame
         protected float _currentLength = 0f;                                               // 影音當前長度
         protected Action _endEvent = null;                                                 // 停止播放時的事件調用
         public bool isPrepared { get; protected set; } = false;                            // 影音準備好的標記
+        internal bool isDestroying = false;                                                // 正在被銷毀的標記                        
 
         internal void HandleFixedUpdate(float dt)
         {

@@ -12,10 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ebd4b70705a7394dbef385916144fcc, type: 3}
   m_Name: BindCodeSetting
   m_EditorClassIdentifier: 
-  variableCaseType: 0
-  variableAccessModifier: protected
-  variablePrefix: _
   methodType: 0
+  attrReferenceRules:
+    list:
+    - AttrName: '[hi]'
+      AttrReference: '[HideInInspector]'
+    - AttrName: '[sf]'
+      AttrReference: '[SerializeField]'
+    keyCollision: 0
+  variableCaseType: 0
+  variableAccessRules:
+    list:
+    - VariableAccessModifier: protected
+      VariablePrefix: _
+    - VariableAccessModifier: private
+      VariablePrefix: _
+    - VariableAccessModifier: public
+      VariablePrefix: 
+    keyCollision: 0
   indicateModifier: 1
   tailRules:
     list:

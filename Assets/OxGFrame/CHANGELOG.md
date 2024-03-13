@@ -1,5 +1,46 @@
 # CHANGELOG
 
+## [2.10.1] - 2024-03-14
+- Fixed AudioBase and VideoBase to avoid executing Stop again in OnDestroy if they are being destroyed.
+- Added MediaLRUCache to handle audios or videos that have not been Unloaded for a long time (Optimize memory).
+- Added binding access modifier rules in BindCodeSetting, split by "$".
+  - _Node@MyObj*Txt$public (UIBase, SRBase).
+  - ~Node@MyObj*Txt$public (CPBase).
+```
+// Default is protected, no set required (depends on the first element in BindCodeSetting)
+UIBase, SRBase:
+_Node@MyObj*Txt
+CPBase:
+~Node@MyObj*Txt
+
+// Assign access modifier
+UIBase, SRBase:
+_Node@MyObj*Txt$public
+_Node@MyObj*Txt$private
+CPBase:
+~Node@MyObj*Txt$public
+~Node@MyObj*Txt$private
+```
+- Added binding attr rules in BindCodeSetting, pattern is "\[\]" (supported multi-attrs \[\]\[\]...).
+  - _Node@MyObj*Txt$public\[hi\] (UIBase, SRBase).
+  - ~Node@MyObj*Txt$public\[hi\] (CPBase).
+```
+[hi] = [HideInInspector]
+UIBase, SRBase:
+_Node@MyObj*Txt$public[hi]
+CPBase:
+~Node@MyObj*Txt$public[hi]
+
+[sf] = [SerializeField]
+UIBase, SRBase:
+_Node@MyObj*Txt[sf]
+CPBase:
+~Node@MyObj*Txt[sf]
+```
+- Modified UIFrameDemo.
+- Modified SRFrameDemo.
+- Modified CPFrameDemo.
+
 ## [2.10.0] - 2024-03-07
 - Added BuiltinQueryMode option on PatchLauncher, can switch built-in query mode.
 ```C#

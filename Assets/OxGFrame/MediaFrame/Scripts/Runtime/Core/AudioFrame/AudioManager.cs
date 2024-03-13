@@ -206,6 +206,10 @@ namespace OxGFrame.MediaFrame.AudioFrame
         {
             if (audBase == null) return;
 
+            // 處理長期沒有被 Unload 的 Audio
+            if (!audBase.onDestroyAndUnload)
+                this.TryLRUCache<AudioBase>(audBase.assetName);
+            
             this.LoadAndPlay(audBase, loops, volume);
 
             Logging.Print<Logger>(string.Format("Play Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));

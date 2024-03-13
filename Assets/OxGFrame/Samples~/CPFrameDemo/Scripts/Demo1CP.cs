@@ -1,8 +1,25 @@
-﻿using OxGFrame.CoreFrame.CPFrame;
+using OxGFrame.CoreFrame.CPFrame;
 using UnityEngine;
 
 public class Demo1CP : CPBase
 {
+    // Use ~Node@XXX to Bind
+
+    #region Binding Components
+    protected GameObject _b1;
+    protected GameObject[] _b2s;
+
+    /// <summary>
+    /// Auto Binding Section
+    /// </summary>
+    protected override void OnAutoBind()
+    {
+        base.OnAutoBind();
+        this._b1 = this.collector.GetNode("B1");
+        this._b2s = this.collector.GetNodes("B2");
+    }
+    #endregion
+
     public override void OnCreate()
     {
         Debug.Log($"<color=#FF2A20>InitThis:</color> {this.gameObject.name}");
@@ -11,11 +28,11 @@ public class Demo1CP : CPBase
     protected override void OnBind()
     {
         // Single Bind
-        Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {this.collector.GetNode("B1").name}");
+        Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {_b1.name}");
 
         // Multi Bind (Same Name)
-        Debug.Log($"<color=#FFA720>Found Array Binds:</color> {this.gameObject.name} => {this.collector.GetNodes("B2").Length}");
-        foreach (var node in this.collector.GetNodes("B2"))
+        Debug.Log($"<color=#FFA720>Found Array Binds:</color> {this.gameObject.name} => {_b2s.Length}");
+        foreach (var node in _b2s)
         {
             Debug.Log($"<color=#FFA720>Found:</color> {this.gameObject.name} => {node.name}");
         }
