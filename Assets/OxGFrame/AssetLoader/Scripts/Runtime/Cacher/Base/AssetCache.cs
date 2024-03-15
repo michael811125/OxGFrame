@@ -2,7 +2,7 @@
 
 namespace OxGFrame.AssetLoader.Cacher
 {
-    public abstract class AssetCache<T> : ICache<T>
+    public abstract class AssetCache<T>
     {
         public class RetryCounter
         {

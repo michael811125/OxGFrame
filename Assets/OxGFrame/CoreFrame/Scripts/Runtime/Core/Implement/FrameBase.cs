@@ -11,7 +11,7 @@ namespace OxGFrame.CoreFrame
     /// </para>
     /// </summary>
     [DisallowMultipleComponent]
-    public abstract class FrameBase : MonoBehaviour, IFrameBase
+    public abstract class FrameBase : MonoBehaviour
     {
         #region 綁定物件的收集器
         public class Collector

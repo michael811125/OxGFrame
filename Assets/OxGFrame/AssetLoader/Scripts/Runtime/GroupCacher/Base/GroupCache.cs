@@ -19,7 +19,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
         }
     }
 
-    public abstract class GroupCache<T> : IGroupCache<T>
+    public abstract class GroupCache<T>
     {
         protected HashSet<KeyGroup> _keyCacher;
 

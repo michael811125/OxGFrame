@@ -9,7 +9,7 @@ using UnityEngine;
 namespace OxGFrame.MediaFrame
 {
     [DisallowMultipleComponent]
-    public abstract class MediaBase : MonoBehaviour, IMediaBase
+    public abstract class MediaBase : MonoBehaviour
     {
         [Serializable]
         public class UrlSet
@@ -98,7 +98,6 @@ namespace OxGFrame.MediaFrame
             this.OnFixedUpdate(dt);
         }
 
-        #region IMediaBase
         /// <summary>
         /// 初始用
         /// </summary>
@@ -174,7 +173,6 @@ namespace OxGFrame.MediaFrame
             this._currentLength = 0f;
             this._endEvent = null;
         }
-        #endregion
 
         /// <summary>
         /// 停止播放自己
