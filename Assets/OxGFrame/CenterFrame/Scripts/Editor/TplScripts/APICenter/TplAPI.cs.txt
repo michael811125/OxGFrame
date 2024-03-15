@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.CenterFrame.APICenter;
 
+    #ROOTNAMESPACEBEGIN#
 public class #SCRIPTNAME# : APIBase
 {
     /* Declare Your Delegate (Callback) */
@@ -129,3 +130,4 @@ public class #SCRIPTNAME# : APIBase
         );
     }
 }
+#ROOTNAMESPACEEND#

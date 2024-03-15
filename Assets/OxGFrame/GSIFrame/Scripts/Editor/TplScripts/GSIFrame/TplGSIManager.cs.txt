@@ -1,5 +1,6 @@
 ﻿using OxGFrame.GSIFrame;
 
+    #ROOTNAMESPACEBEGIN#
 public class #SCRIPTNAME# : GSIManagerBase<#SCRIPTNAME#>
 {
     public #SCRIPTNAME#()
@@ -48,4 +49,4 @@ public class #SCRIPTNAME# : GSIManagerBase<#SCRIPTNAME#>
         base.OnUpdate(dt); // Must be called
     }
 }
-
+#ROOTNAMESPACEEND#

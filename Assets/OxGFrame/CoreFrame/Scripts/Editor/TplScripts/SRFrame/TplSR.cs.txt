@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.CoreFrame.SRFrame;
 
+    #ROOTNAMESPACEBEGIN#
 public class #SCRIPTNAME# : SRBase
 {
     // Use _Node@XXX to Bind
@@ -85,3 +86,4 @@ public class #SCRIPTNAME# : SRBase
          */
     }
 }
+#ROOTNAMESPACEEND#

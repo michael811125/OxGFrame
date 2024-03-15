@@ -1,5 +1,6 @@
 ﻿using OxGFrame.CoreFrame.CPFrame;
 
+    #ROOTNAMESPACEBEGIN#
 public class #SCRIPTNAME# : CPBase
 {
     // Use ~Node@XXX to Bind
@@ -49,3 +50,4 @@ public class #SCRIPTNAME# : CPBase
          */
     }
 }
+#ROOTNAMESPACEEND#

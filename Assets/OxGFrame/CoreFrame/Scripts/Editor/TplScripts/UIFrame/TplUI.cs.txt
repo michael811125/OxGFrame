@@ -1,6 +1,7 @@
 ﻿using OxGFrame.CoreFrame.UIFrame;
 using Cysharp.Threading.Tasks;
 
+    #ROOTNAMESPACEBEGIN#
 public class #SCRIPTNAME# : UIBase
 {
     // Use _Node@XXX to Bind
@@ -95,3 +96,4 @@ public class #SCRIPTNAME# : UIBase
          */
     }
 }
+#ROOTNAMESPACEEND#

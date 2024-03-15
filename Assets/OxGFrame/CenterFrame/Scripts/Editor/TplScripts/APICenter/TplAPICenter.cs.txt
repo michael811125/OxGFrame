@@ -1,6 +1,7 @@
 ﻿using OxGFrame.CenterFrame;
 using OxGFrame.CenterFrame.APICenter;
 
+    #ROOTNAMESPACEBEGIN#
 public class #SCRIPTNAME# : CenterBase<#SCRIPTNAME#, APIBase>
 {
     public #SCRIPTNAME#()
@@ -16,3 +17,4 @@ public class #SCRIPTNAME# : CenterBase<#SCRIPTNAME#, APIBase>
         */
     }
 }
+#ROOTNAMESPACEEND#

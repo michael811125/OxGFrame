@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.GSIFrame;
 
+    #ROOTNAMESPACEBEGIN#
 public class #SCRIPTNAME# : GSIBase
 {
     // Execution Order: OnCreate (Once) > OnEnter (Every Change) > OnUpdate
@@ -25,3 +26,4 @@ public class #SCRIPTNAME# : GSIBase
         /* Do Somethings OnExit in here */
     }
 }
+#ROOTNAMESPACEEND#

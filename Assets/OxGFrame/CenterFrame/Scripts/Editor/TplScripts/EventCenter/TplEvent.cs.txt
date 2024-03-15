@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.CenterFrame.EventCenter;
 
+    #ROOTNAMESPACEBEGIN#
 public class #SCRIPTNAME# : EventBase
 {
     /* Declare Your Parameters  */
@@ -30,3 +31,4 @@ public class #SCRIPTNAME# : EventBase
          */
     }
 }
+#ROOTNAMESPACEEND#
