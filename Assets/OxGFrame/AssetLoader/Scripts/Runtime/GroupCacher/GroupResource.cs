@@ -1,11 +1,10 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Cacher;
-using OxGFrame.AssetLoader.GroupCacher;
 using OxGKit.LoggingSystem;
 using System.Linq;
 using UnityEngine;
 
-namespace OxGFrame.AssetLoader.GroupChacer
+namespace OxGFrame.AssetLoader.GroupCacher
 {
     internal class GroupResource : GroupCache<ResourcePack>
     {

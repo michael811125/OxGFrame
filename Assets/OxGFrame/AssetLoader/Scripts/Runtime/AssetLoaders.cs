@@ -1,7 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Cacher;
-using OxGFrame.AssetLoader.GroupCahcer;
-using OxGFrame.AssetLoader.GroupChacer;
+using OxGFrame.AssetLoader.GroupCacher;
 using OxGKit.LoggingSystem;
 using System.Collections.Generic;
 using UnityEngine;

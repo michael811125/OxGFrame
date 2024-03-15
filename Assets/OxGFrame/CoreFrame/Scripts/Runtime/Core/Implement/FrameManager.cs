@@ -432,7 +432,7 @@ namespace OxGFrame.CoreFrame
                     else fBase = this.PeekStackFromAllCache(assetName);
                 }
             }
-            // 無則加載 (針對一開始必須要先執行加載, 取得組件中的參數進行判斷操作, 針對 allowInstantiate 會在 Cahcer 中有多 1 次的 ref)
+            // 無則加載 (針對一開始必須要先執行加載, 取得組件中的參數進行判斷操作, 針對 allowInstantiate 會在 Cacher 中有多 1 次的 ref)
             else
             {
                 // 標記加載中
