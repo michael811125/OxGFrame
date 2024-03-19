@@ -108,12 +108,9 @@ namespace OxGFrame.AssetLoader.Cacher
                             float lastCount = 0;
                             do
                             {
-                                if (progression != null)
-                                {
-                                    this.currentCount += (req.Progress - lastCount);
-                                    lastCount = req.Progress;
-                                    progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                                }
+                                this.currentCount += (req.Progress - lastCount);
+                                lastCount = req.Progress;
+                                progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
                                 if (req.IsDone)
                                 {
@@ -218,11 +215,8 @@ namespace OxGFrame.AssetLoader.Cacher
                         {
                             if (req.IsDone)
                             {
-                                if (progression != null)
-                                {
-                                    this.currentCount++;
-                                    progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                                }
+                                this.currentCount++;
+                                progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
                                 loaded = true;
                                 pack.SetPack(packageName, assetName, req);
@@ -298,12 +292,9 @@ namespace OxGFrame.AssetLoader.Cacher
                         float lastCount = 0;
                         do
                         {
-                            if (progression != null)
-                            {
-                                this.currentCount += (req.Progress - lastCount);
-                                lastCount = req.Progress;
-                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                            }
+                            this.currentCount += (req.Progress - lastCount);
+                            lastCount = req.Progress;
+                            progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
                             if (req.IsDone)
                             {
@@ -402,11 +393,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     {
                         if (req.IsDone)
                         {
-                            if (progression != null)
-                            {
-                                this.currentCount++;
-                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                            }
+                            this.currentCount++;
+                            progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
                             loaded = true;
                             pack.SetPack(packageName, assetName, req);
@@ -570,25 +558,30 @@ namespace OxGFrame.AssetLoader.Cacher
             bool loaded = false;
             var pack = new BundlePack();
 
+            // 是否 Suspend
+            bool suspendLoad = !activateOnLoad;
+            bool suspendLoaded = false;
+
             // 場景需特殊處理
             var package = PackageManager.GetPackage(packageName);
             if (package != null && package.CheckLocationValid(assetName))
             {
-                var req = package.LoadSceneAsync(assetName, loadSceneMode, !activateOnLoad, priority);
+                var req = package.LoadSceneAsync(assetName, loadSceneMode, suspendLoad, priority);
                 if (req != null)
                 {
                     float lastCount = 0;
                     do
                     {
-                        if (progression != null)
-                        {
-                            this.currentCount += (req.Progress - lastCount);
-                            lastCount = req.Progress;
-                            if (this.currentCount >= 0.9f) this.currentCount = 1f;
-                            progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                        }
+                        this.currentCount += (req.Progress - lastCount);
+                        lastCount = req.Progress;
+                        if (this.currentCount >= 0.9f) this.currentCount = 1f;
+                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
-                        if (req.IsDone)
+                        // 處理 Suspend load
+                        suspendLoaded = suspendLoad && this.currentCount >= 1f;
+
+                        if (req.IsDone ||
+                            suspendLoaded)
                         {
                             loaded = true;
                             switch (loadSceneMode)
@@ -636,13 +629,16 @@ namespace OxGFrame.AssetLoader.Cacher
                 Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
             }
 
-            if (!loaded || !pack.GetScene().isLoaded)
+            if (!suspendLoaded)
             {
-                this.UnloadScene(assetName, true);
-                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load Scene】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
-                else Logging.Print<Logger>($"<color=#f7ff3e>【Load Scene】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
-                this.GetRetryCounter(assetName).AddRetryCount();
-                return await this.LoadSceneAsync(packageName, assetName, loadSceneMode, activateOnLoad, priority, progression);
+                if (!loaded || !pack.GetScene().isLoaded)
+                {
+                    this.UnloadScene(assetName, true);
+                    if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load Scene】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
+                    else Logging.Print<Logger>($"<color=#f7ff3e>【Load Scene】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
+                    this.GetRetryCounter(assetName).AddRetryCount();
+                    return await this.LoadSceneAsync(packageName, assetName, loadSceneMode, activateOnLoad, priority, progression);
+                }
             }
 
             this.RemoveLoadingFlags(assetName);
@@ -830,12 +826,9 @@ namespace OxGFrame.AssetLoader.Cacher
                             float lastCount = 0;
                             do
                             {
-                                if (progression != null)
-                                {
-                                    this.currentCount += (req.Progress - lastCount);
-                                    lastCount = req.Progress;
-                                    progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                                }
+                                this.currentCount += (req.Progress - lastCount);
+                                lastCount = req.Progress;
+                                progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
                                 if (req.IsDone)
                                 {
@@ -940,11 +933,8 @@ namespace OxGFrame.AssetLoader.Cacher
                         {
                             if (req.IsDone)
                             {
-                                if (progression != null)
-                                {
-                                    this.currentCount++;
-                                    progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                                }
+                                this.currentCount++;
+                                progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
                                 loaded = true;
                                 pack.SetPack(packageName, assetName, req);
@@ -1020,12 +1010,9 @@ namespace OxGFrame.AssetLoader.Cacher
                         float lastCount = 0;
                         do
                         {
-                            if (progression != null)
-                            {
-                                this.currentCount += (req.Progress - lastCount);
-                                lastCount = req.Progress;
-                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                            }
+                            this.currentCount += (req.Progress - lastCount);
+                            lastCount = req.Progress;
+                            progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
                             if (req.IsDone)
                             {
@@ -1114,11 +1101,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     {
                         if (req.IsDone)
                         {
-                            if (progression != null)
-                            {
-                                this.currentCount++;
-                                progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                            }
+                            this.currentCount++;
+                            progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
                             loaded = true;
                             pack.SetPack(packageName, assetName, req);

@@ -1,8 +1,27 @@
 # CHANGELOG
 
+## [2.10.2] - 2024-03-19
+- Fixed When scene load with suspend (activateOnLoad = false) cannot return BundlePack correctly .
+```C#
+    // activateOnLoad = false (suspend)
+    var bundlePack = await CoreFrames.USFrame.LoadAdditiveSceneAsync<BundlePack>("MyPackage", "SceneName", false, 100);
+```
+- Added UnsuspendScene in BundlePack.
+```C#
+    // Method 1
+    var bundlePack = await CoreFrames.USFrame.LoadAdditiveSceneAsync<BundlePack>("MyPackage", "SceneName", false, 100);
+    bundlePack.GetOperationHandle<SceneHandle>().UnSuspend();
+    
+    // Method 2
+    var bundlePack = await CoreFrames.USFrame.LoadAdditiveSceneAsync<BundlePack>("MyPackage", "SceneName", false, 100);
+    bundlePack.UnsuspendScene();
+```
+- Modified set #ROOTNAMESPACE# symbol in script templates.
+- Optimized remove useless interfaces.
+
 ## [2.10.1] - 2024-03-14
 - Fixed AudioBase and VideoBase to avoid executing Stop again in OnDestroy if they are being destroyed.
-- Added MediaLRUCache to handle audios or videos that have not been Unloaded for a long time (Optimize memory).
+- Added MediaLRUCache to handle least recently used audio or vidoe will be removed (Optimize memory).
 - Added binding access modifier rules in BindCodeSetting, split by "$".
   - _Node@MyObj*Txt$public (UIBase, SRBase).
   - ~Node@MyObj*Txt$public (CPBase).

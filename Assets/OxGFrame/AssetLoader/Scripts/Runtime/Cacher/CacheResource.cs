@@ -78,12 +78,9 @@ namespace OxGFrame.AssetLoader.Cacher
                     float lastCount = 0;
                     do
                     {
-                        if (progression != null)
-                        {
-                            this.currentCount += (req.progress - lastCount);
-                            lastCount = req.progress;
-                            progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                        }
+                        this.currentCount += (req.progress - lastCount);
+                        lastCount = req.progress;
+                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
                         if (req.isDone)
                         {
@@ -230,12 +227,9 @@ namespace OxGFrame.AssetLoader.Cacher
                     float lastCount = 0;
                     do
                     {
-                        if (progression != null)
-                        {
-                            this.currentCount += (req.progress - lastCount);
-                            lastCount = req.progress;
-                            progression.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                        }
+                        this.currentCount += (req.progress - lastCount);
+                        lastCount = req.progress;
+                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
                         if (req.isDone)
                         {

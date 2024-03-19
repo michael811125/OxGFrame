@@ -150,6 +150,12 @@ namespace OxGFrame.AssetLoader.Cacher
             return this.GetOperationHandle<SceneHandle>().SceneObject;
         }
 
+        public bool UnsuspendScene()
+        {
+            if (this.IsSceneOperationHandleValid()) return this.GetOperationHandle<SceneHandle>().UnSuspend();
+            return false;
+        }
+
         public void UnloadScene()
         {
             if (this.IsSceneOperationHandleValid()) this.GetOperationHandle<SceneHandle>().UnloadAsync();
