@@ -21,7 +21,7 @@
 
 ## [2.10.1] - 2024-03-14
 - Fixed AudioBase and VideoBase to avoid executing Stop again in OnDestroy if they are being destroyed.
-- Added MediaLRUCache to handle least recently used audio or vidoe will be removed (Optimize memory).
+- Added MediaLRUCache to handle least recently used audio or video will be removed (Optimize memory).
 - Added binding access modifier rules in BindCodeSetting, split by "$".
   - _Node@MyObj*Txt$public (UIBase, SRBase).
   - ~Node@MyObj*Txt$public (CPBase).
