@@ -24,6 +24,12 @@ namespace OxGFrame.CenterFrame.APICenter
             RequestAPI(url, method, headers, body, success, error).Forget();
         }
 
+        public static void Acax(string url, string method, string[,] headers, object body, ResponseHandle success = null, ResponseHandle error = null)
+        {
+            method = method.ToUpper();
+            RequestAPI(url, method, headers, body, success, error).Forget();
+        }
+
         /// <summary>
         /// Asynchronous with Callback C# and Xml = Acax
         /// </summary>
@@ -40,6 +46,13 @@ namespace OxGFrame.CenterFrame.APICenter
             return await RequestAPI(url, method, headers, body, success, error);
         }
 
+        public async static UniTask<string> AcaxAsync(string url, string method, string[,] headers, object body, ResponseHandle success = null, ResponseHandle error = null)
+        {
+            method = method.ToUpper();
+            return await RequestAPI(url, method, headers, body, success, error);
+        }
+
+        #region Internal Methods
         internal static async UniTask<string> RequestAPI(string url, string method, string[,] headers, object[,] body, ResponseHandle success, ResponseHandle error)
         {
             using (UnityWebRequest request = new UnityWebRequest(url, method))
@@ -64,7 +77,7 @@ namespace OxGFrame.CenterFrame.APICenter
                         jsonArgs.Add((string)body[row, 0], body[row, 1]);
                     }
                     string json = JsonConvert.SerializeObject(jsonArgs);
-                    byte[] jsonBinary = System.Text.Encoding.Default.GetBytes(json);
+                    byte[] jsonBinary = System.Text.Encoding.UTF8.GetBytes(json);
                     request.uploadHandler = new UploadHandlerRaw(jsonBinary);
                 }
 
@@ -86,5 +99,47 @@ namespace OxGFrame.CenterFrame.APICenter
                 }
             }
         }
+
+        internal static async UniTask<string> RequestAPI(string url, string method, string[,] headers, object body, ResponseHandle success, ResponseHandle error)
+        {
+            using (UnityWebRequest request = new UnityWebRequest(url, method))
+            {
+                // Header args
+                if (headers != null && headers.Length > 0)
+                {
+                    for (int row = 0; row < headers.GetLength(0); row++)
+                    {
+                        if (headers.GetLength(1) != 2) continue;
+                        request.SetRequestHeader(headers[row, 0], headers[row, 1]);
+                    }
+                }
+
+                // Body args
+                if (body != null)
+                {
+                    string json = JsonConvert.SerializeObject(body);
+                    byte[] jsonBinary = System.Text.Encoding.UTF8.GetBytes(json);
+                    request.uploadHandler = new UploadHandlerRaw(jsonBinary);
+                }
+
+                // Response download buffer
+                request.downloadHandler = new DownloadHandlerBuffer();
+
+                // Start send request
+                await request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+                {
+                    if (error != null) error(request.error);
+                    return null;
+                }
+                else
+                {
+                    if (success != null) success(request.downloadHandler.text);
+                    return request.downloadHandler.text;
+                }
+            }
+        }
+        #endregion
     }
 }
