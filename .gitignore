@@ -43,6 +43,7 @@ sysinfo.txt
 # ===================================== #
 [Ee]xported[Oo]bj/
 .vs/
+.vsconfig
 /*.userprefs
 /*.csproj
 /*.pidb
