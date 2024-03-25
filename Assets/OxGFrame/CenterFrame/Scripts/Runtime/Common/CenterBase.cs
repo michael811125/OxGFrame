@@ -1,10 +1,9 @@
 ﻿using OxGKit.LoggingSystem;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace OxGFrame.CenterFrame
 {
-    public class CenterBase<TCenter, TClass> where TCenter : CenterBase<TCenter, TClass>, new()
+    public abstract class CenterBase<TCenter, TClass> where TCenter : CenterBase<TCenter, TClass>, new()
     {
         private Dictionary<int, TClass> _cache = new Dictionary<int, TClass>();
 

@@ -1,10 +1,9 @@
 ﻿using OxGKit.LoggingSystem;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace OxGFrame.GSIFrame
 {
-    public class GSIManagerBase<T> where T : GSIManagerBase<T>, new()
+    public abstract class GSIManagerBase<T> where T : GSIManagerBase<T>, new()
     {
         protected Dictionary<int, GSIBase> _dictGameStage = null; // GameStage 緩存
         protected int _incomingId = 0;                            // 用於記錄 Incoming GameStageId (新的 GameStageId)
