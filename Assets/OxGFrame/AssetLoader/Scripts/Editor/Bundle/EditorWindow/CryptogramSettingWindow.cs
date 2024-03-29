@@ -28,16 +28,16 @@ namespace OxGFrame.AssetLoader.Editor
         private CryptogramSetting _setting;
         private bool _isDirty = false;
 
-        internal static string PROJECT_PATH;
-        internal static string KEY_SAVER;
+        internal static string projectPath;
+        internal static string keySaver;
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
         [MenuItem("YooAsset/" + "OxGFrame Cryptogram Setting With YooAsset", false, 999)]
         public static void ShowWindow()
         {
-            PROJECT_PATH = Application.dataPath;
-            KEY_SAVER = $"{PROJECT_PATH}_{nameof(CryptogramSettingWindow)}";
+            projectPath = Application.dataPath;
+            keySaver = $"{projectPath}_{nameof(CryptogramSettingWindow)}";
 
             _instance = null;
             GetInstance().titleContent = new GUIContent("Cryptogram Setting");
@@ -50,7 +50,7 @@ namespace OxGFrame.AssetLoader.Editor
             this._isDirty = false;
             this._setting = EditorTool.LoadSettingData<CryptogramSetting>();
             this._LoadSettingsData();
-            this.cryptogramType = (CryptogramType)Convert.ToInt32(EditorStorage.GetData(KEY_SAVER, "cryptogramType", "0"));
+            this.cryptogramType = (CryptogramType)Convert.ToInt32(EditorStorage.GetData(keySaver, "cryptogramType", "0"));
         }
 
         private void OnGUI()
@@ -64,7 +64,7 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 this._isDirty = false;
                 this._LoadSettingsData();
-                EditorStorage.SaveData(KEY_SAVER, "cryptogramType", ((int)this.cryptogramType).ToString());
+                EditorStorage.SaveData(keySaver, "cryptogramType", ((int)this.cryptogramType).ToString());
             }
 
             EditorGUILayout.EndHorizontal();

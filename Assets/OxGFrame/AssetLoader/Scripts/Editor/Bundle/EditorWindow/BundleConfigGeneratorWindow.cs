@@ -66,16 +66,16 @@ namespace OxGFrame.AssetLoader.Editor
         private SerializedProperty _exportIndividualPackagesPty;
         private SerializedProperty _bundlePlansPty;
 
-        internal static string PROJECT_PATH;
-        internal static string KEY_SAVER;
+        internal static string projectPath;
+        internal static string keySaver;
 
         private static Vector2 _windowSize = new Vector2(800f, 400f);
 
         [MenuItem(BundleHelper.MENU_ROOT + "Export Bundle And Config Generator", false, 889)]
         public static void ShowWindow()
         {
-            PROJECT_PATH = Application.dataPath;
-            KEY_SAVER = $"{PROJECT_PATH}_{nameof(BundleConfigGeneratorWindow)}";
+            projectPath = Application.dataPath;
+            keySaver = $"{projectPath}_{nameof(BundleConfigGeneratorWindow)}";
 
             _instance = null;
             GetInstance().titleContent = new GUIContent("Export Bundle And Config Generator");
@@ -94,30 +94,30 @@ namespace OxGFrame.AssetLoader.Editor
             int operationTypeCount = Enum.GetNames(typeof(OperationType)).Length;
             for (int i = 0; i < operationTypeCount; i++)
             {
-                this.sourceFolder[i] = EditorStorage.GetData(KEY_SAVER, $"sourceFolder{i}", Path.Combine($"{Application.dataPath}/", AssetBundleBuilderHelper.GetDefaultBuildOutputRoot()));
-                this.exportFolder[i] = EditorStorage.GetData(KEY_SAVER, $"exportFolder{i}", Path.Combine($"{Application.dataPath}/", $"{EditorTools.GetProjectPath()}/ExportBundles"));
+                this.sourceFolder[i] = EditorStorage.GetData(keySaver, $"sourceFolder{i}", Path.Combine($"{Application.dataPath}/", AssetBundleBuilderHelper.GetDefaultBuildOutputRoot()));
+                this.exportFolder[i] = EditorStorage.GetData(keySaver, $"exportFolder{i}", Path.Combine($"{Application.dataPath}/", $"{EditorTools.GetProjectPath()}/ExportBundles"));
             }
 
-            this.operationType = (OperationType)Convert.ToInt32(EditorStorage.GetData(KEY_SAVER, "operationType", "0"));
-            this.productName = EditorStorage.GetData(KEY_SAVER, "productName", Application.productName);
-            this.appVersion = EditorStorage.GetData(KEY_SAVER, "appVersion", Application.version);
-            string jsonExportAppPackages = EditorStorage.GetData(KEY_SAVER, "exportAppPackages", string.Empty);
+            this.operationType = (OperationType)Convert.ToInt32(EditorStorage.GetData(keySaver, "operationType", "0"));
+            this.productName = EditorStorage.GetData(keySaver, "productName", Application.productName);
+            this.appVersion = EditorStorage.GetData(keySaver, "appVersion", Application.version);
+            string jsonExportAppPackages = EditorStorage.GetData(keySaver, "exportAppPackages", string.Empty);
             if (!string.IsNullOrEmpty(jsonExportAppPackages)) this.exportAppPackages = JsonConvert.DeserializeObject<List<string>>(jsonExportAppPackages);
-            string jsonExportIndividualPackages = EditorStorage.GetData(KEY_SAVER, "exportIndividualPackages", string.Empty);
+            string jsonExportIndividualPackages = EditorStorage.GetData(keySaver, "exportIndividualPackages", string.Empty);
             if (!string.IsNullOrEmpty(jsonExportIndividualPackages)) this.exportIndividualPackages = JsonConvert.DeserializeObject<List<DlcInfo>>(jsonExportIndividualPackages);
-            this.groupInfoArgs = EditorStorage.GetData(KEY_SAVER, "groupInfoArgs", string.Empty);
-            string jsonGroupInfos = EditorStorage.GetData(KEY_SAVER, "groupInfos", string.Empty);
+            this.groupInfoArgs = EditorStorage.GetData(keySaver, "groupInfoArgs", string.Empty);
+            string jsonGroupInfos = EditorStorage.GetData(keySaver, "groupInfos", string.Empty);
             if (!string.IsNullOrEmpty(jsonGroupInfos)) this.groupInfos = JsonConvert.DeserializeObject<List<GroupInfo>>(jsonGroupInfos);
 
-            this.buildTarget = (BuildTarget)Convert.ToInt32(EditorStorage.GetData(KEY_SAVER, "buildTarget", $"{(int)BuildTarget.StandaloneWindows64}"));
-            this.activeBuildTarget = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVER, "activeBuildTarget", "true"));
+            this.buildTarget = (BuildTarget)Convert.ToInt32(EditorStorage.GetData(keySaver, "buildTarget", $"{(int)BuildTarget.StandaloneWindows64}"));
+            this.activeBuildTarget = Convert.ToBoolean(EditorStorage.GetData(keySaver, "activeBuildTarget", "true"));
 
-            this.autoReveal = Convert.ToBoolean(EditorStorage.GetData(KEY_SAVER, "autoReveal", "true"));
+            this.autoReveal = Convert.ToBoolean(EditorStorage.GetData(keySaver, "autoReveal", "true"));
 
             // Preset Bundle Plans
-            string jsonBundlePlans = EditorStorage.GetData(KEY_SAVER, "bundlePlans", string.Empty);
+            string jsonBundlePlans = EditorStorage.GetData(keySaver, "bundlePlans", string.Empty);
             if (!string.IsNullOrEmpty(jsonBundlePlans)) this.bundlePlans = JsonConvert.DeserializeObject<List<BundlePlan>>(jsonBundlePlans);
-            this._choicePlanIndex = Convert.ToInt32(EditorStorage.GetData(KEY_SAVER, "_choicePlanIndex", "0"));
+            this._choicePlanIndex = Convert.ToInt32(EditorStorage.GetData(keySaver, "_choicePlanIndex", "0"));
         }
 
         private void OnGUI()
@@ -125,7 +125,7 @@ namespace OxGFrame.AssetLoader.Editor
             // operation type area
             EditorGUI.BeginChangeCheck();
             this.operationType = (OperationType)EditorGUILayout.EnumPopup("Operation Type", this.operationType);
-            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "operationType", ((int)this.operationType).ToString());
+            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(keySaver, "operationType", ((int)this.operationType).ToString());
             this._OperationType(this.operationType);
         }
 
@@ -319,7 +319,7 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             this.sourceFolder[(int)this.operationType] = EditorGUILayout.TextField("Source Folder (YooAsset)", this.sourceFolder[(int)this.operationType]);
-            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, $"sourceFolder{(int)this.operationType}", this.sourceFolder[(int)this.operationType]);
+            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(keySaver, $"sourceFolder{(int)this.operationType}", this.sourceFolder[(int)this.operationType]);
             Color bc = GUI.backgroundColor;
             GUI.backgroundColor = new Color32(0, 255, 128, 255);
             if (GUILayout.Button("Open", GUILayout.MaxWidth(100f))) BundleUtility.OpenFolder(this.sourceFolder[(int)this.operationType], true);
@@ -338,7 +338,7 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             this.exportFolder[(int)this.operationType] = EditorGUILayout.TextField("Export Folder", this.exportFolder[(int)this.operationType]);
-            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, $"exportFolder{(int)this.operationType}", this.exportFolder[(int)this.operationType]);
+            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(keySaver, $"exportFolder{(int)this.operationType}", this.exportFolder[(int)this.operationType]);
             Color bc = GUI.backgroundColor;
             GUI.backgroundColor = new Color32(0, 255, 128, 255);
             if (GUILayout.Button("Open", GUILayout.MaxWidth(100f))) BundleUtility.OpenFolder(this.exportFolder[(int)this.operationType], true);
@@ -361,12 +361,12 @@ namespace OxGFrame.AssetLoader.Editor
                 // build target type
                 EditorGUI.BeginChangeCheck();
                 this.buildTarget = (BuildTarget)EditorGUILayout.EnumPopup("Build Target", this.buildTarget);
-                if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "buildTarget", ((int)this.operationType).ToString());
+                if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(keySaver, "buildTarget", ((int)this.operationType).ToString());
             }
 
             // active build target toggle
             this.activeBuildTarget = GUILayout.Toggle(this.activeBuildTarget, new GUIContent("Use Active Build Target", "If checked, will use active build target."));
-            EditorStorage.SaveData(KEY_SAVER, "activeBuildTarget", this.activeBuildTarget.ToString());
+            EditorStorage.SaveData(keySaver, "activeBuildTarget", this.activeBuildTarget.ToString());
 
             EditorGUILayout.EndHorizontal();
         }
@@ -378,7 +378,7 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             this.productName = EditorGUILayout.TextField("Product Name", this.productName);
-            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "productName", this.productName);
+            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(keySaver, "productName", this.productName);
 
             // Sync button
             Color bc = GUI.backgroundColor;
@@ -406,7 +406,7 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             this.appVersion = EditorGUILayout.TextField("App Version", this.appVersion);
-            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "appVersion", this.appVersion);
+            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(keySaver, "appVersion", this.appVersion);
 
             // Sync button
             Color bc = GUI.backgroundColor;
@@ -446,7 +446,7 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 this._serObj.ApplyModifiedProperties();
                 string json = JsonConvert.SerializeObject(this.exportAppPackages);
-                EditorStorage.SaveData(KEY_SAVER, "exportAppPackages", json);
+                EditorStorage.SaveData(keySaver, "exportAppPackages", json);
             }
 
             Color bc = GUI.backgroundColor;
@@ -455,7 +455,7 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 this.exportAppPackages = new List<string>() { "DefaultPackage" };
                 string json = JsonConvert.SerializeObject(this.exportAppPackages);
-                EditorStorage.SaveData(KEY_SAVER, "exportAppPackages", json);
+                EditorStorage.SaveData(keySaver, "exportAppPackages", json);
             }
             GUI.backgroundColor = bc;
             EditorGUILayout.EndHorizontal();
@@ -482,7 +482,7 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 this._serObj.ApplyModifiedProperties();
                 string json = JsonConvert.SerializeObject(this.exportIndividualPackages);
-                EditorStorage.SaveData(KEY_SAVER, "exportIndividualPackages", json);
+                EditorStorage.SaveData(keySaver, "exportIndividualPackages", json);
             }
 
             Color bc = GUI.backgroundColor;
@@ -491,7 +491,7 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 this.exportIndividualPackages = new List<DlcInfo>();
                 string json = JsonConvert.SerializeObject(this.exportIndividualPackages);
-                EditorStorage.SaveData(KEY_SAVER, "exportIndividualPackages", json);
+                EditorStorage.SaveData(keySaver, "exportIndividualPackages", json);
             }
             GUI.backgroundColor = bc;
             EditorGUILayout.EndHorizontal();
@@ -519,7 +519,7 @@ namespace OxGFrame.AssetLoader.Editor
             if (EditorGUI.EndChangeCheck())
             {
                 this._isParsingDirty = true;
-                EditorStorage.SaveData(KEY_SAVER, "groupInfoArgs", this.groupInfoArgs);
+                EditorStorage.SaveData(keySaver, "groupInfoArgs", this.groupInfoArgs);
             }
             Color bc = GUI.backgroundColor;
             GUI.backgroundColor = new Color32(255, 151, 240, 255);
@@ -527,7 +527,7 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 this._isParsingDirty = true;
                 this.groupInfoArgs = string.Empty;
-                EditorStorage.SaveData(KEY_SAVER, "groupInfoArgs", this.groupInfoArgs);
+                EditorStorage.SaveData(keySaver, "groupInfoArgs", this.groupInfoArgs);
             }
             GUI.backgroundColor = bc;
             bc = GUI.backgroundColor;
@@ -537,7 +537,7 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 this.groupInfos = BundleHelper.ParsingGroupInfosByArgs(this.groupInfoArgs);
                 string json = JsonConvert.SerializeObject(this.groupInfos);
-                EditorStorage.SaveData(KEY_SAVER, "groupInfos", json);
+                EditorStorage.SaveData(keySaver, "groupInfos", json);
                 this._isParsingDirty = false;
                 this._isConvertDirty = false;
             }
@@ -556,7 +556,7 @@ namespace OxGFrame.AssetLoader.Editor
                 this._isConvertDirty = true;
                 this._serObj.ApplyModifiedProperties();
                 string json = JsonConvert.SerializeObject(this.groupInfos);
-                EditorStorage.SaveData(KEY_SAVER, "groupInfos", json);
+                EditorStorage.SaveData(keySaver, "groupInfos", json);
             }
             GUI.backgroundColor = bc;
             bc = GUI.backgroundColor;
@@ -566,7 +566,7 @@ namespace OxGFrame.AssetLoader.Editor
                 this.groupInfos = new List<GroupInfo>();
                 this._isParsingDirty = true;
                 string json = JsonConvert.SerializeObject(this.groupInfos);
-                EditorStorage.SaveData(KEY_SAVER, "groupInfos", json);
+                EditorStorage.SaveData(keySaver, "groupInfos", json);
             }
             GUI.backgroundColor = bc;
 
@@ -576,7 +576,7 @@ namespace OxGFrame.AssetLoader.Editor
             if (GUILayout.Button("Convert", GUILayout.MaxWidth(100f)))
             {
                 this.groupInfoArgs = BundleHelper.ConvertGroupInfosToArgs(this.groupInfos);
-                EditorStorage.SaveData(KEY_SAVER, "groupInfoArgs", this.groupInfoArgs);
+                EditorStorage.SaveData(keySaver, "groupInfoArgs", this.groupInfoArgs);
                 this._isConvertDirty = false;
             }
             GUI.backgroundColor = bc;
@@ -596,7 +596,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             // auto reveal toggle
             this.autoReveal = GUILayout.Toggle(this.autoReveal, new GUIContent("Auto Reveal", "If checked, after process will reveal folder."));
-            EditorStorage.SaveData(KEY_SAVER, "autoReveal", this.autoReveal.ToString());
+            EditorStorage.SaveData(keySaver, "autoReveal", this.autoReveal.ToString());
 
             string inputPath;
             string outputPath;
@@ -685,7 +685,7 @@ namespace OxGFrame.AssetLoader.Editor
             if (this._choicePlanIndex < 0) this._choicePlanIndex = 0;
             if (EditorGUI.EndChangeCheck())
             {
-                EditorStorage.SaveData(KEY_SAVER, "_choicePlanIndex", this._choicePlanIndex.ToString());
+                EditorStorage.SaveData(keySaver, "_choicePlanIndex", this._choicePlanIndex.ToString());
             }
 
             // Load selection button
@@ -723,7 +723,7 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 this._serObj.ApplyModifiedProperties();
                 string json = JsonConvert.SerializeObject(this.bundlePlans);
-                EditorStorage.SaveData(KEY_SAVER, "bundlePlans", json);
+                EditorStorage.SaveData(keySaver, "bundlePlans", json);
             }
 
             bc = GUI.backgroundColor;
@@ -743,11 +743,11 @@ namespace OxGFrame.AssetLoader.Editor
                     // Reset bundle plans
                     this.bundlePlans = new List<BundlePlan>() { new BundlePlan() };
                     string json = JsonConvert.SerializeObject(this.bundlePlans);
-                    EditorStorage.SaveData(KEY_SAVER, "bundlePlans", json);
+                    EditorStorage.SaveData(keySaver, "bundlePlans", json);
 
                     // Reset index
                     this._choicePlanIndex = 0;
-                    EditorStorage.SaveData(KEY_SAVER, "_choicePlanIndex", this._choicePlanIndex.ToString());
+                    EditorStorage.SaveData(keySaver, "_choicePlanIndex", this._choicePlanIndex.ToString());
                 }
             }
             GUI.backgroundColor = bc;
@@ -783,16 +783,16 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void _OpenSourceFolder()
         {
-            string folderPath = EditorStorage.GetData(KEY_SAVER, $"sourceFolder{(int)this.operationType}", Application.dataPath);
+            string folderPath = EditorStorage.GetData(keySaver, $"sourceFolder{(int)this.operationType}", Application.dataPath);
             this.sourceFolder[(int)this.operationType] = EditorUtility.OpenFolderPanel("Open Source Folder", folderPath, string.Empty);
-            if (!string.IsNullOrEmpty(this.sourceFolder[(int)this.operationType])) EditorStorage.SaveData(KEY_SAVER, $"sourceFolder{(int)this.operationType}", this.sourceFolder[(int)this.operationType]);
+            if (!string.IsNullOrEmpty(this.sourceFolder[(int)this.operationType])) EditorStorage.SaveData(keySaver, $"sourceFolder{(int)this.operationType}", this.sourceFolder[(int)this.operationType]);
         }
 
         private void _OpenExportFolder()
         {
-            string folderPath = EditorStorage.GetData(KEY_SAVER, $"exportFolder{(int)this.operationType}", Application.dataPath);
+            string folderPath = EditorStorage.GetData(keySaver, $"exportFolder{(int)this.operationType}", Application.dataPath);
             this.exportFolder[(int)this.operationType] = EditorUtility.OpenFolderPanel("Open Export Folder", folderPath, string.Empty);
-            if (!string.IsNullOrEmpty(this.exportFolder[(int)this.operationType])) EditorStorage.SaveData(KEY_SAVER, $"exportFolder{(int)this.operationType}", this.exportFolder[(int)this.operationType]);
+            if (!string.IsNullOrEmpty(this.exportFolder[(int)this.operationType])) EditorStorage.SaveData(keySaver, $"exportFolder{(int)this.operationType}", this.exportFolder[(int)this.operationType]);
         }
 
         private void _LoadBundlePlanToCurrent()
@@ -808,12 +808,12 @@ namespace OxGFrame.AssetLoader.Editor
 
             // Save
             string json = JsonConvert.SerializeObject(this.exportAppPackages);
-            EditorStorage.SaveData(KEY_SAVER, "exportAppPackages", json);
-            EditorStorage.SaveData(KEY_SAVER, "groupInfoArgs", this.groupInfoArgs);
+            EditorStorage.SaveData(keySaver, "exportAppPackages", json);
+            EditorStorage.SaveData(keySaver, "groupInfoArgs", this.groupInfoArgs);
             json = JsonConvert.SerializeObject(this.groupInfos);
-            EditorStorage.SaveData(KEY_SAVER, "groupInfos", json);
+            EditorStorage.SaveData(keySaver, "groupInfos", json);
             json = JsonConvert.SerializeObject(this.exportIndividualPackages);
-            EditorStorage.SaveData(KEY_SAVER, "exportIndividualPackages", json);
+            EditorStorage.SaveData(keySaver, "exportIndividualPackages", json);
         }
 
         private void _CopyCurrentToBundlePlan()
@@ -832,17 +832,17 @@ namespace OxGFrame.AssetLoader.Editor
 
             // Save
             string json = JsonConvert.SerializeObject(this.bundlePlans);
-            EditorStorage.SaveData(KEY_SAVER, "bundlePlans", json);
+            EditorStorage.SaveData(keySaver, "bundlePlans", json);
         }
 
         private void _ExportBundlePlans()
         {
-            string savePath = EditorStorage.GetData(KEY_SAVER, $"bundlePlanFIlePath", Application.dataPath);
+            string savePath = EditorStorage.GetData(keySaver, $"bundlePlanFIlePath", Application.dataPath);
             var filePath = EditorUtility.SaveFilePanel("Save Bundle Plan Json File", savePath, "BundlePlan", "json");
 
             if (!string.IsNullOrEmpty(filePath))
             {
-                EditorStorage.SaveData(KEY_SAVER, $"bundlePlanFIlePath", Path.GetDirectoryName(filePath));
+                EditorStorage.SaveData(keySaver, $"bundlePlanFIlePath", Path.GetDirectoryName(filePath));
                 string json = JsonConvert.SerializeObject(this.bundlePlans, Formatting.Indented);
                 BundleHelper.WriteTxt(json, filePath);
             }
@@ -850,22 +850,22 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void _ImportBundlePlans()
         {
-            string loadPath = EditorStorage.GetData(KEY_SAVER, $"bundlePlanFIlePath", Application.dataPath);
+            string loadPath = EditorStorage.GetData(keySaver, $"bundlePlanFIlePath", Application.dataPath);
             string filePath = EditorUtility.OpenFilePanel("Select Bundle Plan Json File", !string.IsNullOrEmpty(loadPath) ? loadPath : Application.dataPath, "json");
 
             if (!string.IsNullOrEmpty(filePath))
             {
-                EditorStorage.SaveData(KEY_SAVER, $"bundlePlanFIlePath", Path.GetDirectoryName(filePath));
+                EditorStorage.SaveData(keySaver, $"bundlePlanFIlePath", Path.GetDirectoryName(filePath));
                 string json = File.ReadAllText(filePath);
                 this.bundlePlans = JsonConvert.DeserializeObject<List<BundlePlan>>(json);
 
                 // Resave bundle plans without format
                 json = JsonConvert.SerializeObject(this.bundlePlans);
-                EditorStorage.SaveData(KEY_SAVER, "bundlePlans", json);
+                EditorStorage.SaveData(keySaver, "bundlePlans", json);
 
                 // Reset index
                 this._choicePlanIndex = 0;
-                EditorStorage.SaveData(KEY_SAVER, "_choicePlanIndex", this._choicePlanIndex.ToString());
+                EditorStorage.SaveData(keySaver, "_choicePlanIndex", this._choicePlanIndex.ToString());
             }
         }
     }

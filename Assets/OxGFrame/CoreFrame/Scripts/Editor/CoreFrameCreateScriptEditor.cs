@@ -5,13 +5,13 @@ namespace OxGFrame.CoreFrame.Editor
     public static class CoreFrameCreateScriptEditor
     {
         // SRFrame
-        private const string TPL_SR_SCRIPT_PATH = "TplScripts/SRFrame/TplSR.cs.txt";
+        private const string _TPL_SR_SCRIPT_PATH = "TplScripts/SRFrame/TplSR.cs.txt";
 
         // UIFrame
-        private const string TPL_UI_SCRIPT_PATH = "TplScripts/UIFrame/TplUI.cs.txt";
+        private const string _TPL_UI_SCRIPT_PATH = "TplScripts/UIFrame/TplUI.cs.txt";
 
         // CPFrame
-        private const string TPL_CP_SCRIPT_PATH = "TplScripts/CPFrame/TplCP.cs.txt";
+        private const string _TPL_CP_SCRIPT_PATH = "TplScripts/CPFrame/TplCP.cs.txt";
 
         // find current file path
         private static string _pathFinder
@@ -28,7 +28,7 @@ namespace OxGFrame.CoreFrame.Editor
         public static void CreateScriptTplSR()
         {
             string currentPath = _pathFinder;
-            string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + TPL_SR_SCRIPT_PATH;
+            string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + _TPL_SR_SCRIPT_PATH;
 
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplSR.cs");
         }
@@ -39,7 +39,7 @@ namespace OxGFrame.CoreFrame.Editor
         public static void CreateScriptTplUI()
         {
             string currentPath = _pathFinder;
-            string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + TPL_UI_SCRIPT_PATH;
+            string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + _TPL_UI_SCRIPT_PATH;
 
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplUI.cs");
         }
@@ -50,7 +50,7 @@ namespace OxGFrame.CoreFrame.Editor
         public static void CreateScriptTplCP()
         {
             string currentPath = _pathFinder;
-            string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + TPL_CP_SCRIPT_PATH;
+            string finalPath = currentPath.Replace("CoreFrameCreateScriptEditor.cs", "") + _TPL_CP_SCRIPT_PATH;
 
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplCP.cs");
         }

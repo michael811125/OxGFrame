@@ -5,12 +5,12 @@ namespace OxGFrame.CenterFrame.Editor
     public static class CenterFrameCreateScriptEditor
     {
         // EventCenter
-        private const string TPL_EVENT_BASE_SCRIPT_PATH = "TplScripts/EventCenter/TplEvent.cs.txt";
-        private const string TPL_EVENT_CENTER_SCRIPT_PATH = "TplScripts/EventCenter/TplEventCenter.cs.txt";
+        private const string _TPL_EVENT_BASE_SCRIPT_PATH = "TplScripts/EventCenter/TplEvent.cs.txt";
+        private const string _TPL_EVENT_CENTER_SCRIPT_PATH = "TplScripts/EventCenter/TplEventCenter.cs.txt";
 
         // APICenter
-        private const string TPL_API_CENTER_SCRIPT_PATH = "TplScripts/APICenter/TplAPICenter.cs.txt";
-        private const string TPL_API_BASE_SCRIPT_PATH = "TplScripts/APICenter/TplAPI.cs.txt";
+        private const string _TPL_API_CENTER_SCRIPT_PATH = "TplScripts/APICenter/TplAPICenter.cs.txt";
+        private const string _TPL_API_BASE_SCRIPT_PATH = "TplScripts/APICenter/TplAPI.cs.txt";
 
         // find current file path
         private static string _pathFinder
@@ -27,7 +27,7 @@ namespace OxGFrame.CenterFrame.Editor
         public static void CreateScriptTplEventBase()
         {
             string currentPath = _pathFinder;
-            string finalPath = currentPath.Replace("CenterFrameCreateScriptEditor.cs", "") + TPL_EVENT_BASE_SCRIPT_PATH;
+            string finalPath = currentPath.Replace("CenterFrameCreateScriptEditor.cs", "") + _TPL_EVENT_BASE_SCRIPT_PATH;
 
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplEvent.cs");
         }
@@ -36,7 +36,7 @@ namespace OxGFrame.CenterFrame.Editor
         public static void CreateScriptTplEventCenter()
         {
             string currentPath = _pathFinder;
-            string finalPath = currentPath.Replace("CenterFrameCreateScriptEditor.cs", "") + TPL_EVENT_CENTER_SCRIPT_PATH;
+            string finalPath = currentPath.Replace("CenterFrameCreateScriptEditor.cs", "") + _TPL_EVENT_CENTER_SCRIPT_PATH;
 
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplEventCenter.cs");
         }
@@ -47,7 +47,7 @@ namespace OxGFrame.CenterFrame.Editor
         public static void CreateScriptTplAPIBase()
         {
             string currentPath = _pathFinder;
-            string finalPath = currentPath.Replace("CenterFrameCreateScriptEditor.cs", "") + TPL_API_BASE_SCRIPT_PATH;
+            string finalPath = currentPath.Replace("CenterFrameCreateScriptEditor.cs", "") + _TPL_API_BASE_SCRIPT_PATH;
 
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplAPI.cs");
         }
@@ -56,7 +56,7 @@ namespace OxGFrame.CenterFrame.Editor
         public static void CreateScriptTplAPICenter()
         {
             string currentPath = _pathFinder;
-            string finalPath = currentPath.Replace("CenterFrameCreateScriptEditor.cs", "") + TPL_API_CENTER_SCRIPT_PATH;
+            string finalPath = currentPath.Replace("CenterFrameCreateScriptEditor.cs", "") + _TPL_API_CENTER_SCRIPT_PATH;
 
             ProjectWindowUtil.CreateScriptAssetFromTemplateFile(finalPath, "NewTplAPICenter.cs");
         }

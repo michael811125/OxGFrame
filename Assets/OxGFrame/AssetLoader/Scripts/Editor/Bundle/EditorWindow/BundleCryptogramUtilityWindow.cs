@@ -33,16 +33,16 @@ namespace OxGFrame.AssetLoader.Editor
 
         private CryptogramSetting _setting;
 
-        internal static string PROJECT_PATH;
-        internal static string KEY_SAVER;
+        internal static string projectPath;
+        internal static string keySaver;
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
         [MenuItem(BundleHelper.MENU_ROOT + "Bundle Cryptogram Utility (For Verify)", false, 699)]
         public static void ShowWindow()
         {
-            PROJECT_PATH = Application.dataPath;
-            KEY_SAVER = $"{PROJECT_PATH}_{nameof(BundleCryptogramUtilityWindow)}";
+            projectPath = Application.dataPath;
+            keySaver = $"{projectPath}_{nameof(BundleCryptogramUtilityWindow)}";
 
             _instance = null;
             GetInstance().titleContent = new GUIContent("Bundle Cryptogram Utility");
@@ -54,8 +54,8 @@ namespace OxGFrame.AssetLoader.Editor
         {
             this._setting = EditorTool.LoadSettingData<CryptogramSetting>();
             this._LoadSettingsData();
-            this.sourceFolder = EditorStorage.GetData(KEY_SAVER, $"sourceFolder", Path.Combine($"{Application.dataPath}/", AssetBundleBuilderHelper.GetDefaultBuildOutputRoot()));
-            this.cryptogramType = (CryptogramType)Convert.ToInt32(EditorStorage.GetData(KEY_SAVER, "cryptogramType", "0"));
+            this.sourceFolder = EditorStorage.GetData(keySaver, $"sourceFolder", Path.Combine($"{Application.dataPath}/", AssetBundleBuilderHelper.GetDefaultBuildOutputRoot()));
+            this.cryptogramType = (CryptogramType)Convert.ToInt32(EditorStorage.GetData(keySaver, "cryptogramType", "0"));
         }
 
         private void _LoadSettingsData()
@@ -80,7 +80,7 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             this.sourceFolder = EditorGUILayout.TextField("Source Folder", this.sourceFolder);
-            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "sourceFolder", this.sourceFolder);
+            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(keySaver, "sourceFolder", this.sourceFolder);
             Color bc = GUI.backgroundColor;
             GUI.backgroundColor = new Color32(0, 255, 128, 255);
             if (GUILayout.Button("Open", GUILayout.MaxWidth(100f))) BundleUtility.OpenFolder(this.sourceFolder);
@@ -98,7 +98,7 @@ namespace OxGFrame.AssetLoader.Editor
             // cryptogram options area
             EditorGUI.BeginChangeCheck();
             this.cryptogramType = (CryptogramType)EditorGUILayout.EnumPopup("Cryptogram Type", this.cryptogramType);
-            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(KEY_SAVER, "cryptogramType", ((int)this.cryptogramType).ToString());
+            if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(keySaver, "cryptogramType", ((int)this.cryptogramType).ToString());
 
             EditorGUILayout.EndHorizontal();
 
@@ -321,9 +321,9 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void _OpenSourceFolder()
         {
-            string folderPath = EditorStorage.GetData(KEY_SAVER, "sourceFolder", Path.Combine($"{Application.dataPath}/", AssetBundleBuilderHelper.GetDefaultBuildOutputRoot()));
+            string folderPath = EditorStorage.GetData(keySaver, "sourceFolder", Path.Combine($"{Application.dataPath}/", AssetBundleBuilderHelper.GetDefaultBuildOutputRoot()));
             this.sourceFolder = EditorUtility.OpenFolderPanel("Open Source Folder", folderPath, string.Empty);
-            if (!string.IsNullOrEmpty(this.sourceFolder)) EditorStorage.SaveData(KEY_SAVER, "sourceFolder", this.sourceFolder);
+            if (!string.IsNullOrEmpty(this.sourceFolder)) EditorStorage.SaveData(keySaver, "sourceFolder", this.sourceFolder);
         }
     }
 }

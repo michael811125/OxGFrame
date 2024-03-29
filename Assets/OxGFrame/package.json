@@ -1,91 +1,92 @@
 {
-  "name": "com.michaelo.oxgframe",
-  "displayName": "OxGFrame",
-  "description": "The OxGFrame is a framework based on Unity for accelerating game development. Supports multi-platform Win, OSX, Android, iOS, WebGL.",
-  "version": "2.10.2",
-  "unity": "2021.3",
-  "license": "MIT",
-  "samples": [
-    {
-      "displayName": "AudioManager Prefab",
-      "description": "",
-      "path": "Samples~/AudioManager"
-    },
-    {
-      "displayName": "PatchLauncher Prefab",
-      "description": "",
-      "path": "Samples~/PatchLauncher"
-    },
-    {
-      "displayName": "Hotfixer Demo",
-      "description": "Sample to use Hotfixer",
-      "path": "Samples~/HotfixerDemo"
-    },
-    {
-      "displayName": "Bundle Demo",
-      "description": "Sample to use Bundle",
-      "path": "Samples~/BundleDemo"
-    },
-    {
-      "displayName": "Bundle DLC Demo",
-      "description": "Sample to use Bundle DLC",
-      "path": "Samples~/BundleDLCDemo"
-    },
-    {
-      "displayName": "UIFrame Demo",
-      "description": "Sample to use UIFrame",
-      "path": "Samples~/UIFrameDemo"
-    },
-    {
-      "displayName": "SRFrame Demo",
-      "description": "Sample to use SRFrame",
-      "path": "Samples~/SRFrameDemo"
-    },
-    {
-      "displayName": "USFrame Demo",
-      "description": "Sample to use USFrame",
-      "path": "Samples~/USFrameDemo"
-    },
-    {
-      "displayName": "CPFrame Demo",
-      "description": "Sample to use CPFrame",
-      "path": "Samples~/CPFrameDemo"
-    },
-    {
-      "displayName": "AudioFrame Demo",
-      "description": "Sample to use AudioFrame",
-      "path": "Samples~/AudioFrameDemo"
-    },
-    {
-      "displayName": "VideoFrame Demo",
-      "description": "Sample to use VideoFrame",
-      "path": "Samples~/VideoFrameDemo"
-    },
-    {
-      "displayName": "GSIFrame Demo",
-      "description": "Sample to use GSIFrame",
-      "path": "Samples~/GSIFrameDemo"
-    },
-    {
-      "displayName": "NetFrame Demo",
-      "description": "Sample to use NetFrame",
-      "path": "Samples~/NetFrameDemo"
-    },
-    {
-      "displayName": "APICenter Demo",
-      "description": "Sample to use APICenter",
-      "path": "Samples~/APICenterDemo"
-    },
-    {
-      "displayName": "EventCenter Demo",
-      "description": "Sample to use EventCenter",
-      "path": "Samples~/EventCenterDemo"
-    }
-  ],
-  "dependencies": {
-	  "com.unity.scriptablebuildpipeline": "1.21.7"
-  },
-  "author": {
-    "name": "MichaelO"
-  }
+	"name": "com.michaelo.oxgframe",
+	"displayName": "OxGFrame",
+	"description": "The OxGFrame is a framework based on Unity for accelerating game development. Supports multi-platform Win, OSX, Android, iOS, WebGL.",
+	"version": "2.10.2",
+	"unity": "2021.3",
+	"license": "MIT",
+	"samples": [
+		{
+			"displayName": "AudioManager Prefab",
+			"description": "",
+			"path": "Samples~/AudioManager"
+		},
+		{
+			"displayName": "PatchLauncher Prefab",
+			"description": "",
+			"path": "Samples~/PatchLauncher"
+		},
+		{
+			"displayName": "Hotfixer Demo",
+			"description": "Sample to use Hotfixer",
+			"path": "Samples~/HotfixerDemo"
+		},
+		{
+			"displayName": "Bundle Demo",
+			"description": "Sample to use Bundle",
+			"path": "Samples~/BundleDemo"
+		},
+		{
+			"displayName": "Bundle DLC Demo",
+			"description": "Sample to use Bundle DLC",
+			"path": "Samples~/BundleDLCDemo"
+		},
+		{
+			"displayName": "UIFrame Demo",
+			"description": "Sample to use UIFrame",
+			"path": "Samples~/UIFrameDemo"
+		},
+		{
+			"displayName": "SRFrame Demo",
+			"description": "Sample to use SRFrame",
+			"path": "Samples~/SRFrameDemo"
+		},
+		{
+			"displayName": "USFrame Demo",
+			"description": "Sample to use USFrame",
+			"path": "Samples~/USFrameDemo"
+		},
+		{
+			"displayName": "CPFrame Demo",
+			"description": "Sample to use CPFrame",
+			"path": "Samples~/CPFrameDemo"
+		},
+		{
+			"displayName": "AudioFrame Demo",
+			"description": "Sample to use AudioFrame",
+			"path": "Samples~/AudioFrameDemo"
+		},
+		{
+			"displayName": "VideoFrame Demo",
+			"description": "Sample to use VideoFrame",
+			"path": "Samples~/VideoFrameDemo"
+		},
+		{
+			"displayName": "GSIFrame Demo",
+			"description": "Sample to use GSIFrame",
+			"path": "Samples~/GSIFrameDemo"
+		},
+		{
+			"displayName": "NetFrame Demo",
+			"description": "Sample to use NetFrame",
+			"path": "Samples~/NetFrameDemo"
+		},
+		{
+			"displayName": "APICenter Demo",
+			"description": "Sample to use APICenter",
+			"path": "Samples~/APICenterDemo"
+		},
+		{
+			"displayName": "EventCenter Demo",
+			"description": "Sample to use EventCenter",
+			"path": "Samples~/EventCenterDemo"
+		}
+	],
+	"dependencies": {
+		"com.unity.scriptablebuildpipeline": "1.21.22"
+	},
+	"author": {
+		"name": "MichaelO",
+		"url": "https://github.com/michael811125"
+	}
 }
