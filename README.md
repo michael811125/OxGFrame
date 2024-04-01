@@ -58,7 +58,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/5e41e84a-029d-4392-814
 
 OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、場景資源 (SRFrame)、Unity 場景 (USFrame)、模板物件 (CPFrame)、音樂音效 (AudioFrame)、影片 (VideoFrame)、遊戲階段整合 (GSIFrame)、網路 (NetFrame)、事件中心 (CenterFrame)，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS、WebGL。
 
-※補充：OxGFrame 不關心**遊戲業務邏輯 (Game Logic)** 跟**專案目錄結構 (Project Directory Structure)**，所以你可以自由引入**其他編程框架**，像是 [Unity DOTS](https://unity.com/dots), [Entitas](https://github.com/sschmid/Entitas), [ECSLite](https://github.com/Leopotam/ecslite), [Zenject](https://github.com/modesttree/Zenject), [Extenject](https://github.com/Mathijs-Bakker/Extenject) and more，或者這些**編程框架**僅搭配 [AssetLoader](https://github.com/michael811125/OxGFrame#assetloader-dependence-yooasset) + [Hotfixer](https://github.com/michael811125/OxGFrame#hotfixer-dependence-hybridclr-assetloader) 模塊解決熱更方案。
+※補充：OxGFrame 不關心**遊戲業務邏輯 (Game Logic)** 跟**專案目錄結構 (Project Directory Structure)**，所以你可以自由引入**其他編程框架**，像是 [Unity DOTS](https://unity.com/dots), [Entitas](https://github.com/sschmid/Entitas), [ECSLite](https://github.com/Leopotam/ecslite), [Zenject](https://github.com/modesttree/Zenject), [Extenject](https://github.com/Mathijs-Bakker/Extenject), [VContainer](https://github.com/hadashiA/VContainer) and more，或者這些**編程框架**僅搭配 [AssetLoader](https://github.com/michael811125/OxGFrame#assetloader-dependence-yooasset) + [Hotfixer](https://github.com/michael811125/OxGFrame#hotfixer-dependence-hybridclr-assetloader) 模塊解決熱更方案。
 
 **平台測試**
 - Windows (Passed)
