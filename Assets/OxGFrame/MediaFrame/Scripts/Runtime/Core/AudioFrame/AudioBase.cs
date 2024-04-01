@@ -1,7 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
 using OxGKit.LoggingSystem;
-using OxGKit.Utilities.Request;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -19,7 +18,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         [Tooltip("Drag audio clip. This is not supports [WebGL]"), ConditionalField(nameof(sourceType), false, SourceType.Audio)]
         public AudioClip audioClip = null;
         // SourceType => StreamingAssets, Url
-        [Tooltip("Depends on Requester.InitCacheCapacityForAudio"), ConditionalField(nameof(sourceType), true, SourceType.Audio)]
+        [Tooltip("Can select the \"CacheType\" from the AudioManager's inspector."), ConditionalField(nameof(sourceType), true, SourceType.Audio)]
         public bool requestCached = true;
         // SourceType => StreamingAssets
         [Tooltip("Default path is [StreamingAssets]. Just set that inside path and file name, Don't forget file name must with extension, ex: Audio/example.mp3"), ConditionalField(nameof(sourceType), false, SourceType.StreamingAssets)]
@@ -99,7 +98,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         public async UniTask<AudioClip> GetAudioFromStreamingAssets(bool cached)
         {
             string pathName = System.IO.Path.Combine(GetRequestStreamingAssetsPath(), this.fullPathName);
-            var audioClip = await Requester.RequestAudio(pathName, this.audioFileType, null, null, null, cached);
+            var audioClip = await AudioManager.GetInstance().RequestAudio(pathName, this.audioFileType, null, null, null, cached);
             return audioClip;
         }
 
@@ -108,7 +107,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             string urlCfg = await this.urlSet.urlCfg.GetFileText();
             string urlSet = this.urlSet.getUrlPathFromCfg ? GetValueFromUrlCfg(urlCfg, AUDIO_URLSET) : string.Empty;
             string url = (!string.IsNullOrEmpty(urlSet)) ? $"{urlSet.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
-            var audioClip = await Requester.RequestAudio(url, this.audioFileType, null, null, null, cached);
+            var audioClip = await AudioManager.GetInstance().RequestAudio(url, this.audioFileType, null, null, null, cached);
             return audioClip;
         }
 

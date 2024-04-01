@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.10.3] -2024-04-01
+- Added CacheType to AudioManager, which will be used for caching when AudioBase is using the request method.
+- Modified AudioBase to not rely on the methods of the OxGKit.Utilities' Requester.
+- Modified Acax encoding type (use UTF-8).
+
 ## [2.10.2] - 2024-03-19
 - Fixed When scene load with suspend (activateOnLoad = false) cannot return BundlePack correctly .
 ```C#

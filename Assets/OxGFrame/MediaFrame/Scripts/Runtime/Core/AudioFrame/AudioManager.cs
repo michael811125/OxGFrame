@@ -1,20 +1,38 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
 using OxGKit.LoggingSystem;
+using OxGKit.Utilities.Cacher;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Networking;
 
 namespace OxGFrame.MediaFrame.AudioFrame
 {
     internal class AudioManager : MediaManager<AudioBase>
     {
+        public enum CacheType
+        {
+            None,
+            LRU,
+            ARC
+        }
+
         [Separator("Audio Mixer")]
         [SerializeField, Tooltip("Setup AudioMixer in list")]
         private List<AudioMixer> _listMixer = new List<AudioMixer>();                             // 中控混音器
         private Dictionary<string, float> _dictMixerExpParams = new Dictionary<string, float>();  // 用於記錄 Exposed Parameters 參數
         private Dictionary<string, GameObject> _dictNodes = new Dictionary<string, GameObject>(); // 節點物件
+
+        [Separator("Audio Cacher")]
+        [SerializeField, Tooltip("The caching method requires ensuring that \"RequestCached\" is checked on AudioBase.")]
+        private CacheType _cacheType = CacheType.LRU;
+        [SerializeField, Tooltip("The capacity of the cache."), ConditionalField(nameof(_cacheType), true, CacheType.None)]
+        private int _cacheCapacity = 20;
+        private ARCCache<string, AudioClip> _arcAudios = null;
+        private LRUCache<string, AudioClip> _lruAudios = null;
 
         private static readonly object _locker = new object();
         private static AudioManager _instance = null;
@@ -51,6 +69,18 @@ namespace OxGFrame.MediaFrame.AudioFrame
                     this._dictNodes.Add(nodeName, this.CreateNode(nodeName, this.transform));
                 }
             }
+
+            switch (this._cacheType)
+            {
+                case CacheType.None:
+                    break;
+                case CacheType.LRU:
+                    this._InitLRUCacheCapacityForAudio(this._cacheCapacity);
+                    break;
+                case CacheType.ARC:
+                    this._InitARCCacheCapacityForAudio(this._cacheCapacity);
+                    break; ;
+            }
         }
 
         protected override void SetParent(AudioBase audBase, Transform parent)
@@ -61,6 +91,147 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 audBase.gameObject.transform.SetParent(goNode.transform);
             }
         }
+
+        #region Cacher
+        #region ARC Audio
+        private void _InitARCCacheCapacityForAudio(int capacity)
+        {
+            if (this._arcAudios == null)
+                this._arcAudios = new ARCCache<string, AudioClip>(capacity);
+
+            // Only allow one cache type (Clear LRU)
+            this._ClearLRUCacheCapacityForAudio();
+            this._lruAudios = null;
+        }
+
+        private void _ClearARCCacheCapacityForAudio()
+        {
+            if (this._arcAudios != null)
+                this._arcAudios.Clear();
+        }
+        #endregion
+
+        #region LRU Audio
+        private void _InitLRUCacheCapacityForAudio(int capacity)
+        {
+            if (this._lruAudios == null)
+                this._lruAudios = new LRUCache<string, AudioClip>(capacity);
+
+            // Only allow one cache type (Clear ARC)
+            this._ClearARCCacheCapacityForAudio();
+            _arcAudios = null;
+        }
+
+        private void _ClearLRUCacheCapacityForAudio()
+        {
+            if (this._lruAudios != null)
+                this._lruAudios.Clear();
+        }
+        #endregion
+
+        /// <summary>
+        /// Audio request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="audioType"></param>
+        /// <param name="successAction"></param>
+        /// <param name="errorAction"></param>
+        /// <param name="cts"></param>
+        /// <returns></returns>
+        public async UniTask<AudioClip> RequestAudio(string url, UnityEngine.AudioType audioType = UnityEngine.AudioType.MPEG, Action<AudioClip> successAction = null, Action errorAction = null, CancellationTokenSource cts = null, bool cached = true)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                Logging.Print<Logger>($"<color=#FF0000>Request failed, URL is null or empty.</color>");
+                return null;
+            }
+
+            if (cached)
+            {
+                // ARCCache
+                if (this._arcAudios != null)
+                {
+                    AudioClip audioClip = this._arcAudios.Get(url);
+                    if (audioClip != null) return audioClip;
+                }
+                // LRUCache
+                else if (this._lruAudios != null)
+                {
+                    AudioClip audioClip = this._lruAudios.Get(url);
+                    if (audioClip != null) return audioClip;
+                }
+            }
+
+            UnityWebRequest request = null;
+            try
+            {
+                request = UnityWebRequestMultimedia.GetAudioClip(url, audioType);
+                ((DownloadHandlerAudioClip)request.downloadHandler).streamAudio = true;
+
+                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
+                else await request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.ProtocolError ||
+                    request.result == UnityWebRequest.Result.ConnectionError)
+                {
+                    request.Dispose();
+                    errorAction?.Invoke();
+                    Logging.Print<Logger>($"<color=#FF0000>Request failed, URL: {url}</color>");
+                    return null;
+                }
+
+                AudioClip audioClip = ((DownloadHandlerAudioClip)request.downloadHandler).audioClip;
+                if (cached)
+                {
+                    // ARCCache
+                    if (this._arcAudios != null)
+                    {
+                        this._arcAudios.Add(url, audioClip);
+                        audioClip = this._arcAudios.Get(url);
+                    }
+                    // LRUCache
+                    else if (this._lruAudios != null)
+                    {
+                        this._lruAudios.Add(url, audioClip);
+                        audioClip = this._lruAudios.Get(url);
+                    }
+                }
+                successAction?.Invoke(audioClip);
+
+#if UNITY_EDITOR
+                string GetBytesToString(ulong bytes)
+                {
+                    if (bytes < (1024 * 1024 * 1f))
+                    {
+                        return (bytes / 1024f).ToString("f2") + "KB";
+                    }
+                    else if (bytes >= (1024 * 1024 * 1f) && bytes < (1024 * 1024 * 1024 * 1f))
+                    {
+                        return (bytes / (1024 * 1024 * 1f)).ToString("f2") + "MB";
+                    }
+                    else
+                    {
+                        return (bytes / (1024 * 1024 * 1024 * 1f)).ToString("f2") + "GB";
+                    }
+                }
+
+                ulong sizeBytes = (ulong)request.downloadHandler.data.Length;
+                Logging.Print<Logger>($"<color=#90ff67>Request Audio => Channel: {audioClip.channels}, Frequency: {audioClip.frequency}, Sample: {audioClip.samples}, Length: {audioClip.length}, State: {audioClip.loadState}, Size: {GetBytesToString(sizeBytes)}</color>");
+#endif
+
+                request.Dispose();
+                return audioClip;
+            }
+            catch (Exception ex)
+            {
+                request?.Dispose();
+                errorAction?.Invoke();
+                Logging.Print<Logger>($"<color=#FF0000>Request failed, URL: {url}</color>");
+                Logging.PrintException<Logger>(ex);
+                return null;
+            }
+        }
+        #endregion
 
         #region 中控 Mixer
         /// <summary>
@@ -209,7 +380,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             // 處理長期沒有被 Unload 的 Audio
             if (!audBase.onDestroyAndUnload)
                 this.TryLRUCache<AudioBase>(audBase.assetName);
-            
+
             this.LoadAndPlay(audBase, loops, volume);
 
             Logging.Print<Logger>(string.Format("Play Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));

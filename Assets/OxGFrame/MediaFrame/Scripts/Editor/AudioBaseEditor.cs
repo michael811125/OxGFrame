@@ -1,4 +1,5 @@
-﻿using OxGFrame.MediaFrame.AudioFrame;
+﻿using Cysharp.Threading.Tasks;
+using OxGFrame.MediaFrame.AudioFrame;
 using UnityEditor;
 using UnityEngine;
 
@@ -36,39 +37,41 @@ namespace OxGFrame.MediaFrame.Editor
             GUI.backgroundColor = Color.cyan;
 
             serializedObject.Update();
-
             EditorGUILayout.PropertyField(this._audioLength);
             if (GUILayout.Button("Preload"))
             {
                 // must set dirty (save will be success)
                 EditorUtility.SetDirty(this._target);
 
-                AudioClip audioClip = null;
-                switch (this._target.sourceType)
+                UniTask.Void(async () =>
                 {
-                    case SourceType.Audio:
-                        audioClip = this._target.audioClip;
-                        if (audioClip != null) this._audioLength.floatValue = this._target.audioLength = this._target.audioClip.length;
-                        else Debug.LogError("Cannot found AudioClip");
-                        break;
+                    AudioClip audioClip = null;
+                    switch (this._target.sourceType)
+                    {
+                        case SourceType.Audio:
+                            audioClip = this._target.audioClip;
+                            if (audioClip != null) this._audioLength.floatValue = this._target.audioLength = this._target.audioClip.length;
+                            else Debug.LogError("Cannot found AudioClip");
+                            break;
 
-                    case SourceType.StreamingAssets:
-                        audioClip = await this._target.GetAudioFromStreamingAssets(false);
-                        if (audioClip != null) this._audioLength.floatValue = this._target.audioLength = audioClip.length;
-                        break;
+                        case SourceType.StreamingAssets:
+                            audioClip = await this._target.GetAudioFromStreamingAssets(false);
+                            if (audioClip != null) this._audioLength.floatValue = this._target.audioLength = audioClip.length;
+                            break;
 
-                    case SourceType.Url:
-                        audioClip = await this._target.GetAudioFromURL(false);
-                        if (audioClip != null) this._audioLength.floatValue = this._target.audioLength = audioClip.length;
-                        break;
-                }
+                        case SourceType.Url:
+                            audioClip = await this._target.GetAudioFromURL(false);
+                            if (audioClip != null) this._audioLength.floatValue = this._target.audioLength = audioClip.length;
+                            break;
+                    }
 
-                if (audioClip != null)
-                {
-                    Debug.Log($"<color=#FFE700>AudioClip Info => Channel: {audioClip.channels}, Frequency: {audioClip.frequency}, Sample: {audioClip.samples}, Length: {audioClip.length}, State: {audioClip.loadState}</color>");
-                }
+                    if (audioClip != null)
+                        Debug.Log($"<color=#ffe700>AudioClip Info => Channel: {audioClip.channels}, Frequency: {audioClip.frequency}, Sample: {audioClip.samples}, Length: {audioClip.length}, State: {audioClip.loadState}</color>");
+                    else
+                        Debug.Log($"<color=#ff0000>AudioClip request failed!!!</color>");
 
-                serializedObject.ApplyModifiedProperties();
+                    serializedObject.ApplyModifiedProperties();
+                });
             }
             else
             {
