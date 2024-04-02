@@ -60,6 +60,8 @@ OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTas
 
 ※補充：OxGFrame 不關心**遊戲業務邏輯 (Game Logic)** 跟**專案目錄結構 (Project Directory Structure)**，所以你可以自由引入**其他編程框架**，像是 [Unity DOTS](https://unity.com/dots), [Entitas](https://github.com/sschmid/Entitas), [ECSLite](https://github.com/Leopotam/ecslite), [Zenject](https://github.com/modesttree/Zenject), [Extenject](https://github.com/Mathijs-Bakker/Extenject), [VContainer](https://github.com/hadashiA/VContainer) and more，或者這些**編程框架**僅搭配 [AssetLoader](https://github.com/michael811125/OxGFrame#assetloader-dependence-yooasset) + [Hotfixer](https://github.com/michael811125/OxGFrame#hotfixer-dependence-hybridclr-assetloader) 模塊解決熱更方案。
 
+※另外補充：OxGFrame 也不關心**遊戲表數據 (Game Database)**，依照喜好自由選擇轉表方式，像是 [luban](https://github.com/focus-creative-games/luban), [ExcelToCode](https://github.com/feifeid47/ExcelToCode), [TippingExcelTool](https://github.com/TippingGame/TippingExcelTool?tab=readme-ov-file), [ExcelConverter](https://github.com/JohnsonChenz/ExcelConverter) and more。
+
 **平台測試**
 - Windows (Passed)
 - MacOSX (Passed)
