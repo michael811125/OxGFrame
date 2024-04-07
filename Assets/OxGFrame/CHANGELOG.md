@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [2.10.4] -2024-04-08
+- Removed UniTask from built-in.
+  - Please use install via git URL instead (Package Manager)
+```
+https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
+```
+
 ## [2.10.3] -2024-04-01
 - Added CacheType to AudioManager, which will be used for caching when AudioBase is using the request method.
 - Modified AudioBase to not rely on the methods of the OxGKit.Utilities' Requester.

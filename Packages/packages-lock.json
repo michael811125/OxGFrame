@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "67c487f521087a3887e6c8817dff3cd264aa4f20"
     },
+    "com.cysharp.unitask": {
+      "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "0c8057c66852e7d720966ef076d4924ebb27e80c"
+    },
     "com.domybest.lwmybox": {
       "version": "https://github.com/michael811125/LWMyBox.git",
       "depth": 0,
