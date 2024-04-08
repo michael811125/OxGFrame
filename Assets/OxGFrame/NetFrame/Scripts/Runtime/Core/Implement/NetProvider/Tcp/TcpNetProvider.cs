@@ -203,7 +203,7 @@ namespace OxGFrame.NetFrame
 
         public bool SendMessage(string text)
         {
-            throw new Exception("[Text] TCP/IP not supports SendMessge!!! Please convert string to binary and send by binary.");
+            throw new Exception("[Text] TCP/IP not supports SendMessage!!! Please convert string to binary and send by binary.");
         }
 
         public bool IsConnected()
