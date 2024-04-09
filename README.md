@@ -336,8 +336,6 @@ https://github.com/michael811125/OxGFrame/assets/30960759/4c61bede-0bbc-4cae-bab
 
 https://github.com/michael811125/OxGFrame/assets/30960759/8e4f63e9-b955-4f91-8ac7-be949677c54f
 
-**如果沒有要使用 CoreFrame 核心製作模塊，可以直接刪除整個 CoreFrame。**
-
 ※備註 : Right-Click Create/OxGFrame/Core Frame... (Template cs and prefab)
 
 ---
@@ -384,8 +382,6 @@ video_urlset 127.0.0.1/video/
 
 **額外說明**：如果透過 URL 方式請求音訊或影片資源，建議於 WebGL 平台上使用，因為 WebGL 不支援 AssetBundle 事先指定 AudioClip 或 VideoClip (Assign 方式) 至 Prefab 中，所以提供 URL 的方式進行影音檔請求。
 
-**如果沒有要使用 MediaFrame 影音模塊，可以直接刪除整個 MediaFrame。**
-
 ※備註 : Right-Click Create/OxGFrame/Media Frame... (Template prefab)
 
 ---
@@ -425,8 +421,6 @@ video_urlset 127.0.0.1/video/
     public static void Update(float dt = 0.0f)
 ```
 
-**如果沒有要使用 GSIFrame 遊戲整合模塊，可以直接刪除整個 GSIFrame。**
-
 ※備註 : Right-Click Create/OxGFrame/GSI Frame... (Template cs)
 
 ---
@@ -448,8 +442,6 @@ video_urlset 127.0.0.1/video/
 **目前有提供的 NetProvider (可自行擴展 KCP, UDP...)**
 - TCP/IP
 - WebSocket
-
-**如果沒有要使用 NetFrame 網路模塊，可以直接刪除整個 NetFrame。**
 
 ---
 
@@ -490,8 +482,6 @@ video_urlset 127.0.0.1/video/
 - TClass: APIBase，單個 API 基類，需建立實作 => 右鍵創建
 - TCenter: APICenter，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
   - 使用 Default API 進行調用 (Add, Find)
-
-**如果沒有要使用 CenterFrame 事件模塊，可以直接刪除整個 CenterFrame。**
   
 ※備註 : Right-Click Create/OxGFrame/Center Frame... (Template cs)
 
