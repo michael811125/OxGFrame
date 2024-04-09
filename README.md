@@ -8,9 +8,9 @@
 
 ## 官方主頁 (OxGFrame with [YooAsset](https://github.com/tuyoogame/YooAsset) + [HybridCLR](https://github.com/focus-creative-games/hybridclr))
 
-- [官方文檔] (https://oxgframe.ouhiyo.com/)
+- [官方文檔](https://oxgframe.ouhiyo.com/)
 
-- [快速上手 (安裝教程)] (https://oxgframe.ouhiyo.com/docs/getting-started)
+- [快速上手 (安裝教程)](https://oxgframe.ouhiyo.com/docs/getting-started)
 
 ---
 
