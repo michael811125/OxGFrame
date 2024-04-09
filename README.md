@@ -6,45 +6,14 @@
 
 ---
 
-## 安裝 OxGFrame with [YooAsset](https://github.com/tuyoogame/YooAsset) + [HybridCLR](https://github.com/focus-creative-games/hybridclr)
+## 官方主頁 (OxGFrame with [YooAsset](https://github.com/tuyoogame/YooAsset) + [HybridCLR](https://github.com/focus-creative-games/hybridclr))
 
-[![version](https://img.shields.io/badge/version-2.7.7-yellow.svg)](https://github.com/michael811125/OxGFrame/releases/tag/v2.7.7) 以上各模組的日誌打印可以自由控制開關，皆依賴 [OxGKit.LoggingSystem](https://github.com/michael811125/OxGKit#loggingsystem-dependence-lwmybox)，安裝後需要 Import LoggingLauncher from Samples，再拖曳至場景上並且加載 LoggerSetting 才能成功激活日誌系統的配置 (**Build 激活標籤 OXGKIT_LOGGER_ON**)。
-
-| **需先手動安裝依賴庫 (Recommended to manually install dependencies first)** |
-|:-|
-| [![version](https://img.shields.io/badge/version-2.10.4-yellow.svg)](https://github.com/michael811125/OxGFrame/releases/tag/v2.10.4) [UniTask v2.5.4 or higher](https://github.com/Cysharp/UniTask), Add https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask to Package Manager **建議先安裝** |
-| [LWMyBox v1.2.2 or higher](https://github.com/michael811125/LWMyBox), Add https://github.com/michael811125/LWMyBox.git to Package Manager |
-| [OxGKit.LoggingSystem v1.0.0 or higher](https://github.com/michael811125/OxGKit#loggingsystem-dependence-lwmybox), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts to Package Manager |
-| [OxGKit.Utilities v1.0.0 or higher](https://github.com/michael811125/OxGKit#utilities-dependence-unitask), Add https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts to Package Manager |
-| [HybirdCLR v5.1.0 or higher](https://github.com/focus-creative-games/hybridclr), Add https://github.com/focus-creative-games/hybridclr_unity.git to Package Manager (革命性的程式熱更新方案) **特別推薦** |
-
-**OxGKit.Utilities 遇到 UniTask 引用問題請無視，因為最後完成 OxGFrame 的安裝後，就會自動引用內建的 UniTask 了**
-
-### Unity 如果新專案有遇到 Newtonsoft 引用問題
-
-- 請自行安裝 Add package by name [com.unity.nuget.newtonsoft-json](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/wiki/Install-official-via-UPM)
-
-### 1. 透過 Package Manager 安裝 (Install via git)
-
-Add https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame to Package Manager.
-	
-![](Docs/img_3.png)
-
-Import Prefabs from Samples
-
-![](Docs/img_7.png)
-	
-### 2. 透過 Github 下載 (Code Download ZIP)
-
-Copy Assets/OxGFrame to Unity New Project.
-
-※備註 : 如果沒有要自行更改框架的需求，建議直接使用 Package Manager 方式安裝。
-
-**額外可搭配 [OxGKit](https://github.com/michael811125/OxGKit) 提供遊戲開發常用的系統工具組**
+[官方文檔] (https://oxgframe.ouhiyo.com/)
+[快速上手 (安裝教程)] (https://oxgframe.ouhiyo.com/docs/getting-started)
 
 ---
 
-### 使用 OxGFrame 實現的 Demo 小遊戲
+## 使用 OxGFrame 實現的 Demo 小遊戲
 
 [Github - FlappyBird_OxGFrame](https://github.com/michael811125/FlappyBird_OxGFrame)
   - [Resources](https://github.com/michael811125/FlappyBird_OxGFrame/tree/resources)
@@ -82,45 +51,6 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 
 ---
 
-## 第三方庫 (內建)
-
-### Main-ThirdParty
-
-- 使用 [UnitTask v2.5.3](https://github.com/Cysharp/UniTask) (最佳異步處理方案)
-- 使用部分 [UniFramework](https://github.com/gmhevinci/UniFramework) (輕量級框架) **特別推薦**
-
-### Sub-ThirdParty
-
-- 使用 [UnityWebSocket v2.7.0](https://github.com/psygames/UnityWebSocket) (最佳 WebSocket 解決方案) **特別推薦**
-- 使用 [YooAsset v2.1.1](https://github.com/tuyoogame/YooAsset) (強大的資源熱更新方案) **特別推薦**
-- 使用 [DiskUtils by keerthik](https://github.com/keerthik/simple-disk-utils)
-
-※備註 : 會持續更新內建第三方庫。
-
----
-
-## 框架 API
-
-- Hotfixers (using OxGFrame.Hotfixer)
-- AssetLoaders (using OxGFrame.AssetLoader)
-- AssetPatcher (using OxGFrame.AssetLoader)
-- CoreFrames (using OxGFrame.CoreFrame)
-- MediaFrames (using OxGFrame.MediaFrame)
-- NetFrames (using OxGFrame.NetFrame)
-
-※備註 : 建議詳看各模塊的 Example (注意 "res#" 跟 "build#" 的使用規則)。
-
-**額外有需要編寫 BuildTool 的可以調用**
-- HotfixHelper (using OxGFrame.Hotfix.Editor)
-- BundleConfig (using OxGFrame.AssetLoader.Bundle)
-- PatchSetting (using OxGFrame.AssetLoader)
-  - PatchSetting.setting (**Singleton instance**)
-  - PatchSetting.yooSetting (**Singleton instance**)
-- BundleHelper (using OxGFrame.AssetLoader.Editor)
-- MediaHelper (using OxGFrame.MediaFrame.Editor)
-
----
-
 ## 模塊框架介紹
 
 - [Hotfixer](https://github.com/michael811125/OxGFrame#hotfixer-dependence-hybridclr-assetloader)
@@ -146,8 +76,6 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 
 ※備註 : 運行打包 HotfixerDemo 需要 Import PatchLauncher from PackageManager
 
-**如果沒有要使用 Hotfixer 熱修復模塊，可以直接刪除整個 Hotfixer。**
-
 ---
 
 ### AssetLoader (dependence YooAsset)
@@ -167,69 +95,19 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
   - AB 包體積增加 OFFSET > AES > HT2XOR = XOR
   - 破解難度 AES > HT2XOR > XOR > OFFSET
 
-### 資源熱更新方案
-
-使用 YooAsset Collector 進行資源收集，建議進行 Built-in 跟 Patch 資源的區分 (打包粒度自行決定)，再使用 YooAsset Builder 執行打包 **(不需要手動更改資源日期版號)**，如有 Bundle 加密需求需先配置加密設定 YooAsset/OxGFrame Cryptogram Setting With YooAsset。
-
-YooAsset Build 完成之後開啟 OxGFrame/AssetLoader/Export Bundle And Config Generator 視窗進行 Bundle 上傳檔輸出 + 配置檔建立 (**步驟如下**)。
-
-1. 選擇 Export App Config To StreamingAssets 頁籤，建立 appconfig.json 至 StreamingAssets 中 (主要用於 App Version 比對)。
-
-![](Docs/img_10.png)
-
-2. 再開啟 OxGFrame/AssetLoader/Bundle Url Generator (burlconfig.conf) 視窗，建立 burlconfig.conf 至 StreamgingAssets 中 (主要用於定位 CDN Server Domain 與 Store Link)。 
-
-![](Docs/img_13.png)
-
-3. 最後返回 OxGFrame/AssetLoader/Export Bundle And Config Generator 視窗，選擇 Export Configs And App Bundles for CDN 頁籤，輸出上傳資源，Source Folder 選擇剛剛使用 YooAsset 輸出的 Bundles 資料夾，依照自己需求是否有想要使用 Tags 進行預設包的群組分包，輸出後將 CDN 資料夾直接上傳至 Server。
-
-![](Docs/img_11.png) 
-  
----
-  
-群組分包舉例
+#### 群組分包舉例
   - 最小運行包
   - 標準運行包
   - 全部運行包 (預設索引標籤為 #all)
 
 ![](Docs/img_1.png)
 
-資源更新過程 (支援下載途中直接進行修復功能)
+#### 資源更新過程 (支援下載途中直接進行修復功能)
 
 https://github.com/michael811125/OxGFrame/assets/30960759/11dcf0d3-41bd-4a8d-af6b-7115374552f5
 
----
 
-**將 PatchLauncher 拖曳至場景中後，可以設置 PlayMode**
-- Editor Simulate Mode (模擬模式 [加快開發])，需先配置 YooAsset Collector。
-- Offline Mode (單機模式)，需將 AB 打包至 Built-in，並且產出相關配置，需注意 PatchLauncher 的解密設定。
-- Host Mode (聯機模式)，需將 AB 打包區分 Built-in 跟 Patch，並且產出相關配置，需注意 PatchLauncher 的解密設定。
-  - 允許選擇 Semantic Version 版號檢查規則 (比對完整版號 X.Y.Z 或比對大小版號 X.Y)。
-  - 允許跳過 Preset App Packages 主下載階段 (強制邊玩邊下載)。
-- WebGL Mode (僅支援 WebGL 平台)，需將 AB 全部打包至 Built-in (StreamingAssets)。
-  - 不支援事先下載，主要是因為 WebGL 是邊玩邊下載。
-
-**檢查 PlayMode 是否初始完成**
-- 判斷檢查 AssetPatcher.IsInitialized() 是否完成 Preset Packages 的初始，因為初始完成後，才能開始進行 Built-in Bundle 的加載與 AssetPatcher.Check() 檢查更新，又或者邊玩邊下載。
-  - 備註 : 區分 Built-in 跟 Patch (視情況自行訂定運作流程)
-    1. 需自己拆分 Patch 更新前所用到的資源 (例如 : LogoUI 等...)，需要先打包至 Built-in 作為內置資源。
-	2. 後續執行 AssetPatcher.Check() 檢查 Patch 更新完成後，就可以讀取更新資源了。
-      - 執行 AssetPatcher.Check() 檢查流程時，**會將 Preset App Packages 與 Preset DLC Packages 進行 Main Download 的合併**。  
-
-| **Preset App Packages & Preset DLC Packages** |
-|:-|
-| Preset_App_Pkg_01 (TotalCount = 3, TotalSize = 600 KB) |
-| Preset_App_Pkg_02 (TotalCount = 6, TotalSize = 1200 KB) |
-| Preset_DLC_Pkg_01 (TotalCount = 2, TotalSize = 200 KB) |
-| Preset_DLC_Pkg_02 (TotalCount = 4, TotalSize = 400 KB) |
-| **Combination** |
-| Preset_App_Pkg_01 + Preset_App_Pkg_02 + Preset_DLC_Pkg_01 + Preset_DLC_Pkg_02 (TotalCount = 15, TotalSize = 2400 KB) |
-
-![](Docs/img_12.png)
-
-備註：通過 Preset 設置的 DLC Packages 必須是**固定版號** (ex: "latest")。
-
-是否啟用 Disk Space 檢查流程
+#### 是否啟用 Disk Space 檢查流程
 
 ![](Docs/img_14.png)
 
@@ -239,25 +117,8 @@ https://github.com/michael811125/OxGFrame/assets/30960759/11dcf0d3-41bd-4a8d-af6
 
 ![](Docs/img_16.png)
 
-**檢查 Patch 是否更新完成**
-- 判斷檢查 AssetPatcher.IsDone() 是否更新完成。
 
-**Patch 執行順序流程**
-- 輪詢判斷 AssetPathcer.IsInitialized() => 執行 AssetPatcher.Check() => 輪詢判斷 AssetPatcher.IsDone() => 完成更新。
-
----
-
-**指定特定的 Package 進行資源加載**
-
-分別區分 App Packages 跟 DLC Packages，注意路徑不同。
-- App Packages (.../CDN/\<ProductName\>/\<Platform\>/\<Version\>/Packages)
-  - 手動進行 AssetPatcher.InitAppPackage 的初始 (如果 autoUpdate = false，則需要自行另外調用 AssetPatcher.UpdatePackage 進行 Manifest 的更新)。
-- DLC Packages
-  - 路徑包含平台 (.../CDN/\<ProductName\>/\<Platform\>/DLC/Packages)
-  - 路徑不含平台 **【屬於所有平台的共用資源】** (.../CDN/\<ProductName\>/DLC/Packages)
-  - 支援特定版本 DLC package 的下載與 DLC package 卸載功能，需手動進行 AssetPatcher.InitDlcPackage，並且指定特定 dlcVersion，對於 dlcVersion 也可以單一固定 dlcVersion (ex: "latest")，變成只要 DLC 有更新就可以使用固定路徑進行更新。
-
-**使用 PackageOperation 進行 DLC 資源包的操作 (方便控管資源包)**
+#### 使用 PackageOperation 進行 DLC 資源包的操作 (方便控管資源包)
 
 https://github.com/michael811125/OxGFrame/assets/30960759/694d1125-cf9f-42bb-85f4-df42041057c7
 
@@ -332,8 +193,6 @@ if (isInitialized)
 }
 ```
 
----
-
 #### Bundle [burlconfig] (Bundle URL Config) 格式
 
 格式如下 **(store_link 針對非 Android, iOS 平台的，可以設置主程式下載的 link)**
@@ -349,15 +208,10 @@ bundle_fallback_ip 127.0.0.1
 store_link http://
 ```
 
-#### Build 防呆標籤 (避免再打包時，忘記將 EditorSimulateMode 調成 OfflineMode, HostMode, WebGLMode)
+#### Build 防呆宏
 - OXGFRAME_OFFLINE_MODE
 - OXGFRAME_HOST_MODE
 - OXGFRAME_WEBGL_MODE
-
-**\>\> 建立 burlconfig.conf 方式 \<\<**
-- 使用 OxGFrame/AssetLoader/Bundle Url Config Generator 創建 burlconfig.conf (StreamingAssets/burlconfig.conf)。
-
-**如果沒有要使用 AssetLoader 資源加載模塊，可以直接刪除整個 AssetLoader (注意有模塊依賴引用)。**
 
 ---
 
@@ -418,8 +272,6 @@ Init Order : OnCreate (Once) > OnAutoBind (Once) > OnBind (Once) > OnPreShow (Ev
 - 透過 collector.GetNodeComponents\<TComponent\>("BindName") 返回取得綁定 TComponent[] (同名多綁定，物件順序由上至下)
   - UIBase & SRBase 使用 _Node@XXX
   - CPBase 使用 ~Node@XXX
-
----
 
 ***建議使用 Hotkey，不然使用 Right-Click 會執行多次 (實際上不影響自動生成)，但這是 [Unity Bug](https://issuetracker.unity3d.com/issues/menuitem-is-executed-more-than-once-when-multiple-objects-are-selected) 官方不修復了***
 
