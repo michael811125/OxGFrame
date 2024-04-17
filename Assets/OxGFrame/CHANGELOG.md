@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.10.5] -2024-04-17
+- Fixed SimpleDiskUtils compile error isue on WIN.
+
 ## [2.10.4] -2024-04-08
 - Removed UniTask from built-in.
   - Please use install via git URL instead (Package Manager)
