@@ -141,8 +141,8 @@ namespace SimpleDiskUtils
 	    /// </summary>
 	    /// <returns>The available space in MB.</returns>
 	    public static int CheckAvailableSpace(){
-		    DriveInfo drive = new DriveInfo(DEFAULT_DRIVE);
-            if (drive == null)
+		    DriveInfo drive = GetDrive (DEFAULT_DRIVE);
+		    if (drive == null)
 			    return -1;
 		    return int.Parse((drive.AvailableFreeSpace / MEGA_BYTE).ToString());
 	    }
@@ -152,8 +152,8 @@ namespace SimpleDiskUtils
 	    /// </summary>
 	    /// <returns>The total space in MB.</returns>
 	    public static int CheckTotalSpace(){
-		    DriveInfo drive = new DriveInfo(DEFAULT_DRIVE);
-            if (drive == null)
+		    DriveInfo drive = GetDrive (DEFAULT_DRIVE);
+		    if (drive == null)
 			    return -1;
 		    return int.Parse ((drive.TotalSize / MEGA_BYTE).ToString());
 	    }
@@ -163,8 +163,8 @@ namespace SimpleDiskUtils
 	    /// </summary>
 	    /// <returns>The busy space in MB.</returns>
 	    public static int CheckBusySpace(){
-		    DriveInfo drive = new DriveInfo(DEFAULT_DRIVE);
-            if (drive == null)
+		    DriveInfo drive = GetDrive (DEFAULT_DRIVE);
+		    if (drive == null)
 			    return -1;
 
 		    return int.Parse (((drive.TotalSize - drive.AvailableFreeSpace) / MEGA_BYTE).ToString());
@@ -254,15 +254,15 @@ namespace SimpleDiskUtils
 	}
 #endif
 
-		#endregion
+        #endregion
 
-		#region FILE_TOOLS
+        #region FILE_TOOLS
 
-		/// <summary>
-		/// Deletes the file.
-		/// </summary>
-		/// <param name="filePath">File path.</param>
-		public static void DeleteFile (string filePath)
+        /// <summary>
+        /// Deletes the file.
+        /// </summary>
+        /// <param name="filePath">File path.</param>
+        public static void DeleteFile (string filePath)
 		{
 			#if UNITY_IOS
 	if (!filePath.StartsWith("/private"))
