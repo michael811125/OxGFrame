@@ -42,7 +42,7 @@ namespace SimpleDiskUtils
 
 	public class DiskUtils
 	{
-        #region DISK_TOOLS
+		#region DISK_TOOLS
 
 #if UNITY_STANDALONE || UNITY_EDITOR
 
@@ -85,7 +85,7 @@ namespace SimpleDiskUtils
 
 
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-        [DllImport("DiskUtilsWinAPI")]
+		[DllImport("DiskUtilsWinAPI")]
         private static extern int getAvailableDiskSpace(StringBuilder drive);
 
         [DllImport("DiskUtilsWinAPI")]
