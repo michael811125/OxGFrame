@@ -180,7 +180,7 @@ namespace OxGFrame.Hotfixer
             {
                 this._isCheck = true;
 
-                // Hotfix package name
+                // Hotfix package info
                 this.packageInfoWithBuild = packageInfoWithBuild;
 
                 // Add AOT assemblies
