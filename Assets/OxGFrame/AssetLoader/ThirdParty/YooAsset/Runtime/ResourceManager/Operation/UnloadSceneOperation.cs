@@ -31,6 +31,22 @@ namespace YooAsset
         {
             _error = null;
             _provider = provider;
+
+            // 注意：卸载场景前必须先解除挂起操作
+            if (provider is DatabaseSceneProvider)
+            {
+                var temp = provider as DatabaseSceneProvider;
+                temp.UnSuspendLoad();
+            }
+            else if (provider is BundledSceneProvider)
+            {
+                var temp = provider as BundledSceneProvider;
+                temp.UnSuspendLoad();
+            }
+            else
+            {
+                throw new System.NotImplementedException();
+            }
         }
         internal override void InternalOnStart()
         {
@@ -82,7 +98,6 @@ namespace YooAsset
             {
                 _asyncOp = SceneManager.UnloadSceneAsync(_provider.SceneObject);
                 _provider.ResourceMgr.UnloadSubScene(_provider.SceneName);
-                _provider.ResourceMgr.TryUnloadUnusedAsset(_provider.MainAssetInfo);
                 _steps = ESteps.Checking;
             }
 
@@ -91,7 +106,7 @@ namespace YooAsset
                 Progress = _asyncOp.progress;
                 if (_asyncOp.isDone == false)
                     return;
-
+                _provider.ResourceMgr.TryUnloadUnusedAsset(_provider.MainAssetInfo);
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Succeed;
             }

@@ -1,4 +1,5 @@
-﻿using OxGFrame.Hotfixer.HotfixEvent;
+﻿using OxGFrame.AssetLoader.Bundle;
+using OxGFrame.Hotfixer.HotfixEvent;
 using OxGFrame.Hotfixer.HotfixFsm;
 using OxGKit.LoggingSystem;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace OxGFrame.Hotfixer
     internal class HotfixManager
     {
         public string packageName { get; private set; }
+        public PackageInfoWithBuild packageInfoWithBuild { get; private set; } = null;
         public ResourceDownloaderOperation mainDownloader;
 
         private bool _isCheck = false;
@@ -150,6 +152,36 @@ namespace OxGFrame.Hotfixer
 
                 // Hotfix package name
                 this.packageName = packageName;
+
+                // Add AOT assemblies
+                this._aotAssemblies = aotAssemblies;
+
+                // Add Hotfix assemblies
+                this._hotfixAssemblies = hotfixAssemblies;
+
+                // Run hotfix procedure
+                this._hotfixFsm.Run<HotfixFsmStates.FsmHotfixPrepare>();
+            }
+            else
+            {
+                Logging.PrintWarning<Logger>("Hotfix Checking...");
+            }
+        }
+
+        public void CheckHotfix(PackageInfoWithBuild packageInfoWithBuild, string[] aotAssemblies, string[] hotfixAssemblies)
+        {
+            if (this._isDone)
+            {
+                Logging.Print<Logger>("<color=#ff8686>Hotfix all are loaded.</color>");
+                return;
+            }
+
+            if (!this._isCheck)
+            {
+                this._isCheck = true;
+
+                // Hotfix package name
+                this.packageInfoWithBuild = packageInfoWithBuild;
 
                 // Add AOT assemblies
                 this._aotAssemblies = aotAssemblies;

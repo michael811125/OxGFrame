@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [2.11.0] -2024-05-12
+- Updated YooAsset commits.
+- Updated Scriptable Build Pipeline to v2.1.3 (Unity).
+- Added YooAsset can support RawFile encryption.
+- Added Hotfixer can new PackageInfoWithBuild to CheckHotfix method.
+- Optimized Support Hotfix to be loaded using other threads (WebGL is not supported).
+
 ## [2.10.5] -2024-04-17
 - Fixed SimpleDiskUtils compile error issue on WIN.
 

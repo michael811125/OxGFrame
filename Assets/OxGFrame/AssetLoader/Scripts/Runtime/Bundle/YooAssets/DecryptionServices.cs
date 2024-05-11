@@ -10,14 +10,29 @@ namespace OxGFrame.AssetLoader.Bundle
         Stream DecryptStream(DecryptFileInfo fileInfo);
     }
 
-    public class NoneDecryption : IDecryptionServices, IDecryptStream
+    internal interface IDecryptData
     {
+        byte[] DecryptData(DecryptFileInfo fileInfo);
+    }
+
+    public class NoneDecryption : IDecryptionServices, IDecryptStream, IDecryptData
+    {
+        #region OxGFrame Implements
+        public byte[] DecryptData(DecryptFileInfo fileInfo)
+        {
+            string filePath = fileInfo.FileLoadPath;
+            if (File.Exists(filePath) == false)
+                return null;
+            return File.ReadAllBytes(filePath);
+        }
+
         public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
             string filePath = fileInfo.FileLoadPath;
             var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None);
             return fs;
         }
+        #endregion
 
         public uint GetManagedReadBufferSize()
         {
@@ -35,10 +50,29 @@ namespace OxGFrame.AssetLoader.Bundle
             managedStream = this.DecryptStream(fileInfo);
             return AssetBundle.LoadFromStreamAsync(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
+
+        public byte[] LoadRawFileData(DecryptFileInfo fileInfo)
+        {
+            return this.DecryptData(fileInfo);
+        }
     }
 
-    public class OffsetDecryption : IDecryptionServices, IDecryptStream
+    public class OffsetDecryption : IDecryptionServices, IDecryptStream, IDecryptData
     {
+        #region OxGFrame Implements
+        public byte[] DecryptData(DecryptFileInfo fileInfo)
+        {
+            OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
+            string filePath = fileInfo.FileLoadPath;
+            int dummySize = Convert.ToInt32(decryptArgs[1].Decrypt());
+            if (File.Exists(filePath) == false)
+                return null;
+            byte[] data = File.ReadAllBytes(filePath);
+            if (FileCryptogram.Offset.OffsetDecryptBytes(ref data, dummySize))
+                return data;
+            return null;
+        }
+
         public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
             OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
@@ -46,6 +80,7 @@ namespace OxGFrame.AssetLoader.Bundle
             int dummySize = Convert.ToInt32(decryptArgs[1].Decrypt());
             return FileCryptogram.Offset.OffsetDecryptStream(filePath, dummySize);
         }
+        #endregion
 
         public uint GetManagedReadBufferSize()
         {
@@ -63,10 +98,29 @@ namespace OxGFrame.AssetLoader.Bundle
             managedStream = this.DecryptStream(fileInfo);
             return AssetBundle.LoadFromStreamAsync(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
+
+        public byte[] LoadRawFileData(DecryptFileInfo fileInfo)
+        {
+            return this.DecryptData(fileInfo);
+        }
     }
 
-    public class XorDecryption : IDecryptionServices, IDecryptStream
+    public class XorDecryption : IDecryptionServices, IDecryptStream, IDecryptData
     {
+        #region OxGFrame Implements
+        public byte[] DecryptData(DecryptFileInfo fileInfo)
+        {
+            OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
+            string filePath = fileInfo.FileLoadPath;
+            byte xorKey = Convert.ToByte(decryptArgs[1].Decrypt());
+            if (File.Exists(filePath) == false)
+                return null;
+            byte[] data = File.ReadAllBytes(filePath);
+            if (FileCryptogram.XOR.XorDecryptBytes(data, xorKey))
+                return data;
+            return null;
+        }
+
         public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
             OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
@@ -74,6 +128,7 @@ namespace OxGFrame.AssetLoader.Bundle
             byte xorKey = Convert.ToByte(decryptArgs[1].Decrypt());
             return FileCryptogram.XOR.XorDecryptStream(filePath, xorKey);
         }
+        #endregion
 
         public uint GetManagedReadBufferSize()
         {
@@ -91,10 +146,31 @@ namespace OxGFrame.AssetLoader.Bundle
             managedStream = this.DecryptStream(fileInfo);
             return AssetBundle.LoadFromStreamAsync(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
+
+        public byte[] LoadRawFileData(DecryptFileInfo fileInfo)
+        {
+            return this.DecryptData(fileInfo);
+        }
     }
 
-    public class HT2XorDecryption : IDecryptionServices, IDecryptStream
+    public class HT2XorDecryption : IDecryptionServices, IDecryptStream, IDecryptData
     {
+        #region OxGFrame Implements
+        public byte[] DecryptData(DecryptFileInfo fileInfo)
+        {
+            OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
+            string filePath = fileInfo.FileLoadPath;
+            byte hXorkey = Convert.ToByte(decryptArgs[1].Decrypt());
+            byte tXorkey = Convert.ToByte(decryptArgs[2].Decrypt());
+            byte jXorKey = Convert.ToByte(decryptArgs[3].Decrypt());
+            if (File.Exists(filePath) == false)
+                return null;
+            byte[] data = File.ReadAllBytes(filePath);
+            if (FileCryptogram.HT2XOR.HT2XorDecryptBytes(data, hXorkey, tXorkey, jXorKey))
+                return data;
+            return null;
+        }
+
         public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
             OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
@@ -104,6 +180,7 @@ namespace OxGFrame.AssetLoader.Bundle
             byte jXorKey = Convert.ToByte(decryptArgs[3].Decrypt());
             return FileCryptogram.HT2XOR.HT2XorDecryptStream(filePath, hXorkey, tXorkey, jXorKey);
         }
+        #endregion
 
         public uint GetManagedReadBufferSize()
         {
@@ -121,10 +198,30 @@ namespace OxGFrame.AssetLoader.Bundle
             managedStream = this.DecryptStream(fileInfo);
             return AssetBundle.LoadFromStreamAsync(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
         }
+
+        public byte[] LoadRawFileData(DecryptFileInfo fileInfo)
+        {
+            return this.DecryptData(fileInfo);
+        }
     }
 
-    public class AesDecryption : IDecryptionServices, IDecryptStream
+    public class AesDecryption : IDecryptionServices, IDecryptStream, IDecryptData
     {
+        #region OxGFrame Implements
+        public byte[] DecryptData(DecryptFileInfo fileInfo)
+        {
+            OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
+            string filePath = fileInfo.FileLoadPath;
+            string aesKey = decryptArgs[1].Decrypt();
+            string aesIv = decryptArgs[2].Decrypt();
+            if (File.Exists(filePath) == false)
+                return null;
+            byte[] data = File.ReadAllBytes(filePath);
+            if (FileCryptogram.AES.AesDecryptBytes(data, aesKey, aesIv))
+                return data;
+            return null;
+        }
+
         public Stream DecryptStream(DecryptFileInfo fileInfo)
         {
             OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
@@ -133,6 +230,7 @@ namespace OxGFrame.AssetLoader.Bundle
             string aesIv = decryptArgs[2].Decrypt();
             return FileCryptogram.AES.AesDecryptStream(filePath, aesKey, aesIv);
         }
+        #endregion
 
         public uint GetManagedReadBufferSize()
         {
@@ -149,6 +247,11 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             managedStream = this.DecryptStream(fileInfo);
             return AssetBundle.LoadFromStreamAsync(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
+        }
+
+        public byte[] LoadRawFileData(DecryptFileInfo fileInfo)
+        {
+            return this.DecryptData(fileInfo);
         }
     }
 }

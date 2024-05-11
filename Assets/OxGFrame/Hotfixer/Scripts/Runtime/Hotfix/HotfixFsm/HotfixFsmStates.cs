@@ -75,12 +75,16 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
             private async UniTask _InitHotfixPackage()
             {
-                AppPackageInfoWithBuild packageInfo = new AppPackageInfoWithBuild()
+                PackageInfoWithBuild packageInfoWithBuild = HotfixManager.GetInstance().packageInfoWithBuild;
+                if (packageInfoWithBuild == null)
                 {
-                    buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline,
-                    packageName = HotfixManager.GetInstance().packageName
-                };
-                bool isInitialized = await AssetPatcher.InitAppPackage(packageInfo);
+                    packageInfoWithBuild = new AppPackageInfoWithBuild()
+                    {
+                        buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline,
+                        packageName = HotfixManager.GetInstance().packageName
+                    };
+                }
+                bool isInitialized = await AssetPatcher.InitPackage(packageInfoWithBuild);
                 if (isInitialized) this._machine.ChangeState<FsmUpdateHotfixPackage>();
                 else HotfixEvents.HotfixInitFailed.SendEventMessage();
             }
@@ -330,8 +334,16 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                         foreach (var dllName in aotMetaAssemblyFiles)
                         {
                             var dll = await AssetLoaders.LoadAssetAsync<TextAsset>(HotfixManager.GetInstance().packageName, dllName);
+#if !UNITY_WEBGL
+                            // 切換至其他線程
+                            await UniTask.SwitchToThreadPool();
+#endif
                             // 加載 assembly 對應的 dll, 會自動為它 hook, 一旦 aot 泛型函數的 native 函數不存在, 用解釋器版本代碼
                             LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dll.bytes, mode);
+#if !UNITY_WEBGL
+                            // 切回至主線程
+                            await UniTask.SwitchToMainThread();
+#endif
                             // Unload after load
                             AssetLoaders.UnloadAsset(dllName);
                             Logging.Print<Logger>($"<color=#32fff5>Load <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}, ret: {err}</color>");
@@ -400,7 +412,16 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                             else
                             {
                                 var dll = await AssetLoaders.LoadAssetAsync<TextAsset>(HotfixManager.GetInstance().packageName, dllName);
+#if !UNITY_WEBGL
+                                // 切換至其他線程
+                                await UniTask.SwitchToThreadPool();
+#endif
+                                // 加載熱更 dlls
                                 hotfixAsm = Assembly.Load(dll.bytes);
+#if !UNITY_WEBGL
+                                // 切回至主線程
+                                await UniTask.SwitchToMainThread();
+#endif
                                 // Unload after load
                                 AssetLoaders.UnloadAsset(dllName);
                             }

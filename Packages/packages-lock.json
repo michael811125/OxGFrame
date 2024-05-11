@@ -5,14 +5,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "67c487f521087a3887e6c8817dff3cd264aa4f20"
+      "hash": "95922aec1ed8eb385caa68b7662e9caa9f9685c6"
     },
     "com.cysharp.unitask": {
       "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "0c8057c66852e7d720966ef076d4924ebb27e80c"
+      "hash": "fbe0bf85155f42f8832205f7b3ac3df571ada33e"
     },
     "com.domybest.lwmybox": {
       "version": "https://github.com/michael811125/LWMyBox.git",
@@ -21,7 +21,7 @@
       "dependencies": {
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "9816f6cb6b3475b762488ba716d6953caab611d5"
+      "hash": "42b343614ebe621cb9a3470f3c400eaaa8cf6f1b"
     },
     "com.jeffjadulco.guidregenerator": {
       "version": "https://github.com/jeffjadulco/unity-guid-regenerator.git",
@@ -35,14 +35,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "79948ba60ee32a71558ef3b916844eff3913595f"
+      "hash": "f0278d119d59ac53b353d8ab4e12b5eaa3413ede"
     },
     "com.michaelo.oxgkit.utilities": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "ba952548433885b05744ae660e8c4e5c9d836794"
+      "hash": "f0278d119d59ac53b353d8ab4e12b5eaa3413ede"
     },
     "com.unity.2d.animation": {
       "version": "7.0.13",
@@ -217,7 +217,7 @@
       }
     },
     "com.unity.scriptablebuildpipeline": {
-      "version": "1.21.7",
+      "version": "2.1.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
