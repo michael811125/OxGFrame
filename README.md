@@ -87,10 +87,10 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 **選擇使用 Bundle 開發時，需要先將 PatchLauncher 拖曳至場景中，才能驅動相關配置。【如果使用 PakcageManager 安裝的，透過 Samples Import PatchLauncher Prefab】**
 
 - FileCryptogram (檔案加解密)
-  - 運算效率 OFFSET > HT2XOR > XOR > AES
-  - 內存占用 OFFSET > AES > HT2XOR = XOR 
-  - AB 包體積增加 OFFSET > AES > HT2XOR = XOR
-  - 破解難度 AES > HT2XOR > XOR > OFFSET
+  - 運算效率 OFFSET > HT2XOR >= HT2XORPlus > XOR > AES
+  - 內存占用 OFFSET > AES > HT2XORPlus = HT2XOR = XOR 
+  - AB 包體積增加 OFFSET > AES > HT2XORPlus = HT2XOR = XOR
+  - 破解難度 AES > HT2XORPlus > HT2XOR > XOR > OFFSET
 
 #### 群組分包舉例
   - 最小運行包

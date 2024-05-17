@@ -5,12 +5,12 @@ using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
-    internal interface IDecryptStream
+    public interface IDecryptStream
     {
         Stream DecryptStream(DecryptFileInfo fileInfo);
     }
 
-    internal interface IDecryptData
+    public interface IDecryptData
     {
         byte[] DecryptData(DecryptFileInfo fileInfo);
     }
@@ -57,6 +57,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
     }
 
+    #region Offset
     public class OffsetDecryption : IDecryptionServices, IDecryptStream, IDecryptData
     {
         #region OxGFrame Implements
@@ -104,7 +105,9 @@ namespace OxGFrame.AssetLoader.Bundle
             return this.DecryptData(fileInfo);
         }
     }
+    #endregion
 
+    #region Xor
     public class XorDecryption : IDecryptionServices, IDecryptStream, IDecryptData
     {
         #region OxGFrame Implements
@@ -152,7 +155,9 @@ namespace OxGFrame.AssetLoader.Bundle
             return this.DecryptData(fileInfo);
         }
     }
+    #endregion
 
+    #region HT2Xor
     public class HT2XorDecryption : IDecryptionServices, IDecryptStream, IDecryptData
     {
         #region OxGFrame Implements
@@ -204,7 +209,65 @@ namespace OxGFrame.AssetLoader.Bundle
             return this.DecryptData(fileInfo);
         }
     }
+    #endregion
 
+    #region HT2XorPlus
+    public class HT2XorPlusDecryption : IDecryptionServices, IDecryptStream, IDecryptData
+    {
+        #region OxGFrame Implements
+        public byte[] DecryptData(DecryptFileInfo fileInfo)
+        {
+            OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
+            string filePath = fileInfo.FileLoadPath;
+            byte hXorkey = Convert.ToByte(decryptArgs[1].Decrypt());
+            byte tXorkey = Convert.ToByte(decryptArgs[2].Decrypt());
+            byte j1XorKey = Convert.ToByte(decryptArgs[3].Decrypt());
+            byte j2XorKey = Convert.ToByte(decryptArgs[4].Decrypt());
+            if (File.Exists(filePath) == false)
+                return null;
+            byte[] data = File.ReadAllBytes(filePath);
+            if (FileCryptogram.HT2XORPlus.HT2XorPlusDecryptBytes(data, hXorkey, tXorkey, j1XorKey, j2XorKey))
+                return data;
+            return null;
+        }
+
+        public Stream DecryptStream(DecryptFileInfo fileInfo)
+        {
+            OxGFrame.AssetLoader.Utility.SecureMemory.SecureString[] decryptArgs = BundleConfig.decryptArgs;
+            string filePath = fileInfo.FileLoadPath;
+            byte hXorkey = Convert.ToByte(decryptArgs[1].Decrypt());
+            byte tXorkey = Convert.ToByte(decryptArgs[2].Decrypt());
+            byte j1XorKey = Convert.ToByte(decryptArgs[3].Decrypt());
+            byte j2XorKey = Convert.ToByte(decryptArgs[4].Decrypt());
+            return FileCryptogram.HT2XORPlus.HT2XorPlusDecryptStream(filePath, hXorkey, tXorkey, j1XorKey, j2XorKey);
+        }
+        #endregion
+
+        public uint GetManagedReadBufferSize()
+        {
+            return 1024;
+        }
+
+        public AssetBundle LoadAssetBundle(DecryptFileInfo fileInfo, out Stream managedStream)
+        {
+            managedStream = this.DecryptStream(fileInfo);
+            return AssetBundle.LoadFromStream(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
+        }
+
+        public AssetBundleCreateRequest LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream)
+        {
+            managedStream = this.DecryptStream(fileInfo);
+            return AssetBundle.LoadFromStreamAsync(managedStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
+        }
+
+        public byte[] LoadRawFileData(DecryptFileInfo fileInfo)
+        {
+            return this.DecryptData(fileInfo);
+        }
+    }
+    #endregion
+
+    #region AES
     public class AesDecryption : IDecryptionServices, IDecryptStream, IDecryptData
     {
         #region OxGFrame Implements
@@ -254,4 +317,5 @@ namespace OxGFrame.AssetLoader.Bundle
             return this.DecryptData(fileInfo);
         }
     }
+    #endregion
 }

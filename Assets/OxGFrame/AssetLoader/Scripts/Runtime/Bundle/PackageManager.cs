@@ -43,6 +43,9 @@ namespace OxGFrame.AssetLoader.Bundle
                 case BundleConfig.CryptogramType.HT2XOR:
                     _decryption = new HT2XorDecryption();
                     break;
+                case BundleConfig.CryptogramType.HT2XORPLUS:
+                    _decryption = new HT2XorPlusDecryption();
+                    break;
                 case BundleConfig.CryptogramType.AES:
                     _decryption = new AesDecryption();
                     break;

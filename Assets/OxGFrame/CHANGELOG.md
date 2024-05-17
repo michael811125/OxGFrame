@@ -1,23 +1,27 @@
 # CHANGELOG
 
-## [2.11.0] -2024-05-12
+## [2.11.1] - 2024-05-17
+- Added HT2XORPlus encryption stronger than HT2XOR (Recommended).
+- Updated YooAsset to v2.1.2 (new commits).
+
+## [2.11.0] - 2024-05-12
 - Updated YooAsset commits.
 - Updated Scriptable Build Pipeline to v2.1.3 (Unity).
 - Added YooAsset can support RawFile encryption.
 - Added Hotfixer can new PackageInfoWithBuild to CheckHotfix method.
 - Optimized Support Hotfix to be loaded using other threads (WebGL is not supported).
 
-## [2.10.5] -2024-04-17
+## [2.10.5] - 2024-04-17
 - Fixed SimpleDiskUtils compile error issue on WIN.
 
-## [2.10.4] -2024-04-08
+## [2.10.4] - 2024-04-08
 - Removed UniTask from built-in.
   - Please use install via git URL instead (Package Manager)
 ```
 https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
 ```
 
-## [2.10.3] -2024-04-01
+## [2.10.3] - 2024-04-01
 - Added CacheType to AudioManager, which will be used for caching when AudioBase is using the request method.
 - Modified AudioBase to not rely on the methods of the OxGKit.Utilities' Requester.
 - Modified Acax encoding type (use UTF-8).
