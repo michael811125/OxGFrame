@@ -12,6 +12,7 @@ namespace OxGFrame.AssetLoader.Editor
             Offset,
             Xor,
             HT2Xor,
+            HT2XorPlus,
             Aes
         }
 
@@ -74,12 +75,25 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void _LoadSettingsData()
         {
+            // Offset
             this.randomSeed = this._setting.randomSeed;
             this.dummySize = this._setting.dummySize;
+
+            // XOR
             this.xorKey = this._setting.xorKey;
+
+            // HT2XOR
             this.hXorKey = this._setting.hXorKey;
             this.tXorKey = this._setting.tXorKey;
             this.jXorKey = this._setting.jXorKey;
+
+            // HT2XORPlus
+            this.hXorPlusKey = this._setting.hXorPlusKey;
+            this.tXorPlusKey = this._setting.tXorPlusKey;
+            this.j1XorPlusKey = this._setting.j1XorPlusKey;
+            this.j2XorPlusKey = this._setting.j2XorPlusKey;
+
+            // AES
             this.aesKey = this._setting.aesKey;
             this.aesIv = this._setting.aesIv;
         }
@@ -97,12 +111,16 @@ namespace OxGFrame.AssetLoader.Editor
                 case CryptogramType.HT2Xor:
                     this._DrawHT2XorView();
                     break;
+                case CryptogramType.HT2XorPlus:
+                    this._DrawHT2XorPlusView();
+                    break;
                 case CryptogramType.Aes:
                     this._DrawAesView();
                     break;
             }
         }
 
+        #region Offset
         [SerializeField]
         public int randomSeed = 1;
         [SerializeField]
@@ -135,7 +153,9 @@ namespace OxGFrame.AssetLoader.Editor
 
             EditorGUILayout.EndVertical();
         }
+        #endregion
 
+        #region Xor
         [SerializeField]
         public int xorKey = 0;
         private void _DrawXorView()
@@ -165,7 +185,9 @@ namespace OxGFrame.AssetLoader.Editor
 
             EditorGUILayout.EndVertical();
         }
+        #endregion
 
+        #region HT2Xor
         [SerializeField]
         public int hXorKey = 0;
         [SerializeField]
@@ -205,7 +227,57 @@ namespace OxGFrame.AssetLoader.Editor
 
             EditorGUILayout.EndVertical();
         }
+        #endregion
 
+        #region HT2Xor Plus
+        [SerializeField]
+        public int hXorPlusKey = 0;
+        [SerializeField]
+        public int tXorPlusKey = 0;
+        [SerializeField]
+        public int j1XorPlusKey = 0;
+        [SerializeField]
+        public int j2XorPlusKey = 0;
+        private void _DrawHT2XorPlusView()
+        {
+            EditorGUILayout.Space();
+
+            GUIStyle style = new GUIStyle();
+            var bg = new Texture2D(1, 1);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
+            Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+            bg.SetPixels(pixels);
+            bg.Apply();
+            style.normal.background = bg;
+            EditorGUILayout.BeginVertical(style);
+            var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+            centeredStyle.alignment = TextAnchor.UpperCenter;
+            GUILayout.Label(new GUIContent("Head-Tail 2 XOR Plus Settings"), centeredStyle);
+            EditorGUILayout.Space();
+
+            EditorGUI.BeginChangeCheck();
+            EditorGUIUtility.labelWidth = 200;
+            this.hXorPlusKey = EditorGUILayout.IntField("Head XOR Plus KEY (0 ~ 255)", this.hXorPlusKey);
+            if (this.hXorPlusKey < 0) this.hXorPlusKey = 0;
+            else if (this.hXorPlusKey > 255) this.hXorPlusKey = 255;
+            this.tXorPlusKey = EditorGUILayout.IntField("Tail XOR Plus KEY (0 ~ 255)", this.tXorPlusKey);
+            if (this.tXorPlusKey < 0) this.tXorPlusKey = 0;
+            else if (this.tXorPlusKey > 255) this.tXorPlusKey = 255;
+            this.j1XorPlusKey = EditorGUILayout.IntField("Jump 1 XOR Plus KEY (0 ~ 255)", this.j1XorPlusKey);
+            if (this.j1XorPlusKey < 0) this.j1XorPlusKey = 0;
+            else if (this.j1XorPlusKey > 255) this.j1XorPlusKey = 255;
+            this.j2XorPlusKey = EditorGUILayout.IntField("Jump 2 XOR Plus KEY (0 ~ 255)", this.j2XorPlusKey);
+            if (this.j2XorPlusKey < 0) this.j2XorPlusKey = 0;
+            else if (this.j2XorPlusKey > 255) this.j2XorPlusKey = 255;
+            if (EditorGUI.EndChangeCheck()) this._isDirty = true;
+
+            this._DrawOperateButtonsView(this.cryptogramType);
+
+            EditorGUILayout.EndVertical();
+        }
+        #endregion
+
+        #region AES
         [SerializeField]
         public string aesKey = "aes_key";
         [SerializeField]
@@ -236,6 +308,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             EditorGUILayout.EndVertical();
         }
+        #endregion
 
         private void _DrawOperateButtonsView(CryptogramType cryptogramType)
         {
@@ -287,6 +360,18 @@ namespace OxGFrame.AssetLoader.Editor
                     AssetDatabase.SaveAssets();
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [Head-Tail 2 XOR] Setting.", "OK");
+                    break;
+                case CryptogramType.HT2XorPlus:
+                    this._setting.hXorPlusKey = (byte)this.hXorPlusKey;
+                    this._setting.tXorPlusKey = (byte)this.tXorPlusKey;
+                    this._setting.j1XorPlusKey = (byte)this.j1XorPlusKey;
+                    this._setting.j2XorPlusKey = (byte)this.j2XorPlusKey;
+
+                    this._isDirty = false;
+                    EditorUtility.SetDirty(this._setting);
+                    AssetDatabase.SaveAssets();
+
+                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [Head-Tail 2 XOR Plus] Setting.", "OK");
                     break;
                 case CryptogramType.Aes:
                     if (string.IsNullOrEmpty(this.aesKey) || string.IsNullOrEmpty(this.aesIv))

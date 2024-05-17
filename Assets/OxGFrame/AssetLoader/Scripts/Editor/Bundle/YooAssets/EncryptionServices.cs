@@ -109,6 +109,39 @@ namespace OxGFrame.AssetLoader.Editor
         }
     }
 
+    public class HT2XorPlusEncryption : IEncryptionServices
+    {
+        public EncryptResult Encrypt(EncryptFileInfo fileInfo)
+        {
+            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+
+            string filePath = fileInfo.FilePath;
+
+            byte hXorKey = cryptogramSettings.hXorPlusKey;
+            byte tXorKey = cryptogramSettings.tXorPlusKey;
+            byte j1XorKey = cryptogramSettings.j1XorPlusKey;
+            byte j2XorKey = cryptogramSettings.j2XorPlusKey;
+
+            byte[] fileData = File.ReadAllBytes(filePath);
+
+            if (FileCryptogram.HT2XORPlus.HT2XorPlusEncryptBytes(fileData, hXorKey, tXorKey, j1XorKey, j2XorKey))
+            {
+                Debug.Log($"HT2XorPlusCryptogram => hXorKey: {hXorKey}, tXorKey: {tXorKey}, j1XorKey: {j1XorKey}, j2XorKey: {j2XorKey}");
+
+                EncryptResult result = new EncryptResult();
+                result.Encrypted = true;
+                result.EncryptedData = fileData;
+                return result;
+            }
+            else
+            {
+                EncryptResult result = new EncryptResult();
+                result.Encrypted = false;
+                return result;
+            }
+        }
+    }
+
     public class AesEncryption : IEncryptionServices
     {
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)

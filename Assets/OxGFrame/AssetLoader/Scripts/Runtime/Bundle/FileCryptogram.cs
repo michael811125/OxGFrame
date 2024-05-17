@@ -266,14 +266,15 @@ namespace OxGFrame.AssetLoader.Bundle
                     try
                     {
                         byte[] dataBytes = File.ReadAllBytes(sourceFile);
+                        int length = dataBytes.Length;
 
                         // head encrypt
                         dataBytes[0] ^= hKey;
                         // tail encrypt
-                        dataBytes[dataBytes.Length - 1] ^= tKey;
+                        dataBytes[length - 1] ^= tKey;
 
                         // jump 2 encrypt
-                        for (int i = 0; i < dataBytes.Length >> 1; i++)
+                        for (int i = 0; i < length >> 1; i++)
                         {
                             dataBytes[i << 1] ^= jKey;
                         }
@@ -298,9 +299,10 @@ namespace OxGFrame.AssetLoader.Bundle
                     try
                     {
                         byte[] dataBytes = File.ReadAllBytes(encryptFile);
+                        int length = dataBytes.Length;
 
                         // jump 2 encrypt
-                        for (int i = 0; i < dataBytes.Length >> 1; i++)
+                        for (int i = 0; i < length >> 1; i++)
                         {
                             dataBytes[i << 1] ^= jKey;
                         }
@@ -308,7 +310,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         // head encrypt
                         dataBytes[0] ^= hKey;
                         // tail encrypt
-                        dataBytes[dataBytes.Length - 1] ^= tKey;
+                        dataBytes[length - 1] ^= tKey;
 
                         File.WriteAllBytes(encryptFile, dataBytes);
                     }
@@ -330,13 +332,15 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 try
                 {
+                    int length = rawBytes.Length;
+
                     // head encrypt
                     rawBytes[0] ^= hKey;
                     // tail encrypt
-                    rawBytes[rawBytes.Length - 1] ^= tKey;
+                    rawBytes[length - 1] ^= tKey;
 
                     // jump 2 encrypt
-                    for (int i = 0; i < rawBytes.Length >> 1; i++)
+                    for (int i = 0; i < length >> 1; i++)
                     {
                         rawBytes[i << 1] ^= jKey;
                     }
@@ -356,8 +360,10 @@ namespace OxGFrame.AssetLoader.Bundle
             /// <returns></returns>
             public static bool HT2XorDecryptBytes(byte[] encryptBytes, byte hKey, byte tKey, byte jKey)
             {
+                int length = encryptBytes.Length;
+
                 // jump 2 encrypt
-                for (int i = 0; i < encryptBytes.Length >> 1; i++)
+                for (int i = 0; i < length >> 1; i++)
                 {
                     encryptBytes[i << 1] ^= jKey;
                 }
@@ -365,7 +371,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 // head encrypt
                 encryptBytes[0] ^= hKey;
                 // tail encrypt
-                encryptBytes[encryptBytes.Length - 1] ^= tKey;
+                encryptBytes[length - 1] ^= tKey;
 
                 return true;
             }
@@ -379,13 +385,14 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 var fsDecrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.None);
                 var dataBytes = new byte[fsDecrypt.Length];
-                fsDecrypt.Read(dataBytes, 0, dataBytes.Length);
+                int length = dataBytes.Length;
+                fsDecrypt.Read(dataBytes, 0, length);
                 fsDecrypt.Dispose();
 
                 var msDecrypt = new MemoryStream();
 
                 // jump 2 encrypt
-                for (int i = 0; i < dataBytes.Length >> 1; i++)
+                for (int i = 0; i < length >> 1; i++)
                 {
                     dataBytes[i << 1] ^= jKey;
                 }
@@ -393,9 +400,185 @@ namespace OxGFrame.AssetLoader.Bundle
                 // head encrypt
                 dataBytes[0] ^= hKey;
                 // tail encrypt
-                dataBytes[dataBytes.Length - 1] ^= tKey;
+                dataBytes[length - 1] ^= tKey;
 
-                msDecrypt.Write(dataBytes, 0, dataBytes.Length);
+                msDecrypt.Write(dataBytes, 0, length);
+
+                return msDecrypt;
+            }
+        }
+
+        public class HT2XORPlus
+        {
+            public class WriteFile
+            {
+                /// <summary>
+                /// Head-Tail 2 XOR Plus 加密檔案 【檢測OK】
+                /// </summary>
+                /// <param name="sourceFile"></param>
+                /// <returns></returns>
+                public static bool HT2XorPlusEncryptFile(string sourceFile, byte hKey, byte tKey, byte j1Key, byte j2Key)
+                {
+                    try
+                    {
+                        byte[] dataBytes = File.ReadAllBytes(sourceFile);
+                        int length = dataBytes.Length;
+
+                        // head encrypt
+                        dataBytes[0] ^= hKey;
+                        // tail encrypt
+                        dataBytes[length - 1] ^= tKey;
+
+                        // jump 2 encrypt
+                        for (int i = 0; i < length >> 1; i++)
+                        {
+                            int s1 = i << 1;
+                            int s2 = s1 + 1;
+                            dataBytes[s1] ^= j1Key;
+                            if (s2 < length)
+                                dataBytes[s2] ^= j2Key;
+                        }
+
+                        File.WriteAllBytes(sourceFile, dataBytes);
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+
+                /// <summary>
+                /// Head-Tail 2 XOR Plus 解密檔案 【檢測OK】
+                /// </summary>
+                /// <param name="encryptFile"></param>
+                /// <returns></returns>
+                public static bool HT2XorPlusDecryptFile(string encryptFile, byte hKey, byte tKey, byte j1Key, byte j2Key)
+                {
+                    try
+                    {
+                        byte[] dataBytes = File.ReadAllBytes(encryptFile);
+                        int length = dataBytes.Length;
+
+                        // jump 2 plus decrypt
+                        for (int i = 0; i < length >> 1; i++)
+                        {
+                            int s1 = i << 1;
+                            int s2 = s1 + 1;
+                            dataBytes[s1] ^= j1Key;
+                            if (s2 < length)
+                                dataBytes[s2] ^= j2Key;
+                        }
+
+                        // head decrypt
+                        dataBytes[0] ^= hKey;
+                        // tail decrypt
+                        dataBytes[length - 1] ^= tKey;
+
+                        File.WriteAllBytes(encryptFile, dataBytes);
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+            }
+
+            /// <summary>
+            /// Head-Tail 2 XOR Plus 加密檔案 【檢測OK】
+            /// </summary>
+            /// <param name="sourceFile"></param>
+            /// <returns></returns>
+            public static bool HT2XorPlusEncryptBytes(byte[] rawBytes, byte hKey, byte tKey, byte j1Key, byte j2Key)
+            {
+                try
+                {
+                    int length = rawBytes.Length;
+
+                    // head encrypt
+                    rawBytes[0] ^= hKey;
+                    // tail encrypt
+                    rawBytes[length - 1] ^= tKey;
+
+                    // jump 2 plus encrypt
+                    for (int i = 0; i < length >> 1; i++)
+                    {
+                        int s1 = i << 1;
+                        int s2 = s1 + 1;
+                        rawBytes[s1] ^= j1Key;
+                        if (s2 < length)
+                            rawBytes[s2] ^= j2Key;
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            /// <summary>
+            /// Head-Tail 2 XOR Plus 解密檔案 【檢測OK】
+            /// </summary>
+            /// <param name="encryptBytes"></param>
+            /// <returns></returns>
+            public static bool HT2XorPlusDecryptBytes(byte[] encryptBytes, byte hKey, byte tKey, byte j1Key, byte j2Key)
+            {
+                int length = encryptBytes.Length;
+
+                // jump 2 plus decrypt
+                for (int i = 0; i < length >> 1; i++)
+                {
+                    int s1 = i << 1;
+                    int s2 = s1 + 1;
+                    encryptBytes[s1] ^= j1Key;
+                    if (s2 < length)
+                        encryptBytes[s2] ^= j2Key;
+                }
+
+                // head decrypt
+                encryptBytes[0] ^= hKey;
+                // tail decrypt
+                encryptBytes[length - 1] ^= tKey;
+
+                return true;
+            }
+
+            /// <summary>
+            /// 返回 Head-Tail 2 XOR Plus 解密 Stream 【檢測OK】
+            /// </summary>
+            /// <param name="encryptFile"></param>
+            /// <returns></returns>
+            public static Stream HT2XorPlusDecryptStream(string encryptFile, byte hKey, byte tKey, byte j1Key, byte j2Key)
+            {
+                var fsDecrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.None);
+                var dataBytes = new byte[fsDecrypt.Length];
+                int length = dataBytes.Length;
+                fsDecrypt.Read(dataBytes, 0, length);
+                fsDecrypt.Dispose();
+
+                var msDecrypt = new MemoryStream();
+
+                // jump 2 plus decrypt
+                for (int i = 0; i < length >> 1; i++)
+                {
+                    int s1 = i << 1;
+                    int s2 = s1 + 1;
+                    dataBytes[s1] ^= j1Key;
+                    if (s2 < length)
+                        dataBytes[s2] ^= j2Key;
+                }
+
+                // head decrypt
+                dataBytes[0] ^= hKey;
+                // tail decrypt
+                dataBytes[length - 1] ^= tKey;
+
+                msDecrypt.Write(dataBytes, 0, length);
 
                 return msDecrypt;
             }

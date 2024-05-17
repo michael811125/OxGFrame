@@ -18,6 +18,12 @@ namespace OxGFrame.AssetLoader.Editor
         public byte tXorKey = 1;
         public byte jXorKey = 1;
 
+        [Separator("HT2XORPlus")]
+        public byte hXorPlusKey = 1;
+        public byte tXorPlusKey = 1;
+        public byte j1XorPlusKey = 1;
+        public byte j2XorPlusKey = 1;
+
         [Separator("AES")]
         public string aesKey = "aes_key";
         public string aesIv = "aes_iv";

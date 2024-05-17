@@ -52,6 +52,7 @@ namespace OxGFrame.AssetLoader.Bundle
             public const string OFFSET = "OFFSET";
             public const string XOR = "XOR";
             public const string HT2XOR = "HT2XOR";
+            public const string HT2XORPLUS = "HT2XORPLUS";
             public const string AES = "AES";
         }
 
