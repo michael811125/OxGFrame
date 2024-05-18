@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.11.2] - 2024-05-18
+- Added burlconfig.conf can export cipher type (If the output is ciphertext, it will automatically determine whether to execute with the decryption process).
+  - Cipher process.
+  - Plaintext process.  
+
 ## [2.11.1] - 2024-05-17
 - Added HT2XORPlus encryption stronger than HT2XOR (Recommended).
 - Updated YooAsset to v2.1.2 (new commits).

@@ -21,7 +21,7 @@ namespace OxGFrame.MediaFrame.Editor
             if (string.IsNullOrEmpty(audioUrlset)) audioUrlset = "127.0.0.1/audio/";
             if (string.IsNullOrEmpty(videoUrlset)) videoUrlset = "127.0.0.1/video/";
 
-            IEnumerable<string> contents = new string[]
+            IEnumerable<string> texts = new string[]
             {
             @$"# {MediaConfig.AUDIO_URLSET} = Audio Source Url Path",
             @$"# {MediaConfig.VIDEO_URLSET} = Video Source Url Path",
@@ -33,7 +33,7 @@ namespace OxGFrame.MediaFrame.Editor
             string fullOutputPath = Path.Combine(outputPath, MediaConfig.MEDIA_URL_CFG_NAME);
 
             // 寫入配置文件
-            File.WriteAllLines(fullOutputPath, contents, System.Text.Encoding.UTF8);
+            File.WriteAllLines(fullOutputPath, texts, System.Text.Encoding.UTF8);
 
             Debug.Log($"<color=#00FF00>【Export {MediaConfig.MEDIA_URL_CFG_NAME} Completes】</color>");
         }

@@ -90,7 +90,10 @@ namespace OxGFrame.AssetLoader.Editor
 
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
-            this.bundleIp = EditorGUILayout.TextField("Bundle IP", this.bundleIp);
+            var labelWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 180;
+            this.bundleIp = EditorGUILayout.TextField("Bundle IP or Domain", this.bundleIp);
+            EditorGUIUtility.labelWidth = labelWidth;
             if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(keySaver, "bundleIp", this.bundleIp);
             EditorGUILayout.EndHorizontal();
         }
@@ -101,7 +104,10 @@ namespace OxGFrame.AssetLoader.Editor
 
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
-            this.bundleFallbackIp = EditorGUILayout.TextField("Bundle Fallback IP", this.bundleFallbackIp);
+            var labelWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 180;
+            this.bundleFallbackIp = EditorGUILayout.TextField("Bundle Fallback IP or Domain", this.bundleFallbackIp);
+            EditorGUIUtility.labelWidth = labelWidth;
             if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(keySaver, "bundleFallbackIp", this.bundleFallbackIp);
             EditorGUILayout.EndHorizontal();
         }
@@ -112,7 +118,10 @@ namespace OxGFrame.AssetLoader.Editor
 
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
+            var labelWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 180;
             this.storeLink = EditorGUILayout.TextField("Store Link", this.storeLink);
+            EditorGUIUtility.labelWidth = labelWidth;
             if (EditorGUI.EndChangeCheck()) EditorStorage.SaveData(keySaver, "storeLink", this.storeLink);
             EditorGUILayout.EndHorizontal();
         }
@@ -132,11 +141,22 @@ namespace OxGFrame.AssetLoader.Editor
             // process button
             Color bc = GUI.backgroundColor;
             GUI.backgroundColor = new Color32(255, 185, 83, 255);
-            if (GUILayout.Button("Process", GUILayout.MaxWidth(100f)))
+            if (GUILayout.Button("Cipher Process", GUILayout.MaxWidth(110f)))
             {
                 string outputPath = Application.streamingAssetsPath;
-                BundleHelper.ExportBundleUrlConfig(this.bundleIp, this.bundleFallbackIp, this.storeLink, outputPath);
-                EditorUtility.DisplayDialog("Process Message", "Export BundleUrlConfig To StreamingAssets.", "OK");
+                BundleHelper.ExportBundleUrlConfig(this.bundleIp, this.bundleFallbackIp, this.storeLink, outputPath, true);
+                EditorUtility.DisplayDialog("Process Message", "Export [Cipher] BundleUrlConfig To StreamingAssets.", "OK");
+                AssetDatabase.Refresh();
+                string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.BUNDLE_URL_CFG_EXTENSION}";
+                if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{bundleUrlFileName}");
+            }
+            GUI.backgroundColor = bc;
+            GUI.backgroundColor = new Color32(255, 185, 83, 255);
+            if (GUILayout.Button("Plaintext Process", GUILayout.MaxWidth(125f)))
+            {
+                string outputPath = Application.streamingAssetsPath;
+                BundleHelper.ExportBundleUrlConfig(this.bundleIp, this.bundleFallbackIp, this.storeLink, outputPath, false);
+                EditorUtility.DisplayDialog("Process Message", "Export [Plaintext] BundleUrlConfig To StreamingAssets.", "OK");
                 AssetDatabase.Refresh();
                 string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.BUNDLE_URL_CFG_EXTENSION}";
                 if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{bundleUrlFileName}");

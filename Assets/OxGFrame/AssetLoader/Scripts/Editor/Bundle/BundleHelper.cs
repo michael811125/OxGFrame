@@ -1,10 +1,13 @@
 ﻿using Newtonsoft.Json;
+using NUnit.Framework;
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 using YooAsset.Editor;
@@ -158,10 +161,12 @@ namespace OxGFrame.AssetLoader.Editor
         /// <summary>
         /// 產生 Bundle URL 配置檔至輸出路徑 (Export BundleUrlConfig to StreamingAssets [for Built-in])
         /// </summary>
-        /// <param name="productName"></param>
-        /// <param name="appVersion"></param>
+        /// <param name="bundleIp"></param>
+        /// <param name="bundleFallbackIp"></param>
+        /// <param name="storeLink"></param>
         /// <param name="outputPath"></param>
-        public static void ExportBundleUrlConfig(string bundleIp, string bundleFallbackIp, string storeLink, string outputPath)
+        /// <param name="cipher"></param>
+        public static void ExportBundleUrlConfig(string bundleIp, string bundleFallbackIp, string storeLink, string outputPath, bool cipher)
         {
             if (!Directory.Exists(outputPath)) Directory.CreateDirectory(outputPath);
 
@@ -169,7 +174,7 @@ namespace OxGFrame.AssetLoader.Editor
             if (string.IsNullOrEmpty(bundleFallbackIp)) bundleFallbackIp = "127.0.0.1";
             if (string.IsNullOrEmpty(storeLink)) storeLink = "http://";
 
-            IEnumerable<string> contents = new string[]
+            IEnumerable<string> texts = new string[]
             {
                 @$"# {PatchSetting.BUNDLE_IP} = First CDN Server IP or Domain (Plan A)",
                 @$"# {PatchSetting.BUNDLE_FALLBACK_IP} = Second CDN Server IP or Domain (Plan B)",
@@ -184,10 +189,48 @@ namespace OxGFrame.AssetLoader.Editor
             string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.BUNDLE_URL_CFG_EXTENSION}";
             string fullOutputPath = Path.Combine(outputPath, bundleUrlFileName);
 
-            // 寫入配置文件
-            File.WriteAllLines(fullOutputPath, contents, System.Text.Encoding.UTF8);
+            string content = string.Empty;
+            int idx = 0;
+            foreach (string txt in texts)
+            {
+                if (cipher)
+                {
+                    // Without useless texts
+                    if (idx < texts.ToArray().Length - 3)
+                    {
+                        idx++;
+                        continue;
+                    }
+                }
+                content += txt + "\n";
+            }
 
-            Debug.Log($"<color=#00FF00>【Export {bundleUrlFileName} Completes】</color>");
+            byte[] writeBuffer;
+            byte[] data = Encoding.UTF8.GetBytes(content);
+
+            if (cipher)
+            {
+                // Encrypt
+                for (int i = 0; i < data.Length; i++)
+                {
+                    data[i] ^= BundleConfig.cipher << 1;
+                }
+
+                // Write data with header
+                int pos = 0;
+                byte[] dataWithHeader = new byte[data.Length + 2];
+                // Write header (non-encrypted)
+                BundleConfig.WriteInt16(BundleConfig.cipherHeader, dataWithHeader, ref pos);
+                Buffer.BlockCopy(data, 0, dataWithHeader, pos, data.Length);
+                writeBuffer = dataWithHeader;
+            }
+            else
+                writeBuffer = data;
+
+            // 寫入配置文件
+            File.WriteAllBytes(fullOutputPath, writeBuffer);
+
+            Debug.Log($"<color=#00FF00>【Export Source is Cipher: {cipher}, {bundleUrlFileName} Completes】</color>");
         }
         #endregion
 
