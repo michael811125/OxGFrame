@@ -32,6 +32,8 @@ public static class UnityScene
 
 public class USFrameDemo : MonoBehaviour
 {
+    public bool syncMode = false;
+
     private void Awake()
     {
         DontDestroyOnLoad(this);
@@ -48,76 +50,118 @@ public class USFrameDemo : MonoBehaviour
         #region From Build
         if (Keyboard.current.numpad1Key.wasReleasedThisFrame)
         {
-            Action asyncHandler = async () =>
+            if (!this.syncMode)
             {
-                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Build.LevelDemo01, LoadSceneMode.Single, true, 100, (float progress, float currentCount, float totalCount) =>
+                Action asyncHandler = async () =>
                 {
-                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
-                });
-            };
-            asyncHandler.Invoke();
+                    await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Build.LevelDemo01, LoadSceneMode.Single, true, 100, (float progress, float currentCount, float totalCount) =>
+                    {
+                        Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
+                    });
+                };
+                asyncHandler.Invoke();
+            }
+            else
+            {
+                CoreFrames.USFrame.LoadScene(UnityScene.Build.LevelDemo01, LoadSceneMode.Single);
+            }
         }
 
         if (Keyboard.current.numpad2Key.wasReleasedThisFrame)
         {
-            Action asyncHandler = async () =>
+            if (!this.syncMode)
             {
-                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Build.LevelDemo02, LoadSceneMode.Single, true, 100, (float progress, float currentCount, float totalCount) =>
+                Action asyncHandler = async () =>
                 {
-                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
-                });
-            };
-            asyncHandler.Invoke();
+                    await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Build.LevelDemo02, LoadSceneMode.Single, true, 100, (float progress, float currentCount, float totalCount) =>
+                    {
+                        Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
+                    });
+                };
+                asyncHandler.Invoke();
+            }
+            else
+            {
+                CoreFrames.USFrame.LoadScene(UnityScene.Build.LevelDemo02, LoadSceneMode.Single);
+            }
         }
 
         if (Keyboard.current.numpad3Key.wasReleasedThisFrame)
         {
-            Action asyncHandler = async () =>
+            if (!this.syncMode)
             {
-                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Build.LevelDemo03, LoadSceneMode.Additive, true, 100, (float progress, float currentCount, float totalCount) =>
+                Action asyncHandler = async () =>
                 {
-                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
-                });
-            };
-            asyncHandler.Invoke();
+                    await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Build.LevelDemo03, LoadSceneMode.Additive, true, 100, (float progress, float currentCount, float totalCount) =>
+                    {
+                        Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
+                    });
+                };
+                asyncHandler.Invoke();
+            }
+            else
+            {
+                CoreFrames.USFrame.LoadScene(UnityScene.Build.LevelDemo03, LoadSceneMode.Additive);
+            }
         }
         #endregion
 
         #region From Bundle
         if (Keyboard.current.numpad4Key.wasReleasedThisFrame)
         {
-            Action asyncHandler = async () =>
+            if (!this.syncMode)
             {
-                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Bundle.LevelDemo01, LoadSceneMode.Single, true, 100, (float progress, float currentCount, float totalCount) =>
+                Action asyncHandler = async () =>
                 {
-                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
-                });
-            };
-            asyncHandler.Invoke();
+                    await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Bundle.LevelDemo01, LoadSceneMode.Single, true, 100, (float progress, float currentCount, float totalCount) =>
+                    {
+                        Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
+                    });
+                };
+                asyncHandler.Invoke();
+            }
+            else
+            {
+                CoreFrames.USFrame.LoadScene(UnityScene.Bundle.LevelDemo01, LoadSceneMode.Single);
+            }
         }
 
         if (Keyboard.current.numpad5Key.wasReleasedThisFrame)
         {
-            Action asyncHandler = async () =>
+            if (!this.syncMode)
             {
-                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Bundle.LevelDemo02, LoadSceneMode.Single, true, 100, (float progress, float currentCount, float totalCount) =>
+                Action asyncHandler = async () =>
                 {
-                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
-                });
-            };
-            asyncHandler.Invoke();
+                    await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Bundle.LevelDemo02, LoadSceneMode.Single, true, 100, (float progress, float currentCount, float totalCount) =>
+                    {
+                        Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
+                    });
+                };
+                asyncHandler.Invoke();
+            }
+            else
+            {
+                CoreFrames.USFrame.LoadScene(UnityScene.Bundle.LevelDemo02, LoadSceneMode.Single);
+            }
         }
 
         if (Keyboard.current.numpad6Key.wasReleasedThisFrame)
         {
-            Action asyncHandler = async () =>
+            if (!this.syncMode)
             {
-                await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Bundle.LevelDemo03, LoadSceneMode.Additive, true, 100, (float progress, float currentCount, float totalCount) =>
+                Action asyncHandler = async () =>
                 {
-                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
-                });
-            };
-            asyncHandler.Invoke();
+                    await CoreFrames.USFrame.LoadSceneAsync(UnityScene.Bundle.LevelDemo03, LoadSceneMode.Additive, true, 100, (float progress, float currentCount, float totalCount) =>
+                    {
+                        Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
+                    });
+                };
+                asyncHandler.Invoke();
+            }
+            else
+            {
+                CoreFrames.USFrame.LoadScene(UnityScene.Bundle.LevelDemo03, LoadSceneMode.Additive);
+            }
         }
         #endregion
 

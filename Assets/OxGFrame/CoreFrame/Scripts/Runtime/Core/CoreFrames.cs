@@ -4,6 +4,7 @@ using OxGFrame.CoreFrame.CPFrame;
 using OxGFrame.CoreFrame.SRFrame;
 using OxGFrame.CoreFrame.UIFrame;
 using OxGFrame.CoreFrame.USFrame;
+using OxGKit.LoggingSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -658,6 +659,20 @@ namespace OxGFrame.CoreFrame
             /// <summary>
             /// (Single) If use prefix "build#" will load from build and else will load from bundle
             /// </summary>
+            /// <param name="sceneName"></param>
+            public static void LoadSingleScene(string sceneName)
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    USManager.GetInstance().LoadFromBuild(sceneName, LoadSceneMode.Single);
+                }
+                else USManager.GetInstance().LoadFromBundle(packageName, sceneName, LoadSceneMode.Single);
+            }
+
+            /// <summary>
+            /// (Single) If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
             /// <typeparam name="T"></typeparam>
             /// <param name="sceneName"></param>
             /// <param name="progression"></param>
@@ -689,6 +704,20 @@ namespace OxGFrame.CoreFrame
                     await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Single, progression);
                 }
                 else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, true, 100, progression);
+            }
+
+            /// <summary>
+            /// (Single) If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
+            /// <param name="packageName"></param>
+            /// <param name="sceneName"></param>
+            public static void LoadSingleScene(string packageName, string sceneName)
+            {
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    USManager.GetInstance().LoadFromBuild(sceneName, LoadSceneMode.Single);
+                }
+                else USManager.GetInstance().LoadFromBundle(packageName, sceneName, LoadSceneMode.Single);
             }
 
             /// <summary>
@@ -744,6 +773,34 @@ namespace OxGFrame.CoreFrame
             /// (Additive) If use prefix "build#" will load from build and else will load from bundle
             /// </summary>
             /// <param name="sceneName"></param>
+            public static void LoadAdditiveScene(string sceneName)
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    USManager.GetInstance().LoadFromBuild(sceneName, LoadSceneMode.Additive);
+                }
+                else USManager.GetInstance().LoadFromBundle(packageName, sceneName, LoadSceneMode.Additive);
+            }
+
+            public static void LoadAdditiveScene(string sceneName, bool activeRootGameObjects = true)
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    USManager.GetInstance().LoadFromBuild(sceneName, LoadSceneMode.Additive);
+                }
+                else USManager.GetInstance().LoadFromBundle(packageName, sceneName, LoadSceneMode.Additive);
+                if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
+            }
+
+            /// <summary>
+            /// (Additive) If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <param name="sceneName"></param>
+            /// <param name="activateOnLoad"></param>
+            /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <returns>
             /// <para>From Build is &lt;AsyncOperation&gt;</para>
@@ -807,6 +864,30 @@ namespace OxGFrame.CoreFrame
             /// <summary>
             /// (Additive) If use prefix "build#" will load from build and else will load from bundle
             /// </summary>
+            /// <param name="packageName"></param>
+            /// <param name="sceneName"></param>
+            public static void LoadAdditiveScene(string packageName, string sceneName)
+            {
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    USManager.GetInstance().LoadFromBuild(sceneName, LoadSceneMode.Additive);
+                }
+                else USManager.GetInstance().LoadFromBundle(packageName, sceneName, LoadSceneMode.Additive);
+            }
+
+            public static void LoadAdditiveScene(string packageName, string sceneName, bool activeRootGameObjects = true)
+            {
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    USManager.GetInstance().LoadFromBuild(sceneName, LoadSceneMode.Additive);
+                }
+                else USManager.GetInstance().LoadFromBundle(packageName, sceneName, LoadSceneMode.Additive);
+                if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
+            }
+
+            /// <summary>
+            /// (Additive) If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
             /// <typeparam name="T"></typeparam>
             /// <param name="packageName"></param>
             /// <param name="sceneName"></param>
@@ -839,6 +920,312 @@ namespace OxGFrame.CoreFrame
                     var handler = await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, activateOnLoad, priority, progression) as T;
                     if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
                     return handler;
+                }
+            }
+
+            /// <summary>
+            /// Load single scene and additive scenes
+            /// </summary>
+            /// <param name="singleSceneName"></param>
+            /// <param name="additiveSceneInfos"></param>
+            /// <param name="priority"></param>
+            /// <param name="progression"></param>
+            /// <returns></returns>
+            public static async UniTask LoadMainAndSubScenesAsync(string singleSceneName, AdditiveSceneInfo[] additiveSceneInfos, uint priority = 100, Progression progression = null)
+            {
+                var scene = GetSceneByName(singleSceneName);
+                if (!string.IsNullOrEmpty(scene.name) &&
+                    scene.isLoaded)
+                {
+                    Logging.PrintWarning<Logger>($"Single Scene => {singleSceneName} already exists!!!");
+                    return;
+                }
+
+                float comboCurrentCount = 0;
+                float comboTotalCount = 1;
+
+                if (additiveSceneInfos != null)
+                    comboTotalCount += additiveSceneInfos.Length;
+
+                // Single scene
+                bool loaded = false;
+                await LoadSingleSceneAsync(singleSceneName, (float progress, float currentCount, float totalCount) =>
+                {
+                    if (!loaded && progress == 1)
+                    {
+                        comboCurrentCount += progress;
+                        loaded = true;
+                    }
+                    progression?.Invoke(comboCurrentCount / comboTotalCount, comboCurrentCount, comboTotalCount);
+                });
+
+                // Additive scenes
+                if (additiveSceneInfos != null)
+                {
+                    uint idx = 0;
+                    foreach (var additiveSceneInfo in additiveSceneInfos)
+                    {
+                        loaded = false;
+                        await LoadAdditiveSceneAsync
+                        (
+                            additiveSceneInfo.sceneName,
+                            additiveSceneInfo.activeRootGameObjects,
+                            true,
+                            priority + idx,
+                            (float progress, float currentCount, float totalCount) =>
+                            {
+                                if (!loaded && progress == 1)
+                                {
+                                    comboCurrentCount += progress;
+                                    loaded = true;
+                                }
+                                progression?.Invoke(comboCurrentCount / comboTotalCount, comboCurrentCount, comboTotalCount);
+                            }
+                        );
+                        idx++;
+                    }
+                }
+            }
+
+            public static void LoadMainAndSubScenes(string singleSceneName, AdditiveSceneInfo[] additiveSceneInfos)
+            {
+                var scene = GetSceneByName(singleSceneName);
+                if (!string.IsNullOrEmpty(scene.name) &&
+                    scene.isLoaded)
+                {
+                    Logging.PrintWarning<Logger>($"Single Scene => {singleSceneName} already exists!!!");
+                    return;
+                }
+
+                // Single scene
+                LoadSingleScene(singleSceneName);
+
+                // Additive scenes
+                if (additiveSceneInfos != null)
+                {
+                    foreach (var additiveSceneInfo in additiveSceneInfos)
+                    {
+                        LoadAdditiveScene
+                        (
+                            additiveSceneInfo.sceneName,
+                            additiveSceneInfo.activeRootGameObjects
+                        );
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Load additive scenes
+            /// </summary>
+            /// <param name="additiveSceneInfos"></param>
+            /// <param name="priority"></param>
+            /// <param name="progression"></param>
+            /// <returns></returns>
+            public static async UniTask LoadSubScenesAsync(AdditiveSceneInfo[] additiveSceneInfos, uint priority = 100, Progression progression = null)
+            {
+                float comboCurrentCount = 0;
+                float comboTotalCount = 0;
+
+                if (additiveSceneInfos != null)
+                    comboTotalCount += additiveSceneInfos.Length;
+
+                // Additive scenes
+                if (additiveSceneInfos != null)
+                {
+                    uint idx = 0;
+                    foreach (var additiveSceneInfo in additiveSceneInfos)
+                    {
+                        bool loaded = false;
+                        await LoadAdditiveSceneAsync
+                        (
+                            additiveSceneInfo.sceneName,
+                            additiveSceneInfo.activeRootGameObjects,
+                            true,
+                            priority + idx,
+                            (float progress, float currentCount, float totalCount) =>
+                            {
+                                if (!loaded && progress == 1)
+                                {
+                                    comboCurrentCount += progress;
+                                    loaded = true;
+                                }
+                                progression?.Invoke(comboCurrentCount / comboTotalCount, comboCurrentCount, comboTotalCount);
+                            }
+                        );
+                        idx++;
+                    }
+                }
+            }
+
+            public static void LoadSubScenes(AdditiveSceneInfo[] additiveSceneInfos)
+            {
+                // Additive scenes
+                if (additiveSceneInfos != null)
+                {
+                    foreach (var additiveSceneInfo in additiveSceneInfos)
+                    {
+                        LoadAdditiveScene
+                        (
+                            additiveSceneInfo.sceneName,
+                            additiveSceneInfo.activeRootGameObjects
+                        );
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Load single scene and additive scenes
+            /// </summary>
+            /// <param name="packageName"></param>
+            /// <param name="singleSceneName"></param>
+            /// <param name="additiveSceneInfos"></param>
+            /// <param name="priority"></param>
+            /// <param name="progression"></param>
+            /// <returns></returns>
+            public static async UniTask LoadMainAndSubScenesAsync(string packageName, string singleSceneName, AdditiveSceneInfo[] additiveSceneInfos, uint priority = 100, Progression progression = null)
+            {
+                var scene = GetSceneByName(singleSceneName);
+                if (!string.IsNullOrEmpty(scene.name) &&
+                    scene.isLoaded)
+                {
+                    Logging.PrintWarning<Logger>($"Single Scene => {singleSceneName} already exists!!!");
+                    return;
+                }
+
+                float comboCurrentCount = 0;
+                float comboTotalCount = 1;
+
+                if (additiveSceneInfos != null)
+                    comboTotalCount += additiveSceneInfos.Length;
+
+                // Single scene
+                bool loaded = false;
+                await LoadSingleSceneAsync(packageName, singleSceneName, (float progress, float currentCount, float totalCount) =>
+                {
+                    if (!loaded && progress == 1)
+                    {
+                        comboCurrentCount += progress;
+                        loaded = true;
+                    }
+                    progression?.Invoke(comboCurrentCount / comboTotalCount, comboCurrentCount, comboTotalCount);
+                });
+
+                // Additive scenes
+                if (additiveSceneInfos != null)
+                {
+                    uint idx = 0;
+                    foreach (var additiveSceneInfo in additiveSceneInfos)
+                    {
+                        loaded = false;
+                        await LoadAdditiveSceneAsync
+                        (
+                            packageName,
+                            additiveSceneInfo.sceneName,
+                            additiveSceneInfo.activeRootGameObjects,
+                            true,
+                            priority + idx,
+                            (float progress, float currentCount, float totalCount) =>
+                            {
+                                if (!loaded && progress == 1)
+                                {
+                                    comboCurrentCount += progress;
+                                    loaded = true;
+                                }
+                                progression?.Invoke(comboCurrentCount / comboTotalCount, comboCurrentCount, comboTotalCount);
+                            }
+                        );
+                        idx++;
+                    }
+                }
+            }
+
+            public static void LoadMainAndSubScenes(string packageName, string singleSceneName, AdditiveSceneInfo[] additiveSceneInfos)
+            {
+                var scene = GetSceneByName(singleSceneName);
+                if (!string.IsNullOrEmpty(scene.name) &&
+                    scene.isLoaded)
+                {
+                    Logging.PrintWarning<Logger>($"Single Scene => {singleSceneName} already exists!!!");
+                    return;
+                }
+
+                // Single scene
+                LoadSingleScene(packageName, singleSceneName);
+
+                // Additive scenes
+                if (additiveSceneInfos != null)
+                {
+                    foreach (var additiveSceneInfo in additiveSceneInfos)
+                    {
+                        LoadAdditiveScene
+                        (
+                            packageName,
+                            additiveSceneInfo.sceneName,
+                            additiveSceneInfo.activeRootGameObjects
+                        );
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Load additive scenes
+            /// </summary>
+            /// <param name="packageName"></param>
+            /// <param name="additiveSceneInfos"></param>
+            /// <param name="priority"></param>
+            /// <param name="progression"></param>
+            /// <returns></returns>
+            public static async UniTask LoadSubScenesAsync(string packageName, AdditiveSceneInfo[] additiveSceneInfos, uint priority = 100, Progression progression = null)
+            {
+                float comboCurrentCount = 0;
+                float comboTotalCount = 0;
+
+                if (additiveSceneInfos != null)
+                    comboTotalCount += additiveSceneInfos.Length;
+
+                // Additive scenes
+                if (additiveSceneInfos != null)
+                {
+                    uint idx = 0;
+                    foreach (var additiveSceneInfo in additiveSceneInfos)
+                    {
+                        bool loaded = false;
+                        await LoadAdditiveSceneAsync
+                        (
+                            packageName,
+                            additiveSceneInfo.sceneName,
+                            additiveSceneInfo.activeRootGameObjects,
+                            true,
+                            priority + idx,
+                            (float progress, float currentCount, float totalCount) =>
+                            {
+                                if (!loaded && progress == 1)
+                                {
+                                    comboCurrentCount += progress;
+                                    loaded = true;
+                                }
+                                progression?.Invoke(comboCurrentCount / comboTotalCount, comboCurrentCount, comboTotalCount);
+                            }
+                        );
+                        idx++;
+                    }
+                }
+            }
+
+            public static void LoadSubScenes(string packageName, AdditiveSceneInfo[] additiveSceneInfos)
+            {
+                // Additive scenes
+                if (additiveSceneInfos != null)
+                {
+                    foreach (var additiveSceneInfo in additiveSceneInfos)
+                    {
+                        LoadAdditiveScene
+                        (
+                            packageName,
+                            additiveSceneInfo.sceneName,
+                            additiveSceneInfo.activeRootGameObjects
+                        );
+                    }
                 }
             }
 
@@ -886,6 +1273,21 @@ namespace OxGFrame.CoreFrame
             /// <summary>
             /// If use prefix "build#" will load from build and else will load from bundle
             /// </summary>
+            /// <param name="sceneName"></param>
+            /// <param name="loadSceneMode"></param>
+            public static void LoadScene(string sceneName, LoadSceneMode loadSceneMode)
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    USManager.GetInstance().LoadFromBuild(sceneName, loadSceneMode);
+                }
+                else USManager.GetInstance().LoadFromBundle(packageName, sceneName, loadSceneMode);
+            }
+
+            /// <summary>
+            /// If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
             /// <param name="packageName"></param>
             /// <param name="sceneName"></param>
             /// <param name="loadSceneMode"></param>
@@ -926,6 +1328,21 @@ namespace OxGFrame.CoreFrame
             }
 
             /// <summary>
+            /// If use prefix "build#" will load from build and else will load from bundle
+            /// </summary>
+            /// <param name="packageName"></param>
+            /// <param name="sceneName"></param>
+            /// <param name="loadSceneMode"></param>
+            public static void LoadScene(string packageName, string sceneName, LoadSceneMode loadSceneMode)
+            {
+                if (RefineBuildScenePath(ref sceneName))
+                {
+                    USManager.GetInstance().LoadFromBuild(sceneName, loadSceneMode);
+                }
+                else USManager.GetInstance().LoadFromBundle(packageName, sceneName, loadSceneMode);
+            }
+
+            /// <summary>
             /// Only load from build via build index
             /// </summary>
             /// <param name="buildIndex"></param>
@@ -935,6 +1352,16 @@ namespace OxGFrame.CoreFrame
             public static async UniTask<AsyncOperation> LoadSceneAsync(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
             {
                 return await USManager.GetInstance().LoadFromBuildAsync(buildIndex, loadSceneMode, progression);
+            }
+
+            /// <summary>
+            /// Only load from build via build index
+            /// </summary>
+            /// <param name="buildIndex"></param>
+            /// <param name="loadSceneMode"></param>
+            public static Scene LoadScene(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+            {
+                return USManager.GetInstance().LoadFromBuild(buildIndex, loadSceneMode);
             }
 
             /// <summary>

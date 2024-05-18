@@ -646,6 +646,111 @@ namespace OxGFrame.AssetLoader.Cacher
             return pack;
         }
 
+        public BundlePack LoadScene(string packageName, string assetName, LoadSceneMode loadSceneMode)
+        {
+            /**
+             * Single Scene will auto unload and release
+             */
+
+            if (string.IsNullOrEmpty(assetName)) return null;
+
+            // 如果有進行 Loading 標記後, 直接 return
+            if (this.HasInLoadingFlags(assetName) && !this.GetRetryCounter(assetName).IsRetryValid())
+            {
+                if (this.GetRetryCounter(assetName).IsRetryActive())
+                {
+                    this.RemoveLoadingFlags(assetName);
+                    Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                }
+                else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
+                return null;
+            }
+
+            // 場景最多嘗試 1 次
+            byte maxRetryCount = 1;
+            // Loading 標記
+            this.AddLoadingFlags(assetName, maxRetryCount);
+
+            bool loaded = false;
+            var pack = new BundlePack();
+
+            // 場景需特殊處理
+            var package = PackageManager.GetPackage(packageName);
+            if (package != null && package.CheckLocationValid(assetName))
+            {
+                var req = package.LoadSceneSync(assetName, loadSceneMode);
+                if (req != null)
+                {
+                    int frame = 1000;
+                    do
+                    {
+                        if (req.IsDone)
+                        {
+                            loaded = true;
+                            switch (loadSceneMode)
+                            {
+                                case LoadSceneMode.Single:
+                                    {
+                                        pack.SetPack(packageName, assetName, req);
+
+                                        // 清除 Additive 計數緩存 (主場景無需緩存, 因為會自動釋放子場景)
+                                        this._additiveScenes.Clear();
+                                        this._additiveSceneCounter.Clear();
+                                    }
+                                    break;
+                                case LoadSceneMode.Additive:
+                                    {
+                                        pack.SetPack(packageName, assetName, req);
+
+                                        // 加載場景的計數緩存 (Additive 需要進行計數, 要手動卸載子場景)
+                                        if (!this._additiveSceneCounter.ContainsKey(assetName))
+                                        {
+                                            this._additiveSceneCounter.Add(assetName, 1);
+                                            var count = this._additiveSceneCounter[assetName];
+                                            string key = $"{assetName}#{count}";
+                                            this._additiveScenes.Add(key, pack);
+                                            Logging.Print<Logger>($"<color=#90FF71>【Load Scene Additive】 => << CacheBundle >> scene: {key}</color>");
+                                        }
+                                        else
+                                        {
+                                            var count = ++this._additiveSceneCounter[assetName];
+                                            string key = $"{assetName}#{count}";
+                                            this._additiveScenes.Add(key, pack);
+                                            Logging.Print<Logger>($"<color=#90FF71>【Load Scene Additive】 => << CacheBundle >> scene: {key}</color>");
+                                        }
+                                    }
+                                    break;
+                            }
+                            break;
+                        }
+
+                        // 保險機制 (Fuse breaker)
+                        frame--;
+                        if (frame <= 0)
+                            break;
+                    } while (true);
+                }
+            }
+            else
+            {
+                Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+            }
+
+            // (Caution) If use sync to load scene.isLoaded return false -> Why??
+            if (!loaded)
+            {
+                this.UnloadScene(assetName, true);
+                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load Scene】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
+                else Logging.Print<Logger>($"<color=#f7ff3e>【Load Scene】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
+                this.GetRetryCounter(assetName).AddRetryCount();
+                return this.LoadScene(packageName, assetName, loadSceneMode);
+            }
+
+            this.RemoveLoadingFlags(assetName);
+
+            return pack;
+        }
+
         public void UnloadScene(string assetName, bool recursively)
         {
             /**

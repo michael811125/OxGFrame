@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## [2.11.3] - 2024-05-19
+- Added new methods for sync loading of scene.
+```csharp
+    public static void LoadSingleScene(string sceneName)
+    public static void LoadSingleScene(string packageName, string sceneName)
+    public static void LoadAdditiveScene(string sceneName)
+    public static void LoadAdditiveScene(string sceneName, bool activeRootGameObjects = true)
+    public static void LoadAdditiveScene(string packageName, string sceneName)
+    public static void LoadAdditiveScene(string packageName, string sceneName, bool activeRootGameObjects = true)
+    public static void LoadScene(string sceneName, LoadSceneMode loadSceneMode)
+    public static void LoadScene(string packageName, string sceneName, LoadSceneMode loadSceneMode)
+    public static Scene LoadScene(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+```
+- Added new methods to combine load a single scene and additive scenes.
+```csharp
+    public static async UniTask LoadMainAndSubScenesAsync(string singleSceneName, AdditiveSceneInfo[] additiveSceneInfos, uint priority = 100, Progression progression = null)
+    public static async UniTask LoadMainAndSubScenesAsync(string packageName, string singleSceneName, AdditiveSceneInfo[] additiveSceneInfos, uint priority = 100, Progression progression = null)
+    public static void LoadMainAndSubScenes(string singleSceneName, AdditiveSceneInfo[] additiveSceneInfos)
+    public static void LoadMainAndSubScenes(string packageName, string singleSceneName, AdditiveSceneInfo[] additiveSceneInfos)
+```
+- Added new methods to load additive scenes.
+```csharp
+    public static async UniTask LoadSubScenesAsync(AdditiveSceneInfo[] additiveSceneInfos, uint priority = 100, Progression progression = null)
+    public static async UniTask LoadSubScenesAsync(string packageName, AdditiveSceneInfo[] additiveSceneInfos, uint priority = 100, Progression progression = null)
+    public static void LoadSubScenes(AdditiveSceneInfo[] additiveSceneInfos)
+    public static void LoadSubScenes(string packageName, AdditiveSceneInfo[] additiveSceneInfos)
+```
+
 ## [2.11.2] - 2024-05-18
 - Added burlconfig.conf can export cipher type (If the output is ciphertext, it will automatically determine whether to execute with the decryption process).
   - Cipher process.
@@ -33,12 +61,12 @@ https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
 
 ## [2.10.2] - 2024-03-19
 - Fixed When scene load with suspend (activateOnLoad = false) cannot return BundlePack correctly .
-```C#
+```csharp
     // activateOnLoad = false (suspend)
     var bundlePack = await CoreFrames.USFrame.LoadAdditiveSceneAsync<BundlePack>("MyPackage", "SceneName", false, 100);
 ```
 - Added UnsuspendScene in BundlePack.
-```C#
+```csharp
     // Method 1
     var bundlePack = await CoreFrames.USFrame.LoadAdditiveSceneAsync<BundlePack>("MyPackage", "SceneName", false, 100);
     bundlePack.GetOperationHandle<SceneHandle>().UnSuspend();
@@ -93,7 +121,7 @@ CPBase:
 
 ## [2.10.0] - 2024-03-07
 - Added BuiltinQueryMode option on PatchLauncher, can switch built-in query mode.
-```C#
+```csharp
     public enum BuiltinQueryMode
     {
         WebRequest,
@@ -102,7 +130,7 @@ CPBase:
     }
 ```
 - Added Auto save binding content to script for UIBase, SRBase, CPBase.
-```C#
+```csharp
     // Specific pattern
     #region Binding Components
     #endregion
@@ -111,7 +139,7 @@ CPBase:
 ## [2.9.16] - 2024-02-20
 - Updated YooAsset commits.
 - Added InitPackage in AssetPatcher.
-```C#
+```csharp
     /// <summary>
     /// Init package by type
     /// </summary>
@@ -121,7 +149,7 @@ CPBase:
     public static async UniTask<bool> InitPackage(PackageInfoWithBuild packageInfo, bool autoUpdate = false)
 ```
 - Modified PackageOperation initialize procedure by manual.
-```C#
+```csharp
 public class PackageOperation
 {
     /// <summary>
@@ -137,7 +165,7 @@ public class PackageOperation
 ## [2.9.15] - 2024-02-19
 - Updated UniTask to v2.5.3.
 - Added DriveUpdate methods in CPBase (can call update by other PlayerLoop).
-```C#
+```csharp
     public void DriveUpdate(float dt) => this.HandleUpdate(dt);
     public void DriveFixedUpdate(float dt) => this.HandleFixedUpdate(dt);
     public void DriveLateUpdate(float dt) => this.HandleLateUpdate(dt);
@@ -145,7 +173,7 @@ public class PackageOperation
 
 ## [2.9.14] - 2024-02-02
 - Modified PackageOperation user callback events, can reference itself in callback.
-```C#
+```csharp
 public class PackageOperation
 {
     public delegate void OnPatchRepairFailed(PackageOperation itself);
@@ -164,7 +192,7 @@ public class PackageOperation
   - Must add PatchEvents.PatchCheckDiskNotEnoughSpace in patchEvents to handle it (checkout BundleDemo).
 - Added CheckDiskSpace flag setting on PatchLauncher inspector.
 - Added Can set user event handler to PackageOperation.
-```C#
+```csharp
 public class PackageOperation
 {
     /// <summary>
@@ -199,14 +227,14 @@ param animeEndCb => animationEnd
 
 ## [2.9.12] - 2024-01-16
 - Added CoreFrames.UIFrame.GetStackByStackCount method.
-```C#
+```csharp
     public static int GetStackByStackCount(string canvasName)
     
     public static int GetStackByStackCount(int groupId, string canvasName)
 ```
 
 **How to use it**
-```C#
+```csharp
     if (Keyboard.current.escapeKey.wasReleasedThisFrame)
     {
         if (CoreFrames.UIFrame.GetStackByStackCount(groupId, canvasName) > 0)
@@ -220,7 +248,7 @@ param animeEndCb => animationEnd
     }
 ```
 - Modified UI NodeType name (the original settings will not be changed).
-```C#
+```csharp
     public enum NodeType
     {
         Fixed,        // Normal => Fixed
@@ -252,7 +280,7 @@ param animeEndCb => animationEnd
 
 ## [2.9.9] - 2023-12-18
 - Added PackageOperation feature, can download packages more easier (please checkout BundleDLCDemo).
-```C#
+```csharp
     // Factory Mode
     public static PackageOperation CreateOperation(string groupName, PackageInfoWithBuild packageInfo, bool skipDownload = false)
     public static PackageOperation CreateOperation(string groupName, PackageInfoWithBuild[] packageInfos, bool skipDownload = false)
@@ -286,7 +314,7 @@ param animeEndCb => animationEnd
 ```
 - Added BundleDLCDemo for operate PackageOperation.
 - Modified params to PackageInfoWithBuild.
-```C#
+```csharp
     public abstract class PackageInfoWithBuild
     {
         [Tooltip("Only for EditorSimulateMode")]
@@ -312,7 +340,7 @@ param animeEndCb => animationEnd
 
 ## [2.9.8] - 2023-12-08
 - Added Generate binding code rule (MethodType: Manual, Auto, default is Auto).
-```C#
+```csharp
     #region Binding Components
     protected Image _bgImg;
     protected Text _msgTxt;
@@ -339,7 +367,7 @@ param animeEndCb => animationEnd
 
 ## [2.9.5] - 2023-12-05
 - Added AppPackageInfoWithBuild and DlcPackageInfoWithBuild (BuildMode can be selected when executing on SimulateMode).
-```C#
+```csharp
     [Serializable]
     public class PackageInfoWithBuild
     {
@@ -366,31 +394,31 @@ param animeEndCb => animationEnd
 - Updated UniMachine ([Blackboard](https://github.com/gmhevinci/UniFramework/commit/3ea882c2fc8d5314c51e66fa35579324d0c7a73c)).
 - Updated UniTask to [v2.5.0](https://github.com/Cysharp/UniTask/releases/tag/2.5.0).
 - Renamed GetAllScene to GetAllScenes in CoreFrames.USFrame.
-```C#
+```csharp
     public static Scene[] GetAllScenes(params string[] sceneNames)
     public static Scene[] GetAllScenes(params int[] buildIndexes)
 ```
 - Added CoreFrames.UIFrame, CoreFrames.SRFrame can control updates (**enabledUpdate defaults is true, else are false**).
-```C#
+```csharp
     public static bool ignoreTimeScale
     public static bool enabledUpdate
     public static bool enabledFixedUpdate
     public static bool enabledLateUpdate
 ```
 - Added FixedUpdate, LateUpdate behaviour to FrameBase (UIBase, SRBase, CPBase).
-```C#
+```csharp
     protected override void OnFixedUpdate(float dt) { }
     
     protected override void OnLateUpdate(float dt) { }
 ```
 - Added SetActiveSceneRootGameObjects method in CoreFrames.USFrame (Can control the active of scene root GameObjects).
-```C#
+```csharp
     public static void SetActiveSceneRootGameObjects(string sceneName, bool active, string[] withoutRootGameObjectNames = null)
     public static void SetActiveSceneRootGameObjects(Scene scene, bool active, string[] withoutRootGameObjectNames = null)
 ```
 - 
 - Added overload methods in CoreFrames.USFrame (LoadAdditiveSceneAsync has activeRootGameObjects param, can control the active of root GameObjects after the scene is loaded).
-```C#
+```csharp
     public static async UniTask LoadAdditiveSceneAsync(string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
     public static async UniTask<T> LoadAdditiveSceneAsync<T>(string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
     public static async UniTask LoadAdditiveSceneAsync(string packageName, string sceneName, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
@@ -418,7 +446,7 @@ param animeEndCb => animationEnd
 - Fixed UIManager CloseAll with groupId bug issue.
 - Added [AllowCloseStackByStack] setting for UI.
 - Added CloseStackByStack method in CoreFrames.UIFrame.
-```C#
+```csharp
     // Only allow close stack by stack
     public static void CloseStackByStack(string canvasName, bool disablePreClose = false, bool forceDestroy = false)
     public static void CloseStackByStack(int groupId, string canvasName, bool disablePreClose = false, bool forceDestroy = false)
@@ -429,7 +457,7 @@ param animeEndCb => animationEnd
 - Added Priority param for any load async methods (can controls loading priority by YooAsset).
 - Optimized cached AppConfig in Runtime.
 - Modified BindCodeSetting init param and use region to group binding code (more clear).
-```C#
+```csharp
     #region Binding Components
     protected GameObject _openBtn;
     
@@ -443,7 +471,7 @@ param animeEndCb => animationEnd
     #endregion
 ```
 - Changed CoreFrame.FrameBase method name (OnInit change to OnCreate).
-```C#
+```csharp
     // Replace all OnInit() to OnCreate()
     public override void OnCreate()
     {
@@ -453,7 +481,7 @@ param animeEndCb => animationEnd
     }
 ```
 - Chagned GSIFrame.GSIBase method name (OnInit change to OnCreate).
-```C#
+```csharp
     // Replace all OnInit() to OnCreate()
     public async override UniTask OnCreate()
     {
@@ -461,7 +489,7 @@ param animeEndCb => animationEnd
     }
 ```
 - Removed methods from AssetPatcher.
-```C#
+```csharp
     // Removed
     public static string GetPresetAppPackageNameByIdx(int idx)
 ```
@@ -491,7 +519,7 @@ param animeEndCb => animationEnd
 - Fixed RetryCounter reference bug issue.
 - Modified RefinePath methods use SubString to process.
 - Modified params of SendRefreshData method (use RefreshInfo struct).
-```C#
+```csharp
     // CoreFrames.UIFrame & CoreFrames.SRFrame
     public static void SendRefreshData(RefreshInfo refreshInfo)
     public static void SendRefreshData(RefreshInfo[] refreshInfos)
@@ -500,7 +528,7 @@ param animeEndCb => animationEnd
 
 ## [2.7.10] - 2023-09-11
 - Added more check methods for AssetObject.
-```C#
+```csharp
     public bool IsRawFileOperationHandleValid()
     public bool IsSceneOperationHandleValid()
     public bool IsAssetOperationHandleValid()
@@ -537,7 +565,7 @@ param animeEndCb => animationEnd
 - Optimized UIBase and SRBase of CoreFrame update behaviour call by FrameManager.
 - Optimized CPBase of CoreFrame update behaviour, if need to update have to call by self to drive.
   - Added DriveSelfUpdate(float dt) method in CPBase (drive by self).
-```C#
+```csharp
 public class NewTplCP : CPBase
 {
     private void Update()
@@ -556,7 +584,7 @@ public class NewTplCP : CPBase
 - Updated part of UniFramework.
 #### CoreFrames (UIFrame, SRFrame)
 - Added API.
-```C#
+```csharp
     public static void SendRefreshData(string assetName, object data = null)
     
     public static void SendRefreshData(string[] assetNames, object[] data = null)	
@@ -564,7 +592,7 @@ public class NewTplCP : CPBase
 #### AssetPatcher
 - Added API.
 Common
-```C#
+```csharp
     public struct DownloadInfo
     {
         public int totalCount;
@@ -576,7 +604,7 @@ Common
     public static async UniTask<bool> BeginDownloadWithCombineDownloaders(ResourceDownloaderOperation[] downloaders, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
 ```
 Get Downloader   
-```C#
+```csharp
     // All
     public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackages(ResourcePackage[] packages)
     
@@ -598,7 +626,7 @@ Get Downloader
     public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackagesByAssetInfos(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, params AssetInfo[] assetInfos)
 ```
 Begin Download
-```C#
+```csharp
     // All
     public static async UniTask<bool> BeginDownloadWithCombinePackages(ResourcePackage[] packages, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
     
@@ -620,7 +648,7 @@ Begin Download
     public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetInfos(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, AssetInfo[] assetInfos = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
 ```
 Get Download Info   
-```C#    
+```csharp    
     // All
     public static DownloadInfo GetDownloadInfoWithCombinePackages(ResourcePackage[] packages)
     
@@ -640,7 +668,7 @@ Get Download Info
 
 ## [2.7.1] - 2023-08-05
 - Added Default API in GSIManagerBase (protected GetInstance() method).
-```C#
+```csharp
     public static int GetCurrentId()
     
     public static U GetStage<U>() where U : GSIBase
@@ -662,7 +690,7 @@ Get Download Info
     public static void Update(float dt = 0.0f)
 ```
 - Added Default API in CenterBase (removed Default API from subtype).
-```C#
+```csharp
     public static void Add<UClass>() where UClass : TClass, new()
     
     public static void Add<UClass>(int id) where UClass : TClass, new()
@@ -785,7 +813,7 @@ Get Download Info
 
 ## [2.3.1] - 2023-06-19
 - Added bind collector can use GetNodeComponent(string nodeName) to get component.
-```C#
+```csharp
 // Single
 collector.GetNodeComponent<TComponent>("BindName");
 
@@ -849,7 +877,7 @@ collector.GetNodeComponents<TComponent>("BindName");
 
 ## [2.1.4] - 2023-05-15
 - Added DownloadSpeedCalculator (using OxGFrame.AssetLoader.Utility).
-```C#
+```csharp
 var packageName = "DlcPackage";
 bool isInitialized = await AssetPatcher.InitDlcPackage(packageName, "dlcVersion", true);
 if (isInitialized)
@@ -915,7 +943,7 @@ if (isInitialized)
 - Extended CoreFrames.USFrame methods (LoadSingleSceneAsync and LoadAdditiveSceneAsync).
 - Extended load asset and download from specific package.
 - Optimized code.
-```C#
+```csharp
 // [Load asset and download from specific package]
 var packageName = "OtherPackage";
 await AssetPatcher.InitPackage(packageName, true, "127.0.0.1/package", "127.0.0.1/package");

@@ -38,6 +38,24 @@ namespace OxGFrame.AssetLoader
         /// Only load scene from bundle
         /// </summary>
         /// <param name="assetName"></param>
+        /// <param name="loadSceneMode"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
+        public static BundlePack LoadScene(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        {
+            string packageName = AssetPatcher.GetDefaultPackageName();
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode);
+        }
+
+        public static BundlePack LoadScene(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        {
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode);
+        }
+
+        /// <summary>
+        /// Only load scene from bundle
+        /// </summary>
+        /// <param name="assetName"></param>
         /// <param name="activateOnLoad"></param>
         /// <param name="priority"></param>
         /// <param name="progression"></param>
@@ -57,6 +75,23 @@ namespace OxGFrame.AssetLoader
         /// Only load scene from bundle
         /// </summary>
         /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
+        public static BundlePack LoadSingleScene(string assetName)
+        {
+            string packageName = AssetPatcher.GetDefaultPackageName();
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Single);
+        }
+
+        public static BundlePack LoadSingleScene(string packageName, string assetName)
+        {
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Single);
+        }
+
+        /// <summary>
+        /// Only load scene from bundle
+        /// </summary>
+        /// <param name="assetName"></param>
         /// <param name="activateOnLoad"></param>
         /// <param name="priority"></param>
         /// <param name="progression"></param>
@@ -70,6 +105,23 @@ namespace OxGFrame.AssetLoader
         public static async UniTask<BundlePack> LoadAdditiveSceneAsync(string packageName, string assetName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
+        }
+
+        /// <summary>
+        /// Only load scene from bundle
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
+        public static BundlePack LoadAdditiveScene(string assetName)
+        {
+            string packageName = AssetPatcher.GetDefaultPackageName();
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Additive);
+        }
+
+        public static BundlePack LoadAdditiveScene(string packageName, string assetName)
+        {
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Additive);
         }
 
         /// <summary>
