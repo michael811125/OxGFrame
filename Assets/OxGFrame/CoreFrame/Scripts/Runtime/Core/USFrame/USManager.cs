@@ -2,13 +2,18 @@
 using OxGFrame.AssetLoader;
 using OxGFrame.AssetLoader.Cacher;
 using OxGKit.LoggingSystem;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace OxGFrame.CoreFrame.USFrame
 {
+    public struct AdditiveSceneInfo
+    {
+        public string sceneName;
+        public bool activeRootGameObjects;
+    }
+
     internal class USManager
     {
         public static int sceneCount { get { return SceneManager.sceneCount; } }
@@ -143,13 +148,36 @@ namespace OxGFrame.CoreFrame.USFrame
         public async UniTask<BundlePack> LoadFromBundleAsync(string packageName, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             var scene = this.GetSceneByName(sceneName);
-            if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
+            if (!string.IsNullOrEmpty(scene.name) &&
+                scene.isLoaded &&
+                loadSceneMode == LoadSceneMode.Single)
             {
                 Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
                 return null;
             }
 
             var pack = await AssetLoaders.LoadSceneAsync(packageName, sceneName, loadSceneMode, activateOnLoad, priority, progression);
+            if (pack != null)
+            {
+                Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Bundle</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
+                return pack;
+            }
+
+            return null;
+        }
+
+        public BundlePack LoadFromBundle(string packageName, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        {
+            var scene = this.GetSceneByName(sceneName);
+            if (!string.IsNullOrEmpty(scene.name) &&
+                scene.isLoaded &&
+                loadSceneMode == LoadSceneMode.Single)
+            {
+                Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
+                return null;
+            }
+
+            var pack = AssetLoaders.LoadScene(packageName, sceneName, loadSceneMode);
             if (pack != null)
             {
                 Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Bundle</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
@@ -178,7 +206,9 @@ namespace OxGFrame.CoreFrame.USFrame
             this._totalCount = 1; // 初始 1 = 必有一場景
 
             var scene = this.GetSceneByName(sceneName);
-            if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
+            if (!string.IsNullOrEmpty(scene.name) &&
+                scene.isLoaded &&
+                loadSceneMode == LoadSceneMode.Single)
             {
                 Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
                 return null;
@@ -207,6 +237,26 @@ namespace OxGFrame.CoreFrame.USFrame
             }
 
             return req;
+        }
+
+        public Scene LoadFromBuild(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        {
+            this._currentCount = 0;
+            this._totalCount = 1; // 初始 1 = 必有一場景
+
+            var scene = this.GetSceneByName(sceneName);
+            if (!string.IsNullOrEmpty(scene.name) &&
+                scene.isLoaded &&
+                loadSceneMode == LoadSceneMode.Single)
+            {
+                Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
+                return default;
+            }
+
+            scene = SceneManager.LoadScene(sceneName, new LoadSceneParameters(loadSceneMode));
+            Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
+            // (Caution) If use sync to load scene.isLoaded return false -> Why??
+            return scene;
         }
 
         public async UniTask<AsyncOperation> LoadFromBuildAsync(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
@@ -245,6 +295,27 @@ namespace OxGFrame.CoreFrame.USFrame
             }
 
             return req;
+        }
+
+        public Scene LoadFromBuild(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        {
+            this._currentCount = 0;
+            this._totalCount = 1; // 初始 1 = 必有一場景
+
+            var scene = this.GetSceneByBuildIndex(buildIndex);
+            string sceneName = scene.name;
+            if (!string.IsNullOrEmpty(sceneName) &&
+                scene.isLoaded &&
+                loadSceneMode == LoadSceneMode.Single)
+            {
+                Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
+                return default;
+            }
+
+            scene = SceneManager.LoadScene(sceneName, new LoadSceneParameters(loadSceneMode));
+            Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => idx: {buildIndex}, mode: {loadSceneMode}</color>");
+            // (Caution) If use sync to load scene.isLoaded return false -> Why??
+            return scene;
         }
 
         public void UnloadFromBuild(bool recursively, params string[] sceneNames)
