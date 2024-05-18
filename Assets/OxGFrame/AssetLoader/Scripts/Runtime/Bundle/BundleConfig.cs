@@ -2,10 +2,12 @@
 using MyBox;
 using Newtonsoft.Json;
 using OxGFrame.AssetLoader.Utility.SecureMemory;
+using OxGKit.LoggingSystem;
 using OxGKit.Utilities.Request;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
 
 namespace OxGFrame.AssetLoader.Bundle
@@ -57,6 +59,16 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         #region 執行配置
+        /// <summary>
+        /// 配置檔標檔頭
+        /// </summary>
+        public const short cipherHeader = 0x584F;
+
+        /// <summary>
+        /// 配置檔金鑰
+        /// </summary>
+        public const byte cipher = 0x4D;
+
         /// <summary>
         /// Patch 執行模式
         /// </summary>
@@ -171,6 +183,40 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         private static AppConfig _appConfig = null;
 
+        #region Header Helper
+        public static void WriteInt16(short value, byte[] buffer, ref int pos)
+        {
+            WriteUInt16((ushort)value, buffer, ref pos);
+        }
+
+        internal static void WriteUInt16(ushort value, byte[] buffer, ref int pos)
+        {
+            buffer[pos++] = (byte)value;
+            buffer[pos++] = (byte)(value >> 8);
+        }
+
+        public static short ReadInt16(byte[] buffer, ref int pos)
+        {
+            if (BitConverter.IsLittleEndian)
+            {
+                short value = (short)((buffer[pos]) | (buffer[pos + 1] << 8));
+                pos += 2;
+                return value;
+            }
+            else
+            {
+                short value = (short)((buffer[pos] << 8) | (buffer[pos + 1]));
+                pos += 2;
+                return value;
+            }
+        }
+
+        internal static ushort ReadUInt16(byte[] buffer, ref int pos)
+        {
+            return (ushort)ReadInt16(buffer, ref pos);
+        }
+        #endregion
+
         /// <summary>
         /// 取得 burlconfig 佈署配置檔的數據
         /// </summary>
@@ -182,19 +228,51 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.BUNDLE_URL_CFG_EXTENSION}";
                 string pathName = Path.Combine(GetRequestStreamingAssetsPath(), bundleUrlFileName);
-                var content = await Requester.RequestText(pathName, null, null, null, false);
-                if (string.IsNullOrEmpty(content)) return string.Empty;
+                var data = await Requester.RequestBytes(pathName);
+                if (data.Length == 0)
+                    return string.Empty;
+
+                #region Check data type
+                string content;
+                int pos = 0;
+
+                // Read header (non-encrypted)
+                var header = ReadInt16(data, ref pos);
+                if (header == cipherHeader)
+                {
+                    // Read data without header
+                    byte[] dataWithoutHeader = new byte[data.Length - 2];
+                    Buffer.BlockCopy(data, pos, dataWithoutHeader, 0, data.Length - pos);
+                    // Decrypt
+                    for (int i = 0; i < dataWithoutHeader.Length; i++)
+                    {
+                        dataWithoutHeader[i] ^= cipher << 1;
+                    }
+                    // To string
+                    content = Encoding.UTF8.GetString(dataWithoutHeader);
+                    Logging.Print<Logger>($"<color=#4eff9e>[Source is Cipher] Check -> burlconfig.conf:</color>\n{content}");
+                }
+                else
+                {
+                    content = Encoding.UTF8.GetString(data);
+                    Logging.Print<Logger>($"<color=#4eff9e>[Source is Plaintext] Check -> burlconfig.conf:</color>\n{content}");
+                }
+                #endregion
+
+                // Parsing
                 var allWords = content.Split('\n');
                 var lines = new List<string>(allWords);
 
                 _urlCfgFileMap = new Dictionary<string, string>();
                 foreach (var readLine in lines)
                 {
-                    if (readLine.IndexOf('#') != -1 && readLine[0] == '#') continue;
+                    if (readLine.IndexOf('#') != -1 && readLine[0] == '#')
+                        continue;
                     var args = readLine.Split(' ', 2);
                     if (args.Length >= 2)
                     {
-                        if (!_urlCfgFileMap.ContainsKey(args[0])) _urlCfgFileMap.Add(args[0], args[1].Replace("\n", "").Replace("\r", ""));
+                        if (!_urlCfgFileMap.ContainsKey(args[0]))
+                            _urlCfgFileMap.Add(args[0], args[1].Replace("\n", "").Replace("\r", ""));
                     }
                 }
             }

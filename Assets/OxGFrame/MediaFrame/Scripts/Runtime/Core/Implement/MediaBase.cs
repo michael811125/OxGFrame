@@ -53,7 +53,8 @@ namespace OxGFrame.MediaFrame
 
                     case RequestType.StreamingAssets:
                         string pathName = System.IO.Path.Combine(GetRequestStreamingAssetsPath(), this.fullPathName);
-                        if (string.IsNullOrEmpty(_urlCfgContent)) _urlCfgContent = await OxGKit.Utilities.Request.Requester.RequestText(pathName, null, null, null, false);
+                        if (string.IsNullOrEmpty(_urlCfgContent))
+                            _urlCfgContent = await OxGKit.Utilities.Request.Requester.RequestText(pathName, null, null, null, false);
                         return _urlCfgContent;
                 }
 
@@ -210,7 +211,8 @@ namespace OxGFrame.MediaFrame
         public const string AUDIO_URLSET = "audio_urlset";
         public static string GetValueFromUrlCfg(string urlCfg, string key)
         {
-            if (string.IsNullOrEmpty(urlCfg)) return string.Empty;
+            if (string.IsNullOrEmpty(urlCfg))
+                return string.Empty;
 
             var content = urlCfg;
             var allWords = content.Split('\n');
@@ -220,7 +222,8 @@ namespace OxGFrame.MediaFrame
             foreach (var readLine in lines)
             {
                 Logging.Print<Logger>($"readline: {readLine}");
-                if (readLine.IndexOf('#') != -1 && readLine[0] == '#') continue;
+                if (readLine.IndexOf('#') != -1 && readLine[0] == '#')
+                    continue;
                 var args = readLine.Split(' ', 2);
                 if (args.Length >= 2)
                 {

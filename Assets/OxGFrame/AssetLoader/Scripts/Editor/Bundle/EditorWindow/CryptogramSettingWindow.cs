@@ -256,6 +256,7 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.Space();
 
             EditorGUI.BeginChangeCheck();
+            var labelWidth = EditorGUIUtility.labelWidth;
             EditorGUIUtility.labelWidth = 200;
             this.hXorPlusKey = EditorGUILayout.IntField("Head XOR Plus KEY (0 ~ 255)", this.hXorPlusKey);
             if (this.hXorPlusKey < 0) this.hXorPlusKey = 0;
@@ -269,6 +270,7 @@ namespace OxGFrame.AssetLoader.Editor
             this.j2XorPlusKey = EditorGUILayout.IntField("Jump 2 XOR Plus KEY (0 ~ 255)", this.j2XorPlusKey);
             if (this.j2XorPlusKey < 0) this.j2XorPlusKey = 0;
             else if (this.j2XorPlusKey > 255) this.j2XorPlusKey = 255;
+            EditorGUIUtility.labelWidth = labelWidth;
             if (EditorGUI.EndChangeCheck()) this._isDirty = true;
 
             this._DrawOperateButtonsView(this.cryptogramType);

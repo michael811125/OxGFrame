@@ -192,7 +192,9 @@ if (isInitialized)
 
 #### Bundle [burlconfig] (Bundle URL Config) 格式
 
-格式如下 **(store_link 針對非 Android, iOS 平台的，可以設置主程式下載的 link)**
+格式如下，以下為明文類型 **(store_link 針對非 Android, iOS 平台的，可以設置主程式下載的 link)**
+- 支持 Cipher Type (密文類型)
+- 支持 Plaintext Type (明文類型)
 
 ```
 # bundle_ip = First CDN Server IP or Domain (Plan A)
