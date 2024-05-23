@@ -63,7 +63,10 @@ public class USFrameDemo : MonoBehaviour
             }
             else
             {
-                CoreFrames.USFrame.LoadScene(UnityScene.Build.LevelDemo01, LoadSceneMode.Single);
+                CoreFrames.USFrame.LoadScene(UnityScene.Build.LevelDemo01, LoadSceneMode.Single, (float progress, float currentCount, float totalCount) =>
+                {
+                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
+                });
             }
         }
 
@@ -82,7 +85,10 @@ public class USFrameDemo : MonoBehaviour
             }
             else
             {
-                CoreFrames.USFrame.LoadScene(UnityScene.Build.LevelDemo02, LoadSceneMode.Single);
+                CoreFrames.USFrame.LoadScene(UnityScene.Build.LevelDemo02, LoadSceneMode.Single, (float progress, float currentCount, float totalCount) =>
+                {
+                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
+                });
             }
         }
 
@@ -101,7 +107,10 @@ public class USFrameDemo : MonoBehaviour
             }
             else
             {
-                CoreFrames.USFrame.LoadScene(UnityScene.Build.LevelDemo03, LoadSceneMode.Additive);
+                CoreFrames.USFrame.LoadScene(UnityScene.Build.LevelDemo03, LoadSceneMode.Additive, (float progress, float currentCount, float totalCount) =>
+                {
+                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
+                });
             }
         }
         #endregion
@@ -122,7 +131,10 @@ public class USFrameDemo : MonoBehaviour
             }
             else
             {
-                CoreFrames.USFrame.LoadScene(UnityScene.Bundle.LevelDemo01, LoadSceneMode.Single);
+                CoreFrames.USFrame.LoadScene(UnityScene.Bundle.LevelDemo01, LoadSceneMode.Single, (float progress, float currentCount, float totalCount) =>
+                {
+                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
+                });
             }
         }
 
@@ -141,7 +153,10 @@ public class USFrameDemo : MonoBehaviour
             }
             else
             {
-                CoreFrames.USFrame.LoadScene(UnityScene.Bundle.LevelDemo02, LoadSceneMode.Single);
+                CoreFrames.USFrame.LoadScene(UnityScene.Bundle.LevelDemo02, LoadSceneMode.Single, (float progress, float currentCount, float totalCount) =>
+                {
+                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
+                });
             }
         }
 
@@ -160,7 +175,10 @@ public class USFrameDemo : MonoBehaviour
             }
             else
             {
-                CoreFrames.USFrame.LoadScene(UnityScene.Bundle.LevelDemo03, LoadSceneMode.Additive);
+                CoreFrames.USFrame.LoadScene(UnityScene.Bundle.LevelDemo03, LoadSceneMode.Additive, (float progress, float currentCount, float totalCount) =>
+                {
+                    Debug.Log($"Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
+                });
             }
         }
         #endregion

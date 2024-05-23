@@ -646,7 +646,7 @@ namespace OxGFrame.AssetLoader.Cacher
             return pack;
         }
 
-        public BundlePack LoadScene(string packageName, string assetName, LoadSceneMode loadSceneMode)
+        public BundlePack LoadScene(string packageName, string assetName, LoadSceneMode loadSceneMode, Progression progression)
         {
             /**
              * Single Scene will auto unload and release
@@ -665,6 +665,10 @@ namespace OxGFrame.AssetLoader.Cacher
                 else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
                 return null;
             }
+
+            // 初始加載進度
+            this.currentCount = 0;
+            this.totalCount = 1;
 
             // 場景最多嘗試 1 次
             byte maxRetryCount = 1;
@@ -686,6 +690,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     {
                         if (req.IsDone)
                         {
+                            this.currentCount++;
+                            progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                             loaded = true;
                             switch (loadSceneMode)
                             {
@@ -743,7 +749,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load Scene】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                 else Logging.Print<Logger>($"<color=#f7ff3e>【Load Scene】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                 this.GetRetryCounter(assetName).AddRetryCount();
-                return this.LoadScene(packageName, assetName, loadSceneMode);
+                return this.LoadScene(packageName, assetName, loadSceneMode, progression);
             }
 
             this.RemoveLoadingFlags(assetName);

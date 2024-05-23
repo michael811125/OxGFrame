@@ -41,15 +41,15 @@ namespace OxGFrame.AssetLoader
         /// <param name="loadSceneMode"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public static BundlePack LoadScene(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        public static BundlePack LoadScene(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
-            return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode);
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode, progression);
         }
 
-        public static BundlePack LoadScene(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        public static BundlePack LoadScene(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
-            return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode);
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode, progression);
         }
 
         /// <summary>
@@ -77,15 +77,15 @@ namespace OxGFrame.AssetLoader
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public static BundlePack LoadSingleScene(string assetName)
+        public static BundlePack LoadSingleScene(string assetName, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
-            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Single);
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Single, progression);
         }
 
-        public static BundlePack LoadSingleScene(string packageName, string assetName)
+        public static BundlePack LoadSingleScene(string packageName, string assetName, Progression progression = null)
         {
-            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Single);
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Single, progression);
         }
 
         /// <summary>
@@ -113,15 +113,15 @@ namespace OxGFrame.AssetLoader
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
         /// <returns></returns>
-        public static BundlePack LoadAdditiveScene(string assetName)
+        public static BundlePack LoadAdditiveScene(string assetName, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
-            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Additive);
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Additive, progression);
         }
 
-        public static BundlePack LoadAdditiveScene(string packageName, string assetName)
+        public static BundlePack LoadAdditiveScene(string packageName, string assetName, Progression progression = null)
         {
-            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Additive);
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Additive, progression);
         }
 
         /// <summary>

@@ -166,7 +166,7 @@ namespace OxGFrame.CoreFrame.USFrame
             return null;
         }
 
-        public BundlePack LoadFromBundle(string packageName, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        public BundlePack LoadFromBundle(string packageName, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
             var scene = this.GetSceneByName(sceneName);
             if (!string.IsNullOrEmpty(scene.name) &&
@@ -177,7 +177,7 @@ namespace OxGFrame.CoreFrame.USFrame
                 return null;
             }
 
-            var pack = AssetLoaders.LoadScene(packageName, sceneName, loadSceneMode);
+            var pack = AssetLoaders.LoadScene(packageName, sceneName, loadSceneMode, progression);
             if (pack != null)
             {
                 Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Bundle</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
@@ -239,7 +239,7 @@ namespace OxGFrame.CoreFrame.USFrame
             return req;
         }
 
-        public Scene LoadFromBuild(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        public Scene LoadFromBuild(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
             this._currentCount = 0;
             this._totalCount = 1; // 初始 1 = 必有一場景
@@ -254,6 +254,11 @@ namespace OxGFrame.CoreFrame.USFrame
             }
 
             scene = SceneManager.LoadScene(sceneName, new LoadSceneParameters(loadSceneMode));
+            if (progression != null)
+            {
+                this._currentCount++;
+                progression.Invoke(this._currentCount / this._totalCount, this._currentCount, this._totalCount);
+            }
             Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
             // (Caution) If use sync to load scene.isLoaded return false -> Why??
             return scene;
@@ -297,7 +302,7 @@ namespace OxGFrame.CoreFrame.USFrame
             return req;
         }
 
-        public Scene LoadFromBuild(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        public Scene LoadFromBuild(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
             this._currentCount = 0;
             this._totalCount = 1; // 初始 1 = 必有一場景
@@ -313,6 +318,11 @@ namespace OxGFrame.CoreFrame.USFrame
             }
 
             scene = SceneManager.LoadScene(sceneName, new LoadSceneParameters(loadSceneMode));
+            if (progression != null)
+            {
+                this._currentCount++;
+                progression.Invoke(this._currentCount / this._totalCount, this._currentCount, this._totalCount);
+            }
             Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => idx: {buildIndex}, mode: {loadSceneMode}</color>");
             // (Caution) If use sync to load scene.isLoaded return false -> Why??
             return scene;
