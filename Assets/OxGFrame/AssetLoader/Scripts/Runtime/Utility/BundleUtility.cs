@@ -1,7 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Bundle;
 using OxGKit.LoggingSystem;
-using SimpleDiskUtils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -367,15 +366,17 @@ namespace OxGFrame.AssetLoader.Utility
         #region Disk Operation
         public static int CheckAvailableDiskSpaceMegabytes()
         {
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN                                         
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             string rootPath = BundleConfig.GetLocalSandboxRootPath();
             string diskLetter = rootPath.Substring(0, 3);
-            return DiskUtils.CheckAvailableSpace(diskLetter);
+            return SimpleDiskUtils.DiskUtils.CheckAvailableSpace(diskLetter);
 #elif UNITY_ANDROID
             string rootPath = BundleConfig.GetLocalSandboxRootPath();
-            return DiskUtils.CheckAvailableSpace(rootPath);
-#else
+            return SimpleDiskUtils.DiskUtils.CheckAvailableSpace(rootPath);
+#elif !UNITY_WEBGL
             return DiskUtils.CheckAvailableSpace();
+#else
+            return 0;
 #endif
         }
         #endregion
