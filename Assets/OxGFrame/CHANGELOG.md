@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.11.4] - 2024-06-17
+- Fixed WebGL build bug error (close #17).
+- Fixed Hotfix unity TextAsset get_bytes bug error.
+
 ## [2.11.3] - 2024-05-19
 - Added new methods for sync loading of scene.
 ```csharp
