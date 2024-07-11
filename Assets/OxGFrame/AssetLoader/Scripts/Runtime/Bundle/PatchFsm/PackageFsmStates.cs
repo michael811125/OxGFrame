@@ -209,7 +209,17 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         }
                         else throw new Exception("Package info type error.");
 
-                        isInitialized = await PackageManager.InitPackage(packageInfo, false, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
+                        // Try-catch to avoid same package to init, will try-catch until is initialized
+                        try
+                        {
+                            isInitialized = await PackageManager.InitPackage(packageInfo, false, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
+                        }
+                        catch
+                        {
+                            isInitialized = false;
+                            await UniTask.Yield();
+                        }
+
                         if (!isInitialized)
                         {
                             PackageEvents.PatchInitPatchModeFailed.SendEventMessage(this._hashId);
