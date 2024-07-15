@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine;
 
 namespace OxGFrame.CoreFrame.Editor
 {
-    [CustomEditor(typeof(MonoBehaviour), true)]
+    [CustomEditor(typeof(FrameBase), true)]
     [CanEditMultipleObjects()]
     public class HidePropertiesInInspectorEditor : UnityEditor.Editor
     {
@@ -34,7 +33,7 @@ namespace OxGFrame.CoreFrame.Editor
 
         public new bool DrawDefaultInspector()
         {
-            //draw properties
+            // draw properties
             this.serializedObject.Update();
             var result = DrawDefaultInspectorExcept(this.serializedObject, this._hiddenProperties);
             if (result) this.serializedObject.ApplyModifiedProperties();

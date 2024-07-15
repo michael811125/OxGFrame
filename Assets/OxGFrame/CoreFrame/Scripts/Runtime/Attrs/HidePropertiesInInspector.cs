@@ -6,12 +6,12 @@
 
         public HidePropertiesInInspector(params string[] props)
         {
-            _props = props;
+            this._props = props;
         }
 
         public string[] hiddenProperties
         {
-            get { return _props; }
+            get { return this._props; }
         }
     }
 }
