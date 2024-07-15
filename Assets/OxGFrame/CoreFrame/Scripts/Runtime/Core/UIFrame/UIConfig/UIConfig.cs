@@ -37,8 +37,10 @@ namespace OxGFrame.CoreFrame.UIFrame
         public int order = 0;
         [Tooltip("If checked, allow close stack by stack")]
         public bool allowCloseStackByStack = false;
+        [OverrideLabel("Exclude From Close All")]
         [Tooltip("If checked, when call CloseAll method will auto skip process (If ReverseChanges or Stack is enabled, it will not work)")]
         public bool whenCloseAllToSkip = false;
+        [OverrideLabel("Exclude From Hide All")]
         [Tooltip("If checked, when call HideAll method will auto skip process (If ReverseChanges or Stack is enabled, it will not work)")]
         public bool whenHideAllToSkip = false;
     }

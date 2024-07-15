@@ -158,6 +158,9 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 var packageInfos = (this._machine.Owner as PackageOperation).GetPackageInfos();
                 if (packageInfos != null)
                 {
+                    if (packageInfos.Length == 0)
+                        throw new Exception("Package infos array is of zero.");
+
                     bool isInitialized = false;
                     foreach (var packageInfo in packageInfos)
                     {
