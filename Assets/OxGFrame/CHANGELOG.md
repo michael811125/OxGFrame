@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.11.5] - 2024-07-22
+- Fixed Unload after yooasset destroyed bug issue.
+- Fixed same package in PackageFsmStates
+- Fixed packageInfos.Length == 0 in PackageFsmStates bug issue (throw Exception).
+
 ## [2.11.4] - 2024-06-17
 - Fixed WebGL build bug error (close #17).
 - Fixed Hotfix unity TextAsset get_bytes bug error.
