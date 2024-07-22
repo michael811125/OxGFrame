@@ -131,7 +131,8 @@ namespace OxGFrame.AssetLoader
         /// <param name="recursively"></param>
         public static void UnloadScene(string assetName, bool recursively = false)
         {
-            CacheBundle.GetInstance().UnloadScene(assetName, recursively);
+            if (AssetPatcher.IsInitialized())
+                CacheBundle.GetInstance().UnloadScene(assetName, recursively);
         }
         #endregion
 
@@ -412,7 +413,7 @@ namespace OxGFrame.AssetLoader
         public static void UnloadRawFile(string assetName, bool forceUnload = false)
         {
             if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
-            else CacheBundle.GetInstance().UnloadRawFile(assetName, forceUnload);
+            else if (AssetPatcher.IsInitialized()) CacheBundle.GetInstance().UnloadRawFile(assetName, forceUnload);
         }
 
         public static void ReleaseBundleRawFiles()
@@ -933,7 +934,7 @@ namespace OxGFrame.AssetLoader
         public static void UnloadAsset(string assetName, bool forceUnload = false)
         {
             if (RefineResourcesPath(ref assetName)) CacheResource.GetInstance().UnloadAsset(assetName, forceUnload);
-            else CacheBundle.GetInstance().UnloadAsset(assetName, forceUnload);
+            else if (AssetPatcher.IsInitialized()) CacheBundle.GetInstance().UnloadAsset(assetName, forceUnload);
         }
 
         public static void ReleaseResourceAssets()
@@ -1122,7 +1123,7 @@ namespace OxGFrame.AssetLoader
         public static void UnloadRawFile(int groupId, string assetName, bool forceUnload = false)
         {
             if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
-            else GroupBundle.GetInstance().UnloadRawFile(groupId, assetName, forceUnload);
+            else if (AssetPatcher.IsInitialized()) GroupBundle.GetInstance().UnloadRawFile(groupId, assetName, forceUnload);
         }
 
         public static void ReleaseBundleRawFiles(int groupId)
@@ -1648,7 +1649,7 @@ namespace OxGFrame.AssetLoader
         public static void UnloadAsset(int groupId, string assetName, bool forceUnload = false)
         {
             if (RefineResourcesPath(ref assetName)) GroupResource.GetInstance().UnloadAsset(groupId, assetName, forceUnload);
-            else GroupBundle.GetInstance().UnloadAsset(groupId, assetName, forceUnload);
+            else if (AssetPatcher.IsInitialized()) GroupBundle.GetInstance().UnloadAsset(groupId, assetName, forceUnload);
         }
 
         public static void ReleaseResourceAssets(int groupId)
