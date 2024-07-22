@@ -455,7 +455,10 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static ResourcePackage GetPackage(string packageName)
         {
-            if (string.IsNullOrEmpty(packageName)) return null;
+            if (!isInitialized)
+                return null;
+            if (string.IsNullOrEmpty(packageName))
+                return null;
             return YooAssets.TryGetPackage(packageName);
         }
 

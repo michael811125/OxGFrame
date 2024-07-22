@@ -56,17 +56,8 @@ namespace OxGFrame.CoreFrame.CPFrame
 
         private void OnDestroy()
         {
-            if (Time.frameCount == 0 || !Application.isPlaying) return;
-
-            try
-            {
-                this.OnRelease();
-                AssetLoaders.UnloadAsset(this.assetName);
-            }
-            catch
-            {
-                /* Nothing to do */
-            }
+            this.OnRelease();
+            AssetLoaders.UnloadAsset(this.assetName);
         }
 
         public override void OnCreate() { }
