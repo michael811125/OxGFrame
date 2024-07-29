@@ -2,7 +2,6 @@
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.Utility;
 using System.Collections.Generic;
-using UnityEngine;
 using YooAsset;
 using static OxGFrame.AssetLoader.Utility.DownloadSpeedCalculator;
 using static YooAsset.DownloaderOperation;
@@ -98,6 +97,15 @@ namespace OxGFrame.AssetLoader
         public static bool IsInitialized()
         {
             return PackageManager.isInitialized;
+        }
+
+        /// <summary>
+        /// Return yooasset is released
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsReleased()
+        {
+            return PackageManager.isReleased;
         }
 
         /// <summary>
@@ -844,5 +852,14 @@ namespace OxGFrame.AssetLoader
         #endregion
         #endregion
         #endregion
+
+        /// <summary>
+        /// Release packages
+        /// </summary>
+        public static void Release()
+        {
+            BundleConfig.ReleaseSecureString();
+            PackageManager.Release();
+        }
     }
 }

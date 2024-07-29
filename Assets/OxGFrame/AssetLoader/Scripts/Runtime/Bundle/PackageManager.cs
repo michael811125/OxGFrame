@@ -11,6 +11,7 @@ namespace OxGFrame.AssetLoader.Bundle
     internal static class PackageManager
     {
         internal static bool isInitialized = false;
+        internal static bool isReleased = false;
 
         private static string _currentPackageName;
         private static ResourcePackage _currentPackage;
@@ -761,6 +762,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         public static void Release()
         {
+            isReleased = true;
             YooAssets.Destroy();
         }
     }

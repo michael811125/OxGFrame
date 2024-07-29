@@ -869,6 +869,36 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff4a8d>Unload Scene Invalid</color>】 => << CacheBundle >> sceneName: {assetName} maybe not <color=#ffb33e>Additive</color> or is <color=#ffb33e>Single</color></color>");
         }
+
+        public void ReleaseScenes()
+        {
+            if (this._additiveSceneCounter.Count == 0) return;
+
+            HashSet<ResourcePackage> packages = new HashSet<ResourcePackage>();
+
+            // 強制釋放緩存與資源
+            foreach (var assetName in this._additiveSceneCounter.Keys.ToArray())
+            {
+                if (this.HasInCache(assetName))
+                {
+                    BundlePack pack = this.GetFromCache(assetName);
+                    var package = PackageManager.GetPackage(pack.packageName);
+                    if (!packages.Contains(package)) packages.Add(package);
+                    this.UnloadScene(assetName, true);
+                }
+            }
+
+            // 清除 Additive 計數緩存
+            this._additiveScenes.Clear();
+            this._additiveSceneCounter.Clear();
+
+            foreach (var package in packages)
+            {
+                package?.UnloadUnusedAssets();
+            }
+
+            Logging.Print<Logger>($"<color=#ff71b7>【Release All Scenes (Addtive)】 => Current << CacheBundle >> Additive Scene Cache Count: {this._additiveSceneCounter.Count}</color>");
+        }
         #endregion
 
         #region Asset

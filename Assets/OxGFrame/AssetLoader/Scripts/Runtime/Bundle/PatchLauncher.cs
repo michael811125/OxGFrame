@@ -100,16 +100,6 @@ namespace OxGFrame.AssetLoader.Bundle
             }
         }
 
-        private void OnApplicationQuit()
-        {
-            PackageManager.isInitialized = false;
-            BundleConfig.ReleaseSecureString();
-#if !UNITY_WEBGL
-            PackageManager.Release();
-            Logging.Print<Logger>("<color=#ff84d1>(Powered by YooAsset) Release Packages Completes.</color>");
-#endif
-        }
-
 #if UNITY_EDITOR
         private void OnValidate()
         {
