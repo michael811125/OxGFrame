@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.11.6] - 2024-07-29
+- Added method AssetsLoaders.ReleaseBundleScenes (for additive scenes).
+- Added method AssetPatcher.Release (mainly for yooasset destroy).
+- Removed OnApplicationQuit process in PatchLauncher, use manual to call AssetPatcher.Release before the application quits.
+
 ## [2.11.5] - 2024-07-22
 - Fixed Unload after yooasset destroyed bug issue.
 - Fixed same package in PackageFsmStates
