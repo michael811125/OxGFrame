@@ -11,7 +11,6 @@ using System.IO;
 using System.Linq;
 using UniFramework.Machine;
 using YooAsset;
-using static UnityEngine.Mesh;
 
 namespace OxGFrame.AssetLoader.PatchFsm
 {

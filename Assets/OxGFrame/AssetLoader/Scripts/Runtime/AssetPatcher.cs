@@ -1,7 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.Utility;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 using YooAsset;
 using static OxGFrame.AssetLoader.Utility.DownloadSpeedCalculator;
 using static YooAsset.DownloaderOperation;
@@ -183,6 +185,9 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static string GetPlatform()
         {
+            // For simulate mode
+            if (string.IsNullOrEmpty(PatchManager.platform))
+                return Application.platform.ToString();
             return PatchManager.platform;
         }
 
@@ -192,6 +197,9 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static string GetAppVersion()
         {
+            // For simulate mode
+            if (string.IsNullOrEmpty(PatchManager.appVersion))
+                return Application.version;
             return PatchManager.appVersion;
         }
 
@@ -205,6 +213,10 @@ namespace OxGFrame.AssetLoader
             string newestVersion = BundleUtility.NewestPackageVersion(versions);
             string patchVersion = string.IsNullOrEmpty(newestVersion) ? string.Empty : newestVersion;
 
+            // For simulate mode
+            if (string.IsNullOrEmpty(patchVersion))
+                patchVersion = GetDefaultPackageVersion();
+
             if (encode)
             {
                 string versionHash = BundleUtility.GetVersionHash(separator, patchVersion, 1 << 5);
@@ -213,6 +225,16 @@ namespace OxGFrame.AssetLoader
             }
 
             return patchVersion;
+        }
+
+        /// <summary>
+        /// Get package version by current date
+        /// </summary>
+        /// <returns></returns>
+        internal static string GetDefaultPackageVersion()
+        {
+            int totalMinutes = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+            return DateTime.Now.ToString("yyyy-MM-dd") + "-" + totalMinutes;
         }
         #endregion
 
