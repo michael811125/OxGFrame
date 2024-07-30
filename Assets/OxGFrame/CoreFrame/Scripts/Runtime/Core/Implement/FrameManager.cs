@@ -399,6 +399,8 @@ namespace OxGFrame.CoreFrame
                     // 如果允許多實例 & 預加載模式, 則直接返回 (主要是 Cacher 已經有加載資源了)
                     if (stack.allowInstantiate && isPreloadMode)
                     {
+                        // 直接標記加載完成
+                        progression?.Invoke(1, 1, 1);
                         Logging.Print<Logger>($"<color=#FF9149>{stack.assetName} => 【Allow Instantiate + Preload Mode】skip cache process.</color>");
                         return null;
                     }
@@ -429,7 +431,12 @@ namespace OxGFrame.CoreFrame
                         fBase = this.Instantiate(fBase, assetName, (fBaseNew) => { stack.Push(fBaseNew); }, parent);
                     }
                     // 不允許多實例, 則返回取得物件
-                    else fBase = this.PeekStackFromAllCache(assetName);
+                    else
+                    {
+                        // 直接標記加載完成
+                        progression?.Invoke(1, 1, 1);
+                        fBase = this.PeekStackFromAllCache(assetName);
+                    }
                 }
             }
             // 無則加載 (針對一開始必須要先執行加載, 取得組件中的參數進行判斷操作, 針對 allowInstantiate 會在 Cacher 中有多 1 次的 ref)
