@@ -292,6 +292,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         }
                         else
                         {
+                            PatchManager.platform = hostCfg.PLATFORM;
                             PatchManager.appVersion = hostCfg.APP_VERSION;
                             this._machine.ChangeState<FsmInitPatchMode>();
 
@@ -331,6 +332,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                                 File.WriteAllText(localCfgPath, JsonConvert.SerializeObject(hostCfg));
                             }
 
+                            PatchManager.platform = hostCfg.PLATFORM;
                             PatchManager.appVersion = hostCfg.APP_VERSION;
                             this._machine.ChangeState<FsmInitPatchMode>();
 
