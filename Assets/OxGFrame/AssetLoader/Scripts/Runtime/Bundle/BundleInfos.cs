@@ -102,6 +102,7 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         public string packageName;
         public string packageVersion;
+        public string packageVersionEncoded;
         public long packageSize;
     }
 
