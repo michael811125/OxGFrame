@@ -554,9 +554,17 @@ namespace OxGFrame.AssetLoader.Editor
                     {
                         string versionName = Path.GetFileNameWithoutExtension(newestVersionPath);
                         string refineVersionName = versionName.Replace("-", string.Empty);
+                        #region Encode
+                        string versionHash = BundleUtility.GetVersionHash("-", versionName, 1 << 5);
+                        // Default length is 6
+                        string versionNumber1 = BundleUtility.GetVersionNumber(versionHash, 6);
+                        // Just show more
+                        string versionNumber2 = BundleUtility.GetVersionNumber(versionHash, 32);
+                        #endregion
 
                         packageInfo.packageName = packageName;
                         packageInfo.packageVersion = refineVersionName;
+                        packageInfo.packageVersionEncoded = $"{versionNumber1}-{versionNumber2}";
                         packageInfo.packageSize = packageSize;
                     }
 

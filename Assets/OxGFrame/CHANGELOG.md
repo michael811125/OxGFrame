@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.11.7] - 2024-07-30
+- Added method AssetPatcher.GetPlatform.
+- Modified patchconfig.json include packageVersionEncoded info (just for comparison).
+- Fixed AssetPatcher -> GetAppVersion, GetPatchVersion return default value for simulate mode.
+
 ## [2.11.6] - 2024-07-29
 - Added method AssetsLoaders.ReleaseBundleScenes (for additive scenes).
 - Added method AssetPatcher.Release (mainly for yooasset destroy).
