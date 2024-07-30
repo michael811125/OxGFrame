@@ -37,6 +37,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
         #endregion
 
+        internal static string platform = string.Empty;
         internal static string appVersion = string.Empty;
         internal static string[] patchVersions;
         internal ResourceDownloaderOperation[] mainDownloaders;

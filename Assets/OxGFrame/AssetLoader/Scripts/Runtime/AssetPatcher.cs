@@ -178,6 +178,15 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Get app os platform
+        /// </summary>
+        /// <returns></returns>
+        public static string GetPlatform()
+        {
+            return PatchManager.platform;
+        }
+
+        /// <summary>
         /// Get app version
         /// </summary>
         /// <returns></returns>
