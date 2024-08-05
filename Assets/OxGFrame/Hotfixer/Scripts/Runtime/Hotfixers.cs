@@ -6,6 +6,14 @@ namespace OxGFrame.Hotfixer
     public static class Hotfixers
     {
         /// <summary>
+        /// Reset hotfix flgas and cache
+        /// </summary>
+        public static void Reset()
+        {
+            HotfixManager.GetInstance().Reset();
+        }
+
+        /// <summary>
         /// Start hotfix files download and load all (default is AppPackageInfoWithBuild)
         /// </summary>
         /// <param name="packageName"></param>

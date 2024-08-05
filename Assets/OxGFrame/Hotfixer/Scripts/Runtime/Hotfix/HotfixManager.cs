@@ -98,8 +98,16 @@ namespace OxGFrame.Hotfixer
             this._hotfixFsm.AddNode<HotfixFsmStates.FsmHotfixDone>();
         }
 
+        public void Reset()
+        {
+            this._isCheck = false;
+            this._isDone = false;
+            this._dictHotfixAssemblies.Clear();
+        }
+
         public void ReleaseMainDownloader()
         {
+            this.packageInfoWithBuild = null;
             this.mainDownloader = null;
         }
 
@@ -172,7 +180,7 @@ namespace OxGFrame.Hotfixer
         {
             if (this._isDone)
             {
-                Logging.Print<Logger>("<color=#ff8686>Hotfix all are loaded.</color>");
+                Logging.Print<Logger>("<color=#ff8686>Hotfix all are loaded. Please run reset and try again.</color>");
                 return;
             }
 
