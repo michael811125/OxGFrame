@@ -7,7 +7,10 @@ namespace OxGFrame.NetFrame
 {
     internal class NetManager
     {
-        private Dictionary<byte, NetNode> _netNodes = null; // NetNode 緩存
+        /// <summary>
+        /// NetNode 緩存
+        /// </summary>
+        private Dictionary<int, NetNode> _netNodes = null;
         private RTUpdater _rtUpdater = null;
 
         private static readonly object _locker = new object();
@@ -27,7 +30,7 @@ namespace OxGFrame.NetFrame
 
         public NetManager()
         {
-            this._netNodes = new Dictionary<byte, NetNode>();
+            this._netNodes = new Dictionary<int, NetNode>();
             this._rtUpdater = new RTUpdater();
             this._rtUpdater.onUpdate = this._OnUpdate;
             this._rtUpdater.Start();
@@ -42,7 +45,7 @@ namespace OxGFrame.NetFrame
                 {
                     if (this._netNodes.Count != nodes.Length) break;
                     else if (node == null) continue;
-                    node.OnUpdate(dt);
+                    node.OnUpdate();
                 }
             }
         }
@@ -52,7 +55,7 @@ namespace OxGFrame.NetFrame
         /// </summary>
         /// <param name="netNode"></param>
         /// <param name="nnId"></param>
-        public void AddNetNode(NetNode netNode, byte nnId)
+        public void AddNetNode(NetNode netNode, int nnId)
         {
             if (!this._netNodes.ContainsKey(nnId))
             {
@@ -69,7 +72,7 @@ namespace OxGFrame.NetFrame
         /// Remove net node
         /// </summary>
         /// <param name="nnId"></param>
-        public void RemoveNetNode(byte nnId)
+        public void RemoveNetNode(int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
             {
@@ -83,7 +86,7 @@ namespace OxGFrame.NetFrame
         /// </summary>
         /// <param name="nnId"></param>
         /// <returns></returns>
-        public NetNode GetNetNode(byte nnId)
+        public NetNode GetNetNode(int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
                 return this._netNodes[nnId];
@@ -95,7 +98,7 @@ namespace OxGFrame.NetFrame
         /// </summary>
         /// <param name="netOption"></param>
         /// <param name="nnId"></param>
-        public void Connect(NetOption netOption, byte nnId)
+        public void Connect(NetOption netOption, int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
             {
@@ -109,7 +112,7 @@ namespace OxGFrame.NetFrame
         /// </summary>
         /// <param name="nnId"></param>
         /// <returns></returns>
-        public bool IsConnected(byte nnId)
+        public bool IsConnected(int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
             {
@@ -125,7 +128,7 @@ namespace OxGFrame.NetFrame
         /// <param name="buffer"></param>
         /// <param name="nnId"></param>
         /// <returns></returns>
-        public bool Send(byte[] buffer, byte nnId)
+        public bool Send(byte[] buffer, int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
             {
@@ -144,7 +147,7 @@ namespace OxGFrame.NetFrame
         /// <param name="text"></param>
         /// <param name="nnId"></param>
         /// <returns></returns>
-        public bool Send(string text, byte nnId)
+        public bool Send(string text, int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
             {
@@ -162,7 +165,7 @@ namespace OxGFrame.NetFrame
         /// </summary>
         /// <param name="nnId"></param>
         /// <param name="remove"></param>
-        public void Close(byte nnId, bool remove)
+        public void Close(int nnId, bool remove)
         {
             if (this._netNodes.ContainsKey(nnId))
             {
