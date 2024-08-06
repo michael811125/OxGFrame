@@ -142,7 +142,7 @@ namespace OxGFrame.NetFrame
             }
         }
 
-        internal void OnUpdate(float dt)
+        internal void OnUpdate()
         {
             this._ProcessOutReceive();
             this._ProcessHeartBeat();
