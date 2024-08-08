@@ -374,7 +374,7 @@ namespace OxGFrame.AssetLoader.Utility
             string rootPath = BundleConfig.GetLocalSandboxRootPath();
             return SimpleDiskUtils.DiskUtils.CheckAvailableSpace(rootPath);
 #elif !UNITY_WEBGL
-            return DiskUtils.CheckAvailableSpace();
+            return SimpleDiskUtils.DiskUtils.CheckAvailableSpace();
 #else
             return 0;
 #endif
