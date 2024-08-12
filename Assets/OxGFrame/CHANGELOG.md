@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.11.8] - 2024-08-10
+- Added Reset method in Hotfixers.
+- Modified nnId byte to int (NetFrame).
+- Fixed DiskUtils using bug issue.
+
 ## [2.11.7] - 2024-07-30
 - Added method AssetPatcher.GetPlatform.
 - Modified patchconfig.json include packageVersionEncoded info (just for comparison).
