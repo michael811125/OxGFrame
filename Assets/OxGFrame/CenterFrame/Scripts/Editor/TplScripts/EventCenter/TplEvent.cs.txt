@@ -15,7 +15,25 @@ public class #SCRIPTNAME# : EventBase
         this.HandleEvent().Forget();
     }
 
+    public async UniTask EmitAsync(/* Custom Your Parameters */)
+    {
+        /*
+         Set Your Parameters In Here
+         */
+
+        await this.HandleEventAsync();
+    }
+
     public async override UniTaskVoid HandleEvent()
+    {
+        /*
+         Get Your Values
+         */
+
+        this.Release();
+    }
+
+    public async override UniTask HandleEventAsync()
     {
         /*
          Get Your Values
