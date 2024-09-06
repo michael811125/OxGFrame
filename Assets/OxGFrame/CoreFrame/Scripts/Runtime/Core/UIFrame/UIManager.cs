@@ -56,7 +56,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// 透過對應名稱查找物件, 並且設置與檢查是否有匹配的 UICanvas 環境
         /// </summary>
         /// <param name="canvasName"></param>
-        private bool _SetupAndCheckUICanvas(string canvasName)
+        public bool SetupAndCheckUICanvas(string canvasName)
         {
             if (this._dictUICanvas.ContainsKey(canvasName)) return true;
 
@@ -205,7 +205,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             if (uiBase != null)
             {
                 // 先檢查與設置 UICanvas 環境
-                if (this._SetupAndCheckUICanvas(uiBase.uiSetting.canvasName))
+                if (this.SetupAndCheckUICanvas(uiBase.uiSetting.canvasName))
                 {
                     uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasName);
                 }
@@ -506,6 +506,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         {
             if (this._dictStackByStack.Count == 0) return 0;
             string key = $"{groupId}{canvasName}";
+            if (!this._dictStackByStack.ContainsKey(key)) return 0;
             return this._dictStackByStack[key].Count;
         }
 
@@ -609,7 +610,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             this._Close(assetName, disabledPreClose, forceDestroy, false);
         }
 
-        public override void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -643,13 +644,13 @@ namespace OxGFrame.CoreFrame.UIFrame
                 if (!forceDestroy && !this.CheckIsShowing(uiBase) && !uiBase.allowInstantiate) continue;
 
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
-                if (uiBase.uiSetting.whenCloseAllToSkip) continue;
+                if (!forceCloseExcluded && uiBase.uiSetting.whenCloseAllToSkip) continue;
 
                 this._Close(assetName, disabledPreClose, forceDestroy, true);
             }
         }
 
-        public override void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -685,7 +686,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 if (!forceDestroy && !this.CheckIsShowing(uiBase) && !uiBase.allowInstantiate) continue;
 
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
-                if (uiBase.uiSetting.whenCloseAllToSkip) continue;
+                if (!forceCloseExcluded && uiBase.uiSetting.whenCloseAllToSkip) continue;
 
                 this._Close(assetName, disabledPreClose, forceDestroy, true);
             }
@@ -994,20 +995,23 @@ namespace OxGFrame.CoreFrame.UIFrame
             {
                 // 使用 GroupId + CanvasName 作為 Reverse 緩存的 Key (主要是獨立切出不同 Canvas 的反切緩存)
                 var key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
-                if (this._dictReverse[key].Count > 1)
+                if (this._dictReverse.ContainsKey(key))
                 {
-                    // 如果當前 UI 是 Reverse 模式, 將會直接移除最上層的緩存
-                    this._dictReverse[key].RemoveAt(this._dictReverse[key].Count - 1);
-                    // 移除最上層後, 再取一次最上層 (等於是倒數第二變成最 Top)
-                    var top = this._dictReverse[key][this._dictReverse[key].Count - 1];
-                    // 開啟最上層的 UI (堆疊的緩存中後出的會有 isHidden = false 參考問題, 所以需要強制 doStack = false, 避免影響堆疊計數)
-                    // ※備註: 另外就是如果 allowInstantiate = false, 會有 Data Reference 問題, 所以會需要儲存上一次的數據進行還原 (需注意在同參考的情況下, 當 Second Last 被關閉時, Hidden = true 剛好不用數據還原)
-                    this.LoadAndDisplay(top.uiBase, top.data, false).Forget();
-                }
-                else if (this._dictReverse[key].Count > 0 && this._dictReverse[key].Count < 2)
-                {
-                    this._dictReverse[key].RemoveAt(this._dictReverse[key].Count - 1);
-                    this._dictReverse.Remove(key);
+                    if (this._dictReverse[key].Count > 1)
+                    {
+                        // 如果當前 UI 是 Reverse 模式, 將會直接移除最上層的緩存
+                        this._dictReverse[key].RemoveAt(this._dictReverse[key].Count - 1);
+                        // 移除最上層後, 再取一次最上層 (等於是倒數第二變成最 Top)
+                        var top = this._dictReverse[key][this._dictReverse[key].Count - 1];
+                        // 開啟最上層的 UI (堆疊的緩存中後出的會有 isHidden = false 參考問題, 所以需要強制 doStack = false, 避免影響堆疊計數)
+                        // ※備註: 另外就是如果 allowInstantiate = false, 會有 Data Reference 問題, 所以會需要儲存上一次的數據進行還原 (需注意在同參考的情況下, 當 Second Last 被關閉時, Hidden = true 剛好不用數據還原)
+                        this.LoadAndDisplay(top.uiBase, top.data, false).Forget();
+                    }
+                    else if (this._dictReverse[key].Count > 0 && this._dictReverse[key].Count < 2)
+                    {
+                        this._dictReverse[key].RemoveAt(this._dictReverse[key].Count - 1);
+                        this._dictReverse.Remove(key);
+                    }
                 }
             }
         }
@@ -1044,25 +1048,28 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 以 GroupId + CanvasName 作為 key
                 var key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
                 string currentAssetName = uiBase.assetName;
-                if (this._dictStackByStack[key].Count > 1)
+                if (this._dictStackByStack.ContainsKey(key))
                 {
-                    int count = 1;
-                    string assetName = this._dictStackByStack[key][this._dictStackByStack[key].Count - count];
-                    // 如果 currentAssetName != assetName 表示被特別關閉
-                    while (currentAssetName != assetName)
+                    if (this._dictStackByStack[key].Count > 1)
                     {
-                        // 往下查找直到匹配
-                        ++count;
-                        if (count > this._dictStackByStack[key].Count) break;
-                        assetName = this._dictStackByStack[key][this._dictStackByStack[key].Count - count];
+                        int count = 1;
+                        string assetName = this._dictStackByStack[key][this._dictStackByStack[key].Count - count];
+                        // 如果 currentAssetName != assetName 表示被特別關閉
+                        while (currentAssetName != assetName)
+                        {
+                            // 往下查找直到匹配
+                            ++count;
+                            if (count > this._dictStackByStack[key].Count) break;
+                            assetName = this._dictStackByStack[key][this._dictStackByStack[key].Count - count];
+                        }
+                        // 如果當前 UI 是 StackByStack 模式, 將會直接移除最上層的緩存
+                        this._dictStackByStack[key].RemoveAt(this._dictStackByStack[key].Count - count);
                     }
-                    // 如果當前 UI 是 StackByStack 模式, 將會直接移除最上層的緩存
-                    this._dictStackByStack[key].RemoveAt(this._dictStackByStack[key].Count - count);
-                }
-                else if (this._dictStackByStack[key].Count > 0 && this._dictStackByStack[key].Count < 2)
-                {
-                    this._dictStackByStack[key].RemoveAt(this._dictStackByStack[key].Count - 1);
-                    this._dictStackByStack.Remove(key);
+                    else if (this._dictStackByStack[key].Count > 0 && this._dictStackByStack[key].Count < 2)
+                    {
+                        this._dictStackByStack[key].RemoveAt(this._dictStackByStack[key].Count - 1);
+                        this._dictStackByStack.Remove(key);
+                    }
                 }
             }
         }

@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [2.11.9] - 2024-09-06
+- Added CoreFrames.SRFrame.CloseAllAndExcluded() method.
+- Added CoreFrames.UIFrame.CloseAllAndExcluded() method.
+- Added CoreFrames.UIFrame.SetupAndCheckUICanvas() method.
+- Added Bundle url set plan editor.
+- Added Media url set plan editor.
+- Fixed UIManager dict check issue.
+
 ## [2.11.8] - 2024-08-10
 - Added Reset method in Hotfixers.
 - Modified nnId byte to int (NetFrame).

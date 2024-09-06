@@ -178,7 +178,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             this._Close(assetName, disabledPreClose, forceDestroy, false);
         }
 
-        public override void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -212,13 +212,13 @@ namespace OxGFrame.CoreFrame.SRFrame
                 if (!forceDestroy && !this.CheckIsShowing(srBase)) continue;
 
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
-                if (srBase.srSetting.whenCloseAllToSkip) continue;
+                if (!forceCloseExcluded && srBase.srSetting.whenCloseAllToSkip) continue;
 
                 this._Close(assetName, disabledPreClose, forceDestroy, true);
             }
         }
 
-        public override void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+        public override void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -254,7 +254,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 if (!forceDestroy && !this.CheckIsShowing(srBase)) continue;
 
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
-                if (srBase.srSetting.whenCloseAllToSkip) continue;
+                if (!forceCloseExcluded && srBase.srSetting.whenCloseAllToSkip) continue;
 
                 this._Close(assetName, disabledPreClose, forceDestroy, true);
             }
