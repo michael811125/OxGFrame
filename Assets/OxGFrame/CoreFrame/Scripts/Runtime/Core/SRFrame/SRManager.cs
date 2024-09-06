@@ -360,7 +360,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             this._Hide(assetName);
         }
 
-        public override void HideAll(params string[] withoutAssetNames)
+        public override void HideAll(bool forceHideExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -391,13 +391,13 @@ namespace OxGFrame.CoreFrame.SRFrame
                 if (checkWithout) continue;
 
                 // 如有啟用 HideAll 需跳過開關, 則不列入關閉執行
-                if (srBase.srSetting.whenHideAllToSkip) continue;
+                if (!forceHideExcluded && srBase.srSetting.whenHideAllToSkip) continue;
 
                 this._Hide(assetName);
             }
         }
 
-        public override void HideAll(int groupId, params string[] withoutAssetNames)
+        public override void HideAll(int groupId, bool forceHideExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -430,7 +430,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 if (checkWithout) continue;
 
                 // 如有啟用 HideAll 需跳過開關, 則不列入關閉執行
-                if (srBase.srSetting.whenHideAllToSkip) continue;
+                if (!forceHideExcluded && srBase.srSetting.whenHideAllToSkip) continue;
 
                 this._Hide(assetName);
             }
