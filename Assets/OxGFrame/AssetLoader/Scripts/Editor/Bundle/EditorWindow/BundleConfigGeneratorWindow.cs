@@ -845,6 +845,7 @@ namespace OxGFrame.AssetLoader.Editor
                 EditorStorage.SaveData(keySaver, $"bundlePlanFIlePath", Path.GetDirectoryName(filePath));
                 string json = JsonConvert.SerializeObject(this.bundlePlans, Formatting.Indented);
                 BundleHelper.WriteTxt(json, filePath);
+                AssetDatabase.Refresh();
             }
         }
 
