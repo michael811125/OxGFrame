@@ -326,14 +326,24 @@ namespace OxGFrame.CoreFrame
                 UIManager.GetInstance().Hide(assetName);
             }
 
-            public static void HideAll()
+            public static void HideAll(params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().HideAll();
+                UIManager.GetInstance().HideAll(false, withoutAssetNames);
             }
 
-            public static void HideAll(int groupId)
+            public static void HideAll(int groupId, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().HideAll(groupId);
+                UIManager.GetInstance().HideAll(groupId, false, withoutAssetNames);
+            }
+
+            public static void HideAllAndExcluded()
+            {
+                UIManager.GetInstance().HideAll(true);
+            }
+
+            public static void HideAllAndExcluded(int groupId)
+            {
+                UIManager.GetInstance().HideAll(groupId, true);
             }
             #endregion
         }
@@ -598,14 +608,24 @@ namespace OxGFrame.CoreFrame
                 SRManager.GetInstance().Hide(assetName);
             }
 
-            public static void HideAll()
+            public static void HideAll(params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().HideAll();
+                SRManager.GetInstance().HideAll(false, withoutAssetNames);
             }
 
-            public static void HideAll(int groupId)
+            public static void HideAll(int groupId, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().HideAll(groupId);
+                SRManager.GetInstance().HideAll(groupId, false, withoutAssetNames);
+            }
+
+            public static void HideAllAndExcluded()
+            {
+                SRManager.GetInstance().HideAll(true);
+            }
+
+            public static void HideAllAndExcluded(int groupId)
+            {
+                SRManager.GetInstance().HideAll(groupId, true);
             }
             #endregion
         }

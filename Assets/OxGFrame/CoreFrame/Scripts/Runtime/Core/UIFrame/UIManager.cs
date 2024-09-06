@@ -810,7 +810,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             this._Hide(assetName);
         }
 
-        public override void HideAll(params string[] withoutAssetNames)
+        public override void HideAll(bool forceHideExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -842,13 +842,13 @@ namespace OxGFrame.CoreFrame.UIFrame
                 if (checkWithout) continue;
 
                 // 如有啟用 HideAll 需跳過開關, 則不列入關閉執行
-                if (!uiBase.reverseChanges && uiBase.uiSetting.whenHideAllToSkip) continue;
+                if (!forceHideExcluded && !uiBase.reverseChanges && uiBase.uiSetting.whenHideAllToSkip) continue;
 
                 this._Hide(assetName);
             }
         }
 
-        public override void HideAll(int groupId, params string[] withoutAssetNames)
+        public override void HideAll(int groupId, bool forceHideExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
 
@@ -882,7 +882,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 if (checkWithout) continue;
 
                 // 如有啟用 HideAll 需跳過開關, 則不列入關閉執行
-                if (!uiBase.reverseChanges && uiBase.uiSetting.whenHideAllToSkip) continue;
+                if (!forceHideExcluded && !uiBase.reverseChanges && uiBase.uiSetting.whenHideAllToSkip) continue;
 
                 this._Hide(assetName);
             }

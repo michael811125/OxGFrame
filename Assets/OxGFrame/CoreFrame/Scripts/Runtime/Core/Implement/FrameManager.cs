@@ -620,13 +620,13 @@ namespace OxGFrame.CoreFrame
         /// <summary>
         /// 全部隱藏 (可透過 Show 或者 Reveal 進行顯示, 差別在於初始行為)
         /// </summary>
-        public virtual void HideAll(params string[] withoutAssetNames) { }
+        public virtual void HideAll(bool forceHideExcluded = false, params string[] withoutAssetNames) { }
 
         /// <summary>
         /// 透過 id 群組進行全部隱藏 (可透過 Show 或者 Reveal 進行顯示, 差別在於初始行為)
         /// </summary>
         /// <param name="groupId"></param>
-        public virtual void HideAll(int groupId, params string[] withoutAssetNames) { }
+        public virtual void HideAll(int groupId, bool forceHideExcluded = false, params string[] withoutAssetNames) { }
         #endregion
 
         #region Destroy

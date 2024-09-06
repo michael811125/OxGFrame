@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## [2.11.9] - 2024-09-06
+- Added CoreFrames.SRFrame.HideAllAndExcluded() method.
+- Added CoreFrames.UIFrame.HideAllAndExcluded() method.
 - Added CoreFrames.SRFrame.CloseAllAndExcluded() method.
 - Added CoreFrames.UIFrame.CloseAllAndExcluded() method.
 - Added CoreFrames.UIFrame.SetupAndCheckUICanvas() method.
