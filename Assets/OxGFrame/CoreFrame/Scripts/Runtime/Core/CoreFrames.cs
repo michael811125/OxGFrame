@@ -40,6 +40,15 @@ namespace OxGFrame.CoreFrame
                 UIManager.GetInstance();
             }
 
+            /// <summary>
+            /// Finds an object by its name and sets and checks if there is a matching UICanvas context
+            /// </summary>
+            /// <param name="canvasName"></param>
+            public static bool SetupAndCheckUICanvas(string canvasName)
+            {
+                return UIManager.GetInstance().SetupAndCheckUICanvas(canvasName);
+            }
+
             public static bool CheckIsShowing(string assetName)
             {
                 return UIManager.GetInstance().CheckIsShowing(assetName);
@@ -252,12 +261,22 @@ namespace OxGFrame.CoreFrame
 
             public static void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, false, withoutAssetNames);
             }
 
             public static void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, false, withoutAssetNames);
+            }
+
+            public static void CloseAllAndExcluded(bool disabledPreClose = false, bool forceDestroy = false)
+            {
+                UIManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, true);
+            }
+
+            public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false)
+            {
+                UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true);
             }
 
             /// <summary>
@@ -537,12 +556,22 @@ namespace OxGFrame.CoreFrame
 
             public static void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, false, withoutAssetNames);
             }
 
             public static void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, false, withoutAssetNames);
+            }
+
+            public static void CloseAllAndExcluded(bool disabledPreClose = false, bool forceDestroy = false)
+            {
+                SRManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, true);
+            }
+
+            public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false)
+            {
+                SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true);
             }
             #endregion
 

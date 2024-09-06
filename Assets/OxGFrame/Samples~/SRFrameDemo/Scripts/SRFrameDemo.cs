@@ -136,4 +136,10 @@ public class SRFrameDemo : MonoBehaviour
         CoreFrames.SRFrame.CloseAll(ScenePrefs.Id, true, true);
         CoreFrames.SRFrame.CloseAll(ResPrefs.Id, true, true);
     }
+
+    public void CloseAllAndExcludedWithDestroy()
+    {
+        CoreFrames.SRFrame.CloseAllAndExcluded(ScenePrefs.Id, true, true);
+        CoreFrames.SRFrame.CloseAllAndExcluded(ResPrefs.Id, true, true);
+    }
 }

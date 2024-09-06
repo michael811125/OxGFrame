@@ -579,7 +579,7 @@ namespace OxGFrame.CoreFrame
         /// <param name="disabledPreClose"></param>
         /// <param name="forceDestroy"></param>
         /// <param name="withoutAssetNames"></param>
-        public virtual void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames) { }
+        public virtual void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames) { }
 
         /// <summary>
         /// 透過 id 群組進行全部關閉
@@ -588,7 +588,7 @@ namespace OxGFrame.CoreFrame
         /// <param name="disabledPreClose"></param>
         /// <param name="forceDestroy"></param>
         /// <param name="withoutAssetNames"></param>
-        public virtual void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames) { }
+        public virtual void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames) { }
         #endregion
 
         #region Reveal
