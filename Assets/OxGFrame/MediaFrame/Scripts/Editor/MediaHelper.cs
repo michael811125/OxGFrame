@@ -39,5 +39,18 @@ namespace OxGFrame.MediaFrame.Editor
         }
         #endregion
         #endregion
+
+        /// <summary>
+        /// 寫入文字文件檔
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <param name="outputPath"></param>
+        internal static void WriteTxt(string txt, string outputPath)
+        {
+            // 寫入配置文件
+            var file = File.CreateText(outputPath);
+            file.Write(txt);
+            file.Close();
+        }
     }
 }
