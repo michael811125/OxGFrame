@@ -642,6 +642,26 @@ namespace OxGFrame.CoreFrame
                 return USManager.sceneCount;
             }
 
+            public static Scene GetActiveScene()
+            {
+                return USManager.GetInstance().GetActiveScene();
+            }
+
+            public static bool SetActiveScene(int index)
+            {
+                return USManager.GetInstance().SetActiveScene(index);
+            }
+
+            public static bool SetActiveScene(string sceneName)
+            {
+                return USManager.GetInstance().SetActiveScene(sceneName);
+            }
+
+            public static bool SetActiveScene(Scene scene)
+            {
+                return USManager.GetInstance().SetActiveScene(scene);
+            }
+
             public static Scene GetSceneAt(int index)
             {
                 return USManager.GetInstance().GetSceneAt(index);

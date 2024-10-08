@@ -35,6 +35,28 @@ namespace OxGFrame.CoreFrame.USFrame
             return _instance;
         }
 
+        public Scene GetActiveScene()
+        {
+            return SceneManager.GetActiveScene();
+        }
+
+        public bool SetActiveScene(int index)
+        {
+            var scene = this.GetSceneAt(index);
+            return this.SetActiveScene(scene);
+        }
+
+        public bool SetActiveScene(string sceneName)
+        {
+            var scene = this.GetSceneByName(sceneName);
+            return this.SetActiveScene(scene);
+        }
+
+        public bool SetActiveScene(Scene scene)
+        {
+            return SceneManager.SetActiveScene(scene);
+        }
+
         public Scene GetSceneAt(int index)
         {
             return SceneManager.GetSceneAt(index);

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2.11.10] - 2024-10-08
+- Added CoreFrames.USFrame.GetActiveScene() method.
+- Added CoreFrames.USFrame.SetActiveScene(int index) method.
+- Added CoreFrames.USFrame.SetActiveScene(string sceneName) method.
+- Added CoreFrames.USFrame.SetActiveScene(Scene scene) method.
+
 ## [2.11.9] - 2024-09-06
 - Added CoreFrames.SRFrame.HideAllAndExcluded() method.
 - Added CoreFrames.UIFrame.HideAllAndExcluded() method.
