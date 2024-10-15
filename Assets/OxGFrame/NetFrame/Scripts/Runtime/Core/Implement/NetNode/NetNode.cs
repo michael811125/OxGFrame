@@ -54,6 +54,11 @@ namespace OxGFrame.NetFrame
             this._Initialize(socket, netTips);
         }
 
+        ~NetNode()
+        {
+            this.Dispose();
+        }
+
         public T GetNetProvider<T>() where T : INetProvider
         {
             T socket = (T)this._netProvider;
@@ -373,7 +378,7 @@ namespace OxGFrame.NetFrame
 
         public void Dispose()
         {
-            if (this._netProvider != null)
+            if (this._netProvider != null && !this._isCloseForce)
                 this._netProvider.Close();
             this._netProvider = null;
             this._netTips = null;
@@ -385,11 +390,6 @@ namespace OxGFrame.NetFrame
             this._reconnectTicker = null;
             this._reconnectAction = null;
             this._responseBinaryHandler = null;
-        }
-
-        ~NetNode()
-        {
-            this.Dispose();
         }
     }
 }
