@@ -88,7 +88,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             this._audioSource.priority = this.audioType.priority;
             this._audioSource.outputAudioMixerGroup = this._mixerGroup;
             this._audioSource.loop = (this.loops == -1) ? true : false;
-            this._mediaLength = this._currentLength = (this.audioLength > 0) ? this.audioLength : this.audioClip.length;
+            this._mediaLength = this._currentRemainingLength = (this.audioLength > 0) ? this.audioLength : this.audioClip.length;
 
             this.isPrepared = true;
 
@@ -119,10 +119,10 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             if (this.IsPaused()) return;
 
-            if (this.CurrentLength() > 0f)
+            if (this.CurrentRemainingLength() > 0f)
             {
-                this._currentLength -= dt;
-                if (this.CurrentLength() <= 0f)
+                this._currentRemainingLength -= dt;
+                if (this.CurrentRemainingLength() <= 0f)
                 {
                     if (this._loops >= 0)
                     {
@@ -131,12 +131,12 @@ namespace OxGFrame.MediaFrame.AudioFrame
                         this._loops--;
                         if (this._loops <= 0)
                         {
-                            this._currentLength = 0;
+                            this._currentRemainingLength = 0;
                             if (this.autoEndToStop) this.StopSelf();
                         }
                         else this._audioSource.Play();
                     }
-                    this._currentLength = this.Length();
+                    this._currentRemainingLength = this.Length();
                 }
             }
         }
@@ -219,7 +219,12 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         public override float CurrentLength()
         {
-            return this._currentLength;
+            return this._mediaLength - this._currentRemainingLength;
+        }
+
+        public override float CurrentRemainingLength()
+        {
+            return this._currentRemainingLength;
         }
 
         public override void OnRelease()

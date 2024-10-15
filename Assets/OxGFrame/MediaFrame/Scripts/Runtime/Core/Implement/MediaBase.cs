@@ -87,7 +87,7 @@ namespace OxGFrame.MediaFrame
         protected bool _isPaused = false;                                                  // 是否暫停
         protected bool _isInit = false;                                                    // 初始標記 (表示確認初始完畢)
         protected float _mediaLength = 0f;                                                 // 影音長度
-        protected float _currentLength = 0f;                                               // 影音當前長度
+        protected float _currentRemainingLength = 0f;                                               // 影音當前長度
         protected Action _endEvent = null;                                                 // 停止播放時的事件調用
         public bool isPrepared { get; protected set; } = false;                            // 影音準備好的標記
         internal bool isDestroying = false;                                                // 正在被銷毀的標記                        
@@ -154,6 +154,12 @@ namespace OxGFrame.MediaFrame
         public abstract float CurrentLength();
 
         /// <summary>
+        /// 取得當前影音剩餘長度 -> Remaining time (單位: 秒)
+        /// </summary>
+        /// <returns></returns>
+        public abstract float CurrentRemainingLength();
+
+        /// <summary>
         /// 設置停止播放時的事件 Callback
         /// </summary>
         /// <param name="endEvent"></param>
@@ -170,7 +176,7 @@ namespace OxGFrame.MediaFrame
             this.assetName = null;
             this.mediaName = null;
             this._mediaLength = 0f;
-            this._currentLength = 0f;
+            this._currentRemainingLength = 0f;
             this._endEvent = null;
         }
 
@@ -184,7 +190,7 @@ namespace OxGFrame.MediaFrame
         /// </summary>
         protected virtual void ResetLength()
         {
-            this._currentLength = this._mediaLength;
+            this._currentRemainingLength = this._mediaLength;
         }
 
         /// <summary>

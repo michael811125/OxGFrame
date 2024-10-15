@@ -126,7 +126,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                     break;
             }
 
-            this._mediaLength = this._currentLength = (1f * this._videoPlayer.frameCount / this._videoPlayer.frameRate);
+            this._mediaLength = this._currentRemainingLength = (1f * this._videoPlayer.frameCount / this._videoPlayer.playbackSpeed / this._videoPlayer.frameRate);
 
             this.isPrepared = true;
 
@@ -189,10 +189,10 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             if (this.IsPaused()) return;
 
-            if (this.CurrentLength() > 0f)
+            if (this.CurrentRemainingLength() > 0f)
             {
-                this._currentLength -= dt;
-                if (this.CurrentLength() <= 0f)
+                this._currentRemainingLength -= dt;
+                if (this.CurrentRemainingLength() <= 0f)
                 {
                     if (this._loops >= 0)
                     {
@@ -201,12 +201,12 @@ namespace OxGFrame.MediaFrame.VideoFrame
                         this._loops--;
                         if (this._loops <= 0)
                         {
-                            this._currentLength = 0;
+                            this._currentRemainingLength = 0;
                             if (this.autoEndToStop) this.StopSelf();
                         }
                         else this._videoPlayer.Play();
                     }
-                    this._currentLength = this.Length();
+                    this._currentRemainingLength = this.Length();
                 }
             }
         }
@@ -285,7 +285,12 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         public override float CurrentLength()
         {
-            return this._currentLength;
+            return this._mediaLength - this._currentRemainingLength;
+        }
+
+        public override float CurrentRemainingLength()
+        {
+            return this._currentRemainingLength;
         }
 
         public override void OnRelease()
@@ -301,6 +306,45 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this.fullPathName = null;
             this.urlSet = null;
             this._targetCamera = null;
+        }
+
+        /// <summary>
+        /// Skip range is 0.0 to 1.0 pct
+        /// </summary>
+        /// <param name="pct"></param>
+        public void SkipToPercent(float pct)
+        {
+            if (this._videoPlayer == null) return;
+
+            // Clamp pct to ensure it's between 0.0 and 1.0
+            pct = Mathf.Clamp(pct, 0f, 1f);
+
+            var frame = this._videoPlayer.frameCount * pct;
+            this._videoPlayer.frame = (long)frame;
+
+            // update length infos
+            this._mediaLength = (1f * this._videoPlayer.frameCount / this._videoPlayer.playbackSpeed / this._videoPlayer.frameRate);
+            this._currentRemainingLength = this._mediaLength - (1f * frame / this._videoPlayer.playbackSpeed / this._videoPlayer.frameRate);
+            // offset remaining time
+            if (this._currentRemainingLength <= 0)
+                this._currentRemainingLength = 0.1f;
+        }
+
+        /// <summary>
+        /// Set speed range is 0.01 to float.MaxValue
+        /// <para>Generally we recommend these rates: 0.25, 0.5, 1.0, 1.25, 1.5, 1.75, 2.0</para>
+        /// </summary>
+        /// <param name="speed"></param>
+        public void SetPlaySpeed(float speed)
+        {
+            if (this._videoPlayer == null) return;
+
+            // Clamp speed to ensure it does not go below 0.1
+            speed = Mathf.Clamp(speed, 0.01f, float.MaxValue);
+
+            this._videoPlayer.playbackSpeed = speed;
+            // use skip to percent to update current length and media total length
+            this.SkipToPercent((this._mediaLength - this._currentRemainingLength) / this._mediaLength);
         }
 
         public VideoPlayer GetVideoPlayer()

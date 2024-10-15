@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2.11.11] - 2024-10-15
+- Added SkipToPercent method in VideoBase (You can use a percentage to jump to a specific segment of the video).
+- Added SetPlaySpeed in VideoBase.
+- Added CurrentRemainingLength in MediaBase.
+- Fixed CurrentLength return value in MediaBase.
+
 ## [2.11.10] - 2024-10-08
 - Added CoreFrames.USFrame.GetActiveScene() method.
 - Added CoreFrames.USFrame.SetActiveScene(int index) method.
