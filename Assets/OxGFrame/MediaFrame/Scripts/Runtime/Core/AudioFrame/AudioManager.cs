@@ -383,7 +383,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.LoadAndPlay(audBase, loops, volume);
 
-            Logging.Print<Logger>(string.Format("Play Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentRemainingLength()));
+            Logging.Print<Logger>(string.Format("Play Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));
         }
 
         /// <summary>
@@ -532,7 +532,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.ExitAndStop(audBase, true, false);
 
-            Logging.Print<Logger>(string.Format("Pause Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentRemainingLength()));
+            Logging.Print<Logger>(string.Format("Pause Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));
         }
 
         /// <summary>
