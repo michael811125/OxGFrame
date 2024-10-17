@@ -68,10 +68,7 @@ namespace OxGFrame.AssetLoader.Bundle
             int dummySize = Convert.ToInt32(decryptArgs[1].Decrypt());
             if (File.Exists(filePath) == false)
                 return null;
-            byte[] data = File.ReadAllBytes(filePath);
-            if (FileCryptogram.Offset.OffsetDecryptBytes(ref data, dummySize))
-                return data;
-            return null;
+            return FileCryptogram.Offset.OffsetDecryptBytes(filePath, dummySize);
         }
 
         public Stream DecryptStream(DecryptFileInfo fileInfo)
@@ -118,10 +115,7 @@ namespace OxGFrame.AssetLoader.Bundle
             byte xorKey = Convert.ToByte(decryptArgs[1].Decrypt());
             if (File.Exists(filePath) == false)
                 return null;
-            byte[] data = File.ReadAllBytes(filePath);
-            if (FileCryptogram.XOR.XorDecryptBytes(data, xorKey))
-                return data;
-            return null;
+            return FileCryptogram.XOR.XorDecryptBytes(filePath, xorKey);
         }
 
         public Stream DecryptStream(DecryptFileInfo fileInfo)
@@ -170,10 +164,7 @@ namespace OxGFrame.AssetLoader.Bundle
             byte jXorKey = Convert.ToByte(decryptArgs[3].Decrypt());
             if (File.Exists(filePath) == false)
                 return null;
-            byte[] data = File.ReadAllBytes(filePath);
-            if (FileCryptogram.HT2XOR.HT2XorDecryptBytes(data, hXorkey, tXorkey, jXorKey))
-                return data;
-            return null;
+            return FileCryptogram.HT2XOR.HT2XorDecryptBytes(filePath, hXorkey, tXorkey, jXorKey);
         }
 
         public Stream DecryptStream(DecryptFileInfo fileInfo)
@@ -225,10 +216,7 @@ namespace OxGFrame.AssetLoader.Bundle
             byte j2XorKey = Convert.ToByte(decryptArgs[4].Decrypt());
             if (File.Exists(filePath) == false)
                 return null;
-            byte[] data = File.ReadAllBytes(filePath);
-            if (FileCryptogram.HT2XORPlus.HT2XorPlusDecryptBytes(data, hXorkey, tXorkey, j1XorKey, j2XorKey))
-                return data;
-            return null;
+            return FileCryptogram.HT2XORPlus.HT2XorPlusDecryptBytes(filePath, hXorkey, tXorkey, j1XorKey, j2XorKey);
         }
 
         public Stream DecryptStream(DecryptFileInfo fileInfo)
@@ -279,10 +267,7 @@ namespace OxGFrame.AssetLoader.Bundle
             string aesIv = decryptArgs[2].Decrypt();
             if (File.Exists(filePath) == false)
                 return null;
-            byte[] data = File.ReadAllBytes(filePath);
-            if (FileCryptogram.AES.AesDecryptBytes(data, aesKey, aesIv))
-                return data;
-            return null;
+            return FileCryptogram.AES.AesDecryptBytes(filePath, aesKey, aesIv);
         }
 
         public Stream DecryptStream(DecryptFileInfo fileInfo)

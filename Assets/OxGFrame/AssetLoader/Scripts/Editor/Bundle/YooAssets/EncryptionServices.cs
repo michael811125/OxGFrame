@@ -27,9 +27,9 @@ namespace OxGFrame.AssetLoader.Editor
             int randomSeed = cryptogramSettings.randomSeed;
             int dummySize = cryptogramSettings.dummySize;
 
-            byte[] fileData = File.ReadAllBytes(filePath);
+            byte[] fileData = FileCryptogram.Offset.OffsetEncryptBytes(filePath, randomSeed, dummySize);
 
-            if (FileCryptogram.Offset.OffsetEncryptBytes(ref fileData, randomSeed, dummySize))
+            if (fileData != null)
             {
                 Debug.Log($"OffsetCryptogram => randomSeed: {randomSeed}, dummySize: {dummySize}");
 
@@ -57,9 +57,9 @@ namespace OxGFrame.AssetLoader.Editor
 
             byte xorKey = cryptogramSettings.xorKey;
 
-            byte[] fileData = File.ReadAllBytes(filePath);
+            byte[] fileData = FileCryptogram.XOR.XorEncryptBytes(filePath, xorKey);
 
-            if (FileCryptogram.XOR.XorEncryptBytes(fileData, xorKey))
+            if (fileData != null)
             {
                 Debug.Log($"XorCryptogram => xorKey: {xorKey}");
 
@@ -89,9 +89,9 @@ namespace OxGFrame.AssetLoader.Editor
             byte tXorKey = cryptogramSettings.tXorKey;
             byte jXorKey = cryptogramSettings.jXorKey;
 
-            byte[] fileData = File.ReadAllBytes(filePath);
+            byte[] fileData = FileCryptogram.HT2XOR.HT2XorEncryptBytes(filePath, hXorKey, tXorKey, jXorKey);
 
-            if (FileCryptogram.HT2XOR.HT2XorEncryptBytes(fileData, hXorKey, tXorKey, jXorKey))
+            if (fileData != null)
             {
                 Debug.Log($"HT2XorCryptogram => hXorKey: {hXorKey}, tXorKey: {tXorKey}, jXorKey: {jXorKey}");
 
@@ -122,9 +122,9 @@ namespace OxGFrame.AssetLoader.Editor
             byte j1XorKey = cryptogramSettings.j1XorPlusKey;
             byte j2XorKey = cryptogramSettings.j2XorPlusKey;
 
-            byte[] fileData = File.ReadAllBytes(filePath);
+            byte[] fileData = FileCryptogram.HT2XORPlus.HT2XorPlusEncryptBytes(filePath, hXorKey, tXorKey, j1XorKey, j2XorKey);
 
-            if (FileCryptogram.HT2XORPlus.HT2XorPlusEncryptBytes(fileData, hXorKey, tXorKey, j1XorKey, j2XorKey))
+            if (fileData != null)
             {
                 Debug.Log($"HT2XorPlusCryptogram => hXorKey: {hXorKey}, tXorKey: {tXorKey}, j1XorKey: {j1XorKey}, j2XorKey: {j2XorKey}");
 
@@ -153,9 +153,9 @@ namespace OxGFrame.AssetLoader.Editor
             string aesKey = cryptogramSettings.aesKey;
             string aesIv = cryptogramSettings.aesIv;
 
-            byte[] fileData = File.ReadAllBytes(filePath);
+            byte[] fileData = FileCryptogram.AES.AesEncryptBytes(filePath, aesKey, aesIv);
 
-            if (FileCryptogram.AES.AesEncryptBytes(ref fileData, aesKey, aesIv))
+            if (fileData != null)
             {
                 Debug.Log($"AesCryptogram => aesKey: {aesKey}, aesIv: {aesIv}");
 

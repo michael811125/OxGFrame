@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.11.12] - 2024-10-17
+- Optimized the bundle decryption memory allocation method to avoid allocating excessively large memory in a single ReadAllBytes operation.
+
 ## [2.11.11] - 2024-10-15
 - Added SkipToPercent method in VideoBase (You can use a percentage to jump to a specific segment of the video).
 - Added SetPlaySpeed in VideoBase.
