@@ -12,6 +12,11 @@ namespace OxGFrame.CoreFrame
 {
     public static class CoreFrames
     {
+        /// <summary>
+        /// Default group id
+        /// </summary>
+        internal const int DEFAULT_GROUP_ID = 0;
+
         public static class UIFrame
         {
             public static bool ignoreTimeScale
@@ -200,6 +205,7 @@ namespace OxGFrame.CoreFrame
             #region Show
             /// <summary>
             /// If use prefix "res#" will load from resources else will load from bundle
+            /// <para>Default group id is 0</para>
             /// </summary>
             /// <param name="assetName"></param>
             /// <param name="data"></param>
@@ -211,12 +217,12 @@ namespace OxGFrame.CoreFrame
             public static async UniTask<UIBase> Show(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
+                return await UIManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
             }
 
             public static async UniTask<UIBase> Show(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
             {
-                return await UIManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
+                return await UIManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
             }
 
             public static async UniTask<UIBase> Show(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
@@ -233,12 +239,12 @@ namespace OxGFrame.CoreFrame
             public static async UniTask<T> Show<T>(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : UIBase
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+                return await UIManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
             }
 
             public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : UIBase
             {
-                return await UIManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+                return await UIManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
             }
 
             public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : UIBase
@@ -259,9 +265,15 @@ namespace OxGFrame.CoreFrame
                 UIManager.GetInstance().Close(assetName, disabledPreClose, forceDestroy);
             }
 
+            /// <summary>
+            /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
+            /// </summary>
+            /// <param name="disabledPreClose"></param>
+            /// <param name="forceDestroy"></param>
+            /// <param name="withoutAssetNames"></param>
             public static void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, false, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(DEFAULT_GROUP_ID, disabledPreClose, forceDestroy, false, withoutAssetNames);
             }
 
             public static void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
@@ -269,14 +281,20 @@ namespace OxGFrame.CoreFrame
                 UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, false, withoutAssetNames);
             }
 
-            public static void CloseAllAndExcluded(bool disabledPreClose = false, bool forceDestroy = false)
+            /// <summary>
+            /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
+            /// </summary>
+            /// <param name="disabledPreClose"></param>
+            /// <param name="forceDestroy"></param>
+            /// <param name="withoutAssetNames"></param>
+            public static void CloseAllAndExcluded(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, true);
+                UIManager.GetInstance().CloseAll(DEFAULT_GROUP_ID, disabledPreClose, forceDestroy, true, withoutAssetNames);
             }
 
-            public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false)
+            public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true);
+                UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true, withoutAssetNames);
             }
 
             /// <summary>
@@ -287,7 +305,7 @@ namespace OxGFrame.CoreFrame
             /// <param name="forceDestroy"></param>
             public static void CloseStackByStack(string canvasName, bool disabledPreClose = false, bool forceDestroy = false)
             {
-                UIManager.GetInstance().CloseStackByStack(0, canvasName, disabledPreClose, forceDestroy);
+                UIManager.GetInstance().CloseStackByStack(DEFAULT_GROUP_ID, canvasName, disabledPreClose, forceDestroy);
             }
 
             /// <summary>
@@ -309,9 +327,12 @@ namespace OxGFrame.CoreFrame
                 UIManager.GetInstance().Reveal(assetName);
             }
 
+            /// <summary>
+            /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
+            /// </summary>
             public static void RevealAll()
             {
-                UIManager.GetInstance().RevealAll();
+                UIManager.GetInstance().RevealAll(DEFAULT_GROUP_ID);
             }
 
             public static void RevealAll(int groupId)
@@ -326,9 +347,13 @@ namespace OxGFrame.CoreFrame
                 UIManager.GetInstance().Hide(assetName);
             }
 
+            /// <summary>
+            /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
+            /// </summary>
+            /// <param name="withoutAssetNames"></param>
             public static void HideAll(params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().HideAll(false, withoutAssetNames);
+                UIManager.GetInstance().HideAll(DEFAULT_GROUP_ID, false, withoutAssetNames);
             }
 
             public static void HideAll(int groupId, params string[] withoutAssetNames)
@@ -336,14 +361,18 @@ namespace OxGFrame.CoreFrame
                 UIManager.GetInstance().HideAll(groupId, false, withoutAssetNames);
             }
 
-            public static void HideAllAndExcluded()
+            /// <summary>
+            /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
+            /// </summary>
+            /// <param name="withoutAssetNames"></param>
+            public static void HideAllAndExcluded(params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().HideAll(true);
+                UIManager.GetInstance().HideAll(DEFAULT_GROUP_ID, true, withoutAssetNames);
             }
 
-            public static void HideAllAndExcluded(int groupId)
+            public static void HideAllAndExcluded(int groupId, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().HideAll(groupId, true);
+                UIManager.GetInstance().HideAll(groupId, true, withoutAssetNames);
             }
             #endregion
         }
@@ -505,6 +534,7 @@ namespace OxGFrame.CoreFrame
             #region Show
             /// <summary>
             /// If use prefix "res#" will load from resources else will load from bundle
+            /// <para>Default group id is 0</para>
             /// </summary>
             /// <param name="assetName"></param>
             /// <param name="data"></param>
@@ -516,12 +546,12 @@ namespace OxGFrame.CoreFrame
             public static async UniTask<SRBase> Show(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await SRManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
+                return await SRManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
             }
 
             public static async UniTask<SRBase> Show(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
             {
-                return await SRManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
+                return await SRManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
             }
 
             public static async UniTask<SRBase> Show(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
@@ -538,12 +568,12 @@ namespace OxGFrame.CoreFrame
             public static async UniTask<T> Show<T>(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : SRBase
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await SRManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+                return await SRManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
             }
 
             public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : SRBase
             {
-                return await SRManager.GetInstance().Show(0, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+                return await SRManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
             }
 
             public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : SRBase
@@ -564,9 +594,15 @@ namespace OxGFrame.CoreFrame
                 SRManager.GetInstance().Close(assetName, disabledPreClose, forceDestroy);
             }
 
+            /// <summary>
+            /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
+            /// </summary>
+            /// <param name="disabledPreClose"></param>
+            /// <param name="forceDestroy"></param>
+            /// <param name="withoutAssetNames"></param>
             public static void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, false, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(DEFAULT_GROUP_ID, disabledPreClose, forceDestroy, false, withoutAssetNames);
             }
 
             public static void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
@@ -574,14 +610,20 @@ namespace OxGFrame.CoreFrame
                 SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, false, withoutAssetNames);
             }
 
-            public static void CloseAllAndExcluded(bool disabledPreClose = false, bool forceDestroy = false)
+            /// <summary>
+            /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
+            /// </summary>
+            /// <param name="disabledPreClose"></param>
+            /// <param name="forceDestroy"></param>
+            /// <param name="withoutAssetNames"></param>
+            public static void CloseAllAndExcluded(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, true);
+                SRManager.GetInstance().CloseAll(DEFAULT_GROUP_ID, disabledPreClose, forceDestroy, true, withoutAssetNames);
             }
 
-            public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false)
+            public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true);
+                SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true, withoutAssetNames);
             }
             #endregion
 
@@ -591,9 +633,12 @@ namespace OxGFrame.CoreFrame
                 SRManager.GetInstance().Reveal(assetName);
             }
 
+            /// <summary>
+            /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
+            /// </summary>
             public static void RevealAll()
             {
-                SRManager.GetInstance().RevealAll();
+                SRManager.GetInstance().RevealAll(DEFAULT_GROUP_ID);
             }
 
             public static void RevealAll(int groupId)
@@ -610,22 +655,31 @@ namespace OxGFrame.CoreFrame
 
             public static void HideAll(params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().HideAll(false, withoutAssetNames);
+                SRManager.GetInstance().HideAll(DEFAULT_GROUP_ID, false, withoutAssetNames);
             }
 
+            /// <summary>
+            /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
+            /// </summary>
+            /// <param name="groupId"></param>
+            /// <param name="withoutAssetNames"></param>
             public static void HideAll(int groupId, params string[] withoutAssetNames)
             {
                 SRManager.GetInstance().HideAll(groupId, false, withoutAssetNames);
             }
 
-            public static void HideAllAndExcluded()
+            /// <summary>
+            /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
+            /// </summary>
+            /// <param name="withoutAssetNames"></param>
+            public static void HideAllAndExcluded(params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().HideAll(true);
+                SRManager.GetInstance().HideAll(DEFAULT_GROUP_ID, true, withoutAssetNames);
             }
 
-            public static void HideAllAndExcluded(int groupId)
+            public static void HideAllAndExcluded(int groupId, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().HideAll(groupId, true);
+                SRManager.GetInstance().HideAll(groupId, true, withoutAssetNames);
             }
             #endregion
         }
