@@ -269,14 +269,14 @@ namespace OxGFrame.CoreFrame
                 UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, false, withoutAssetNames);
             }
 
-            public static void CloseAllAndExcluded(bool disabledPreClose = false, bool forceDestroy = false)
+            public static void CloseAllAndExcluded(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, true);
+                UIManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, true, withoutAssetNames);
             }
 
-            public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false)
+            public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true);
+                UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true, withoutAssetNames);
             }
 
             /// <summary>
@@ -336,14 +336,14 @@ namespace OxGFrame.CoreFrame
                 UIManager.GetInstance().HideAll(groupId, false, withoutAssetNames);
             }
 
-            public static void HideAllAndExcluded()
+            public static void HideAllAndExcluded(params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().HideAll(true);
+                UIManager.GetInstance().HideAll(true, withoutAssetNames);
             }
 
-            public static void HideAllAndExcluded(int groupId)
+            public static void HideAllAndExcluded(int groupId, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().HideAll(groupId, true);
+                UIManager.GetInstance().HideAll(groupId, true, withoutAssetNames);
             }
             #endregion
         }
@@ -574,14 +574,14 @@ namespace OxGFrame.CoreFrame
                 SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, false, withoutAssetNames);
             }
 
-            public static void CloseAllAndExcluded(bool disabledPreClose = false, bool forceDestroy = false)
+            public static void CloseAllAndExcluded(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, true);
+                SRManager.GetInstance().CloseAll(disabledPreClose, forceDestroy, true, withoutAssetNames);
             }
 
-            public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false)
+            public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true);
+                SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true, withoutAssetNames);
             }
             #endregion
 
@@ -618,14 +618,14 @@ namespace OxGFrame.CoreFrame
                 SRManager.GetInstance().HideAll(groupId, false, withoutAssetNames);
             }
 
-            public static void HideAllAndExcluded()
+            public static void HideAllAndExcluded(params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().HideAll(true);
+                SRManager.GetInstance().HideAll(true, withoutAssetNames);
             }
 
-            public static void HideAllAndExcluded(int groupId)
+            public static void HideAllAndExcluded(int groupId, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().HideAll(groupId, true);
+                SRManager.GetInstance().HideAll(groupId, true, withoutAssetNames);
             }
             #endregion
         }
