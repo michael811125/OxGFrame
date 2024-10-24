@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [2.12.0] - 2024-10-24 (rule changed)
+- Modified CloseAll, HideAll, RevealAll rules of method for UIFrame and SRFrame.
+  - Set the default group id to 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1.
+  - ex: CloseAll(-1) do all without any group id.
+  - ex: HideAll(-1) do all without any group id.
+  - ex: RevealAll(-1) do all without any group id.
+- Modified CloseAllAndExcluded and HideAllAndExcluded to support the withoutAssetNames param.
+
 ## [2.11.12] - 2024-10-17
 - Optimized the bundle decryption memory allocation method to avoid allocating excessively large memory in a single ReadAllBytes operation.
 

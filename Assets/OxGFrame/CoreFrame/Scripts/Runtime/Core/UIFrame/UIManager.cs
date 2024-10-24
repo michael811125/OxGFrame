@@ -610,46 +610,6 @@ namespace OxGFrame.CoreFrame.UIFrame
             this._Close(assetName, disabledPreClose, forceDestroy, false);
         }
 
-        public override void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames)
-        {
-            if (this._dictAllCache.Count == 0) return;
-
-            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
-            {
-                // prevent preload mode
-                if (stack.Count() == 0) continue;
-
-                string assetName = stack.assetName;
-
-                var uiBase = stack.Peek();
-
-                // 檢查排除執行的 UI
-                bool checkWithout = false;
-                if (withoutAssetNames.Length > 0)
-                {
-                    for (int i = 0; i < withoutAssetNames.Length; i++)
-                    {
-                        if (assetName == withoutAssetNames[i])
-                        {
-                            checkWithout = true;
-                            break;
-                        }
-                    }
-                }
-
-                // 排除在外的 UI 直接略過處理
-                if (checkWithout) continue;
-
-                // 如果沒有強制 Destroy + 不是顯示狀態則直接略過處理
-                if (!forceDestroy && !this.CheckIsShowing(uiBase) && !uiBase.allowInstantiate) continue;
-
-                // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
-                if (!forceCloseExcluded && uiBase.uiSetting.whenCloseAllToSkip) continue;
-
-                this._Close(assetName, disabledPreClose, forceDestroy, true);
-            }
-        }
-
         public override void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
@@ -663,7 +623,8 @@ namespace OxGFrame.CoreFrame.UIFrame
 
                 var uiBase = stack.Peek();
 
-                if (uiBase.groupId != groupId) continue;
+                // 如果 -1 表示不管任何 groupId
+                if (groupId != -1 && uiBase.groupId != groupId) continue;
 
                 // 檢查排除執行的 UI
                 bool checkWithout = false;
@@ -742,25 +703,6 @@ namespace OxGFrame.CoreFrame.UIFrame
             this._Reveal(assetName);
         }
 
-        public override void RevealAll()
-        {
-            if (this._dictAllCache.Count == 0) return;
-
-            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values)
-            {
-                // prevent preload mode
-                if (stack.Count() == 0) continue;
-
-                string assetName = stack.assetName;
-
-                var uiBase = stack.Peek();
-
-                if (!uiBase.isHidden) continue;
-
-                this._Reveal(assetName);
-            }
-        }
-
         public override void RevealAll(int groupId)
         {
             if (this._dictAllCache.Count == 0) return;
@@ -774,7 +716,8 @@ namespace OxGFrame.CoreFrame.UIFrame
 
                 var uiBase = stack.Peek();
 
-                if (uiBase.groupId != groupId) continue;
+                // 如果 -1 表示不管任何 groupId
+                if (groupId != -1 && uiBase.groupId != groupId) continue;
 
                 if (!uiBase.isHidden) continue;
 
@@ -810,44 +753,6 @@ namespace OxGFrame.CoreFrame.UIFrame
             this._Hide(assetName);
         }
 
-        public override void HideAll(bool forceHideExcluded = false, params string[] withoutAssetNames)
-        {
-            if (this._dictAllCache.Count == 0) return;
-
-            // 需要注意緩存需要 temp 出來, 因為如果迴圈裡有功能直接對緩存進行操作會出錯
-            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values)
-            {
-                // prevent preload mode
-                if (stack.Count() == 0) continue;
-
-                string assetName = stack.assetName;
-
-                var uiBase = stack.Peek();
-
-                // 檢查排除執行的 UI
-                bool checkWithout = false;
-                if (withoutAssetNames.Length > 0)
-                {
-                    for (int i = 0; i < withoutAssetNames.Length; i++)
-                    {
-                        if (assetName == withoutAssetNames[i])
-                        {
-                            checkWithout = true;
-                            break;
-                        }
-                    }
-                }
-
-                // 排除在外的 UI 直接略過處理
-                if (checkWithout) continue;
-
-                // 如有啟用 HideAll 需跳過開關, 則不列入關閉執行
-                if (!forceHideExcluded && !uiBase.reverseChanges && uiBase.uiSetting.whenHideAllToSkip) continue;
-
-                this._Hide(assetName);
-            }
-        }
-
         public override void HideAll(int groupId, bool forceHideExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
@@ -862,7 +767,8 @@ namespace OxGFrame.CoreFrame.UIFrame
 
                 var uiBase = stack.Peek();
 
-                if (uiBase.groupId != groupId) continue;
+                // 如果 -1 表示不管任何 groupId
+                if (groupId != -1 && uiBase.groupId != groupId) continue;
 
                 // 檢查排除執行的 UI
                 bool checkWithout = false;

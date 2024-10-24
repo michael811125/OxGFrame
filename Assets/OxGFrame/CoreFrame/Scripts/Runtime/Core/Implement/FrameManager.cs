@@ -574,14 +574,6 @@ namespace OxGFrame.CoreFrame
         public virtual void Close(string assetName, bool disabledPreClose = false, bool forceDestroy = false) { }
 
         /// <summary>
-        /// 全部關閉
-        /// </summary>
-        /// <param name="disabledPreClose"></param>
-        /// <param name="forceDestroy"></param>
-        /// <param name="withoutAssetNames"></param>
-        public virtual void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames) { }
-
-        /// <summary>
         /// 透過 id 群組進行全部關閉
         /// </summary>
         /// <param name="groupId"></param>
@@ -599,11 +591,6 @@ namespace OxGFrame.CoreFrame
         public virtual void Reveal(string assetName) { }
 
         /// <summary>
-        /// 全部解除隱藏 (只允許 Hide, 如果透過 Close 則無法進行 Reveal)
-        /// </summary>
-        public virtual void RevealAll() { }
-
-        /// <summary>
         /// 透過 id 群組進行全部解除隱藏 (只允許 Hide, 如果透過 Close 則無法進行 Reveal)
         /// </summary>
         /// <param name="groupId"></param>
@@ -616,11 +603,6 @@ namespace OxGFrame.CoreFrame
         /// </summary>
         /// <param name="assetName"></param>
         public virtual void Hide(string assetName) { }
-
-        /// <summary>
-        /// 全部隱藏 (可透過 Show 或者 Reveal 進行顯示, 差別在於初始行為)
-        /// </summary>
-        public virtual void HideAll(bool forceHideExcluded = false, params string[] withoutAssetNames) { }
 
         /// <summary>
         /// 透過 id 群組進行全部隱藏 (可透過 Show 或者 Reveal 進行顯示, 差別在於初始行為)

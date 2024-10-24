@@ -178,46 +178,6 @@ namespace OxGFrame.CoreFrame.SRFrame
             this._Close(assetName, disabledPreClose, forceDestroy, false);
         }
 
-        public override void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames)
-        {
-            if (this._dictAllCache.Count == 0) return;
-
-            foreach (FrameStack<SRBase> stack in this._dictAllCache.Values.ToArray())
-            {
-                // prevent preload mode
-                if (stack.Count() == 0) continue;
-
-                string assetName = stack.assetName;
-
-                var srBase = stack.Peek();
-
-                // 檢查排除執行的 SR
-                bool checkWithout = false;
-                if (withoutAssetNames.Length > 0)
-                {
-                    for (int i = 0; i < withoutAssetNames.Length; i++)
-                    {
-                        if (assetName == withoutAssetNames[i])
-                        {
-                            checkWithout = true;
-                            break;
-                        }
-                    }
-                }
-
-                // 排除在外的 SR 直接略過處理
-                if (checkWithout) continue;
-
-                // 如果沒有強制 Destroy + 不是顯示狀態則直接略過處理
-                if (!forceDestroy && !this.CheckIsShowing(srBase)) continue;
-
-                // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
-                if (!forceCloseExcluded && srBase.srSetting.whenCloseAllToSkip) continue;
-
-                this._Close(assetName, disabledPreClose, forceDestroy, true);
-            }
-        }
-
         public override void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
@@ -231,7 +191,8 @@ namespace OxGFrame.CoreFrame.SRFrame
 
                 var srBase = stack.Peek();
 
-                if (srBase.groupId != groupId) continue;
+                // 如果 -1 表示不管任何 groupId
+                if (groupId != -1 && srBase.groupId != groupId) continue;
 
                 // 檢查排除執行的 SR
                 bool checkWithout = false;
@@ -292,25 +253,6 @@ namespace OxGFrame.CoreFrame.SRFrame
             this._Reveal(assetName);
         }
 
-        public override void RevealAll()
-        {
-            if (this._dictAllCache.Count == 0) return;
-
-            foreach (FrameStack<SRBase> stack in this._dictAllCache.Values)
-            {
-                // prevent preload mode
-                if (stack.Count() == 0) continue;
-
-                string assetName = stack.assetName;
-
-                var srBase = stack.Peek();
-
-                if (!srBase.isHidden) continue;
-
-                this._Reveal(assetName);
-            }
-        }
-
         public override void RevealAll(int groupId)
         {
             if (this._dictAllCache.Count == 0) return;
@@ -324,7 +266,8 @@ namespace OxGFrame.CoreFrame.SRFrame
 
                 var srBase = stack.Peek();
 
-                if (srBase.groupId != groupId) continue;
+                // 如果 -1 表示不管任何 groupId
+                if (groupId != -1 && srBase.groupId != groupId) continue;
 
                 if (!srBase.isHidden) continue;
 
@@ -360,43 +303,6 @@ namespace OxGFrame.CoreFrame.SRFrame
             this._Hide(assetName);
         }
 
-        public override void HideAll(bool forceHideExcluded = false, params string[] withoutAssetNames)
-        {
-            if (this._dictAllCache.Count == 0) return;
-
-            foreach (FrameStack<SRBase> stack in this._dictAllCache.Values)
-            {
-                // prevent preload mode
-                if (stack.Count() == 0) continue;
-
-                string assetName = stack.assetName;
-
-                var srBase = stack.Peek();
-
-                // 檢查排除執行的 SR
-                bool checkWithout = false;
-                if (withoutAssetNames.Length > 0)
-                {
-                    for (int i = 0; i < withoutAssetNames.Length; i++)
-                    {
-                        if (assetName == withoutAssetNames[i])
-                        {
-                            checkWithout = true;
-                            break;
-                        }
-                    }
-                }
-
-                // 排除在外的 SR 直接略過處理
-                if (checkWithout) continue;
-
-                // 如有啟用 HideAll 需跳過開關, 則不列入關閉執行
-                if (!forceHideExcluded && srBase.srSetting.whenHideAllToSkip) continue;
-
-                this._Hide(assetName);
-            }
-        }
-
         public override void HideAll(int groupId, bool forceHideExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0) return;
@@ -410,7 +316,8 @@ namespace OxGFrame.CoreFrame.SRFrame
 
                 var srBase = stack.Peek();
 
-                if (srBase.groupId != groupId) continue;
+                // 如果 -1 表示不管任何 groupId
+                if (groupId != -1 && srBase.groupId != groupId) continue;
 
                 // 檢查排除執行的 SR
                 bool checkWithout = false;
