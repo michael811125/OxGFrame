@@ -1,8 +1,8 @@
-﻿using System.Linq;
+﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
-using Cysharp.Threading.Tasks;
-using UnityEngine;
 using OxGKit.LoggingSystem;
+using System.Linq;
+using UnityEngine;
 
 namespace OxGFrame.CoreFrame.SRFrame
 {
@@ -105,7 +105,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 if (this.CheckIsShowing(assetName))
                 {
                     Logging.PrintWarning<Logger>($"SR: {assetName} already exists!!!");
-                    return null;
+                    return this.GetFrameComponent<SRBase>(assetName);
                 }
             }
 

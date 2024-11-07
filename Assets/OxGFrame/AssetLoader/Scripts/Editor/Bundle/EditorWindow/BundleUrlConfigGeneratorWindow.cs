@@ -59,8 +59,8 @@ namespace OxGFrame.AssetLoader.Editor
             this._serObj = new SerializedObject(this);
             this._bundleUrlPlansPty = this._serObj.FindProperty("bundleUrlPlans");
 
-            this.bundleIp = EditorStorage.GetData(keySaver, "bundleIp", "127.0.0.1");
-            this.bundleFallbackIp = EditorStorage.GetData(keySaver, "bundleFallbackIp", "127.0.0.1");
+            this.bundleIp = EditorStorage.GetData(keySaver, "bundleIp", "http://127.0.0.1");
+            this.bundleFallbackIp = EditorStorage.GetData(keySaver, "bundleFallbackIp", "http://127.0.0.1");
             this.storeLink = EditorStorage.GetData(keySaver, "storeLink", "http://");
 
             this.autoReveal = Convert.ToBoolean(EditorStorage.GetData(keySaver, "autoReveal", "true"));

@@ -55,8 +55,8 @@ namespace OxGFrame.MediaFrame.Editor
             this._serObj = new SerializedObject(this);
             this._mediaUrlPlansPty = this._serObj.FindProperty("mediaUrlPlans");
 
-            this.audioUrlset = EditorStorage.GetData(keySaver, "audioUrlset", "127.0.0.1/audio/");
-            this.videoUrlset = EditorStorage.GetData(keySaver, "videoUrlset", "127.0.0.1/video/");
+            this.audioUrlset = EditorStorage.GetData(keySaver, "audioUrlset", "http://127.0.0.1/audio/");
+            this.videoUrlset = EditorStorage.GetData(keySaver, "videoUrlset", "http://127.0.0.1/video/");
 
             this.autoReveal = Convert.ToBoolean(EditorStorage.GetData(keySaver, "autoReveal", "true"));
 

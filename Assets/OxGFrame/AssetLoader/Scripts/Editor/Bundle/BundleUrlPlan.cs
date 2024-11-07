@@ -9,9 +9,9 @@ namespace OxGFrame.AssetLoader.Editor
         [SerializeField]
         public string planName = string.Empty;
         [SerializeField]
-        public string bundleIp = "127.0.0.1";
+        public string bundleIp = "http://127.0.0.1";
         [SerializeField]
-        public string bundleFallbackIp = "127.0.0.1";
+        public string bundleFallbackIp = "http://127.0.0.1";
         [SerializeField]
         public string storeLink = "http://";
 
