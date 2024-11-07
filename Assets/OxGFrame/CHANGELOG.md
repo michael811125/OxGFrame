@@ -1,5 +1,75 @@
 # CHANGELOG
 
+## [2.12.1] - 2024-11-08
+- Added MediaFrame (Audio, Video) with an option to specify a sourceClip, handled by the prefab container for playback.
+```csharp
+    // Audio
+    public static async UniTask<AudioBase> Play(string assetName, AudioClip sourceClip, Transform parent = null, int loops = 0, float volume = 0f)
+    public static async UniTask<AudioBase> Play(string packageName, string assetName, AudioClip sourceClip, Transform parent = null, int loops = 0, float volume = 0f)
+	
+	// Video
+	public static async UniTask<VideoBase> Play(string assetName, VideoClip sourceClip, Transform parent = null, int loops = 0, float volume = 0f)
+	public static async UniTask<VideoBase> Play(string packageName, string assetName, VideoClip sourceClip, Transform parent = null, int loops = 0, float volume = 0f)
+```
+- Added CoreFrame binding parameters that will compare with the parent class's binding parameters and remove any overlapping parts.
+```csharp
+TestAUI ↓↓↓
+
+    #region Binding Components
+    [HideInInspector] public GameObject a;
+    protected GameObject _b;
+    
+    /// <summary>
+    /// Auto Binding Section
+    /// </summary>
+    protected override void OnAutoBind()
+    {
+        base.OnAutoBind();
+        this.a = this.collector.GetNode("A");
+        this._b = this.collector.GetNode("B");
+    }
+    #endregion
+
+TestBUI : TestAUI ↓↓↓
+    #region Binding Components
+    protected ButtonPlus _cBtnPlus;
+    
+    /// <summary>
+    /// Auto Binding Section
+    /// </summary>
+    protected override void OnAutoBind()
+    {
+        base.OnAutoBind();
+        this._cBtnPlus = this.collector.GetNodeComponent<ButtonPlus>("C*BtnPlus");
+    }
+    #endregion
+	
+TestCUI : TestBUI ↓↓↓
+    #region Binding Components
+    protected GameObject _d;
+    
+    /// <summary>
+    /// Auto Binding Section
+    /// </summary>
+    protected override void OnAutoBind()
+    {
+        base.OnAutoBind();
+        this._d = this.collector.GetNode("D");
+    }
+    #endregion
+```
+- Added some methods to CoreFrames.USFrame.
+```csharp
+    public static Scene CreateScene(string sceneName, CreateSceneParameters parameters)
+    public static bool MergeScenes(Scene sourceScene, Scene targetScene)
+    public static bool MoveGameObjectToScene(GameObject go, Scene targetScene)
+    public static bool MoveGameObjectToActiveScene(GameObject go)
+```
+- Modified the CoreFrame Attrs binding format to a single-line format.
+- Modified the configuration file’s default value from 127.0.0.1 to http://127.0.0.1.
+- Fixed handling for MediaFrame when the clip is null.
+- Fixed an issue in which the CoreFrame object returned Null when calling Show on an already showing object. It now returns the cached object instead. 
+
 ## [2.12.0] - 2024-10-24 (rule changed)
 - Modified CloseAll, HideAll, RevealAll rules of method for UIFrame and SRFrame.
   - Set the default group id to 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1.

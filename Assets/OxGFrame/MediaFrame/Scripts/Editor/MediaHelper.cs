@@ -18,8 +18,8 @@ namespace OxGFrame.MediaFrame.Editor
         /// <param name="outputPath"></param>
         public static void ExportMediaUrlConfig(string audioUrlset, string videoUrlset, string outputPath)
         {
-            if (string.IsNullOrEmpty(audioUrlset)) audioUrlset = "127.0.0.1/audio/";
-            if (string.IsNullOrEmpty(videoUrlset)) videoUrlset = "127.0.0.1/video/";
+            if (string.IsNullOrEmpty(audioUrlset)) audioUrlset = "http://127.0.0.1/audio/";
+            if (string.IsNullOrEmpty(videoUrlset)) videoUrlset = "http://127.0.0.1/video/";
 
             IEnumerable<string> texts = new string[]
             {

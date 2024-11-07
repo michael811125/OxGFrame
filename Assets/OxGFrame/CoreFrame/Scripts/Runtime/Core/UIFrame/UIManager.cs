@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-using Cysharp.Threading.Tasks;
-using UnityEngine.UI;
+﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
 using OxGKit.LoggingSystem;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace OxGFrame.CoreFrame.UIFrame
 {
@@ -394,7 +394,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 if (this.CheckIsShowing(assetName))
                 {
                     Logging.PrintWarning<Logger>($"UI: {assetName} already exists!!!");
-                    return null;
+                    return this.GetFrameComponent<UIBase>(assetName);
                 }
             }
 

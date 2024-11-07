@@ -101,7 +101,7 @@ namespace OxGFrame.MediaFrame
         /// <summary>
         /// 初始用
         /// </summary>
-        public abstract UniTask Init();
+        public abstract UniTask<bool> Init();
 
         /// <summary>
         /// 固定每幀被調用

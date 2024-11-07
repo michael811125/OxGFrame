@@ -39,19 +39,23 @@ namespace OxGFrame.MediaFrame.AudioFrame
         [SerializeField, ConditionalField(nameof(_mixerGroupSourceType), false, MixerGroupSourceType.Find)]
         protected string _mixerGroupName = "";
 
-        public override async UniTask Init()
+        public override async UniTask<bool> Init()
         {
             this._audioSource = this.GetComponent<AudioSource>();
-            await this._InitAudio();
+            bool isInitialized = await this._InitAudio();
 
-            this._isInit = true; // Mark all init is finished.
+            if (isInitialized)
+                this._isInit = true; // Mark all init is finished.
+
+            return this._isInit;
         }
 
-        private async UniTask _InitAudio()
+        private async UniTask<bool> _InitAudio()
         {
             this.isPrepared = false;
 
-            if (this._audioSource == null) return;
+            if (this._audioSource == null)
+                return false;
 
             // Get Audio
             switch (this.sourceType)
@@ -66,8 +70,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             if (this.audioClip == null)
             {
-                Logging.Print<Logger>($"<color=#FF0000>Cannot found AudioClip: {this.mediaName}</color>");
-                return;
+                Logging.Print<Logger>($"<color=#FF0000>Cannot find AudioClip: {this.mediaName}</color>");
+                return false;
             }
 
             // Get Mixer Group
@@ -93,6 +97,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
             this.isPrepared = true;
 
             Logging.Print<Logger>($"<color=#00EEFF>【Init Once】 Audio length: {this._mediaLength} (s)</color>");
+
+            return this.isPrepared;
         }
 
         public async UniTask<AudioClip> GetAudioFromStreamingAssets(bool cached)

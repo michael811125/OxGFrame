@@ -51,7 +51,7 @@ namespace OxGFrame.MediaFrame.Editor
                         case SourceType.Audio:
                             audioClip = this._target.audioClip;
                             if (audioClip != null) this._audioLength.floatValue = this._target.audioLength = this._target.audioClip.length;
-                            else Debug.LogError("Cannot found AudioClip");
+                            else Debug.LogError("Cannot find AudioClip");
                             break;
 
                         case SourceType.StreamingAssets:

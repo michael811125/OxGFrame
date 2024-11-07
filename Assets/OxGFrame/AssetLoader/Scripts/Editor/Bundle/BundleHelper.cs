@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json;
-using NUnit.Framework;
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -170,8 +168,8 @@ namespace OxGFrame.AssetLoader.Editor
         {
             if (!Directory.Exists(outputPath)) Directory.CreateDirectory(outputPath);
 
-            if (string.IsNullOrEmpty(bundleIp)) bundleIp = "127.0.0.1";
-            if (string.IsNullOrEmpty(bundleFallbackIp)) bundleFallbackIp = "127.0.0.1";
+            if (string.IsNullOrEmpty(bundleIp)) bundleIp = "http://127.0.0.1";
+            if (string.IsNullOrEmpty(bundleFallbackIp)) bundleFallbackIp = "http://127.0.0.1";
             if (string.IsNullOrEmpty(storeLink)) storeLink = "http://";
 
             IEnumerable<string> texts = new string[]

@@ -3402,6 +3402,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe251c1b9b35a7346a96e88f47683980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clips:
+  - {fileID: 32900000, guid: 12f7b111392fa11449c23f7a982dd405, type: 3}
+  - {fileID: 32900000, guid: 4c8f2885b109e7b43a3e3a0049cce218, type: 3}
   rawImage: {fileID: 1323699754}
 --- !u!4 &2084247922
 Transform:

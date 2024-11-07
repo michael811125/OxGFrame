@@ -38,12 +38,15 @@ namespace OxGFrame.MediaFrame.VideoFrame
         [SerializeField]
         protected VideoAspectRatio _aspectRatio = VideoAspectRatio.FitHorizontally;
 
-        public override async UniTask Init()
+        public override async UniTask<bool> Init()
         {
             this._videoPlayer = this.GetComponent<VideoPlayer>();
-            await this._InitVideo();
+            bool isInitialized = await this._InitVideo();
 
-            this._isInit = true; // Mark all init is finished.
+            if (isInitialized)
+                this._isInit = true; // Mark all init is finished.
+
+            return this._isInit;
         }
 
         protected bool TrySetUrl(string url)
@@ -60,11 +63,12 @@ namespace OxGFrame.MediaFrame.VideoFrame
             return true;
         }
 
-        private async UniTask _InitVideo()
+        private async UniTask<bool> _InitVideo()
         {
             this.isPrepared = false;
 
-            if (this._videoPlayer == null) return;
+            if (this._videoPlayer == null)
+                return false;
 
             switch (this.sourceType)
             {
@@ -73,8 +77,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
                     this._videoPlayer.clip = this.videoClip;
                     if (this.videoClip == null)
                     {
-                        Logging.Print<Logger>($"<color=#FF0000>Cannot found VideoClip: {this.mediaName}</color>");
-                        return;
+                        Logging.Print<Logger>($"<color=#FF0000>Cannot find VideoClip: {this.mediaName}</color>");
+                        return false;
                     }
                     break;
                 case SourceType.StreamingAssets:
@@ -83,8 +87,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
                         string url = System.IO.Path.Combine(Application.streamingAssetsPath, this.fullPathName);
                         if (!this.TrySetUrl(url))
                         {
-                            Logging.Print<Logger>($"<color=#FF0000>Cannot found VideoClip: {this.mediaName}</color>");
-                            return;
+                            Logging.Print<Logger>($"<color=#FF0000>Cannot find VideoClip: {this.mediaName}</color>");
+                            return false;
                         }
                     }
                     break;
@@ -95,8 +99,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
                         string url = (!string.IsNullOrEmpty(urlSet)) ? $"{urlSet.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
                         if (!this.TrySetUrl(url))
                         {
-                            Logging.Print<Logger>($"<color=#FF0000>Cannot found VideoClip: {this.mediaName}</color>");
-                            return;
+                            Logging.Print<Logger>($"<color=#FF0000>Cannot find VideoClip: {this.mediaName}</color>");
+                            return false;
                         }
                     }
                     break;
@@ -105,9 +109,20 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this._videoPlayer.Prepare();
             Logging.Print<Logger>($"{this.mediaName} video is preparing...");
             var cts = new CancellationTokenSource();
-            cts.CancelAfterSlim(TimeSpan.FromSeconds(5f));
-            await UniTask.WaitUntil(() => { return this._videoPlayer.isPrepared; }, PlayerLoopTiming.FixedUpdate, cts.Token);
-            Logging.Print<Logger>($"{this.mediaName} video is prepared");
+            cts.CancelAfterSlim(TimeSpan.FromSeconds(15f));
+            try
+            {
+                await UniTask.WaitUntil(() => { return this._videoPlayer.isPrepared; }, PlayerLoopTiming.FixedUpdate, cts.Token);
+                Logging.Print<Logger>($"{this.mediaName} video is prepared");
+            }
+            catch (OperationCanceledException ex)
+            {
+                if (ex.CancellationToken == cts.Token)
+                {
+                    Logging.PrintException<Logger>(ex);
+                    return false;
+                }
+            }
 
             this._videoPlayer.SetDirectAudioMute(0, true);
             this._videoPlayer.playOnAwake = false;
@@ -131,6 +146,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this.isPrepared = true;
 
             Logging.Print<Logger>($"<color=#00EEFF>【Init Once】 Video length: {this._mediaLength} (s)</color>");
+
+            return this.isPrepared;
         }
 
         /// <summary>

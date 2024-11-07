@@ -142,7 +142,7 @@ namespace OxGFrame.CenterFrame
         {
             if (!this.HasInCache(id))
             {
-                Logging.Print<Logger>(string.Format("<color=#FF0000>Cannot found. Id: {0}</color>", id));
+                Logging.Print<Logger>(string.Format("<color=#FF0000>Cannot find. Id: {0}</color>", id));
                 return default;
             }
 

@@ -68,9 +68,9 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <param name="parent"></param>
         /// <param name="loops"></param>
         /// <returns></returns>
-        public override async UniTask<VideoBase[]> Play(string packageName, string assetName, Transform parent = null, int loops = 0, float volume = 0f)
+        public override async UniTask<VideoBase[]> Play(string packageName, string assetName, UnityEngine.Object sourceClip, Transform parent = null, int loops = 0, float volume = 0f)
         {
-            if (string.IsNullOrEmpty(assetName)) return new VideoBase[] { };
+            if (string.IsNullOrEmpty(assetName)) return new VideoBase[] { null };
 
             VideoBase[] vidBases = this.GetMediaComponents<VideoBase>(assetName);
             bool isResume = false;
@@ -91,11 +91,11 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 GameObject go = await this.LoadAssetIntoCache(packageName, assetName);
                 Transform spawnParent = null;
                 if (parent == null) spawnParent = this.gameObject.transform;
-                VideoBase vidBase = await this.CloneAsset<VideoBase>(assetName, go, parent, spawnParent);
+                VideoBase vidBase = await this.CloneAsset<VideoBase>(assetName, go, sourceClip, parent, spawnParent);
                 if (vidBase == null)
                 {
                     Logging.PrintWarning<Logger>(string.Format("Asset not found at this path!!!【Video】: {0}", assetName));
-                    return new VideoBase[] { };
+                    return new VideoBase[] { null };
                 }
 
                 this._Play(vidBase, loops, volume);

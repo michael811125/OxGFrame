@@ -9,9 +9,9 @@ namespace OxGFrame.MediaFrame.Editor
         [SerializeField]
         public string planName = string.Empty;
         [SerializeField]
-        public string audioUrlset = "127.0.0.1/audio/";
+        public string audioUrlset = "http://127.0.0.1/audio/";
         [SerializeField]
-        public string videoUrlset = "127.0.0.1/video/";
+        public string videoUrlset = "http://127.0.0.1/video/";
 
         public MediaUrlPlan()
         {
