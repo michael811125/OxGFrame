@@ -386,7 +386,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 _currentPackageName = package.PackageName;
                 _currentPackage = package;
             }
-            else Logging.Print<Logger>($"<color=#ff2478>Switch default package failed! Cannot found package: {packageName}.</color>");
+            else Logging.Print<Logger>($"<color=#ff2478>Switch default package failed! Cannot find package: {packageName}.</color>");
         }
 
         /// <summary>

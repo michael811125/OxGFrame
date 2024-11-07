@@ -207,7 +207,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     }
                     else
                     {
-                        Logging.Print<Logger>("<color=#FF0000>Cannot found bundle config from StreamingAssets.</color>");
+                        Logging.Print<Logger>("<color=#FF0000>Cannot find bundle config from StreamingAssets.</color>");
                         return;
                     }
                 }

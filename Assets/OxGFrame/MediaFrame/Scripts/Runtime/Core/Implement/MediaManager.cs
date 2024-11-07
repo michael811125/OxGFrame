@@ -1,9 +1,12 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
+using OxGFrame.MediaFrame.AudioFrame;
 using OxGFrame.MediaFrame.Cacher;
+using OxGFrame.MediaFrame.VideoFrame;
 using OxGKit.LoggingSystem;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 namespace OxGFrame.MediaFrame
 {
@@ -187,7 +190,7 @@ namespace OxGFrame.MediaFrame
         /// <param name="assetName"></param>
         /// <param name="go"></param>
         /// <returns></returns>
-        protected async virtual UniTask<U> CloneAsset<U>(string assetName, GameObject go, Transform parent, Transform spwanParent) where U : T
+        protected async virtual UniTask<U> CloneAsset<U>(string assetName, GameObject go, UnityEngine.Object sourceClip, Transform parent, Transform spwanParent) where U : T
         {
             if (go == null) return default;
 
@@ -199,7 +202,8 @@ namespace OxGFrame.MediaFrame
             // 激活檢查, 如果主體 Active 為 false 必須打開
             if (!instGo.activeSelf) instGo.SetActive(true);
 
-            this._listAllCache.Add(mBase); // 先加入緩存
+            // 先加入緩存
+            this._listAllCache.Add(mBase);
             this.SetParent(mBase, parent);
 
             // 設置管理名稱
@@ -207,11 +211,32 @@ namespace OxGFrame.MediaFrame
             mediaName = (mediaName.IndexOf('/') != -1) ? mediaName.Substring(mediaName.LastIndexOf('/')).Replace("/", string.Empty) : mediaName;
             mBase.SetNames(assetName, mediaName);
 
-            await mBase.Init();
+            // 如果判斷有 clip 來源, 會重新 assign
+            if (sourceClip != null)
+            {
+                if (typeof(U) == typeof(AudioBase))
+                {
+                    // 處理 AudioBase 類型
+                    (mBase as AudioBase).audioClip = sourceClip as AudioClip;
+                }
+                else if (typeof(U) == typeof(VideoBase))
+                {
+                    // 處理 VideoBase 類型
+                    (mBase as VideoBase).videoClip = sourceClip as VideoClip;
+                }
+            }
+
+            bool isInitialized = await mBase.Init();
+            if (!isInitialized)
+            {
+                this.Destroy(mBase);
+                return default;
+            }
 
             // >>> 需在 Init 之後, 以下設定開始生效 <<<
 
-            if (mBase == null || mBase.gameObject.IsDestroyed()) return default;
+            if (mBase == null || mBase.gameObject.IsDestroyed())
+                return default;
 
             mBase.gameObject.SetActive(false);
 
@@ -239,7 +264,7 @@ namespace OxGFrame.MediaFrame
         protected virtual void SetParent(T mBase, Transform parent) { }
 
         #region Play
-        public abstract UniTask<T[]> Play(string packageName, string assetName, Transform parent = null, int loops = 0, float volume = 0f);
+        public abstract UniTask<T[]> Play(string packageName, string assetName, UnityEngine.Object sourceClip, Transform parent = null, int loops = 0, float volume = 0f);
         public abstract void ResumeAll();
         #endregion
 

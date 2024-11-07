@@ -1,6 +1,7 @@
 ﻿using OxGFrame.MediaFrame;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public static class VideoPrefs
 {
@@ -17,6 +18,8 @@ public static class VideoPrefs
 
 public class VideoFrameDemo : MonoBehaviour
 {
+    public VideoClip[] clips;
+
     private void Awake()
     {
         // If Init instance can more efficiency
@@ -29,7 +32,8 @@ public class VideoFrameDemo : MonoBehaviour
     public async void PlayVideoCamera()
     {
         // if render mode is Camera just play directly
-        await MediaFrames.VideoFrame.Play(VideoPrefs.VideoCamExample);
+        // You can assign a clip to prefab and play it, or load a clip from prefab and play it
+        await MediaFrames.VideoFrame.Play(VideoPrefs.VideoCamExample, this.clips[0]);
     }
 
     public void StopVideoCamera()
@@ -51,7 +55,8 @@ public class VideoFrameDemo : MonoBehaviour
     #region Video cast to 【RenderTexture】
     public async void PlayVideoRenderTexture()
     {
-        var video = await MediaFrames.VideoFrame.Play(VideoPrefs.VideoRtExample);
+        // You can assign a clip to prefab and play it, or load a clip from prefab and play it
+        var video = await MediaFrames.VideoFrame.Play(VideoPrefs.VideoRtExample, this.clips[1]);
 
         // Get Video
         if (video != null)

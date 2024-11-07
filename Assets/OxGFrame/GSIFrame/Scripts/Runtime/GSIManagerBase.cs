@@ -295,7 +295,7 @@ namespace OxGFrame.GSIFrame
             // 開始進行 GameStage 初始流程
             if (this._currentGameStage != null) this._currentGameStage.BeginInit().Forget();
 #if UNITY_EDITOR
-            else Logging.Print<Logger>(string.Format("Cannot found GameStage. Id: {0}", this._currentId));
+            else Logging.Print<Logger>(string.Format("Cannot find GameStage. Id: {0}", this._currentId));
 #endif
         }
 

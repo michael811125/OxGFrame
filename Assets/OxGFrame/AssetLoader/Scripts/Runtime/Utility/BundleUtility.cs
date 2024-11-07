@@ -262,7 +262,7 @@ namespace OxGFrame.AssetLoader.Utility
 
                 if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
                 {
-                    Logging.Print<Logger>("<color=#FF0000>Request failed. Cannot found file in StreamingAssets.</color>");
+                    Logging.Print<Logger>("<color=#FF0000>Request failed. Cannot find file in StreamingAssets.</color>");
                     Logging.Print<Logger>(request.error);
                 }
                 else

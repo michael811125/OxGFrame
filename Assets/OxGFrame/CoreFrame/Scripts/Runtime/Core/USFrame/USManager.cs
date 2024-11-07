@@ -2,6 +2,7 @@
 using OxGFrame.AssetLoader;
 using OxGFrame.AssetLoader.Cacher;
 using OxGKit.LoggingSystem;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -33,6 +34,54 @@ namespace OxGFrame.CoreFrame.USFrame
                 }
             }
             return _instance;
+        }
+
+        public Scene CreateScene(string sceneName, CreateSceneParameters parameters)
+        {
+            return SceneManager.CreateScene(sceneName, parameters);
+        }
+
+        public bool MergeScenes(Scene sourceScene, Scene targetScene)
+        {
+            try
+            {
+                SceneManager.MergeScenes(sourceScene, targetScene);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logging.PrintException<Logger>(ex);
+                return false;
+            }
+        }
+
+        public bool MoveGameObjectToScene(GameObject go, Scene targetScene)
+        {
+            try
+            {
+                SceneManager.MoveGameObjectToScene(go, targetScene);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logging.PrintException<Logger>(ex);
+                return false;
+            }
+        }
+
+        public bool MoveGameObjectToActiveScene(GameObject go)
+        {
+            try
+            {
+                Scene targetScene = this.GetActiveScene();
+                SceneManager.MoveGameObjectToScene(go, targetScene);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logging.PrintException<Logger>(ex);
+                return false;
+            }
         }
 
         public Scene GetActiveScene()

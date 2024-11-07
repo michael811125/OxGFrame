@@ -4,6 +4,7 @@ using OxGFrame.MediaFrame.AudioFrame;
 using OxGFrame.MediaFrame.VideoFrame;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Video;
 
 namespace OxGFrame.MediaFrame
 {
@@ -110,13 +111,26 @@ namespace OxGFrame.MediaFrame
             public static async UniTask<AudioBase> Play(string assetName, Transform parent = null, int loops = 0, float volume = 0f)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                var media = await AudioManager.GetInstance().Play(packageName, assetName, parent, loops, volume);
+                var media = await AudioManager.GetInstance().Play(packageName, assetName, null, parent, loops, volume);
                 return media[0];
             }
 
             public static async UniTask<AudioBase> Play(string packageName, string assetName, Transform parent = null, int loops = 0, float volume = 0f)
             {
-                var media = await AudioManager.GetInstance().Play(packageName, assetName, parent, loops, volume);
+                var media = await AudioManager.GetInstance().Play(packageName, assetName, null, parent, loops, volume);
+                return media[0];
+            }
+
+            public static async UniTask<AudioBase> Play(string assetName, AudioClip sourceClip, Transform parent = null, int loops = 0, float volume = 0f)
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                var media = await AudioManager.GetInstance().Play(packageName, assetName, sourceClip, parent, loops, volume);
+                return media[0];
+            }
+
+            public static async UniTask<AudioBase> Play(string packageName, string assetName, AudioClip sourceClip, Transform parent = null, int loops = 0, float volume = 0f)
+            {
+                var media = await AudioManager.GetInstance().Play(packageName, assetName, sourceClip, parent, loops, volume);
                 return media[0];
             }
 
@@ -211,13 +225,26 @@ namespace OxGFrame.MediaFrame
             public static async UniTask<VideoBase> Play(string assetName, Transform parent = null, int loops = 0, float volume = 0f)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                var media = await VideoManager.GetInstance().Play(packageName, assetName, parent, loops, volume);
+                var media = await VideoManager.GetInstance().Play(packageName, assetName, null, parent, loops, volume);
                 return media[0];
             }
 
             public static async UniTask<VideoBase> Play(string packageName, string assetName, Transform parent = null, int loops = 0, float volume = 0f)
             {
-                var media = await VideoManager.GetInstance().Play(packageName, assetName, parent, loops, volume);
+                var media = await VideoManager.GetInstance().Play(packageName, assetName, null, parent, loops, volume);
+                return media[0];
+            }
+
+            public static async UniTask<VideoBase> Play(string assetName, VideoClip sourceClip, Transform parent = null, int loops = 0, float volume = 0f)
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                var media = await VideoManager.GetInstance().Play(packageName, assetName, sourceClip, parent, loops, volume);
+                return media[0];
+            }
+
+            public static async UniTask<VideoBase> Play(string packageName, string assetName, VideoClip sourceClip, Transform parent = null, int loops = 0, float volume = 0f)
+            {
+                var media = await VideoManager.GetInstance().Play(packageName, assetName, sourceClip, parent, loops, volume);
                 return media[0];
             }
 

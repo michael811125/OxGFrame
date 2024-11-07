@@ -43,7 +43,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 lock (_locker)
                 {
                     _instance = FindObjectOfType<AudioManager>();
-                    if (_instance == null) Logging.PrintWarning<Logger>("<color=#FF0000>Cannot found 【AudioManager Component】, Please to check your 【AudioManager GameObject】.</color>");
+                    if (_instance == null) Logging.PrintWarning<Logger>("<color=#FF0000>Cannot find 【AudioManager Component】, Please to check your 【AudioManager GameObject】.</color>");
                 }
             }
             return _instance;
@@ -393,9 +393,9 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <param name="parent"></param>
         /// <param name="loops"></param>
         /// <returns></returns>
-        public override async UniTask<AudioBase[]> Play(string packageName, string assetName, Transform parent = null, int loops = 0, float volume = 0f)
+        public override async UniTask<AudioBase[]> Play(string packageName, string assetName, UnityEngine.Object sourceClip, Transform parent = null, int loops = 0, float volume = 0f)
         {
-            if (string.IsNullOrEmpty(assetName)) return new AudioBase[] { };
+            if (string.IsNullOrEmpty(assetName)) return new AudioBase[] { null };
 
             AudioBase[] audBases = this.GetMediaComponents<AudioBase>(assetName);
             bool isResume = false;
@@ -420,11 +420,11 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 GameObject go = await this.LoadAssetIntoCache(packageName, assetName);
                 Transform spawnParent = null;
                 if (parent == null) spawnParent = this.transform;
-                AudioBase audBase = await this.CloneAsset<AudioBase>(assetName, go, parent, spawnParent);
+                AudioBase audBase = await this.CloneAsset<AudioBase>(assetName, go, sourceClip, parent, spawnParent);
                 if (audBase == null)
                 {
                     Logging.PrintWarning<Logger>(string.Format("Asset not found at this path!!!【Audio】: {0}", assetName));
-                    return new AudioBase[] { };
+                    return new AudioBase[] { null };
                 }
 
                 this._Play(audBase, loops, volume);

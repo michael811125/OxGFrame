@@ -24,6 +24,8 @@ public static class AudioPrefs
 
 public class AudioFrameDemo : MonoBehaviour
 {
+    public AudioClip[] clips;
+
     private void Awake()
     {
         // If Init instance can more efficiency
@@ -55,7 +57,8 @@ public class AudioFrameDemo : MonoBehaviour
     #region Audio 【General SFX】 
     public async void PlayGeneralFX()
     {
-        await MediaFrames.AudioFrame.Play(AudioPrefs.a201);
+        // You can assign a clip to prefab and play it, or load a clip from prefab and play it
+        await MediaFrames.AudioFrame.Play(AudioPrefs.a201, this.clips[0]);
     }
 
     public void StopGeneralFX()
@@ -83,7 +86,8 @@ public class AudioFrameDemo : MonoBehaviour
     #region Audio 【Interact SFX】
     public async void PlayFightFX()
     {
-        await MediaFrames.AudioFrame.Play(AudioPrefs.a301);
+        // You can assign a clip to prefab and play it, or load a clip from prefab and play it
+        await MediaFrames.AudioFrame.Play(AudioPrefs.a301, this.clips[1]);
     }
 
     public void StopFightFX()

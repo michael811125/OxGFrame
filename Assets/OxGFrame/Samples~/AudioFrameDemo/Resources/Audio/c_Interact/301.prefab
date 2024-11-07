@@ -143,15 +143,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ignoreTimeScale: 1
   loops: 0
+  autoEndToStop: 1
   onStopAndDestroy: 1
   onDestroyAndUnload: 0
-  autoEndToStop: 1
   audioType:
     soundType: 1
     priority: 128
   audioFileType: 13
   sourceType: 0
   audioClip: {fileID: 8300000, guid: ddf4c2454856b1941b9506eba8f82ce2, type: 3}
+  requestCached: 1
   fullPathName: 
   urlSet:
     getUrlPathFromCfg: 1
@@ -160,7 +161,7 @@ MonoBehaviour:
       file: {fileID: 0}
       fullPathName: 
     url: Fight/impact.mp3
-  audioLength: 1.7502041
+  audioLength: 0
   _mixerGroupSourceType: 1
   _mixerGroup: {fileID: 0}
   _mixerName: MasterMixer

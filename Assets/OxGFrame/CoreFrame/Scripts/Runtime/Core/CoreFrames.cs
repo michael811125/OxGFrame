@@ -17,6 +17,9 @@ namespace OxGFrame.CoreFrame
         /// </summary>
         internal const int DEFAULT_GROUP_ID = 0;
 
+        /// <summary>
+        /// User Interface
+        /// </summary>
         public static class UIFrame
         {
             public static bool ignoreTimeScale
@@ -377,6 +380,9 @@ namespace OxGFrame.CoreFrame
             #endregion
         }
 
+        /// <summary>
+        /// Scene Resource
+        /// </summary>
         public static class SRFrame
         {
             public static bool ignoreTimeScale
@@ -684,6 +690,9 @@ namespace OxGFrame.CoreFrame
             #endregion
         }
 
+        /// <summary>
+        /// Unity Scene
+        /// </summary>
         public static class USFrame
         {
             public static void InitInstance()
@@ -694,6 +703,26 @@ namespace OxGFrame.CoreFrame
             public static int SceneCount()
             {
                 return USManager.sceneCount;
+            }
+
+            public static Scene CreateScene(string sceneName, CreateSceneParameters parameters)
+            {
+                return USManager.GetInstance().CreateScene(sceneName, parameters);
+            }
+
+            public static bool MergeScenes(Scene sourceScene, Scene targetScene)
+            {
+                return USManager.GetInstance().MergeScenes(sourceScene, targetScene);
+            }
+
+            public static bool MoveGameObjectToScene(GameObject go, Scene targetScene)
+            {
+                return USManager.GetInstance().MoveGameObjectToScene(go, targetScene);
+            }
+
+            public static bool MoveGameObjectToActiveScene(GameObject go)
+            {
+                return USManager.GetInstance().MoveGameObjectToActiveScene(go);
             }
 
             public static Scene GetActiveScene()
@@ -1413,6 +1442,9 @@ namespace OxGFrame.CoreFrame
             }
         }
 
+        /// <summary>
+        /// Clone Prefab
+        /// </summary>
         public static class CPFrame
         {
             public static void InitInstance()

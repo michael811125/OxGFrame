@@ -143,15 +143,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ignoreTimeScale: 1
   loops: 0
+  autoEndToStop: 1
   onStopAndDestroy: 1
   onDestroyAndUnload: 0
-  autoEndToStop: 1
   audioType:
     soundType: 1
     priority: 128
   audioFileType: 13
   sourceType: 0
   audioClip: {fileID: 8300000, guid: b8ce5ca072e6e1a4caa78d9927dab6db, type: 3}
+  requestCached: 1
   fullPathName: 
   urlSet:
     getUrlPathFromCfg: 1
@@ -160,7 +161,7 @@ MonoBehaviour:
       file: {fileID: 0}
       fullPathName: 
     url: General/button_click.mp3
-  audioLength: 2.0636735
+  audioLength: 0
   _mixerGroupSourceType: 1
   _mixerGroup: {fileID: 0}
   _mixerName: MasterMixer
