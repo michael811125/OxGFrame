@@ -87,14 +87,18 @@ namespace OxGFrame.CenterFrame.APICenter
                 // Start send request
                 await request.SendWebRequest();
 
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+                if (request.result == UnityWebRequest.Result.DataProcessingError ||
+                    request.result == UnityWebRequest.Result.ProtocolError ||
+                    request.result == UnityWebRequest.Result.ConnectionError)
                 {
-                    if (error != null) error(request.error);
+                    if (error != null)
+                        error(request.error);
                     return null;
                 }
                 else
                 {
-                    if (success != null) success(request.downloadHandler.text);
+                    if (success != null)
+                        success(request.downloadHandler.text);
                     return request.downloadHandler.text;
                 }
             }
@@ -128,14 +132,18 @@ namespace OxGFrame.CenterFrame.APICenter
                 // Start send request
                 await request.SendWebRequest();
 
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+                if (request.result == UnityWebRequest.Result.DataProcessingError ||
+                    request.result == UnityWebRequest.Result.ProtocolError ||
+                    request.result == UnityWebRequest.Result.ConnectionError)
                 {
-                    if (error != null) error(request.error);
+                    if (error != null)
+                        error(request.error);
                     return null;
                 }
                 else
                 {
-                    if (success != null) success(request.downloadHandler.text);
+                    if (success != null)
+                        success(request.downloadHandler.text);
                     return request.downloadHandler.text;
                 }
             }
