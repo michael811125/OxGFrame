@@ -1,9 +1,7 @@
 {
-    "name": "UniFramework.Event",
+    "name": "UniFramework.Reference",
     "rootNamespace": "",
-    "references": [
-        "GUID:e168ba7048aa3904897471c4265f0162"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,

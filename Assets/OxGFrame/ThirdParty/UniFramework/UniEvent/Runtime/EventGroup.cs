@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace UniFramework.Event
@@ -13,7 +12,7 @@ namespace UniFramework.Event
 
         public EventGroup(int groupId)
         {
-            this._groupId = groupId;
+            _groupId = groupId;
         }
 
         /// <summary>
@@ -28,8 +27,10 @@ namespace UniFramework.Event
             if (_cachedListener[eventType].Contains(listener) == false)
             {
                 _cachedListener[eventType].Add(listener);
-                if (this._groupId != null) UniEvent.AddListener((int)this._groupId, listener);
-                else UniEvent.AddListener(eventType, listener);
+                if (_groupId != null)
+                    UniEvent.AddListener((int)_groupId, listener);
+                else
+                    UniEvent.AddListener(eventType, listener);
             }
             else
             {
@@ -47,8 +48,10 @@ namespace UniFramework.Event
                 System.Type eventType = pair.Key;
                 for (int i = 0; i < pair.Value.Count; i++)
                 {
-                    if (this._groupId != null) UniEvent.RemoveListener((int)this._groupId, pair.Value[i]);
-                    else UniEvent.RemoveListener(eventType, pair.Value[i]);
+                    if (_groupId != null)
+                        UniEvent.RemoveListener((int)_groupId, pair.Value[i]);
+                    else
+                        UniEvent.RemoveListener(eventType, pair.Value[i]);
                 }
                 pair.Value.Clear();
             }
