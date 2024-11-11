@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.12.2] - 2024-11-11
+- Updated UniEvent of UniFramework.
+- Added constructors in EncryptionServices (Editor).
+
 ## [2.12.1] - 2024-11-08
 - Added MediaFrame (Audio, Video) with an option to specify a sourceClip, handled by the prefab container for playback.
 ```csharp
