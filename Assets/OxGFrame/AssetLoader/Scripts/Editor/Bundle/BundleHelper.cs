@@ -615,6 +615,11 @@ namespace OxGFrame.AssetLoader.Editor
         /// <param name="outputPath"></param>
         internal static void WriteTxt(string txt, string outputPath)
         {
+            // 檢查目錄是否存在, 若不存在則創建它
+            string directoryPath = Path.GetDirectoryName(outputPath);
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+
             // 寫入配置文件
             var file = File.CreateText(outputPath);
             file.Write(txt);
