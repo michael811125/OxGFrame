@@ -579,30 +579,38 @@ namespace OxGFrame.AssetLoader.Editor
         {
             #region Newest Filter
             string[] versionPaths = Directory.GetDirectories(packagePath);
-            Dictionary<string, decimal> packageVersions = new Dictionary<string, decimal>();
+            string newestVersionPath = null;
+            decimal newestVersion = 0;
+
             foreach (var versionPath in versionPaths)
             {
                 string versionName = Path.GetFileNameWithoutExtension(versionPath);
 
+                // 確保符合預期格式, 跳過不符合格式的資料夾
                 if (versionName.IndexOf('-') <= -1) continue;
 
-                string major = versionName.Substring(0, versionName.LastIndexOf("-"));
-                string minor = versionName.Substring(versionName.LastIndexOf("-") + 1, versionName.Length - versionName.LastIndexOf("-") - 1);
+                // 提取日期部分並處理為 "yyyyMMdd" 格式
+                string major = versionName.Substring(0, versionName.LastIndexOf("-")).Replace("-", string.Empty);
 
-                // yyyy-mm-dd
-                major = major.Trim().Replace("-", string.Empty);
-                // 24 h * 60 m = 1440 m (max is 4 num of digits)
-                minor = minor.Trim().PadLeft(4, '0');
-                //Debug.Log($"Major Date: {major}, Minor Minute: {minor} => {major}{minor}");
+                // 提取分鐘部分, 並確保其為 4 位數格式
+                string minor = versionName.Substring(versionName.LastIndexOf("-") + 1).PadLeft(4, '0');
 
-                string refineVersionName = $"{major}{minor}";
-                if (decimal.TryParse(refineVersionName, out decimal value)) packageVersions.Add(versionPath, value);
+                // 合併日期與分鐘部分, 並轉換為數字
+                string refinedVersionName = major + minor;
+
+                if (decimal.TryParse(refinedVersionName, out decimal value))
+                {
+                    // 直接比較, 更新最新版本的路徑和版本號
+                    if (value > newestVersion)
+                    {
+                        newestVersion = value;
+                        newestVersionPath = versionPath;
+                    }
+                }
             }
-
-            string newestVersionPath = packageVersions.Any() ? packageVersions.Aggregate((x, y) => x.Value > y.Value ? x : y).Key : null;
-            decimal newestVersion = !string.IsNullOrEmpty(newestVersionPath) ? packageVersions[newestVersionPath] : 0;
             #endregion
 
+            // 返回最新的版本路徑和版本數值
             return new object[] { newestVersionPath, newestVersion };
         }
 
