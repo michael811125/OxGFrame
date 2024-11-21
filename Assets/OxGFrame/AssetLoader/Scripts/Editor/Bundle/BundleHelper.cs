@@ -388,7 +388,10 @@ namespace OxGFrame.AssetLoader.Editor
                 if (isSkip) continue;
 
                 // 取得 NewestPackagePath
-                string newestVersionPath = NewestPackagePathFilter(packagePath);
+                string newestVersionPath = (string)NewestPackagePathFilter(packagePath)[0];
+
+                // If the latest version path cannot be found, skip it
+                if (string.IsNullOrEmpty(newestVersionPath)) continue;
 
                 string destFullDir = Path.GetFullPath(outputPath + $@"/{productName}" + $@"/{platform}" + $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}" + $@"/{packageName}");
                 BundleUtility.CopyFolderRecursively(newestVersionPath, destFullDir);
@@ -441,29 +444,13 @@ namespace OxGFrame.AssetLoader.Editor
 
                 if (isSkip) continue;
 
-                string[] versionPaths = Directory.GetDirectories(packagePath);
-                Dictionary<string, decimal> packageVersions = new Dictionary<string, decimal>();
-                foreach (var versionPath in versionPaths)
-                {
-                    string versionName = Path.GetFileNameWithoutExtension(versionPath);
+                object[] newestData = NewestPackagePathFilter(packagePath);
+                string newestVersionPath = (string)newestData[0];
+                decimal newestVersion = (decimal)newestData[1];
 
-                    if (versionName.IndexOf('-') <= -1) continue;
+                // If the latest version path cannot be found, skip it
+                if (string.IsNullOrEmpty(newestVersionPath)) continue;
 
-                    string major = versionName.Substring(0, versionName.LastIndexOf("-"));
-                    string minor = versionName.Substring(versionName.LastIndexOf("-") + 1, versionName.Length - versionName.LastIndexOf("-") - 1);
-
-                    // yyyy-mm-dd
-                    major = major.Trim().Replace("-", string.Empty);
-                    // 24 h * 60 m = 1440 m (max is 4 num of digits)
-                    minor = minor.Trim().PadLeft(4, '0');
-                    //Debug.Log($"Major Date: {major}, Minor Minute: {minor} => {major}{minor}");
-
-                    string refineVersionName = $"{major}{minor}";
-                    if (decimal.TryParse(refineVersionName, out decimal value)) packageVersions.Add(versionPath, value);
-                }
-
-                string newestVersionPath = packageVersions.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-                decimal newestVersion = packageVersions.Aggregate((x, y) => x.Value > y.Value ? x : y).Value;
                 if (string.IsNullOrEmpty(dlcVersion)) dlcVersion = $"{newestVersion}";
 
                 string destFullDir;
@@ -535,7 +522,10 @@ namespace OxGFrame.AssetLoader.Editor
                     if (isSkip) continue;
 
                     // 取得 NewestPackagePath
-                    string newestVersionPath = NewestPackagePathFilter(packagePath);
+                    string newestVersionPath = (string)NewestPackagePathFilter(packagePath)[0];
+
+                    // If the latest version path cannot be found, skip it
+                    if (string.IsNullOrEmpty(newestVersionPath)) continue;
 
                     // 建立 Package info
                     Bundle.PackageInfo packageInfo = new Bundle.PackageInfo();
@@ -578,7 +568,14 @@ namespace OxGFrame.AssetLoader.Editor
             return cfg;
         }
 
-        internal static string NewestPackagePathFilter(string packagePath)
+        /// <summary>
+        /// Return the following parameters
+        /// <para> object[0] = (string)key = version path </para>
+        /// <para> object[1] = (decimal)value = version date number </para>
+        /// </summary>
+        /// <param name="packagePath"></param>
+        /// <returns></returns>
+        internal static object[] NewestPackagePathFilter(string packagePath)
         {
             #region Newest Filter
             string[] versionPaths = Directory.GetDirectories(packagePath);
@@ -602,10 +599,11 @@ namespace OxGFrame.AssetLoader.Editor
                 if (decimal.TryParse(refineVersionName, out decimal value)) packageVersions.Add(versionPath, value);
             }
 
-            string newestVersionPath = packageVersions.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+            string newestVersionPath = packageVersions.Any() ? packageVersions.Aggregate((x, y) => x.Value > y.Value ? x : y).Key : null;
+            decimal newestVersion = !string.IsNullOrEmpty(newestVersionPath) ? packageVersions[newestVersionPath] : 0;
             #endregion
 
-            return newestVersionPath;
+            return new object[] { newestVersionPath, newestVersion };
         }
 
         /// <summary>
