@@ -265,6 +265,11 @@ namespace OxGFrame.CoreFrame
         protected abstract void CloseSelf();
 
         /// <summary>
+        /// 調用隱藏自己
+        /// </summary>
+        protected abstract void HideSelf();
+
+        /// <summary>
         /// 設置名稱
         /// </summary>
         /// <param name="assetName"></param>

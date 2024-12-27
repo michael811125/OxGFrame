@@ -137,6 +137,9 @@ namespace OxGFrame.CoreFrame.CPFrame
 
         [System.Obsolete("This is not supported in this class.")]
         protected sealed override void CloseSelf() { }
+
+        [System.Obsolete("This is not supported in this class.")]
+        protected sealed override void HideSelf() { }
         #endregion
     }
 }
