@@ -48,7 +48,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         /// 僅執行一次, 只交由 UIManager 加載資源時呼叫初始相關綁定組件
         /// </summary>
-        public sealed override void InitFirst()
+        internal sealed override void InitFirst()
         {
             base.InitFirst();
         }
@@ -83,7 +83,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         /// UIManager 控制調用 Display
         /// </summary>
-        public sealed override void Display(object obj)
+        internal sealed override void Display(object obj)
         {
             this.gameObject.SetActive(true);
 
@@ -91,16 +91,19 @@ namespace OxGFrame.CoreFrame.UIFrame
             if (!this.isHidden)
             {
                 // 啟用 Mask
-                if (this.autoMask) this._AddMask();
+                if (this.autoMask)
+                    this._AddMask();
                 // 進行顯示初始動作【子類 OnShow】
                 this.OnShow(obj);
             }
             else
             {
                 // 確保 Mask
-                if (this.autoMask) this._AddMask();
+                if (this.autoMask)
+                    this._AddMask();
                 // 隱藏顯示
                 this.OnReveal();
+                this.SetHidden(false);
             }
 
             this.Freeze();
@@ -110,7 +113,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         ///  UIManager 控制調用 Hide
         /// </summary>
-        public sealed override void Hide(bool disabledPreClose = false)
+        internal sealed override void Hide(bool disabledPreClose = false)
         {
             if (!this.gameObject.activeSelf) return;
 

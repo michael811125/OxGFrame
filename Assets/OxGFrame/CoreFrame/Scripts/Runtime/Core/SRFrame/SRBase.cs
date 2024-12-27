@@ -10,7 +10,7 @@ namespace OxGFrame.CoreFrame.SRFrame
 
         public override void OnCreate() { }
 
-        public sealed override void InitFirst()
+        internal sealed override void InitFirst()
         {
             base.InitFirst();
         }
@@ -31,15 +31,20 @@ namespace OxGFrame.CoreFrame.SRFrame
 
         protected override void OnLateUpdate(float dt) { }
 
-        public sealed override void Display(object obj)
+        internal sealed override void Display(object obj)
         {
             this.gameObject.SetActive(true);
 
-            if (!this.isHidden) this.OnShow(obj);
-            else this.OnReveal();
+            if (!this.isHidden)
+                this.OnShow(obj);
+            else
+            {
+                this.OnReveal();
+                this.SetHidden(false);
+            }
         }
 
-        public sealed override void Hide(bool disabledPreClose = false)
+        internal sealed override void Hide(bool disabledPreClose = false)
         {
             if (!this.gameObject.activeSelf) return;
 

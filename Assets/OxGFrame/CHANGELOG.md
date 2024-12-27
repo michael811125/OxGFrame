@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [2.12.3] - 2024-12-27
+- Added to CoreFrames.SRFrame & CoreFrames.UIFrame:
+  - Can use CheckHasAnyHidingAllGroups() to replace CheckHasAnyHiding(-1).
+  - Can use CloseAllForAllGroups() to replace CloseAll(-1).
+  - Can use CloseAllAndExcludedForAllGroups() to replace CloseAllAndExcluded(-1).
+  - Can use RevealAllForAllGroups() to replace RevealAll(-1).
+  - Can use HideAllForAllGroups() to replace HideAll(-1).
+  - Can use HideAllAndExcludedForAllGroups() to replace HideAllExcluded(-1).
+- Modified access modifiers of certain methods.
+- Modified CoreFrames.SRFrame & CoreFrames.UIFrame:
+  - Update the rules for CheckHasAnyHiding(). By default, groupId is set to 0, and -1 indicates that all groupIds should be processed.
+- Fixed RevealAll not marking hidden as false.
+
 ## [2.12.2] - 2024-11-11
 - Updated UniEvent of UniFramework.
 - Added constructors in EncryptionServices (Editor).

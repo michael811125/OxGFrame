@@ -38,7 +38,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
         [SerializeField]
         protected VideoAspectRatio _aspectRatio = VideoAspectRatio.FitHorizontally;
 
-        public override async UniTask<bool> Init()
+        internal override async UniTask<bool> Init()
         {
             this._videoPlayer = this.GetComponent<VideoPlayer>();
             bool isInitialized = await this._InitVideo();
@@ -228,7 +228,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             }
         }
 
-        public override void Play(int loops, float volume)
+        internal override void Play(int loops, float volume)
         {
             if (this._videoPlayer == null) return;
 
@@ -248,7 +248,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this._isPaused = false; // 取消暫停標記
         }
 
-        public override void Stop()
+        internal override void Stop()
         {
             if (this._videoPlayer == null) return;
 
@@ -265,7 +265,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this.gameObject.SetActive(false);
         }
 
-        public override void Pause()
+        internal override void Pause()
         {
             if (this._videoPlayer == null) return;
 

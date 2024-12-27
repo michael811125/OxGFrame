@@ -18,6 +18,11 @@ namespace OxGFrame.CoreFrame
         internal const int DEFAULT_GROUP_ID = 0;
 
         /// <summary>
+        /// Do all groups
+        /// </summary>
+        internal const int DO_ALL_GROUPS = -1;
+
+        /// <summary>
         /// User Interface
         /// </summary>
         public static class UIFrame
@@ -77,9 +82,13 @@ namespace OxGFrame.CoreFrame
                 return UIManager.GetInstance().CheckIsHiding(uiBase);
             }
 
+            /// <summary>
+            /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
+            /// </summary>
+            /// <returns></returns>
             public static bool CheckHasAnyHiding()
             {
-                return UIManager.GetInstance().CheckHasAnyHiding();
+                return UIManager.GetInstance().CheckHasAnyHiding(DEFAULT_GROUP_ID);
             }
 
             public static bool CheckHasAnyHiding(int groupId)
@@ -87,9 +96,14 @@ namespace OxGFrame.CoreFrame
                 return UIManager.GetInstance().CheckHasAnyHiding(groupId);
             }
 
+            public static bool CheckHasAnyHidingForAllGroups()
+            {
+                return UIManager.GetInstance().CheckHasAnyHiding(DO_ALL_GROUPS);
+            }
+
             public static int GetStackByStackCount(string canvasName)
             {
-                return UIManager.GetInstance().GetStackByStackCount(0, canvasName);
+                return UIManager.GetInstance().GetStackByStackCount(DEFAULT_GROUP_ID, canvasName);
             }
 
             public static int GetStackByStackCount(int groupId, string canvasName)
@@ -284,6 +298,11 @@ namespace OxGFrame.CoreFrame
                 UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, false, withoutAssetNames);
             }
 
+            public static void CloseAllForAllGroups(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            {
+                UIManager.GetInstance().CloseAll(DO_ALL_GROUPS, disabledPreClose, forceDestroy, false, withoutAssetNames);
+            }
+
             /// <summary>
             /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
             /// </summary>
@@ -298,6 +317,11 @@ namespace OxGFrame.CoreFrame
             public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
                 UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true, withoutAssetNames);
+            }
+
+            public static void CloseAllAndExcludedForAllGroups(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            {
+                UIManager.GetInstance().CloseAll(DO_ALL_GROUPS, disabledPreClose, forceDestroy, true, withoutAssetNames);
             }
 
             /// <summary>
@@ -342,6 +366,11 @@ namespace OxGFrame.CoreFrame
             {
                 UIManager.GetInstance().RevealAll(groupId);
             }
+
+            public static void RevealAllForAllGroups()
+            {
+                UIManager.GetInstance().RevealAll(DO_ALL_GROUPS);
+            }
             #endregion
 
             #region Hide
@@ -364,6 +393,11 @@ namespace OxGFrame.CoreFrame
                 UIManager.GetInstance().HideAll(groupId, false, withoutAssetNames);
             }
 
+            public static void HideAllForAllGroups(params string[] withoutAssetNames)
+            {
+                UIManager.GetInstance().HideAll(DO_ALL_GROUPS, false, withoutAssetNames);
+            }
+
             /// <summary>
             /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
             /// </summary>
@@ -376,6 +410,11 @@ namespace OxGFrame.CoreFrame
             public static void HideAllAndExcluded(int groupId, params string[] withoutAssetNames)
             {
                 UIManager.GetInstance().HideAll(groupId, true, withoutAssetNames);
+            }
+
+            public static void HideAllAndExcludedForAllGroups(params string[] withoutAssetNames)
+            {
+                UIManager.GetInstance().HideAll(DO_ALL_GROUPS, true, withoutAssetNames);
             }
             #endregion
         }
@@ -431,14 +470,23 @@ namespace OxGFrame.CoreFrame
                 return SRManager.GetInstance().CheckIsHiding(srBase);
             }
 
+            /// <summary>
+            /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
+            /// </summary>
+            /// <returns></returns>
             public static bool CheckHasAnyHiding()
             {
-                return SRManager.GetInstance().CheckHasAnyHiding();
+                return SRManager.GetInstance().CheckHasAnyHiding(DEFAULT_GROUP_ID);
             }
 
             public static bool CheckHasAnyHiding(int groupId)
             {
                 return SRManager.GetInstance().CheckHasAnyHiding(groupId);
+            }
+
+            public static bool CheckHasAnyHidingForAllGroups()
+            {
+                return SRManager.GetInstance().CheckHasAnyHiding(DO_ALL_GROUPS);
             }
 
             /// <summary>
@@ -616,6 +664,11 @@ namespace OxGFrame.CoreFrame
                 SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, false, withoutAssetNames);
             }
 
+            public static void CloseAllForAllGroups(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            {
+                SRManager.GetInstance().CloseAll(DO_ALL_GROUPS, disabledPreClose, forceDestroy, false, withoutAssetNames);
+            }
+
             /// <summary>
             /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
             /// </summary>
@@ -630,6 +683,11 @@ namespace OxGFrame.CoreFrame
             public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
                 SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true, withoutAssetNames);
+            }
+
+            public static void CloseAllAndExcludedForAllGroups(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            {
+                SRManager.GetInstance().CloseAll(DO_ALL_GROUPS, disabledPreClose, forceDestroy, true, withoutAssetNames);
             }
             #endregion
 
@@ -650,6 +708,11 @@ namespace OxGFrame.CoreFrame
             public static void RevealAll(int groupId)
             {
                 SRManager.GetInstance().RevealAll(groupId);
+            }
+
+            public static void RevealAllForAllGroups()
+            {
+                SRManager.GetInstance().RevealAll(DO_ALL_GROUPS);
             }
             #endregion
 
@@ -674,6 +737,11 @@ namespace OxGFrame.CoreFrame
                 SRManager.GetInstance().HideAll(groupId, false, withoutAssetNames);
             }
 
+            public static void HideAllForAllGroups(params string[] withoutAssetNames)
+            {
+                SRManager.GetInstance().HideAll(DO_ALL_GROUPS, false, withoutAssetNames);
+            }
+
             /// <summary>
             /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
             /// </summary>
@@ -686,6 +754,11 @@ namespace OxGFrame.CoreFrame
             public static void HideAllAndExcluded(int groupId, params string[] withoutAssetNames)
             {
                 SRManager.GetInstance().HideAll(groupId, true, withoutAssetNames);
+            }
+
+            public static void HideAllAndExcludedForAllGroups(params string[] withoutAssetNames)
+            {
+                SRManager.GetInstance().HideAll(DO_ALL_GROUPS, true, withoutAssetNames);
             }
             #endregion
         }

@@ -324,22 +324,10 @@ namespace OxGFrame.CoreFrame
         {
             foreach (var fBase in this._dictAllCache.Values)
             {
-                if (fBase.Peek().groupId == groupId && fBase.Peek().isHidden) return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// 判斷是否有任一隱藏
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public bool CheckHasAnyHiding()
-        {
-            foreach (var fBase in this._dictAllCache.Values)
-            {
-                if (fBase.Peek().isHidden) return true;
+                if (groupId == -1 && fBase.Peek().isHidden)
+                    return true;
+                else if (fBase.Peek().groupId == groupId && fBase.Peek().isHidden)
+                    return true;
             }
 
             return false;

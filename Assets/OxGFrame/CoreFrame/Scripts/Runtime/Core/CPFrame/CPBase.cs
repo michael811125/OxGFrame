@@ -62,7 +62,7 @@ namespace OxGFrame.CoreFrame.CPFrame
 
         public override void OnCreate() { }
 
-        public sealed override void InitFirst()
+        internal sealed override void InitFirst()
         {
             base.InitFirst();
         }
@@ -77,7 +77,7 @@ namespace OxGFrame.CoreFrame.CPFrame
 
         protected override void OnLateUpdate(float dt) { }
 
-        public sealed override void Display(object obj)
+        internal sealed override void Display(object obj)
         {
             this.gameObject.SetActive(true);
             this.OnShow();
@@ -133,7 +133,7 @@ namespace OxGFrame.CoreFrame.CPFrame
         public override void OnReceiveAndRefresh(object obj = null) { }
 
         [System.Obsolete("This is not supported in this class.")]
-        public sealed override void Hide(bool disabledPreClose = false) { }
+        internal sealed override void Hide(bool disabledPreClose = false) { }
 
         [System.Obsolete("This is not supported in this class.")]
         protected sealed override void CloseSelf() { }

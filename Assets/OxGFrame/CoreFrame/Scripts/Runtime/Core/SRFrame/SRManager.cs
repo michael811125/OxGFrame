@@ -347,7 +347,8 @@ namespace OxGFrame.CoreFrame.SRFrame
         #region 顯示場景 & 關閉場景
         protected async UniTask LoadAndDisplay(SRBase srBase, object obj = null)
         {
-            if (!srBase.isHidden) await srBase.PreInit();
+            if (!srBase.isHidden)
+                await srBase.PreInit();
             srBase.Display(obj);
         }
 
