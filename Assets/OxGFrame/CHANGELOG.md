@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## [2.12.3] - 2024-12-27
+- Added HideSelf() method to FrameBase (SRBase, UIBase).
 - Added to CoreFrames.SRFrame & CoreFrames.UIFrame:
   - Can use CheckHasAnyHidingAllGroups() to replace CheckHasAnyHiding(-1).
   - Can use CloseAllForAllGroups() to replace CloseAll(-1).

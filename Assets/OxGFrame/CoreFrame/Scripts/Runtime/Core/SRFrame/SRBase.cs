@@ -62,5 +62,10 @@ namespace OxGFrame.CoreFrame.SRFrame
         {
             SRManager.GetInstance().Close(this.assetName);
         }
+
+        protected sealed override void HideSelf()
+        {
+            SRManager.GetInstance().Hide(this.assetName);
+        }
     }
 }

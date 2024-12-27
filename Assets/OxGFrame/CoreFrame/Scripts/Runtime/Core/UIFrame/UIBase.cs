@@ -176,6 +176,14 @@ namespace OxGFrame.CoreFrame.UIFrame
             UIManager.GetInstance().Close(this.assetName);
         }
 
+        /// <summary>
+        /// 子類調用隱藏自己
+        /// </summary>
+        protected sealed override void HideSelf()
+        {
+            UIManager.GetInstance().Hide(this.assetName);
+        }
+
         protected virtual void MaskEvent()
         {
             if (this.maskSetting.isClickMaskToClose) UIManager.GetInstance().Close(this.assetName);
