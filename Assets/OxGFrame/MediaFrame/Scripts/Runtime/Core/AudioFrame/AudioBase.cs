@@ -39,7 +39,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         [SerializeField, ConditionalField(nameof(_mixerGroupSourceType), false, MixerGroupSourceType.Find)]
         protected string _mixerGroupName = "";
 
-        public override async UniTask<bool> Init()
+        internal override async UniTask<bool> Init()
         {
             this._audioSource = this.GetComponent<AudioSource>();
             bool isInitialized = await this._InitAudio();
@@ -147,7 +147,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             }
         }
 
-        public override void Play(int loops, float volume)
+        internal override void Play(int loops, float volume)
         {
             if (this._audioSource == null || this._audioSource.clip == null) return;
 
@@ -174,7 +174,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             this._isPaused = false; // 取消暫停標記
         }
 
-        public override void Stop()
+        internal override void Stop()
         {
             if (this._audioSource == null) return;
 
@@ -188,7 +188,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             this.gameObject.SetActive(false);
         }
 
-        public override void Pause()
+        internal override void Pause()
         {
             if (this._audioSource == null) return;
 

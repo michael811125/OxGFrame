@@ -149,7 +149,7 @@ namespace OxGFrame.CoreFrame
         /// <summary>
         /// 綁定與初次初始
         /// </summary>
-        public virtual void InitFirst()
+        internal virtual void InitFirst()
         {
             // 未綁定的話就執行綁定流程
             if (!this._isBinded)
@@ -171,7 +171,7 @@ namespace OxGFrame.CoreFrame
         /// 預初始
         /// </summary>
         /// <returns></returns>
-        public async UniTask PreInit()
+        internal async UniTask PreInit()
         {
             // 等待異步加載, 進行異步加載動作
             await this.OnPreShow();
@@ -202,12 +202,12 @@ namespace OxGFrame.CoreFrame
         /// 顯示相關流程
         /// </summary>
         /// <param name="obj"></param>
-        public abstract void Display(object obj);
+        internal abstract void Display(object obj);
 
         /// <summary>
         /// 隱藏相關流程
         /// </summary>
-        public abstract void Hide(bool disabledPreClose);
+        internal abstract void Hide(bool disabledPreClose);
 
         /// <summary>
         /// 開啟時每次都會被呼叫
@@ -268,7 +268,7 @@ namespace OxGFrame.CoreFrame
         /// 設置名稱
         /// </summary>
         /// <param name="assetName"></param>
-        public void SetNames(string assetName)
+        internal void SetNames(string assetName)
         {
             this.assetName = assetName;
         }
@@ -277,7 +277,7 @@ namespace OxGFrame.CoreFrame
         /// 設置群組 Id
         /// </summary>
         /// <param name="groupId"></param>
-        public void SetGroupId(int groupId)
+        internal void SetGroupId(int groupId)
         {
             this.groupId = groupId;
         }
@@ -286,7 +286,7 @@ namespace OxGFrame.CoreFrame
         /// 設置隱藏開關
         /// </summary>
         /// <param name="isHidden"></param>
-        public void SetHidden(bool isHidden)
+        internal void SetHidden(bool isHidden)
         {
             this.isHidden = isHidden;
         }

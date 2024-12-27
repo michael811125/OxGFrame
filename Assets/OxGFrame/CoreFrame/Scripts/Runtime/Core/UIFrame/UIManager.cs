@@ -798,10 +798,6 @@ namespace OxGFrame.CoreFrame.UIFrame
         #region 開啟窗體 & 關閉窗體
         protected async UniTask LoadAndDisplay(UIBase uiBase, object obj = null, bool doStack = true)
         {
-            // 非隱藏才正規處理
-            if (!uiBase.isHidden) await uiBase.PreInit();
-            uiBase.Display(obj);
-
             // 堆疊式管理 (只有非隱藏才進行堆疊計數管理)
             if (uiBase.uiSetting.stack && !uiBase.isHidden && doStack)
             {
@@ -838,12 +834,16 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 最後將物件設置到最後一個節點
                 uiBase.gameObject.transform.SetAsLastSibling();
             }
+
+            // 非隱藏才正規處理
+            if (!uiBase.isHidden)
+                await uiBase.PreInit();
+
+            uiBase.Display(obj);
         }
 
         protected void ExitAndHide(UIBase uiBase, bool disabledPreClose = false, int extraStack = 0)
         {
-            uiBase.Hide(disabledPreClose);
-
             // 堆疊式管理 (只有非隱藏才進行堆疊計數管理)
             if (uiBase.uiSetting.stack && !uiBase.isHidden)
             {
@@ -858,6 +858,8 @@ namespace OxGFrame.CoreFrame.UIFrame
                     if (this._dictStackCounter[key] <= 0) this._dictStackCounter.Remove(key);
                 }
             }
+
+            uiBase.Hide(disabledPreClose);
         }
         #endregion
 

@@ -101,7 +101,7 @@ namespace OxGFrame.MediaFrame
         /// <summary>
         /// 初始用
         /// </summary>
-        public abstract UniTask<bool> Init();
+        internal abstract UniTask<bool> Init();
 
         /// <summary>
         /// 固定每幀被調用
@@ -112,17 +112,17 @@ namespace OxGFrame.MediaFrame
         /// <summary>
         /// 開始播放
         /// </summary>
-        public abstract void Play(int loops, float volume);
+        internal abstract void Play(int loops, float volume);
 
         /// <summary>
         /// 停止播放
         /// </summary>
-        public abstract void Stop();
+        internal abstract void Stop();
 
         /// <summary>
         /// 暫停播放
         /// </summary>
-        public abstract void Pause();
+        internal abstract void Pause();
 
         /// <summary>
         /// 返回是否播放中
@@ -206,7 +206,7 @@ namespace OxGFrame.MediaFrame
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="mediaName"></param>
-        public void SetNames(string assetName, string mediaName)
+        internal void SetNames(string assetName, string mediaName)
         {
             this.assetName = assetName;
             this.mediaName = mediaName;
@@ -215,7 +215,7 @@ namespace OxGFrame.MediaFrame
         #region MEDIA_URL 請求
         public const string VIDEO_URLSET = "video_urlset";
         public const string AUDIO_URLSET = "audio_urlset";
-        public static string GetValueFromUrlCfg(string urlCfg, string key)
+        internal static string GetValueFromUrlCfg(string urlCfg, string key)
         {
             if (string.IsNullOrEmpty(urlCfg))
                 return string.Empty;
@@ -246,7 +246,7 @@ namespace OxGFrame.MediaFrame
         /// 取得 UnityWebRequest StreamingAssets 路徑 (OSX and iOS 需要 + file://)
         /// </summary>
         /// <returns></returns>
-        public static string GetRequestStreamingAssetsPath()
+        internal static string GetRequestStreamingAssetsPath()
         {
 #if UNITY_STANDALONE_OSX || UNITY_IOS
             return $"file://{Application.streamingAssetsPath}";
