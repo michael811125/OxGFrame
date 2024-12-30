@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.12.4] - 2024-12-30
+- Fixed the issue with the condition triggering PackageEvents.PatchInitPatchModeFailed.SendEventMessage in PackageFsmStates.
+
 ## [2.12.3] - 2024-12-27
 - Added HideSelf() method to FrameBase (SRBase, UIBase).
 - Added to CoreFrames.SRFrame & CoreFrames.UIFrame:
