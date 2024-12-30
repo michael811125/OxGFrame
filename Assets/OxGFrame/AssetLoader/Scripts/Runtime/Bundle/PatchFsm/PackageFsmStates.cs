@@ -220,14 +220,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         catch
                         {
                             isInitialized = false;
-                            await UniTask.Yield();
                         }
 
                         if (!isInitialized)
-                        {
-                            PackageEvents.PatchInitPatchModeFailed.SendEventMessage(this._hashId);
                             break;
-                        }
                     }
 
                     if (isInitialized)
