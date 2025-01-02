@@ -3,7 +3,6 @@ using OxGFrame.AssetLoader;
 using OxGKit.LoggingSystem;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -133,21 +132,21 @@ namespace OxGFrame.CoreFrame
         private void Update()
         {
             if (!this.enabledUpdate) return;
-            _dt = ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
+            _dt = this.ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
             this.DriveUpdates(UpdateType.Update);
         }
 
         private void FixedUpdate()
         {
             if (!this.enabledFixedUpdate) return;
-            _fdt = ignoreTimeScale ? Time.fixedUnscaledDeltaTime : Time.fixedDeltaTime;
+            _fdt = this.ignoreTimeScale ? Time.fixedUnscaledDeltaTime : Time.fixedDeltaTime;
             this.DriveUpdates(UpdateType.FixedUpdate);
         }
 
         private void LateUpdate()
         {
             if (!this.enabledLateUpdate) return;
-            _dt = ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
+            _dt = this.ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
             this.DriveUpdates(UpdateType.LateUpdate);
         }
 
