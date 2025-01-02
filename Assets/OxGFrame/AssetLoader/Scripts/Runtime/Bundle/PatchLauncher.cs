@@ -26,7 +26,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         [Separator("Download Options")]
         [Tooltip("* [WebRequest] supports dynamic query built-in files (Some memory will be used, but will be released at next GC).\n\n* [BuiltinFileManifest] query built-in files from manifest (setup at build-time or manual export).\n\n* [BuiltinFileManifest with CRC] query built-in files and check CRC from manifest (setup at build-time or manual export).")]
-        public BundleConfig.BuiltinQueryMode builtinQueryMode = BundleConfig.BuiltinQueryMode.WebRequest;
+        public BundleConfig.BuiltinQueryMode builtinQueryMode = BundleConfig.BuiltinQueryMode.BuiltinFileManifest;
         public int maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
         public int failedRetryCount = BundleConfig.failedRetryCount;
         [Tooltip("If file size >= [BreakpointFileSizeThreshold] that file will enable breakpoint mechanism (for all downloaders).")]

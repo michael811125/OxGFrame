@@ -152,11 +152,11 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         public void OnPreprocessBuild(UnityEditor.Build.Reporting.BuildReport report)
         {
-            ExportBuiltinFileManifest();
+            _ExportBuiltinFileManifest();
         }
 
         [UnityEditor.MenuItem("OxGFrame/AssetLoader/" + "Export Built-in File Manifest (BuiltinFileManifest.asset)", false, 879)]
-        private static void ExportBuiltinFileManifest()
+        private static void _ExportBuiltinFileManifest()
         {
             string saveFilePath = Path.Combine(_resourcesPath, _MANIFEST_FILE_NAME + _MANIFEST_FILE_EXTENSION);
             string saveFileMetaPath = Path.Combine(_resourcesPath, _MANIFEST_FILE_NAME + _MANIFEST_FILE_EXTENSION + _META_FILE_EXTENSION);

@@ -57,6 +57,7 @@ namespace OxGFrame.CoreFrame.CPFrame
         private void OnDestroy()
         {
             this.OnRelease();
+            this.Dispose();
             AssetLoaders.UnloadAsset(this.assetName);
         }
 

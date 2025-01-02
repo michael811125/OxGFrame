@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ namespace OxGFrame.CoreFrame
     public abstract class FrameBase : MonoBehaviour
     {
         #region 綁定物件的收集器
-        public class Collector
+        public class Collector : IDisposable
         {
             #region 依照綁定類型建立緩存容器
             // 用於存放綁定物件的緩存 (GameObject)
@@ -98,6 +99,15 @@ namespace OxGFrame.CoreFrame
                 }
 
                 return components;
+            }
+
+            /// <summary>
+            /// Release
+            /// </summary>
+            public void Dispose()
+            {
+                this._nodes.Clear();
+                this._nodes = null;
             }
             #endregion
         }
@@ -258,6 +268,15 @@ namespace OxGFrame.CoreFrame
         /// Destroy 時會被呼叫
         /// </summary>
         public virtual void OnRelease() { }
+
+        /// <summary>
+        /// 釋放引用
+        /// </summary>
+        internal virtual void Dispose()
+        {
+            this.collector.Dispose();
+            this.collector = null;
+        }
 
         /// <summary>
         /// 調用關閉自己

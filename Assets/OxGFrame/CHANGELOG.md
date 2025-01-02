@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.12.5] - 2025-01-02
+- Modified the default value of builtinQueryMode in PatchLauncher to BuiltinFileManifest. WebRequest will be deprecated in the future, so it is recommended to switch to BuiltinFileManifest. 
+- Optimized to reduce the FrameManager Update GC issue in CoreFrame.
+- Optimized to accelerate the garbage collection efficiency of the Collector dictionary in FrameBase.
+
 ## [2.12.4] - 2024-12-30
 - Fixed the issue with the condition triggering PackageEvents.PatchInitPatchModeFailed.SendEventMessage in PackageFsmStates.
 
