@@ -133,65 +133,57 @@ namespace OxGFrame.CoreFrame
         private void Update()
         {
             if (!this.enabledUpdate) return;
+            _dt = ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
             this.DriveUpdates(UpdateType.Update);
         }
 
         private void FixedUpdate()
         {
             if (!this.enabledFixedUpdate) return;
+            _fdt = ignoreTimeScale ? Time.fixedUnscaledDeltaTime : Time.fixedDeltaTime;
             this.DriveUpdates(UpdateType.FixedUpdate);
         }
 
         private void LateUpdate()
         {
             if (!this.enabledLateUpdate) return;
+            _dt = ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
             this.DriveUpdates(UpdateType.LateUpdate);
         }
 
         public void DriveUpdates(UpdateType updateType)
         {
-            if (this._dictAllCache.Count > 0)
+            if (this._dictAllCache.Count == 0)
+                return;
+
+            int fStackCount = this._dictAllCache.Count;
+            foreach (var fStack in this._dictAllCache.Values)
             {
-                var fStacks = this._dictAllCache.Values.ToArray();
-                foreach (var fStack in fStacks)
+                // 判斷陣列長度是否有改變, 有改變表示陣列元素有更動
+                if (this._dictAllCache.Count != fStackCount)
+                    break;
+
+                int fBaseCount = fStack.Count();
+                foreach (var fBase in fStack.cache)
                 {
-                    // 判斷陣列長度是否有改變, 有改變表示陣列元素有更動
-                    if (this._dictAllCache.Count != fStacks.Length) break;
+                    if (fStack.Count() != fBaseCount)
+                        break;
 
-                    var fBases = fStack.cache.ToArray();
-                    foreach (var fBase in fBases)
+                    // 僅刷新激活的物件
+                    if (!this.CheckIsShowing(fBase))
+                        continue;
+
+                    switch (updateType)
                     {
-                        if (fStack.Count() != fBases.Length) break;
-
-                        // 僅刷新激活的物件
-                        if (this.CheckIsShowing(fBase))
-                        {
-                            switch (updateType)
-                            {
-                                case UpdateType.Update:
-                                case UpdateType.LateUpdate:
-                                    if (!this.ignoreTimeScale) _dt = Time.deltaTime;
-                                    else _dt = Time.unscaledDeltaTime;
-                                    break;
-                                case UpdateType.FixedUpdate:
-                                    if (!this.ignoreTimeScale) _fdt = Time.fixedDeltaTime;
-                                    else _fdt = Time.fixedUnscaledDeltaTime;
-                                    break;
-                            }
-
-                            switch (updateType)
-                            {
-                                case UpdateType.Update:
-                                    fBase.HandleUpdate(_dt);
-                                    break;
-                                case UpdateType.FixedUpdate:
-                                    fBase.HandleFixedUpdate(_fdt);
-                                    break;
-                                case UpdateType.LateUpdate:
-                                    fBase.HandleLateUpdate(_dt);
-                                    break;
-                            }
-                        }
+                        case UpdateType.Update:
+                            fBase.HandleUpdate(_dt);
+                            break;
+                        case UpdateType.FixedUpdate:
+                            fBase.HandleFixedUpdate(_fdt);
+                            break;
+                        case UpdateType.LateUpdate:
+                            fBase.HandleLateUpdate(_dt);
+                            break;
                     }
                 }
             }
@@ -609,6 +601,7 @@ namespace OxGFrame.CoreFrame
         {
             // 調用釋放接口
             fBase.OnRelease();
+            fBase.Dispose();
 
             // 刪除物件
             if (!fBase.gameObject.IsDestroyed()) Destroy(fBase.gameObject);
