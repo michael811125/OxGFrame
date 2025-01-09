@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.13.0] - 2025-01-09
+- Redefined ShowAnimation and HideAnimation methods in UIBase, marked as obsolete, and are no longer in use (must be replaced). Please replace them with OnShowAnimation and OnCloseAnimation for clearer method names. 
+  - **Hint: You can use the menu item OxGFrame -> Others -> Try to update the APIs (Search and replace in all files) for automatic replacement.**
+
 ## [2.12.5] - 2025-01-02
 - Modified the default value of builtinQueryMode in PatchLauncher to BuiltinFileManifest. WebRequest will be deprecated in the future, so it is recommended to switch to BuiltinFileManifest. 
 - Optimized to reduce the FrameManager Update GC issue in CoreFrame.

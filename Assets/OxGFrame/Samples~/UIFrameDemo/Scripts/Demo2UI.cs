@@ -65,12 +65,12 @@ public class Demo2UI : UIBase
         */
     }
 
-    protected override void ShowAnimation(AnimationEnd animationEnd)
+    protected override void OnShowAnimation(AnimationEnd animationEnd)
     {
         animationEnd(); // Must call if animation end
     }
 
-    protected override void HideAnimation(AnimationEnd animationEnd)
+    protected override void OnCloseAnimation(AnimationEnd animationEnd)
     {
         animationEnd(); // Must call if animation end
     }

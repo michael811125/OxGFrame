@@ -105,7 +105,7 @@ namespace OxGFrame.AssetLoader.Bundle
         #region At Editor
         private static bool _FileExistsAtEditor(string packageName, string fileName, string fileCRC)
         {
-            var yooDefaultFolderName = PatchSetting.yooSetting.DefaultYooFolderName;
+            var yooDefaultFolderName = PatchSetting.yooSettings.DefaultYooFolderName;
             string filePath = Path.Combine(Application.streamingAssetsPath, yooDefaultFolderName, packageName, fileName);
             if (File.Exists(filePath))
             {
@@ -168,7 +168,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 UnityEditor.AssetDatabase.Refresh();
             }
 
-            var yooDefaultFolderName = PatchSetting.yooSetting.DefaultYooFolderName;
+            var yooDefaultFolderName = PatchSetting.yooSettings.DefaultYooFolderName;
             string folderPath = Path.Combine(Application.streamingAssetsPath, yooDefaultFolderName);
             DirectoryInfo root = new DirectoryInfo(folderPath);
             if (root.Exists == false)
@@ -183,7 +183,7 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 if (fileInfo.Extension == _META_FILE_EXTENSION)
                     continue;
-                if (fileInfo.Name.StartsWith(PatchSetting.yooSetting.ManifestFileName))
+                if (fileInfo.Name.StartsWith(PatchSetting.yooSettings.ManifestFileName))
                     continue;
 
                 BuiltinFileManifest.Element element = new BuiltinFileManifest.Element();

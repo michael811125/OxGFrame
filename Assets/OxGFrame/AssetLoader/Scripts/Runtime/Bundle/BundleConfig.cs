@@ -393,7 +393,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetLocalSandboxRootPath()
         {
-            var yooDefaultFolderName = PatchSetting.yooSetting.DefaultYooFolderName;
+            var yooDefaultFolderName = PatchSetting.yooSettings.DefaultYooFolderName;
 #if UNITY_EDITOR
             string projectPath = Path.GetDirectoryName(Application.dataPath);
             projectPath = projectPath.Replace('\\', '/').Replace("\\", "/");
