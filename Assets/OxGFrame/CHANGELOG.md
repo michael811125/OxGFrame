@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.13.1] - 2025-01-09
+- Fixed an issue with BindCodeAutoGenerateEditor where using ScriptableObject.CreateInstance caused an "InvalidCastException: Specified cast is not valid." in Unity 6.
+
 ## [2.13.0] - 2025-01-09
 - Redefined ShowAnimation and HideAnimation methods in UIBase, marked as obsolete, and are no longer in use (must be replaced). Please replace them with OnShowAnimation and OnCloseAnimation for clearer method names. 
   - **Hint: You can use the menu item OxGFrame -> Others -> Try to update the APIs (Search and replace in all files) for automatic replacement.**

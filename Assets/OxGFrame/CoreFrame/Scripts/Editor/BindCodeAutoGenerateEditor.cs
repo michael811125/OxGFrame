@@ -531,8 +531,7 @@ namespace OxGFrame.CoreFrame.Editor
                 if (!currentType.IsAbstract)
                 {
                     // 嘗試取得 MonoScript 路徑
-                    ScriptableObject tempInstance = ScriptableObject.CreateInstance(currentType);
-                    MonoScript monoScript = MonoScript.FromScriptableObject(tempInstance);
+                    MonoScript monoScript = _GetMonoScriptFromType(currentType);
 
                     if (monoScript != null)
                     {
@@ -542,12 +541,6 @@ namespace OxGFrame.CoreFrame.Editor
                             string scriptPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, "..", scriptRelativePath));
                             scriptPaths.Add(scriptPath);
                         }
-                    }
-
-                    // 清理暫時創建的實例
-                    if (tempInstance != null)
-                    {
-                        UnityEngine.Object.DestroyImmediate(tempInstance);
                     }
                 }
 
@@ -563,6 +556,30 @@ namespace OxGFrame.CoreFrame.Editor
                 scriptPaths.RemoveAt(scriptPaths.Count - 1);
 
             return scriptPaths.ToArray();
+        }
+
+        /// <summary>
+        /// 獲取 MonoScript
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private static MonoScript _GetMonoScriptFromType(Type type)
+        {
+            // 確保傳入的類型是 MonoBehaviour 的子類型
+            if (!typeof(MonoBehaviour).IsAssignableFrom(type))
+                return null;
+
+            // 嘗試通過反射訪問類型並獲取 MonoScript
+            MonoBehaviour dummyInstance = new GameObject("Dummy").AddComponent(type) as MonoBehaviour;
+            if (dummyInstance != null)
+            {
+                MonoScript monoScript = MonoScript.FromMonoBehaviour(dummyInstance);
+                // 清理臨時對象
+                UnityEngine.Object.DestroyImmediate(dummyInstance.gameObject);
+                return monoScript;
+            }
+
+            return null;
         }
 
         /// <summary>
