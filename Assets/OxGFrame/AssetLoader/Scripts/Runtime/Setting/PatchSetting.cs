@@ -58,23 +58,23 @@ namespace OxGFrame.AssetLoader
         }
 
         #region YooAsset Setting
-        private static YooAssetSettings _yooSetting = null;
-        public static YooAssetSettings yooSetting
+        private static YooAssetSettings _yooSettings = null;
+        public static YooAssetSettings yooSettings
         {
             get
             {
-                if (_yooSetting == null) _LoadYooSettingData();
-                return _yooSetting;
+                if (_yooSettings == null) _LoadYooSettingsData();
+                return _yooSettings;
             }
         }
 
         /// <summary>
         /// 加载配置文件
         /// </summary>
-        private static void _LoadYooSettingData()
+        private static void _LoadYooSettingsData()
         {
-            _yooSetting = Resources.Load<YooAssetSettings>("YooAssetSettings");
-            if (_yooSetting == null) _yooSetting = ScriptableObject.CreateInstance<YooAssetSettings>();
+            _yooSettings = Resources.Load<YooAssetSettings>("YooAssetSettings");
+            if (_yooSettings == null) _yooSettings = ScriptableObject.CreateInstance<YooAssetSettings>();
         }
         #endregion
     }

@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -87,6 +88,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         {
             this.gameObject.SetActive(true);
 
+            this.Freeze();
+
             // 非隱藏才正規處理
             if (!this.isHidden)
             {
@@ -106,8 +109,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 this.SetHidden(false);
             }
 
-            this.Freeze();
-            this.ShowAnimation(this.UnFreeze);
+            this.OnShowAnimation(this.UnFreeze);
         }
 
         /// <summary>
@@ -118,7 +120,8 @@ namespace OxGFrame.CoreFrame.UIFrame
             if (!this.gameObject.activeSelf) return;
 
             this.Freeze();
-            this.HideAnimation(() =>
+
+            AnimationEnd callback = () =>
             {
                 this.UnFreeze();
 
@@ -133,7 +136,9 @@ namespace OxGFrame.CoreFrame.UIFrame
                 else this.OnHide();
 
                 this.gameObject.SetActive(false);
-            });
+            };
+
+            this.OnCloseAnimation(callback);
         }
 
         /// <summary>
@@ -190,15 +195,23 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         #region UI Transition Animation
-        protected virtual void ShowAnimation(AnimationEnd animationEnd)
+        protected virtual void OnShowAnimation(AnimationEnd animationEnd)
         {
             animationEnd();
         }
 
-        protected virtual void HideAnimation(AnimationEnd animationEnd)
+        protected virtual void OnCloseAnimation(AnimationEnd animationEnd)
         {
             animationEnd();
         }
+        #endregion
+
+        #region Obsolete
+        [Obsolete("The ShowAnimation method is deprecated. Please use OnShowAnimation instead.")]
+        protected virtual void ShowAnimation(AnimationEnd animationEnd) { }
+
+        [Obsolete("The HideAnimation method is deprecated. Please use OnCloseAnimation instead.")]
+        protected virtual void HideAnimation(AnimationEnd animationEnd) { }
         #endregion
     }
 }

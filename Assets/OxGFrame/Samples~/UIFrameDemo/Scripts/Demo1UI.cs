@@ -71,14 +71,14 @@ public class Demo1UI : UIBase
         */
     }
 
-    protected override void ShowAnimation(AnimationEnd animationEnd)
+    protected override void OnShowAnimation(AnimationEnd animationEnd)
     {
         Debug.Log($"UI: {this.gameObject.name}, Check Data: {this._msg}");
 
         animationEnd(); // Must call if animation end
     }
 
-    protected override void HideAnimation(AnimationEnd animationEnd)
+    protected override void OnCloseAnimation(AnimationEnd animationEnd)
     {
         animationEnd(); // Must call if animation end
     }
