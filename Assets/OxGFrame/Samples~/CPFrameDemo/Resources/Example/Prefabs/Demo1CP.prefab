@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowInstantiate: 0
   onCloseAndDestroy: 0
+  monoDrive: 0
 --- !u!1 &1956257828595483996
 GameObject:
   m_ObjectHideFlags: 0

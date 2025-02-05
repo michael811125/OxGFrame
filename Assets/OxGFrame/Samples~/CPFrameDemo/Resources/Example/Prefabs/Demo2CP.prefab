@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowInstantiate: 0
   onCloseAndDestroy: 0
+  monoDrive: 0
   price: 0
 --- !u!1 &7108754004220404273
 GameObject:

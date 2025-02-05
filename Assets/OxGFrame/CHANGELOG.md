@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2.13.2] - 2025-02-05
+- Added CPBase MonoDrive feature. When enabled, it supports initialization driven by MonoBehaviour, allowing it to be directly placed in the scene without needing to be loaded through CPManager.
+- Fixed the issue in FrameManager where an InvalidOperationException could occur due to collection modification during enumeration.
+- Modified CPFrameDemo.
+- Optimized CPManager code.
+
 ## [2.13.1] - 2025-01-09
 - Fixed an issue with BindCodeAutoGenerateEditor where using ScriptableObject.CreateInstance caused an "InvalidCastException: Specified cast is not valid." in Unity 6.
 
