@@ -8,6 +8,17 @@ namespace OxGFrame.CoreFrame.CPFrame
     public class CPBase : FrameBase
     {
         /// <summary>
+        /// If checked, it can be directly placed in the scene and driven by MonoBehaviour
+        /// </summary>
+        [Tooltip("If checked, it can be directly placed in the scene and driven by MonoBehaviour")]
+        public bool monoDrive = false;
+
+        /// <summary>
+        /// Flag for controlling the call order of OnShow
+        /// </summary>
+        internal bool initFirstByMono = false;
+
+        /// <summary>
         /// Drive by self MonoBehaviour Update
         /// </summary>
         /// <param name="dt"></param>
@@ -43,9 +54,22 @@ namespace OxGFrame.CoreFrame.CPFrame
         /// <param name="dt"></param>
         public void DriveLateUpdate(float dt) => this.HandleLateUpdate(dt);
 
+        private void Awake()
+        {
+            if (this.monoDrive)
+            {
+                this.SetNames(this.name);
+                this.OnCreate();
+                this.InitFirst();
+            }
+        }
+
         private void OnEnable()
         {
-            if (!this._isInitFirst) return;
+            if (!this._isInitFirst)
+                return;
+            if (this.initFirstByMono)
+                return;
             this.OnShow();
         }
 

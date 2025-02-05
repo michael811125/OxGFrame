@@ -76,192 +76,140 @@ namespace OxGFrame.CoreFrame.CPFrame
 
         public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent = null, uint priority = 0, Progression progression = null) where T : CPBase, new()
         {
-            GameObject go = await this.LoadGameObjectAsync(packageName, assetName, priority, progression);
-            if (go == null) return null;
-
-            GameObject instGo = GameObject.Instantiate(go, parent);
-
-            // 激活檢查, 如果主體 Active 為 false 必須打開
-            bool active;
-            if (!instGo.activeSelf)
-            {
-                active = instGo.activeSelf;
-                instGo.SetActive(true);
-            }
-            else active = instGo.activeSelf;
-
-            T cpBase = instGo.GetComponent<T>();
-            if (cpBase == null) return null;
-
-            cpBase.SetNames(assetName);
-            cpBase.OnCreate();
-            cpBase.InitFirst();
-            // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
-            if (active) cpBase.Display(null);
-
-            // 最後還原本身預製體的 Active
-            instGo.SetActive(active);
-
-            return cpBase;
+            return await this._LoadWithCloneAsync<T>(packageName, assetName, parent, priority, progression, null, null);
         }
 
         public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null) where T : CPBase, new()
         {
-            GameObject go = await this.LoadGameObjectAsync(packageName, assetName, priority, progression);
-            if (go == null) return null;
-
-            GameObject instGo = GameObject.Instantiate(go, parent, worldPositionStays);
-
-            // 激活檢查, 如果主體 Active 為 false 必須打開
-            bool active;
-            if (!instGo.activeSelf)
-            {
-                active = instGo.activeSelf;
-                instGo.SetActive(true);
-            }
-            else active = instGo.activeSelf;
-
-            T cpBase = instGo.GetComponent<T>();
-            if (cpBase == null) return null;
-
-            cpBase.SetNames(assetName);
-            cpBase.OnCreate();
-            cpBase.InitFirst();
-            // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
-            if (active) cpBase.Display(null);
-
-            // 最後還原本身預製體的 Active
-            instGo.SetActive(active);
-
-            return cpBase;
+            return await this._LoadWithCloneAsync<T>(packageName, assetName, parent, priority, progression, worldPositionStays, null);
         }
 
         public async UniTask<T> LoadWithCloneAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, uint priority = 0, Progression progression = null) where T : CPBase, new()
         {
+            return await this._LoadWithCloneAsync<T>(packageName, assetName, parent, priority, progression, null, scale, position, rotation);
+        }
+
+        private async UniTask<T> _LoadWithCloneAsync<T>(string packageName, string assetName, Transform parent, uint priority, Progression progression, bool? worldPositionStays, Vector3? scale = null, Vector3? position = null, Quaternion? rotation = null) where T : CPBase, new()
+        {
             GameObject go = await this.LoadGameObjectAsync(packageName, assetName, priority, progression);
-            if (go == null) return null;
+            if (go == null)
+                return null;
 
-            GameObject instGo = GameObject.Instantiate(go, position, rotation, parent);
-
-            // 激活檢查, 如果主體 Active 為 false 必須打開
-            bool active;
-            if (!instGo.activeSelf)
+            GameObject instGo;
+            if (position.HasValue && rotation.HasValue)
             {
-                active = instGo.activeSelf;
-                instGo.SetActive(true);
+                instGo = GameObject.Instantiate(go, position.Value, rotation.Value, parent);
             }
-            else active = instGo.activeSelf;
+            else if (worldPositionStays.HasValue)
+            {
+                instGo = GameObject.Instantiate(go, parent, worldPositionStays.Value);
+            }
+            else
+            {
+                instGo = GameObject.Instantiate(go, parent);
+            }
 
-            Vector3 localScale = (scale == null) ? instGo.transform.localScale : (Vector3)scale;
-            instGo.transform.localScale = localScale;
+            if (scale.HasValue)
+            {
+                instGo.transform.localScale = scale.Value;
+            }
 
             T cpBase = instGo.GetComponent<T>();
-            if (cpBase == null) return null;
+            if (cpBase == null)
+                return null;
+
+            // 激活檢查, 如果主體 Active 為 false 必須打開
+            bool active = instGo.activeSelf;
+            if (!active)
+            {
+                cpBase.initFirstByMono = cpBase.monoDrive;
+                instGo.SetActive(true);
+            }
 
             cpBase.SetNames(assetName);
-            cpBase.OnCreate();
-            cpBase.InitFirst();
-            // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
-            if (active) cpBase.Display(null);
+            if (!cpBase.monoDrive)
+            {
+                cpBase.OnCreate();
+                cpBase.InitFirst();
+
+                // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+                if (active)
+                    cpBase.Display(null);
+            }
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
+            cpBase.initFirstByMono = false;
 
             return cpBase;
         }
 
         public T LoadWithClone<T>(string packageName, string assetName, Transform parent = null, Progression progression = null) where T : CPBase, new()
         {
-            GameObject go = this.LoadGameObject(packageName, assetName, progression);
-            if (go == null) return null;
-
-            GameObject instGo = GameObject.Instantiate(go, parent);
-
-            // 激活檢查, 如果主體 Active 為 false 必須打開
-            bool active;
-            if (!instGo.activeSelf)
-            {
-                active = instGo.activeSelf;
-                instGo.SetActive(true);
-            }
-            else active = instGo.activeSelf;
-
-            T cpBase = instGo.GetComponent<T>();
-            if (cpBase == null) return null;
-
-            cpBase.SetNames(assetName);
-            cpBase.OnCreate();
-            cpBase.InitFirst();
-            // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
-            if (active) cpBase.Display(null);
-
-            // 最後還原本身預製體的 Active
-            instGo.SetActive(active);
-
-            return cpBase;
+            return this._LoadWithClone<T>(packageName, assetName, parent, progression, null, null);
         }
 
         public T LoadWithClone<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null) where T : CPBase, new()
         {
-            GameObject go = this.LoadGameObject(packageName, assetName, progression);
-            if (go == null) return null;
-
-            GameObject instGo = GameObject.Instantiate(go, parent, worldPositionStays);
-
-            // 激活檢查, 如果主體 Active 為 false 必須打開
-            bool active;
-            if (!instGo.activeSelf)
-            {
-                active = instGo.activeSelf;
-                instGo.SetActive(true);
-            }
-            else active = instGo.activeSelf;
-
-            T cpBase = instGo.GetComponent<T>();
-            if (cpBase == null) return null;
-
-            cpBase.SetNames(assetName);
-            cpBase.OnCreate();
-            cpBase.InitFirst();
-            // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
-            if (active) cpBase.Display(null);
-
-            // 最後還原本身預製體的 Active
-            instGo.SetActive(active);
-
-            return cpBase;
+            return this._LoadWithClone<T>(packageName, assetName, parent, progression, worldPositionStays, null);
         }
 
         public T LoadWithClone<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent = null, Vector3? scale = null, Progression progression = null) where T : CPBase, new()
         {
+            return this._LoadWithClone<T>(packageName, assetName, parent, progression, null, scale, position, rotation);
+        }
+
+        private T _LoadWithClone<T>(string packageName, string assetName, Transform parent, Progression progression, bool? worldPositionStays = null, Vector3? scale = null, Vector3? position = null, Quaternion? rotation = null) where T : CPBase, new()
+        {
             GameObject go = this.LoadGameObject(packageName, assetName, progression);
-            if (go == null) return null;
+            if (go == null)
+                return null;
 
-            GameObject instGo = GameObject.Instantiate(go, position, rotation, parent);
-
-            // 激活檢查, 如果主體 Active 為 false 必須打開
-            bool active;
-            if (!instGo.activeSelf)
+            GameObject instGo;
+            if (position.HasValue && rotation.HasValue)
             {
-                active = instGo.activeSelf;
-                instGo.SetActive(true);
+                instGo = GameObject.Instantiate(go, position.Value, rotation.Value, parent);
             }
-            else active = instGo.activeSelf;
+            else if (worldPositionStays.HasValue)
+            {
+                instGo = GameObject.Instantiate(go, parent, worldPositionStays.Value);
+            }
+            else
+            {
+                instGo = GameObject.Instantiate(go, parent);
+            }
 
-            Vector3 localScale = (scale == null) ? instGo.transform.localScale : (Vector3)scale;
-            instGo.transform.localScale = localScale;
+            if (scale.HasValue)
+            {
+                instGo.transform.localScale = scale.Value;
+            }
 
             T cpBase = instGo.GetComponent<T>();
-            if (cpBase == null) return null;
+            if (cpBase == null)
+                return null;
+
+            // 激活檢查, 如果主體 Active 為 false 必須打開
+            bool active = instGo.activeSelf;
+            if (!active)
+            {
+                cpBase.initFirstByMono = cpBase.monoDrive;
+                instGo.SetActive(true);
+            }
 
             cpBase.SetNames(assetName);
-            cpBase.OnCreate();
-            cpBase.InitFirst();
-            // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
-            if (active) cpBase.Display(null);
+            if (!cpBase.monoDrive)
+            {
+                cpBase.OnCreate();
+                cpBase.InitFirst();
+
+                // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+                if (active)
+                    cpBase.Display(null);
+            }
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
+            cpBase.initFirstByMono = false;
 
             return cpBase;
         }

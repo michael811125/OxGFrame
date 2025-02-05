@@ -3,6 +3,7 @@ using OxGFrame.AssetLoader;
 using OxGKit.LoggingSystem;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -37,29 +38,29 @@ namespace OxGFrame.CoreFrame
             public bool isPreloadMode { get; private set; }
             public bool allowInstantiate { get; private set; }
             public string assetName { get; private set; }
-            public Stack<U> cache { get; private set; }
+            public List<U> cache { get; private set; }
 
             public FrameStack()
             {
-                this.cache = new Stack<U>();
+                this.cache = new List<U>();
             }
 
             public FrameStack(string assetName)
             {
-                this.cache = new Stack<U>();
+                this.cache = new List<U>();
                 this.assetName = assetName;
             }
 
             public FrameStack(string assetName, bool allowInstantiate)
             {
-                this.cache = new Stack<U>();
+                this.cache = new List<U>();
                 this.assetName = assetName;
                 this.allowInstantiate = allowInstantiate;
             }
 
             public FrameStack(string assetName, bool allowInstantiate, bool isPreloadMode)
             {
-                this.cache = new Stack<U>();
+                this.cache = new List<U>();
                 this.assetName = assetName;
                 this.allowInstantiate = allowInstantiate;
                 this.isPreloadMode = isPreloadMode;
@@ -87,18 +88,23 @@ namespace OxGFrame.CoreFrame
 
             public void Push(U fBase)
             {
-                this.cache.Push(fBase);
+                this.cache.Add(fBase);
             }
 
             public U Peek()
             {
-                this.cache.TryPeek(out U result);
-                return result;
+                if (this.cache.Count == 0)
+                    return default;
+                return this.cache[this.cache.Count - 1];
             }
 
             public U Pop()
             {
-                this.cache.TryPop(out U result);
+                if (this.cache.Count == 0)
+                    return default;
+                int lastIndex = this.cache.Count - 1;
+                U result = this.cache[lastIndex];
+                this.cache.RemoveAt(lastIndex);
                 return result;
             }
 
@@ -156,19 +162,25 @@ namespace OxGFrame.CoreFrame
                 return;
 
             int fStackCount = this._dictAllCache.Count;
-            foreach (var fStack in this._dictAllCache.Values)
+            string[] fKeysSnapshot = this._dictAllCache.Keys.ToArray();
+
+            foreach (var fKey in fKeysSnapshot)
             {
-                // 判斷陣列長度是否有改變, 有改變表示陣列元素有更動
                 if (this._dictAllCache.Count != fStackCount)
                     break;
 
+                if (!this._dictAllCache.TryGetValue(fKey, out var fStack))
+                    continue;
+
                 int fBaseCount = fStack.Count();
-                foreach (var fBase in fStack.cache)
+
+                for (int i = 0; i < fBaseCount; i++)
                 {
                     if (fStack.Count() != fBaseCount)
                         break;
 
-                    // 僅刷新激活的物件
+                    var fBase = fStack.cache[i];
+
                     if (!this.CheckIsShowing(fBase))
                         continue;
 
