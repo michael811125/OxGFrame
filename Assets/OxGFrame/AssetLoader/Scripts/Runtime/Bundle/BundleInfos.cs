@@ -1,9 +1,7 @@
-﻿using MyBox;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using YooAsset;
-using static OxGFrame.AssetLoader.Bundle.BundleConfig;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
@@ -12,11 +10,11 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         [SerializeField, Tooltip("Bundle decryption (case-insensitive).\n\n[NONE], \n[OFFSET, dummySize], \n[XOR, key], \n[HT2XOR, headKey, tailKey, jumpKey], \n[HT2XORPLUS, headKey, tailKey, jump1Key, jump2Key], \n[AES, key, iv]\n\nex: \n\"none\" \n\"offset, 12\" \n\"xor, 23\" \n\"ht2xor, 34, 45, 56\" \n\"ht2xorplus, 34, 45, 56, 78\" \n\"aes, key, iv\"")]
         private string _decryptArgs = BundleConfig.CryptogramType.NONE;
-        [SerializeField, Tooltip("Can encrypt string data in memory.")]
+        [SerializeField, Tooltip("If checked, complex encryption will be performed in memory (more GC).\n\nIf unchecked, simple encryption will be performed in memory (less GC).")]
         public bool secureString = true;
-        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)"), ConditionalField(nameof(secureString))]
+        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)")]
         private int _saltSize = 1 << 4;
-        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)"), ConditionalField(nameof(secureString))]
+        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)")]
         private int _dummySize = 1 << 5;
 
         public string GetDecryptArgs()
@@ -58,7 +56,7 @@ namespace OxGFrame.AssetLoader.Bundle
     public abstract class PackageInfoWithBuild
     {
         [Tooltip("Only for EditorSimulateMode")]
-        public BuildMode buildMode;
+        public BundleConfig.BuildMode buildMode;
         public string packageName;
 
         /// <summary>

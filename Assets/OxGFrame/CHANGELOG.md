@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.13.3] - 2025-02-11
+- Modified PatchLauncher SecureString Tooltip: If checked, complex encryption will be performed in memory (more GC). If unchecked, simple encryption will be performed in memory (less GC).
+- Optimized SecureString to reduce GC by more than half.
+
 ## [2.13.2] - 2025-02-05
 - Added CPBase MonoDrive feature. When enabled, it supports initialization driven by MonoBehaviour, allowing it to be directly placed in the scene without needing to be loaded through CPManager.
 - Fixed the issue in FrameManager where an InvalidOperationException could occur due to collection modification during enumeration.
