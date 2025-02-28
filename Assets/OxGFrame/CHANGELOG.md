@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.14.0] - 2025-02-28
+- Added Bundle output rules, allowing the version path request rules to be determined by setting the Semantic Rule option.
+- Modified Patch request rules to first request appConfig from the server and use the latest Version as the CDN request path.
+
 ## [2.13.3] - 2025-02-11
 - Modified PatchLauncher SecureString Tooltip: If checked, complex encryption will be performed in memory (more GC). If unchecked, simple encryption will be performed in memory (less GC).
 - Optimized SecureString to reduce GC by more than half.

@@ -8,6 +8,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using YooAsset.Editor;
+using static OxGFrame.AssetLoader.Bundle.AppConfig;
 
 namespace OxGFrame.AssetLoader.Editor
 {
@@ -42,6 +43,8 @@ namespace OxGFrame.AssetLoader.Editor
         public string productName;
         [SerializeField]
         public string appVersion;
+        [SerializeField]
+        public SemanticRule semanticRule;
         [SerializeField]
         public List<string> exportAppPackages = new List<string>() { "DefaultPackage" };
         [SerializeField]
@@ -113,6 +116,10 @@ namespace OxGFrame.AssetLoader.Editor
             this.activeBuildTarget = Convert.ToBoolean(EditorStorage.GetData(keySaver, "activeBuildTarget", "true"));
 
             this.autoReveal = Convert.ToBoolean(EditorStorage.GetData(keySaver, "autoReveal", "true"));
+
+            this.semanticRule.MAJOR = true;
+            this.semanticRule.MINOR = true;
+            this.semanticRule.PATCH = Convert.ToBoolean(EditorStorage.GetData(keySaver, "semanticRule.PATCH", "false"));
 
             // Preset Bundle Plans
             string jsonBundlePlans = EditorStorage.GetData(keySaver, "bundlePlans", string.Empty);
@@ -226,6 +233,7 @@ namespace OxGFrame.AssetLoader.Editor
             this._DrawSourceFolderView();
             this._DrawProductNameTextFieldView();
             this._DrawAppVersionTextFieldView();
+            this._DrawSemanticRuleView();
             this._DrawExportFolderView();
             this._DrawExportAppPackagesView();
             this._DrawExportIndividualPackagesView();
@@ -264,6 +272,7 @@ namespace OxGFrame.AssetLoader.Editor
             this._DrawSourceFolderView();
             this._DrawProductNameTextFieldView();
             this._DrawAppVersionTextFieldView();
+            this._DrawSemanticRuleView();
             this._DrawExportFolderView();
             this._DrawExportAppPackagesView();
             this._DrawExportIndividualPackagesView();
@@ -424,6 +433,27 @@ namespace OxGFrame.AssetLoader.Editor
                 if (confirmation) PlayerSettings.bundleVersion = this.appVersion;
             }
             GUI.backgroundColor = bc;
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void _DrawSemanticRuleView()
+        {
+            EditorGUILayout.Space();
+
+            EditorGUILayout.BeginHorizontal();
+
+            GUILayout.Label(new GUIContent("Semantic Rule", "[This option applies only to the AppConfig on the Host Server] If the Patch option is checked, the folder will be output with the full version number (to prevent overwriting resources from different versions)."), GUILayout.MaxWidth(147.5f));
+
+            EditorGUI.BeginDisabledGroup(true);
+            this.semanticRule.MAJOR = GUILayout.Toggle(this.semanticRule.MAJOR, new GUIContent("Major", ""), GUILayout.MaxWidth(75f));
+            this.semanticRule.MINOR = GUILayout.Toggle(this.semanticRule.MINOR, new GUIContent("Minor", ""), GUILayout.MaxWidth(75f));
+            EditorGUI.EndDisabledGroup();
+
+            this.semanticRule.PATCH = GUILayout.Toggle(this.semanticRule.PATCH, new GUIContent("Patch", ""), GUILayout.MaxWidth(75f));
+            EditorStorage.SaveData(keySaver, "semanticRule.PATCH", this.semanticRule.PATCH.ToString());
+
+            GUILayout.FlexibleSpace();
+
             EditorGUILayout.EndHorizontal();
         }
 
@@ -610,7 +640,7 @@ namespace OxGFrame.AssetLoader.Editor
                 {
                     case OperationType.ExportAppConfigToStreamingAssets:
                         outputPath = Application.streamingAssetsPath;
-                        BundleHelper.ExportAppConfig(this.productName, this.appVersion, outputPath, this.activeBuildTarget, this.buildTarget);
+                        BundleHelper.ExportAppConfig(this.productName, this.semanticRule, this.appVersion, outputPath, this.activeBuildTarget, this.buildTarget);
                         EditorUtility.DisplayDialog("Process Message", "Export AppConfig To StreamingAssets.", "OK");
                         AssetDatabase.Refresh();
                         string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION}";
@@ -622,7 +652,7 @@ namespace OxGFrame.AssetLoader.Editor
                         List<string> exportDlcPackages = new List<string>();
                         foreach (var dlcPackage in this.exportIndividualPackages) exportDlcPackages.Add(dlcPackage.packageName);
                         string[] packageInfos = this.exportAppPackages.Union(exportDlcPackages).ToArray();
-                        BundleHelper.ExportConfigsAndAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.exportAppPackages.ToArray(), this.groupInfos, packageInfos, this.activeBuildTarget, this.buildTarget, true);
+                        BundleHelper.ExportConfigsAndAppBundles(inputPath, outputPath, this.productName, this.semanticRule, this.appVersion, this.exportAppPackages.ToArray(), this.groupInfos, packageInfos, this.activeBuildTarget, this.buildTarget, true);
                         BundleHelper.ExportIndividualDlcBundles(inputPath, outputPath, this.productName, this.exportIndividualPackages, this.activeBuildTarget, this.buildTarget, false);
                         EditorUtility.DisplayDialog("Process Message", "Export Configs And App Bundles For CDN.", "OK");
                         if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);
@@ -630,7 +660,7 @@ namespace OxGFrame.AssetLoader.Editor
                     case OperationType.ExportAppBundlesWithoutConfigsForCDN:
                         inputPath = this.sourceFolder[(int)this.operationType];
                         outputPath = $"{this.exportFolder[(int)this.operationType]}/{PatchSetting.setting.rootFolderName}";
-                        BundleHelper.ExportAppBundles(inputPath, outputPath, this.productName, this.appVersion, this.exportAppPackages.ToArray(), this.activeBuildTarget, this.buildTarget, true);
+                        BundleHelper.ExportAppBundles(inputPath, outputPath, this.productName, this.semanticRule, this.appVersion, this.exportAppPackages.ToArray(), this.activeBuildTarget, this.buildTarget, true);
                         BundleHelper.ExportIndividualDlcBundles(inputPath, outputPath, this.productName, this.exportIndividualPackages, this.activeBuildTarget, this.buildTarget, false);
                         EditorUtility.DisplayDialog("Process Message", "Export App Bundles For CDN Without Configs.", "OK");
                         if (this.autoReveal) EditorUtility.RevealInFinder(outputPath);

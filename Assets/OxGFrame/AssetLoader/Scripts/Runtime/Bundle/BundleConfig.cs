@@ -179,9 +179,14 @@ namespace OxGFrame.AssetLoader.Bundle
         private static Dictionary<string, string> _urlCfgFileMap = null;
 
         /// <summary>
-        /// 緩存 app config
+        /// 緩存 builtin app config
         /// </summary>
-        private static AppConfig _appConfig = null;
+        private static AppConfig _builtinAppConfig = null;
+
+        /// <summary>
+        /// 緩存 host app config
+        /// </summary>
+        private static AppConfig _hostAppConfig = null;
 
         #region Header Helper
         public static void WriteInt16(short value, byte[] buffer, ref int pos)
@@ -287,12 +292,27 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<AppConfig> GetAppConfigFromStreamingAssets()
         {
-            if (_appConfig == null)
+            if (_builtinAppConfig == null)
             {
                 string cfgJson = await Requester.RequestText(GetStreamingAssetsAppConfigPath(), null, null, null, false);
-                if (!string.IsNullOrEmpty(cfgJson)) _appConfig = JsonConvert.DeserializeObject<AppConfig>(cfgJson);
+                if (!string.IsNullOrEmpty(cfgJson)) _builtinAppConfig = JsonConvert.DeserializeObject<AppConfig>(cfgJson);
             }
-            return _appConfig;
+            return _builtinAppConfig;
+        }
+
+        /// <summary>
+        /// 從 Host Server 中取得 AppConfig
+        /// </summary>
+        /// <returns></returns>
+        public static async UniTask<AppConfig> GetAppConfigFromHostServer()
+        {
+            if (_hostAppConfig == null)
+            {
+                var url = await GetHostServerAppConfigPath();
+                string cfgJson = await Requester.RequestText(url, null, null, null, false);
+                if (!string.IsNullOrEmpty(cfgJson)) _hostAppConfig = JsonConvert.DeserializeObject<AppConfig>(cfgJson);
+            }
+            return _hostAppConfig;
         }
 
         /// <summary>
@@ -301,12 +321,13 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetHostServerUrl(string packageName)
         {
-            var appConfig = await GetAppConfigFromStreamingAssets();
+            // 獲取 Host Server 最新的 AppConfig 版本, 主要是為了獲取最新 AppVersion 路徑
+            var appConfig = await GetAppConfigFromHostServer();
             string host = await GetValueFromUrlCfg(PatchSetting.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
             string appVersion = appConfig.APP_VERSION;
-            string refineAppVersion = $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
+            string refineAppVersion = appConfig.SEMANTIC_RULE.PATCH ? $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}.{appVersion.Split('.')[2]}" : $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
             string rootFolderName = PatchSetting.setting.rootFolderName;
 
             // 預設組合路徑
@@ -319,12 +340,13 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetFallbackHostServerUrl(string packageName)
         {
-            var appConfig = await GetAppConfigFromStreamingAssets();
+            // 獲取 Host Server 最新的 AppConfig 版本, 主要是為了獲取最新 AppVersion 路徑
+            var appConfig = await GetAppConfigFromHostServer();
             string host = await GetValueFromUrlCfg(PatchSetting.BUNDLE_FALLBACK_IP);
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
             string appVersion = appConfig.APP_VERSION;
-            string refineAppVersion = $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
+            string refineAppVersion = appConfig.SEMANTIC_RULE.PATCH ? $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}.{appVersion.Split('.')[2]}" : $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
             string rootFolderName = PatchSetting.setting.rootFolderName;
 
             // 預設組合路徑
@@ -339,7 +361,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetDlcHostServerUrl(string packageName, string dlcVersion, bool withoutPlatform = false)
         {
-            var appConfig = await GetAppConfigFromStreamingAssets();
+            var appConfig = await GetAppConfigFromHostServer();
             string host = await GetValueFromUrlCfg(PatchSetting.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
@@ -357,7 +379,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetDlcFallbackHostServerUrl(string packageName, string dlcVersion, bool withoutPlatform = false)
         {
-            var appConfig = await GetAppConfigFromStreamingAssets();
+            var appConfig = await GetAppConfigFromHostServer();
             string host = await GetValueFromUrlCfg(PatchSetting.BUNDLE_FALLBACK_IP);
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
@@ -454,6 +476,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetHostServerAppConfigPath()
         {
+            // 從 StreamingAssets 中先獲取 AppConfig, 是為了獲取對應的平台與產品名稱路徑
             var appConfig = await GetAppConfigFromStreamingAssets();
             string host = await GetValueFromUrlCfg(PatchSetting.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
@@ -470,6 +493,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetHostServerPatchConfigPath()
         {
+            // 從 StreamingAssets 中先獲取 appConfig, 是為了獲取對應的平台與產品名稱路徑
             var appConfig = await GetAppConfigFromStreamingAssets();
             string host = await GetValueFromUrlCfg(PatchSetting.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
