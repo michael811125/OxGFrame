@@ -9,6 +9,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 using YooAsset.Editor;
+using static OxGFrame.AssetLoader.Bundle.AppConfig;
 
 namespace OxGFrame.AssetLoader.Editor
 {
@@ -22,15 +23,17 @@ namespace OxGFrame.AssetLoader.Editor
         /// 輸出 App 配置檔至輸出路徑 (Export AppConfig to StreamingAssets [for Built-in])
         /// </summary>
         /// <param name="productName"></param>
-        /// <param name="inputPath"></param>
+        /// <param name="semanticRule"></param>
+        /// <param name="appVersion"></param>
         /// <param name="outputPath"></param>
-        /// <param name="compressed"></param>
-        public static void ExportAppConfig(string productName, string appVersion, string outputPath, bool activeBuildTarget, BuildTarget buildTarget)
+        /// <param name="activeBuildTarget"></param>
+        /// <param name="buildTarget"></param>
+        public static void ExportAppConfig(string productName, SemanticRule semanticRule, string appVersion, string outputPath, bool activeBuildTarget, BuildTarget buildTarget)
         {
             if (!Directory.Exists(outputPath)) Directory.CreateDirectory(outputPath);
 
             // 生成配置檔數據
-            var cfg = GenerateAppConfig(productName, appVersion, activeBuildTarget, buildTarget);
+            var cfg = GenerateAppConfig(productName, semanticRule, appVersion, activeBuildTarget, buildTarget);
 
             // 配置檔序列化, 將進行寫入
             string jsonCfg = JsonConvert.SerializeObject(cfg, Formatting.Indented);
@@ -49,17 +52,18 @@ namespace OxGFrame.AssetLoader.Editor
         /// <param name="inputPath"></param>
         /// <param name="outputPath"></param>
         /// <param name="productName"></param>
+        /// <param name="semanticRule"></param>
         /// <param name="appVersion"></param>
         /// <param name="exportPackages"></param>
         /// <param name="groupInfos"></param>
-        /// <param name="packageInfos"> Set package names to export package infos </param>
+        /// <param name="packageInfos"></param>
         /// <param name="activeBuildTarget"></param>
         /// <param name="buildTarget"></param>
         /// <param name="isClearOutputPath"></param>
-        public static void ExportConfigsAndAppBundles(string inputPath, string outputPath, string productName, string appVersion, string[] exportPackages, List<GroupInfo> groupInfos, string[] packageInfos, bool activeBuildTarget, BuildTarget buildTarget, bool isClearOutputPath = true)
+        public static void ExportConfigsAndAppBundles(string inputPath, string outputPath, string productName, SemanticRule semanticRule, string appVersion, string[] exportPackages, List<GroupInfo> groupInfos, string[] packageInfos, bool activeBuildTarget, BuildTarget buildTarget, bool isClearOutputPath = true)
         {
             // 生成配置檔數據 (AppConfig)
-            var appCfg = GenerateAppConfig(productName, appVersion, activeBuildTarget, buildTarget);
+            var appCfg = GenerateAppConfig(productName, semanticRule, appVersion, activeBuildTarget, buildTarget);
             var patchCfg = GeneratePatchConfig(groupInfos, packageInfos, inputPath);
 
             // 清空輸出路徑
@@ -67,7 +71,7 @@ namespace OxGFrame.AssetLoader.Editor
             if (!Directory.Exists(outputPath)) Directory.CreateDirectory(outputPath);
 
             #region YooAsset Bundle
-            ExportNewestYooAssetBundles(inputPath, outputPath, appCfg.PLATFORM, productName, appVersion, exportPackages);
+            ExportNewestYooAssetBundles(inputPath, outputPath, appCfg.PLATFORM, productName, semanticRule, appVersion, exportPackages);
             #endregion
 
             #region AppConfig Write
@@ -81,7 +85,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             // 寫入配置文件 (BAK)
             string appCfgBakFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_BAK_EXTENSION}";
-            writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}" + $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}", appCfgBakFileName);
+            writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}" + (semanticRule.PATCH ? $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}.{appVersion.Split('.')[2]}" : $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}"), appCfgBakFileName);
             WriteTxt(jsonCfg, writePath);
             #endregion
 
@@ -96,7 +100,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             // 寫入配置文件 (BAK)
             string patchCfgBakFileName = $"{PatchSetting.setting.patchCfgName}{PatchSetting.PATCH_CFG_BAK_EXTENSION}";
-            writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}" + $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}", patchCfgBakFileName);
+            writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}" + (semanticRule.PATCH ? $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}.{appVersion.Split('.')[2]}" : $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}"), patchCfgBakFileName);
             WriteTxt(jsonCfg, writePath);
             #endregion
 
@@ -109,22 +113,23 @@ namespace OxGFrame.AssetLoader.Editor
         /// <param name="inputPath"></param>
         /// <param name="outputPath"></param>
         /// <param name="productName"></param>
+        /// <param name="semanticRule"></param>
         /// <param name="appVersion"></param>
         /// <param name="exportPackages"></param>
         /// <param name="activeBuildTarget"></param>
         /// <param name="buildTarget"></param>
         /// <param name="isClearOutputPath"></param>
-        public static void ExportAppBundles(string inputPath, string outputPath, string productName, string appVersion, string[] exportPackages, bool activeBuildTarget, BuildTarget buildTarget, bool isClearOutputPath = true)
+        public static void ExportAppBundles(string inputPath, string outputPath, string productName, SemanticRule semanticRule, string appVersion, string[] exportPackages, bool activeBuildTarget, BuildTarget buildTarget, bool isClearOutputPath = true)
         {
             // 生成配置檔數據 (AppConfig)
-            var appCfg = GenerateAppConfig(productName, appVersion, activeBuildTarget, buildTarget);
+            var appCfg = GenerateAppConfig(productName, semanticRule, appVersion, activeBuildTarget, buildTarget);
 
             // 清空輸出路徑
             if (isClearOutputPath && Directory.Exists(outputPath)) BundleUtility.DeleteFolder(outputPath);
             if (!Directory.Exists(outputPath)) Directory.CreateDirectory(outputPath);
 
             #region YooAsset Bundle
-            ExportNewestYooAssetBundles(inputPath, outputPath, appCfg.PLATFORM, productName, appVersion, exportPackages);
+            ExportNewestYooAssetBundles(inputPath, outputPath, appCfg.PLATFORM, productName, semanticRule, appVersion, exportPackages);
             #endregion
 
             Debug.Log($"<color=#00FF00>【Export App Bundles Without Configs Completes】</color>");
@@ -358,8 +363,10 @@ namespace OxGFrame.AssetLoader.Editor
         /// <param name="outputPath"></param>
         /// <param name="platform"></param>
         /// <param name="productName"></param>
+        /// <param name="semanticRule"></param>
         /// <param name="appVersion"></param>
-        internal static void ExportNewestYooAssetBundles(string inputPath, string outputPath, string platform, string productName, string appVersion, string[] exportPackages)
+        /// <param name="exportPackages"></param>
+        internal static void ExportNewestYooAssetBundles(string inputPath, string outputPath, string platform, string productName, SemanticRule semanticRule, string appVersion, string[] exportPackages)
         {
             #region YooAsset Bundle Process
             // 取得 Bundle 輸出路徑
@@ -393,7 +400,7 @@ namespace OxGFrame.AssetLoader.Editor
                 // If the latest version path cannot be found, skip it
                 if (string.IsNullOrEmpty(newestVersionPath)) continue;
 
-                string destFullDir = Path.GetFullPath(outputPath + $@"/{productName}" + $@"/{platform}" + $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}" + $@"/{packageName}");
+                string destFullDir = Path.GetFullPath(outputPath + $@"/{productName}" + $@"/{platform}" + (semanticRule.PATCH ? $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}.{appVersion.Split('.')[2]}" : $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}") + $@"/{packageName}");
                 BundleUtility.CopyFolderRecursively(newestVersionPath, destFullDir);
 
                 {
@@ -473,7 +480,7 @@ namespace OxGFrame.AssetLoader.Editor
         /// <param name="inputPath"></param>
         /// <param name="compressed"></param>
         /// <returns></returns>
-        internal static AppConfig GenerateAppConfig(string productName, string appVersion, bool activeBuildTarget, BuildTarget buildTarget)
+        internal static AppConfig GenerateAppConfig(string productName, SemanticRule semanticRule, string appVersion, bool activeBuildTarget, BuildTarget buildTarget)
         {
             // 生成配置檔
             var cfg = new AppConfig();
@@ -486,6 +493,9 @@ namespace OxGFrame.AssetLoader.Editor
 
             // 主程式版本
             cfg.APP_VERSION = string.IsNullOrEmpty(appVersion) ? Application.version : appVersion;
+
+            // 版號規則
+            cfg.SEMANTIC_RULE = semanticRule;
 
             Debug.Log($"<color=#00FF00>【Generate】{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION} Completes.</color>");
 

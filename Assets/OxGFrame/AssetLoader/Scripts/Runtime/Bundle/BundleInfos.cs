@@ -106,17 +106,18 @@ namespace OxGFrame.AssetLoader.Bundle
 
     public class AppConfig
     {
-        [NonSerialized]
-        public static readonly string[] keys = new string[]
+        [Serializable]
+        public class SemanticRule
         {
-            "PLATFORM",
-            "PRODUCT_NAME",
-            "APP_VERSION"
-        };
+            public bool MAJOR = true;
+            public bool MINOR = true;
+            public bool PATCH = false;
+        }
 
-        public string PLATFORM;     // 平台
-        public string PRODUCT_NAME; // 產品名稱
-        public string APP_VERSION;  // 主程式版本
+        public string PLATFORM;            // 平台
+        public string PRODUCT_NAME;        // 產品名稱
+        public string APP_VERSION;         // 主程式版本
+        public SemanticRule SEMANTIC_RULE; // 主程式版號規則
 
         ~AppConfig()
         {
@@ -128,13 +129,6 @@ namespace OxGFrame.AssetLoader.Bundle
 
     public class PatchConfig
     {
-        [NonSerialized]
-        public static readonly string[] keys = new string[]
-        {
-            "PACKAGES",
-            "GROUP_INFOS"
-        };
-
         public List<PackageInfo> PACKAGES;
         public List<GroupInfo> GROUP_INFOS;
 
