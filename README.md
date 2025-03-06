@@ -487,7 +487,7 @@ video_urlset 127.0.0.1/video/
 
 ### Unity 版本
 
-建議使用 Unity 2021.3.32f1(LTS) or higher 版本 - [Unity Download](https://unity3d.com/get-unity/download/archive)
+建議使用 Unity 2022.3.59f1(LTS) or higher 版本 - [Unity Download](https://unity3d.com/get-unity/download/archive)
 
 ---
 
