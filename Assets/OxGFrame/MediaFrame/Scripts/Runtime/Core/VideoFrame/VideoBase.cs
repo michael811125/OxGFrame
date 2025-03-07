@@ -112,7 +112,13 @@ namespace OxGFrame.MediaFrame.VideoFrame
             cts.CancelAfterSlim(TimeSpan.FromSeconds(15f));
             try
             {
-                await UniTask.WaitUntil(() => { return this._videoPlayer.isPrepared; }, PlayerLoopTiming.FixedUpdate, cts.Token);
+                do
+                {
+                    if (this._videoPlayer.isPrepared)
+                        break;
+                    // load balancing
+                    await UniTask.Yield(PlayerLoopTiming.FixedUpdate, cts.Token);
+                } while (true);
                 Logging.Print<Logger>($"{this.mediaName} video is prepared");
             }
             catch (OperationCanceledException ex)
