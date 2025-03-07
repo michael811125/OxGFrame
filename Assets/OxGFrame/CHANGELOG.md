@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.14.1] - 2025-03-07
+- Modified video loading preparation to avoid blocking caused by "wait until".
+
 ## [2.14.0] - 2025-02-28
 - Added Bundle output rules, allowing the version path request rules to be determined by setting the Semantic Rule option.
 - Modified Patch request rules to first request appConfig from the server and use the latest Version as the CDN request path.
