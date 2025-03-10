@@ -15,18 +15,8 @@ namespace YooAsset.Editor
 
         protected override string GetUnityHash(BuildBundleInfo bundleInfo, BuildContext context)
         {
-            var buildParametersContext = context.GetContextObject<BuildParametersContext>();
-            var parameters = buildParametersContext.Parameters;
-            var buildMode = parameters.BuildMode;
-            if (buildMode == EBuildMode.SimulateBuild)
-            {
-                return "00000000000000000000000000000000"; //32位
-            }
-            else
-            {
-                string filePath = bundleInfo.PackageSourceFilePath;
-                return HashUtility.FileMD5(filePath);
-            }
+            string filePath = bundleInfo.PackageSourceFilePath;
+            return HashUtility.FileMD5(filePath);
         }
         protected override uint GetUnityCRC(BuildBundleInfo bundleInfo, BuildContext context)
         {
@@ -35,29 +25,17 @@ namespace YooAsset.Editor
         protected override string GetBundleFileHash(BuildBundleInfo bundleInfo, BuildParametersContext buildParametersContext)
         {
             string filePath = bundleInfo.PackageSourceFilePath;
-            var buildMode = buildParametersContext.Parameters.BuildMode;
-            if (buildMode == EBuildMode.SimulateBuild)
-                return GetFilePathTempHash(filePath);
-            else
-                return HashUtility.FileMD5(filePath);
+            return HashUtility.FileMD5(filePath);
         }
         protected override string GetBundleFileCRC(BuildBundleInfo bundleInfo, BuildParametersContext buildParametersContext)
         {
             string filePath = bundleInfo.PackageSourceFilePath;
-            var buildMode = buildParametersContext.Parameters.BuildMode;
-            if (buildMode == EBuildMode.SimulateBuild)
-                return "00000000"; //8位
-            else
-                return HashUtility.FileCRC32(filePath);
+            return HashUtility.FileCRC32(filePath);
         }
         protected override long GetBundleFileSize(BuildBundleInfo bundleInfo, BuildParametersContext buildParametersContext)
         {
             string filePath = bundleInfo.PackageSourceFilePath;
-            var buildMode = buildParametersContext.Parameters.BuildMode;
-            if (buildMode == EBuildMode.SimulateBuild)
-                return GetBundleTempSize(bundleInfo);
-            else
-                return FileUtility.GetFileSize(filePath);
+            return FileUtility.GetFileSize(filePath);
         }
     }
 }

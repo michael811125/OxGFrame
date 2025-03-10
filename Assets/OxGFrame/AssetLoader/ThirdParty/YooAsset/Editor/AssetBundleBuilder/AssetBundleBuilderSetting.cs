@@ -18,18 +18,6 @@ namespace YooAsset.Editor
             EditorPrefs.SetInt(key, (int)buildPipeline);
         }
 
-        // EBuildMode
-        public static EBuildMode GetPackageBuildMode(string packageName, EBuildPipeline buildPipeline)
-        {
-            string key = $"{Application.productName}_{packageName}_{buildPipeline}_{nameof(EBuildMode)}";
-            return (EBuildMode)EditorPrefs.GetInt(key, (int)EBuildMode.ForceRebuild);
-        }
-        public static void SetPackageBuildMode(string packageName, EBuildPipeline buildPipeline, EBuildMode buildMode)
-        {
-            string key = $"{Application.productName}_{packageName}_{buildPipeline}_{nameof(EBuildMode)}";
-            EditorPrefs.SetInt(key, (int)buildMode);
-        }
-
         // ECompressOption
         public static ECompressOption GetPackageCompressOption(string packageName, EBuildPipeline buildPipeline)
         {
@@ -88,6 +76,30 @@ namespace YooAsset.Editor
         {
             string key = $"{Application.productName}_{packageName}_{buildPipeline}_EncyptionClassName";
             EditorPrefs.SetString(key, encyptionClassName);
+        }
+
+        // ClearBuildCache
+        public static bool GetPackageClearBuildCache(string packageName, EBuildPipeline buildPipeline)
+        {
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_ClearBuildCache";
+            return EditorPrefs.GetInt(key, 0) > 0;
+        }
+        public static void SetPackageClearBuildCache(string packageName, EBuildPipeline buildPipeline, bool clearBuildCache)
+        {
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_ClearBuildCache";
+            EditorPrefs.SetInt(key, clearBuildCache ? 1 : 0);
+        }
+
+        // UseAssetDependencyDB
+        public static bool GetPackageUseAssetDependencyDB(string packageName, EBuildPipeline buildPipeline)
+        {
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_UseAssetDependencyDB";
+            return EditorPrefs.GetInt(key, 0) > 0;
+        }
+        public static void SetPackageUseAssetDependencyDB(string packageName, EBuildPipeline buildPipeline, bool useAssetDependencyDB)
+        {
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_UseAssetDependencyDB";
+            EditorPrefs.SetInt(key, useAssetDependencyDB ? 1 : 0);
         }
     }
 }

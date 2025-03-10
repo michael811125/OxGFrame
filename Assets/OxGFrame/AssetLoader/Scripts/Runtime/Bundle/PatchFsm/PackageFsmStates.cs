@@ -70,7 +70,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 foreach (var packageName in packageNames)
                 {
                     // Clear cache and files of package
-                    isCleared = await PackageManager.UnloadPackageAndClearCacheFiles(packageName);
+                    isCleared = await PackageManager.UnloadPackageAndClearCacheFiles(packageName, false);
                     if (!isCleared) break;
                 }
 
@@ -166,28 +166,19 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     {
                         string hostServer;
                         string fallbackHostServer;
-                        IBuildinQueryServices builtinQueryService;
-                        IDeliveryQueryServices deliveryQueryService;
-                        IDeliveryLoadServices deliveryLoadService;
 
                         if (packageInfo is DlcPackageInfoWithBuild)
                         {
                             var packageDetail = packageInfo as DlcPackageInfoWithBuild;
                             hostServer = packageDetail.hostServer;
                             fallbackHostServer = packageDetail.fallbackHostServer;
-                            builtinQueryService = packageDetail.builtinQueryService;
-                            deliveryQueryService = packageDetail.deliveryQueryService;
-                            deliveryLoadService = packageDetail.deliveryLoadService;
 
                             // Host Mode or WebGL Mode
                             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
-                                BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
+                                BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
                             {
                                 hostServer = string.IsNullOrEmpty(hostServer) ? await BundleConfig.GetDlcHostServerUrl(packageDetail.packageName, packageDetail.dlcVersion, packageDetail.withoutPlatform) : hostServer;
                                 fallbackHostServer = string.IsNullOrEmpty(fallbackHostServer) ? await BundleConfig.GetDlcFallbackHostServerUrl(packageDetail.packageName, packageDetail.dlcVersion, packageDetail.withoutPlatform) : fallbackHostServer;
-                                builtinQueryService = builtinQueryService == null ? new RequestBuiltinQuery() : builtinQueryService;
-                                deliveryQueryService = deliveryQueryService == null ? new RequestDeliveryQuery() : deliveryQueryService;
-                                deliveryLoadService = deliveryLoadService == null ? new RequestDeliveryQuery() : deliveryLoadService;
                             }
                         }
                         else if (packageInfo is AppPackageInfoWithBuild)
@@ -195,19 +186,13 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             var packageDetail = packageInfo as AppPackageInfoWithBuild;
                             hostServer = null;
                             fallbackHostServer = null;
-                            builtinQueryService = null;
-                            deliveryQueryService = null;
-                            deliveryLoadService = null;
 
                             // Host Mode or WebGL Mode
                             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
-                                BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
+                                BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
                             {
                                 hostServer = await BundleConfig.GetHostServerUrl(packageDetail.packageName);
                                 fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageDetail.packageName);
-                                builtinQueryService = new RequestBuiltinQuery();
-                                deliveryQueryService = new RequestDeliveryQuery();
-                                deliveryLoadService = new RequestDeliveryQuery();
                             }
                         }
                         else throw new Exception("Package info type error.");
@@ -215,7 +200,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         // Try-catch to avoid same package to init, will try-catch until is initialized
                         try
                         {
-                            isInitialized = await PackageManager.InitPackage(packageInfo, false, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
+                            isInitialized = await PackageManager.InitPackage(packageInfo, false, hostServer, fallbackHostServer);
                         }
                         catch
                         {
@@ -228,8 +213,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                     if (isInitialized)
                     {
-                        this._machine.ChangeState<FsmPatchVersionUpdate>();
                         Logging.Print<Logger>("<color=#ffcf67>(Init) Init Patch</color>");
+                        this._machine.ChangeState<FsmPatchVersionUpdate>();
                     }
                     else
                     {
@@ -283,7 +268,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 List<string> patchVersions = new List<string>();
                 foreach (var package in packages)
                 {
-                    var operation = package.UpdatePackageVersionAsync();
+                    var operation = package.RequestPackageVersionAsync();
                     await operation;
 
                     if (operation.Status == EOperationStatus.Succeed)
@@ -356,7 +341,6 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     if (operation.Status == EOperationStatus.Succeed)
                     {
                         succeed = true;
-                        operation.SavePackageVersion();
                         Logging.Print<Logger>($"<color=#85cf0f>Package: {packages[i].PackageName} <color=#00c1ff>Update</color> completed successfully.</color>");
                     }
                     else
@@ -408,7 +392,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 // EditorSimulateMode or OfflineMode skip directly
                 if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
-                    BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode)
+                    BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode ||
+                    BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
                 {
                     this._machine.ChangeState<FsmPatchDone>();
                     return;
@@ -576,26 +561,19 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     int lastCount = 0;
                     long lastBytes = 0;
-                    downloader.OnDownloadErrorCallback = (
-                        string fileName,
-                        string error) =>
+                    downloader.DownloadErrorCallback = (DownloadErrorData data) =>
                     {
                         PackageEvents.PatchDownloadFailed.SendEventMessage(
                             this._hashId,
-                            fileName,
-                            error);
+                            data.FileName,
+                            data.ErrorInfo);
                     };
-                    downloader.OnDownloadProgressCallback =
-                    (
-                        int totalDownloadCount,
-                        int currentDownloadCount,
-                        long totalDownloadBytes,
-                        long currentDownloadBytes) =>
+                    downloader.DownloadUpdateCallback = (DownloadUpdateData data) =>
                     {
-                        currentCount += currentDownloadCount - lastCount;
-                        lastCount = currentDownloadCount;
-                        currentBytes += currentDownloadBytes - lastBytes;
-                        lastBytes = currentDownloadBytes;
+                        currentCount += data.CurrentDownloadCount - lastCount;
+                        lastCount = data.CurrentDownloadCount;
+                        currentBytes += data.CurrentDownloadBytes - lastBytes;
+                        lastBytes = data.CurrentDownloadBytes;
                         downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
                     };
 
@@ -705,8 +683,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 foreach (var package in packages)
                 {
-                    var operation = package.ClearUnusedCacheFilesAsync();
-                    await operation;
+                    var clearUnusedBundleFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
+                    var clearUnusedManifestFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
+                    await clearUnusedBundleFilesOperation;
+                    await clearUnusedManifestFilesOperation;
                 }
 
                 this._machine.ChangeState<FsmPatchDone>();

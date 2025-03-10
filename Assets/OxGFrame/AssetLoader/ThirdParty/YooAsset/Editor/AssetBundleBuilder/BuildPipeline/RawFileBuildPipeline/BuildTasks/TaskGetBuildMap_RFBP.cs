@@ -12,7 +12,7 @@ namespace YooAsset.Editor
         void IBuildTask.Run(BuildContext context)
         {
             var buildParametersContext = context.GetContextObject<BuildParametersContext>();
-            var buildMapContext = CreateBuildMap(buildParametersContext.Parameters);
+            var buildMapContext = CreateBuildMap(true, buildParametersContext.Parameters);
             context.SetContextObject(buildMapContext);
 
             // 检测构建结果
@@ -27,7 +27,7 @@ namespace YooAsset.Editor
             // 注意：原生文件资源包只能包含一个原生文件
             foreach (var bundleInfo in buildMapContext.Collection)
             {
-                if (bundleInfo.MainAssets.Count != 1)
+                if (bundleInfo.AllPackAssets.Count != 1)
                 {
                     string message = BuildLogger.GetErrorMessage(ErrorCode.NotSupportMultipleRawAsset, $"The bundle does not support multiple raw asset : {bundleInfo.BundleName}");
                     throw new Exception(message);

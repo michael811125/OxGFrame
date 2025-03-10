@@ -8,7 +8,8 @@ namespace OxGFrame.CoreFrame.Editor
         private static BindCodeClipboardWindow _instance = null;
         internal static BindCodeClipboardWindow GetInstance()
         {
-            if (_instance == null) _instance = GetWindow<BindCodeClipboardWindow>();
+            if (_instance == null)
+                _instance = GetWindow<BindCodeClipboardWindow>();
             return _instance;
         }
 

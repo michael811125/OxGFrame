@@ -33,6 +33,14 @@ namespace YooAsset.Editor
             if (AssetDatabase.IsValidFolder(assetInfo.AssetPath))
                 return true;
 
+            // 忽略编辑器图标资源
+            if (assetInfo.AssetPath.Contains("/Gizmos/"))
+                return true;
+
+            // 忽略编辑器专属资源
+            if (assetInfo.AssetPath.Contains("/Editor/") || assetInfo.AssetPath.Contains("/Editor Resources/"))
+                return true;
+
             // 忽略编辑器下的类型资源
             if (assetInfo.AssetType == typeof(LightingDataAsset))
                 return true;

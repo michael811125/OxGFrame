@@ -39,8 +39,14 @@ namespace YooAsset.Editor
         public long MainBundleSize;
 
         /// <summary>
-        /// 依赖的资源路径列表
+        /// 依赖的资源集合
         /// </summary>
-        public List<string> DependAssets = new List<string>();
+        public List<AssetInfo> DependAssets = new List<AssetInfo>();
+
+        /// <summary>
+        /// 依赖的资源包集合
+        /// 说明：框架层收集查询结果
+        /// </summary>
+        public List<string> DependBundles = new List<string>();
     }
 }

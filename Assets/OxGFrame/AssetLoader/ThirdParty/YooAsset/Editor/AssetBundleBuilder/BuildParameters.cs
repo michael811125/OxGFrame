@@ -22,19 +22,19 @@ namespace YooAsset.Editor
         public string BuildinFileRoot;
 
         /// <summary>
-        /// 构建管线
+        /// 构建管线名称
         /// </summary>
         public string BuildPipeline;
+
+        /// <summary>
+        /// 构建资源包类型
+        /// </summary>
+        public int BuildBundleType;
 
         /// <summary>
         /// 构建的平台
         /// </summary>
         public BuildTarget BuildTarget;
-
-        /// <summary>
-        /// 构建模式
-        /// </summary>
-        public EBuildMode BuildMode;
 
         /// <summary>
         /// 构建的包裹名称
@@ -46,11 +46,32 @@ namespace YooAsset.Editor
         /// </summary>
         public string PackageVersion;
 
+        /// <summary>
+        /// 构建的包裹备注
+        /// </summary>
+        public string PackageNote;
 
         /// <summary>
-        /// 是否启用共享资源打包
+        /// 清空构建缓存文件
+        /// </summary>
+        public bool ClearBuildCacheFiles = false;
+
+        /// <summary>
+        /// 使用资源依赖缓存数据库
+        /// 说明：开启此项可以极大提高资源收集速度！
+        /// </summary>
+        public bool UseAssetDependencyDB = false;
+
+        /// <summary>
+        /// 启用共享资源打包
         /// </summary>
         public bool EnableSharePackRule = false;
+
+        /// <summary>
+        /// 对单独引用的共享资源进行独立打包
+        /// 说明：关闭该选项单独引用的共享资源将会构建到引用它的资源包内！
+        /// </summary>
+        public bool SingleReferencedPackAlone = true;
 
         /// <summary>
         /// 验证构建结果
@@ -60,12 +81,12 @@ namespace YooAsset.Editor
         /// <summary>
         /// 资源包名称样式
         /// </summary>
-        public EFileNameStyle FileNameStyle;
+        public EFileNameStyle FileNameStyle = EFileNameStyle.HashName;
 
         /// <summary>
         /// 内置文件的拷贝选项
         /// </summary>
-        public EBuildinFileCopyOption BuildinFileCopyOption;
+        public EBuildinFileCopyOption BuildinFileCopyOption = EBuildinFileCopyOption.None;
 
         /// <summary>
         /// 内置文件的拷贝参数
@@ -95,30 +116,10 @@ namespace YooAsset.Editor
                 throw new Exception(message);
             }
 
-            // 检测是否有未保存场景
-            if (BuildMode != EBuildMode.SimulateBuild)
-            {
-                if (EditorTools.HasDirtyScenes())
-                {
-                    string message = BuildLogger.GetErrorMessage(ErrorCode.FoundUnsavedScene, "Found unsaved scene !");
-                    throw new Exception(message);
-                }
-            }
-
             // 检测构建参数合法性
             if (BuildTarget == BuildTarget.NoTarget)
             {
                 string message = BuildLogger.GetErrorMessage(ErrorCode.NoBuildTarget, "Please select the build target platform !");
-                throw new Exception(message);
-            }
-            if (string.IsNullOrEmpty(PackageName))
-            {
-                string message = BuildLogger.GetErrorMessage(ErrorCode.PackageNameIsNullOrEmpty, "Package name is null or empty !");
-                throw new Exception(message);
-            }
-            if (string.IsNullOrEmpty(PackageVersion))
-            {
-                string message = BuildLogger.GetErrorMessage(ErrorCode.PackageVersionIsNullOrEmpty, "Package version is null or empty !");
                 throw new Exception(message);
             }
             if (string.IsNullOrEmpty(BuildOutputRoot))
@@ -131,33 +132,31 @@ namespace YooAsset.Editor
                 string message = BuildLogger.GetErrorMessage(ErrorCode.BuildinFileRootIsNullOrEmpty, "Buildin file root is null or empty !");
                 throw new Exception(message);
             }
-
-            // 强制构建删除包裹目录
-            if (BuildMode == EBuildMode.ForceRebuild)
+            if (string.IsNullOrEmpty(BuildPipeline))
             {
-                string packageRootDirectory = GetPackageRootDirectory();
-                if (EditorTools.DeleteDirectory(packageRootDirectory))
-                {
-                    BuildLogger.Log($"Delete package root directory: {packageRootDirectory}");
-                }
+                string message = BuildLogger.GetErrorMessage(ErrorCode.BuildPipelineIsNullOrEmpty, "Build pipeline is null or empty !");
+                throw new Exception(message);
+            }
+            if (BuildBundleType == (int)EBuildBundleType.Unknown)
+            {
+                string message = BuildLogger.GetErrorMessage(ErrorCode.BuildBundleTypeIsUnknown, $"Build bundle type is unknown {BuildBundleType} !");
+                throw new Exception(message);
+            }
+            if (string.IsNullOrEmpty(PackageName))
+            {
+                string message = BuildLogger.GetErrorMessage(ErrorCode.PackageNameIsNullOrEmpty, "Package name is null or empty !");
+                throw new Exception(message);
+            }
+            if (string.IsNullOrEmpty(PackageVersion))
+            {
+                string message = BuildLogger.GetErrorMessage(ErrorCode.PackageVersionIsNullOrEmpty, "Package version is null or empty !");
+                throw new Exception(message);
             }
 
-            // 检测包裹输出目录是否存在
-            if (BuildMode != EBuildMode.SimulateBuild)
+            // 设置默认备注信息
+            if (string.IsNullOrEmpty(PackageNote))
             {
-                string packageOutputDirectory = GetPackageOutputDirectory();
-                if (Directory.Exists(packageOutputDirectory))
-                {
-                    string message = BuildLogger.GetErrorMessage(ErrorCode.PackageOutputDirectoryExists, $"Package outout directory exists: {packageOutputDirectory}");
-                    throw new Exception(message);
-                }
-            }
-
-            // 如果输出目录不存在
-            string pipelineOutputDirectory = GetPipelineOutputDirectory();
-            if (EditorTools.CreateDirectory(pipelineOutputDirectory))
-            {
-                BuildLogger.Log($"Create pipeline output directory: {pipelineOutputDirectory}");
+                PackageNote = DateTime.Now.ToString();
             }
         }
 

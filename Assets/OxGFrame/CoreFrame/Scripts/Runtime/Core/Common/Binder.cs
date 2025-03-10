@@ -43,7 +43,8 @@ namespace OxGFrame.CoreFrame
             // 依序綁定下一個子物件 (遞迴找到符合綁定條件)
             foreach (Transform child in go.GetComponentInChildren<Transform>())
             {
-                if (!_BindNode(child.gameObject, fBase)) return false;
+                if (!_BindNode(child.gameObject, fBase))
+                    return false;
             }
 
             return true;
@@ -100,7 +101,8 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public static bool CheckNodeHasStopEnd(string name)
         {
-            if (name.Substring(name.Length - 1) == FrameConfig.BIND_STOP_END) return true;
+            if (name.Substring(name.Length - 1) == FrameConfig.BIND_STOP_END)
+                return true;
             return false;
         }
 
@@ -114,10 +116,12 @@ namespace OxGFrame.CoreFrame
             switch (fBase)
             {
                 case CPBase:
-                    if (name.Substring(0, 1) == FrameConfig.BIND_PREFIXES[1]) return true;
+                    if (name.Substring(0, 1) == FrameConfig.BIND_PREFIXES[1])
+                        return true;
                     break;
                 default:
-                    if (name.Substring(0, 1) == FrameConfig.BIND_PREFIXES[0]) return true;
+                    if (name.Substring(0, 1) == FrameConfig.BIND_PREFIXES[0])
+                        return true;
                     break;
             }
 
@@ -127,7 +131,8 @@ namespace OxGFrame.CoreFrame
         public static bool CheckNodeHasPrefix(string name)
         {
             if (name.Substring(0, 1) == FrameConfig.BIND_PREFIXES[0] ||
-                name.Substring(0, 1) == FrameConfig.BIND_PREFIXES[1]) return true;
+                name.Substring(0, 1) == FrameConfig.BIND_PREFIXES[1])
+                return true;
 
             return false;
         }
@@ -140,7 +145,8 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public static string[] GetHeadSplitNameBySeparator(string name)
         {
-            if (string.IsNullOrEmpty(name)) return null;
+            if (string.IsNullOrEmpty(name))
+                return null;
 
             return name.Split(FrameConfig.BIND_HEAD_SEPARATOR);
         }
@@ -153,7 +159,8 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public static string[] GetTailSplitNameBySeparator(string name)
         {
-            if (string.IsNullOrEmpty(name)) return null;
+            if (string.IsNullOrEmpty(name))
+                return null;
 
             return name.Split(FrameConfig.BIND_TAIL_SEPARATOR);
         }
@@ -166,7 +173,8 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public static string[] GetAccessModifierSplitNameBySeparator(string name)
         {
-            if (string.IsNullOrEmpty(name)) return null;
+            if (string.IsNullOrEmpty(name))
+                return null;
 
             return name.Split(FrameConfig.BIND_ACCESS_MODIFIER_SEPARATOR);
         }

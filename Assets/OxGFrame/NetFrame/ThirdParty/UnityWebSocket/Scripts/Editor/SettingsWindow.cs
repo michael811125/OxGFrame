@@ -93,27 +93,10 @@ namespace UnityWebSocket.Editor
                 {
                     if (GUI.Button(new Rect(440, 50, 150, 18), "Update to | " + latestVersion))
                     {
-                        ShowUpdateDialog();
+                        Application.OpenURL(Settings.GITHUB + "/releases");
                     }
                 }
             }
-        }
-
-        private void ShowUpdateDialog()
-        {
-            var isOK = EditorUtility.DisplayDialog("UnityWebSocket",
-                "Update UnityWebSocket now?\n" + changeLog,
-                "Update Now", "Cancel");
-
-            if (isOK)
-            {
-                UpdateVersion();
-            }
-        }
-
-        private void UpdateVersion()
-        {
-            Application.OpenURL(Settings.GITHUB + "/releases");
         }
 
         private void DrawHelper()
@@ -137,7 +120,7 @@ namespace UnityWebSocket.Editor
                 Application.OpenURL(uri.AbsoluteUri);
             }
 
-            GUI.Label(new Rect(330, 275, 100, 18), "QQ群:", TextStyle(10, TextAnchor.MiddleRight));
+            GUI.Label(new Rect(330, 275, 100, 18), "QQ Group:", TextStyle(10, TextAnchor.MiddleRight));
             if (GUI.Button(new Rect(440, 275, 150, 18), Settings.QQ_GROUP))
             {
                 Application.OpenURL(Settings.QQ_GROUP_LINK);

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace YooAsset
 {
-    public sealed class AllAssetsHandle : HandleBase, IDisposable
+    public sealed class AllAssetsHandle : HandleBase
     {
         private System.Action<AllAssetsHandle> _callback;
 
-        internal AllAssetsHandle(ProviderBase provider) : base(provider)
+        internal AllAssetsHandle(ProviderOperation provider) : base(provider)
         {
         }
         internal override void InvokeCallback()
@@ -48,26 +47,9 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 释放资源句柄
-        /// </summary>
-        public void Release()
-        {
-            this.ReleaseInternal();
-        }
-
-        /// <summary>
-        /// 释放资源句柄
-        /// </summary>
-        public void Dispose()
-        {
-            this.ReleaseInternal();
-        }
-
-
-        /// <summary>
         /// 子资源对象集合
         /// </summary>
-        public UnityEngine.Object[] AllAssetObjects
+        public IReadOnlyList<UnityEngine.Object> AllAssetObjects
         {
             get
             {

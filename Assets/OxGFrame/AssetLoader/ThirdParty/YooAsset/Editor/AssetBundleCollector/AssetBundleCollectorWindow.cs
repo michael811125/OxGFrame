@@ -42,7 +42,7 @@ namespace YooAsset.Editor
         private Toggle _includeAssetGUIDToogle;
         private Toggle _autoCollectShadersToogle;
         private PopupField<RuleDisplayName> _ignoreRulePopupField;
-        
+
         private VisualElement _packageContainer;
         private ListView _packageListView;
         private TextField _packageNameTxt;
@@ -164,25 +164,25 @@ namespace YooAsset.Editor
                         RefreshWindow();
                     }
                 });
+
+                // 忽略规则
+                _ignoreRulePopupField = new PopupField<RuleDisplayName>(_ignoreRuleList, 0);
+                _ignoreRulePopupField.label = "File Ignore Rule";
+                _ignoreRulePopupField.name = "IgnoreRulePopupField";
+                _ignoreRulePopupField.style.unityTextAlign = TextAnchor.MiddleLeft;
+                _ignoreRulePopupField.style.width = 300;
+                _ignoreRulePopupField.formatListItemCallback = FormatListItemCallback;
+                _ignoreRulePopupField.formatSelectedValueCallback = FormatSelectedValueCallback;
+                _ignoreRulePopupField.RegisterValueChangedCallback(evt =>
                 {
-                    _ignoreRulePopupField = new PopupField<RuleDisplayName>(_ignoreRuleList, 0);
-                    _ignoreRulePopupField.label = "File Ignore Rule";
-                    _ignoreRulePopupField.name = "IgnoreRulePopupField";
-                    _ignoreRulePopupField.style.unityTextAlign = TextAnchor.MiddleLeft;
-                    _ignoreRulePopupField.style.width = 300;
-                    _ignoreRulePopupField.formatListItemCallback = FormatListItemCallback;
-                    _ignoreRulePopupField.formatSelectedValueCallback = FormatSelectedValueCallback;
-                    _ignoreRulePopupField.RegisterValueChangedCallback(evt => 
+                    var selectPackage = _packageListView.selectedItem as AssetBundleCollectorPackage;
+                    if (selectPackage != null)
                     {
-                        var selectPackage = _packageListView.selectedItem as AssetBundleCollectorPackage;
-                        if(selectPackage != null)
-                        {
-                            selectPackage.IgnoreRuleName = evt.newValue.ClassName;
-                            AssetBundleCollectorSettingData.ModifyPackage(selectPackage);
-                        }
-                    });
-                    _setting2Container.Add(_ignoreRulePopupField);
-                }
+                        selectPackage.IgnoreRuleName = evt.newValue.ClassName;
+                        AssetBundleCollectorSettingData.ModifyPackage(selectPackage);
+                    }
+                });
+                _setting2Container.Add(_ignoreRulePopupField);
 
                 // 配置修复按钮
                 var fixBtn = root.Q<Button>("FixButton");
@@ -205,7 +205,9 @@ namespace YooAsset.Editor
                 _packageListView = root.Q<ListView>("PackageListView");
                 _packageListView.makeItem = MakePackageListViewItem;
                 _packageListView.bindItem = BindPackageListViewItem;
-#if UNITY_2020_1_OR_NEWER
+#if UNITY_2022_3_OR_NEWER
+                _packageListView.selectionChanged += PackageListView_onSelectionChange;
+#elif UNITY_2020_1_OR_NEWER
                 _packageListView.onSelectionChange += PackageListView_onSelectionChange;
 #else
                 _packageListView.onSelectionChanged += PackageListView_onSelectionChange;
@@ -250,7 +252,9 @@ namespace YooAsset.Editor
                 _groupListView = root.Q<ListView>("GroupListView");
                 _groupListView.makeItem = MakeGroupListViewItem;
                 _groupListView.bindItem = BindGroupListViewItem;
-#if UNITY_2020_1_OR_NEWER
+#if UNITY_2022_3_OR_NEWER
+                _groupListView.selectionChanged += GroupListView_onSelectionChange;
+#elif UNITY_2020_1_OR_NEWER
                 _groupListView.onSelectionChange += GroupListView_onSelectionChange;
 #else
                 _groupListView.onSelectionChanged += GroupListView_onSelectionChange;
@@ -657,7 +661,7 @@ namespace YooAsset.Editor
 
             // 激活状态
             IActiveRule activeRule = AssetBundleCollectorSettingData.GetActiveRuleInstance(group.ActiveRuleName);
-            bool isActive = activeRule.IsActiveGroup();
+            bool isActive = activeRule.IsActiveGroup(new GroupData(group.GroupName));
             textField1.SetEnabled(isActive);
         }
         private void GroupListView_onSelectionChange(IEnumerable<object> objs)
@@ -991,14 +995,16 @@ namespace YooAsset.Editor
                 try
                 {
                     IIgnoreRule ignoreRule = AssetBundleCollectorSettingData.GetIgnoreRuleInstance(_ignoreRulePopupField.value.ClassName);
-                    CollectCommand command = new CollectCommand(EBuildMode.SimulateBuild,
-                        _packageNameTxt.value,
-                        _enableAddressableToogle.value,
-                        _locationToLowerToogle.value,
-                        _includeAssetGUIDToogle.value,
-                        _autoCollectShadersToogle.value,
-                        _uniqueBundleNameToogle.value,
-                        ignoreRule);
+                    string packageName = _packageNameTxt.value;
+                    var command = new CollectCommand(packageName, ignoreRule);
+                    command.SimulateBuild = true;
+                    command.UniqueBundleName = _uniqueBundleNameToogle.value;
+                    command.UseAssetDependencyDB = true;
+                    command.EnableAddressable = _enableAddressableToogle.value;
+                    command.LocationToLower = _locationToLowerToogle.value;
+                    command.IncludeAssetGUID = _includeAssetGUIDToogle.value;
+                    command.AutoCollectShaders = _autoCollectShadersToogle.value;
+
                     collector.CheckConfigError();
                     collectAssetInfos = collector.GetAllCollectAssets(command, group);
                 }

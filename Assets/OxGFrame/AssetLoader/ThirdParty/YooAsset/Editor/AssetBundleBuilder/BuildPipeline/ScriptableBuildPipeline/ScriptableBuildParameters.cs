@@ -42,6 +42,17 @@ namespace YooAsset.Editor
 
 
         /// <summary>
+        /// 内置着色器资源包名称
+        /// </summary>
+        public string BuiltinShadersBundleName;
+
+        /// <summary>
+        /// Mono脚本资源包名称
+        /// </summary>
+        public string MonoScriptsBundleName;
+
+
+        /// <summary>
         /// 获取可编程构建管线的构建参数
         /// </summary>
         public BundleBuildParameters GetBundleBuildParameters()

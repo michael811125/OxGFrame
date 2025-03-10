@@ -12,16 +12,16 @@ namespace YooAsset.Editor
         /// <summary>
         /// 生成资源构建上下文
         /// </summary>
-        public BuildMapContext CreateBuildMap(BuildParameters buildParameters)
+        public BuildMapContext CreateBuildMap(bool simulateBuild, BuildParameters buildParameters)
         {
             BuildMapContext context = new BuildMapContext();
-            var buildMode = buildParameters.BuildMode;
             var packageName = buildParameters.PackageName;
 
             Dictionary<string, BuildAssetInfo> allBuildAssetInfos = new Dictionary<string, BuildAssetInfo>(1000);
 
             // 1. 获取所有收集器收集的资源
-            var collectResult = AssetBundleCollectorSettingData.Setting.GetPackageAssets(buildMode, packageName);
+            bool useAssetDependencyDB = buildParameters.UseAssetDependencyDB;
+            var collectResult = AssetBundleCollectorSettingData.Setting.BeginCollect(packageName, simulateBuild, useAssetDependencyDB);
             List<CollectAssetInfo> allCollectAssets = collectResult.CollectAssets;
 
             // 2. 剔除未被引用的依赖项资源
@@ -56,9 +56,9 @@ namespace YooAsset.Editor
                 string bundleName = collectAssetInfo.BundleName;
                 foreach (var dependAsset in collectAssetInfo.DependAssets)
                 {
-                    if (allBuildAssetInfos.ContainsKey(dependAsset.AssetPath))
+                    if (allBuildAssetInfos.TryGetValue(dependAsset.AssetPath, out var value))
                     {
-                        allBuildAssetInfos[dependAsset.AssetPath].AddReferenceBundleName(bundleName);
+                        value.AddReferenceBundleName(bundleName);
                     }
                     else
                     {
@@ -109,15 +109,10 @@ namespace YooAsset.Editor
                 {
                     if (buildAssetInfo.HasBundleName() == false)
                     {
-                        PackRuleResult packRuleResult = GetShareBundleName(buildAssetInfo);
-                        if (packRuleResult.IsValid())
-                        {
-                            string shareBundleName = packRuleResult.GetShareBundleName(collectResult.Command.PackageName, collectResult.Command.UniqueBundleName);
-                            buildAssetInfo.SetBundleName(shareBundleName);
-                        }
+                        ProcessingPackShareBundle(buildParameters, collectResult.Command, buildAssetInfo);
                     }
                 }
-                PostProcessPackShareBundle();
+                PostProcessPackShareBundle(buildParameters, collectResult.Command, allBuildAssetInfos);
             }
 
             // 8. 记录关键信息
@@ -209,20 +204,37 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// 共享资源打包后置处理
+        /// 共享资源打包机制
         /// </summary>
-        protected virtual void PostProcessPackShareBundle()
+        protected virtual void ProcessingPackShareBundle(BuildParameters buildParameters, CollectCommand command, BuildAssetInfo buildAssetInfo)
         {
-        }
+            PackRuleResult packRuleResult = GetShareBundleName(buildAssetInfo);
+            if (packRuleResult.IsValid() == false)
+                return;
 
-        /// <summary>
-        /// 获取共享资源包名称
-        /// </summary>
-        protected virtual PackRuleResult GetShareBundleName(BuildAssetInfo buildAssetInfo)
+            // 处理单个引用的共享资源
+            if (buildAssetInfo.GetReferenceBundleCount() <= 1)
+            {
+                if (buildParameters.SingleReferencedPackAlone == false)
+                    return;
+            }
+
+            // 设置共享资源包名
+            string shareBundleName = packRuleResult.GetShareBundleName(command.PackageName, command.UniqueBundleName);
+            buildAssetInfo.SetBundleName(shareBundleName);
+        }
+        private PackRuleResult GetShareBundleName(BuildAssetInfo buildAssetInfo)
         {
             string bundleName = Path.GetDirectoryName(buildAssetInfo.AssetInfo.AssetPath);
             PackRuleResult result = new PackRuleResult(bundleName, DefaultPackRule.AssetBundleFileExtension);
             return result;
+        }
+
+        /// <summary>
+        /// 共享资源打包后置处理
+        /// </summary>
+        protected virtual void PostProcessPackShareBundle(BuildParameters buildParameters, CollectCommand command, Dictionary<string, BuildAssetInfo> allBuildAssetInfos)
+        {
         }
         #endregion
     }

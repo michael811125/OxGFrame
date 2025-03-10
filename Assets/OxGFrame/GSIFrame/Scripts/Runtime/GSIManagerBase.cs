@@ -1,4 +1,5 @@
 ﻿using OxGKit.LoggingSystem;
+using System;
 using System.Collections.Generic;
 
 namespace OxGFrame.GSIFrame
@@ -67,20 +68,24 @@ namespace OxGFrame.GSIFrame
 
         public static void ChangeStage<U>(bool force = false) where U : GSIBase
         {
-            if (force) GetInstance().ChangeGameStageForce<U>();
-            else GetInstance().ChangeGameStage<U>();
+            if (force)
+                GetInstance().ChangeGameStageForce<U>();
+            else
+                GetInstance().ChangeGameStage<U>();
         }
 
         public static void ChangeStage(int id, bool force = false)
         {
-            if (force) GetInstance().ChangeGameStageForce(id);
-            else GetInstance().ChangeGameStage(id);
+            if (force)
+                GetInstance().ChangeGameStageForce(id);
+            else
+                GetInstance().ChangeGameStage(id);
         }
 
         /// <summary>
         /// Call by main MonoBehaviour (Start)
         /// </summary>
-        public static void Start()
+        public static void DriveStart()
         {
             GetInstance().OnStart();
         }
@@ -89,6 +94,18 @@ namespace OxGFrame.GSIFrame
         /// Call by main MonoBehaviour (Update)
         /// </summary>
         /// <param name="dt"></param>
+        public static void DriveUpdate(float dt = 0.0f)
+        {
+            GetInstance().OnUpdate(dt);
+        }
+
+        [Obsolete("Use DriveStart instead.")]
+        public static void Start()
+        {
+            GetInstance().OnStart();
+        }
+
+        [Obsolete("Use DriveUpdate instead.")]
         public static void Update(float dt = 0.0f)
         {
             GetInstance().OnUpdate(dt);
@@ -139,7 +156,8 @@ namespace OxGFrame.GSIFrame
         /// <returns></returns>
         public U GetGameStage<U>(int id) where U : GSIBase
         {
-            if (!this._dictGameStage.ContainsKey(id)) return null;
+            if (!this._dictGameStage.ContainsKey(id))
+                return null;
             return (U)this._dictGameStage[id];
         }
 
@@ -280,9 +298,11 @@ namespace OxGFrame.GSIFrame
                 this.InitGameStage();               // 開始進行 GameStage 初始的處理過程
             }
 
-            if (this._currentGameStage == null) return;
+            if (this._currentGameStage == null)
+                return;
 
-            if (this._currentGameStage.runUpdate) this._currentGameStage.OnUpdate(dt); // 開始刷新當前的 GameStage
+            if (this._currentGameStage.runUpdate)
+                this._currentGameStage.OnUpdate(dt); // 開始刷新當前的 GameStage
         }
 
         /// <summary>
@@ -304,7 +324,8 @@ namespace OxGFrame.GSIFrame
         /// </summary>
         protected void ReleaseGameStage()
         {
-            if (this._currentGameStage == null) return;
+            if (this._currentGameStage == null)
+                return;
             this._currentGameStage.OnExit();
         }
 

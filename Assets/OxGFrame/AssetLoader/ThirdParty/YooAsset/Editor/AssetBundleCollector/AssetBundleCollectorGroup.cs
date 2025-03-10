@@ -46,7 +46,7 @@ namespace YooAsset.Editor
 
             // 检测分组是否激活
             IActiveRule activeRule = AssetBundleCollectorSettingData.GetActiveRuleInstance(ActiveRuleName);
-            if (activeRule.IsActiveGroup() == false)
+            if (activeRule.IsActiveGroup(new GroupData(GroupName)) == false)
                 return;
 
             foreach (var collector in Collectors)
@@ -80,7 +80,7 @@ namespace YooAsset.Editor
 
             // 检测分组是否激活
             IActiveRule activeRule = AssetBundleCollectorSettingData.GetActiveRuleInstance(ActiveRuleName);
-            if (activeRule.IsActiveGroup() == false)
+            if (activeRule.IsActiveGroup(new GroupData(GroupName)) == false)
             {
                 return new List<CollectAssetInfo>();
             }

@@ -1,4 +1,4 @@
-#if !UNITY_EDITOR && UNITY_WEBGL
+﻿#if !UNITY_EDITOR && UNITY_WEBGL
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -39,7 +39,7 @@ namespace UnityWebSocket
 
         /* WebSocket JSLIB callback setters and other functions */
         [DllImport("__Internal")]
-        public static extern int WebSocketAllocate(string url, string binaryType);
+        public static extern int WebSocketAllocate(string url);
 
         [DllImport("__Internal")]
         public static extern int WebSocketAddSubProtocol(int instanceId, string protocol);
@@ -61,6 +61,9 @@ namespace UnityWebSocket
 
         [DllImport("__Internal")]
         public static extern void WebSocketSetOnClose(OnCloseCallback callback);
+        
+        [DllImport("__Internal")]
+        public static extern void WebSocketSetSupport6000();
 
         /* If callbacks was initialized and set */
         private static bool isInitialized = false;
@@ -73,6 +76,9 @@ namespace UnityWebSocket
             WebSocketSetOnMessageStr(DelegateOnMessageStrEvent);
             WebSocketSetOnError(DelegateOnErrorEvent);
             WebSocketSetOnClose(DelegateOnCloseEvent);
+#if UNITY_6000_0_OR_NEWER
+            WebSocketSetSupport6000();
+#endif
 
             isInitialized = true;
         }
@@ -97,7 +103,7 @@ namespace UnityWebSocket
             }
         }
 
-        [MonoPInvokeCallback(typeof(OnMessageCallback))]
+        [MonoPInvokeCallback(typeof(OnMessageStrCallback))]
         public static void DelegateOnMessageStrEvent(int instanceId, IntPtr msgStrPtr)
         {
             if (sockets.TryGetValue(instanceId, out var socket))
@@ -127,10 +133,10 @@ namespace UnityWebSocket
             }
         }
 
-        internal static int AllocateInstance(string address, string binaryType)
+        internal static int AllocateInstance(string address)
         {
             if (!isInitialized) Initialize();
-            return WebSocketAllocate(address, binaryType);
+            return WebSocketAllocate(address);
         }
 
         internal static void Add(WebSocket socket)

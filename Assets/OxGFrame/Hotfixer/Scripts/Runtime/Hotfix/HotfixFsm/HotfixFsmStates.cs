@@ -1,15 +1,15 @@
-﻿using UniFramework.Machine;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using HybridCLR;
-using OxGFrame.AssetLoader.Bundle;
-using UnityEngine;
-using System.Linq;
-using System.Reflection;
-using YooAsset;
-using OxGFrame.Hotfixer.HotfixEvent;
 using OxGFrame.AssetLoader;
+using OxGFrame.AssetLoader.Bundle;
+using OxGFrame.Hotfixer.HotfixEvent;
 using OxGKit.LoggingSystem;
 using System;
+using System.Linq;
+using System.Reflection;
+using UniFramework.Machine;
+using UnityEngine;
+using YooAsset;
 
 namespace OxGFrame.Hotfixer.HotfixFsm
 {
@@ -32,8 +32,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
             void IStateNode.OnEnter()
             {
                 HotfixEvents.HotfixFsmState.SendEventMessage(this);
-                this._machine.ChangeState<FsmInitHotfixPackage>();
                 Logging.Print<Logger>("<color=#00cf6b>(Powered by HybridCLR) Hotfix Work</color>");
+                this._machine.ChangeState<FsmInitHotfixPackage>();
             }
 
             void IStateNode.OnUpdate()
@@ -204,7 +204,10 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
                 // Get main downloader
                 var downloader = HotfixManager.GetInstance().mainDownloader;
-                downloader.OnDownloadErrorCallback = HotfixEvents.HotfixDownloadFailed.SendEventMessage;
+                downloader.DownloadErrorCallback = (DownloadErrorData data) =>
+                {
+                    HotfixEvents.HotfixDownloadFailed.SendEventMessage(data.FileName, data.ErrorInfo);
+                };
                 downloader.BeginDownload();
 
                 await downloader;
@@ -277,11 +280,25 @@ namespace OxGFrame.Hotfixer.HotfixFsm
             {
                 // Get hotfix package
                 var package = AssetPatcher.GetPackage(HotfixManager.GetInstance().packageName);
-                var operation = package.ClearUnusedCacheFilesAsync();
-                await operation;
+                var clearUnusedBundleFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
+                var clearUnusedManifestFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
+                await clearUnusedBundleFilesOperation;
+                await clearUnusedManifestFilesOperation;
 
                 // Start load hotfix assemblies
-                if (operation.IsDone) this._machine.ChangeState<FsmLoadAOTAssemblies>();
+                if (clearUnusedBundleFilesOperation.IsDone &&
+                    clearUnusedManifestFilesOperation.IsDone)
+                {
+                    if (HotfixManager.GetInstance().IsDisabled())
+                    {
+                        Logging.PrintWarning<Logger>("<color=#cfc100><color=#ff0000>[DISABLED]</color> Skip processing AOTAssemblies.</color>");
+                        this._machine.ChangeState<FsmLoadHotfixAssemblies>();
+                    }
+                    else
+                    {
+                        this._machine.ChangeState<FsmLoadAOTAssemblies>();
+                    }
+                }
             }
         }
 
@@ -347,7 +364,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                             await UniTask.SwitchToMainThread();
 #endif
                             // Unload after load
-                            AssetLoaders.UnloadAsset(dllName);
+                            await AssetLoaders.UnloadAsset(dllName);
                             Logging.Print<Logger>($"<color=#32fff5>Load <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}, ret: {err}</color>");
                         }
                     }
@@ -402,13 +419,14 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                         {
                             Assembly hotfixAsm;
                             if (Application.isEditor ||
-                                BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
+                                BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
+                                HotfixManager.GetInstance().IsDisabled())
                             {
                                 // 移除 .dll 副檔名
                                 var fileExtension = ".dll";
                                 var newLength = dllName.Length - fileExtension.Length;
                                 var newDllName = dllName.Substring(0, newLength);
-                                // Editor 或 Simulate 下無需加載, 直接查找獲得 Hotfix 程序集
+                                // 直接查找獲取 Hotfix 程序集
                                 hotfixAsm = System.AppDomain.CurrentDomain.GetAssemblies().First(a => a.GetName().Name == newDllName);
                             }
                             else
@@ -427,7 +445,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                                 await UniTask.SwitchToMainThread();
 #endif
                                 // Unload after load
-                                AssetLoaders.UnloadAsset(dllName);
+                                await AssetLoaders.UnloadAsset(dllName);
                             }
 
                             HotfixManager.GetInstance().AddHotfixAssembly(dllName, hotfixAsm);

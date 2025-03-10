@@ -1,5 +1,53 @@
 # CHANGELOG
 
+## [3.0.0] - 2025-03-11
+- **Hotfixer**
+  - Added the OXGFRAME_HYBRIDCLR_DISABLED symbol, which skips the AOTAssemblies metadata loading process during CheckHotfix, but the initial loading of Hotfix Package and HotfixAssemblies will still be executed. (If HybridCLR functionality is disabled, it is recommended to use this symbol to skip the Hotfix process).
+  - Added the Hotfixers.IsDisabled() method, which checks whether the OXGFRAME_HYBRIDCLR_DISABLED symbol is active.
+- **AssetLoader**
+  - **Others**
+    - Added methods to encrypt/decrypt using byte[].
+    - Implemented IWebDecryptionServices interface for WebGL.
+	- Upgraded YooAsset to the latest ([2.3.4-preview](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.4-preview)), with WebGL supporting multi-package development for versions 2.2.x and above.
+  - **PatchLauncher**
+    - Added SecuredStringType options (None, XORWithDummy, AES) for clearer explanation, replacing the previous bool SecuredString. It is recommended to default to None or XORWithDummy (for less GC).
+    - Added PlayMode - WebGLRemoteMode, which deploys CDN remote resources and configuration files, requests remote resources, and compares the remote App version.
+    - Adjusted PlayMode - WebGLMode to not require deploying CDN resources and configuration files, only requesting resources and the App version from StreamingAssets.
+    - Optimized and adjusted the implementation of SecuredString.
+  - **AssetPatcher**
+    - Added builtinpkgcatalog.json to check for built-in packages and to decide whether to use the file system for built-in queries. The builtinpkgcatalog.json will be automatically generated during OnPreprocessBuild (due to Yoo using a new file system, differing from the previous built-in query method).
+    - Added UnloadPackage method to destroy and release the package from memory, while the sandbox cache files remain.
+    - Added UnloadPackageAndClearCacheFiles method, with a destroyPackage parameter to choose whether to destroy and release the package from memory.
+    - Added GetBuiltinRootPath method to retrieve the root path for built-in resources.
+    - Changed Release to be processed asynchronously.
+    - Removed the BuiltinQueryMode option from PatchLauncher, as the new version of Yoo supports Built-in Query by default.
+    - Removed PatchSetting.yooSettings, and switched to using YooAssetBridge.
+  - **AssetLoaders**
+    - Adjusted Unload to be processed asynchronously.
+    - Adjusted Release to be processed asynchronously.
+- **CoreFrame**
+  - **UIFrame**
+    - Optimized the generation method of UIMaskPool and UIFreezePool, creating only one object when the pool is insufficient.
+    - Optimized UIMaskPool and UIFreezePool to handle the maximum number of objects in the pool and avoid pool expansion.
+  - **USFrame**
+    - Adjusted LoadSceneAsync and all related methods, added LocalPhysicsMode parameter.
+- **MediaFrame**
+  - **VideoFrame**
+    - Added GetPlaySpeed() method.
+    - Fixed the issue where playbackSpeed wasn't updated synchronously.
+- **GSIFrame**
+  - Renamed GSIManager's Start and Update methods (Obsolete), now using DriveStart and DriveUpdate instead.
+- **NetFrame**
+  - Added NetFrames API methods.
+  - Added MirrorNetworking [TCP](https://github.com/MirrorNetworking/Telepathy), [KCP2k](https://github.com/MirrorNetworking/kcp2k) libs.
+  - Added KCP (Reliable UDP) -> KcpNetProvider based on MirrorNetworking KCP2k (Reference: [F8Framework](https://github.com/TippingGame/F8Framework)).
+  - Adjusted TCP to use MirrorNetworking.Telepathy (Reference: [F8Framework](https://github.com/TippingGame/F8Framework)).
+  - Renamed WebsocketNetProvider to WebSocketNetProvider.
+  - Renamed WebsocketNetOption to WebSocketNetOption.
+  - Upgraded [UnityWebSocket](https://github.com/psygames/UnityWebSocket) to v2.8.6.
+- Updated all Samples.
+- Upgraded SBP dependencies to the latest (2.2.11).
+
 ## [2.14.1] - 2025-03-07
 - Modified video loading preparation to avoid blocking caused by "wait until".
 

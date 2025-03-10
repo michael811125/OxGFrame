@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace YooAsset
 {
-    public sealed class AssetHandle : HandleBase, IDisposable
+    public sealed class AssetHandle : HandleBase
     {
         private System.Action<AssetHandle> _callback;
 
-        internal AssetHandle(ProviderBase provider) : base(provider)
+        internal AssetHandle(ProviderOperation provider) : base(provider)
         {
         }
         internal override void InvokeCallback()
@@ -46,22 +44,6 @@ namespace YooAsset
             if (IsValidWithWarning == false)
                 return;
             Provider.WaitForAsyncComplete();
-        }
-
-        /// <summary>
-        /// 释放资源句柄
-        /// </summary>
-        public void Release()
-        {
-            this.ReleaseInternal();
-        }
-
-        /// <summary>
-        /// 释放资源句柄
-        /// </summary>
-        public void Dispose()
-        {
-            this.ReleaseInternal();
         }
 
 
@@ -116,25 +98,25 @@ namespace YooAsset
         /// <summary>
         /// 异步初始化游戏对象
         /// </summary>
-        public InstantiateOperation InstantiateAsync()
+        public InstantiateOperation InstantiateAsync(bool actived = true)
         {
-            return InstantiateAsyncInternal(false, Vector3.zero, Quaternion.identity, null, false);
+            return InstantiateAsyncInternal(false, Vector3.zero, Quaternion.identity, null, false, actived);
         }
-        public InstantiateOperation InstantiateAsync(Transform parent)
+        public InstantiateOperation InstantiateAsync(Transform parent, bool actived = true)
         {
-            return InstantiateAsyncInternal(false, Vector3.zero, Quaternion.identity, parent, false);
+            return InstantiateAsyncInternal(false, Vector3.zero, Quaternion.identity, parent, false, actived);
         }
-        public InstantiateOperation InstantiateAsync(Transform parent, bool worldPositionStays)
+        public InstantiateOperation InstantiateAsync(Transform parent, bool worldPositionStays, bool actived = true)
         {
-            return InstantiateAsyncInternal(false, Vector3.zero, Quaternion.identity, parent, worldPositionStays);
+            return InstantiateAsyncInternal(false, Vector3.zero, Quaternion.identity, parent, worldPositionStays, actived);
         }
-        public InstantiateOperation InstantiateAsync(Vector3 position, Quaternion rotation)
+        public InstantiateOperation InstantiateAsync(Vector3 position, Quaternion rotation, bool actived = true)
         {
-            return InstantiateAsyncInternal(true, position, rotation, null, false);
+            return InstantiateAsyncInternal(true, position, rotation, null, false, actived);
         }
-        public InstantiateOperation InstantiateAsync(Vector3 position, Quaternion rotation, Transform parent)
+        public InstantiateOperation InstantiateAsync(Vector3 position, Quaternion rotation, Transform parent, bool actived = true)
         {
-            return InstantiateAsyncInternal(true, position, rotation, parent, false);
+            return InstantiateAsyncInternal(true, position, rotation, parent, false, actived);
         }
 
         private GameObject InstantiateSyncInternal(bool setPositionAndRotation, Vector3 position, Quaternion rotation, Transform parent, bool worldPositionStays)
@@ -146,10 +128,10 @@ namespace YooAsset
 
             return InstantiateOperation.InstantiateInternal(Provider.AssetObject, setPositionAndRotation, position, rotation, parent, worldPositionStays);
         }
-        private InstantiateOperation InstantiateAsyncInternal(bool setPositionAndRotation, Vector3 position, Quaternion rotation, Transform parent, bool worldPositionStays)
+        private InstantiateOperation InstantiateAsyncInternal(bool setPositionAndRotation, Vector3 position, Quaternion rotation, Transform parent, bool worldPositionStays, bool actived)
         {
             string packageName = GetAssetInfo().PackageName;
-            InstantiateOperation operation = new InstantiateOperation(this, setPositionAndRotation, position, rotation, parent, worldPositionStays);
+            InstantiateOperation operation = new InstantiateOperation(this, setPositionAndRotation, position, rotation, parent, worldPositionStays, actived);
             OperationSystem.StartOperation(packageName, operation);
             return operation;
         }

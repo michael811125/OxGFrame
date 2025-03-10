@@ -15,7 +15,8 @@ namespace OxGFrame.AssetLoader.Editor
         private static BundleUrlConfigGeneratorWindow _instance = null;
         internal static BundleUrlConfigGeneratorWindow GetInstance()
         {
-            if (_instance == null) _instance = GetWindow<BundleUrlConfigGeneratorWindow>();
+            if (_instance == null)
+                _instance = GetWindow<BundleUrlConfigGeneratorWindow>();
             return _instance;
         }
 

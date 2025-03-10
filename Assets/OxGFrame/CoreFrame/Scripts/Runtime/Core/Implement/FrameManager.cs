@@ -137,21 +137,24 @@ namespace OxGFrame.CoreFrame
 
         private void Update()
         {
-            if (!this.enabledUpdate) return;
+            if (!this.enabledUpdate)
+                return;
             _dt = this.ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
             this.DriveUpdates(UpdateType.Update);
         }
 
         private void FixedUpdate()
         {
-            if (!this.enabledFixedUpdate) return;
+            if (!this.enabledFixedUpdate)
+                return;
             _fdt = this.ignoreTimeScale ? Time.fixedUnscaledDeltaTime : Time.fixedDeltaTime;
             this.DriveUpdates(UpdateType.FixedUpdate);
         }
 
         private void LateUpdate()
         {
-            if (!this.enabledLateUpdate) return;
+            if (!this.enabledLateUpdate)
+                return;
             _dt = this.ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
             this.DriveUpdates(UpdateType.LateUpdate);
         }
@@ -207,7 +210,8 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public bool HasInLoadingFlags(string assetName)
         {
-            if (string.IsNullOrEmpty(assetName)) return false;
+            if (string.IsNullOrEmpty(assetName))
+                return false;
             return this._loadingFlags.Contains(assetName);
         }
 
@@ -218,7 +222,8 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public bool HasStackInAllCache(string assetName)
         {
-            if (string.IsNullOrEmpty(assetName)) return false;
+            if (string.IsNullOrEmpty(assetName))
+                return false;
             return this._dictAllCache.ContainsKey(assetName);
         }
 
@@ -229,7 +234,8 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         protected T PeekStackFromAllCache(string assetName)
         {
-            if (string.IsNullOrEmpty(assetName)) return null;
+            if (string.IsNullOrEmpty(assetName))
+                return null;
 
             FrameStack<T> stack = this.GetStackFromAllCache(assetName);
             return stack?.Peek();
@@ -242,7 +248,8 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         protected FrameStack<T> GetStackFromAllCache(string assetName)
         {
-            if (string.IsNullOrEmpty(assetName)) return null;
+            if (string.IsNullOrEmpty(assetName))
+                return null;
 
             FrameStack<T> stack = null;
             if (this.HasStackInAllCache(assetName)) stack = this._dictAllCache[assetName];
@@ -269,7 +276,8 @@ namespace OxGFrame.CoreFrame
         public U[] GetFrameComponents<U>(string assetName) where U : T
         {
             var stack = this.GetStackFromAllCache(assetName);
-            if (stack != null) return (U[])this.GetStackFromAllCache(assetName).cache.ToArray();
+            if (stack != null)
+                return (U[])this.GetStackFromAllCache(assetName).cache.ToArray();
             return new U[] { };
         }
 
@@ -281,7 +289,8 @@ namespace OxGFrame.CoreFrame
         public bool CheckIsShowing(string assetName)
         {
             T fBase = this.PeekStackFromAllCache(assetName);
-            if (fBase == null) return false;
+            if (fBase == null)
+                return false;
             return fBase.gameObject.activeSelf;
         }
 
@@ -291,7 +300,8 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public bool CheckIsShowing(T fBase)
         {
-            if (fBase == null) return false;
+            if (fBase == null)
+                return false;
             return fBase.gameObject.activeSelf;
         }
 
@@ -303,7 +313,8 @@ namespace OxGFrame.CoreFrame
         public bool CheckIsHiding(string assetName)
         {
             T fBase = this.PeekStackFromAllCache(assetName);
-            if (fBase == null) return false;
+            if (fBase == null)
+                return false;
             return fBase.isHidden;
         }
 
@@ -314,7 +325,8 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public bool CheckIsHiding(T fBase)
         {
-            if (fBase == null) return false;
+            if (fBase == null)
+                return false;
             return fBase.isHidden;
         }
 
@@ -534,7 +546,8 @@ namespace OxGFrame.CoreFrame
         /// </summary>
         protected void CloseAwaiting(string assetName)
         {
-            if (!string.IsNullOrEmpty(assetName)) UIFrame.UIManager.GetInstance().Close(assetName, true);
+            if (!string.IsNullOrEmpty(assetName))
+                UIFrame.UIManager.GetInstance().Close(assetName, true);
         }
 
         #region Show
@@ -550,7 +563,6 @@ namespace OxGFrame.CoreFrame
         public async virtual UniTask<T> Show(int groupId, string packageName, string assetName, object obj = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
         {
             await this.ShowAwaiting(groupId, packageName, awaitingUIAssetName, priority);
-
             return default;
         }
         #endregion
@@ -615,26 +627,30 @@ namespace OxGFrame.CoreFrame
             fBase.Dispose();
 
             // 刪除物件
-            if (!fBase.gameObject.IsDestroyed()) Destroy(fBase.gameObject);
+            if (!fBase.gameObject.IsDestroyed())
+                Destroy(fBase.gameObject);
 
             // 取出柱列緩存
             FrameStack<T> stack = this.GetStackFromAllCache(assetName);
             stack.Pop();
 
             // 允許多實例 & 預加載模式, 需要再額外 Unload 1 次 (因為預加載額外進行多 1 次的 Cacher 加載, 所以需要校正 Cacher Ref Count)
-            if (stack.allowInstantiate && stack.isPreloadMode && stack.Count() == 0)
+            if (stack.allowInstantiate &&
+                stack.isPreloadMode &&
+                stack.Count() == 0)
             {
                 // 額外卸載
-                AssetLoaders.UnloadAsset(assetName);
+                AssetLoaders.UnloadAsset(assetName).Forget();
 
                 Logging.Print<Logger>($"<color=#ffa2a3>[FrameManager] Extra Unload Asset: {assetName}</color>");
             }
 
             // 柱列為空, 則刪除資源緩存
-            if (stack.Count() == 0) this._dictAllCache.Remove(assetName);
+            if (stack.Count() == 0)
+                this._dictAllCache.Remove(assetName);
 
             // 卸載
-            AssetLoaders.UnloadAsset(assetName);
+            AssetLoaders.UnloadAsset(assetName).Forget();
 
             Logging.Print<Logger>($"<color=#ffb6db>[FrameManager] Unload Asset: {assetName}</color>");
 
@@ -744,7 +760,8 @@ namespace OxGFrame.CoreFrame
                 {
                     try
                     {
-                        if (pInfo.Name == "name") continue;
+                        if (pInfo.Name == "name")
+                            continue;
                         pInfo.SetValue(comp, pInfo.GetValue(other, null), null);
                     }
                     catch

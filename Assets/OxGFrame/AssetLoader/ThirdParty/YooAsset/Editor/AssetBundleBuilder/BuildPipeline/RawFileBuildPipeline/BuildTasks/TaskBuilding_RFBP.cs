@@ -10,14 +10,8 @@ namespace YooAsset.Editor
         void IBuildTask.Run(BuildContext context)
         {
             var buildParametersContext = context.GetContextObject<BuildParametersContext>();
-            var buildParameters = context.GetContextObject<BuildParametersContext>();
             var buildMapContext = context.GetContextObject<BuildMapContext>();
-
-            var buildMode = buildParameters.Parameters.BuildMode;
-            if (buildMode == EBuildMode.ForceRebuild || buildMode == EBuildMode.IncrementalBuild)
-            {
-                CopyRawBundle(buildMapContext, buildParametersContext);
-            }
+            CopyRawBundle(buildMapContext, buildParametersContext);
         }
 
         /// <summary>
@@ -29,7 +23,7 @@ namespace YooAsset.Editor
             foreach (var bundleInfo in buildMapContext.Collection)
             {
                 string dest = $"{pipelineOutputDirectory}/{bundleInfo.BundleName}";
-                foreach (var buildAsset in bundleInfo.MainAssets)
+                foreach (var buildAsset in bundleInfo.AllPackAssets)
                 {
                     EditorTools.CopyFile(buildAsset.AssetInfo.AssetPath, dest, true);
                 }

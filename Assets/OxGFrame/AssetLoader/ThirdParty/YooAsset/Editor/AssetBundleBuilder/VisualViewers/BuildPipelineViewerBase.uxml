@@ -2,7 +2,8 @@
     <ui:VisualElement name="BuildContainer">
         <ui:TextField picking-mode="Ignore" label="Build Output" name="BuildOutput" />
         <ui:TextField picking-mode="Ignore" label="Build Version" name="BuildVersion" />
-        <ui:VisualElement name="BuildModeContainer" style="height: 24px;" />
+        <ui:Toggle label="Clear Build Cache" name="ClearBuildCache" />
+        <ui:Toggle label="Use Asset Depend DB" name="UseAssetDependency" />
         <ui:VisualElement name="EncryptionContainer" style="height: 24px;" />
         <uie:EnumField label="Compression" value="Center" name="Compression" />
         <uie:EnumField label="File Name Style" value="Center" name="FileNameStyle" />

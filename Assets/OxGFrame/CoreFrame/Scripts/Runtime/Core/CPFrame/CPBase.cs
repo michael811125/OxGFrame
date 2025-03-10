@@ -82,7 +82,7 @@ namespace OxGFrame.CoreFrame.CPFrame
         {
             this.OnRelease();
             this.Dispose();
-            AssetLoaders.UnloadAsset(this.assetName);
+            AssetLoaders.UnloadAsset(this.assetName).Forget();
         }
 
         public override void OnCreate() { }

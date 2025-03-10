@@ -9,7 +9,7 @@ namespace YooAsset.Editor
         public BuildResult Run(BuildParameters buildParameters, bool enableLog)
         {
             if (buildParameters is BuiltinBuildParameters)
-            {
+            {              
                 AssetBundleBuilder builder = new AssetBundleBuilder();
                 return builder.Run(buildParameters, GetDefaultBuildPipeline(), enableLog);
             }

@@ -36,7 +36,7 @@ namespace OxGFrame.Hotfixer
         }
 
         /// <summary>
-        /// Get hotfix assembly
+        /// Get hotfix assembly (included .dll suffix)
         /// </summary>
         /// <param name="assemblyName"></param>
         /// <returns></returns>
@@ -52,6 +52,15 @@ namespace OxGFrame.Hotfixer
         public static bool IsDone()
         {
             return HotfixManager.GetInstance().IsDone();
+        }
+
+        /// <summary>
+        /// Return whether Hotfix is disabled
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsDisabled()
+        {
+            return HotfixManager.GetInstance().IsDisabled();
         }
     }
 }

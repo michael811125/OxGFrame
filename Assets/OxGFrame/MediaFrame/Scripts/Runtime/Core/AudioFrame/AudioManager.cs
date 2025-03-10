@@ -43,7 +43,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 lock (_locker)
                 {
                     _instance = FindObjectOfType<AudioManager>();
-                    if (_instance == null) Logging.PrintWarning<Logger>("<color=#FF0000>Cannot find 【AudioManager Component】, Please to check your 【AudioManager GameObject】.</color>");
+                    if (_instance == null)
+                        Logging.PrintWarning<Logger>("<color=#FF0000>Cannot find 【AudioManager Component】, Please to check your 【AudioManager GameObject】.</color>");
                 }
             }
             return _instance;
@@ -56,11 +57,13 @@ namespace OxGFrame.MediaFrame.AudioFrame
             if (this.gameObject.transform.root.name == newName)
             {
                 var container = GameObject.Find(nameof(OxGFrame));
-                if (container == null) container = new GameObject(nameof(OxGFrame));
+                if (container == null)
+                    container = new GameObject(nameof(OxGFrame));
                 this.gameObject.transform.SetParent(container.transform);
                 DontDestroyOnLoad(container);
             }
-            else DontDestroyOnLoad(this.gameObject.transform.root);
+            else
+                DontDestroyOnLoad(this.gameObject.transform.root);
 
             foreach (var nodeName in Enum.GetNames(typeof(SoundType)))
             {
@@ -85,11 +88,10 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         protected override void SetParent(AudioBase audBase, Transform parent)
         {
-            if (parent != null) audBase.gameObject.transform.SetParent(parent);
+            if (parent != null)
+                audBase.gameObject.transform.SetParent(parent);
             else if (this._dictNodes.TryGetValue(audBase.audioType.soundType.ToString(), out GameObject goNode))
-            {
                 audBase.gameObject.transform.SetParent(goNode.transform);
-            }
         }
 
         #region Cacher
@@ -152,13 +154,15 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 if (this._arcAudios != null)
                 {
                     AudioClip audioClip = this._arcAudios.Get(url);
-                    if (audioClip != null) return audioClip;
+                    if (audioClip != null)
+                        return audioClip;
                 }
                 // LRUCache
                 else if (this._lruAudios != null)
                 {
                     AudioClip audioClip = this._lruAudios.Get(url);
-                    if (audioClip != null) return audioClip;
+                    if (audioClip != null)
+                        return audioClip;
                 }
             }
 
@@ -168,8 +172,10 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 request = UnityWebRequestMultimedia.GetAudioClip(url, audioType);
                 ((DownloadHandlerAudioClip)request.downloadHandler).streamAudio = true;
 
-                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
-                else await request.SendWebRequest();
+                if (cts != null)
+                    await request.SendWebRequest().WithCancellation(cts.Token);
+                else
+                    await request.SendWebRequest();
 
                 if (request.result == UnityWebRequest.Result.ProtocolError ||
                     request.result == UnityWebRequest.Result.ConnectionError)
@@ -244,10 +250,9 @@ namespace OxGFrame.MediaFrame.AudioFrame
         {
             string key = $"{mixerName},{expParam}"; // 以 , 號隔開 (之後Replace也需要+上 , 號)
             if (!this._dictMixerExpParams.ContainsKey(key))
-            {
                 this._dictMixerExpParams.Add(key, val);
-            }
-            else this._dictMixerExpParams[key] = val;
+            else
+                this._dictMixerExpParams[key] = val;
         }
 
         /// <summary>
@@ -280,7 +285,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <param name="mixer"></param>
         public void AutoClearMixerExposedParams(AudioMixer mixer)
         {
-            if (this._dictMixerExpParams.Count == 0) return;
+            if (this._dictMixerExpParams.Count == 0)
+                return;
 
             foreach (var key in this._dictMixerExpParams.Keys)
             {
@@ -295,7 +301,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <param name="mixer"></param>
         public void AutoRestoreMixerExposedParams(AudioMixer mixer)
         {
-            if (this._dictMixerExpParams.Count == 0) return;
+            if (this._dictMixerExpParams.Count == 0)
+                return;
 
             foreach (var expParam in this._dictMixerExpParams)
             {
@@ -312,7 +319,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         public void SetMixerSnapshot(AudioMixer mixer, string snapshotName)
         {
             var snapshot = mixer.FindSnapshot(snapshotName);
-            if (snapshot == null) return;
+            if (snapshot == null)
+                return;
 
             snapshot.TransitionTo(0.02f);
         }
@@ -355,11 +363,14 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <returns></returns>
         public AudioMixer GetMixerByName(string mixerName)
         {
-            if (string.IsNullOrEmpty(mixerName) || this._listMixer.Count == 0) return null;
+            if (string.IsNullOrEmpty(mixerName) ||
+                this._listMixer.Count == 0)
+                return null;
 
             foreach (var mixer in this._listMixer)
             {
-                if (mixer.name == mixerName) return mixer;
+                if (mixer.name == mixerName)
+                    return mixer;
             }
 
             return null;
@@ -375,7 +386,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <returns></returns>
         private void _Play(AudioBase audBase, int loops, float volume)
         {
-            if (audBase == null) return;
+            if (audBase == null)
+                return;
 
             // 處理長期沒有被 Unload 的 Audio
             if (!audBase.onDestroyAndUnload)
@@ -395,7 +407,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <returns></returns>
         public override async UniTask<AudioBase[]> Play(string packageName, string assetName, UnityEngine.Object sourceClip, Transform parent = null, int loops = 0, float volume = 0f)
         {
-            if (string.IsNullOrEmpty(assetName)) return new AudioBase[] { null };
+            if (string.IsNullOrEmpty(assetName))
+                return new AudioBase[] { null };
 
             AudioBase[] audBases = this.GetMediaComponents<AudioBase>(assetName);
             bool isResume = false;
@@ -412,14 +425,17 @@ namespace OxGFrame.MediaFrame.AudioFrame
                     }
                 }
 
-                if (!main.IsPlaying() || main.IsPaused()) isResume = true;
+                if (!main.IsPlaying() ||
+                    main.IsPaused())
+                    isResume = true;
             }
 
             if (!isResume)
             {
                 GameObject go = await this.LoadAssetIntoCache(packageName, assetName);
                 Transform spawnParent = null;
-                if (parent == null) spawnParent = this.transform;
+                if (parent == null)
+                    spawnParent = this.transform;
                 AudioBase audBase = await this.CloneAsset<AudioBase>(assetName, go, sourceClip, parent, spawnParent);
                 if (audBase == null)
                 {
@@ -435,7 +451,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
             {
                 for (int i = 0; i < audBases.Length; i++)
                 {
-                    if (!audBases[i].IsPlaying()) this._Play(audBases[i], 0, 0f);
+                    if (!audBases[i].IsPlaying())
+                        this._Play(audBases[i], 0, 0f);
                 }
 
                 return audBases;
@@ -448,11 +465,13 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <returns></returns>
         public override void ResumeAll()
         {
-            if (this._listAllCache.Count == 0) return;
+            if (this._listAllCache.Count == 0)
+                return;
 
             foreach (var audBase in this._listAllCache)
             {
-                if (audBase.IsPaused()) this._Play(audBase, 0, 0f);
+                if (audBase.IsPaused())
+                    this._Play(audBase, 0, 0f);
             }
         }
         #endregion
@@ -465,7 +484,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <param name="forceDestroy"></param>
         private void _Stop(AudioBase audBase, bool disabledEndEvent = false, bool forceDestroy = false)
         {
-            if (audBase == null) return;
+            if (audBase == null)
+                return;
 
             this.ExitAndStop(audBase, false, disabledEndEvent);
 
@@ -474,8 +494,10 @@ namespace OxGFrame.MediaFrame.AudioFrame
             // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
             if (audBase.isPrepared)
             {
-                if (forceDestroy) this.Destroy(audBase);
-                else if (audBase.onStopAndDestroy) this.Destroy(audBase);
+                if (forceDestroy)
+                    this.Destroy(audBase);
+                else if (audBase.onStopAndDestroy)
+                    this.Destroy(audBase);
             }
         }
 
@@ -497,7 +519,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         public override void Stop(string assetName, bool disabledEndEvent = false, bool forceDestroy = false)
         {
             AudioBase[] audBases = this.GetMediaComponents<AudioBase>(assetName);
-            if (audBases.Length == 0) return;
+            if (audBases.Length == 0)
+                return;
 
             foreach (var audBase in audBases)
             {
@@ -512,7 +535,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <returns></returns>
         public override void StopAll(bool disabledEndEvent = false, bool forceDestroy = false)
         {
-            if (this._listAllCache.Count == 0) return;
+            if (this._listAllCache.Count == 0)
+                return;
 
             foreach (var audBase in this._listAllCache.ToArray())
             {
@@ -528,7 +552,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <param name="audBase"></param>
         private void _Pause(AudioBase audBase)
         {
-            if (audBase == null) return;
+            if (audBase == null)
+                return;
 
             this.ExitAndStop(audBase, true, false);
 
@@ -542,7 +567,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         public override void Pause(string assetName)
         {
             AudioBase[] audBases = this.GetMediaComponents<AudioBase>(assetName);
-            if (audBases.Length == 0) return;
+            if (audBases.Length == 0)
+                return;
 
             foreach (var audBase in audBases)
             {
@@ -556,7 +582,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <returns></returns>
         public override void PauseAll()
         {
-            if (this._listAllCache.Count == 0) return;
+            if (this._listAllCache.Count == 0)
+                return;
 
             foreach (var audBase in this._listAllCache)
             {
@@ -567,7 +594,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         protected override void LoadAndPlay(AudioBase audBase, int loops, float volume)
         {
-            if (audBase == null) return;
+            if (audBase == null)
+                return;
             audBase.Play(loops, volume);
         }
 
@@ -575,10 +603,12 @@ namespace OxGFrame.MediaFrame.AudioFrame
         {
             if (!pause)
             {
-                if (disabledEndEvent) audBase.SetEndEvent(null);
+                if (disabledEndEvent)
+                    audBase.SetEndEvent(null);
                 audBase.Stop();
             }
-            else audBase.Pause();
+            else
+                audBase.Pause();
         }
     }
 }

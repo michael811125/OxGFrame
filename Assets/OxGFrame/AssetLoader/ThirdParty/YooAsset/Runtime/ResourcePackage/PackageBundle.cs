@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace YooAsset
 {
@@ -43,32 +44,33 @@ namespace YooAsset
 
         /// <summary>
         /// 依赖的资源包ID集合
+        /// 注意：引擎层构建查询结果
         /// </summary>
-        public int[] DependIDs;
-
-
-        /// <summary>
-        /// 所属的包裹名称
-        /// </summary>
-        public string PackageName { private set; get; }
+        public int[] DependBundleIDs;
 
         /// <summary>
-        /// 所属的构建管线
+        /// 资源包GUID
         /// </summary>
-        public string Buildpipeline { private set; get; }
-
-        /// <summary>
-        /// 缓存GUID
-        /// </summary>
-        public string CacheGUID
+        public string BundleGUID
         {
             get { return FileHash; }
         }
 
         /// <summary>
-        /// 文件名称
+        /// 资源包类型
         /// </summary>
-        private string _fileName;
+        public int BundleType
+        {
+            get
+            {
+                return _bundleType;
+            }
+        }
+        private int _bundleType;
+
+        /// <summary>
+        /// 文件名称
+        /// </summary>  
         public string FileName
         {
             get
@@ -78,11 +80,11 @@ namespace YooAsset
                 return _fileName;
             }
         }
+        private string _fileName;
 
         /// <summary>
         /// 文件后缀名
         /// </summary>
-        private string _fileExtension;
         public string FileExtension
         {
             get
@@ -92,6 +94,21 @@ namespace YooAsset
                 return _fileExtension;
             }
         }
+        private string _fileExtension;
+
+        /// <summary>
+        /// 包含的主资源集合
+        /// </summary>
+        [NonSerialized]
+        public readonly List<PackageAsset> IncludeMainAssets = new List<PackageAsset>(10);
+
+        /// <summary>
+        /// 引用该资源包的资源包列表
+        /// 说明：谁引用了该资源包
+        /// </summary>
+        [NonSerialized]
+        public readonly List<int> ReferenceBundleIDs = new List<int>(10);
+        private readonly HashSet<int> _referenceBundleIDs = new HashSet<int>();
 
 
         public PackageBundle()
@@ -99,14 +116,27 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 解析资源包
+        /// 初始化资源包
         /// </summary>
-        public void ParseBundle(PackageManifest manifest)
+        public void InitBundle(PackageManifest manifest)
         {
-            PackageName = manifest.PackageName;
-            Buildpipeline = manifest.BuildPipeline;
+            _mainfest = manifest;
+            _bundleType = manifest.BuildBundleType;
             _fileExtension = ManifestTools.GetRemoteBundleFileExtension(BundleName);
             _fileName = ManifestTools.GetRemoteBundleFileName(manifest.OutputNameStyle, BundleName, _fileExtension, FileHash);
+        }
+
+        /// <summary>
+        /// 添加引用该资源包的资源包ID
+        /// 说明：谁引用了该资源包
+        /// </summary>
+        public void AddReferenceBundleID(int bundleID)
+        {
+            if (_referenceBundleIDs.Contains(bundleID) == false)
+            {
+                _referenceBundleIDs.Add(bundleID);
+                ReferenceBundleIDs.Add(bundleID);
+            }
         }
 
         /// <summary>
@@ -148,5 +178,23 @@ namespace YooAsset
 
             return false;
         }
+
+        #region 调试信息
+        private PackageManifest _mainfest;
+        private List<string> _debugReferenceBundles;
+        public List<string> GetDebugReferenceBundles()
+        {
+            if (_debugReferenceBundles == null)
+            {
+                _debugReferenceBundles = new List<string>(ReferenceBundleIDs.Count);
+                foreach (int bundleID in ReferenceBundleIDs)
+                {
+                    var packageBundle = _mainfest.BundleList[bundleID];
+                    _debugReferenceBundles.Add(packageBundle.BundleName);
+                }
+            }
+            return _debugReferenceBundles;
+        }
+        #endregion
     }
 }

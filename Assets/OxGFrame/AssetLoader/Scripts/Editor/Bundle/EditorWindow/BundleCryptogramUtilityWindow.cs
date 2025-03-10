@@ -14,7 +14,8 @@ namespace OxGFrame.AssetLoader.Editor
         private static BundleCryptogramUtilityWindow _instance = null;
         internal static BundleCryptogramUtilityWindow GetInstance()
         {
-            if (_instance == null) _instance = GetWindow<BundleCryptogramUtilityWindow>();
+            if (_instance == null)
+                _instance = GetWindow<BundleCryptogramUtilityWindow>();
             return _instance;
         }
 

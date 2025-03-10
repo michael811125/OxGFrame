@@ -1,10 +1,10 @@
 namespace OxGFrame.NetFrame
 {
-    public class WebsocketNetOption : NetOption
+    public class WebSocketNetOption : NetOption
     {
         public string url { get; set; }
 
-        public WebsocketNetOption(string url, int autoReconnectCount = -1) : base(autoReconnectCount)
+        public WebSocketNetOption(string url, int autoReconnectCount = -1) : base(autoReconnectCount)
         {
             this.url = url;
         }

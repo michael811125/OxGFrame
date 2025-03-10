@@ -31,7 +31,8 @@ namespace OxGFrame.AssetLoader.Bundle
             EditorSimulateMode,
             OfflineMode,
             HostMode,
-            WebGLMode
+            WebGLMode,
+            WebGLRemoteMode
         }
 
         public enum BuildMode
@@ -39,13 +40,6 @@ namespace OxGFrame.AssetLoader.Bundle
             BuiltinBuildPipeline = 1,
             ScriptableBuildPipeline = 0,
             RawFileBuildPipeline = 2
-        }
-
-        public enum BuiltinQueryMode
-        {
-            WebRequest,
-            BuiltinFileManifest,
-            BuiltinFileManifestWithCRC
         }
 
         public class CryptogramType
@@ -125,15 +119,16 @@ namespace OxGFrame.AssetLoader.Bundle
         public static uint breakpointFileSizeThreshold = 20 * 1 << 20;
 
         /// <summary>
-        /// 查找內置資源方式
+        /// 解密 Key
+        /// <para> [NONE] </para>
+        /// <para> [OFFSET, dummySize] </para>
+        /// <para> [XOR, key] </para>
+        /// <para> [HT2XOR, hKey, tKey, jKey] </para>
+        /// <para> [HT2XORPlus, hKey, tKey, j1Key, j2key] </para>
+        /// <para> [AES, key, iv] </para>
         /// </summary>
-        public static BuiltinQueryMode builtinQueryMode = BuiltinQueryMode.WebRequest;
-
-        /// <summary>
-        /// 解密 Key, [NONE], [OFFSET, dummySize], [XOR, key], [HT2XOR, hKey, tKey, jKey], [AES, key, iv]
-        /// </summary>
-        private static SecureString[] _decryptArgs = null;
-        internal static SecureString[] decryptArgs => _decryptArgs;
+        private static SecuredString[] _decryptArgs = null;
+        internal static SecuredString[] decryptArgs => _decryptArgs;
 
         /// <summary>
         /// Init decryption args
@@ -142,21 +137,22 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <param name="secured"></param>
         /// <param name="saltSize"></param>
         /// <param name="dummySize"></param>
-        internal static void InitDecryptInfo(string args, bool secured, int saltSize, int dummySize)
+        internal static void InitDecryptInfo(string args, SecuredStringType secured, int saltSize, int dummySize)
         {
             if (_decryptArgs == null)
             {
                 // Check args first, if is none don't need to secure memory
                 bool isNone = args.Substring(0, CryptogramType.NONE.Length).ToUpper().Equals(CryptogramType.NONE);
-                secured = !isNone && secured;
+                if (isNone)
+                    secured = SecuredStringType.None;
 
                 // Parsing decrypt keys
                 string[] decryptKeys = args.Trim().Split(',');
-                _decryptArgs = new SecureString[decryptKeys.Length];
+                _decryptArgs = new SecuredString[decryptKeys.Length];
                 for (int i = 0; i < decryptKeys.Length; i++)
                 {
                     decryptKeys[i] = decryptKeys[i].Trim();
-                    _decryptArgs[i] = new SecureString(decryptKeys[i], secured, saltSize, dummySize);
+                    _decryptArgs[i] = new SecuredString(decryptKeys[i], secured, saltSize, dummySize);
                     decryptKeys[i] = null;
                 }
             }
@@ -165,7 +161,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// Release secure string
         /// </summary>
-        internal static void ReleaseSecureString()
+        internal static void ReleaseSecuredString()
         {
             if (_decryptArgs != null)
                 foreach (var decryptArg in _decryptArgs)
@@ -415,16 +411,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetLocalSandboxRootPath()
         {
-            var yooDefaultFolderName = PatchSetting.yooSettings.DefaultYooFolderName;
-#if UNITY_EDITOR
-            string projectPath = Path.GetDirectoryName(Application.dataPath);
-            projectPath = projectPath.Replace('\\', '/').Replace("\\", "/");
-            return Path.Combine(projectPath, yooDefaultFolderName);
-#elif UNITY_STANDALONE
-            return Path.Combine(Application.dataPath, yooDefaultFolderName);
-#else
-            return Path.Combine(Application.persistentDataPath, yooDefaultFolderName);
-#endif
+            return YooAssetBridge.YooAssetSettingsData.GetYooDefaultCacheRoot();
         }
 
         /// <summary>
@@ -433,9 +420,17 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetLocalSandboxPackagePath(string packageName)
         {
-            var package = PackageManager.GetPackage(packageName);
-            string rootPath = package?.GetPackageSandboxRootDirectory();
+            string rootPath = GetLocalSandboxRootPath();
             return Path.Combine(rootPath, packageName);
+        }
+
+        /// <summary>
+        /// 取得內置資源根目錄
+        /// </summary>
+        /// <returns></returns>
+        public static string GetBuiltinRootPath()
+        {
+            return YooAssetBridge.YooAssetSettingsData.GetYooDefaultBuildinRoot();
         }
 
         /// <summary>
@@ -445,8 +440,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetBuiltinPackagePath(string packageName)
         {
-            var package = PackageManager.GetPackage(packageName);
-            string rootPath = package?.GetPackageBuildinRootDirectory();
+            string rootPath = GetBuiltinRootPath();
             return Path.Combine(rootPath, packageName);
         }
 

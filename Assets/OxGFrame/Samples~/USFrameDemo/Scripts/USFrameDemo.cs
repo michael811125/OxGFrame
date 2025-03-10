@@ -1,4 +1,5 @@
-﻿using OxGFrame.AssetLoader;
+﻿using Cysharp.Threading.Tasks;
+using OxGFrame.AssetLoader;
 using OxGFrame.CoreFrame;
 using System;
 using UnityEngine;
@@ -197,22 +198,22 @@ public class USFrameDemo : MonoBehaviour
 
         if (Keyboard.current.numpad7Key.wasReleasedThisFrame)
         {
-            CoreFrames.USFrame.Unload(true, UnityScene.Bundle.LevelDemo01);
+            CoreFrames.USFrame.Unload(true, UnityScene.Bundle.LevelDemo01).Forget();
         }
 
         if (Keyboard.current.numpad8Key.wasReleasedThisFrame)
         {
-            CoreFrames.USFrame.Unload(true, UnityScene.Bundle.LevelDemo02);
+            CoreFrames.USFrame.Unload(true, UnityScene.Bundle.LevelDemo02).Forget();
         }
 
         if (Keyboard.current.numpad9Key.wasReleasedThisFrame)
         {
-            CoreFrames.USFrame.Unload(false, UnityScene.Build.LevelDemo03);
+            CoreFrames.USFrame.Unload(false, UnityScene.Build.LevelDemo03).Forget();
         }
 
         if (Keyboard.current.numpad0Key.wasReleasedThisFrame)
         {
-            CoreFrames.USFrame.Unload(false, UnityScene.Bundle.LevelDemo03);
+            CoreFrames.USFrame.Unload(false, UnityScene.Bundle.LevelDemo03).Forget();
         }
     }
 }

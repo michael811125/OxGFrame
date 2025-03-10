@@ -17,7 +17,8 @@ namespace OxGFrame.CoreFrame.SRFrame
                 lock (_locker)
                 {
                     _instance = FindObjectOfType(typeof(SRManager)) as SRManager;
-                    if (_instance == null) _instance = new GameObject(nameof(SRManager)).AddComponent<SRManager>();
+                    if (_instance == null)
+                        _instance = new GameObject(nameof(SRManager)).AddComponent<SRManager>();
                 }
             }
             return _instance;
@@ -30,11 +31,13 @@ namespace OxGFrame.CoreFrame.SRFrame
             if (this.gameObject.transform.root.name == newName)
             {
                 var container = GameObject.Find(nameof(OxGFrame));
-                if (container == null) container = new GameObject(nameof(OxGFrame));
+                if (container == null)
+                    container = new GameObject(nameof(OxGFrame));
                 this.gameObject.transform.SetParent(container.transform);
                 DontDestroyOnLoad(container);
             }
-            else DontDestroyOnLoad(this.gameObject.transform.root);
+            else
+                DontDestroyOnLoad(this.gameObject.transform.root);
         }
 
         #region 實作 Loading
@@ -43,12 +46,14 @@ namespace OxGFrame.CoreFrame.SRFrame
             GameObject instPref = Instantiate(srBase.gameObject, (parent != null) ? parent : this.transform);
 
             // 激活檢查, 如果主體 Active 為 false 必須打開
-            if (!instPref.activeSelf) instPref.SetActive(true);
+            if (!instPref.activeSelf)
+                instPref.SetActive(true);
 
             // Replace Name
             instPref.name = instPref.name.Replace("(Clone)", "");
             srBase = instPref.GetComponent<SRBase>();
-            if (srBase == null) return null;
+            if (srBase == null)
+                return null;
 
             addIntoCache?.Invoke(srBase);
 
@@ -79,7 +84,8 @@ namespace OxGFrame.CoreFrame.SRFrame
         {
             if (parent != null)
             {
-                if (parent.gameObject.GetComponent<SRParent>() == null) parent.gameObject.AddComponent<SRParent>();
+                if (parent.gameObject.GetComponent<SRParent>() == null)
+                    parent.gameObject.AddComponent<SRParent>();
                 srBase.gameObject.transform.SetParent(parent);
                 return true;
             }
@@ -94,7 +100,8 @@ namespace OxGFrame.CoreFrame.SRFrame
         #region Show
         public override async UniTask<SRBase> Show(int groupId, string packageName, string assetName, object obj = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
         {
-            if (string.IsNullOrEmpty(assetName)) return null;
+            if (string.IsNullOrEmpty(assetName))
+                return null;
 
             // 先取出 Stack 主體
             var stack = this.GetStackFromAllCache(assetName);
@@ -140,7 +147,9 @@ namespace OxGFrame.CoreFrame.SRFrame
         /// <param name="doAll"></param>
         private void _Close(string assetName, bool disabledPreClose, bool forceDestroy, bool doAll)
         {
-            if (string.IsNullOrEmpty(assetName) || !this.HasStackInAllCache(assetName)) return;
+            if (string.IsNullOrEmpty(assetName) ||
+                !this.HasStackInAllCache(assetName))
+                return;
 
             if (doAll)
             {
@@ -150,22 +159,29 @@ namespace OxGFrame.CoreFrame.SRFrame
                     srBase.SetHidden(false);
                     this.ExitAndHide(srBase, disabledPreClose);
 
-                    if (forceDestroy) this.Destroy(srBase, assetName);
-                    else if (srBase.allowInstantiate) this.Destroy(srBase, assetName);
-                    else if (srBase.onCloseAndDestroy) this.Destroy(srBase, assetName);
+                    if (forceDestroy)
+                        this.Destroy(srBase, assetName);
+                    else if (srBase.allowInstantiate)
+                        this.Destroy(srBase, assetName);
+                    else if (srBase.onCloseAndDestroy)
+                        this.Destroy(srBase, assetName);
                 }
             }
             else
             {
                 SRBase srBase = this.PeekStackFromAllCache(assetName);
-                if (srBase == null) return;
+                if (srBase == null)
+                    return;
 
                 srBase.SetHidden(false);
                 this.ExitAndHide(srBase, disabledPreClose);
 
-                if (forceDestroy) this.Destroy(srBase, assetName);
-                else if (srBase.allowInstantiate) this.Destroy(srBase, assetName);
-                else if (srBase.onCloseAndDestroy) this.Destroy(srBase, assetName);
+                if (forceDestroy)
+                    this.Destroy(srBase, assetName);
+                else if (srBase.allowInstantiate)
+                    this.Destroy(srBase, assetName);
+                else if (srBase.onCloseAndDestroy)
+                    this.Destroy(srBase, assetName);
             }
 
             Logging.Print<Logger>($"<color=#1effad>Close SR: <color=#ffdb1e>{assetName}</color></color>");
@@ -174,25 +190,31 @@ namespace OxGFrame.CoreFrame.SRFrame
         public override void Close(string assetName, bool disabledPreClose = false, bool forceDestroy = false)
         {
             // 如果沒有強制 Destroy + 不是顯示狀態則直接 return
-            if (!forceDestroy && !this.CheckIsShowing(assetName)) return;
+            if (!forceDestroy &&
+                !this.CheckIsShowing(assetName))
+                return;
             this._Close(assetName, disabledPreClose, forceDestroy, false);
         }
 
         public override void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames)
         {
-            if (this._dictAllCache.Count == 0) return;
+            if (this._dictAllCache.Count == 0)
+                return;
 
             foreach (FrameStack<SRBase> stack in this._dictAllCache.Values.ToArray())
             {
                 // prevent preload mode
-                if (stack.Count() == 0) continue;
+                if (stack.Count() == 0)
+                    continue;
 
                 string assetName = stack.assetName;
 
                 var srBase = stack.Peek();
 
                 // 如果 -1 表示不管任何 groupId
-                if (groupId != -1 && srBase.groupId != groupId) continue;
+                if (groupId != -1 &&
+                    srBase.groupId != groupId)
+                    continue;
 
                 // 檢查排除執行的 SR
                 bool checkWithout = false;
@@ -209,13 +231,18 @@ namespace OxGFrame.CoreFrame.SRFrame
                 }
 
                 // 排除在外的 SR 直接略過處理
-                if (checkWithout) continue;
+                if (checkWithout)
+                    continue;
 
                 // 如果沒有強制 Destroy + 不是顯示狀態則直接略過處理
-                if (!forceDestroy && !this.CheckIsShowing(srBase)) continue;
+                if (!forceDestroy &&
+                    !this.CheckIsShowing(srBase))
+                    continue;
 
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
-                if (!forceCloseExcluded && srBase.srSetting.whenCloseAllToSkip) continue;
+                if (!forceCloseExcluded &&
+                    srBase.srSetting.whenCloseAllToSkip)
+                    continue;
 
                 this._Close(assetName, disabledPreClose, forceDestroy, true);
             }
@@ -229,7 +256,9 @@ namespace OxGFrame.CoreFrame.SRFrame
         /// <param name="assetName"></param>
         private void _Reveal(string assetName)
         {
-            if (string.IsNullOrEmpty(assetName) || !this.HasStackInAllCache(assetName)) return;
+            if (string.IsNullOrEmpty(assetName) ||
+                !this.HasStackInAllCache(assetName))
+                return;
 
             if (this.CheckIsShowing(assetName))
             {
@@ -240,7 +269,8 @@ namespace OxGFrame.CoreFrame.SRFrame
             FrameStack<SRBase> stack = this.GetStackFromAllCache(assetName);
             foreach (var srBase in stack.cache)
             {
-                if (!srBase.isHidden) return;
+                if (!srBase.isHidden)
+                    return;
 
                 this.LoadAndDisplay(srBase).Forget();
 
@@ -255,21 +285,26 @@ namespace OxGFrame.CoreFrame.SRFrame
 
         public override void RevealAll(int groupId)
         {
-            if (this._dictAllCache.Count == 0) return;
+            if (this._dictAllCache.Count == 0)
+                return;
 
             foreach (FrameStack<SRBase> stack in this._dictAllCache.Values)
             {
                 // prevent preload mode
-                if (stack.Count() == 0) continue;
+                if (stack.Count() == 0)
+                    continue;
 
                 string assetName = stack.assetName;
 
                 var srBase = stack.Peek();
 
                 // 如果 -1 表示不管任何 groupId
-                if (groupId != -1 && srBase.groupId != groupId) continue;
+                if (groupId != -1 &&
+                    srBase.groupId != groupId)
+                    continue;
 
-                if (!srBase.isHidden) continue;
+                if (!srBase.isHidden)
+                    continue;
 
                 this._Reveal(assetName);
             }
@@ -283,11 +318,14 @@ namespace OxGFrame.CoreFrame.SRFrame
         /// <param name="assetName"></param>
         private void _Hide(string assetName)
         {
-            if (string.IsNullOrEmpty(assetName) || !this.HasStackInAllCache(assetName)) return;
+            if (string.IsNullOrEmpty(assetName) ||
+                !this.HasStackInAllCache(assetName))
+                return;
 
             FrameStack<SRBase> stack = this.GetStackFromAllCache(assetName);
 
-            if (!this.CheckIsShowing(stack.Peek())) return;
+            if (!this.CheckIsShowing(stack.Peek()))
+                return;
 
             foreach (var srBase in stack.cache)
             {
@@ -305,19 +343,23 @@ namespace OxGFrame.CoreFrame.SRFrame
 
         public override void HideAll(int groupId, bool forceHideExcluded = false, params string[] withoutAssetNames)
         {
-            if (this._dictAllCache.Count == 0) return;
+            if (this._dictAllCache.Count == 0)
+                return;
 
             foreach (FrameStack<SRBase> stack in this._dictAllCache.Values)
             {
                 // prevent preload mode
-                if (stack.Count() == 0) continue;
+                if (stack.Count() == 0)
+                    continue;
 
                 string assetName = stack.assetName;
 
                 var srBase = stack.Peek();
 
                 // 如果 -1 表示不管任何 groupId
-                if (groupId != -1 && srBase.groupId != groupId) continue;
+                if (groupId != -1 &&
+                    srBase.groupId != groupId)
+                    continue;
 
                 // 檢查排除執行的 SR
                 bool checkWithout = false;
@@ -334,10 +376,12 @@ namespace OxGFrame.CoreFrame.SRFrame
                 }
 
                 // 排除在外的 SR 直接略過處理
-                if (checkWithout) continue;
+                if (checkWithout)
+                    continue;
 
                 // 如有啟用 HideAll 需跳過開關, 則不列入關閉執行
-                if (!forceHideExcluded && srBase.srSetting.whenHideAllToSkip) continue;
+                if (!forceHideExcluded && srBase.srSetting.whenHideAllToSkip)
+                    continue;
 
                 this._Hide(assetName);
             }

@@ -38,6 +38,11 @@ namespace YooAsset
         public int OutputNameStyle;
 
         /// <summary>
+        /// 构建资源包类型
+        /// </summary>
+        public int BuildBundleType;
+
+        /// <summary>
         /// 构建管线名称
         /// </summary>
         public string BuildPipeline;
@@ -53,6 +58,11 @@ namespace YooAsset
         public string PackageVersion;
 
         /// <summary>
+        /// 资源包裹的备注信息
+        /// </summary>
+        public string PackageNote;
+
+        /// <summary>
         /// 资源列表（主动收集的资源列表）
         /// </summary>
         public List<PackageAsset> AssetList = new List<PackageAsset>();
@@ -61,25 +71,6 @@ namespace YooAsset
         /// 资源包列表
         /// </summary>
         public List<PackageBundle> BundleList = new List<PackageBundle>();
-
-
-        /// <summary>
-        /// 资源包集合（提供BundleName获取PackageBundle）
-        /// </summary>
-        [NonSerialized]
-        public Dictionary<string, PackageBundle> BundleDic1;
-
-        /// <summary>
-        /// 资源包集合（提供FileName获取PackageBundle）
-        /// </summary>
-        [NonSerialized]
-        public Dictionary<string, PackageBundle> BundleDic2;
-
-        /// <summary>
-        /// 资源包集合（提供CacheGUID获取PackageBundle）
-        /// </summary>
-        [NonSerialized]
-        public Dictionary<string, PackageBundle> BundleDic3;
 
         /// <summary>
         /// 资源映射集合（提供AssetPath获取PackageAsset）
@@ -99,6 +90,45 @@ namespace YooAsset
         [NonSerialized]
         public Dictionary<string, string> AssetPathMapping2;
 
+        /// <summary>
+        /// 资源包集合（提供BundleName获取PackageBundle）
+        /// </summary>
+        [NonSerialized]
+        public Dictionary<string, PackageBundle> BundleDic1;
+
+        /// <summary>
+        /// 资源包集合（提供FileName获取PackageBundle）
+        /// </summary>
+        [NonSerialized]
+        public Dictionary<string, PackageBundle> BundleDic2;
+
+        /// <summary>
+        /// 资源包集合（提供BundleGUID获取PackageBundle）
+        /// </summary>
+        [NonSerialized]
+        public Dictionary<string, PackageBundle> BundleDic3;
+
+
+        /// <summary>
+        /// 获取包裹的详细信息
+        /// </summary>
+        public PackageDetails GetPackageDetails()
+        {
+            PackageDetails details = new PackageDetails();
+            details.FileVersion = FileVersion;
+            details.EnableAddressable = EnableAddressable;
+            details.LocationToLower = LocationToLower;
+            details.IncludeAssetGUID = IncludeAssetGUID;
+            details.OutputNameStyle = OutputNameStyle;
+            details.BuildBundleType = BuildBundleType;
+            details.BuildPipeline = BuildPipeline;
+            details.PackageName = PackageName;
+            details.PackageVersion = PackageVersion;
+            details.PackageNote = PackageNote;
+            details.AssetTotalCount = AssetList.Count;
+            details.BundleTotalCount = BundleList.Count;
+            return details;
+        }
 
         /// <summary>
         /// 尝试映射为资源路径
@@ -119,48 +149,41 @@ namespace YooAsset
 
         /// <summary>
         /// 获取主资源包
-        /// 注意：传入的资源路径一定合法有效！
+        /// 注意：传入的资源包ID一定合法有效！
         /// </summary>
-        public PackageBundle GetMainPackageBundle(string assetPath)
+        public PackageBundle GetMainPackageBundle(int bundleID)
         {
-            if (AssetDic.TryGetValue(assetPath, out PackageAsset packageAsset))
+            if (bundleID >= 0 && bundleID < BundleList.Count)
             {
-                int bundleID = packageAsset.BundleID;
-                if (bundleID >= 0 && bundleID < BundleList.Count)
-                {
-                    var packageBundle = BundleList[bundleID];
-                    return packageBundle;
-                }
-                else
-                {
-                    throw new Exception($"Invalid bundle id : {bundleID} Asset path : {assetPath}");
-                }
+                var packageBundle = BundleList[bundleID];
+                return packageBundle;
             }
             else
             {
-                throw new Exception("Should never get here !");
+                throw new Exception($"Invalid bundle id : {bundleID}");
             }
         }
 
         /// <summary>
-        /// 获取资源依赖列表
-        /// 注意：传入的资源路径一定合法有效！
+        /// 获取主资源包
+        /// 注意：传入的资源对象一定合法有效！
         /// </summary>
-        public PackageBundle[] GetAllDependencies(string assetPath)
+        public PackageBundle GetMainPackageBundle(PackageAsset packageAsset)
         {
-            var packageBundle = GetMainPackageBundle(assetPath);
-            List<PackageBundle> result = new List<PackageBundle>(packageBundle.DependIDs.Length);
-            foreach (var dependID in packageBundle.DependIDs)
+            return GetMainPackageBundle(packageAsset.BundleID);
+        }
+
+        /// <summary>
+        /// 获取资源依赖列表
+        /// 注意：传入的资源对象一定合法有效！
+        /// </summary>
+        public PackageBundle[] GetAllDependencies(PackageAsset packageAsset)
+        {
+            List<PackageBundle> result = new List<PackageBundle>(packageAsset.DependBundleIDs.Length);
+            foreach (var dependID in packageAsset.DependBundleIDs)
             {
-                if (dependID >= 0 && dependID < BundleList.Count)
-                {
-                    var dependBundle = BundleList[dependID];
-                    result.Add(dependBundle);
-                }
-                else
-                {
-                    throw new Exception($"Invalid bundle id : {dependID} Asset path : {assetPath}");
-                }
+                var dependBundle = GetMainPackageBundle(dependID);
+                result.Add(dependBundle);
             }
             return result.ToArray();
         }
@@ -192,23 +215,37 @@ namespace YooAsset
         /// <summary>
         /// 尝试获取包裹的资源包
         /// </summary>
-        public bool TryGetPackageBundleByCacheGUID(string cacheGUID, out PackageBundle result)
+        public bool TryGetPackageBundleByBundleGUID(string bundleGUID, out PackageBundle result)
         {
-            return BundleDic3.TryGetValue(cacheGUID, out result);
+            return BundleDic3.TryGetValue(bundleGUID, out result);
         }
 
         /// <summary>
         /// 是否包含资源文件
         /// </summary>
-        public bool IsIncludeBundleFile(string cacheGUID)
+        public bool IsIncludeBundleFile(string bundleGUID)
         {
-            return BundleDic3.ContainsKey(cacheGUID);
+            return BundleDic3.ContainsKey(bundleGUID);
+        }
+
+        /// <summary>
+        /// 获取所有的资源信息
+        /// </summary>
+        public AssetInfo[] GetAllAssetInfos()
+        {
+            List<AssetInfo> result = new List<AssetInfo>(AssetList.Count);
+            foreach (var packageAsset in AssetList)
+            {
+                AssetInfo assetInfo = new AssetInfo(PackageName, packageAsset, null);
+                result.Add(assetInfo);
+            }
+            return result.ToArray();
         }
 
         /// <summary>
         /// 获取资源信息列表
         /// </summary>
-        public AssetInfo[] GetAssetsInfoByTags(string[] tags)
+        public AssetInfo[] GetAssetInfosByTags(string[] tags)
         {
             List<AssetInfo> result = new List<AssetInfo>(100);
             foreach (var packageAsset in AssetList)
@@ -318,25 +355,6 @@ namespace YooAsset
             }
         }
 
-        /// <summary>
-        /// 获取资源包内的主资源列表
-        /// </summary>
-        public string[] GetBundleIncludeAssets(string assetPath)
-        {
-            List<string> assetList = new List<string>();
-            if (TryGetPackageAsset(assetPath, out PackageAsset result))
-            {
-                foreach (var packageAsset in AssetList)
-                {
-                    if (packageAsset.BundleID == result.BundleID)
-                    {
-                        assetList.Add(packageAsset.AssetPath);
-                    }
-                }
-            }
-            return assetList.ToArray();
-        }
-
         #region 调试方法
         [Conditional("DEBUG")]
         private void DebugCheckLocation(string location)
@@ -344,7 +362,7 @@ namespace YooAsset
             if (string.IsNullOrEmpty(location) == false)
             {
                 // 检查路径末尾是否有空格
-                int index = location.LastIndexOf(" ");
+                int index = location.LastIndexOf(' ');
                 if (index != -1)
                 {
                     if (location.Length == index + 1)

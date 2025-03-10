@@ -7,7 +7,7 @@ namespace YooAsset
         private System.Action<SceneHandle> _callback;
         internal string PackageName { set; get; }
 
-        internal SceneHandle(ProviderBase provider) : base(provider)
+        internal SceneHandle(ProviderOperation provider) : base(provider)
         {
         }
         internal override void InvokeCallback()
@@ -23,7 +23,7 @@ namespace YooAsset
             add
             {
                 if (IsValidWithWarning == false)
-                    throw new System.Exception($"{nameof(SceneHandle)} is invalid");
+                    throw new System.Exception($"{nameof(SceneHandle)} is invalid !");
                 if (Provider.IsDone)
                     value.Invoke(this);
                 else
@@ -32,7 +32,7 @@ namespace YooAsset
             remove
             {
                 if (IsValidWithWarning == false)
-                    throw new System.Exception($"{nameof(SceneHandle)} is invalid");
+                    throw new System.Exception($"{nameof(SceneHandle)} is invalid !");
                 _callback -= value;
             }
         }
@@ -100,14 +100,9 @@ namespace YooAsset
             if (IsValidWithWarning == false)
                 return false;
 
-            if (Provider is DatabaseSceneProvider)
+            if (Provider is SceneProvider)
             {
-                var provider = Provider as DatabaseSceneProvider;
-                provider.UnSuspendLoad();
-            }
-            else if (Provider is BundledSceneProvider)
-            {
-                var provider = Provider as BundledSceneProvider;
+                var provider = Provider as SceneProvider;
                 provider.UnSuspendLoad();
             }
             else
@@ -118,31 +113,8 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 是否为主场景
-        /// </summary>
-        public bool IsMainScene()
-        {
-            if (IsValidWithWarning == false)
-                return false;
-
-            if (Provider is DatabaseSceneProvider)
-            {
-                var temp = Provider as DatabaseSceneProvider;
-                return temp.SceneMode == LoadSceneMode.Single;
-            }
-            else if (Provider is BundledSceneProvider)
-            {
-                var temp = Provider as BundledSceneProvider;
-                return temp.SceneMode == LoadSceneMode.Single;
-            }
-            else
-            {
-                throw new System.NotImplementedException();
-            }
-        }
-
-        /// <summary>
-        /// 异步卸载子场景
+        /// 异步卸载场景对象
+        /// 注意：场景卸载成功后，会自动释放该handle的引用计数！
         /// </summary>
         public UnloadSceneOperation UnloadAsync()
         {
@@ -157,24 +129,12 @@ namespace YooAsset
                 return operation;
             }
 
-            // 如果是主场景
-            if (IsMainScene())
-            {
-                string error = $"Cannot unload main scene. Use {nameof(YooAssets.LoadSceneAsync)} method to change the main scene !";
-                YooLogger.Error(error);
-                var operation = new UnloadSceneOperation(error);
-                OperationSystem.StartOperation(packageName, operation);
-                return operation;
-            }
-
-            // 卸载子场景
+            // 注意：如果场景正在加载过程，必须等待加载完成后才可以卸载该场景。
             {
                 var operation = new UnloadSceneOperation(Provider);
                 OperationSystem.StartOperation(packageName, operation);
                 return operation;
             }
         }
-
-
     }
 }

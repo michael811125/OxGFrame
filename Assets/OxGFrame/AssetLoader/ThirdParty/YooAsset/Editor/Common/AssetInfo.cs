@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace YooAsset.Editor
 {
     [Serializable]
-    public class AssetInfo
+    public class AssetInfo : IComparable<AssetInfo>
     {
         private string _fileExtension = null;
 
@@ -37,11 +37,18 @@ namespace YooAsset.Editor
             }
         }
 
+
         public AssetInfo(string assetPath)
         {
             AssetPath = assetPath;
             AssetGUID = UnityEditor.AssetDatabase.AssetPathToGUID(AssetPath);
             AssetType = UnityEditor.AssetDatabase.GetMainAssetTypeAtPath(AssetPath);
+
+            // 注意：如果资源文件损坏或者实例化关联脚本丢失，获取的资源类型会无效！
+            if (AssetType == null)
+            {
+                throw new Exception($"Found invalid asset : {AssetPath}");
+            }
         }
 
         /// <summary>
@@ -53,6 +60,11 @@ namespace YooAsset.Editor
                 return true;
             else
                 return false;
+        }
+
+        public int CompareTo(AssetInfo other)
+        {
+            return this.AssetPath.CompareTo(other.AssetPath);
         }
     }
 }

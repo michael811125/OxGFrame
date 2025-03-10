@@ -9,7 +9,7 @@ namespace UnityEditor.Build.Pipeline.Tasks
 {
     public static class SBPBuildTasks
     {
-        public static IList<IBuildTask> Create(string builtInShaderBundleName)
+        public static IList<IBuildTask> Create(string builtInShaderBundleName, string monoScriptsBundleName)
         {
             var buildTasks = new List<IBuildTask>();
 
@@ -28,7 +28,10 @@ namespace UnityEditor.Build.Pipeline.Tasks
 #endif
             buildTasks.Add(new CalculateAssetDependencyData());
             buildTasks.Add(new StripUnusedSpriteSources());
-            buildTasks.Add(new CreateBuiltInBundle(builtInShaderBundleName));
+            if (string.IsNullOrEmpty(builtInShaderBundleName) == false)
+                buildTasks.Add(new CreateBuiltInShadersBundle(builtInShaderBundleName));
+            if (string.IsNullOrEmpty(monoScriptsBundleName) == false)
+                buildTasks.Add(new CreateMonoScriptBundle(monoScriptsBundleName));
             buildTasks.Add(new PostDependencyCallback());
 
             // Packing

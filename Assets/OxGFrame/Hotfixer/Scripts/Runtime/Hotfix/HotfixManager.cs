@@ -29,7 +29,8 @@ namespace OxGFrame.Hotfixer
         private static HotfixManager _instance = null;
         public static HotfixManager GetInstance()
         {
-            if (_instance == null) _instance = new HotfixManager();
+            if (_instance == null)
+                _instance = new HotfixManager();
             return _instance;
         }
 
@@ -217,6 +218,15 @@ namespace OxGFrame.Hotfixer
         public bool IsDone()
         {
             return this._isDone;
+        }
+
+        public bool IsDisabled()
+        {
+#if OXGFRAME_HYBRIDCLR_DISABLED
+            return true;
+#else
+            return false;
+#endif
         }
         #endregion
 

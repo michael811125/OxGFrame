@@ -19,7 +19,8 @@ namespace OxGFrame.AssetLoader.Editor
         private static CryptogramSettingWindow _instance = null;
         internal static CryptogramSettingWindow GetInstance()
         {
-            if (_instance == null) _instance = GetWindow<CryptogramSettingWindow>();
+            if (_instance == null)
+                _instance = GetWindow<CryptogramSettingWindow>();
             return _instance;
         }
 

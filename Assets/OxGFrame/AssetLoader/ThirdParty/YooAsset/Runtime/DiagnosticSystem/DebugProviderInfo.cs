@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace YooAsset
 {
     [Serializable]
-    internal class DebugProviderInfo : IComparer<DebugProviderInfo>, IComparable<DebugProviderInfo>
+    internal struct DebugProviderInfo : IComparer<DebugProviderInfo>, IComparable<DebugProviderInfo>
     {
         /// <summary>
         /// 包裹名
@@ -23,9 +23,9 @@ namespace YooAsset
         public string SpawnScene;
 
         /// <summary>
-        /// 资源出生的时间
+        /// 资源加载开始时间
         /// </summary>
-        public string SpawnTime;
+        public string BeginTime;
 
         /// <summary>
         /// 加载耗时（单位：毫秒）
@@ -45,7 +45,7 @@ namespace YooAsset
         /// <summary>
         /// 依赖的资源包列表
         /// </summary>
-        public List<DebugBundleInfo> DependBundleInfos;
+        public List<string> DependBundles;
 
         public int CompareTo(DebugProviderInfo other)
         {

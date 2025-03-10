@@ -32,6 +32,18 @@ namespace YooAsset
         public int BundleID;
 
         /// <summary>
+        /// 依赖的资源包ID集合
+        /// 说明：框架层收集查询结果
+        /// </summary>
+        public int[] DependBundleIDs;
+
+        /// <summary>
+        /// 临时数据对象（仅编辑器有效）
+        /// </summary>
+        [NonSerialized]
+        public object TempDataInEditor;
+
+        /// <summary>
         /// 是否包含Tag
         /// </summary>
         public bool HasTag(string[] tags)

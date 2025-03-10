@@ -24,37 +24,32 @@ namespace YooAsset.Editor
         /// </summary>
         protected override void ExecuteBuild()
         {
-            var buildMode = AssetBundleBuilderSetting.GetPackageBuildMode(PackageName, BuildPipeline);
             var fileNameStyle = AssetBundleBuilderSetting.GetPackageFileNameStyle(PackageName, BuildPipeline);
             var buildinFileCopyOption = AssetBundleBuilderSetting.GetPackageBuildinFileCopyOption(PackageName, BuildPipeline);
             var buildinFileCopyParams = AssetBundleBuilderSetting.GetPackageBuildinFileCopyParams(PackageName, BuildPipeline);
+            var clearBuildCache = AssetBundleBuilderSetting.GetPackageClearBuildCache(PackageName, BuildPipeline);
+            var useAssetDependencyDB = AssetBundleBuilderSetting.GetPackageUseAssetDependencyDB(PackageName, BuildPipeline);
 
             RawFileBuildParameters buildParameters = new RawFileBuildParameters();
             buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
             buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
             buildParameters.BuildPipeline = BuildPipeline.ToString();
+            buildParameters.BuildBundleType = (int)EBuildBundleType.RawBundle;
             buildParameters.BuildTarget = BuildTarget;
-            buildParameters.BuildMode = buildMode;
             buildParameters.PackageName = PackageName;
             buildParameters.PackageVersion = GetPackageVersion();
             buildParameters.VerifyBuildingResult = true;
             buildParameters.FileNameStyle = fileNameStyle;
             buildParameters.BuildinFileCopyOption = buildinFileCopyOption;
             buildParameters.BuildinFileCopyParams = buildinFileCopyParams;
+            buildParameters.ClearBuildCacheFiles = clearBuildCache;
+            buildParameters.UseAssetDependencyDB = useAssetDependencyDB;
             buildParameters.EncryptionServices = CreateEncryptionInstance();
 
             RawFileBuildPipeline pipeline = new RawFileBuildPipeline();
             var buildResult = pipeline.Run(buildParameters, true);
             if (buildResult.Success)
                 EditorUtility.RevealInFinder(buildResult.OutputPackageDirectory);
-        }
-
-        protected override List<Enum> GetSupportBuildModes()
-        {
-            List<Enum> buildModeList = new List<Enum>();
-            buildModeList.Add(EBuildMode.ForceRebuild);
-            buildModeList.Add(EBuildMode.SimulateBuild);
-            return buildModeList;
         }
     }
 }

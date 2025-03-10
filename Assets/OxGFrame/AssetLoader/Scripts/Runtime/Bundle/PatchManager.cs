@@ -52,7 +52,8 @@ namespace OxGFrame.AssetLoader.Bundle
         private static PatchManager _instance = null;
         internal static PatchManager GetInstance()
         {
-            if (_instance == null) _instance = new PatchManager();
+            if (_instance == null)
+                _instance = new PatchManager();
             return _instance;
         }
 

@@ -140,7 +140,7 @@ namespace YooAsset.Editor
         public List<CollectAssetInfo> GetAllCollectAssets(CollectCommand command, AssetBundleCollectorGroup group)
         {
             // 注意：模拟构建模式下只收集主资源
-            if (command.BuildMode == EBuildMode.SimulateBuild)
+            if (command.SimulateBuild)
             {
                 if (CollectorType != ECollectorType.MainAssetCollector)
                     return new List<CollectAssetInfo>();
@@ -149,7 +149,7 @@ namespace YooAsset.Editor
             Dictionary<string, CollectAssetInfo> result = new Dictionary<string, CollectAssetInfo>(1000);
 
             // 收集打包资源路径
-            List<string> findAssets =new List<string>();
+            List<string> findAssets = new List<string>();
             if (AssetDatabase.IsValidFolder(CollectPath))
             {
                 string collectDirectory = CollectPath;
@@ -218,13 +218,7 @@ namespace YooAsset.Editor
             string bundleName = GetBundleName(command, group, assetInfo);
             List<string> assetTags = GetAssetTags(group);
             CollectAssetInfo collectAssetInfo = new CollectAssetInfo(CollectorType, bundleName, address, assetInfo, assetTags);
-
-            // 注意：模拟构建模式下不需要收集依赖资源
-            if (command.BuildMode == EBuildMode.SimulateBuild)
-                collectAssetInfo.DependAssets = new List<AssetInfo>();
-            else
-                collectAssetInfo.DependAssets = GetAllDependencies(command, assetInfo.AssetPath);
-
+            collectAssetInfo.DependAssets = GetAllDependencies(command, assetInfo.AssetPath);
             return collectAssetInfo;
         }
 
@@ -272,7 +266,11 @@ namespace YooAsset.Editor
         }
         private List<AssetInfo> GetAllDependencies(CollectCommand command, string mainAssetPath)
         {
-            string[] depends = AssetDatabase.GetDependencies(mainAssetPath, true);
+            // 注意：模拟构建模式下不需要收集依赖资源
+            if (command.SimulateBuild)
+                return new List<AssetInfo>();
+
+            string[] depends = command.AssetDependency.GetDependencies(mainAssetPath, true);
             List<AssetInfo> result = new List<AssetInfo>(depends.Length);
             foreach (string assetPath in depends)
             {

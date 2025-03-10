@@ -13,6 +13,7 @@ namespace YooAsset.Editor
     internal abstract class BuildPipelineViewerBase
     {
         private const int StyleWidth = 400;
+        private const int LabelMinWidth = 180;
 
         protected readonly string PackageName;
         protected readonly BuildTarget BuildTarget;
@@ -27,6 +28,8 @@ namespace YooAsset.Editor
         private EnumField _outputNameStyleField;
         private EnumField _copyBuildinFileOptionField;
         private TextField _copyBuildinFileTagsField;
+        private Toggle _clearBuildCacheToggle;
+        private Toggle _useAssetDependencyDBToggle;
 
         public BuildPipelineViewerBase(string packageName, EBuildPipeline buildPipeline, BuildTarget buildTarget, VisualElement parent)
         {
@@ -58,24 +61,6 @@ namespace YooAsset.Editor
             _buildVersionField = Root.Q<TextField>("BuildVersion");
             _buildVersionField.style.width = StyleWidth;
             _buildVersionField.SetValueWithoutNotify(GetDefaultPackageVersion());
-
-            // 构建模式
-            {
-                var buildModeContainer = Root.Q("BuildModeContainer");
-                var buildMode = AssetBundleBuilderSetting.GetPackageBuildMode(PackageName, BuildPipeline);
-                var buildModeList = GetSupportBuildModes();
-                int defaultIndex = buildModeList.FindIndex(x => x.Equals(buildMode));
-                if (defaultIndex < 0)
-                    defaultIndex = (int)(EBuildMode)buildModeList[0];
-                _buildModeField = new PopupField<Enum>(buildModeList, defaultIndex);
-                _buildModeField.label = "Build Mode";
-                _buildModeField.style.width = StyleWidth;
-                _buildModeField.RegisterValueChangedCallback(evt =>
-                {
-                    AssetBundleBuilderSetting.SetPackageBuildMode(PackageName, BuildPipeline, (EBuildMode)_buildModeField.value);
-                });
-                buildModeContainer.Add(_buildModeField);
-            }
 
             // 加密方法
             {
@@ -148,6 +133,35 @@ namespace YooAsset.Editor
                 AssetBundleBuilderSetting.SetPackageBuildinFileCopyParams(PackageName, BuildPipeline, _copyBuildinFileTagsField.value);
             });
 
+            // 清理构建缓存
+            bool clearBuildCache = AssetBundleBuilderSetting.GetPackageClearBuildCache(PackageName, BuildPipeline);
+            _clearBuildCacheToggle = Root.Q<Toggle>("ClearBuildCache");
+            _clearBuildCacheToggle.SetValueWithoutNotify(clearBuildCache);
+            _clearBuildCacheToggle.RegisterValueChangedCallback(evt =>
+            {
+                AssetBundleBuilderSetting.SetPackageClearBuildCache(PackageName, BuildPipeline, _clearBuildCacheToggle.value);
+            });
+
+            // 使用资源依赖数据库
+            bool useAssetDependencyDB = AssetBundleBuilderSetting.GetPackageUseAssetDependencyDB(PackageName, BuildPipeline);
+            _useAssetDependencyDBToggle = Root.Q<Toggle>("UseAssetDependency");
+            _useAssetDependencyDBToggle.SetValueWithoutNotify(useAssetDependencyDB);
+            _useAssetDependencyDBToggle.RegisterValueChangedCallback(evt =>
+            {
+                AssetBundleBuilderSetting.SetPackageUseAssetDependencyDB(PackageName, BuildPipeline, _useAssetDependencyDBToggle.value);
+            });
+
+            // 对齐文本间距
+            UIElementsTools.SetElementLabelMinWidth(_buildOutputField, LabelMinWidth);
+            UIElementsTools.SetElementLabelMinWidth(_buildVersionField, LabelMinWidth);
+            UIElementsTools.SetElementLabelMinWidth(_compressionField, LabelMinWidth);
+            UIElementsTools.SetElementLabelMinWidth(_encryptionField, LabelMinWidth);
+            UIElementsTools.SetElementLabelMinWidth(_outputNameStyleField, LabelMinWidth);
+            UIElementsTools.SetElementLabelMinWidth(_copyBuildinFileOptionField, LabelMinWidth);
+            UIElementsTools.SetElementLabelMinWidth(_copyBuildinFileTagsField, LabelMinWidth);
+            UIElementsTools.SetElementLabelMinWidth(_clearBuildCacheToggle, LabelMinWidth);
+            UIElementsTools.SetElementLabelMinWidth(_useAssetDependencyDBToggle, LabelMinWidth);
+
             // 构建按钮
             var buildButton = Root.Q<Button>("Build");
             buildButton.clicked += BuildButton_clicked;
@@ -160,8 +174,7 @@ namespace YooAsset.Editor
         }
         private void BuildButton_clicked()
         {
-            var buildMode = AssetBundleBuilderSetting.GetPackageBuildMode(PackageName, BuildPipeline);
-            if (EditorUtility.DisplayDialog("提示", $"通过构建模式【{buildMode}】来构建！", "Yes", "No"))
+            if (EditorUtility.DisplayDialog("提示", $"开始构建资源包[{PackageName}]！", "Yes", "No"))
             {
                 EditorTools.ClearUnityConsole();
                 EditorApplication.delayCall += ExecuteBuild;
@@ -176,11 +189,6 @@ namespace YooAsset.Editor
         /// 执行构建任务
         /// </summary>
         protected abstract void ExecuteBuild();
-
-        /// <summary>
-        /// 获取构建管线支持的构建模式集合
-        /// </summary>
-        protected abstract List<Enum> GetSupportBuildModes();
 
         /// <summary>
         /// 获取构建版本

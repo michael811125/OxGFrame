@@ -129,6 +129,21 @@ namespace YooAsset.Editor
         }
         #endregion
 
+        #region PackageManager
+        public static string GetPackageManagerYooVersion()
+        {
+#if UNITY_2019_4_OR_NEWER
+            UnityEditor.PackageManager.PackageInfo packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(YooAssets).Assembly);
+            if (packageInfo != null)
+                return packageInfo.version;
+            else
+                return string.Empty;
+#else
+            return string.Empty;
+#endif
+        }
+        #endregion
+
         #region EditorUtility
         /// <summary>
         /// 搜集资源
@@ -558,6 +573,21 @@ namespace YooAsset.Editor
         public static string GetRegularPath(string path)
         {
             return path.Replace('\\', '/').Replace("\\", "/"); //替换为Linux路径格式
+        }
+
+        /// <summary>
+        /// 移除路径里的后缀名
+        /// </summary>
+        public static string RemoveExtension(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return str;
+
+            int index = str.LastIndexOf('.');
+            if (index == -1)
+                return str;
+            else
+                return str.Remove(index); //"assets/config/test.unity3d" --> "assets/config/test"
         }
 
         /// <summary>
