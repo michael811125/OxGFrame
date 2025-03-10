@@ -9,57 +9,84 @@ public class NetworkExample
     public static void InitNetNode()
     {
         var netTips = new NetTipsExample();
+        NetNode netNode = null;
 
-        #region Websocket Example
-        NetNode wsNetNode = new NetNode(new WebsocketNetProvider(), netTips);
+        #region WebSocket Example
+        netNode = new NetNode(new WebSocketNetProvider(), netTips);
         // Set data receive callback
-        wsNetNode.SetResponseBinaryHandler(ProcessRecvData);
+        netNode.SetResponseBinaryHandler(ProcessRecvData);
         // Set connecting callback
-        wsNetNode.SetConnectingHandler(ProcessConnectingEvent);
+        netNode.SetConnectingHandler(ProcessConnectingEvent);
         // Set heart beat callback
-        wsNetNode.SetHeartBeatAction(() =>
+        netNode.SetHeartBeatAction(() =>
         {
             /* Process Heart Beat */
         });
         // Set out receive callback
-        wsNetNode.SetOutReceiveAction(() =>
+        netNode.SetOutReceiveAction(() =>
         {
             /* Process Out Of Receive */
         });
         // Set reconnect callback
-        wsNetNode.SetReconnectAction(() =>
+        netNode.SetReconnectAction(() =>
         {
             /* Process Reconnect */
         });
 
         // Add net node (register)
-        NetFrames.AddNetNode(wsNetNode, 0);
+        NetFrames.AddNetNode(netNode, 0);
         #endregion
 
-        #region TCP/IP Example
-        NetNode tcpNetNode = new NetNode(new TcpNetProvider(), netTips);
+        #region TCP Example
+        netNode = new NetNode(new TcpNetProvider(), netTips);
         // Set data receive callback
-        tcpNetNode.SetResponseBinaryHandler(ProcessRecvData);
+        netNode.SetResponseBinaryHandler(ProcessRecvData);
         // Set connecting callback
-        tcpNetNode.SetConnectingHandler(ProcessConnectingEvent);
+        netNode.SetConnectingHandler(ProcessConnectingEvent);
         // Set heart beat callback
-        tcpNetNode.SetHeartBeatAction(() =>
+        netNode.SetHeartBeatAction(() =>
         {
             /* Process Heart Beat */
         });
         // Set out receive callback
-        tcpNetNode.SetOutReceiveAction(() =>
+        netNode.SetOutReceiveAction(() =>
         {
             /* Process Out Of Receive */
         });
         // Set reconnect callback
-        tcpNetNode.SetReconnectAction(() =>
+        netNode.SetReconnectAction(() =>
         {
             /* Process Reconnect */
         });
 
         // Add net node (register)
-        NetFrames.AddNetNode(tcpNetNode, 1);
+        NetFrames.AddNetNode(netNode, 1);
+        #endregion
+
+        #region KCP Example
+        netNode = new NetNode(new KcpNetProvider(), netTips);
+        // Set data receive callback
+        netNode.SetResponseBinaryHandler(ProcessRecvData);
+        // Set connecting callback
+        netNode.SetConnectingHandler(ProcessConnectingEvent);
+        // Set heart beat callback
+        netNode.SetHeartBeatAction(() =>
+        {
+            /* Process Heart Beat */
+        });
+        // Set out receive callback
+        netNode.SetOutReceiveAction(() =>
+        {
+            /* Process Out Of Receive */
+        });
+        // Set reconnect callback
+        netNode.SetReconnectAction(() =>
+        {
+            /* Process Reconnect */
+        });
+
+        // Add net node (register)
+        NetFrames.AddNetNode(netNode, 2);
         #endregion
     }
 
@@ -88,7 +115,8 @@ public class NetworkExample
     /// Create connection
     /// </summary>
     /// <param name="netOption"></param>
-    public static void OpenConnection(NetOption netOption, byte nnid = 0)
+    /// <param name="nnid"></param>
+    public static void OpenConnection(NetOption netOption, int nnid = 0)
     {
         InitNetNode();
         NetFrames.Connect(netOption, nnid);
@@ -97,7 +125,8 @@ public class NetworkExample
     /// <summary>
     /// Close connection
     /// </summary>
-    public static void CloseConnection(byte nnid = 0)
+    /// <param name="nnid"></param>
+    public static void CloseConnection(int nnid = 0)
     {
         NetFrames.Close(nnid, true);
     }
@@ -105,8 +134,9 @@ public class NetworkExample
     /// <summary>
     /// Return connection status
     /// </summary>
+    /// <param name="nnid"></param>
     /// <returns></returns>
-    public static bool IsConnected(byte nnid = 0)
+    public static bool IsConnected(int nnid = 0)
     {
         return NetFrames.IsConnected(nnid);
     }
@@ -115,8 +145,9 @@ public class NetworkExample
     /// Send binary data
     /// </summary>
     /// <param name="buffer"></param>
+    /// <param name="nnid"></param>
     /// <returns></returns>
-    public static bool SendData(byte[] buffer, byte nnid = 0)
+    public static bool SendData(byte[] buffer, int nnid = 0)
     {
         return NetFrames.Send(buffer, nnid);
     }

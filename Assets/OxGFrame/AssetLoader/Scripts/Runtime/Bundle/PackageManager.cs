@@ -15,7 +15,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         private static string _currentPackageName;
         private static ResourcePackage _currentPackage;
-        private static IDecryptionServices _decryption;
+        private static DecryptionServices _decryptionServices;
 
         /// <summary>
         /// Init settings
@@ -23,7 +23,6 @@ namespace OxGFrame.AssetLoader.Bundle
         public async static UniTask InitSetup()
         {
             #region Init YooAssets
-            YooAssets.Destroy();
             YooAssets.Initialize();
             YooAssets.SetOperationSystemMaxTimeSlice(30);
             #endregion
@@ -36,19 +35,19 @@ namespace OxGFrame.AssetLoader.Bundle
                 case BundleConfig.CryptogramType.NONE:
                     break;
                 case BundleConfig.CryptogramType.OFFSET:
-                    _decryption = new OffsetDecryption();
+                    _decryptionServices = new OffsetDecryption();
                     break;
                 case BundleConfig.CryptogramType.XOR:
-                    _decryption = new XorDecryption();
+                    _decryptionServices = new XorDecryption();
                     break;
                 case BundleConfig.CryptogramType.HT2XOR:
-                    _decryption = new HT2XorDecryption();
+                    _decryptionServices = new HT2XorDecryption();
                     break;
                 case BundleConfig.CryptogramType.HT2XORPLUS:
-                    _decryption = new HT2XorPlusDecryption();
+                    _decryptionServices = new HT2XorPlusDecryption();
                     break;
                 case BundleConfig.CryptogramType.AES:
-                    _decryption = new AesDecryption();
+                    _decryptionServices = new AesDecryption();
                     break;
             }
             Logging.Print<Logger>($"<color=#ffe45a>Init Bundle Decryption: {decryptType}</color>");
@@ -80,7 +79,8 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     foreach (var packageInfo in presetAppPackageInfos)
                     {
-                        bool isInitialized = await AssetPatcher.InitAppPackage(packageInfo, false);
+                        // autoUpdate = true, 因為新版 Yoo 必須獲取版號與 manifest 才能進行資源加載
+                        bool isInitialized = await AssetPatcher.InitAppPackage(packageInfo, true);
                         if (!isInitialized) return false;
                     }
                 }
@@ -106,7 +106,8 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     foreach (var packageInfo in presetDlcPackageInfos)
                     {
-                        bool isInitialized = await AssetPatcher.InitDlcPackage(packageInfo, false);
+                        // autoUpdate = true, 因為新版 Yoo 必須獲取版號與 manifest 才能進行資源加載
+                        bool isInitialized = await AssetPatcher.InitDlcPackage(packageInfo, true);
                         if (!isInitialized) return false;
                     }
                 }
@@ -126,11 +127,8 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <param name="autoUpdate"></param>
         /// <param name="hostServer"></param>
         /// <param name="fallbackHostServer"></param>
-        /// <param name="builtinQueryService"></param>
-        /// <param name="deliveryQueryService"></param>
-        /// <param name="deliveryLoadService"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitPackage(PackageInfoWithBuild packageInfo, bool autoUpdate, string hostServer, string fallbackHostServer, IBuildinQueryServices builtinQueryService, IDeliveryQueryServices deliveryQueryService, IDeliveryLoadServices deliveryLoadService)
+        public static async UniTask<bool> InitPackage(PackageInfoWithBuild packageInfo, bool autoUpdate, string hostServer, string fallbackHostServer)
         {
             var packageName = packageInfo.packageName;
             var buildMode = packageInfo.buildMode.ToString();
@@ -149,8 +147,10 @@ namespace OxGFrame.AssetLoader.Bundle
             InitializationOperation initializationOperation = null;
             if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
             {
+                var buildResult = EditorSimulateModeHelper.SimulateBuild(packageName);
+                var packageRoot = buildResult.PackageRootDirectory;
                 var createParameters = new EditorSimulateModeParameters();
-                createParameters.SimulateManifestFilePath = EditorSimulateModeHelper.SimulateBuild(buildMode, packageName);
+                createParameters.EditorFileSystemParameters = FileSystemParameters.CreateDefaultEditorFileSystemParameters(packageRoot);
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 
@@ -158,11 +158,21 @@ namespace OxGFrame.AssetLoader.Bundle
             if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode)
             {
                 var createParameters = new OfflinePlayModeParameters();
-                createParameters.DecryptionServices = _decryption;
-                createParameters.BreakpointResumeFileSize = BundleConfig.breakpointFileSizeThreshold;
+                var decryptionServices = _decryptionServices;
+                bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
+                if (builtinExists)
+                {
+                    createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(decryptionServices);
+                }
+                else
+                {
+                    createParameters.BuildinFileSystemParameters = null;
+                }
                 // Only raw file build pipeline need to append extension
                 if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                    createParameters.CacheFileAppendExtension = true;
+                {
+                    createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+                }
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 
@@ -170,15 +180,25 @@ namespace OxGFrame.AssetLoader.Bundle
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
             {
                 var createParameters = new HostPlayModeParameters();
-                createParameters.DecryptionServices = _decryption;
-                createParameters.BreakpointResumeFileSize = BundleConfig.breakpointFileSizeThreshold;
-                createParameters.BuildinQueryServices = builtinQueryService;
-                createParameters.DeliveryQueryServices = deliveryQueryService;
-                createParameters.DeliveryLoadServices = deliveryLoadService;
-                createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);
+                var remoteServices = new HostServers(hostServer, fallbackHostServer);
+                var decryptionServices = _decryptionServices;
+                bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
+                if (builtinExists)
+                {
+                    createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(decryptionServices);
+                }
+                else
+                {
+                    createParameters.BuildinFileSystemParameters = null;
+                }
+                createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices, decryptionServices);
+                createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.RESUME_DOWNLOAD_MINMUM_SIZE, BundleConfig.breakpointFileSizeThreshold);
                 // Only raw file build pipeline need to append extension
                 if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                    createParameters.CacheFileAppendExtension = true;
+                {
+                    createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+                    createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+                }
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 
@@ -186,13 +206,47 @@ namespace OxGFrame.AssetLoader.Bundle
             if (BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
             {
                 var createParameters = new WebPlayModeParameters();
-                createParameters.DecryptionServices = _decryption;
-                createParameters.BreakpointResumeFileSize = BundleConfig.breakpointFileSizeThreshold;
-                createParameters.BuildinQueryServices = builtinQueryService;
-                createParameters.RemoteServices = new HostServers(hostServer, fallbackHostServer);
+                var decryptionServices = _decryptionServices;
+                bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
+                if (builtinExists)
+                {
+                    createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(decryptionServices);
+                }
+                else
+                {
+                    createParameters.WebServerFileSystemParameters = null;
+                }
                 // Only raw file build pipeline need to append extension
                 if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                    createParameters.CacheFileAppendExtension = true;
+                {
+                    createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+                }
+                initializationOperation = package.InitializeAsync(createParameters);
+            }
+
+            // WebGL Remote Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
+            {
+                var createParameters = new WebPlayModeParameters();
+                var remoteServices = new HostServers(hostServer, fallbackHostServer);
+                var decryptionServices = _decryptionServices;
+                bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
+                if (builtinExists)
+                {
+                    createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(decryptionServices);
+                }
+                else
+                {
+                    createParameters.WebServerFileSystemParameters = null;
+                }
+                createParameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices, decryptionServices);
+                createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.RESUME_DOWNLOAD_MINMUM_SIZE, BundleConfig.breakpointFileSizeThreshold);
+                // Only raw file build pipeline need to append extension
+                if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                {
+                    createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+                    createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+                }
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 
@@ -221,7 +275,7 @@ namespace OxGFrame.AssetLoader.Bundle
         public static async UniTask<bool> UpdatePackage(string packageName)
         {
             var package = GetPackage(packageName);
-            var versionOperation = package.UpdatePackageVersionAsync();
+            var versionOperation = package.RequestPackageVersionAsync();
             await versionOperation;
             if (versionOperation.Status == EOperationStatus.Succeed)
             {
@@ -248,7 +302,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// Check package has any files in local
+        /// Check package has any files in local sandbox
         /// </summary>
         /// <param name="packageName"></param>
         /// <returns></returns>
@@ -263,10 +317,12 @@ namespace OxGFrame.AssetLoader.Bundle
             try
             {
                 var package = GetPackage(packageName);
-                if (package == null) return false;
+                if (_PackageIsNull(packageName, package))
+                    return false;
 
                 string path = BundleConfig.GetLocalSandboxPackagePath(packageName);
-                if (!Directory.Exists(path)) return false;
+                if (!Directory.Exists(path))
+                    return false;
 
                 DirectoryInfo directoryInfo = new DirectoryInfo(path);
                 return directoryInfo.GetFiles("*.*", SearchOption.AllDirectories).Any();
@@ -278,7 +334,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// Get package files size in local
+        /// Get package files size in local sandbox
         /// </summary>
         /// <param name="packageName"></param>
         /// <returns></returns>
@@ -287,7 +343,8 @@ namespace OxGFrame.AssetLoader.Bundle
             try
             {
                 var package = GetPackage(packageName);
-                if (package == null) return 0;
+                if (_PackageIsNull(packageName, package))
+                    return 0;
 
                 if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
                 {
@@ -296,7 +353,8 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 string path = BundleConfig.GetLocalSandboxPackagePath(packageName);
-                if (!Directory.Exists(path)) return 0;
+                if (!Directory.Exists(path))
+                    return 0;
 
                 DirectoryInfo directoryInfo = new DirectoryInfo(path);
                 return (ulong)directoryInfo.GetFiles("*.*", SearchOption.AllDirectories).Sum(fi => fi.Length);
@@ -311,36 +369,65 @@ namespace OxGFrame.AssetLoader.Bundle
         /// Unload package and clear package files from sandbox
         /// </summary>
         /// <param name="packageName"></param>
+        /// <param name="destroyPackage">Remove package from cache memory</param>
         /// <returns></returns>
-        public static async UniTask<bool> UnloadPackageAndClearCacheFiles(string packageName)
+        public static async UniTask<bool> UnloadPackageAndClearCacheFiles(string packageName, bool destroyPackage)
         {
             var package = GetPackage(packageName);
-            if (package == null)
-            {
-                Logging.PrintWarning<Logger>($"[Invalid unload] Package is null (return true). Package Name: {packageName}");
+            if (_PackageIsNull(packageName, package))
                 return true;
-            }
+
+            bool processed = false;
 
             try
             {
-                // delete local files first
-                package.ClearPackageSandbox();
+                // Clear package cache files from sandbox
+                var clearAllBundleFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearAllBundleFiles);
+                var clearAllManifestFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearAllManifestFiles);
+                await clearAllBundleFilesOperation;
+                await clearAllManifestFilesOperation;
 
-                await UniTask.NextFrame();
+                if (clearAllBundleFilesOperation.Status == EOperationStatus.Succeed &&
+                    clearAllManifestFilesOperation.Status == EOperationStatus.Succeed)
+                    processed = true;
 
-                // after clear package cache files
-                var operation = package.ClearAllCacheFilesAsync();
-                await operation;
+                if (destroyPackage)
+                    processed = await _UnloadPackage(package);
 
-                if (operation.Status == EOperationStatus.Succeed) return true;
+                return processed;
             }
             catch (Exception ex)
             {
                 Logging.PrintWarning<Logger>(ex);
-                return false;
+                processed = false;
+                return processed;
             }
+        }
 
-            return false;
+        /// <summary>
+        /// Unload (Destroy) package from cache memory
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <returns></returns>
+        public static async UniTask<bool> UnloadPackage(string packageName)
+        {
+            var package = GetPackage(packageName);
+            return await _UnloadPackage(package);
+        }
+
+        /// <summary>
+        /// Unload (Destroy) package from cache memory
+        /// </summary>
+        /// <param name="package"></param>
+        /// <returns></returns>
+        private static async UniTask<bool> _UnloadPackage(ResourcePackage package)
+        {
+            if (_PackageIsNull(string.Empty, package))
+                return true;
+
+            // Destroy package from cache memory
+            await package.DestroyAsync();
+            return YooAssets.RemovePackage(package);
         }
 
         /// <summary>
@@ -395,7 +482,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static IDecryptionServices GetDecryptionService()
         {
-            return _decryption;
+            return _decryptionServices;
         }
 
         /// <summary>
@@ -456,8 +543,6 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static ResourcePackage GetPackage(string packageName)
         {
-            if (!isInitialized)
-                return null;
             if (string.IsNullOrEmpty(packageName))
                 return null;
             return YooAssets.TryGetPackage(packageName);
@@ -760,10 +845,27 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// Release YooAsset (all packages)
         /// </summary>
-        public static void Release()
+        public async static UniTask Release()
         {
             isReleased = true;
-            YooAssets.Destroy();
+            var packages = YooAssets.GetAllPackages();
+            foreach (var package in packages)
+            {
+                await package.DestroyAsync();
+                YooAssets.RemovePackage(package);
+            }
         }
+
+        #region Checker
+        private static bool _PackageIsNull(string PackageName, ResourcePackage package)
+        {
+            if (package == null)
+            {
+                Logging.PrintWarning<Logger>($"[Invalid unload] Package is null (return true). Package Name: {PackageName}");
+                return true;
+            }
+            return false;
+        }
+        #endregion
     }
 }

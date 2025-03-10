@@ -13,6 +13,8 @@ namespace YooAsset.Editor
         public class BuildResultContext : IContextObject
         {
             public IBundleBuildResults Results;
+            public string BuiltinShadersBundleName;
+            public string MonoScriptsBundleName;
         }
 
         void IBuildTask.Run(BuildContext context)
@@ -21,18 +23,15 @@ namespace YooAsset.Editor
             var buildMapContext = context.GetContextObject<BuildMapContext>();
             var scriptableBuildParameters = buildParametersContext.Parameters as ScriptableBuildParameters;
 
-            // 模拟构建模式下跳过引擎构建
-            var buildMode = buildParametersContext.Parameters.BuildMode;
-            if (buildMode == EBuildMode.SimulateBuild)
-                return;
-
             // 构建内容
             var buildContent = new BundleBuildContent(buildMapContext.GetPipelineBuilds());
 
             // 开始构建
             IBundleBuildResults buildResults;
             var buildParameters = scriptableBuildParameters.GetBundleBuildParameters();
-            var taskList = SBPBuildTasks.Create(buildMapContext.Command.ShadersBundleName);
+            string builtinShadersBundleName = scriptableBuildParameters.BuiltinShadersBundleName;
+            string monoScriptsBundleName = scriptableBuildParameters.MonoScriptsBundleName;
+            var taskList = SBPBuildTasks.Create(builtinShadersBundleName, monoScriptsBundleName);
             ReturnCode exitCode = ContentPipeline.BuildAssetBundles(buildParameters, buildContent, out buildResults, taskList);
             if (exitCode < 0)
             {
@@ -40,18 +39,24 @@ namespace YooAsset.Editor
                 throw new Exception(message);
             }
 
-            // 创建着色器信息
-            // 说明：解决因为着色器资源包导致验证失败。
+            // 说明：解决因为特殊资源包导致验证失败。
             // 例如：当项目里没有着色器，如果有依赖内置着色器就会验证失败。
-            string shadersBundleName = buildMapContext.Command.ShadersBundleName;
-            if (buildResults.BundleInfos.ContainsKey(shadersBundleName))
+            if (string.IsNullOrEmpty(builtinShadersBundleName) == false)
             {
-                buildMapContext.CreateShadersBundleInfo(shadersBundleName);
+                if (buildResults.BundleInfos.ContainsKey(builtinShadersBundleName))
+                    buildMapContext.CreateEmptyBundleInfo(builtinShadersBundleName);
+            }
+            if (string.IsNullOrEmpty(monoScriptsBundleName) == false)
+            {
+                if (buildResults.BundleInfos.ContainsKey(monoScriptsBundleName))
+                    buildMapContext.CreateEmptyBundleInfo(monoScriptsBundleName);
             }
 
             BuildLogger.Log("UnityEngine build success!");
             BuildResultContext buildResultContext = new BuildResultContext();
             buildResultContext.Results = buildResults;
+            buildResultContext.BuiltinShadersBundleName = builtinShadersBundleName;
+            buildResultContext.MonoScriptsBundleName = monoScriptsBundleName;
             context.SetContextObject(buildResultContext);
         }
     }

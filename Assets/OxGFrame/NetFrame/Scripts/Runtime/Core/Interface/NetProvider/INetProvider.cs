@@ -41,6 +41,11 @@ namespace OxGFrame.NetFrame
         bool SendMessage(string text);
 
         /// <summary>
+        /// Update looping
+        /// </summary>
+        void OnUpdate();
+
+        /// <summary>
         /// Close connection
         /// </summary>
         void Close();

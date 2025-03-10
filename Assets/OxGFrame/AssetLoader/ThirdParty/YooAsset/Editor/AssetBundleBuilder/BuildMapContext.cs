@@ -17,7 +17,7 @@ namespace YooAsset.Editor
         /// 未被依赖的资源列表
         /// </summary>
         public readonly List<ReportIndependAsset> IndependAssets = new List<ReportIndependAsset>(1000);
-        
+
         /// <summary>
         /// 参与构建的资源总数
         /// 说明：包括主动收集的资源以及其依赖的所有资源
@@ -96,14 +96,14 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// 创建着色器信息类
+        /// 创建空的资源包
         /// </summary>
-        public void CreateShadersBundleInfo(string shadersBundleName)
+        public void CreateEmptyBundleInfo(string bundleName)
         {
-            if (IsContainsBundle(shadersBundleName) == false)
+            if (IsContainsBundle(bundleName) == false)
             {
-                var shaderBundleInfo = new BuildBundleInfo(shadersBundleName);
-                _bundleInfoDic.Add(shadersBundleName, shaderBundleInfo);
+                var bundleInfo = new BuildBundleInfo(bundleName);
+                _bundleInfoDic.Add(bundleName, bundleInfo);
             }
         }
     }

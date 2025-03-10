@@ -16,9 +16,11 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// Offset 加密檔案 【檢測OK】
+                ///  Offset 加密文件 【檢測OK】
                 /// </summary>
                 /// <param name="sourceFile"></param>
+                /// <param name="randomSeed"></param>
+                /// <param name="dummySize"></param>
                 /// <returns></returns>
                 public static bool OffsetEncryptFile(string sourceFile, int randomSeed, int dummySize = 0)
                 {
@@ -27,18 +29,18 @@ namespace OxGFrame.AssetLoader.Bundle
                         // 初始化亂數種子
                         UnityEngine.Random.InitState(randomSeed);
 
-                        // 取得原始檔案的長度
+                        // 取得原始文件的長度
                         long fileLength = new FileInfo(sourceFile).Length;
-                        long totalLength = fileLength + dummySize; // 計算總長度：原始檔案長度 + dummySize
+                        long totalLength = fileLength + dummySize; // 計算總長度：原始文件長度 + dummySize
 
                         // 建立緩衝區
                         byte[] buffer = new byte[BUFFER_SIZE];
                         byte[] offsetBytes = new byte[BUFFER_SIZE]; // 用來存放偏移後的字節
                         long bytesProcessed = 0;                    // 已處理的字節數
 
-                        // 使用 FileStream 讀取與寫入檔案
+                        // 使用 FileStream 讀取與寫入文件
                         using (FileStream fsRead = new FileStream(sourceFile, FileMode.Open, FileAccess.Read))
-                        using (FileStream fsWrite = new FileStream(sourceFile + ".tmp", FileMode.Create, FileAccess.Write)) // 建立臨時檔案
+                        using (FileStream fsWrite = new FileStream(sourceFile + ".tmp", FileMode.Create, FileAccess.Write)) // 建立臨時文件
                         {
                             // 寫入 dummySize 長度的隨機數據
                             for (int i = 0; i < dummySize; i++)
@@ -75,15 +77,16 @@ namespace OxGFrame.AssetLoader.Bundle
 
 
                 /// <summary>
-                /// Offset 解密檔案 【檢測OK】
+                /// Offset 解密文件 【檢測OK】
                 /// </summary>
-                /// <param name="encryptBytes"></param>
+                /// <param name="encryptFile"></param>
+                /// <param name="dummySize"></param>
                 /// <returns></returns>
                 public static bool OffsetDecryptFile(string encryptFile, int dummySize = 0)
                 {
                     try
                     {
-                        // 取得加密檔案的長度
+                        // 取得加密文件的長度
                         long fileLength = new FileInfo(encryptFile).Length;
                         long totalLength = fileLength - dummySize; // 總長度去掉 dummySize 的部分
 
@@ -91,7 +94,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         byte[] buffer = new byte[BUFFER_SIZE];
                         long bytesProcessed = 0; // 已處理的字節數
 
-                        // 使用 FileStream 逐步讀取加密檔案並寫入新檔案
+                        // 使用 FileStream 逐步讀取加密文件並寫入新文件
                         using (FileStream fsRead = new FileStream(encryptFile, FileMode.Open, FileAccess.Read))
                         using (FileStream fsWrite = new FileStream(encryptFile + ".tmp", FileMode.Create, FileAccess.Write))
                         {
@@ -125,9 +128,9 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Offset 加密檔案 【檢測OK】
+            /// Offset 加密文件 【檢測OK】
             /// </summary>
-            /// <param name="rawBytes"></param>
+            /// <param name="filePath"></param>
             /// <param name="randomSeed"></param>
             /// <param name="dummySize"></param>
             /// <returns></returns>
@@ -135,7 +138,7 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 try
                 {
-                    // 使用 FileStream 逐步讀取檔案
+                    // 使用 FileStream 逐步讀取文件
                     using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
                         // 設置隨機種子
@@ -177,15 +180,16 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Offset 解密檔案 【檢測OK】
+            /// Offset 解密文件 【檢測OK】
             /// </summary>
-            /// <param name="encryptBytes"></param>
+            /// <param name="filePath"></param>
+            /// <param name="dummySize"></param>
             /// <returns></returns>
             public static byte[] OffsetDecryptBytes(string filePath, int dummySize = 0)
             {
                 try
                 {
-                    // 獲取檔案長度
+                    // 獲取文件長度
                     long fileLength = new FileInfo(filePath).Length;
                     long totalLength = fileLength - dummySize;
 
@@ -220,11 +224,65 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
             }
 
+            /// <summary>
+            /// Offset 加密文件 【檢測OK】
+            /// </summary>
+            /// <param name="rawBytes"></param>
+            /// <param name="randomSeed"></param>
+            /// <param name="dummySize"></param>
+            /// <returns></returns>
+            public static bool OffsetEncryptBytes(ref byte[] rawBytes, int randomSeed, int dummySize = 0)
+            {
+                try
+                {
+                    UnityEngine.Random.InitState(randomSeed);
+
+                    byte[] dataBytes = rawBytes;
+                    int totalLength = dataBytes.Length + dummySize;
+                    byte[] offsetDatabytes = new byte[totalLength];
+                    for (int i = 0; i < totalLength; i++)
+                    {
+                        if (dummySize > 0 && i < dummySize) offsetDatabytes[i] = (byte)(UnityEngine.Random.Range(0, 256));
+                        else offsetDatabytes[i] = dataBytes[i - dummySize];
+                    }
+                    rawBytes = offsetDatabytes;
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            /// <summary>
+            /// Offset 解密文件 【檢測OK】
+            /// </summary>
+            /// <param name="encryptBytes"></param>
+            /// <param name="dummySize"></param>
+            /// <returns></returns>
+            public static bool OffsetDecryptBytes(ref byte[] encryptBytes, int dummySize = 0)
+            {
+                try
+                {
+                    int totalLength = encryptBytes.Length - dummySize;
+                    byte[] offsetDatabytes = new byte[totalLength];
+                    Buffer.BlockCopy(encryptBytes, dummySize, offsetDatabytes, 0, totalLength);
+                    encryptBytes = offsetDatabytes;
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+            }
 
             /// <summary>
             /// 返回 Offset 解密 Stream 【檢測OK】
             /// </summary>
             /// <param name="encryptFile"></param>
+            /// <param name="dummySize"></param>
             /// <returns></returns>
             public static Stream OffsetDecryptStream(string encryptFile, int dummySize = 0)
             {
@@ -264,15 +322,16 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// XOR 加密檔案 【檢測OK】
+                /// XOR 加密文件 【檢測OK】
                 /// </summary>
                 /// <param name="sourceFile"></param>
+                /// <param name="key"></param>
                 /// <returns></returns>
                 public static bool XorEncryptFile(string sourceFile, byte key)
                 {
                     try
                     {
-                        // 使用 FileStream 逐步讀取和寫入檔案
+                        // 使用 FileStream 逐步讀取和寫入文件
                         using (FileStream fsRead = new FileStream(sourceFile, FileMode.Open, FileAccess.Read))
                         using (FileStream fsWrite = new FileStream(sourceFile + ".tmp", FileMode.Create, FileAccess.Write))
                         {
@@ -303,9 +362,10 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 /// <summary>
-                /// XOR 解密檔案 【檢測OK】
+                /// XOR 解密文件 【檢測OK】
                 /// </summary>
                 /// <param name="encryptFile"></param>
+                /// <param name="key"></param>
                 /// <returns></returns>
                 public static bool XorDecryptFile(string encryptFile, byte key)
                 {
@@ -315,16 +375,16 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// XOR 加密檔案 【檢測OK】
+            /// XOR 加密文件 【檢測OK】
             /// </summary>
-            /// <param name="rawBytes"></param>
+            /// <param name="filePath"></param>
             /// <param name="key"></param>
             /// <returns></returns>
             public static byte[] XorEncryptBytes(string filePath, byte key)
             {
                 try
                 {
-                    // 使用 FileStream 逐步讀取檔案
+                    // 使用 FileStream 逐步讀取文件
                     using (FileStream fsRead = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     using (MemoryStream msWrite = new MemoryStream())
                     {
@@ -351,9 +411,10 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// XOR 解密檔案 【檢測OK】
+            /// XOR 解密文件 【檢測OK】
             /// </summary>
-            /// <param name="encryptBytes"></param>
+            /// <param name="filePath"></param>
+            /// <param name="key"></param>
             /// <returns></returns>
             public static byte[] XorDecryptBytes(string filePath, byte key)
             {
@@ -362,15 +423,62 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
+            /// XOR 加密文件 【檢測OK】
+            /// </summary>
+            /// <param name="rawBytes"></param>
+            /// <param name="key"></param>
+            /// <returns></returns>
+            public static bool XorEncryptBytes(byte[] rawBytes, byte key)
+            {
+                try
+                {
+                    for (int i = 0; i < rawBytes.Length; i++)
+                    {
+                        rawBytes[i] ^= key;
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            /// <summary>
+            /// XOR 解密文件 【檢測OK】
+            /// </summary>
+            /// <param name="encryptBytes"></param>
+            /// <param name="key"></param>
+            /// <returns></returns>
+            public static bool XorDecryptBytes(byte[] encryptBytes, byte key)
+            {
+                try
+                {
+                    for (int i = 0; i < encryptBytes.Length; i++)
+                    {
+                        encryptBytes[i] ^= key;
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            /// <summary>
             /// 返回 XOR 解密 Stream 【檢測OK】
             /// </summary>
             /// <param name="encryptFile"></param>
+            /// <param name="key"></param>
             /// <returns></returns>
             public static Stream XorDecryptStream(string encryptFile, byte key)
             {
                 try
                 {
-                    // 建立 FileStream 以逐步讀取加密檔案
+                    // 建立 FileStream 以逐步讀取加密文件
                     using (FileStream fsDecrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
                         // 創建 MemoryStream 用於存放解密後的數據
@@ -407,9 +515,12 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// Head-Tail 2 XOR 加密檔案 【檢測OK】
+                /// Head-Tail 2 XOR 加密文件 【檢測OK】
                 /// </summary>
                 /// <param name="sourceFile"></param>
+                /// <param name="hKey"></param>
+                /// <param name="tKey"></param>
+                /// <param name="jKey"></param>
                 /// <returns></returns>
                 public static bool HT2XorEncryptFile(string sourceFile, byte hKey, byte tKey, byte jKey)
                 {
@@ -466,9 +577,12 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 /// <summary>
-                /// Head-Tail 2 XOR 解密檔案 【檢測OK】
+                /// Head-Tail 2 XOR 解密文件 【檢測OK】
                 /// </summary>
                 /// <param name="encryptFile"></param>
+                /// <param name="hKey"></param>
+                /// <param name="tKey"></param>
+                /// <param name="jKey"></param>
                 /// <returns></returns>
                 public static bool HT2XorDecryptFile(string encryptFile, byte hKey, byte tKey, byte jKey)
                 {
@@ -525,9 +639,12 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail 2 XOR 加密檔案 【檢測OK】
+            /// Head-Tail 2 XOR 加密文件 【檢測OK】
             /// </summary>
-            /// <param name="sourceFile"></param>
+            /// <param name="filePath"></param>
+            /// <param name="hKey"></param>
+            /// <param name="tKey"></param>
+            /// <param name="jKey"></param>
             /// <returns></returns>
             public static byte[] HT2XorEncryptBytes(string filePath, byte hKey, byte tKey, byte jKey)
             {
@@ -580,9 +697,12 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail 2 XOR 解密檔案 【檢測OK】
+            /// Head-Tail 2 XOR 解密文件 【檢測OK】
             /// </summary>
-            /// <param name="encryptBytes"></param>
+            /// <param name="filePath"></param>
+            /// <param name="hKey"></param>
+            /// <param name="tKey"></param>
+            /// <param name="jKey"></param>
             /// <returns></returns>
             public static byte[] HT2XorDecryptBytes(string filePath, byte hKey, byte tKey, byte jKey)
             {
@@ -635,15 +755,75 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
+            /// Head-Tail 2 XOR 加密文件 【檢測OK】
+            /// </summary>
+            /// <param name="rawBytes"></param>
+            /// <param name="hKey"></param>
+            /// <param name="tKey"></param>
+            /// <param name="jKey"></param>
+            /// <returns></returns>
+            public static bool HT2XorEncryptBytes(byte[] rawBytes, byte hKey, byte tKey, byte jKey)
+            {
+                try
+                {
+                    int length = rawBytes.Length;
+
+                    // head encrypt
+                    rawBytes[0] ^= hKey;
+                    // tail encrypt
+                    rawBytes[length - 1] ^= tKey;
+
+                    // jump 2 encrypt
+                    for (int i = 0; i < length >> 1; i++)
+                    {
+                        rawBytes[i << 1] ^= jKey;
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            /// <summary>
+            /// Head-Tail 2 XOR 解密文件 【檢測OK】
+            /// </summary>
+            /// <param name="encryptBytes"></param>
+            /// <param name="hKey"></param>
+            /// <param name="tKey"></param>
+            /// <param name="jKey"></param>
+            /// <returns></returns>
+            public static bool HT2XorDecryptBytes(byte[] encryptBytes, byte hKey, byte tKey, byte jKey)
+            {
+                // jump 2 encrypt
+                for (int i = 0; i < encryptBytes.Length >> 1; i++)
+                {
+                    encryptBytes[i << 1] ^= jKey;
+                }
+
+                // head encrypt
+                encryptBytes[0] ^= hKey;
+                // tail encrypt
+                encryptBytes[encryptBytes.Length - 1] ^= tKey;
+
+                return true;
+            }
+
+            /// <summary>
             /// 返回 Head-Tail 2 XOR 解密 Stream 【檢測OK】
             /// </summary>
             /// <param name="encryptFile"></param>
+            /// <param name="hKey"></param>
+            /// <param name="tKey"></param>
+            /// <param name="jKey"></param>
             /// <returns></returns>
             public static Stream HT2XorDecryptStream(string encryptFile, byte hKey, byte tKey, byte jKey)
             {
                 try
                 {
-                    // 建立 FileStream 以逐步讀取加密檔案
+                    // 建立 FileStream 以逐步讀取加密文件
                     using (FileStream fsDecrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
                         // 創建 MemoryStream 用於存放解密後的數據
@@ -696,9 +876,13 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// Head-Tail 2 XOR Plus 加密檔案 【檢測OK】
+                /// Head-Tail 2 XOR Plus 加密文件 【檢測OK】
                 /// </summary>
                 /// <param name="sourceFile"></param>
+                /// <param name="hKey"></param>
+                /// <param name="tKey"></param>
+                /// <param name="j1Key"></param>
+                /// <param name="j2Key"></param>
                 /// <returns></returns>
                 public static bool HT2XorPlusEncryptFile(string sourceFile, byte hKey, byte tKey, byte j1Key, byte j2Key)
                 {
@@ -760,9 +944,13 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 /// <summary>
-                /// Head-Tail 2 XOR Plus 解密檔案 【檢測OK】
+                /// Head-Tail 2 XOR Plus 解密文件 【檢測OK】
                 /// </summary>
                 /// <param name="encryptFile"></param>
+                /// <param name="hKey"></param>
+                /// <param name="tKey"></param>
+                /// <param name="j1Key"></param>
+                /// <param name="j2Key"></param>
                 /// <returns></returns>
                 public static bool HT2XorPlusDecryptFile(string encryptFile, byte hKey, byte tKey, byte j1Key, byte j2Key)
                 {
@@ -826,9 +1014,13 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail 2 XOR Plus 加密檔案 【檢測OK】
+            /// Head-Tail 2 XOR Plus 加密文件 【檢測OK】
             /// </summary>
-            /// <param name="sourceFile"></param>
+            /// <param name="filePath"></param>
+            /// <param name="hKey"></param>
+            /// <param name="tKey"></param>
+            /// <param name="j1Key"></param>
+            /// <param name="j2Key"></param>
             /// <returns></returns>
             public static byte[] HT2XorPlusEncryptBytes(string filePath, byte hKey, byte tKey, byte j1Key, byte j2Key)
             {
@@ -889,9 +1081,13 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail 2 XOR Plus 解密檔案 【檢測OK】
+            /// Head-Tail 2 XOR Plus 解密文件 【檢測OK】
             /// </summary>
-            /// <param name="encryptBytes"></param>
+            /// <param name="filePath"></param>
+            /// <param name="hKey"></param>
+            /// <param name="tKey"></param>
+            /// <param name="j1Key"></param>
+            /// <param name="j2Key"></param>
             /// <returns></returns>
             public static byte[] HT2XorPlusDecryptBytes(string filePath, byte hKey, byte tKey, byte j1Key, byte j2Key)
             {
@@ -950,15 +1146,88 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
+            /// Head-Tail 2 XOR Plus 加密文件 【檢測OK】
+            /// </summary>
+            /// <param name="rawBytes"></param>
+            /// <param name="hKey"></param>
+            /// <param name="tKey"></param>
+            /// <param name="j1Key"></param>
+            /// <param name="j2Key"></param>
+            /// <returns></returns>
+            public static bool HT2XorPlusEncryptBytes(byte[] rawBytes, byte hKey, byte tKey, byte j1Key, byte j2Key)
+            {
+                try
+                {
+                    int length = rawBytes.Length;
+
+                    // head encrypt
+                    rawBytes[0] ^= hKey;
+                    // tail encrypt
+                    rawBytes[length - 1] ^= tKey;
+
+                    // jump 2 plus encrypt
+                    for (int i = 0; i < length >> 1; i++)
+                    {
+                        int s1 = i << 1;
+                        int s2 = s1 + 1;
+                        rawBytes[s1] ^= j1Key;
+                        if (s2 < length)
+                            rawBytes[s2] ^= j2Key;
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            /// <summary>
+            /// Head-Tail 2 XOR Plus 解密文件 【檢測OK】
+            /// </summary>
+            /// <param name="encryptBytes"></param>
+            /// <param name="hKey"></param>
+            /// <param name="tKey"></param>
+            /// <param name="j1Key"></param>
+            /// <param name="j2Key"></param>
+            /// <returns></returns>
+            public static bool HT2XorPlusDecryptBytes(byte[] encryptBytes, byte hKey, byte tKey, byte j1Key, byte j2Key)
+            {
+                int length = encryptBytes.Length;
+
+                // jump 2 plus decrypt
+                for (int i = 0; i < length >> 1; i++)
+                {
+                    int s1 = i << 1;
+                    int s2 = s1 + 1;
+                    encryptBytes[s1] ^= j1Key;
+                    if (s2 < length)
+                        encryptBytes[s2] ^= j2Key;
+                }
+
+                // head decrypt
+                encryptBytes[0] ^= hKey;
+                // tail decrypt
+                encryptBytes[length - 1] ^= tKey;
+
+                return true;
+            }
+
+            /// <summary>
             /// 返回 Head-Tail 2 XOR Plus 解密 Stream 【檢測OK】
             /// </summary>
             /// <param name="encryptFile"></param>
+            /// <param name="hKey"></param>
+            /// <param name="tKey"></param>
+            /// <param name="j1Key"></param>
+            /// <param name="j2Key"></param>
             /// <returns></returns>
             public static Stream HT2XorPlusDecryptStream(string encryptFile, byte hKey, byte tKey, byte j1Key, byte j2Key)
             {
                 try
                 {
-                    // 建立 FileStream 以逐步讀取加密檔案
+                    // 建立 FileStream 以逐步讀取加密文件
                     using (FileStream fsDecrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
                         // 創建 MemoryStream 用於存放解密後的數據
@@ -1017,7 +1286,7 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// AES 加密檔案 【檢測OK】
+                /// AES 加密文件 【檢測OK】
                 /// </summary>
                 /// <param name="sourceFile"></param>
                 /// <param name="key"></param>
@@ -1049,7 +1318,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
                             using (FileStream fsEncrypt = new FileStream(sourceFile, FileMode.Create, FileAccess.Write))
                             {
-                                //檔案加密
+                                //文件加密
                                 using (CryptoStream cs = new CryptoStream(fsEncrypt, aes.CreateEncryptor(), CryptoStreamMode.Write))
                                 {
                                     cs.Write(dataBytes, 0, dataBytes.Length);
@@ -1068,7 +1337,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 /// <summary>
-                /// AES 解密檔案 【檢測OK】
+                /// AES 解密文件 【檢測OK】
                 /// </summary>
                 /// <param name="encryptFile"></param>
                 /// <param name="key"></param>
@@ -1095,7 +1364,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
                             using (FileStream fsDecrypt = new FileStream(encryptFile, FileMode.Create, FileAccess.Write))
                             {
-                                //檔案解密
+                                //文件解密
                                 using (CryptoStream cs = new CryptoStream(fsDecrypt, aes.CreateDecryptor(), CryptoStreamMode.Write))
                                 {
                                     cs.Write(dataBytes, 0, dataBytes.Length);
@@ -1115,9 +1384,9 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// AES 加密檔案 【檢測OK】
+            /// AES 加密文件 【檢測OK】
             /// </summary>
-            /// <param name="rawBytes"></param>
+            /// <param name="filePath"></param>
             /// <param name="key"></param>
             /// <param name="iv"></param>
             /// <returns></returns>
@@ -1162,9 +1431,9 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// AES 解密檔案 【檢測OK】
+            /// AES 解密文件 【檢測OK】
             /// </summary>
-            /// <param name="encryptBytes"></param>
+            /// <param name="filePath"></param>
             /// <param name="key"></param>
             /// <param name="iv"></param>
             /// <returns></returns>
@@ -1205,6 +1474,87 @@ namespace OxGFrame.AssetLoader.Bundle
                     Debug.LogError(ex);
                     return null;
                 }
+            }
+
+            /// <summary>
+            /// AES 加密文件 【檢測OK】
+            /// </summary>
+            /// <param name="rawBytes"></param>
+            /// <param name="key"></param>
+            /// <param name="iv"></param>
+            /// <returns></returns>
+            public static bool AesEncryptBytes(ref byte[] rawBytes, string key = null, string iv = null)
+            {
+                try
+                {
+                    AesCryptoServiceProvider aes = new AesCryptoServiceProvider();
+                    MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+                    SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider();
+                    byte[] keyData = sha256.ComputeHash(Encoding.UTF8.GetBytes(key));
+                    byte[] ivData = md5.ComputeHash(Encoding.UTF8.GetBytes(iv));
+                    aes.Key = keyData;
+                    aes.IV = ivData;
+
+                    using (MemoryStream msSource = new MemoryStream())
+                    {
+                        //文件加密
+                        using (CryptoStream cs = new CryptoStream(msSource, aes.CreateEncryptor(), CryptoStreamMode.Write))
+                        {
+                            cs.Write(rawBytes, 0, rawBytes.Length);
+                        }
+                        rawBytes = msSource.ToArray();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logging.Print<Logger>($"<color=#FF0000>File Encrypt failed.</color> {ex}");
+                    return false;
+                }
+
+                return true;
+            }
+
+            /// <summary>
+            /// AES 解密文件 【檢測OK】
+            /// </summary>
+            /// <param name="encryptBytes"></param>
+            /// <param name="key"></param>
+            /// <param name="iv"></param>
+            /// <returns></returns>
+            public static bool AesDecryptBytes(byte[] encryptBytes, string key = null, string iv = null)
+            {
+                try
+                {
+                    AesCryptoServiceProvider aes = new AesCryptoServiceProvider();
+                    MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+                    SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider();
+                    byte[] keyData = sha256.ComputeHash(Encoding.UTF8.GetBytes(key));
+                    byte[] ivData = md5.ComputeHash(Encoding.UTF8.GetBytes(iv));
+                    aes.Key = keyData;
+                    aes.IV = ivData;
+
+                    using (MemoryStream msEncrypt = new MemoryStream(encryptBytes))
+                    {
+                        // 文件解密
+                        using (CryptoStream cs = new CryptoStream(msEncrypt, aes.CreateDecryptor(), CryptoStreamMode.Read))
+                        {
+                            int idx = 0;
+                            int data;
+                            while ((data = cs.ReadByte()) != -1)
+                            {
+                                encryptBytes[idx] = (byte)data;
+                                idx++;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logging.Print<Logger>($"<color=#FF0000>File Decrypt failed.</color> {ex}");
+                    return false;
+                }
+
+                return true;
             }
 
             /// <summary>

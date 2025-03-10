@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/OxGFrame/Samples/HotfixerDemo/Scenes/Main/HotfixerDemo.unity
     guid: b2f42f35bbfda28478550033c1e123bb
+  - enabled: 0
+    path: Assets/OxGFrame/Samples/BundleDLCDemo/BundleDLCDemo.unity
+    guid: 1ece66c418b3df6488a09fb140fa58ab
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 846103b260185f14fa06320b884c5bd6,
       type: 2}

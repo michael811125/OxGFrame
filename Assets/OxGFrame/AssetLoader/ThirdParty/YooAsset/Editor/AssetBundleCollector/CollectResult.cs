@@ -15,12 +15,9 @@ namespace YooAsset.Editor
         /// </summary>
         public List<CollectAssetInfo> CollectAssets { private set; get; }
 
-        public CollectResult(CollectCommand command)
+        public CollectResult(CollectCommand command, List<CollectAssetInfo> collectAssets)
         {
             Command = command;
-        }
-        public void SetCollectAssets(List<CollectAssetInfo> collectAssets)
-        {
             CollectAssets = collectAssets;
         }
     }

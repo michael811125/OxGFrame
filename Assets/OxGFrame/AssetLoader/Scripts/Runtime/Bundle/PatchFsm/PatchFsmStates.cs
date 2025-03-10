@@ -76,7 +76,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 foreach (var packageName in packageNames)
                 {
                     // Clear cache and files of package
-                    isCleared = await PackageManager.UnloadPackageAndClearCacheFiles(packageName);
+                    isCleared = await PackageManager.UnloadPackageAndClearCacheFiles(packageName, false);
                     if (!isCleared) break;
                 }
 
@@ -167,9 +167,12 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 string url;
 
                 // 判斷是否離線版, 如果是離線版則請求 StreamingAssets 中的 Cfg
-                if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode) url = saCfgPath;
-                // 反之, 請求 Server 的 Cfg
-                else url = await BundleConfig.GetHostServerAppConfigPath();
+                if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode ||
+                    BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
+                    url = saCfgPath;
+                // 反之, 從 Server 請求 Cfg
+                else
+                    url = await BundleConfig.GetHostServerAppConfigPath();
 
                 string hostCfgJson = await Requester.RequestText(url, null, PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage, null, false);
 
@@ -225,7 +228,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     localCfg = JsonConvert.DeserializeObject<AppConfig>(localCfgJson);
 
                     // 如果是離線模式, Local Config = StreamingAssets Config
-                    if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode)
+                    if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode ||
+                        BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
                     {
                         // 寫入 StreamingAssets 的配置檔至 Local
                         File.WriteAllText(localCfgPath, JsonConvert.SerializeObject(saCfg));
@@ -293,9 +297,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         {
                             PatchManager.platform = hostCfg.PLATFORM;
                             PatchManager.appVersion = hostCfg.APP_VERSION;
-                            this._machine.ChangeState<FsmInitPatchMode>();
-
                             Logging.Print<Logger>($"<color=#00ff00>【App Version Passed (X.Y.Z)】LOCAL APP_VER: v{localCfg.APP_VERSION} == SERVER APP_VER: v{hostCfg.APP_VERSION}</color>");
+                            this._machine.ChangeState<FsmInitPatchMode>();
                         }
                     }
                     else
@@ -333,9 +336,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                             PatchManager.platform = hostCfg.PLATFORM;
                             PatchManager.appVersion = hostCfg.APP_VERSION;
-                            this._machine.ChangeState<FsmInitPatchMode>();
-
                             Logging.Print<Logger>($"<color=#00ff00>【App Version Passed (X.Y)】LOCAL APP_VER: v{localVersion} ({localCfg.APP_VERSION}) == SERVER APP_VER: v{hostVersion} ({hostCfg.APP_VERSION})</color>");
+                            this._machine.ChangeState<FsmInitPatchMode>();
                         }
                     }
                 }
@@ -377,16 +379,16 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 if (PackageManager.isInitialized)
                 {
-                    this._machine.ChangeState<FsmPatchVersionUpdate>();
                     Logging.Print<Logger>("<color=#ffcf67>(Check) Check Patch</color>");
+                    this._machine.ChangeState<FsmPatchVersionUpdate>();
                     return;
                 }
 
                 bool isInitialized = await PackageManager.InitPresetAppPackages();
                 if (isInitialized)
                 {
-                    this._machine.ChangeState<FsmPatchVersionUpdate>();
                     Logging.Print<Logger>("<color=#ffcf67>(Init) Init Patch</color>");
+                    this._machine.ChangeState<FsmPatchVersionUpdate>();
                 }
                 else
                 {
@@ -438,7 +440,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 List<string> patchVersions = new List<string>();
                 foreach (var package in packages)
                 {
-                    var operation = package.UpdatePackageVersionAsync();
+                    var operation = package.RequestPackageVersionAsync();
                     await operation;
 
                     if (operation.Status == EOperationStatus.Succeed)
@@ -511,7 +513,6 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     if (operation.Status == EOperationStatus.Succeed)
                     {
                         succeed = true;
-                        operation.SavePackageVersion();
                         Logging.Print<Logger>($"<color=#85cf0f>Package: {packages[i].PackageName} <color=#00c1ff>Update</color> completed successfully.</color>");
                     }
                     else
@@ -568,7 +569,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 // EditorSimulateMode or OfflineMode skip directly
                 if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
-                    BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode)
+                    BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode ||
+                    BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
                 {
                     this._machine.ChangeState<FsmPatchDone>();
                     return;
@@ -840,18 +842,16 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     int lastCount = 0;
                     long lastBytes = 0;
-                    downloader.OnDownloadErrorCallback = PatchEvents.PatchDownloadFailed.SendEventMessage;
-                    downloader.OnDownloadProgressCallback =
-                    (
-                        int totalDownloadCount,
-                        int currentDownloadCount,
-                        long totalDownloadBytes,
-                        long currentDownloadBytes) =>
+                    downloader.DownloadErrorCallback = (DownloadErrorData data) =>
                     {
-                        currentCount += currentDownloadCount - lastCount;
-                        lastCount = currentDownloadCount;
-                        currentBytes += currentDownloadBytes - lastBytes;
-                        lastBytes = currentDownloadBytes;
+                        PatchEvents.PatchDownloadFailed.SendEventMessage(data.FileName, data.ErrorInfo);
+                    };
+                    downloader.DownloadUpdateCallback = (DownloadUpdateData data) =>
+                    {
+                        currentCount += data.CurrentDownloadCount - lastCount;
+                        lastCount = data.CurrentDownloadCount;
+                        currentBytes += data.CurrentDownloadBytes - lastBytes;
+                        lastBytes = data.CurrentDownloadBytes;
                         downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
                     };
 
@@ -942,8 +942,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 foreach (var package in packages)
                 {
-                    var operation = package.ClearUnusedCacheFilesAsync();
-                    await operation;
+                    var clearUnusedBundleFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
+                    var clearUnusedManifestFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
+                    await clearUnusedBundleFilesOperation;
+                    await clearUnusedManifestFilesOperation;
                 }
 
                 this._machine.ChangeState<FsmPatchDone>();

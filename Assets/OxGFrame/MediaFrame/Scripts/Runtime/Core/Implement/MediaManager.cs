@@ -316,7 +316,7 @@ namespace OxGFrame.MediaFrame
                     if (this.HasAssetInCache(assetName)) this._dictAssetCache.Remove(assetName);
 
                     // 卸載
-                    AssetLoaders.UnloadAsset(assetName);
+                    AssetLoaders.UnloadAsset(assetName).Forget();
 
                     Logging.Print<Logger>($"<color=#ffb6db>[MediaManager] Unload Asset: {assetName}</color>");
                 }
@@ -345,7 +345,7 @@ namespace OxGFrame.MediaFrame
             if (this.HasAssetInCache(assetName)) this._dictAssetCache.Remove(assetName);
 
             // 卸載
-            AssetLoaders.UnloadAsset(assetName);
+            AssetLoaders.UnloadAsset(assetName).Forget();
         }
     }
 

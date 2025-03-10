@@ -123,11 +123,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
             }
             catch (OperationCanceledException ex)
             {
-                if (ex.CancellationToken == cts.Token)
-                {
-                    Logging.PrintException<Logger>(ex);
-                    return false;
-                }
+                Logging.PrintException<Logger>(ex);
+                return false;
             }
 
             this._videoPlayer.SetDirectAudioMute(0, true);
@@ -189,7 +186,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         private void _SetTargetCamera()
         {
-            if (this._targetCamera.camera == null) return;
+            if (this._targetCamera.camera == null)
+                return;
 
             switch (this._targetCamera.orderType)
             {
@@ -206,11 +204,14 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         protected override void OnFixedUpdate(float dt = 0f)
         {
-            if (this._videoPlayer == null) return;
+            if (this._videoPlayer == null)
+                return;
 
-            if (!this.isPrepared) return;
+            if (!this.isPrepared)
+                return;
 
-            if (this.IsPaused()) return;
+            if (this.IsPaused())
+                return;
 
             if (this.CurrentRemainingLength() > 0f)
             {
@@ -225,9 +226,11 @@ namespace OxGFrame.MediaFrame.VideoFrame
                         if (this._loops <= 0)
                         {
                             this._currentRemainingLength = 0;
-                            if (this.autoEndToStop) this.StopSelf();
+                            if (this.autoEndToStop)
+                                this.StopSelf();
                         }
-                        else this._videoPlayer.Play();
+                        else
+                            this._videoPlayer.Play();
                     }
                     this._currentRemainingLength = this.Length();
                 }
@@ -236,15 +239,18 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         internal override void Play(int loops, float volume)
         {
-            if (this._videoPlayer == null) return;
+            if (this._videoPlayer == null)
+                return;
 
             this.gameObject.SetActive(true);
 
             this._videoPlayer.SetDirectAudioMute(0, false);
 
-            if (!this.IsPaused()) this._loops = (loops == -1 || loops > 0) ? loops : this.loops;
+            if (!this.IsPaused())
+                this._loops = (loops == -1 || loops > 0) ? loops : this.loops;
 
-            if (this._loops == -1) this._videoPlayer.isLooping = true;
+            if (this._loops == -1)
+                this._videoPlayer.isLooping = true;
 
             volume = (volume > 0f) ? volume : this._videoPlayer.GetDirectAudioVolume(0);
             this._videoPlayer.SetDirectAudioVolume(0, volume);
@@ -256,14 +262,16 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         internal override void Stop()
         {
-            if (this._videoPlayer == null) return;
+            if (this._videoPlayer == null)
+                return;
 
             this._videoPlayer.Stop();
             this.ResetLength();
             this.ResetLoops();
 
             // RenderTexture 需要額外釋放, 避免內存膨脹
-            if (this._targetRt != null) this._ReleaseTargetRenderTexture();
+            if (this._targetRt != null)
+                this._ReleaseTargetRenderTexture();
 
             this._endEvent?.Invoke();
             this._endEvent = null;
@@ -273,7 +281,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         internal override void Pause()
         {
-            if (this._videoPlayer == null) return;
+            if (this._videoPlayer == null)
+                return;
 
             this._isPaused = true; // 標記暫停
             this._videoPlayer.Pause();
@@ -281,7 +290,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         public override bool IsPlaying()
         {
-            if (this._videoPlayer == null) return false;
+            if (this._videoPlayer == null)
+                return false;
             return this._videoPlayer.isPlaying;
         }
 
@@ -292,7 +302,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         public override bool IsLooping()
         {
-            if (this._videoPlayer == null) return false;
+            if (this._videoPlayer == null)
+                return false;
             return this._videoPlayer.isLooping;
         }
 
@@ -319,7 +330,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
         public override void OnRelease()
         {
             // RenderTexture 需要額外釋放, 避免內存膨脹
-            if (this._targetRt != null) this._ReleaseTargetRenderTexture();
+            if (this._targetRt != null)
+                this._ReleaseTargetRenderTexture();
 
             this._endEvent?.Invoke();
 
@@ -337,7 +349,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <param name="pct"></param>
         public void SkipToPercent(float pct)
         {
-            if (this._videoPlayer == null) return;
+            if (this._videoPlayer == null)
+                return;
 
             // Clamp pct to ensure it's between 0.0 and 1.0
             pct = Mathf.Clamp(pct, 0f, 1f);
@@ -360,14 +373,27 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <param name="speed"></param>
         public void SetPlaySpeed(float speed)
         {
-            if (this._videoPlayer == null) return;
+            if (this._videoPlayer == null)
+                return;
 
             // Clamp speed to ensure it does not go below 0.1
             speed = Mathf.Clamp(speed, 0.01f, float.MaxValue);
 
-            this._videoPlayer.playbackSpeed = speed;
+            this._videoPlayer.playbackSpeed = this.playbackSpeed = speed;
             // use skip to percent to update current length and media total length
             this.SkipToPercent((this._mediaLength - this._currentRemainingLength) / this._mediaLength);
+        }
+
+        /// <summary>
+        /// Get video play speed
+        /// </summary>
+        /// <returns></returns>
+        public float GetPlaySpeed()
+        {
+            if (this._videoPlayer == null)
+                return this.playbackSpeed;
+
+            return this._videoPlayer.playbackSpeed;
         }
 
         public VideoPlayer GetVideoPlayer()
@@ -377,7 +403,9 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         private void OnDestroy()
         {
-            if (Time.frameCount == 0 || !Application.isPlaying) return;
+            if (Time.frameCount == 0 ||
+                !Application.isPlaying)
+                return;
 
             try
             {

@@ -10,6 +10,11 @@ namespace YooAsset
         /// 采样一次
         /// </summary>
         SampleOnce = 0,
+
+        /// <summary>
+        /// 自动采集
+        /// </summary>
+        SampleAuto = 1,
     }
 
     [Serializable]

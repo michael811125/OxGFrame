@@ -31,7 +31,8 @@ namespace OxGFrame.CoreFrame.UIFrame
                 lock (_locker)
                 {
                     _instance = FindObjectOfType(typeof(UIManager)) as UIManager;
-                    if (_instance == null) _instance = new GameObject(nameof(UIManager)).AddComponent<UIManager>();
+                    if (_instance == null)
+                        _instance = new GameObject(nameof(UIManager)).AddComponent<UIManager>();
                 }
             }
             return _instance;
@@ -44,11 +45,13 @@ namespace OxGFrame.CoreFrame.UIFrame
             if (this.gameObject.transform.root.name == newName)
             {
                 var container = GameObject.Find(nameof(OxGFrame));
-                if (container == null) container = new GameObject(nameof(OxGFrame));
+                if (container == null)
+                    container = new GameObject(nameof(OxGFrame));
                 this.gameObject.transform.SetParent(container.transform);
                 DontDestroyOnLoad(container);
             }
-            else DontDestroyOnLoad(this.gameObject.transform.root);
+            else
+                DontDestroyOnLoad(this.gameObject.transform.root);
         }
 
         #region 初始建立 Node 相關方法
@@ -58,7 +61,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <param name="canvasName"></param>
         public bool SetupAndCheckUICanvas(string canvasName)
         {
-            if (this._dictUICanvas.ContainsKey(canvasName)) return true;
+            if (this._dictUICanvas.ContainsKey(canvasName))
+                return true;
 
             // 查找與 CanvasName 定義名稱一樣的 Canvas 物件
             GameObject goCanvas = null;
@@ -75,7 +79,8 @@ namespace OxGFrame.CoreFrame.UIFrame
             {
                 // 取得或建立 UICanvas
                 UICanvas uiCanvas = goCanvas.GetComponent<UICanvas>();
-                if (uiCanvas == null) uiCanvas = goCanvas.AddComponent<UICanvas>();
+                if (uiCanvas == null)
+                    uiCanvas = goCanvas.AddComponent<UICanvas>();
 
                 // 設置 UIRoot (parent = Canvas)
                 var goUIRoot = this._CreateUIRoot(uiCanvas, UIConfig.UI_ROOT_NAME, goCanvas.transform);
@@ -111,7 +116,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         {
             // 檢查是否已經有先被創立了
             GameObject uiRootChecker = parent.Find(name)?.gameObject;
-            if (uiRootChecker != null) return uiRootChecker;
+            if (uiRootChecker != null)
+                return uiRootChecker;
 
             GameObject uiRootGo = new GameObject(UIConfig.UI_ROOT_NAME, typeof(RectTransform));
             // 設置繼承主 Canvas 的 Layer
@@ -134,7 +140,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         {
             // 檢查是否已經有先被創立了
             GameObject uiNodeChecker = parent.Find(nodeType.ToString())?.gameObject;
-            if (uiNodeChecker != null) return uiNodeChecker;
+            if (uiNodeChecker != null)
+                return uiNodeChecker;
 
             GameObject uiNodeGo = new GameObject(nodeType.ToString(), typeof(RectTransform), typeof(Canvas));
             // 設置繼承主 Canvas 的 Layer
@@ -167,7 +174,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         {
             // 檢查是否已經有先被創立了
             GameObject uiContainerChecker = parent.Find(name)?.gameObject;
-            if (uiContainerChecker != null) return uiContainerChecker;
+            if (uiContainerChecker != null)
+                return uiContainerChecker;
 
             GameObject uiContainerGo = new GameObject(name, typeof(RectTransform));
             // 設置繼承主 Canvas 的 Layer
@@ -190,9 +198,11 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <returns></returns>
         public UICanvas GetUICanvas(string canvasName)
         {
-            if (this._dictUICanvas.Count == 0) return null;
+            if (this._dictUICanvas.Count == 0)
+                return null;
 
-            if (this._dictUICanvas.TryGetValue(canvasName.ToString(), out var uiCanvas)) return uiCanvas;
+            if (this._dictUICanvas.TryGetValue(canvasName.ToString(), out var uiCanvas))
+                return uiCanvas;
 
             return null;
         }
@@ -219,19 +229,23 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             // 透過 RenderMode 區分預設父層級
             Transform rootParent;
-            if (uiCanvas.canvas.renderMode == RenderMode.WorldSpace) rootParent = uiCanvas.transform;
-            else rootParent = uiCanvas.uiRoot.transform;
+            if (uiCanvas.canvas.renderMode == RenderMode.WorldSpace)
+                rootParent = uiCanvas.transform;
+            else
+                rootParent = uiCanvas.uiRoot.transform;
             // instantiate 【UI Prefab】 (需先指定 Instantiate Parent 為 UIRoot 不然 Canvas 初始會跑掉)
             GameObject instPref = Instantiate(uiBase.gameObject, (parent != null) ? parent : rootParent);
 
             // 激活檢查, 如果主體 Active 為 false 必須打開
-            if (!instPref.activeSelf) instPref.SetActive(true);
+            if (!instPref.activeSelf)
+                instPref.SetActive(true);
 
             // Replace Name
             instPref.name = instPref.name.Replace("(Clone)", "");
             // 取得 UIBase 組件
             uiBase = instPref.GetComponent<UIBase>();
-            if (uiBase == null) return null;
+            if (uiBase == null)
+                return null;
 
             addIntoCache?.Invoke(uiBase);
 
@@ -247,7 +261,8 @@ namespace OxGFrame.CoreFrame.UIFrame
             // >>> 需在 InitThis 之後, 以下設定開始生效 <<<
 
             // 透過 UIFormType 類型, 設置 Parent
-            if (!this.SetParent(uiBase, parent)) return null;
+            if (!this.SetParent(uiBase, parent))
+                return null;
             // SortingOrder 設置需在 SetActive(false) 之前就設置, 基於 UIFormType 的階層去設置排序
             this._SetSortingOrder(uiBase);
             // 設置 UI 物件底下的 Renderer 組件為 UI 層, 使得 Renderer 為正確的 UI 階層與渲染順序
@@ -269,7 +284,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         {
             if (parent != null)
             {
-                if (parent.gameObject.GetComponent<UIParent>() == null) parent.gameObject.AddComponent<UIParent>();
+                if (parent.gameObject.GetComponent<UIParent>() == null)
+                    parent.gameObject.AddComponent<UIParent>();
                 uiBase.gameObject.transform.SetParent(parent);
                 return true;
             }
@@ -285,7 +301,8 @@ namespace OxGFrame.CoreFrame.UIFrame
                 var goNode = uiCanvas.GetUINode(uiBase.uiSetting.nodeType);
                 if (goNode != null)
                 {
-                    if (goNode.GetComponent<UIParent>() == null) goNode.AddComponent<UIParent>();
+                    if (goNode.GetComponent<UIParent>() == null)
+                        goNode.AddComponent<UIParent>();
                     uiBase.gameObject.transform.SetParent(goNode.transform);
                     return true;
                 }
@@ -317,7 +334,8 @@ namespace OxGFrame.CoreFrame.UIFrame
             uiBaseGraphicRaycaster.blockingMask = mainGraphicRaycaster.blockingMask;
 
             // 是否自動遞迴設置 LayerMask
-            if (UIConfig.autoSetLayerRecursively) this._SetLayerRecursively(uiBase.gameObject, uiCanvas.gameObject.layer);
+            if (UIConfig.autoSetLayerRecursively)
+                this._SetLayerRecursively(uiBase.gameObject, uiCanvas.gameObject.layer);
         }
 
         /// <summary>
@@ -341,16 +359,20 @@ namespace OxGFrame.CoreFrame.UIFrame
         private void _SetSortingOrder(UIBase uiBase)
         {
             Canvas uiBaseCanvas = uiBase?.canvas;
-            if (uiBaseCanvas == null) return;
+            if (uiBaseCanvas == null)
+                return;
 
             // 設置 sortingOrder (UIBase 中設置的 order 需要再 -=1, 保留給 Renderer)
-            if ((uiBase.uiSetting.order -= 1) < 0) uiBase.uiSetting.order = 0;
+            if ((uiBase.uiSetting.order -= 1) < 0)
+                uiBase.uiSetting.order = 0;
             // ORDER_DIFFERENCE - 2 => 1 保留給下一個UI階層, 另外一個 1 保留給 Renderer
             int uiOrder = (uiBase.uiSetting.order >= (UIConfig.ORDER_DIFFERENCE - 2)) ? (UIConfig.ORDER_DIFFERENCE - 2) : uiBase.uiSetting.order;
             int uiNodeOrder = UIConfig.uiNodes[uiBase.uiSetting.nodeType];
             // 判斷非 Stack, 則進行設置累加, 反之則不進行
-            if (!uiBase.uiSetting.stack) uiBaseCanvas.sortingOrder = uiNodeOrder + uiOrder;
-            else uiBaseCanvas.sortingOrder = uiNodeOrder;
+            if (!uiBase.uiSetting.stack)
+                uiBaseCanvas.sortingOrder = uiNodeOrder + uiOrder;
+            else
+                uiBaseCanvas.sortingOrder = uiNodeOrder;
         }
 
         /// <summary>
@@ -361,10 +383,13 @@ namespace OxGFrame.CoreFrame.UIFrame
         private void _SetRendererOrder(UIBase uiBase)
         {
             Canvas uiBaseCanvas = uiBase?.canvas;
-            if (uiBaseCanvas == null) return;
+            if (uiBaseCanvas == null)
+                return;
 
             Renderer[] renderers = uiBase.gameObject?.GetComponentsInChildren<Renderer>();
-            if (renderers == null || renderers.Length == 0) return;
+            if (renderers == null ||
+                renderers.Length == 0)
+                return;
 
             // 設置 Renderer 的 sortingLayerName
             string sortingLayerName = uiBaseCanvas.sortingLayerName;
@@ -383,7 +408,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         #region Show
         public override async UniTask<UIBase> Show(int groupId, string packageName, string assetName, object obj = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
         {
-            if (string.IsNullOrEmpty(assetName)) return null;
+            if (string.IsNullOrEmpty(assetName))
+                return null;
 
             // 先取出 Stack 主體
             var stack = this.GetStackFromAllCache(assetName);
@@ -434,7 +460,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         {
             ReverseCache reverseCache = new ReverseCache();
 
-            if (this._dictReverse.Count == 0) return reverseCache;
+            if (this._dictReverse.Count == 0)
+                return reverseCache;
 
             if (doRemoveSafety)
             {
@@ -449,7 +476,8 @@ namespace OxGFrame.CoreFrame.UIFrame
                     for (int i = topIdx; i > 0; i--)
                     {
                         // 僅取出 Top == 該 UI 的 Reverse 緩存
-                        if (i == topIdx && top.uiBase.Equals(uiBase))
+                        if (i == topIdx &&
+                            top.uiBase.Equals(uiBase))
                         {
                             equalsTop = top.uiBase;
                             // 額外計算堆疊數 (用於校正堆疊計數)
@@ -483,11 +511,13 @@ namespace OxGFrame.CoreFrame.UIFrame
             var key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
             if (this._dictReverse.ContainsKey(key))
             {
-                if (this._dictReverse[key].Count > 0 && uiBase.reverseChanges)
+                if (this._dictReverse[key].Count > 0 &&
+                    uiBase.reverseChanges)
                 {
                     var top = this._dictReverse[key][this._dictReverse[key].Count - 1];
                     // 該 UI 不等於 Reverse 緩存中的 Top UI 則返回 false
-                    if (!top.uiBase.Equals(uiBase)) return false;
+                    if (!top.uiBase.Equals(uiBase))
+                        return false;
                 }
             }
 
@@ -504,9 +534,11 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <returns></returns>
         public int GetStackByStackCount(int groupId, string canvasName)
         {
-            if (this._dictStackByStack.Count == 0) return 0;
+            if (this._dictStackByStack.Count == 0)
+                return 0;
             string key = $"{groupId}{canvasName}";
-            if (!this._dictStackByStack.ContainsKey(key)) return 0;
+            if (!this._dictStackByStack.ContainsKey(key))
+                return 0;
             return this._dictStackByStack[key].Count;
         }
 
@@ -518,7 +550,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <returns></returns>
         private void _PreprocessRemoveStackByStackSafety(bool doRemoveSafety, UIBase uiBase)
         {
-            if (this._dictStackByStack.Count == 0) return;
+            if (this._dictStackByStack.Count == 0)
+                return;
 
             if (doRemoveSafety)
             {
@@ -552,7 +585,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <param name="doAll"></param>
         private void _Close(string assetName, bool disabledPreClose, bool forceDestroy, bool doAll)
         {
-            if (string.IsNullOrEmpty(assetName) || !this.HasStackInAllCache(assetName)) return;
+            if (string.IsNullOrEmpty(assetName) ||
+                !this.HasStackInAllCache(assetName))
+                return;
 
             if (doAll)
             {
@@ -564,26 +599,34 @@ namespace OxGFrame.CoreFrame.UIFrame
 
                     // 清除相同 groupId + canvasName 的緩存 (主要是為了校正)
                     string key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}";
-                    if (this._dictReverse.ContainsKey(key)) this._dictReverse.Remove(key);
-                    if (this._dictStackByStack.ContainsKey(key)) this._dictStackByStack.Remove(key);
+                    if (this._dictReverse.ContainsKey(key))
+                        this._dictReverse.Remove(key);
+                    if (this._dictStackByStack.ContainsKey(key))
+                        this._dictStackByStack.Remove(key);
                     key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}{uiBase.uiSetting.nodeType}";
-                    if (this._dictStackCounter.ContainsKey(key)) this._dictStackCounter.Remove(key);
+                    if (this._dictStackCounter.ContainsKey(key))
+                        this._dictStackCounter.Remove(key);
 
-                    if (forceDestroy) this.Destroy(uiBase, assetName);
-                    else if (uiBase.allowInstantiate) this.Destroy(uiBase, assetName);
-                    else if (uiBase.onCloseAndDestroy) this.Destroy(uiBase, assetName);
+                    if (forceDestroy)
+                        this.Destroy(uiBase, assetName);
+                    else if
+                        (uiBase.allowInstantiate) this.Destroy(uiBase, assetName);
+                    else if
+                        (uiBase.onCloseAndDestroy) this.Destroy(uiBase, assetName);
                 }
             }
             else
             {
                 UIBase uiBase = this.PeekStackFromAllCache(assetName);
-                if (uiBase == null) return;
+                if (uiBase == null)
+                    return;
 
                 #region StackByStack Process
                 // 如果強制關閉 UI, 需要處理原本柱列在 StackByStack 中的 UI 緩存 
                 this._PreprocessRemoveStackByStackSafety(forceDestroy, uiBase);
                 // 從 StackByStack 緩存中移除
-                if (!forceDestroy) this.PopStackByStack(uiBase);
+                if (!forceDestroy)
+                    this.PopStackByStack(uiBase);
                 #endregion
 
                 // 如果強制關閉 UI, 需要處理原本柱列在 Reverse 中的 UI 緩存
@@ -595,9 +638,12 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 如果檢測到 equalsTop.uiBase != null 則需要進行反切還原
                 this.ExitAndHideReverse(uiBase, !forceDestroy || (equalsTop.uiBase != null));
 
-                if (forceDestroy) this.Destroy(uiBase, assetName);
-                else if (uiBase.allowInstantiate) this.Destroy(uiBase, assetName);
-                else if (uiBase.onCloseAndDestroy) this.Destroy(uiBase, assetName);
+                if (forceDestroy)
+                    this.Destroy(uiBase, assetName);
+                else if (uiBase.allowInstantiate)
+                    this.Destroy(uiBase, assetName);
+                else if (uiBase.onCloseAndDestroy)
+                    this.Destroy(uiBase, assetName);
             }
 
             Logging.Print<Logger>($"<color=#1effad>Close UI: <color=#ffdb1e>{assetName}</color></color>");
@@ -606,25 +652,31 @@ namespace OxGFrame.CoreFrame.UIFrame
         public override void Close(string assetName, bool disabledPreClose = false, bool forceDestroy = false)
         {
             // 如果沒有強制 Destroy + 不是顯示狀態則直接 return
-            if (!forceDestroy && !this.CheckIsShowing(assetName)) return;
+            if (!forceDestroy &&
+                !this.CheckIsShowing(assetName))
+                return;
             this._Close(assetName, disabledPreClose, forceDestroy, false);
         }
 
         public override void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames)
         {
-            if (this._dictAllCache.Count == 0) return;
+            if (this._dictAllCache.Count == 0)
+                return;
 
             foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
                 // prevent preload mode
-                if (stack.Count() == 0) continue;
+                if (stack.Count() == 0)
+                    continue;
 
                 string assetName = stack.assetName;
 
                 var uiBase = stack.Peek();
 
                 // 如果 -1 表示不管任何 groupId
-                if (groupId != -1 && uiBase.groupId != groupId) continue;
+                if (groupId != -1 &&
+                    uiBase.groupId != groupId)
+                    continue;
 
                 // 檢查排除執行的 UI
                 bool checkWithout = false;
@@ -644,10 +696,15 @@ namespace OxGFrame.CoreFrame.UIFrame
                 if (checkWithout) continue;
 
                 // 如果沒有強制 Destroy + 不是顯示狀態則直接略過處理
-                if (!forceDestroy && !this.CheckIsShowing(uiBase) && !uiBase.allowInstantiate) continue;
+                if (!forceDestroy &&
+                    !this.CheckIsShowing(uiBase) &&
+                    !uiBase.allowInstantiate)
+                    continue;
 
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
-                if (!forceCloseExcluded && uiBase.uiSetting.whenCloseAllToSkip) continue;
+                if (!forceCloseExcluded &&
+                    uiBase.uiSetting.whenCloseAllToSkip)
+                    continue;
 
                 this._Close(assetName, disabledPreClose, forceDestroy, true);
             }
@@ -655,7 +712,8 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         public void CloseStackByStack(int groupId, string canvasName, bool disabledPreClose = false, bool forceDestroy = false)
         {
-            if (this._dictStackByStack.Count == 0) return;
+            if (this._dictStackByStack.Count == 0)
+                return;
 
             string key = $"{groupId}{canvasName}";
             if (this._dictStackByStack.ContainsKey(key) &&
@@ -676,7 +734,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <param name="assetName"></param>
         private void _Reveal(string assetName)
         {
-            if (string.IsNullOrEmpty(assetName) || !this.HasStackInAllCache(assetName)) return;
+            if (string.IsNullOrEmpty(assetName) ||
+                !this.HasStackInAllCache(assetName))
+                return;
 
             if (this.CheckIsShowing(assetName))
             {
@@ -687,10 +747,12 @@ namespace OxGFrame.CoreFrame.UIFrame
             FrameStack<UIBase> stack = this.GetStackFromAllCache(assetName);
             foreach (var uiBase in stack.cache)
             {
-                if (!uiBase.isHidden) return;
+                if (!uiBase.isHidden)
+                    return;
 
                 // 判斷 UI 跟 Reverse 最上層不相同則跳過 Reveal (相反的如果相同表示是上一次被 Hide 的 UI)
-                if (!this._IsEqualsReverseTop(uiBase)) continue;
+                if (!this._IsEqualsReverseTop(uiBase))
+                    continue;
 
                 this.LoadAndDisplay(uiBase).Forget();
 
@@ -705,21 +767,26 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         public override void RevealAll(int groupId)
         {
-            if (this._dictAllCache.Count == 0) return;
+            if (this._dictAllCache.Count == 0)
+                return;
 
             foreach (FrameStack<UIBase> stack in this._dictAllCache.Values)
             {
                 // prevent preload mode
-                if (stack.Count() == 0) continue;
+                if (stack.Count() == 0)
+                    continue;
 
                 string assetName = stack.assetName;
 
                 var uiBase = stack.Peek();
 
                 // 如果 -1 表示不管任何 groupId
-                if (groupId != -1 && uiBase.groupId != groupId) continue;
+                if (groupId != -1 &&
+                    uiBase.groupId != groupId)
+                    continue;
 
-                if (!uiBase.isHidden) continue;
+                if (!uiBase.isHidden)
+                    continue;
 
                 this._Reveal(assetName);
             }
@@ -733,11 +800,14 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <param name="assetName"></param>
         private void _Hide(string assetName)
         {
-            if (string.IsNullOrEmpty(assetName) || !this.HasStackInAllCache(assetName)) return;
+            if (string.IsNullOrEmpty(assetName) ||
+                !this.HasStackInAllCache(assetName))
+                return;
 
             FrameStack<UIBase> stack = this.GetStackFromAllCache(assetName);
 
-            if (!this.CheckIsShowing(stack.Peek())) return;
+            if (!this.CheckIsShowing(stack.Peek()))
+                return;
 
             foreach (var uiBase in stack.cache)
             {
@@ -755,20 +825,24 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         public override void HideAll(int groupId, bool forceHideExcluded = false, params string[] withoutAssetNames)
         {
-            if (this._dictAllCache.Count == 0) return;
+            if (this._dictAllCache.Count == 0)
+                return;
 
             // 需要注意緩存需要 temp 出來, 因為如果迴圈裡有功能直接對緩存進行操作會出錯
             foreach (FrameStack<UIBase> stack in this._dictAllCache.Values)
             {
                 // prevent preload mode
-                if (stack.Count() == 0) continue;
+                if (stack.Count() == 0)
+                    continue;
 
                 string assetName = stack.assetName;
 
                 var uiBase = stack.Peek();
 
                 // 如果 -1 表示不管任何 groupId
-                if (groupId != -1 && uiBase.groupId != groupId) continue;
+                if (groupId != -1 &&
+                    uiBase.groupId != groupId)
+                    continue;
 
                 // 檢查排除執行的 UI
                 bool checkWithout = false;
@@ -785,10 +859,14 @@ namespace OxGFrame.CoreFrame.UIFrame
                 }
 
                 // 排除在外的 UI 直接略過處理
-                if (checkWithout) continue;
+                if (checkWithout)
+                    continue;
 
                 // 如有啟用 HideAll 需跳過開關, 則不列入關閉執行
-                if (!forceHideExcluded && !uiBase.reverseChanges && uiBase.uiSetting.whenHideAllToSkip) continue;
+                if (!forceHideExcluded &&
+                    !uiBase.reverseChanges &&
+                    uiBase.uiSetting.whenHideAllToSkip)
+                    continue;
 
                 this._Hide(assetName);
             }
@@ -805,12 +883,15 @@ namespace OxGFrame.CoreFrame.UIFrame
                 string key = $"{uiBase.groupId}{uiBase.uiSetting.canvasName}{uiBase.uiSetting.nodeType}";
                 NodeType nodeType = uiBase.uiSetting.nodeType;
 
-                if (!this._dictStackCounter.ContainsKey(key)) this._dictStackCounter.Add(key, 0);
+                if (!this._dictStackCounter.ContainsKey(key))
+                    this._dictStackCounter.Add(key, 0);
 
                 // 確保在節點中的第一個 UI 物件, 堆疊層數是從 0 開始
                 var uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasName);
                 var goNode = uiCanvas?.GetUINode(uiBase.uiSetting.nodeType);
-                if (goNode != null && goNode.transform.childCount == 1) this._dictStackCounter[key] = 0;
+                if (goNode != null &&
+                    goNode.transform.childCount == 1)
+                    this._dictStackCounter[key] = 0;
 
                 // 堆疊層數++
                 this._dictStackCounter[key]++;
@@ -915,7 +996,8 @@ namespace OxGFrame.CoreFrame.UIFrame
                         // ※備註: 另外就是如果 allowInstantiate = false, 會有 Data Reference 問題, 所以會需要儲存上一次的數據進行還原 (需注意在同參考的情況下, 當 Second Last 被關閉時, Hidden = true 剛好不用數據還原)
                         this.LoadAndDisplay(top.uiBase, top.data, false).Forget();
                     }
-                    else if (this._dictReverse[key].Count > 0 && this._dictReverse[key].Count < 2)
+                    else if (this._dictReverse[key].Count > 0 &&
+                             this._dictReverse[key].Count < 2)
                     {
                         this._dictReverse[key].RemoveAt(this._dictReverse[key].Count - 1);
                         this._dictReverse.Remove(key);
@@ -967,13 +1049,15 @@ namespace OxGFrame.CoreFrame.UIFrame
                         {
                             // 往下查找直到匹配
                             ++count;
-                            if (count > this._dictStackByStack[key].Count) break;
+                            if (count > this._dictStackByStack[key].Count)
+                                break;
                             assetName = this._dictStackByStack[key][this._dictStackByStack[key].Count - count];
                         }
                         // 如果當前 UI 是 StackByStack 模式, 將會直接移除最上層的緩存
                         this._dictStackByStack[key].RemoveAt(this._dictStackByStack[key].Count - count);
                     }
-                    else if (this._dictStackByStack[key].Count > 0 && this._dictStackByStack[key].Count < 2)
+                    else if (this._dictStackByStack[key].Count > 0 &&
+                             this._dictStackByStack[key].Count < 2)
                     {
                         this._dictStackByStack[key].RemoveAt(this._dictStackByStack[key].Count - 1);
                         this._dictStackByStack.Remove(key);

@@ -13,7 +13,8 @@ namespace OxGFrame.MediaFrame.Editor
         private static MediaUrlConfigGeneratorWindow _instance = null;
         internal static MediaUrlConfigGeneratorWindow GetInstance()
         {
-            if (_instance == null) _instance = GetWindow<MediaUrlConfigGeneratorWindow>();
+            if (_instance == null)
+                _instance = GetWindow<MediaUrlConfigGeneratorWindow>();
             return _instance;
         }
 

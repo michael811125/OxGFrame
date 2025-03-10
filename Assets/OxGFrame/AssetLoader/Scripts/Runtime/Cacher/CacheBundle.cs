@@ -23,7 +23,8 @@ namespace OxGFrame.AssetLoader.Cacher
         private static CacheBundle _instance = null;
         public static CacheBundle GetInstance()
         {
-            if (_instance == null) _instance = new CacheBundle();
+            if (_instance == null)
+                _instance = new CacheBundle();
             return _instance;
         }
 
@@ -86,7 +87,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                     else
                     {
-                        this.UnloadRawFile(assetName, true);
+                        await this.UnloadRawFileAsync(assetName, true);
                         if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                         else Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                         this.GetRetryCounter(assetName).AddRetryCount();
@@ -194,7 +195,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                     else
                     {
-                        this.UnloadRawFile(assetName, true);
+                        this.UnloadRawFileAsync(assetName, true).Forget();
                         if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【f7ff3e】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                         else Logging.Print<Logger>($"<color=#f7ff3e>【f7ff3e】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                         this.GetRetryCounter(assetName).AddRetryCount();
@@ -342,7 +343,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                this.UnloadRawFile(assetName, true);
+                await this.UnloadRawFileAsync(assetName, true);
                 if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                 else Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                 this.GetRetryCounter(assetName).AddRetryCount();
@@ -437,7 +438,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                this.UnloadRawFile(assetName, true);
+                this.UnloadRawFileAsync(assetName, true).Forget();
                 if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                 else Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                 this.GetRetryCounter(assetName).AddRetryCount();
@@ -449,7 +450,7 @@ namespace OxGFrame.AssetLoader.Cacher
             return (T)data;
         }
 
-        public void UnloadRawFile(string assetName, bool forceUnload)
+        public async UniTask UnloadRawFileAsync(string assetName, bool forceUnload)
         {
             if (string.IsNullOrEmpty(assetName)) return;
 
@@ -478,7 +479,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._cacher.Remove(assetName);
 
                         var package = PackageManager.GetPackage(packageName);
-                        package?.UnloadUnusedAssets();
+                        await package?.UnloadUnusedAssetsAsync();
 
                         Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Force Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
@@ -489,7 +490,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._cacher.Remove(assetName);
 
                         var package = PackageManager.GetPackage(packageName);
-                        package?.UnloadUnusedAssets();
+                        await package?.UnloadUnusedAssetsAsync();
 
                         Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
@@ -498,7 +499,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
         }
 
-        public void ReleaseRawFiles()
+        public async UniTask ReleaseRawFilesAsync()
         {
             if (this.Count == 0) return;
 
@@ -512,13 +513,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     var package = PackageManager.GetPackage(pack.packageName);
                     if (!packages.Contains(package)) packages.Add(package);
-                    this.UnloadRawFile(assetName, true);
+                    await this.UnloadRawFileAsync(assetName, true);
                 }
-            }
-
-            foreach (var package in packages)
-            {
-                package?.UnloadUnusedAssets();
             }
 
             Logging.Print<Logger>($"<color=#ff71b7>【Release All RawFiles】 => Current << CacheBundle >> Cache Count: {this.Count}</color>");
@@ -526,7 +522,7 @@ namespace OxGFrame.AssetLoader.Cacher
         #endregion
 
         #region Scene
-        public async UniTask<BundlePack> LoadSceneAsync(string packageName, string assetName, LoadSceneMode loadSceneMode, bool activateOnLoad, uint priority, Progression progression)
+        public async UniTask<BundlePack> LoadSceneAsync(string packageName, string assetName, LoadSceneMode loadSceneMode, LocalPhysicsMode localPhysicsMode, bool activateOnLoad, uint priority, Progression progression)
         {
             /**
              * Single Scene will auto unload and release
@@ -566,7 +562,7 @@ namespace OxGFrame.AssetLoader.Cacher
             var package = PackageManager.GetPackage(packageName);
             if (package != null && package.CheckLocationValid(assetName))
             {
-                var req = package.LoadSceneAsync(assetName, loadSceneMode, suspendLoad, priority);
+                var req = package.LoadSceneAsync(assetName, loadSceneMode, localPhysicsMode, suspendLoad, priority);
                 if (req != null)
                 {
                     float lastCount = 0;
@@ -633,11 +629,11 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 if (!loaded || !pack.GetScene().isLoaded)
                 {
-                    this.UnloadScene(assetName, true);
+                    await this.UnloadScene(assetName, true);
                     if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load Scene】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                     else Logging.Print<Logger>($"<color=#f7ff3e>【Load Scene】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                     this.GetRetryCounter(assetName).AddRetryCount();
-                    return await this.LoadSceneAsync(packageName, assetName, loadSceneMode, activateOnLoad, priority, progression);
+                    return await this.LoadSceneAsync(packageName, assetName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
                 }
             }
 
@@ -646,7 +642,7 @@ namespace OxGFrame.AssetLoader.Cacher
             return pack;
         }
 
-        public BundlePack LoadScene(string packageName, string assetName, LoadSceneMode loadSceneMode, Progression progression)
+        public BundlePack LoadScene(string packageName, string assetName, LoadSceneMode loadSceneMode, LocalPhysicsMode localPhysicsMode, Progression progression)
         {
             /**
              * Single Scene will auto unload and release
@@ -682,7 +678,7 @@ namespace OxGFrame.AssetLoader.Cacher
             var package = PackageManager.GetPackage(packageName);
             if (package != null && package.CheckLocationValid(assetName))
             {
-                var req = package.LoadSceneSync(assetName, loadSceneMode);
+                var req = package.LoadSceneSync(assetName, loadSceneMode, localPhysicsMode);
                 if (req != null)
                 {
                     int frame = 1000;
@@ -745,11 +741,11 @@ namespace OxGFrame.AssetLoader.Cacher
             // (Caution) If use sync to load scene.isLoaded return false -> Why??
             if (!loaded)
             {
-                this.UnloadScene(assetName, true);
+                this.UnloadScene(assetName, true).Forget();
                 if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load Scene】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                 else Logging.Print<Logger>($"<color=#f7ff3e>【Load Scene】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                 this.GetRetryCounter(assetName).AddRetryCount();
-                return this.LoadScene(packageName, assetName, loadSceneMode, progression);
+                return this.LoadScene(packageName, assetName, loadSceneMode, localPhysicsMode, progression);
             }
 
             this.RemoveLoadingFlags(assetName);
@@ -757,7 +753,7 @@ namespace OxGFrame.AssetLoader.Cacher
             return pack;
         }
 
-        public void UnloadScene(string assetName, bool recursively)
+        public async UniTask UnloadScene(string assetName, bool recursively)
         {
             /**
              * Single Scene will auto unload and release
@@ -834,7 +830,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                         // 遞迴完, 移除計數緩存
                         this._additiveSceneCounter.Remove(assetName);
-                        package?.UnloadUnusedAssets();
+                        await package?.UnloadUnusedAssetsAsync();
 
                         Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef><color=#97ff3e>Safety</color> Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
                     }
@@ -860,7 +856,7 @@ namespace OxGFrame.AssetLoader.Cacher
                             {
                                 var package = PackageManager.GetPackage(packageName);
                                 this._additiveSceneCounter.Remove(assetName);
-                                package?.UnloadUnusedAssets();
+                                await package?.UnloadUnusedAssetsAsync();
                                 Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Unload Additive Scene Completes</color>】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}</color>");
                             }
                         }
@@ -870,7 +866,7 @@ namespace OxGFrame.AssetLoader.Cacher
             else Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff4a8d>Unload Scene Invalid</color>】 => << CacheBundle >> sceneName: {assetName} maybe not <color=#ffb33e>Additive</color> or is <color=#ffb33e>Single</color></color>");
         }
 
-        public void ReleaseScenes()
+        public async UniTask ReleaseScenes()
         {
             if (this._additiveSceneCounter.Count == 0) return;
 
@@ -884,7 +880,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     var package = PackageManager.GetPackage(pack.packageName);
                     if (!packages.Contains(package)) packages.Add(package);
-                    this.UnloadScene(assetName, true);
+                    await this.UnloadScene(assetName, true);
                 }
             }
 
@@ -894,7 +890,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             foreach (var package in packages)
             {
-                package?.UnloadUnusedAssets();
+                await package?.UnloadUnusedAssetsAsync();
             }
 
             Logging.Print<Logger>($"<color=#ff71b7>【Release All Scenes (Addtive)】 => Current << CacheBundle >> Additive Scene Cache Count: {this._additiveSceneCounter.Count}</color>");
@@ -945,7 +941,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                     else
                     {
-                        this.UnloadAsset(assetName, true);
+                        await this.UnloadAsset(assetName, true);
                         if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                         else Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                         this.GetRetryCounter(assetName).AddRetryCount();
@@ -1053,7 +1049,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                     else
                     {
-                        this.UnloadAsset(assetName, true);
+                        this.UnloadAsset(assetName, true).Forget();
                         if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                         else Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                         this.GetRetryCounter(assetName).AddRetryCount();
@@ -1191,7 +1187,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                this.UnloadAsset(assetName, true);
+                await this.UnloadAsset(assetName, true);
                 if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                 else Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                 this.GetRetryCounter(assetName).AddRetryCount();
@@ -1276,7 +1272,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                this.UnloadAsset(assetName, true);
+                this.UnloadAsset(assetName, true).Forget();
                 if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
                 else Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
                 this.GetRetryCounter(assetName).AddRetryCount();
@@ -1288,7 +1284,7 @@ namespace OxGFrame.AssetLoader.Cacher
             return asset;
         }
 
-        public void UnloadAsset(string assetName, bool forceUnload)
+        public async UniTask UnloadAsset(string assetName, bool forceUnload)
         {
             if (string.IsNullOrEmpty(assetName)) return;
 
@@ -1317,7 +1313,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._cacher.Remove(assetName);
 
                         var package = PackageManager.GetPackage(packageName);
-                        package?.UnloadUnusedAssets();
+                        await package?.UnloadUnusedAssetsAsync();
 
                         Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Force Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
@@ -1328,7 +1324,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._cacher.Remove(assetName);
 
                         var package = PackageManager.GetPackage(packageName);
-                        package?.UnloadUnusedAssets();
+                        await package?.UnloadUnusedAssetsAsync();
 
                         Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Unload Completes</color>】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}</color>");
                     }
@@ -1337,7 +1333,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
         }
 
-        public void ReleaseAssets()
+        public async UniTask ReleaseAssets()
         {
             if (this.Count == 0) return;
 
@@ -1351,13 +1347,8 @@ namespace OxGFrame.AssetLoader.Cacher
                     BundlePack pack = this.GetFromCache(assetName);
                     var package = PackageManager.GetPackage(pack.packageName);
                     if (!packages.Contains(package)) packages.Add(package);
-                    this.UnloadAsset(assetName, true);
+                    await this.UnloadAsset(assetName, true);
                 }
-            }
-
-            foreach (var package in packages)
-            {
-                package?.UnloadUnusedAssets();
             }
 
             Logging.Print<Logger>($"<color=#ff71b7>【Release All Assets】 => Current << CacheBundle >> Cache Count: {this.Count}</color>");

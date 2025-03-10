@@ -3,9 +3,6 @@ using UnityEngine;
 
 namespace YooAsset
 {
-    /// <summary>
-    /// 解密文件的信息
-    /// </summary>
     public struct DecryptFileInfo
     {
         /// <summary>
@@ -21,31 +18,47 @@ namespace YooAsset
         /// <summary>
         /// Unity引擎用于内容校验的CRC
         /// </summary>
-        public uint ConentCRC;
+        public uint FileLoadCRC;
+    }
+    public struct DecryptResult
+    {
+        /// <summary>
+        /// 资源包对象
+        /// </summary>
+        public AssetBundle Result;
+
+        /// <summary>
+        /// 异步请求句柄
+        /// </summary>
+        public AssetBundleCreateRequest CreateRequest;
+
+        /// <summary>
+        /// 托管流对象
+        /// 注意：流对象在资源包对象释放的时候会自动释放
+        /// </summary>
+        public Stream ManagedStream;
     }
 
-    /// <summary>
-    /// 解密类服务接口
-    /// </summary>
     public interface IDecryptionServices
     {
         /// <summary>
         /// 同步方式获取解密的资源包对象
-        /// 注意：加载流对象在资源包对象释放的时候会自动释放
         /// </summary>
-        AssetBundle LoadAssetBundle(DecryptFileInfo fileInfo, out Stream managedStream);
+        DecryptResult LoadAssetBundle(DecryptFileInfo fileInfo);
 
         /// <summary>
         /// 异步方式获取解密的资源包对象
-        /// 注意：加载流对象在资源包对象释放的时候会自动释放
         /// </summary>
-        AssetBundleCreateRequest LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream);
+        DecryptResult LoadAssetBundleAsync(DecryptFileInfo fileInfo);
 
         /// <summary>
-        /// 同步方式获取解密原生文件的二进制数据
+        /// 获取解密的字节数据
         /// </summary>
-        /// <param name="fileInfo"></param>
-        /// <returns></returns>
-        byte[] LoadRawFileData(DecryptFileInfo fileInfo);
+        byte[] ReadFileData(DecryptFileInfo fileInfo);
+
+        /// <summary>
+        /// 获取解密的文本数据
+        /// </summary>
+        string ReadFileText(DecryptFileInfo fileInfo);
     }
 }

@@ -8,46 +8,74 @@ namespace YooAsset
     internal class RemoteDebuggerInRuntime : MonoBehaviour
     {
 #if UNITY_EDITOR
-        /// <summary>
-        /// 编辑器下获取报告的回调
-        /// </summary>
-        public static Action<int, DebugReport> EditorHandleDebugReportCallback;
-
-        /// <summary>
-        /// 编辑器下请求报告数据
-        /// </summary>
-        public static void EditorRequestDebugReport()
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void OnRuntimeInitialize()
         {
-            if (UnityEditor.EditorApplication.isPlaying)
-            {
-                var report = YooAssets.GetDebugReport();
-                EditorHandleDebugReportCallback?.Invoke(0, report);
-            }
+            _sampleOnce = false;
+            _autoSample = false;
         }
-#else
+#endif
+
+        private static bool _sampleOnce = false;
+        private static bool _autoSample = false;
+
+        private void Awake()
+        {
+#if UNITY_EDITOR
+            RemotePlayerConnection.Instance.Initialize();
+#endif
+        }
         private void OnEnable()
         {
-            PlayerConnection.instance.Register(RemoteDebuggerDefine.kMsgSendEditorToPlayer, OnHandleEditorMessage);
+#if UNITY_EDITOR
+            RemotePlayerConnection.Instance.Register(RemoteDebuggerDefine.kMsgEditorSendToPlayer, OnHandleEditorMessage);
+#else
+            PlayerConnection.instance.Register(RemoteDebuggerDefine.kMsgEditorSendToPlayer, OnHandleEditorMessage);
+#endif
         }
         private void OnDisable()
         {
-            PlayerConnection.instance.Unregister(RemoteDebuggerDefine.kMsgSendEditorToPlayer, OnHandleEditorMessage);
+#if UNITY_EDITOR
+            RemotePlayerConnection.Instance.Unregister(RemoteDebuggerDefine.kMsgEditorSendToPlayer);
+#else
+            PlayerConnection.instance.Unregister(RemoteDebuggerDefine.kMsgEditorSendToPlayer, OnHandleEditorMessage);
+#endif
         }
-        private void OnHandleEditorMessage(MessageEventArgs args)
+        private void LateUpdate()
+        {
+            if (_autoSample || _sampleOnce)
+            {
+                _sampleOnce = false;
+                var debugReport = YooAssets.GetDebugReport();
+                var data = DebugReport.Serialize(debugReport);
+
+#if UNITY_EDITOR
+                RemotePlayerConnection.Instance.Send(RemoteDebuggerDefine.kMsgPlayerSendToEditor, data);
+#else
+                PlayerConnection.instance.Send(RemoteDebuggerDefine.kMsgPlayerSendToEditor, data);
+#endif
+            }
+        }
+
+        private static void OnHandleEditorMessage(MessageEventArgs args)
         {
             var command = RemoteCommand.Deserialize(args.data);
             YooLogger.Log($"On handle remote command : {command.CommandType} Param : {command.CommandParam}");
             if (command.CommandType == (int)ERemoteCommand.SampleOnce)
             {
-                var debugReport = YooAssets.GetDebugReport();
-                var data = DebugReport.Serialize(debugReport);
-                PlayerConnection.instance.Send(RemoteDebuggerDefine.kMsgSendPlayerToEditor, data);
+                _sampleOnce = true;
+            }
+            else if (command.CommandType == (int)ERemoteCommand.SampleAuto)
+            {
+                if (command.CommandParam == "open")
+                    _autoSample = true;
+                else
+                    _autoSample = false;
             }
             else
             {
                 throw new NotImplementedException(command.CommandType.ToString());
             }
         }
-#endif
     }
 }

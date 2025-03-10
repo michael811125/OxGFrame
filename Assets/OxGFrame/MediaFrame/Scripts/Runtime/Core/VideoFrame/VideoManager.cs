@@ -15,7 +15,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 lock (_locker)
                 {
                     _instance = FindObjectOfType<VideoManager>();
-                    if (_instance == null) _instance = new GameObject(nameof(VideoManager)).AddComponent<VideoManager>();
+                    if (_instance == null)
+                        _instance = new GameObject(nameof(VideoManager)).AddComponent<VideoManager>();
                 }
             }
             return _instance;
@@ -28,17 +29,21 @@ namespace OxGFrame.MediaFrame.VideoFrame
             if (this.gameObject.transform.root.name == newName)
             {
                 var container = GameObject.Find(nameof(OxGFrame));
-                if (container == null) container = new GameObject(nameof(OxGFrame));
+                if (container == null)
+                    container = new GameObject(nameof(OxGFrame));
                 this.gameObject.transform.SetParent(container.transform);
                 DontDestroyOnLoad(container);
             }
-            else DontDestroyOnLoad(this.gameObject.transform.root);
+            else
+                DontDestroyOnLoad(this.gameObject.transform.root);
         }
 
         protected override void SetParent(VideoBase vidBase, Transform parent)
         {
-            if (parent != null) vidBase.gameObject.transform.SetParent(parent);
-            else vidBase.gameObject.transform.SetParent(this.gameObject.transform);
+            if (parent != null)
+                vidBase.gameObject.transform.SetParent(parent);
+            else
+                vidBase.gameObject.transform.SetParent(this.gameObject.transform);
         }
 
         #region 播放 Play
@@ -50,7 +55,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <returns></returns>
         private void _Play(VideoBase vidBase, int loops, float volume)
         {
-            if (vidBase == null) return;
+            if (vidBase == null)
+                return;
 
             // 處理長期沒有被 Unload 的 Video
             if (!vidBase.onDestroyAndUnload)
@@ -70,7 +76,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <returns></returns>
         public override async UniTask<VideoBase[]> Play(string packageName, string assetName, UnityEngine.Object sourceClip, Transform parent = null, int loops = 0, float volume = 0f)
         {
-            if (string.IsNullOrEmpty(assetName)) return new VideoBase[] { null };
+            if (string.IsNullOrEmpty(assetName))
+                return new VideoBase[] { null };
 
             VideoBase[] vidBases = this.GetMediaComponents<VideoBase>(assetName);
             bool isResume = false;
@@ -83,7 +90,9 @@ namespace OxGFrame.MediaFrame.VideoFrame
                     return vidBases;
                 }
 
-                if (!main.IsPlaying() || main.IsPaused()) isResume = true;
+                if (!main.IsPlaying() ||
+                    main.IsPaused())
+                    isResume = true;
             }
 
             if (!isResume)
@@ -106,7 +115,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
             {
                 for (int i = 0; i < vidBases.Length; i++)
                 {
-                    if (!vidBases[i].IsPlaying()) this._Play(vidBases[i], 0, 0f);
+                    if (!vidBases[i].IsPlaying())
+                        this._Play(vidBases[i], 0, 0f);
                 }
 
                 return vidBases;
@@ -119,11 +129,13 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <returns></returns>
         public override void ResumeAll()
         {
-            if (this._listAllCache.Count == 0) return;
+            if (this._listAllCache.Count == 0)
+                return;
 
             foreach (var vidBase in this._listAllCache)
             {
-                if (vidBase.IsPaused()) this._Play(vidBase, 0, 0f);
+                if (vidBase.IsPaused())
+                    this._Play(vidBase, 0, 0f);
             }
         }
         #endregion
@@ -136,7 +148,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <param name="forceDestroy"></param>
         private void _Stop(VideoBase vidBase, bool disabledEndEvent = false, bool forceDestroy = false)
         {
-            if (vidBase == null) return;
+            if (vidBase == null)
+                return;
 
             this.ExitAndStop(vidBase, false, disabledEndEvent);
 
@@ -145,8 +158,10 @@ namespace OxGFrame.MediaFrame.VideoFrame
             // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
             if (vidBase.isPrepared)
             {
-                if (forceDestroy) this.Destroy(vidBase);
-                else if (vidBase.onStopAndDestroy) this.Destroy(vidBase);
+                if (forceDestroy)
+                    this.Destroy(vidBase);
+                else if (vidBase.onStopAndDestroy)
+                    this.Destroy(vidBase);
             }
         }
 
@@ -168,7 +183,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
         public override void Stop(string assetName, bool disabledEndEvent = false, bool forceDestroy = false)
         {
             VideoBase[] vidBases = this.GetMediaComponents<VideoBase>(assetName);
-            if (vidBases.Length == 0) return;
+            if (vidBases.Length == 0)
+                return;
 
             foreach (var vidBase in vidBases)
             {
@@ -183,7 +199,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <returns></returns>
         public override void StopAll(bool disabledEndEvent = false, bool forceDestroy = false)
         {
-            if (this._listAllCache.Count == 0) return;
+            if (this._listAllCache.Count == 0)
+                return;
 
             foreach (var vidBase in this._listAllCache.ToArray())
             {
@@ -199,7 +216,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <param name="vidBase"></param>
         private void _Pause(VideoBase vidBase)
         {
-            if (vidBase == null) return;
+            if (vidBase == null)
+                return;
 
             this.ExitAndStop(vidBase, true, false);
 
@@ -213,7 +231,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
         public override void Pause(string assetName)
         {
             VideoBase[] vidBases = this.GetMediaComponents<VideoBase>(assetName);
-            if (vidBases.Length == 0) return;
+            if (vidBases.Length == 0)
+                return;
 
             foreach (var vidBase in vidBases)
             {
@@ -227,7 +246,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// <returns></returns>
         public override void PauseAll()
         {
-            if (this._listAllCache.Count == 0) return;
+            if (this._listAllCache.Count == 0)
+                return;
 
             foreach (var vidBase in this._listAllCache)
             {
@@ -238,7 +258,8 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         protected override void LoadAndPlay(VideoBase vidBase, int loops, float volume)
         {
-            if (vidBase == null) return;
+            if (vidBase == null)
+                return;
             vidBase.Play(loops, volume);
         }
 
@@ -246,10 +267,12 @@ namespace OxGFrame.MediaFrame.VideoFrame
         {
             if (!pause)
             {
-                if (disabledEndEvent) vidBase.SetEndEvent(null);
+                if (disabledEndEvent)
+                    vidBase.SetEndEvent(null);
                 vidBase.Stop();
             }
-            else vidBase.Pause();
+            else
+                vidBase.Pause();
         }
     }
 }

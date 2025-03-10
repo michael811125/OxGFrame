@@ -72,6 +72,15 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Get built-in root path (.../StreamingAssets/yoo)
+        /// </summary>
+        /// <returns></returns>
+        public static string GetBuiltinRootPath()
+        {
+            return BundleConfig.GetBuiltinRootPath();
+        }
+
+        /// <summary>
         /// Get built-in path by package (.../StreamingAssets/yoo/PackageName)
         /// </summary>
         /// <param name="packageName"></param>
@@ -204,7 +213,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get patch version (Recommend use encode to display)
+        /// Get newest patch version (Recommend use encode to display)
         /// </summary>
         /// <returns></returns>
         public static string GetPatchVersion(bool encode = false, int encodeLength = 6, string separator = "-")
@@ -240,7 +249,7 @@ namespace OxGFrame.AssetLoader
 
         #region Package Operation
         /// <summary>
-        /// Check package has any files in local
+        /// Check package has any files in local sandbox
         /// </summary>
         /// <param name="packageName"></param>
         /// <returns></returns>
@@ -250,7 +259,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get package files size in local
+        /// Get package files size in local sandbox
         /// </summary>
         /// <param name="packageName"></param>
         /// <returns></returns>
@@ -260,13 +269,24 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Unload package and clear package files from sandbox
+        /// Unload package and clear package files from local sandbox
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="destroyPackage">Remove package from cache memory</param>
+        /// <returns></returns>
+        public static async UniTask<bool> UnloadPackageAndClearCacheFiles(string packageName, bool destroyPackage = false)
+        {
+            return await PackageManager.UnloadPackageAndClearCacheFiles(packageName, destroyPackage);
+        }
+
+        /// <summary>
+        /// Unload (Destroy) package from cache memory
         /// </summary>
         /// <param name="packageName"></param>
         /// <returns></returns>
-        public static async UniTask<bool> UnloadPackageAndClearCacheFiles(string packageName)
+        public static async UniTask<bool> UnloadPackage(string packageName)
         {
-            return await PackageManager.UnloadPackageAndClearCacheFiles(packageName);
+            return await PackageManager.UnloadPackage(packageName);
         }
 
         #region Init Package
@@ -301,22 +321,16 @@ namespace OxGFrame.AssetLoader
         {
             string hostServer = null;
             string fallbackHostServer = null;
-            IBuildinQueryServices builtinQueryService = null;
-            IDeliveryQueryServices deliveryQueryService = null;
-            IDeliveryLoadServices deliveryLoadService = null;
 
             // Host Mode or WebGL Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
-                BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
+                BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
             {
                 hostServer = await BundleConfig.GetHostServerUrl(packageInfo.packageName);
                 fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageInfo.packageName);
-                builtinQueryService = new RequestBuiltinQuery();
-                deliveryQueryService = new RequestDeliveryQuery();
-                deliveryLoadService = new RequestDeliveryQuery();
             }
 
-            return await PackageManager.InitPackage(packageInfo, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
+            return await PackageManager.InitPackage(packageInfo, autoUpdate, hostServer, fallbackHostServer);
         }
         #endregion
 
@@ -331,22 +345,16 @@ namespace OxGFrame.AssetLoader
         {
             string hostServer = packageInfo.hostServer;
             string fallbackHostServer = packageInfo.fallbackHostServer;
-            IBuildinQueryServices builtinQueryService = packageInfo.builtinQueryService;
-            IDeliveryQueryServices deliveryQueryService = packageInfo.deliveryQueryService;
-            IDeliveryLoadServices deliveryLoadService = packageInfo.deliveryLoadService;
 
             // Host Mode or WebGL Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
-                BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
+                BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
             {
                 hostServer = string.IsNullOrEmpty(hostServer) ? await BundleConfig.GetDlcHostServerUrl(packageInfo.packageName, packageInfo.dlcVersion, packageInfo.withoutPlatform) : hostServer;
                 fallbackHostServer = string.IsNullOrEmpty(fallbackHostServer) ? await BundleConfig.GetDlcFallbackHostServerUrl(packageInfo.packageName, packageInfo.dlcVersion, packageInfo.withoutPlatform) : fallbackHostServer;
-                builtinQueryService = builtinQueryService == null ? new RequestBuiltinQuery() : builtinQueryService;
-                deliveryQueryService = deliveryQueryService == null ? new RequestDeliveryQuery() : deliveryQueryService;
-                deliveryLoadService = deliveryLoadService == null ? new RequestDeliveryQuery() : deliveryLoadService;
             }
 
-            return await PackageManager.InitPackage(packageInfo, autoUpdate, hostServer, fallbackHostServer, builtinQueryService, deliveryQueryService, deliveryLoadService);
+            return await PackageManager.InitPackage(packageInfo, autoUpdate, hostServer, fallbackHostServer);
         }
         #endregion
         #endregion
@@ -689,49 +697,49 @@ namespace OxGFrame.AssetLoader
             return downloaders.ToArray();
         }
 
-        public static async UniTask<bool> BeginDownloadWithCombinePackages(ResourcePackage[] packages, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
+        public static async UniTask<bool> BeginDownloadWithCombinePackages(ResourcePackage[] packages, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackages(packages);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
-        public static async UniTask<bool> BeginDownloadWithCombinePackages(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
+        public static async UniTask<bool> BeginDownloadWithCombinePackages(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackages(packages, maxConcurrencyDownloadCount, failedRetryCount);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
-        public static async UniTask<bool> BeginDownloadWithCombinePackagesByTags(ResourcePackage[] packages, string[] tags = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
+        public static async UniTask<bool> BeginDownloadWithCombinePackagesByTags(ResourcePackage[] packages, string[] tags = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackagesByTags(packages, tags);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
-        public static async UniTask<bool> BeginDownloadWithCombinePackagesByTags(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, string[] tags = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
+        public static async UniTask<bool> BeginDownloadWithCombinePackagesByTags(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, string[] tags = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackagesByTags(packages, maxConcurrencyDownloadCount, failedRetryCount, tags);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
-        public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetNames(ResourcePackage[] packages, string[] assetNames = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
+        public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetNames(ResourcePackage[] packages, string[] assetNames = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackagesByAssetNames(packages, assetNames);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
-        public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetNames(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, string[] assetNames = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
+        public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetNames(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, string[] assetNames = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackagesByAssetNames(packages, maxConcurrencyDownloadCount, failedRetryCount, assetNames);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
-        public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetInfos(ResourcePackage[] packages, AssetInfo[] assetInfos = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
+        public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetInfos(ResourcePackage[] packages, AssetInfo[] assetInfos = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackagesByAssetInfos(packages, assetInfos);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
-        public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetInfos(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, AssetInfo[] assetInfos = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
+        public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetInfos(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, AssetInfo[] assetInfos = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackagesByAssetInfos(packages, maxConcurrencyDownloadCount, failedRetryCount, assetInfos);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
@@ -829,7 +837,7 @@ namespace OxGFrame.AssetLoader
             return downloadInfo;
         }
 
-        public static async UniTask<bool> BeginDownloadWithCombineDownloaders(ResourceDownloaderOperation[] downloaders, OnDownloadSpeedProgress onDownloadSpeedProgress = null, OnDownloadError onDownloadError = null)
+        public static async UniTask<bool> BeginDownloadWithCombineDownloaders(ResourceDownloaderOperation[] downloaders, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             // Combine all downloaders count and bytes
             int totalCount = 0;
@@ -856,18 +864,14 @@ namespace OxGFrame.AssetLoader
 
                     int lastCount = 0;
                     long lastBytes = 0;
-                    downloader.OnDownloadErrorCallback = onDownloadError;
-                    downloader.OnDownloadProgressCallback =
-                    (
-                        int totalDownloadCount,
-                        int currentDownloadCount,
-                        long totalDownloadBytes,
-                        long currentDownloadBytes) =>
+                    downloader.DownloadErrorCallback = onDownloadError;
+                    downloader.DownloadUpdateCallback =
+                    (DownloadUpdateData data) =>
                     {
-                        currentCount += currentDownloadCount - lastCount;
-                        lastCount = currentDownloadCount;
-                        currentBytes += currentDownloadBytes - lastBytes;
-                        lastBytes = currentDownloadBytes;
+                        currentCount += data.CurrentDownloadCount - lastCount;
+                        lastCount = data.CurrentDownloadCount;
+                        currentBytes += data.CurrentDownloadBytes - lastBytes;
+                        lastBytes = data.CurrentDownloadBytes;
                         downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
                     };
                     downloader.BeginDownload();
@@ -887,10 +891,10 @@ namespace OxGFrame.AssetLoader
         /// <summary>
         /// Release packages
         /// </summary>
-        public static void Release()
+        public async static UniTask Release()
         {
-            BundleConfig.ReleaseSecureString();
-            PackageManager.Release();
+            BundleConfig.ReleaseSecuredString();
+            await PackageManager.Release();
         }
     }
 }

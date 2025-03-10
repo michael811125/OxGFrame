@@ -20,7 +20,7 @@ namespace OxGFrame.NetFrame
     {
         protected NetStatus _netStatus;                                   // Net 狀態
         protected NetOption _netOption = null;                            // 網路設置選項
-        protected INetProvider _netProvider = null;                       // 網路供應者 (TCP/IP, websocket or other)
+        protected INetProvider _netProvider = null;                       // 網路供應者 (TCP, WebSocket, KCP...)
         protected INetTips _netTips = null;                               // 網路狀態提示介面
 
         private bool _isCloseForce = false;                               // 是否強制斷線
@@ -149,6 +149,7 @@ namespace OxGFrame.NetFrame
 
         internal void OnUpdate()
         {
+            this._netProvider?.OnUpdate();
             this._ProcessOutReceive();
             this._ProcessHeartBeat();
             this._ProcessAutoReconnect();
@@ -186,7 +187,8 @@ namespace OxGFrame.NetFrame
             this._NetStatusHandler(NetStatus.DISCONNECTED, status);
 
             this._StopTicker();
-            if (this._isCloseForce) return;
+            if (this._isCloseForce)
+                return;
             this._StartAutoReconnect();
         }
 
@@ -213,7 +215,8 @@ namespace OxGFrame.NetFrame
         /// <returns></returns>
         public bool IsConnected()
         {
-            if (this._netProvider == null) return false;
+            if (this._netProvider == null)
+                return false;
             return this._netProvider.IsConnected();
         }
 
@@ -257,7 +260,8 @@ namespace OxGFrame.NetFrame
 
         private void _ResetOutReceiveTicker()
         {
-            if (this._outReceiveTicker == null) this._outReceiveTicker = new RealTimer();
+            if (this._outReceiveTicker == null)
+                this._outReceiveTicker = new RealTimer();
 
             this._outReceiveTicker.Play();
             this._outReceiveTicker.SetTick(this._outReceiveTick);
@@ -265,12 +269,12 @@ namespace OxGFrame.NetFrame
 
         private void _ProcessOutReceive()
         {
-            if (this._outReceiveTicker.IsPause()) return;
+            if (this._outReceiveTicker.IsPause())
+                return;
 
             if (this._outReceiveTicker.IsTickTimeout())
             {
                 this._outReceiveAction?.Invoke();
-
                 Logging.Print<Logger>("<color=#FFC100>NetNode timeout processing...</color>");
             }
         }
@@ -289,7 +293,8 @@ namespace OxGFrame.NetFrame
 
         private void _ResetHeartBeatTicker()
         {
-            if (this._hearBeatTicker == null) this._hearBeatTicker = new RealTimer();
+            if (this._hearBeatTicker == null)
+                this._hearBeatTicker = new RealTimer();
 
             this._hearBeatTicker.Play();
             this._hearBeatTicker.SetTick(this._heartBeatTick);
@@ -297,12 +302,12 @@ namespace OxGFrame.NetFrame
 
         private void _ProcessHeartBeat()
         {
-            if (this._hearBeatTicker.IsPause()) return;
+            if (this._hearBeatTicker.IsPause())
+                return;
 
             if (this._hearBeatTicker.IsTickTimeout())
             {
                 this._heartBeatAction?.Invoke();
-
                 Logging.Print<Logger>("<color=#8EFF00>NetNode check heartbeat...</color>");
             }
         }
@@ -321,9 +326,11 @@ namespace OxGFrame.NetFrame
 
         private void _ResetAutoReconnect()
         {
-            if (this._reconnectTicker == null) this._reconnectTicker = new RealTimer();
+            if (this._reconnectTicker == null)
+                this._reconnectTicker = new RealTimer();
 
-            if (this._netOption != null) this._autoReconnectCount = this._netOption.autoReconnectCount;
+            if (this._netOption != null)
+                this._autoReconnectCount = this._netOption.autoReconnectCount;
             this._reconnectTicker.Stop();
         }
 
@@ -342,19 +349,21 @@ namespace OxGFrame.NetFrame
 
         private void _ProcessAutoReconnect()
         {
-            if (this._reconnectTicker.IsPause()) return;
+            if (this._reconnectTicker.IsPause())
+                return;
 
-            if (this._IsAutoReconnect() && this._netStatus == NetStatus.RECONNECTING)
+            if (this._IsAutoReconnect() &&
+                this._netStatus == NetStatus.RECONNECTING)
             {
                 if (this._reconnectTicker.IsTickTimeout())
                 {
                     this._netProvider.Close();
 
                     this.Connect(this._netOption);
-                    if (this._autoReconnectCount > 0) this._autoReconnectCount -= 1;
+                    if (this._autoReconnectCount > 0)
+                        this._autoReconnectCount -= 1;
 
                     this._reconnectAction?.Invoke();
-
                     Logging.Print<Logger>("<color=#FF0000>NetNode try to reconnecting...</color>");
                 }
             }
@@ -371,9 +380,12 @@ namespace OxGFrame.NetFrame
         /// </summary>
         private void _StopTicker()
         {
-            if (this._hearBeatTicker != null) this._hearBeatTicker.Stop();
-            if (this._outReceiveTicker != null) this._outReceiveTicker.Stop();
-            if (this._reconnectTicker != null) this._reconnectTicker.Stop();
+            if (this._hearBeatTicker != null)
+                this._hearBeatTicker.Stop();
+            if (this._outReceiveTicker != null)
+                this._outReceiveTicker.Stop();
+            if (this._reconnectTicker != null)
+                this._reconnectTicker.Stop();
         }
 
         public void Dispose()

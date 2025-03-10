@@ -5,21 +5,26 @@ public class GSIFrameDemo : MonoBehaviour
 {
     public bool forceMode = false;
 
-    void Start()
+    private void Start()
     {
-        GSIManagerExample.Start();
+        // Drive by main mono's start
+        GSIManagerExample.DriveStart();
     }
 
-    void Update()
+    private void Update()
     {
-        GSIManagerExample.Update(Time.deltaTime);
+        // Drive by main mono's update
+        GSIManagerExample.DriveUpdate(Time.deltaTime);
 
+        #region Tests
         if (Keyboard.current.numpad0Key.wasReleasedThisFrame)
         {
             this.forceMode = !this.forceMode;
 
-            if (this.forceMode) Debug.Log("Enable ForceMode");
-            else Debug.Log("Disable ForceMode");
+            if (this.forceMode)
+                Debug.Log("Enabled ForceMode");
+            else
+                Debug.Log("Disabled ForceMode");
         }
 
         if (Keyboard.current.numpad1Key.wasReleasedThisFrame)
@@ -46,5 +51,6 @@ public class GSIFrameDemo : MonoBehaviour
         {
             GSIManagerExample.ChangeStage<EnterStageExample>(this.forceMode);
         }
+        #endregion
     }
 }

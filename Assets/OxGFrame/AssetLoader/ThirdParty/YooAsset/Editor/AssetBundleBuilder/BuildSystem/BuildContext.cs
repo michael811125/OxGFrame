@@ -9,7 +9,7 @@ namespace YooAsset.Editor
         private readonly Dictionary<System.Type, IContextObject> _contextObjects = new Dictionary<System.Type, IContextObject>();
 
         /// <summary>
-        /// 清空所有情景对象
+        /// 清空所有上下文对象
         /// </summary>
         public void ClearAllContext()
         {
@@ -17,7 +17,7 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// 设置情景对象
+        /// 设置上下文对象
         /// </summary>
         public void SetContextObject(IContextObject contextObject)
         {
@@ -32,7 +32,7 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// 获取情景对象
+        /// 获取上下文对象
         /// </summary>
         public T GetContextObject<T>() where T : IContextObject
         {
@@ -44,6 +44,22 @@ namespace YooAsset.Editor
             else
             {
                 throw new Exception($"Not found context object : {type}");
+            }
+        }
+
+        /// <summary>
+        /// 获取上下文对象
+        /// </summary>
+        public T TryGetContextObject<T>() where T : IContextObject
+        {
+            var type = typeof(T);
+            if (_contextObjects.TryGetValue(type, out IContextObject contextObject))
+            {
+                return (T)contextObject;
+            }
+            else
+            {
+                return default;
             }
         }
     }

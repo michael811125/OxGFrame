@@ -34,7 +34,7 @@ namespace OxGFrame.AssetLoader.Editor
         {
             var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
 
-            string filePath = fileInfo.FilePath;
+            string filePath = fileInfo.FileLoadPath;
 
             int randomSeed = this._randomSeed == null ? cryptogramSettings.randomSeed : (int)this._randomSeed;
             int dummySize = this._dummySize == null ? cryptogramSettings.dummySize : (int)this._dummySize;
@@ -76,7 +76,7 @@ namespace OxGFrame.AssetLoader.Editor
         {
             var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
 
-            string filePath = fileInfo.FilePath;
+            string filePath = fileInfo.FileLoadPath;
 
             byte xorKey = this._xorKey == null ? cryptogramSettings.xorKey : (byte)this._xorKey;
 
@@ -121,7 +121,7 @@ namespace OxGFrame.AssetLoader.Editor
         {
             var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
 
-            string filePath = fileInfo.FilePath;
+            string filePath = fileInfo.FileLoadPath;
 
             byte hXorKey = this._hXorKey == null ? cryptogramSettings.hXorKey : (byte)this._hXorKey;
             byte tXorKey = this._tXorKey == null ? cryptogramSettings.tXorKey : (byte)this._tXorKey;
@@ -170,7 +170,7 @@ namespace OxGFrame.AssetLoader.Editor
         {
             var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
 
-            string filePath = fileInfo.FilePath;
+            string filePath = fileInfo.FileLoadPath;
 
             byte hXorKey = this._hXorKey == null ? cryptogramSettings.hXorPlusKey : (byte)this._hXorKey;
             byte tXorKey = this._tXorKey == null ? cryptogramSettings.tXorPlusKey : (byte)this._tXorKey;
@@ -216,7 +216,7 @@ namespace OxGFrame.AssetLoader.Editor
         {
             var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
 
-            string filePath = fileInfo.FilePath;
+            string filePath = fileInfo.FileLoadPath;
 
             string aesKey = string.IsNullOrEmpty(this._aesKey) ? cryptogramSettings.aesKey : this._aesKey;
             string aesIv = string.IsNullOrEmpty(this._aesIv) ? cryptogramSettings.aesIv : this._aesIv;

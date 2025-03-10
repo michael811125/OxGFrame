@@ -26,12 +26,23 @@ namespace OxGFrame.AssetLoader
         public static async UniTask<BundlePack> LoadSceneAsync(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
-            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, loadSceneMode, activateOnLoad, priority, progression);
+            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, loadSceneMode, LocalPhysicsMode.None, activateOnLoad, priority, progression);
+        }
+
+        public static async UniTask<BundlePack> LoadSceneAsync(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
+        {
+            string packageName = AssetPatcher.GetDefaultPackageName();
+            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
         }
 
         public static async UniTask<BundlePack> LoadSceneAsync(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
-            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, loadSceneMode, activateOnLoad, priority, progression);
+            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, loadSceneMode, LocalPhysicsMode.None, activateOnLoad, priority, progression);
+        }
+
+        public static async UniTask<BundlePack> LoadSceneAsync(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
+        {
+            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
         }
 
         /// <summary>
@@ -44,12 +55,23 @@ namespace OxGFrame.AssetLoader
         public static BundlePack LoadScene(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
-            return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode, progression);
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode, LocalPhysicsMode.None, progression);
+        }
+
+        public static BundlePack LoadScene(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
+        {
+            string packageName = AssetPatcher.GetDefaultPackageName();
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode, localPhysicsMode, progression);
         }
 
         public static BundlePack LoadScene(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
-            return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode, progression);
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode, LocalPhysicsMode.None, progression);
+        }
+
+        public static BundlePack LoadScene(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
+        {
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode, localPhysicsMode, progression);
         }
 
         /// <summary>
@@ -63,12 +85,12 @@ namespace OxGFrame.AssetLoader
         public static async UniTask<BundlePack> LoadSingleSceneAsync(string assetName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
-            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Single, activateOnLoad, priority, progression);
+            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Single, LocalPhysicsMode.None, activateOnLoad, priority, progression);
         }
 
         public static async UniTask<BundlePack> LoadSingleSceneAsync(string packageName, string assetName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
-            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Single, activateOnLoad, priority, progression);
+            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Single, LocalPhysicsMode.None, activateOnLoad, priority, progression);
         }
 
         /// <summary>
@@ -80,12 +102,12 @@ namespace OxGFrame.AssetLoader
         public static BundlePack LoadSingleScene(string assetName, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
-            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Single, progression);
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Single, LocalPhysicsMode.None, progression);
         }
 
         public static BundlePack LoadSingleScene(string packageName, string assetName, Progression progression = null)
         {
-            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Single, progression);
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Single, LocalPhysicsMode.None, progression);
         }
 
         /// <summary>
@@ -99,12 +121,12 @@ namespace OxGFrame.AssetLoader
         public static async UniTask<BundlePack> LoadAdditiveSceneAsync(string assetName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
-            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
+            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Additive, LocalPhysicsMode.None, activateOnLoad, priority, progression);
         }
 
         public static async UniTask<BundlePack> LoadAdditiveSceneAsync(string packageName, string assetName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
-            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Additive, activateOnLoad, priority, progression);
+            return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Additive, LocalPhysicsMode.None, activateOnLoad, priority, progression);
         }
 
         /// <summary>
@@ -116,12 +138,12 @@ namespace OxGFrame.AssetLoader
         public static BundlePack LoadAdditiveScene(string assetName, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
-            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Additive, progression);
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Additive, LocalPhysicsMode.None, progression);
         }
 
         public static BundlePack LoadAdditiveScene(string packageName, string assetName, Progression progression = null)
         {
-            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Additive, progression);
+            return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Additive, LocalPhysicsMode.None, progression);
         }
 
         /// <summary>
@@ -129,16 +151,16 @@ namespace OxGFrame.AssetLoader
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="recursively"></param>
-        public static void UnloadScene(string assetName, bool recursively = false)
+        public async static UniTask UnloadScene(string assetName, bool recursively = false)
         {
             if (!AssetPatcher.IsReleased())
-                CacheBundle.GetInstance().UnloadScene(assetName, recursively);
+                await CacheBundle.GetInstance().UnloadScene(assetName, recursively);
         }
 
-        public static void ReleaseBundleScenes()
+        public async static UniTask ReleaseBundleScenes()
         {
             if (!AssetPatcher.IsReleased())
-                CacheBundle.GetInstance().ReleaseScenes();
+                await CacheBundle.GetInstance().ReleaseScenes();
         }
         #endregion
 
@@ -180,7 +202,7 @@ namespace OxGFrame.AssetLoader
                 // Get path from operation handle
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 string filePath = operation.GetRawFilePath();
-                UnloadRawFile(assetName, true);
+                await UnloadRawFile(assetName, true);
                 return filePath;
             }
 
@@ -203,7 +225,7 @@ namespace OxGFrame.AssetLoader
                 // Get path from operation handle
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 string filePath = operation.GetRawFilePath();
-                UnloadRawFile(assetName, true);
+                await UnloadRawFile(assetName, true);
                 return filePath;
             }
 
@@ -225,7 +247,7 @@ namespace OxGFrame.AssetLoader
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 // Get path from operation handle
                 string filePath = operation.GetRawFilePath();
-                UnloadRawFile(assetName, true);
+                UnloadRawFile(assetName, true).Forget();
                 return filePath;
             }
 
@@ -248,7 +270,7 @@ namespace OxGFrame.AssetLoader
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 // Get path from operation handle
                 string filePath = operation.GetRawFilePath();
-                UnloadRawFile(assetName, true);
+                UnloadRawFile(assetName, true).Forget();
                 return filePath;
             }
 
@@ -416,16 +438,18 @@ namespace OxGFrame.AssetLoader
             return CacheBundle.GetInstance().LoadRawFile<T>(packageName, assetName, progression, maxRetryCount);
         }
 
-        public static void UnloadRawFile(string assetName, bool forceUnload = false)
+        public async static UniTask UnloadRawFile(string assetName, bool forceUnload = false)
         {
-            if (RefineResourcesPath(ref assetName)) Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
-            else if (!AssetPatcher.IsReleased()) CacheBundle.GetInstance().UnloadRawFile(assetName, forceUnload);
+            if (RefineResourcesPath(ref assetName))
+                Logging.Print<Logger>("<color=#ff0000>【Error】Only Bundle Type</color>");
+            else if (!AssetPatcher.IsReleased())
+                await CacheBundle.GetInstance().UnloadRawFileAsync(assetName, forceUnload);
         }
 
-        public static void ReleaseBundleRawFiles()
+        public async static UniTask ReleaseBundleRawFiles()
         {
             if (!AssetPatcher.IsReleased())
-                CacheBundle.GetInstance().ReleaseRawFiles();
+                await CacheBundle.GetInstance().ReleaseRawFilesAsync();
         }
         #endregion
 
@@ -938,10 +962,12 @@ namespace OxGFrame.AssetLoader
             }
         }
 
-        public static void UnloadAsset(string assetName, bool forceUnload = false)
+        public async static UniTask UnloadAsset(string assetName, bool forceUnload = false)
         {
-            if (RefineResourcesPath(ref assetName)) CacheResource.GetInstance().UnloadAsset(assetName, forceUnload);
-            else if (!AssetPatcher.IsReleased()) CacheBundle.GetInstance().UnloadAsset(assetName, forceUnload);
+            if (RefineResourcesPath(ref assetName))
+                CacheResource.GetInstance().UnloadAsset(assetName, forceUnload);
+            else if (!AssetPatcher.IsReleased())
+                await CacheBundle.GetInstance().UnloadAsset(assetName, forceUnload);
         }
 
         public static void ReleaseResourceAssets()
@@ -949,10 +975,10 @@ namespace OxGFrame.AssetLoader
             CacheResource.GetInstance().ReleaseAssets();
         }
 
-        public static void ReleaseBundleAssets()
+        public async static UniTask ReleaseBundleAssets()
         {
             if (!AssetPatcher.IsReleased())
-                CacheBundle.GetInstance().ReleaseAssets();
+                await CacheBundle.GetInstance().ReleaseAssets();
         }
         #endregion
         #endregion

@@ -1,7 +1,7 @@
 ﻿using MyBox;
+using OxGKit.LoggingSystem;
 using System.Collections.Generic;
 using UnityEngine;
-using OxGKit.LoggingSystem;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
@@ -10,7 +10,7 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         [Separator("Patch Options")]
         public BundleConfig.PlayMode playMode = BundleConfig.PlayMode.EditorSimulateMode;
-        [Tooltip("If checked, the patch field will compare whole version."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WebGLMode)]
+        [Tooltip("If checked, the patch field will compare whole version."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WebGLRemoteMode)]
         public BundleConfig.SemanticRule semanticRule = new BundleConfig.SemanticRule();
         [Tooltip("If checked, will skip preset packages download step of the patch (force download while playing)."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
         public bool skipMainDownload = false;
@@ -25,8 +25,6 @@ namespace OxGFrame.AssetLoader.Bundle
         public List<DlcPackageInfoWithBuild> listDlcPackages = new List<DlcPackageInfoWithBuild>();
 
         [Separator("Download Options")]
-        [Tooltip("* [WebRequest] supports dynamic query built-in files (Some memory will be used, but will be released at next GC).\n\n* [BuiltinFileManifest] query built-in files from manifest (setup at build-time or manual export).\n\n* [BuiltinFileManifest with CRC] query built-in files and check CRC from manifest (setup at build-time or manual export).")]
-        public BundleConfig.BuiltinQueryMode builtinQueryMode = BundleConfig.BuiltinQueryMode.BuiltinFileManifest;
         public int maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
         public int failedRetryCount = BundleConfig.failedRetryCount;
         [Tooltip("If file size >= [BreakpointFileSizeThreshold] that file will enable breakpoint mechanism (for all downloaders).")]
@@ -42,11 +40,13 @@ namespace OxGFrame.AssetLoader.Bundle
             if (this.gameObject.transform.root.name == newName)
             {
                 var container = GameObject.Find(nameof(OxGFrame));
-                if (container == null) container = new GameObject(nameof(OxGFrame));
+                if (container == null)
+                    container = new GameObject(nameof(OxGFrame));
                 this.gameObject.transform.SetParent(container.transform);
                 DontDestroyOnLoad(container);
             }
-            else DontDestroyOnLoad(this.gameObject.transform.root);
+            else
+                DontDestroyOnLoad(this.gameObject.transform.root);
 
             #region Patch Options
 #if !UNITY_EDITOR && OXGFRAME_OFFLINE_MODE
@@ -55,6 +55,8 @@ namespace OxGFrame.AssetLoader.Bundle
             this.playMode = BundleConfig.PlayMode.HostMode;
 #elif !UNITY_EDITOR && OXGFRAME_WEBGL_MODE
             this.playMode = BundleConfig.PlayMode.WebGLMode;
+#elif !UNITY_EDITOR && OXGFRAME_WEBGL_REMOTE_MODE
+            this.playMode = BundleConfig.PlayMode.WebGLRemoteMode;
 #endif
             BundleConfig.playMode = this.playMode;
             // For Host Mode
@@ -65,7 +67,8 @@ namespace OxGFrame.AssetLoader.Bundle
                 BundleConfig.checkDiskSpace = this.checkDiskSpace;
             }
             // For WebGL Mode
-            else if (this.playMode == BundleConfig.PlayMode.WebGLMode)
+            else if (this.playMode == BundleConfig.PlayMode.WebGLMode ||
+                     BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
             {
                 BundleConfig.semanticRule = this.semanticRule;
             }
@@ -77,8 +80,6 @@ namespace OxGFrame.AssetLoader.Bundle
             #endregion
 
             #region Download Options
-            // Set built-in files query mode
-            BundleConfig.builtinQueryMode = this.builtinQueryMode;
             BundleConfig.maxConcurrencyDownloadCount = this.maxConcurrencyDownloadCount <= 0 ? BundleConfig.DEFAULT_MAX_CONCURRENCY_MAX_DOWNLOAD_COUNT : this.maxConcurrencyDownloadCount;
             BundleConfig.failedRetryCount = this.failedRetryCount <= 0 ? BundleConfig.DEFAULT_FAILED_RETRY_COUNT : this.failedRetryCount;
             // Set download breakpoint size threshold
@@ -86,7 +87,7 @@ namespace OxGFrame.AssetLoader.Bundle
             #endregion
 
             #region Cryptogram Options
-            BundleConfig.InitDecryptInfo(this._decryptInfo.GetDecryptArgs(), this._decryptInfo.secureString, this._decryptInfo.GetSaltSize(), this._decryptInfo.GetDummySize());
+            BundleConfig.InitDecryptInfo(this._decryptInfo.GetDecryptArgs(), this._decryptInfo.scuredStringType, this._decryptInfo.GetSaltSize(), this._decryptInfo.GetDummySize());
             this._decryptInfo.Dispose();
             #endregion
 
@@ -115,18 +116,11 @@ namespace OxGFrame.AssetLoader.Bundle
                     Debug.Log($"<color=#ff1f4c>[Host Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
                     break;
             }
-
-            switch (this.builtinQueryMode)
-            {
-                case BundleConfig.BuiltinQueryMode.WebRequest:
-                    this.builtinQueryMode = BundleConfig.BuiltinQueryMode.BuiltinFileManifest;
-                    Debug.Log($"<color=#ff1f4c>[WebRequest QueryMode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
-                    break;
-            }
 #else
             switch (this.playMode)
             {
                 case BundleConfig.PlayMode.WebGLMode:
+                case BundleConfig.PlayMode.WebGLRemoteMode:
                     this.playMode = BundleConfig.PlayMode.EditorSimulateMode;
                     Debug.Log($"<color=#ff1f4c>[WebGL Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
                     break;

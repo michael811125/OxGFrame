@@ -11,24 +11,9 @@ namespace YooAsset.Editor
 {
     internal class ReporterSummaryViewer
     {
-        private class ItemWrapper
-        {
-            public string Title { private set; get; }
-            public string Value { private set; get; }
-
-            public ItemWrapper(string title, string value)
-            {
-                Title = title;
-                Value = value;
-            }
-        }
-
         private VisualTreeAsset _visualAsset;
         private TemplateContainer _root;
-
-        private ListView _listView;
-        private readonly List<ItemWrapper> _items = new List<ItemWrapper>();
-
+        private ScrollView _scrollView;
 
         /// <summary>
         /// 初始化页面
@@ -44,9 +29,7 @@ namespace YooAsset.Editor
             _root.style.flexGrow = 1f;
 
             // 概述列表
-            _listView = _root.Q<ListView>("ListView");
-            _listView.makeItem = MakeListViewItem;
-            _listView.bindItem = BindListViewItem;
+            _scrollView = _root.Q<ScrollView>("ScrollView");
         }
 
         /// <summary>
@@ -54,49 +37,49 @@ namespace YooAsset.Editor
         /// </summary>
         public void FillViewData(BuildReport buildReport)
         {
-            _items.Clear();
+            _scrollView.Clear();
 
-            _items.Add(new ItemWrapper("YooAsset Version", buildReport.Summary.YooVersion));
-            _items.Add(new ItemWrapper("UnityEngine Version", buildReport.Summary.UnityVersion));
-            _items.Add(new ItemWrapper("Build Date", buildReport.Summary.BuildDate));
-            _items.Add(new ItemWrapper("Build Seconds", ConvertTime(buildReport.Summary.BuildSeconds)));
-            _items.Add(new ItemWrapper("Build Target", $"{buildReport.Summary.BuildTarget}"));
-            _items.Add(new ItemWrapper("Build Pipeline", $"{buildReport.Summary.BuildPipeline}"));
-            _items.Add(new ItemWrapper("Build Mode", $"{buildReport.Summary.BuildMode}"));
-            _items.Add(new ItemWrapper("Package Name", buildReport.Summary.BuildPackageName));
-            _items.Add(new ItemWrapper("Package Version", buildReport.Summary.BuildPackageVersion));
+            BindListViewHeader("Build Infos");
+            BindListViewItem("YooAsset Version", buildReport.Summary.YooVersion);
+            BindListViewItem("UnityEngine Version", buildReport.Summary.UnityVersion);
+            BindListViewItem("Build Date", buildReport.Summary.BuildDate);
+            BindListViewItem("Build Seconds", ConvertTime(buildReport.Summary.BuildSeconds));
+            BindListViewItem("Build Target", $"{buildReport.Summary.BuildTarget}");
+            BindListViewItem("Build Pipeline", $"{buildReport.Summary.BuildPipeline}");
+            BindListViewItem("Build Bundle Type", buildReport.Summary.BuildBundleType.ToString());
+            BindListViewItem("Package Name", buildReport.Summary.BuildPackageName);
+            BindListViewItem("Package Version", buildReport.Summary.BuildPackageVersion);
+            BindListViewItem("Package Note", buildReport.Summary.BuildPackageNote);
+            BindListViewItem(string.Empty, string.Empty);
 
-            _items.Add(new ItemWrapper(string.Empty, string.Empty));
-            _items.Add(new ItemWrapper("Collect Settings", string.Empty));
-            _items.Add(new ItemWrapper("Unique Bundle Name", $"{buildReport.Summary.UniqueBundleName}"));
-            _items.Add(new ItemWrapper("Enable Addressable", $"{buildReport.Summary.EnableAddressable}"));
-            _items.Add(new ItemWrapper("Location To Lower", $"{buildReport.Summary.LocationToLower}"));
-            _items.Add(new ItemWrapper("Include Asset GUID", $"{buildReport.Summary.IncludeAssetGUID}"));
-            _items.Add(new ItemWrapper("Auto Collect Shaders", $"{buildReport.Summary.AutoCollectShaders}"));
-            _items.Add(new ItemWrapper("Ignore Rule Name", $"{buildReport.Summary.IgnoreRuleName}"));
+            BindListViewHeader("Collect Settings");
+            BindListViewItem("Unique Bundle Name", $"{buildReport.Summary.UniqueBundleName}");
+            BindListViewItem("Enable Addressable", $"{buildReport.Summary.EnableAddressable}");
+            BindListViewItem("Location To Lower", $"{buildReport.Summary.LocationToLower}");
+            BindListViewItem("Include Asset GUID", $"{buildReport.Summary.IncludeAssetGUID}");
+            BindListViewItem("Auto Collect Shaders", $"{buildReport.Summary.AutoCollectShaders}");
+            BindListViewItem("Ignore Rule Name", $"{buildReport.Summary.IgnoreRuleName}");
+            BindListViewItem(string.Empty, string.Empty);
 
-            _items.Add(new ItemWrapper(string.Empty, string.Empty));
-            _items.Add(new ItemWrapper("Build Params", string.Empty));
-            _items.Add(new ItemWrapper("Enable Share Pack Rule", $"{buildReport.Summary.EnableSharePackRule}"));
-            _items.Add(new ItemWrapper("Encryption Class Name", buildReport.Summary.EncryptionClassName));
-            _items.Add(new ItemWrapper("FileNameStyle", $"{buildReport.Summary.FileNameStyle}"));
-            _items.Add(new ItemWrapper("CompressOption", $"{buildReport.Summary.CompressOption}"));
-            _items.Add(new ItemWrapper("DisableWriteTypeTree", $"{buildReport.Summary.DisableWriteTypeTree}"));
-            _items.Add(new ItemWrapper("IgnoreTypeTreeChanges", $"{buildReport.Summary.IgnoreTypeTreeChanges}"));
+            BindListViewHeader("Build Params");
+            BindListViewItem("Clear Build Cache Files", $"{buildReport.Summary.ClearBuildCacheFiles}");
+            BindListViewItem("Use Asset Dependency DB", $"{buildReport.Summary.UseAssetDependencyDB}");
+            BindListViewItem("Enable Share Pack Rule", $"{buildReport.Summary.EnableSharePackRule}");
+            BindListViewItem("Single Referenced Pack Alone", $"{buildReport.Summary.SingleReferencedPackAlone}");
+            BindListViewItem("Encryption Class Name", buildReport.Summary.EncryptionClassName);
+            BindListViewItem("FileNameStyle", $"{buildReport.Summary.FileNameStyle}");
+            BindListViewItem("CompressOption", $"{buildReport.Summary.CompressOption}");
+            BindListViewItem("DisableWriteTypeTree", $"{buildReport.Summary.DisableWriteTypeTree}");
+            BindListViewItem("IgnoreTypeTreeChanges", $"{buildReport.Summary.IgnoreTypeTreeChanges}");
+            BindListViewItem(string.Empty, string.Empty);
 
-            _items.Add(new ItemWrapper(string.Empty, string.Empty));
-            _items.Add(new ItemWrapper("Build Results", string.Empty));
-            _items.Add(new ItemWrapper("Asset File Total Count", $"{buildReport.Summary.AssetFileTotalCount}"));
-            _items.Add(new ItemWrapper("Main Asset Total Count", $"{buildReport.Summary.MainAssetTotalCount}"));
-            _items.Add(new ItemWrapper("All Bundle Total Count", $"{buildReport.Summary.AllBundleTotalCount}"));
-            _items.Add(new ItemWrapper("All Bundle Total Size", ConvertSize(buildReport.Summary.AllBundleTotalSize)));
-            _items.Add(new ItemWrapper("Encrypted Bundle Total Count", $"{buildReport.Summary.EncryptedBundleTotalCount}"));
-            _items.Add(new ItemWrapper("Encrypted Bundle Total Size", ConvertSize(buildReport.Summary.EncryptedBundleTotalSize)));
-
-            _listView.Clear();
-            _listView.ClearSelection();
-            _listView.itemsSource = _items;
-            _listView.Rebuild();
+            BindListViewHeader("Build Results");
+            BindListViewItem("Asset File Total Count", $"{buildReport.Summary.AssetFileTotalCount}");
+            BindListViewItem("Main Asset Total Count", $"{buildReport.Summary.MainAssetTotalCount}");
+            BindListViewItem("All Bundle Total Count", $"{buildReport.Summary.AllBundleTotalCount}");
+            BindListViewItem("All Bundle Total Size", ConvertSize(buildReport.Summary.AllBundleTotalSize));
+            BindListViewItem("Encrypted Bundle Total Count", $"{buildReport.Summary.EncryptedBundleTotalCount}");
+            BindListViewItem("Encrypted Bundle Total Size", ConvertSize(buildReport.Summary.EncryptedBundleTotalSize));
         }
 
         /// <summary>
@@ -116,44 +99,59 @@ namespace YooAsset.Editor
         }
 
         // 列表相关
+        private void BindListViewHeader(string titile)
+        {
+            Toolbar toolbar = new Toolbar();
+            _scrollView.Add(toolbar);
+
+            ToolbarButton titleButton = new ToolbarButton();
+            titleButton.text = titile;
+            titleButton.style.unityTextAlign = TextAnchor.MiddleCenter;
+            titleButton.style.width = 200;
+            toolbar.Add(titleButton);
+
+            ToolbarButton valueButton = new ToolbarButton();
+            valueButton.style.unityTextAlign = TextAnchor.MiddleCenter;
+            valueButton.style.width = 150;
+            valueButton.style.flexShrink = 1;
+            valueButton.style.flexGrow = 1;
+            valueButton.SetEnabled(false);
+            toolbar.Add(valueButton);
+        }
+        private void BindListViewItem(string name, string value)
+        {
+            VisualElement element = MakeListViewItem();
+            _scrollView.Add(element);
+
+            // Title
+            var titleLabel = element.Q<Label>("TitleLabel");
+            titleLabel.text = name;
+
+            // Value
+            var valueLabel = element.Q<Label>("ValueLabel");
+            valueLabel.text = value;
+        }
         private VisualElement MakeListViewItem()
         {
             VisualElement element = new VisualElement();
             element.style.flexDirection = FlexDirection.Row;
 
-            {
-                var label = new Label();
-                label.name = "Label1";
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.marginLeft = 3f;
-                //label.style.flexGrow = 1f;
-                label.style.width = 200;
-                element.Add(label);
-            }
+            var titleLabel = new Label();
+            titleLabel.name = "TitleLabel";
+            titleLabel.style.unityTextAlign = TextAnchor.MiddleLeft;
+            titleLabel.style.marginLeft = 3f;
+            titleLabel.style.width = 200;
+            element.Add(titleLabel);
 
-            {
-                var label = new Label();
-                label.name = "Label2";
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.marginLeft = 3f;
-                label.style.flexGrow = 1f;
-                label.style.width = 150;
-                element.Add(label);
-            }
+            var valueLabel = new Label();
+            valueLabel.name = "ValueLabel";
+            valueLabel.style.unityTextAlign = TextAnchor.MiddleLeft;
+            valueLabel.style.marginLeft = 3f;
+            valueLabel.style.flexGrow = 1f;
+            valueLabel.style.width = 150;
+            element.Add(valueLabel);
 
             return element;
-        }
-        private void BindListViewItem(VisualElement element, int index)
-        {
-            var itemWrapper = _items[index];
-
-            // Title
-            var label1 = element.Q<Label>("Label1");
-            label1.text = itemWrapper.Title;
-
-            // Value
-            var label2 = element.Q<Label>("Label2");
-            label2.text = itemWrapper.Value;
         }
 
         private string ConvertTime(int time)

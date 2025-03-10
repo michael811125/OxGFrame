@@ -8,87 +8,38 @@ namespace YooAsset.Editor
         /// <summary>
         /// 模拟构建
         /// </summary>
-        public static string SimulateBuild(string buildPipelineName, string packageName)
+        public static PackageInvokeBuildResult SimulateBuild(PackageInvokeBuildParam buildParam)
         {
-            if (buildPipelineName == EBuildPipeline.BuiltinBuildPipeline.ToString())
+            string packageName = buildParam.PackageName;
+            string buildPipelineName = buildParam.BuildPipelineName;
+
+            if (buildPipelineName == "EditorSimulateBuildPipeline")
             {
-                BuiltinBuildParameters buildParameters = new BuiltinBuildParameters();
+                var buildParameters = new EditorSimulateBuildParameters();
                 buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
                 buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
-                buildParameters.BuildPipeline = buildPipelineName;
+                buildParameters.BuildPipeline = EBuildPipeline.EditorSimulateBuildPipeline.ToString();
+                buildParameters.BuildBundleType = (int)EBuildBundleType.VirtualBundle;
                 buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
-                buildParameters.BuildMode = EBuildMode.SimulateBuild;
                 buildParameters.PackageName = packageName;
                 buildParameters.PackageVersion = "Simulate";
                 buildParameters.FileNameStyle = EFileNameStyle.HashName;
                 buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.None;
                 buildParameters.BuildinFileCopyParams = string.Empty;
+                buildParameters.UseAssetDependencyDB = true;
 
-                BuiltinBuildPipeline pipeline = new BuiltinBuildPipeline();
-                var buildResult = pipeline.Run(buildParameters, false);
+                var pipeline = new EditorSimulateBuildPipeline();
+                BuildResult buildResult = pipeline.Run(buildParameters, false);
                 if (buildResult.Success)
                 {
-                    string manifestFileName = YooAssetSettingsData.GetManifestBinaryFileName(buildParameters.PackageName, buildParameters.PackageVersion);
-                    string manifestFilePath = $"{buildResult.OutputPackageDirectory}/{manifestFileName}";
-                    return manifestFilePath;
+                    var reulst = new PackageInvokeBuildResult();
+                    reulst.PackageRootDirectory = buildResult.OutputPackageDirectory;
+                    return reulst;
                 }
                 else
                 {
-                    return null;
-                }
-            }
-            else if (buildPipelineName == EBuildPipeline.ScriptableBuildPipeline.ToString())
-            {
-                ScriptableBuildParameters buildParameters = new ScriptableBuildParameters();
-                buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
-                buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
-                buildParameters.BuildPipeline = buildPipelineName;
-                buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
-                buildParameters.BuildMode = EBuildMode.SimulateBuild;
-                buildParameters.PackageName = packageName;
-                buildParameters.PackageVersion = "Simulate";
-                buildParameters.FileNameStyle = EFileNameStyle.HashName;
-                buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.None;
-                buildParameters.BuildinFileCopyParams = string.Empty;
-
-                ScriptableBuildPipeline pipeline = new ScriptableBuildPipeline();
-                var buildResult = pipeline.Run(buildParameters, true);
-                if (buildResult.Success)
-                {
-                    string manifestFileName = YooAssetSettingsData.GetManifestBinaryFileName(buildParameters.PackageName, buildParameters.PackageVersion);
-                    string manifestFilePath = $"{buildResult.OutputPackageDirectory}/{manifestFileName}";
-                    return manifestFilePath;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else if (buildPipelineName == EBuildPipeline.RawFileBuildPipeline.ToString())
-            {
-                RawFileBuildParameters buildParameters = new RawFileBuildParameters();
-                buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
-                buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
-                buildParameters.BuildPipeline = buildPipelineName;
-                buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
-                buildParameters.BuildMode = EBuildMode.SimulateBuild;
-                buildParameters.PackageName = packageName;
-                buildParameters.PackageVersion = "Simulate";
-                buildParameters.FileNameStyle = EFileNameStyle.HashName;
-                buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.None;
-                buildParameters.BuildinFileCopyParams = string.Empty;
-
-                RawFileBuildPipeline pipeline = new RawFileBuildPipeline();
-                var buildResult = pipeline.Run(buildParameters, true);
-                if (buildResult.Success)
-                {
-                    string manifestFileName = YooAssetSettingsData.GetManifestBinaryFileName(buildParameters.PackageName, buildParameters.PackageVersion);
-                    string manifestFilePath = $"{buildResult.OutputPackageDirectory}/{manifestFileName}";
-                    return manifestFilePath;
-                }
-                else
-                {
-                    return null;
+                    Debug.LogError(buildResult.ErrorInfo);
+                    throw new System.Exception($"{nameof(EditorSimulateBuildPipeline)} build failed !");
                 }
             }
             else

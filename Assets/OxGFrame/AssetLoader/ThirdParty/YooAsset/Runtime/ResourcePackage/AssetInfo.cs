@@ -21,6 +21,13 @@ namespace YooAsset
         /// </summary>
         public string Error { private set; get; }
 
+        /// <summary>
+        /// 资源对象
+        /// </summary>
+        internal PackageAsset Asset
+        {
+            get { return _packageAsset; }
+        }
 
         /// <summary>
         /// 唯一标识符
@@ -43,7 +50,7 @@ namespace YooAsset
         /// <summary>
         /// 身份是否无效
         /// </summary>
-        internal bool IsInvalid
+        public bool IsInvalid
         {
             get
             {
@@ -77,11 +84,6 @@ namespace YooAsset
             }
         }
 
-
-        private AssetInfo()
-        {
-            // 注意：禁止从外部创建该类
-        }
         internal AssetInfo(string packageName, PackageAsset packageAsset, System.Type assetType)
         {
             if (packageAsset == null)

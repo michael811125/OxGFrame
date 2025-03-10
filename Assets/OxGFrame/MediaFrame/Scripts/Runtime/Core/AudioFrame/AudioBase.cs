@@ -119,11 +119,14 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         protected override void OnFixedUpdate(float dt = 0f)
         {
-            if (this._audioSource == null) return;
+            if (this._audioSource == null)
+                return;
 
-            if (!this.isPrepared) return;
+            if (!this.isPrepared)
+                return;
 
-            if (this.IsPaused()) return;
+            if (this.IsPaused())
+                return;
 
             if (this.CurrentRemainingLength() > 0f)
             {
@@ -138,9 +141,11 @@ namespace OxGFrame.MediaFrame.AudioFrame
                         if (this._loops <= 0)
                         {
                             this._currentRemainingLength = 0;
-                            if (this.autoEndToStop) this.StopSelf();
+                            if (this.autoEndToStop)
+                                this.StopSelf();
                         }
-                        else this._audioSource.Play();
+                        else
+                            this._audioSource.Play();
                     }
                     this._currentRemainingLength = this.Length();
                 }
@@ -149,15 +154,19 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         internal override void Play(int loops, float volume)
         {
-            if (this._audioSource == null || this._audioSource.clip == null) return;
+            if (this._audioSource == null ||
+                this._audioSource.clip == null)
+                return;
 
             this.gameObject.SetActive(true);
 
             this._audioSource.mute = false;
 
-            if (!this.IsPaused()) this._loops = (loops == -1 || loops > 0) ? loops : this.loops;
+            if (!this.IsPaused())
+                this._loops = (loops == -1 || loops > 0) ? loops : this.loops;
 
-            if (this._loops == -1) this._audioSource.loop = true;
+            if (this._loops == -1)
+                this._audioSource.loop = true;
 
             if (!this._audioSource.clip.preloadAudioData)
             {
@@ -168,15 +177,18 @@ namespace OxGFrame.MediaFrame.AudioFrame
             volume = (volume > 0f) ? volume : this._audioSource.volume;
             this._audioSource.volume = volume;
 
-            if (!this.IsPaused()) this._audioSource.Play();
-            else this._audioSource.UnPause();
+            if (!this.IsPaused())
+                this._audioSource.Play();
+            else
+                this._audioSource.UnPause();
 
             this._isPaused = false; // 取消暫停標記
         }
 
         internal override void Stop()
         {
-            if (this._audioSource == null) return;
+            if (this._audioSource == null)
+                return;
 
             this._audioSource.Stop();
             this.ResetLength();
@@ -190,7 +202,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         internal override void Pause()
         {
-            if (this._audioSource == null) return;
+            if (this._audioSource == null)
+                return;
 
             this._isPaused = true; // 標記暫停
             this._audioSource.Pause();
@@ -198,7 +211,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         public override bool IsPlaying()
         {
-            if (this._audioSource == null) return false;
+            if (this._audioSource == null)
+                return false;
             return this._audioSource.isPlaying;
         }
 
@@ -209,7 +223,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         public override bool IsLooping()
         {
-            if (this._audioSource == null) return false;
+            if (this._audioSource == null)
+                return false;
             return this._audioSource.loop;
         }
 
@@ -253,7 +268,9 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         private void OnDestroy()
         {
-            if (Time.frameCount == 0 || !Application.isPlaying) return;
+            if (Time.frameCount == 0 ||
+                !Application.isPlaying)
+                return;
 
             try
             {

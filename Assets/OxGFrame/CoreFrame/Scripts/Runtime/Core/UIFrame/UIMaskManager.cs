@@ -9,33 +9,39 @@ namespace OxGFrame.CoreFrame.UIFrame
         #region MaskNodePool, MaskUI 物件池
         public class MaskNodePool
         {
-            private List<UIMask> _uiMaskPool = new List<UIMask>();  // 物件池
-            private int _initNum = 5;                               // 物件池初始數量
+            private List<UIMask> _uiMaskPool = new List<UIMask>(); // 物件池
+            private int _initNum = 5;                              // 物件池初始數量
+            private int _maxNum = 10;                              // 物件池最大回收持有數量
             private UIMaskManager _uiMaskManager = null;
 
             public MaskNodePool(UIMaskManager uiMaskManager)
             {
                 this._uiMaskManager = uiMaskManager;
+                this._Init();
             }
 
             private void _Init()
             {
                 for (int i = 0; i < this._initNum; i++)
-                {
-                    UIMask uiMask = new GameObject(NODE_NAME).AddComponent<UIMask>();
-                    uiMask.gameObject.SetActive(false);
-                    uiMask.gameObject.layer = this._uiMaskManager.layer;
-                    uiMask.gameObject.transform.SetParent(this._uiMaskManager.uiMaskRoot);
-                    uiMask.gameObject.transform.localPosition = Vector3.zero;
-                    uiMask.gameObject.transform.localScale = Vector3.one;
-                    uiMask.InitMask();
-                    this._uiMaskPool.Add(uiMask);
-                }
+                    this._CreateMask();
+            }
+
+            private void _CreateMask()
+            {
+                UIMask uiMask = new GameObject(NODE_NAME).AddComponent<UIMask>();
+                uiMask.gameObject.SetActive(false);
+                uiMask.gameObject.layer = this._uiMaskManager.layer;
+                uiMask.gameObject.transform.SetParent(this._uiMaskManager.uiMaskRoot);
+                uiMask.gameObject.transform.localPosition = Vector3.zero;
+                uiMask.gameObject.transform.localScale = Vector3.one;
+                uiMask.InitMask();
+                this._uiMaskPool.Add(uiMask);
             }
 
             public UIMask GetUIMask(Transform parent)
             {
-                if (this._uiMaskPool.Count <= 0) this._Init();
+                if (this._uiMaskPool.Count <= 0)
+                    this._CreateMask();
 
                 UIMask uiMask = this._uiMaskPool[this._uiMaskPool.Count - 1];
                 this._uiMaskPool.RemoveAt(this._uiMaskPool.Count - 1);
@@ -51,10 +57,12 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             public bool RecycleUIMask(Transform parent)
             {
-                if (parent.Find(NODE_NAME) == null) return false;
+                if (parent.Find(NODE_NAME) == null)
+                    return false;
 
                 GameObject uiMaskNode = parent.Find(NODE_NAME).gameObject;
-                if (uiMaskNode == null || !uiMaskNode.GetComponent<UIMask>())
+                if (uiMaskNode == null ||
+                    !uiMaskNode.GetComponent<UIMask>())
                 {
                     Logging.Print<Logger>(string.Format("No matching object found: {0}, doesn't need to recycle!", NODE_NAME));
                     return false;
@@ -63,17 +71,11 @@ namespace OxGFrame.CoreFrame.UIFrame
                 uiMaskNode.transform.SetParent(this._uiMaskManager.uiMaskRoot);
                 UIMask uiMask = uiMaskNode.GetComponent<UIMask>();
                 uiMask.UnUse();
-                this._uiMaskPool.Add(uiMask);
+                if (this._uiMaskPool.Count >= this._maxNum)
+                    GameObject.Destroy(uiMask.gameObject);
+                else
+                    this._uiMaskPool.Add(uiMask);
                 return true;
-            }
-
-            public void ClearMaskPool()
-            {
-                foreach (UIMask uiMask in this._uiMaskPool)
-                {
-                    uiMask.UnUse();
-                }
-                this._uiMaskPool.Clear();
             }
         }
         #endregion
@@ -98,7 +100,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <param name="maskClickEvent"></param>
         public void AddMask(Transform parent, Color color, Sprite sprite, Material material, MaskEventFunc maskClickEvent = null)
         {
-            if (parent.Find(NODE_NAME) || !parent.GetComponent<UIBase>()) return;
+            if (parent.Find(NODE_NAME) ||
+                !parent.GetComponent<UIBase>())
+                return;
 
             var uiMask = this._maskNodePool.GetUIMask(parent);
             uiMask.SetMaskColor(color);

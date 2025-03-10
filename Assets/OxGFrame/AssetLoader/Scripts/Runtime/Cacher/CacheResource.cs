@@ -10,7 +10,8 @@ namespace OxGFrame.AssetLoader.Cacher
         private static CacheResource _instance = null;
         public static CacheResource GetInstance()
         {
-            if (_instance == null) _instance = new CacheResource();
+            if (_instance == null)
+                _instance = new CacheResource();
             return _instance;
         }
 

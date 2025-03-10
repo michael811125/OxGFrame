@@ -13,6 +13,7 @@ namespace OxGFrame.CoreFrame.USFrame
     {
         public string sceneName;
         public bool activeRootGameObjects;
+        public LocalPhysicsMode localPhysicsMode;
     }
 
     internal class USManager
@@ -216,7 +217,7 @@ namespace OxGFrame.CoreFrame.USFrame
         }
 
         #region Bundle
-        public async UniTask<BundlePack> LoadFromBundleAsync(string packageName, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
+        public async UniTask<BundlePack> LoadFromBundleAsync(string packageName, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             var scene = this.GetSceneByName(sceneName);
             if (!string.IsNullOrEmpty(scene.name) &&
@@ -227,7 +228,7 @@ namespace OxGFrame.CoreFrame.USFrame
                 return null;
             }
 
-            var pack = await AssetLoaders.LoadSceneAsync(packageName, sceneName, loadSceneMode, activateOnLoad, priority, progression);
+            var pack = await AssetLoaders.LoadSceneAsync(packageName, sceneName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
             if (pack != null)
             {
                 Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Bundle</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
@@ -237,7 +238,7 @@ namespace OxGFrame.CoreFrame.USFrame
             return null;
         }
 
-        public BundlePack LoadFromBundle(string packageName, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
+        public BundlePack LoadFromBundle(string packageName, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
         {
             var scene = this.GetSceneByName(sceneName);
             if (!string.IsNullOrEmpty(scene.name) &&
@@ -248,7 +249,7 @@ namespace OxGFrame.CoreFrame.USFrame
                 return null;
             }
 
-            var pack = AssetLoaders.LoadScene(packageName, sceneName, loadSceneMode, progression);
+            var pack = AssetLoaders.LoadScene(packageName, sceneName, loadSceneMode, localPhysicsMode, progression);
             if (pack != null)
             {
                 Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Bundle</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
@@ -258,20 +259,20 @@ namespace OxGFrame.CoreFrame.USFrame
             return null;
         }
 
-        public void UnloadFromBundle(bool recursively, params string[] sceneNames)
+        public async UniTask UnloadFromBundle(bool recursively, params string[] sceneNames)
         {
             if (sceneNames != null && sceneNames.Length > 0)
             {
                 foreach (string sceneName in sceneNames)
                 {
-                    AssetLoaders.UnloadScene(sceneName, recursively);
+                    await AssetLoaders.UnloadScene(sceneName, recursively);
                 }
             }
         }
         #endregion
 
         #region Build
-        public async UniTask<AsyncOperation> LoadFromBuildAsync(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
+        public async UniTask<AsyncOperation> LoadFromBuildAsync(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
         {
             this._currentCount = 0;
             this._totalCount = 1; // 初始 1 = 必有一場景
@@ -285,7 +286,7 @@ namespace OxGFrame.CoreFrame.USFrame
                 return null;
             }
 
-            var req = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+            var req = SceneManager.LoadSceneAsync(sceneName, new LoadSceneParameters(loadSceneMode, localPhysicsMode));
             if (req != null)
             {
                 req.allowSceneActivation = false;
@@ -310,7 +311,7 @@ namespace OxGFrame.CoreFrame.USFrame
             return req;
         }
 
-        public Scene LoadFromBuild(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
+        public Scene LoadFromBuild(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
         {
             this._currentCount = 0;
             this._totalCount = 1; // 初始 1 = 必有一場景
@@ -324,7 +325,7 @@ namespace OxGFrame.CoreFrame.USFrame
                 return default;
             }
 
-            scene = SceneManager.LoadScene(sceneName, new LoadSceneParameters(loadSceneMode));
+            scene = SceneManager.LoadScene(sceneName, new LoadSceneParameters(loadSceneMode, localPhysicsMode));
             if (progression != null)
             {
                 this._currentCount++;
@@ -335,7 +336,7 @@ namespace OxGFrame.CoreFrame.USFrame
             return scene;
         }
 
-        public async UniTask<AsyncOperation> LoadFromBuildAsync(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
+        public async UniTask<AsyncOperation> LoadFromBuildAsync(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
         {
             this._currentCount = 0;
             this._totalCount = 1; // 初始 1 = 必有一場景
@@ -348,7 +349,7 @@ namespace OxGFrame.CoreFrame.USFrame
                 return null;
             }
 
-            var req = SceneManager.LoadSceneAsync(buildIndex, loadSceneMode);
+            var req = SceneManager.LoadSceneAsync(buildIndex, new LoadSceneParameters(loadSceneMode, localPhysicsMode));
             if (req != null)
             {
                 req.allowSceneActivation = false;
@@ -373,7 +374,7 @@ namespace OxGFrame.CoreFrame.USFrame
             return req;
         }
 
-        public Scene LoadFromBuild(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
+        public Scene LoadFromBuild(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
         {
             this._currentCount = 0;
             this._totalCount = 1; // 初始 1 = 必有一場景
@@ -388,7 +389,7 @@ namespace OxGFrame.CoreFrame.USFrame
                 return default;
             }
 
-            scene = SceneManager.LoadScene(sceneName, new LoadSceneParameters(loadSceneMode));
+            scene = SceneManager.LoadScene(sceneName, new LoadSceneParameters(loadSceneMode, localPhysicsMode));
             if (progression != null)
             {
                 this._currentCount++;

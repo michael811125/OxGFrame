@@ -11,7 +11,8 @@ namespace OxGFrame.AssetLoader.GroupCacher
         private static GroupResource _instance = null;
         public static GroupResource GetInstance()
         {
-            if (_instance == null) _instance = new GroupResource();
+            if (_instance == null)
+                _instance = new GroupResource();
             return _instance;
         }
 

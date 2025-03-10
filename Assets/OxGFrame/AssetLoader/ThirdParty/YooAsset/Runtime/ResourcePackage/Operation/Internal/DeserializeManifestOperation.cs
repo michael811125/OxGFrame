@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 namespace YooAsset
 {
@@ -14,6 +15,7 @@ namespace YooAsset
             DeserializeAssetList,
             PrepareBundleList,
             DeserializeBundleList,
+            InitManifest,
             Done,
         }
 
@@ -32,11 +34,11 @@ namespace YooAsset
         {
             _buffer = new BufferReader(binaryData);
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.DeserializeFileHeader;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -80,9 +82,11 @@ namespace YooAsset
                     Manifest.LocationToLower = _buffer.ReadBool();
                     Manifest.IncludeAssetGUID = _buffer.ReadBool();
                     Manifest.OutputNameStyle = _buffer.ReadInt32();
+                    Manifest.BuildBundleType = _buffer.ReadInt32();
                     Manifest.BuildPipeline = _buffer.ReadUTF8();
                     Manifest.PackageName = _buffer.ReadUTF8();
                     Manifest.PackageVersion = _buffer.ReadUTF8();
+                    Manifest.PackageNote = _buffer.ReadUTF8();
 
                     // 检测配置
                     if (Manifest.EnableAddressable && Manifest.LocationToLower)
@@ -94,20 +98,8 @@ namespace YooAsset
                 if (_steps == ESteps.PrepareAssetList)
                 {
                     _packageAssetCount = _buffer.ReadInt32();
-                    Manifest.AssetList = new List<PackageAsset>(_packageAssetCount);
-                    Manifest.AssetDic = new Dictionary<string, PackageAsset>(_packageAssetCount);
-
-                    if (Manifest.EnableAddressable)
-                        Manifest.AssetPathMapping1 = new Dictionary<string, string>(_packageAssetCount * 3);
-                    else
-                        Manifest.AssetPathMapping1 = new Dictionary<string, string>(_packageAssetCount * 2);
-
-                    if (Manifest.IncludeAssetGUID)
-                        Manifest.AssetPathMapping2 = new Dictionary<string, string>(_packageAssetCount);
-                    else
-                        Manifest.AssetPathMapping2 = new Dictionary<string, string>();
-
                     _progressTotalValue = _packageAssetCount;
+                    ManifestTools.CreateAssetCollection(Manifest, _packageAssetCount);
                     _steps = ESteps.DeserializeAssetList;
                 }
                 if (_steps == ESteps.DeserializeAssetList)
@@ -120,57 +112,8 @@ namespace YooAsset
                         packageAsset.AssetGUID = _buffer.ReadUTF8();
                         packageAsset.AssetTags = _buffer.ReadUTF8Array();
                         packageAsset.BundleID = _buffer.ReadInt32();
-                        Manifest.AssetList.Add(packageAsset);
-
-                        // 注意：我们不允许原始路径存在重名
-                        string assetPath = packageAsset.AssetPath;
-                        if (Manifest.AssetDic.ContainsKey(assetPath))
-                            throw new System.Exception($"AssetPath have existed : {assetPath}");
-                        else
-                            Manifest.AssetDic.Add(assetPath, packageAsset);
-
-                        // 填充AssetPathMapping1
-                        {
-                            string location = packageAsset.AssetPath;
-                            if (Manifest.LocationToLower)
-                                location = location.ToLower();
-
-                            // 添加原生路径的映射
-                            if (Manifest.AssetPathMapping1.ContainsKey(location))
-                                throw new System.Exception($"Location have existed : {location}");
-                            else
-                                Manifest.AssetPathMapping1.Add(location, packageAsset.AssetPath);
-
-                            // 添加无后缀名路径的映射
-                            string locationWithoutExtension = Path.ChangeExtension(location, null);
-                            if (ReferenceEquals(location, locationWithoutExtension) == false)
-                            {
-                                if (Manifest.AssetPathMapping1.ContainsKey(locationWithoutExtension))
-                                    YooLogger.Warning($"Location have existed : {locationWithoutExtension}");
-                                else
-                                    Manifest.AssetPathMapping1.Add(locationWithoutExtension, packageAsset.AssetPath);
-                            }
-                        }
-                        if (Manifest.EnableAddressable)
-                        {
-                            string location = packageAsset.Address;
-                            if (string.IsNullOrEmpty(location) == false)
-                            {
-                                if (Manifest.AssetPathMapping1.ContainsKey(location))
-                                    throw new System.Exception($"Location have existed : {location}");
-                                else
-                                    Manifest.AssetPathMapping1.Add(location, packageAsset.AssetPath);
-                            }
-                        }
-
-                        // 填充AssetPathMapping2
-                        if (Manifest.IncludeAssetGUID)
-                        {
-                            if (Manifest.AssetPathMapping2.ContainsKey(packageAsset.AssetGUID))
-                                throw new System.Exception($"AssetGUID have existed : {packageAsset.AssetGUID}");
-                            else
-                                Manifest.AssetPathMapping2.Add(packageAsset.AssetGUID, packageAsset.AssetPath);
-                        }
+                        packageAsset.DependBundleIDs = _buffer.ReadInt32Array();
+                        ManifestTools.FillAssetCollection(Manifest, packageAsset);
 
                         _packageAssetCount--;
                         Progress = 1f - _packageAssetCount / _progressTotalValue;
@@ -187,11 +130,8 @@ namespace YooAsset
                 if (_steps == ESteps.PrepareBundleList)
                 {
                     _packageBundleCount = _buffer.ReadInt32();
-                    Manifest.BundleList = new List<PackageBundle>(_packageBundleCount);
-                    Manifest.BundleDic1 = new Dictionary<string, PackageBundle>(_packageBundleCount);
-                    Manifest.BundleDic2 = new Dictionary<string, PackageBundle>(_packageBundleCount);
-                    Manifest.BundleDic3 = new Dictionary<string, PackageBundle>(_packageBundleCount);
                     _progressTotalValue = _packageBundleCount;
+                    ManifestTools.CreateBundleCollection(Manifest, _packageBundleCount);
                     _steps = ESteps.DeserializeBundleList;
                 }
                 if (_steps == ESteps.DeserializeBundleList)
@@ -206,15 +146,8 @@ namespace YooAsset
                         packageBundle.FileSize = _buffer.ReadInt64();
                         packageBundle.Encrypted = _buffer.ReadBool();
                         packageBundle.Tags = _buffer.ReadUTF8Array();
-                        packageBundle.DependIDs = _buffer.ReadInt32Array();
-                        packageBundle.ParseBundle(Manifest);
-                        Manifest.BundleList.Add(packageBundle);
-                        Manifest.BundleDic1.Add(packageBundle.BundleName, packageBundle);
-                        Manifest.BundleDic2.Add(packageBundle.FileName, packageBundle);
-
-                        // 注意：原始文件可能存在相同的CacheGUID
-                        if (Manifest.BundleDic3.ContainsKey(packageBundle.CacheGUID) == false)
-                            Manifest.BundleDic3.Add(packageBundle.CacheGUID, packageBundle);
+                        packageBundle.DependBundleIDs = _buffer.ReadInt32Array();
+                        ManifestTools.FillBundleCollection(Manifest, packageBundle);
 
                         _packageBundleCount--;
                         Progress = 1f - _packageBundleCount / _progressTotalValue;
@@ -224,9 +157,15 @@ namespace YooAsset
 
                     if (_packageBundleCount <= 0)
                     {
-                        _steps = ESteps.Done;
-                        Status = EOperationStatus.Succeed;
+                        _steps = ESteps.InitManifest;
                     }
+                }
+
+                if (_steps == ESteps.InitManifest)
+                {
+                    ManifestTools.InitManifest(Manifest);
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Succeed;
                 }
             }
             catch (System.Exception e)

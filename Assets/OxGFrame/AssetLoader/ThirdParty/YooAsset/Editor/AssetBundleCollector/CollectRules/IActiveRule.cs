@@ -1,6 +1,16 @@
 ﻿
 namespace YooAsset.Editor
 {
+    public struct GroupData
+    {
+        public string GroupName;
+
+        public GroupData(string groupName)
+        {
+            GroupName = groupName;
+        }
+    }
+
     /// <summary>
     /// 资源分组激活规则接口
     /// </summary>
@@ -9,6 +19,6 @@ namespace YooAsset.Editor
         /// <summary>
         /// 是否激活分组
         /// </summary>
-        bool IsActiveGroup();
+        bool IsActiveGroup(GroupData data);
     }
 }

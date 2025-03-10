@@ -11,7 +11,11 @@ namespace OxGFrame.NetFrame
         /// NetNode 緩存
         /// </summary>
         private Dictionary<int, NetNode> _netNodes = null;
-        private RTUpdater _rtUpdater = null;
+
+        /// <summary>
+        /// Updater 驅動器
+        /// </summary>
+        internal RTUpdater rtUpdater = null;
 
         private static readonly object _locker = new object();
         private static NetManager _instance = null;
@@ -31,9 +35,9 @@ namespace OxGFrame.NetFrame
         public NetManager()
         {
             this._netNodes = new Dictionary<int, NetNode>();
-            this._rtUpdater = new RTUpdater();
-            this._rtUpdater.onUpdate = this._OnUpdate;
-            this._rtUpdater.Start();
+            this.rtUpdater = new RTUpdater();
+            this.rtUpdater.onUpdate = this._OnUpdate;
+            this.rtUpdater.Start();
         }
 
         private void _OnUpdate(float dt)
@@ -51,10 +55,19 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// Add net node
+        /// Number of network nodes
         /// </summary>
-        /// <param name="netNode"></param>
-        /// <param name="nnId"></param>
+        /// <returns></returns>
+        public int Count()
+        {
+            return this._netNodes.Count;
+        }
+
+        /// <summary>
+        /// Adds a network node
+        /// </summary>
+        /// <param name="netNode">The net node to add</param>
+        /// <param name="nnId">The ID of the net node</param>
         public void AddNetNode(NetNode netNode, int nnId)
         {
             if (!this._netNodes.ContainsKey(nnId))
@@ -69,9 +82,9 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// Remove net node
+        /// Removes a network node
         /// </summary>
-        /// <param name="nnId"></param>
+        /// <param name="nnId">The ID of the net node to remove</param>
         public void RemoveNetNode(int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
@@ -82,10 +95,10 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// Get net node
+        /// Retrieves a network node
         /// </summary>
-        /// <param name="nnId"></param>
-        /// <returns></returns>
+        /// <param name="nnId">The ID of the net node to retrieve</param>
+        /// <returns>The net node with the specified ID, or null if it does not exist</returns>
         public NetNode GetNetNode(int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
@@ -94,40 +107,40 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// Open connection
+        /// Opens a connection for a specified network node
         /// </summary>
-        /// <param name="netOption"></param>
-        /// <param name="nnId"></param>
+        /// <param name="netOption">The options for the connection</param>
+        /// <param name="nnId">The ID of the network node to connect</param>
         public void Connect(NetOption netOption, int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
-            {
                 this._netNodes[nnId].Connect(netOption);
-            }
-            else Logging.PrintWarning<Logger>(string.Format("The NodeId: {0} Can't Found !!! Connect Failed.", nnId));
+            else
+                Logging.PrintWarning<Logger>(string.Format("The NodeId: {0} can't be found! Connection failed.", nnId));
         }
 
         /// <summary>
-        /// Connection state
+        /// Checks the connection state of a network node
         /// </summary>
-        /// <param name="nnId"></param>
-        /// <returns></returns>
+        /// <param name="nnId">The ID of the network node to check</param>
+        /// <returns>True if the network node is connected, false otherwise</returns>
         public bool IsConnected(int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
             {
-                if (this._netNodes[nnId] == null) return false;
+                if (this._netNodes[nnId] == null)
+                    return false;
                 return this._netNodes[nnId].IsConnected();
             }
             return false;
         }
 
         /// <summary>
-        /// Send binary data
+        /// Sends binary data to a network node
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="nnId"></param>
-        /// <returns></returns>
+        /// <param name="buffer">The binary data to send</param>
+        /// <param name="nnId">The ID of the network node to send the data to</param>
+        /// <returns>True if the data was sent successfully, false otherwise</returns>
         public bool Send(byte[] buffer, int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
@@ -136,17 +149,17 @@ namespace OxGFrame.NetFrame
             }
             else
             {
-                Logging.PrintWarning<Logger>(string.Format("The NodeId: {0} Can't Found !!! Send Failed.", nnId));
+                Logging.PrintWarning<Logger>(string.Format("The NodeId: {0} can't be found! Send failed.", nnId));
                 return false;
             }
         }
 
         /// <summary>
-        /// Send text data
+        /// Sends text data to a network node
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="nnId"></param>
-        /// <returns></returns>
+        /// <param name="text">The text data to send</param>
+        /// <param name="nnId">The ID of the network node to send the data to</param>
+        /// <returns>True if the data was sent successfully, false otherwise</returns>
         public bool Send(string text, int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
@@ -155,23 +168,34 @@ namespace OxGFrame.NetFrame
             }
             else
             {
-                Logging.PrintWarning<Logger>(string.Format("The NodeId: {0} Can't Found !!! Send Failed.", nnId));
+                Logging.PrintWarning<Logger>(string.Format("The NodeId: {0} can't be found! Send failed.", nnId));
                 return false;
             }
         }
 
         /// <summary>
-        /// Close network
+        /// Close a network
         /// </summary>
         /// <param name="nnId"></param>
-        /// <param name="remove"></param>
-        public void Close(int nnId, bool remove)
+        /// <param name="removeNetNode"></param>
+        public void Close(int nnId, bool removeNetNode)
         {
             if (this._netNodes.ContainsKey(nnId))
             {
                 this._netNodes[nnId].Close();
-                if (remove) this.RemoveNetNode(nnId);
+                if (removeNetNode)
+                    this.RemoveNetNode(nnId);
             }
+        }
+
+        /// <summary>
+        /// Close all networks
+        /// </summary>
+        /// <param name="removeNetNode"></param>
+        public void CloseAll(bool removeNetNode)
+        {
+            foreach (var nnId in this._netNodes.Keys.ToArray())
+                this.Close(nnId, removeNetNode);
         }
     }
 }

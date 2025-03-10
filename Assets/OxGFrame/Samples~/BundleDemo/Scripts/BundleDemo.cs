@@ -514,13 +514,13 @@ public class BundleDemo : MonoBehaviour
 
     public async void PreloadBundle()
     {
-        // if assetName has prefix "res#" will use Resources to load
+        // if assetName has prefix "res#" will use Resources to load (From Default package)
         await AssetLoaders.PreloadAssetAsync<GameObject>(this.assetName);
     }
 
     public async void LoadBundle()
     {
-        // Async LoadAsset
+        // Async LoadAsset (From Default package)
         GameObject go = await AssetLoaders.LoadAssetAsync<GameObject>(this.assetName, 0, (progress, currentCount, totalCount) =>
         {
             Debug.Log($"Load => Progress: {progress}, CurrentCount: {currentCount}, TotalCount: {totalCount}");
@@ -555,7 +555,7 @@ public class BundleDemo : MonoBehaviour
             // Destroy
             Destroy(t.gameObject);
             // Unload
-            AssetLoaders.UnloadAsset(this.assetName);
+            AssetLoaders.UnloadAsset(this.assetName).Forget();
         }
 
         // Unload for preload
@@ -563,7 +563,7 @@ public class BundleDemo : MonoBehaviour
         {
             if (AssetLoaders.HasInCache(this.assetName))
             {
-                AssetLoaders.UnloadAsset(this.assetName);
+                AssetLoaders.UnloadAsset(this.assetName).Forget();
             }
         }
     }
@@ -573,7 +573,7 @@ public class BundleDemo : MonoBehaviour
         // Destroy all first
         foreach (Transform t in this.container.transform) Destroy(t.gameObject);
         // Release all
-        AssetLoaders.ReleaseBundleAssets();
+        AssetLoaders.ReleaseBundleAssets().Forget();
     }
     #endregion
 }

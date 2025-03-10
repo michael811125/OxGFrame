@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace YooAsset
 {
-    public sealed class SubAssetsHandle : HandleBase, IDisposable
+    public sealed class SubAssetsHandle : HandleBase
     {
         private System.Action<SubAssetsHandle> _callback;
 
-        internal SubAssetsHandle(ProviderBase provider) : base(provider)
+        internal SubAssetsHandle(ProviderOperation provider) : base(provider)
         {
         }
         internal override void InvokeCallback()
@@ -47,33 +46,17 @@ namespace YooAsset
             Provider.WaitForAsyncComplete();
         }
 
-        /// <summary>
-        /// 释放资源句柄
-        /// </summary>
-        public void Release()
-        {
-            this.ReleaseInternal();
-        }
-
-        /// <summary>
-        /// 释放资源句柄
-        /// </summary>
-        public void Dispose()
-        {
-            this.ReleaseInternal();
-        }
-
 
         /// <summary>
         /// 子资源对象集合
         /// </summary>
-        public UnityEngine.Object[] AllAssetObjects
+        public IReadOnlyList<UnityEngine.Object> SubAssetObjects
         {
             get
             {
                 if (IsValidWithWarning == false)
                     return null;
-                return Provider.AllAssetObjects;
+                return Provider.SubAssetObjects;
             }
         }
 
@@ -87,9 +70,9 @@ namespace YooAsset
             if (IsValidWithWarning == false)
                 return null;
 
-            foreach (var assetObject in Provider.AllAssetObjects)
+            foreach (var assetObject in Provider.SubAssetObjects)
             {
-                if (assetObject.name == assetName)
+                if (assetObject.name == assetName && assetObject is TObject)
                     return assetObject as TObject;
             }
 
@@ -106,14 +89,14 @@ namespace YooAsset
             if (IsValidWithWarning == false)
                 return null;
 
-            List<TObject> ret = new List<TObject>(Provider.AllAssetObjects.Length);
-            foreach (var assetObject in Provider.AllAssetObjects)
+            List<TObject> result = new List<TObject>(Provider.SubAssetObjects.Length);
+            foreach (var assetObject in Provider.SubAssetObjects)
             {
                 var retObject = assetObject as TObject;
                 if (retObject != null)
-                    ret.Add(retObject);
+                    result.Add(retObject);
             }
-            return ret.ToArray();
+            return result.ToArray();
         }
     }
 }

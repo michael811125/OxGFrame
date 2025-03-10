@@ -1,7 +1,8 @@
-﻿using System;
+﻿using MyBox;
+using OxGFrame.AssetLoader.Utility.SecureMemory;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
@@ -10,11 +11,11 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         [SerializeField, Tooltip("Bundle decryption (case-insensitive).\n\n[NONE], \n[OFFSET, dummySize], \n[XOR, key], \n[HT2XOR, headKey, tailKey, jumpKey], \n[HT2XORPLUS, headKey, tailKey, jump1Key, jump2Key], \n[AES, key, iv]\n\nex: \n\"none\" \n\"offset, 12\" \n\"xor, 23\" \n\"ht2xor, 34, 45, 56\" \n\"ht2xorplus, 34, 45, 56, 78\" \n\"aes, key, iv\"")]
         private string _decryptArgs = BundleConfig.CryptogramType.NONE;
-        [SerializeField, Tooltip("If checked, complex encryption will be performed in memory (more GC).\n\nIf unchecked, simple encryption will be performed in memory (less GC).")]
-        public bool secureString = true;
-        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)")]
+        [SerializeField, Tooltip("None: No encryption.\n\nXORWithDummy: simple encryption will be performed in memory (less GC).\n\nAES: complex encryption will be performed in memory (more GC).")]
+        public SecuredStringType scuredStringType = SecuredStringType.XORWithDummy;
+        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)"), ConditionalField(nameof(scuredStringType), false, SecuredStringType.AES)]
         private int _saltSize = 1 << 4;
-        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)")]
+        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)"), ConditionalField(nameof(scuredStringType), false, SecuredStringType.XORWithDummy)]
         private int _dummySize = 1 << 5;
 
         public string GetDecryptArgs()
@@ -69,9 +70,6 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         [HideInInspector]
         public string fallbackHostServer = null;
-        public IBuildinQueryServices builtinQueryService = null;
-        public IDeliveryQueryServices deliveryQueryService = null;
-        public IDeliveryLoadServices deliveryLoadService = null;
     }
 
     [Serializable]
@@ -118,13 +116,6 @@ namespace OxGFrame.AssetLoader.Bundle
         public string PRODUCT_NAME;        // 產品名稱
         public string APP_VERSION;         // 主程式版本
         public SemanticRule SEMANTIC_RULE; // 主程式版號規則
-
-        ~AppConfig()
-        {
-            this.PLATFORM = null;
-            this.PRODUCT_NAME = null;
-            this.APP_VERSION = null;
-        }
     }
 
     public class PatchConfig
