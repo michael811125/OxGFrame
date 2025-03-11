@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.0.1] - 2025-03-11
+- modified SBP dependency version (v1.21.25).
+
 ## [3.0.0] - 2025-03-11
 - **Hotfixer**
   - Added the OXGFRAME_HYBRIDCLR_DISABLED symbol, which skips the AOTAssemblies metadata loading process during CheckHotfix, but the initial loading of Hotfix Package and HotfixAssemblies will still be executed. (If HybridCLR functionality is disabled, it is recommended to use this symbol to skip the Hotfix process).
