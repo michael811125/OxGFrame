@@ -2,7 +2,7 @@
 	"name": "com.michaelo.oxgframe",
 	"displayName": "OxGFrame",
 	"description": "The OxGFrame is a framework based on Unity for accelerating game development. Supports multi-platform Win, OSX, Android, iOS, WebGL.",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"unity": "2021.3",
 	"license": "MIT",
 	"samples": [
@@ -83,7 +83,7 @@
 		}
 	],
 	"dependencies": {
-		"com.unity.scriptablebuildpipeline": "2.2.11"
+		"com.unity.scriptablebuildpipeline": "1.21.25"
 	},
 	"author": {
 		"name": "MichaelO",
