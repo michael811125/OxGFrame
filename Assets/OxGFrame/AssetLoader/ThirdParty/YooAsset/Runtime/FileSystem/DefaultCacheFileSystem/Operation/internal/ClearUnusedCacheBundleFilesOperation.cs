@@ -8,6 +8,7 @@ namespace YooAsset
         private enum ESteps
         {
             None,
+            CheckManifest,
             GetUnusedCacheFiles,
             ClearUnusedCacheFiles,
             Done,
@@ -19,7 +20,7 @@ namespace YooAsset
         private int _unusedFileTotalCount = 0;
         private ESteps _steps = ESteps.None;
 
-        
+
         internal ClearUnusedCacheBundleFilesOperation(DefaultCacheFileSystem fileSystem, PackageManifest manifest)
         {
             _fileSystem = fileSystem;
@@ -27,15 +28,29 @@ namespace YooAsset
         }
         internal override void InternalStart()
         {
-            _steps = ESteps.GetUnusedCacheFiles;
+            _steps = ESteps.CheckManifest;
         }
         internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
 
+            if (_steps == ESteps.CheckManifest)
+            {
+                if (_manifest == null)
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = "Can not found active package manifest !";
+                }
+                else
+                {
+                    _steps = ESteps.GetUnusedCacheFiles;
+                }
+            }
+
             if (_steps == ESteps.GetUnusedCacheFiles)
-            {    
+            {
                 _unusedBundleGUIDs = GetUnusedBundleGUIDs();
                 _unusedFileTotalCount = _unusedBundleGUIDs.Count;
                 _steps = ESteps.ClearUnusedCacheFiles;

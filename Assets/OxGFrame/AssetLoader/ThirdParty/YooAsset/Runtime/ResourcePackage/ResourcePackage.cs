@@ -263,7 +263,7 @@ namespace YooAsset
         /// <param name="clearParam">执行参数</param>
         public ClearCacheFilesOperation ClearCacheFilesAsync(EFileClearMode clearMode, object clearParam = null)
         {
-            DebugCheckInitialize();
+            DebugCheckInitialize(false);
             var operation = _playModeImpl.ClearCacheFilesAsync(clearMode.ToString(), clearParam);
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
@@ -276,7 +276,7 @@ namespace YooAsset
         /// <param name="clearParam">执行参数</param>
         public ClearCacheFilesOperation ClearCacheFilesAsync(string clearMode, object clearParam = null)
         {
-            DebugCheckInitialize();
+            DebugCheckInitialize(false);
             var operation = _playModeImpl.ClearCacheFilesAsync(clearMode, clearParam);
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
@@ -610,6 +610,7 @@ namespace YooAsset
         private SceneHandle LoadSceneInternal(AssetInfo assetInfo, bool waitForAsyncComplete, LoadSceneMode sceneMode, LocalPhysicsMode physicsMode, bool suspendLoad, uint priority)
         {
             DebugCheckAssetLoadType(assetInfo.AssetType);
+            assetInfo.LoadMethod = AssetInfo.ELoadMethod.LoadScene;
             var loadSceneParams = new LoadSceneParameters(sceneMode, physicsMode);
             var handle = _resourceManager.LoadSceneAsync(assetInfo, loadSceneParams, suspendLoad, priority);
             if (waitForAsyncComplete)
@@ -720,6 +721,7 @@ namespace YooAsset
         private AssetHandle LoadAssetInternal(AssetInfo assetInfo, bool waitForAsyncComplete, uint priority)
         {
             DebugCheckAssetLoadType(assetInfo.AssetType);
+            assetInfo.LoadMethod = AssetInfo.ELoadMethod.LoadAsset;
             var handle = _resourceManager.LoadAssetAsync(assetInfo, priority);
             if (waitForAsyncComplete)
                 handle.WaitForAsyncComplete();
@@ -829,6 +831,7 @@ namespace YooAsset
         private SubAssetsHandle LoadSubAssetsInternal(AssetInfo assetInfo, bool waitForAsyncComplete, uint priority)
         {
             DebugCheckAssetLoadType(assetInfo.AssetType);
+            assetInfo.LoadMethod = AssetInfo.ELoadMethod.LoadSubAssets;
             var handle = _resourceManager.LoadSubAssetsAsync(assetInfo, priority);
             if (waitForAsyncComplete)
                 handle.WaitForAsyncComplete();
@@ -938,6 +941,7 @@ namespace YooAsset
         private AllAssetsHandle LoadAllAssetsInternal(AssetInfo assetInfo, bool waitForAsyncComplete, uint priority)
         {
             DebugCheckAssetLoadType(assetInfo.AssetType);
+            assetInfo.LoadMethod = AssetInfo.ELoadMethod.LoadAllAssets;
             var handle = _resourceManager.LoadAllAssetsAsync(assetInfo, priority);
             if (waitForAsyncComplete)
                 handle.WaitForAsyncComplete();

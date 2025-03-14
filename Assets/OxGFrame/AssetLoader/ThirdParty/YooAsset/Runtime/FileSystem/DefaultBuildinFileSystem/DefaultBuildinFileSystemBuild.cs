@@ -15,11 +15,16 @@ namespace YooAsset
         /// </summary>
         public void OnPreprocessBuild(UnityEditor.Build.Reporting.BuildReport report)
         {
-            YooLogger.Log("Begin to create catalog file !");
+            ExportBuildinCatalogFile();
+        }
 
-            string savePath = YooAssetSettingsData.GetYooResourcesFullPath();
-            if (UnityEditor.AssetDatabase.DeleteAsset(savePath))
-                UnityEditor.AssetDatabase.Refresh();
+        /// <summary>
+        /// 输出包裹的内置资源目录文件
+        /// </summary>
+        /// <exception cref="System.Exception"></exception>
+        public static void ExportBuildinCatalogFile()
+        {
+            YooLogger.Log("Begin to create catalog file !");
 
             string rootPath = YooAssetSettingsData.GetYooDefaultBuildinRoot();
             DirectoryInfo rootDirectory = new DirectoryInfo(rootPath);
@@ -87,9 +92,22 @@ namespace YooAsset
             }
 
             // 创建内置清单实例
-            var buildinFileCatalog = ScriptableObject.CreateInstance<DefaultBuildinFileCatalog>();
+            var buildinFileCatalog = new DefaultBuildinFileCatalog();
             buildinFileCatalog.PackageName = packageName;
             buildinFileCatalog.PackageVersion = packageVersion;
+
+            // 创建白名单查询集合
+            HashSet<string> whiteFileList = new HashSet<string>
+            {
+                "link.xml",
+                "buildlogtep.json",
+                $"{packageName}.version",
+                $"{packageName}_{packageVersion}.bytes",
+                $"{packageName}_{packageVersion}.hash",
+                $"{packageName}_{packageVersion}.json",
+                $"{packageName}_{packageVersion}.report",
+                DefaultBuildinFileSystemDefine.BuildinCatalogFileName
+            };
 
             // 记录所有内置资源文件
             DirectoryInfo rootDirectory = new DirectoryInfo(pacakgeDirectory);
@@ -99,17 +117,7 @@ namespace YooAsset
                 if (fileInfo.Extension == ".meta")
                     continue;
 
-                if (fileInfo.Name == "link.xml" || fileInfo.Name == "buildlogtep.json")
-                    continue;
-                if (fileInfo.Name == $"{packageName}.version")
-                    continue;
-                if (fileInfo.Name == $"{packageName}_{packageVersion}.bytes")
-                    continue;
-                if (fileInfo.Name == $"{packageName}_{packageVersion}.hash")
-                    continue;
-                if (fileInfo.Name == $"{packageName}_{packageVersion}.json")
-                    continue;
-                if (fileInfo.Name == $"{packageName}_{packageVersion}.report")
+                if (whiteFileList.Contains(fileInfo.Name))
                     continue;
 
                 string fileName = fileInfo.Name;
@@ -125,18 +133,13 @@ namespace YooAsset
             }
 
             // 创建输出目录
-            string fullPath = YooAssetSettingsData.GetYooResourcesFullPath();
-            string saveFilePath = $"{fullPath}/{packageName}/{DefaultBuildinFileSystemDefine.BuildinCatalogFileName}";
-            FileUtility.CreateFileDirectory(saveFilePath);
+            string saveFilePath = $"{pacakgeDirectory}/{DefaultBuildinFileSystemDefine.BuildinCatalogFileName}";
+            if (File.Exists(saveFilePath))
+                File.Delete(saveFilePath);
 
             // 创建输出文件
-            UnityEditor.AssetDatabase.CreateAsset(buildinFileCatalog, saveFilePath);
-            UnityEditor.EditorUtility.SetDirty(buildinFileCatalog);
-#if UNITY_2019
-            UnityEditor.AssetDatabase.SaveAssets();
-#else
-            UnityEditor.AssetDatabase.SaveAssetIfDirty(buildinFileCatalog);
-#endif
+            File.WriteAllText(saveFilePath, JsonUtility.ToJson(buildinFileCatalog, false));
+            UnityEditor.AssetDatabase.Refresh();
 
             Debug.Log($"Succeed to save buildin file catalog : {saveFilePath}");
             return true;

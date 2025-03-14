@@ -37,7 +37,9 @@ namespace YooAsset
             string url;
 
             // 获取对应平台的URL地址
-#if UNITY_EDITOR
+#if UNITY_EDITOR_OSX
+            url = StringUtility.Format("file://{0}", path);
+#elif UNITY_EDITOR
             url = StringUtility.Format("file:///{0}", path);
 #elif UNITY_WEBGL
             url = path;

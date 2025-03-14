@@ -333,6 +333,13 @@ namespace YooAsset
         {
             return _records.Keys.ToList();
         }
+        public RecordFileElement GetRecordFileElement(PackageBundle bundle)
+        {
+            if (_records.TryGetValue(bundle.BundleGUID, out RecordFileElement element))
+                return element;
+            else
+                return null;
+        }
 
         public string GetTempFilePath(PackageBundle bundle)
         {
@@ -384,10 +391,10 @@ namespace YooAsset
 
         public EFileVerifyResult VerifyCacheFile(PackageBundle bundle)
         {
-            if (_records.TryGetValue(bundle.BundleGUID, out RecordFileElement wrapper) == false)
+            if (_records.TryGetValue(bundle.BundleGUID, out RecordFileElement element) == false)
                 return EFileVerifyResult.CacheNotFound;
 
-            EFileVerifyResult result = FileVerifyHelper.FileVerify(wrapper.DataFilePath, wrapper.DataFileSize, wrapper.DataFileCRC, EFileVerifyLevel.High);
+            EFileVerifyResult result = FileVerifyHelper.FileVerify(element.DataFilePath, element.DataFileSize, element.DataFileCRC, EFileVerifyLevel.High);
             return result;
         }
         public bool WriteCacheBundleFile(PackageBundle bundle, string copyPath)
@@ -427,22 +434,10 @@ namespace YooAsset
         }
         public bool DeleteCacheBundleFile(string bundleGUID)
         {
-            if (_records.TryGetValue(bundleGUID, out RecordFileElement wrapper))
+            if (_records.TryGetValue(bundleGUID, out RecordFileElement element))
             {
-                try
-                {
-                    string dataFilePath = wrapper.DataFilePath;
-                    FileInfo fileInfo = new FileInfo(dataFilePath);
-                    if (fileInfo.Exists)
-                        fileInfo.Directory.Delete(true);
-                    _records.Remove(bundleGUID);
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    YooLogger.Error($"Failed to delete cache file ! {e.Message}");
-                    return false;
-                }
+                _records.Remove(bundleGUID);
+                return element.DeleteFolder();
             }
             else
             {

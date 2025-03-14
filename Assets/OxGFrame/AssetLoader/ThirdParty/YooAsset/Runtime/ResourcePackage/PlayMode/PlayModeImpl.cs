@@ -176,7 +176,17 @@ namespace YooAsset
                 throw new Exception("Should never get here !");
 
             // 注意：如果清单里未找到资源包会抛出异常！
-            var depends = ActiveManifest.GetAllDependencies(assetInfo.Asset);
+            PackageBundle[] depends;
+            if (assetInfo.LoadMethod == AssetInfo.ELoadMethod.LoadAllAssets)
+            {
+                var mainBundle = ActiveManifest.GetMainPackageBundle(assetInfo.Asset);
+                depends = ActiveManifest.GetAllDependencies(mainBundle);
+            }
+            else
+            {
+                depends = ActiveManifest.GetAllDependencies(assetInfo.Asset);
+            }
+
             List<BundleInfo> result = new List<BundleInfo>(depends.Length);
             foreach (var packageBundle in depends)
             {

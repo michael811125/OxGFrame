@@ -18,12 +18,18 @@ namespace OxGFrame.AssetLoader.Bundle
         public class SemanticRule
         {
             [ReadOnly]
-            public bool major = true;
+            [SerializeField]
+            private bool _major = true;
+            public bool major => this._major;
+
             [ReadOnly]
-            public bool minor = true;
+            [SerializeField]
+            private bool _minor = true;
+            public bool minor => this._minor;
+
             [SerializeField]
             private bool _patch = false;
-            public bool patch { get { return this._patch; } }
+            public bool patch => this._patch;
         }
 
         public enum PlayMode
@@ -291,7 +297,8 @@ namespace OxGFrame.AssetLoader.Bundle
             if (_builtinAppConfig == null)
             {
                 string cfgJson = await Requester.RequestText(GetStreamingAssetsAppConfigPath(), null, null, null, false);
-                if (!string.IsNullOrEmpty(cfgJson)) _builtinAppConfig = JsonConvert.DeserializeObject<AppConfig>(cfgJson);
+                if (!string.IsNullOrEmpty(cfgJson))
+                    _builtinAppConfig = JsonConvert.DeserializeObject<AppConfig>(cfgJson);
             }
             return _builtinAppConfig;
         }
@@ -306,7 +313,8 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 var url = await GetHostServerAppConfigPath();
                 string cfgJson = await Requester.RequestText(url, null, null, null, false);
-                if (!string.IsNullOrEmpty(cfgJson)) _hostAppConfig = JsonConvert.DeserializeObject<AppConfig>(cfgJson);
+                if (!string.IsNullOrEmpty(cfgJson))
+                    _hostAppConfig = JsonConvert.DeserializeObject<AppConfig>(cfgJson);
             }
             return _hostAppConfig;
         }
@@ -365,8 +373,10 @@ namespace OxGFrame.AssetLoader.Bundle
             string dlcFolderName = PatchSetting.setting.dlcFolderName;
 
             // 預設 DLC 組合路徑
-            if (withoutPlatform) return $"{host}/{rootFolderName}/{productName}/{dlcFolderName}/{packageName}/{dlcVersion}";
-            else return $"{host}/{rootFolderName}/{productName}/{platform}/{dlcFolderName}/{packageName}/{dlcVersion}";
+            if (withoutPlatform)
+                return $"{host}/{rootFolderName}/{productName}/{dlcFolderName}/{packageName}/{dlcVersion}";
+            else
+                return $"{host}/{rootFolderName}/{productName}/{platform}/{dlcFolderName}/{packageName}/{dlcVersion}";
         }
 
         /// <summary>
@@ -383,8 +393,10 @@ namespace OxGFrame.AssetLoader.Bundle
             string dlcFolderName = PatchSetting.setting.dlcFolderName;
 
             // 預設 DLC 組合路徑
-            if (withoutPlatform) return $"{host}/{rootFolderName}/{productName}/{dlcFolderName}/{packageName}/{dlcVersion}";
-            else return $"{host}/{rootFolderName}/{productName}/{platform}/{dlcFolderName}/{packageName}/{dlcVersion}";
+            if (withoutPlatform)
+                return $"{host}/{rootFolderName}/{productName}/{dlcFolderName}/{packageName}/{dlcVersion}";
+            else
+                return $"{host}/{rootFolderName}/{productName}/{platform}/{dlcFolderName}/{packageName}/{dlcVersion}";
         }
 
         /// <summary>
