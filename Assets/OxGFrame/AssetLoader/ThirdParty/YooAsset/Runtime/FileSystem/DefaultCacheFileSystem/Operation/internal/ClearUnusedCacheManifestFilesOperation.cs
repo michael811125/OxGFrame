@@ -8,6 +8,7 @@ namespace YooAsset
         private enum ESteps
         {
             None,
+            CheckManifest,
             ClearUnusedCacheFiles,
             Done,
         }
@@ -24,12 +25,26 @@ namespace YooAsset
         }
         internal override void InternalStart()
         {
-            _steps = ESteps.ClearUnusedCacheFiles;
+            _steps = ESteps.CheckManifest;
         }
         internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
+
+            if (_steps == ESteps.CheckManifest)
+            {
+                if (_manifest == null)
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = "Can not found active package manifest !";
+                }
+                else
+                {
+                    _steps = ESteps.ClearUnusedCacheFiles;
+                }
+            }
 
             if (_steps == ESteps.ClearUnusedCacheFiles)
             {

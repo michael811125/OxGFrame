@@ -3,6 +3,16 @@ namespace YooAsset
 {
     public class AssetInfo
     {
+        internal enum ELoadMethod
+        {
+            None = 0,
+            LoadAsset,
+            LoadSubAssets,
+            LoadAllAssets,
+            LoadScene,
+            LoadRawFile,
+        }
+
         private readonly PackageAsset _packageAsset;
         private string _providerGUID;
 
@@ -20,6 +30,11 @@ namespace YooAsset
         /// 错误信息
         /// </summary>
         public string Error { private set; get; }
+
+        /// <summary>
+        /// 加载方法
+        /// </summary>
+        internal ELoadMethod LoadMethod;
 
         /// <summary>
         /// 资源对象

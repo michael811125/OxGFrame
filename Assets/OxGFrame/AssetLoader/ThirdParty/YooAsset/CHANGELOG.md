@@ -2,6 +2,15 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.5-preview] - 2025-03-14
+
+### Fixed
+
+- (#502) 修复了原生缓存文件由于文件格式变动导致的加载本地缓存文件失败的问题。
+- (#504) 修复了MacOS平台Offline Play Mode模式请求本地资源清单失败的问题。
+- (#506) 修复了v2.3x版本LoadAllAssets方法计算依赖Bundle不完整的问题。
+- (#506) 修复了微信小游戏文件系统，在启用加密算法后卸载bundle报错的问题。
+
 ## [2.3.4-preview] - 2025-03-08
 
 ### Improvements

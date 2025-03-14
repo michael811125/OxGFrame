@@ -7,9 +7,10 @@ namespace YooAsset
         private enum ESteps
         {
             None,
+            CheckManifest,
             CheckArgs,
-            GetTagsCacheFiles,
-            ClearTagsCacheFiles,
+            GetClearCacheFiles,
+            ClearFilterCacheFiles,
             Done,
         }
 
@@ -29,12 +30,26 @@ namespace YooAsset
         }
         internal override void InternalStart()
         {
-            _steps = ESteps.CheckArgs;
+            _steps = ESteps.CheckManifest;
         }
         internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
+
+            if (_steps == ESteps.CheckManifest)
+            {
+                if (_manifest == null)
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = "Can not found active package manifest !";
+                }
+                else
+                {
+                    _steps = ESteps.CheckArgs;
+                }
+            }
 
             if (_steps == ESteps.CheckArgs)
             {
@@ -67,17 +82,17 @@ namespace YooAsset
                     return;
                 }
 
-                _steps = ESteps.GetTagsCacheFiles;
+                _steps = ESteps.GetClearCacheFiles;
             }
 
-            if (_steps == ESteps.GetTagsCacheFiles)
+            if (_steps == ESteps.GetClearCacheFiles)
             {
-                _clearBundleGUIDs = GetTagsBundleGUIDs();
+                _clearBundleGUIDs = GetBundleGUIDsByTag();
                 _clearFileTotalCount = _clearBundleGUIDs.Count;
-                _steps = ESteps.ClearTagsCacheFiles;
+                _steps = ESteps.ClearFilterCacheFiles;
             }
 
-            if (_steps == ESteps.ClearTagsCacheFiles)
+            if (_steps == ESteps.ClearFilterCacheFiles)
             {
                 for (int i = _clearBundleGUIDs.Count - 1; i >= 0; i--)
                 {
@@ -100,7 +115,7 @@ namespace YooAsset
                 }
             }
         }
-        private List<string> GetTagsBundleGUIDs()
+        private List<string> GetBundleGUIDsByTag()
         {
             var allBundleGUIDs = _fileSystem.GetAllCachedBundleGUIDs();
             List<string> result = new List<string>(allBundleGUIDs.Count);

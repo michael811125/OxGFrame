@@ -161,30 +161,7 @@ namespace OxGFrame.AssetLoader.Bundle
         [UnityEditor.MenuItem("YooAsset/" + "OxGFrame Pre-Export Built-in Catalog File (BuildinCatalog) used by YooAsset", false, 1099)]
         private static void _ExportBuiltinCatalogFile()
         {
-            string savePath = YooAssetBridge.YooAssetSettingsData.GetYooResourcesFullPath();
-            if (UnityEditor.AssetDatabase.DeleteAsset(savePath))
-                UnityEditor.AssetDatabase.Refresh();
-
-            string rootPath = YooAssetBridge.YooAssetSettingsData.GetYooDefaultBuildinRoot();
-            DirectoryInfo rootDirectory = new DirectoryInfo(rootPath);
-            if (rootDirectory.Exists == false)
-            {
-                UnityEngine.Debug.LogWarning($"Can not found StreamingAssets root directory : {rootPath}");
-                return;
-            }
-
-            // 搜索所有 Package 目录
-            DirectoryInfo[] subDirectories = rootDirectory.GetDirectories();
-            foreach (var subDirectory in subDirectories)
-            {
-                string packageName = subDirectory.Name;
-                string pacakgeDirectory = subDirectory.FullName;
-                bool result = DefaultBuildinFileSystemBuild.CreateBuildinCatalogFile(packageName, pacakgeDirectory);
-                if (result == false)
-                {
-                    throw new System.Exception($"Create package {packageName} catalog file failed ! See the detail error in console !");
-                }
-            }
+            DefaultBuildinFileSystemBuild.ExportBuildinCatalogFile();
         }
 
         private static BuiltinPackageCatalog _CollectBuiltinPackages(DirectoryInfo root)

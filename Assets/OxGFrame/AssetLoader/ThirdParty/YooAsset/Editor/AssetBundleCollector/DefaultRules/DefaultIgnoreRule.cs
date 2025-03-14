@@ -10,7 +10,7 @@ namespace YooAsset.Editor
         /// <summary>
         /// 忽略的文件类型
         /// </summary>
-        public readonly static HashSet<string> IgnoreFileExtensions = new HashSet<string>() { "", ".so", ".dll", ".cs", ".js", ".boo", ".meta", ".cginc", ".hlsl" };
+        public readonly static HashSet<string> IgnoreFileExtensions = new HashSet<string>() { "", ".so", ".cs", ".js", ".boo", ".meta", ".cginc", ".hlsl" };
     }
 
     /// <summary>

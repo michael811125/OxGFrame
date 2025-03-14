@@ -1,28 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using UnityEditor;
 
 namespace YooAsset.Editor
 {
     [InitializeOnLoad]
-    public class MacrosProcessor : AssetPostprocessor
+    public class MacroProcessor : AssetPostprocessor
     {
-        static MacrosProcessor()
-        {
-        }
-
-        /// <summary>
-        /// YooAsset版本宏定义
-        /// </summary>
-        private static readonly List<string> YooAssetMacros = new List<string>()
-        {
-            "YOO_ASSET_2",
-            "YOO_ASSET_2_3",
-            "YOO_ASSET_2_3_OR_NEWER",
-        };
-
         static string OnGeneratedCSProject(string path, string content)
         {
             XmlDocument xmlDoc = new XmlDocument();
@@ -65,7 +52,7 @@ namespace YooAsset.Editor
 
                     string[] defines = childNode.InnerText.Split(';');
                     HashSet<string> hashSets = new HashSet<string>(defines);
-                    foreach (string yooMacro in YooAssetMacros)
+                    foreach (string yooMacro in MacroDefine.Macros)
                     {
                         string tmpMacro = yooMacro.Trim();
                         if (hashSets.Contains(tmpMacro) == false)

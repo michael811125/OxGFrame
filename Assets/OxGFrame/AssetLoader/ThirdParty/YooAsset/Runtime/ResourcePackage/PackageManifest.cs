@@ -174,13 +174,28 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 获取资源依赖列表
+        /// 获取依赖列表
         /// 注意：传入的资源对象一定合法有效！
         /// </summary>
         public PackageBundle[] GetAllDependencies(PackageAsset packageAsset)
         {
             List<PackageBundle> result = new List<PackageBundle>(packageAsset.DependBundleIDs.Length);
             foreach (var dependID in packageAsset.DependBundleIDs)
+            {
+                var dependBundle = GetMainPackageBundle(dependID);
+                result.Add(dependBundle);
+            }
+            return result.ToArray();
+        }
+
+        /// <summary>
+        /// 获取依赖列表
+        /// 注意：传入的资源包对象一定合法有效！
+        /// </summary>
+        public PackageBundle[] GetAllDependencies(PackageBundle packageBundle)
+        {
+            List<PackageBundle> result = new List<PackageBundle>(packageBundle.DependBundleIDs.Length);
+            foreach (var dependID in packageBundle.DependBundleIDs)
             {
                 var dependBundle = GetMainPackageBundle(dependID);
                 result.Add(dependBundle);

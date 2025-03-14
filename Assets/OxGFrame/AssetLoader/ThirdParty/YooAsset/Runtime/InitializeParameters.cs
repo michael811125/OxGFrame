@@ -83,6 +83,6 @@ namespace YooAsset
         /// 文件系统初始化参数列表
         /// 注意：列表最后一个元素作为主文件系统！
         /// </summary>
-        public List<FileSystemParameters> FileSystemParameterList;
+        public readonly List<FileSystemParameters> FileSystemParameterList = new List<FileSystemParameters>();
     }
 }

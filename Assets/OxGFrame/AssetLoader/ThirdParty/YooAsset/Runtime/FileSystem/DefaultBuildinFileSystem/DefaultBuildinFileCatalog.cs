@@ -1,13 +1,14 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace YooAsset
 {
     /// <summary>
     /// 内置资源清单目录
     /// </summary>
-    internal class DefaultBuildinFileCatalog : ScriptableObject
+    [Serializable]
+    internal class DefaultBuildinFileCatalog
     {
         [Serializable]
         public class FileWrapper

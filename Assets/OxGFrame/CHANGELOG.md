@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [3.0.2] - 2025-03-14
+- Modified BuildinCatalog generation and reading methods.
+- Upgraded YooAsset to v2.3.5-preview (latest commit).
+
 ## [3.0.1] - 2025-03-11
 - modified SBP dependency version (v1.21.25).
 
