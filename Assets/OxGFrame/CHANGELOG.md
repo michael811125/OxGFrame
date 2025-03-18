@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.1.1] - 2025-03-18
+- Fixed an issue where StreamingAssets WebRequest did not catch 404 errors.
+
 ## [3.1.0] - 2025-03-18
 - Modified StreamingAssetsHelper to dynamically detect built-in resources (by checking if the BuildinCatalog.bytes file exists in the Package folder, indicating that the package is present).
 - Modified the code in YooAssetBridge.
