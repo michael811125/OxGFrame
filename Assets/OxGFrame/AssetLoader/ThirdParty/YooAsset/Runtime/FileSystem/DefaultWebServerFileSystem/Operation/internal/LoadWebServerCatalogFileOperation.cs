@@ -2,7 +2,6 @@
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace YooAsset
 {
@@ -17,9 +16,8 @@ namespace YooAsset
         }
 
         private readonly DefaultWebServerFileSystem _fileSystem;
-        private UnityWebTextRequestOperation _webTextRequestOp;
+        private UnityWebDataRequestOperation _webDataRequestOp;
         private ESteps _steps = ESteps.None;
-        private string _textData = null;
 
         internal LoadWebServerCatalogFileOperation(DefaultWebServerFileSystem fileSystem)
         {
@@ -36,45 +34,36 @@ namespace YooAsset
 
             if (_steps == ESteps.RequestData)
             {
-                if (_webTextRequestOp == null)
+                if (_webDataRequestOp == null)
                 {
-                    string filePath = _fileSystem.GetCatalogFileLoadPath();
+                    string filePath = _fileSystem.GetCatalogBinaryFileLoadPath();
                     string url = DownloadSystemHelper.ConvertToWWWPath(filePath);
-                    _webTextRequestOp = new UnityWebTextRequestOperation(url);
-                    _webTextRequestOp.StartOperation();
-                    AddChildOperation(_webTextRequestOp);
+                    _webDataRequestOp = new UnityWebDataRequestOperation(url);
+                    _webDataRequestOp.StartOperation();
+                    AddChildOperation(_webDataRequestOp);
                 }
 
-                _webTextRequestOp.UpdateOperation();
-                if (_webTextRequestOp.IsDone == false)
+                _webDataRequestOp.UpdateOperation();
+                if (_webDataRequestOp.IsDone == false)
                     return;
 
-                if (_webTextRequestOp.Status == EOperationStatus.Succeed)
+                if (_webDataRequestOp.Status == EOperationStatus.Succeed)
                 {
                     _steps = ESteps.LoadCatalog;
-                    _textData = _webTextRequestOp.Result;
                 }
                 else
                 {
                     _steps = ESteps.Done;
                     Status = EOperationStatus.Failed;
-                    Error = _webTextRequestOp.Error;
+                    Error = _webDataRequestOp.Error;
                 }
             }
 
             if (_steps == ESteps.LoadCatalog)
             {
-                if (string.IsNullOrEmpty(_textData))
-                {
-                    _steps = ESteps.Done;
-                    Status = EOperationStatus.Failed;
-                    Error = $"Buildin catalog file content is empty !";
-                    return;
-                }
-
                 try
                 {
-                    var catalog = JsonUtility.FromJson<DefaultBuildinFileCatalog>(_textData);
+                    var catalog = CatalogTools.DeserializeFromBinary(_webDataRequestOp.Result);
                     if (catalog.PackageName != _fileSystem.PackageName)
                     {
                         _steps = ESteps.Done;

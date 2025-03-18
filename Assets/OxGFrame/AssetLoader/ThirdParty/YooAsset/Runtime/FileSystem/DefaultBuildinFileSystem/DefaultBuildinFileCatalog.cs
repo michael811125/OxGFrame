@@ -15,13 +15,12 @@ namespace YooAsset
         {
             public string BundleGUID;
             public string FileName;
-
-            public FileWrapper(string bundleGUID, string fileName)
-            {
-                BundleGUID = bundleGUID;
-                FileName = fileName;
-            }
         }
+
+        /// <summary>
+        /// 文件版本
+        /// </summary>
+        public string FileVersion;
 
         /// <summary>
         /// 包裹名称

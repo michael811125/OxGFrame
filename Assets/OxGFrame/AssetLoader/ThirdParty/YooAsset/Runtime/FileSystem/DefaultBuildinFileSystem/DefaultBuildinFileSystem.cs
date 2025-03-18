@@ -336,9 +336,9 @@ namespace YooAsset
             string fileName = YooAssetSettingsData.GetManifestBinaryFileName(PackageName, packageVersion);
             return PathUtility.Combine(_packageRoot, fileName);
         }
-        public string GetCatalogFileLoadPath()
+        public string GetCatalogBinaryFileLoadPath()
         {
-            return PathUtility.Combine(_packageRoot, DefaultBuildinFileSystemDefine.BuildinCatalogFileName);
+            return PathUtility.Combine(_packageRoot, DefaultBuildinFileSystemDefine.BuildinCatalogBinaryFileName);
         }
 
         /// <summary>

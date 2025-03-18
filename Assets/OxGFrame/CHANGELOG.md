@@ -1,11 +1,17 @@
 # CHANGELOG
 
+## [3.1.0] - 2025-03-18
+- Modified StreamingAssetsHelper to dynamically detect built-in resources (by checking if the BuildinCatalog.bytes file exists in the Package folder, indicating that the package is present).
+- Modified the code in YooAssetBridge.
+- Updated YooAsset to use the request for the BuildinCatalog.bytes file as the built-in catalog.
+- Removed builtinpkgcatalog.json and the MenuItem pre-export option.
+
 ## [3.0.2] - 2025-03-14
 - Modified BuildinCatalog generation and reading methods.
 - Upgraded YooAsset to v2.3.5-preview (latest commit).
 
 ## [3.0.1] - 2025-03-11
-- modified SBP dependency version (v1.21.25).
+- Modified SBP dependency version (v1.21.25).
 
 ## [3.0.0] - 2025-03-11
 - **Hotfixer**

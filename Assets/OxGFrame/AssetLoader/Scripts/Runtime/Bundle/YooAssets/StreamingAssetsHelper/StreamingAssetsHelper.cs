@@ -1,10 +1,11 @@
 ﻿using Cysharp.Threading.Tasks;
-using Newtonsoft.Json;
 using OxGKit.LoggingSystem;
-using OxGKit.Utilities.Request;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using UnityEngine;
+using UnityEngine.Networking;
 using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
@@ -14,11 +15,6 @@ namespace OxGFrame.AssetLoader.Bundle
     /// </summary>
     public sealed class StreamingAssetsHelper
     {
-        /// <summary>
-        /// 是否初始清單
-        /// </summary>
-        private static bool _isInitialized = false;
-
         /// <summary>
         /// 緩存 Built-in Package 清單
         /// </summary>
@@ -39,43 +35,29 @@ namespace OxGFrame.AssetLoader.Bundle
         #region At Runtime
         private async static UniTask<bool> _PackageExistsAtRuntime(string packageName)
         {
-            // Initialized
-            {
-                if (!_isInitialized)
-                {
-                    _isInitialized = true;
-
-                    if (_queryPackages == null)
-                        _queryPackages = new HashSet<string>();
-
-                    var manifest = await _GetBuildinPackageCatalogFileFromStreamingAssets();
-                    if (manifest != null)
-                    {
-                        foreach (var package in manifest.Packages)
-                        {
-                            if (!_queryPackages.Contains(package))
-                                _queryPackages.Add(package);
-                        }
-                    }
-                }
-            }
+            if (_queryPackages == null)
+                _queryPackages = new HashSet<string>();
 
             // Check
+            if (!string.IsNullOrEmpty(packageName))
             {
-                if (!string.IsNullOrEmpty(packageName))
+                bool exists = _queryPackages.Contains(packageName);
+                if (exists)
                 {
-                    // 透過清單查詢
-                    bool exists = _queryPackages.Contains(packageName);
-                    if (exists)
-                    {
-                        Logging.Print<Logger>($"<color=#00FF00>【Query Builtin-Package】Search succeeded (Package exists). Package: {packageName}</color>");
-                        return exists;
-                    }
+                    Logging.Print<Logger>($"<color=#00FF00>【Try Query Builtin-Package】Search succeeded (Package exists). Package: {packageName}</color>");
+                    return true;
                 }
 
-                Logging.Print<Logger>($"<color=#FF0000>【Query Builtin-Package】Search failed (Package doesn't exist). Package: {packageName}</color>");
-                return false;
+                // Dynamic try query
+                string fileName = YooAssetBridge.DefaultBuildinFileSystemDefine.BuildinCatalogBinaryFileName();
+                if (await _TryQueryBuiltinPackageFileExists(packageName, fileName))
+                {
+                    _queryPackages.Add(packageName);
+                    return true;
+                }
             }
+
+            return false;
         }
         #endregion
 
@@ -89,102 +71,104 @@ namespace OxGFrame.AssetLoader.Bundle
             bool exists = Directory.Exists(dirPath);
             if (exists)
             {
-                Logging.Print<Logger>($"<color=#00FF00>【Query Builtin-Package】Search succeeded (Package exists). Package: {packageName}</color>");
+                Logging.Print<Logger>($"<color=#00FF00>【Try Query Builtin-Package】Search succeeded (Package exists). Package: {packageName}</color>");
                 return true;
             }
 
-            Logging.Print<Logger>($"<color=#FF0000>【Query Builtin-Package】Search failed (Package doesn't exist). Package: {packageName}</color>");
+            Logging.Print<Logger>($"<color=#FF0000>【Try Query Builtin-Package】Search failed (Package doesn't exist). Package: {packageName}</color>");
             return false;
         }
         #endregion
 
+        #region Try Request Builtin-Package
         /// <summary>
-        /// 從 StreamingAssets 中取得配置文件
+        /// 嘗試請求內置資源清單是否存在 (true = 存在, false = 不存在)
         /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="fileName"></param>
         /// <returns></returns>
-        private static async UniTask<BuiltinPackageCatalog> _GetBuildinPackageCatalogFileFromStreamingAssets()
+        private async static UniTask<bool> _TryQueryBuiltinPackageFileExists(string packageName, string fileName)
         {
-            string url = Path.Combine(BundleConfig.GetRequestStreamingAssetsPath(), $"{PatchSetting.setting.builtinPkgCatalogName}{PatchSetting.BUILTIN_CATALOG_EXTENSION}");
-            string cfgJson = await Requester.RequestText(url, null, null, null, false);
-            if (!string.IsNullOrEmpty(cfgJson))
-                return JsonConvert.DeserializeObject<BuiltinPackageCatalog>(cfgJson);
-            return null;
-        }
-    }
-
-#if UNITY_EDITOR
-    internal class PreprocessBuild : UnityEditor.Build.IPreprocessBuildWithReport
-    {
-        public int callbackOrder { get { return 0; } }
-
-        private static readonly string _destinationPath = Application.streamingAssetsPath;
-
-        public void OnPreprocessBuild(UnityEditor.Build.Reporting.BuildReport report)
-        {
-            _ExportBuiltinPackageCatalogFile();
+            // Builtin (StreamingAssets)
+            string builtinPackagePath = BundleConfig.GetBuiltinPackagePath(packageName);
+            string url = Path.Combine(builtinPackagePath, fileName);
+            // Convert url to www path
+            return await _WebRequestPartialBytes(YooAssetBridge.DownloadSystemHelper.ConvertToWWWPath(url));
         }
 
-        [UnityEditor.MenuItem("OxGFrame/AssetLoader/" + "Pre-Export Built-in Package Catalog File (builtinpkgcatalog.json)", false, 879)]
-        private static void _ExportBuiltinPackageCatalogFile()
+        private async static UniTask<bool> _WebRequestPartialBytes(string url)
         {
-            string saveFilePath = Path.Combine(_destinationPath, PatchSetting.setting.builtinPkgCatalogName + PatchSetting.BUILTIN_CATALOG_EXTENSION);
-            string saveFileMetaPath = Path.Combine(_destinationPath, PatchSetting.setting.builtinPkgCatalogName + PatchSetting.BUILTIN_CATALOG_EXTENSION + PatchSetting.META_FILE_EXTENSION);
-            if (File.Exists(saveFilePath))
+            var cts = new CancellationTokenSource();
+            cts.CancelAfterSlim(TimeSpan.FromSeconds(10));
+
+            UnityWebRequest request = UnityWebRequest.Get(url);
+            request.downloadHandler = new DownloadHandlerBuffer();
+
+            try
             {
-                File.Delete(saveFilePath);
-                File.Delete(saveFileMetaPath);
-                UnityEditor.AssetDatabase.Refresh();
-            }
+                await request.SendWebRequest().WithCancellation(cts.Token);
 
-            var yooDefaultFolderName = YooAssetSettingsData.GetDefaultYooFolderName();
-            string folderPath = Path.Combine(Application.streamingAssetsPath, yooDefaultFolderName);
-            DirectoryInfo root = new DirectoryInfo(folderPath);
-            if (root.Exists == false)
-            {
-                Debug.Log($"<color=#43ffce>No Built-in Packages Found: {folderPath}</color>");
-                return;
-            }
-
-            var catalog = _CollectBuiltinPackages(root);
-
-            if (Directory.Exists(_destinationPath) == false)
-                Directory.CreateDirectory(_destinationPath);
-            File.WriteAllText(saveFilePath, JsonConvert.SerializeObject(catalog, Formatting.Indented));
-            UnityEditor.AssetDatabase.Refresh();
-            Debug.Log($"<color=#00FF00>Total Package Count: {catalog.Packages.Count} in Built-in (StreamingAssets). The {PatchSetting.setting.builtinPkgCatalogName}{PatchSetting.BUILTIN_CATALOG_EXTENSION} Save Succeeded: {saveFilePath}</color>");
-        }
-
-        /// <summary>
-        /// From YooAsset DefaultBuildinFileSystemBuild
-        /// </summary>
-        /// <exception cref="System.Exception"></exception>
-        [UnityEditor.MenuItem("YooAsset/" + "OxGFrame Pre-Export Built-in Catalog File (BuildinCatalog) used by YooAsset", false, 1099)]
-        private static void _ExportBuiltinCatalogFile()
-        {
-            DefaultBuildinFileSystemBuild.ExportBuildinCatalogFile();
-        }
-
-        private static BuiltinPackageCatalog _CollectBuiltinPackages(DirectoryInfo root)
-        {
-            var catalog = new BuiltinPackageCatalog();
-            var dirs = root.GetDirectories("*", SearchOption.AllDirectories);
-
-            // 避免重複設置
-            var packageNames = new HashSet<string>();
-            foreach (var dir in dirs)
-            {
-                string packageName = dir.Name;
-
-                // 檢查 package name 是否已存在
-                if (!packageNames.Contains(packageName))
+                if (request.result == UnityWebRequest.Result.DataProcessingError ||
+                    request.result == UnityWebRequest.Result.ProtocolError ||
+                    request.result == UnityWebRequest.Result.ConnectionError)
                 {
-                    packageNames.Add(packageName);
-                    catalog.Packages.Add(packageName);
+                    Logging.Print<Logger>($"<color=#ff1743>【Try Query Builtin-Package】Request failed (Package doesn't exist). Built-in package not found. URL: {url}</color>");
+                    request.Dispose();
+                    return false;
+                }
+
+                if (request.downloadedBytes > 0 && request.responseCode < 400)
+                {
+                    Logging.Print<Logger>($"<color=#19ff17>【Try Query Builtin-Package】Request succeeded (Package exists). Built-in package found. Code: {request.responseCode}, PartialBytes: {request.downloadedBytes}, URL: {url}</color>");
+                    request.Dispose();
+                    return true;
+                }
+            }
+            catch (OperationCanceledException ex)
+            {
+                if (ex.CancellationToken == cts.Token)
+                {
+                    Logging.PrintWarning<Logger>("【Try Query Builtin-Package】Request timed out");
+                    request.Dispose();
+                    return false;
                 }
             }
 
-            return catalog;
+            return false;
         }
-    }
+        #endregion
+
+#if UNITY_EDITOR
+        internal class PreprocessExporter
+        {
+            /// <summary>
+            /// From YooAsset DefaultBuildinFileSystemBuild
+            /// </summary>
+            /// <exception cref="System.Exception"></exception>
+            [UnityEditor.MenuItem("YooAsset/" + "OxGFrame Pre-Export Built-in Catalog File (BuildinCatalog) used by YooAsset", false, 1099)]
+            private static void _ExportBuiltinCatalogFile()
+            {
+                string rootPath = YooAssetBridge.YooAssetSettingsData.GetYooDefaultBuildinRoot();
+                DirectoryInfo rootDirectory = new DirectoryInfo(rootPath);
+                if (rootDirectory.Exists == false)
+                {
+                    UnityEngine.Debug.LogWarning($"Cannot found StreamingAssets root directory : {rootPath}");
+                    return;
+                }
+
+                DirectoryInfo[] subDirectories = rootDirectory.GetDirectories();
+                foreach (var subDirectory in subDirectories)
+                {
+                    string packageName = subDirectory.Name;
+                    string pacakgeDirectory = subDirectory.FullName;
+                    bool result = DefaultBuildinFileSystemBuild.CreateBuildinCatalogFile(packageName, pacakgeDirectory);
+                    if (result == false)
+                    {
+                        throw new System.Exception($"Create package {packageName} catalog file failed ! See the detail error in console !");
+                    }
+                }
+            }
+        }
 #endif
+    }
 }
