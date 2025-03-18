@@ -126,13 +126,13 @@ namespace OxGFrame.AssetLoader.Bundle
             }
             catch (OperationCanceledException ex) when (ex.CancellationToken == cts.Token)
             {
-                Logging.PrintWarning<Logger>("【Try Query Builtin-Package】Request timed out");
+                Logging.PrintWarning<Logger>($"【Try Query Builtin-Package】Request timed out. URL: {url}");
                 request.Dispose();
                 return false;
             }
             catch (Exception ex)
             {
-                Logging.PrintWarning<Logger>($"【Try Query Builtin-Package】Request failed (Package doesn't exist) The package may not exist: {ex}");
+                Logging.PrintWarning<Logger>($"【Try Query Builtin-Package】Request failed (Package doesn't exist) The package may not exist. URL: {url}, Exception: {ex}");
                 request.Dispose();
                 return false;
             }
