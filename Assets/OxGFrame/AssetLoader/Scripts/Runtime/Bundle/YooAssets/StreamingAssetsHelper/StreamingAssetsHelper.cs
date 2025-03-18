@@ -124,14 +124,17 @@ namespace OxGFrame.AssetLoader.Bundle
                     return true;
                 }
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException ex) when (ex.CancellationToken == cts.Token)
             {
-                if (ex.CancellationToken == cts.Token)
-                {
-                    Logging.PrintWarning<Logger>("【Try Query Builtin-Package】Request timed out");
-                    request.Dispose();
-                    return false;
-                }
+                Logging.PrintWarning<Logger>("【Try Query Builtin-Package】Request timed out");
+                request.Dispose();
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Logging.PrintWarning<Logger>($"【Try Query Builtin-Package】Request failed (Package doesn't exist) The package may not exist: {ex}");
+                request.Dispose();
+                return false;
             }
 
             return false;
