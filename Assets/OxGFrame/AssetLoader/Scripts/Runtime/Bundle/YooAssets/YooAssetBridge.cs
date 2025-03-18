@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using UnityEngine;
+using YooAsset;
 
 namespace OxGFrame.AssetLoader
 {
@@ -14,7 +15,10 @@ namespace OxGFrame.AssetLoader
             /// </summary>
             public static string GetPackageManifestPrefix()
             {
-                return _GetStringTypeFieldFromSetting("PackageManifestPrefix");
+                string typeName = "YooAssetSettingsData";
+                string propertyName = "Setting";
+                string fieldName = "PackageManifestPrefix";
+                return Convert.ToString(ReflectionHelper.GetFieldValueFromProperty(typeName, propertyName, fieldName));
             }
             #endregion
 
@@ -25,7 +29,9 @@ namespace OxGFrame.AssetLoader
             /// <returns></returns>
             public static string GetYooResourcesFullPath()
             {
-                return _InvokeStringTypeMethod("GetYooResourcesFullPath");
+                string typeName = "YooAssetSettingsData";
+                string methodName = "GetYooResourcesFullPath";
+                return Convert.ToString(ReflectionHelper.InvokeInternalMethod(typeName, methodName));
             }
 
             /// <summary>
@@ -34,7 +40,9 @@ namespace OxGFrame.AssetLoader
             /// <returns></returns>
             public static string GetYooDefaultCacheRoot()
             {
-                return _InvokeStringTypeMethod("GetYooDefaultCacheRoot");
+                string typeName = "YooAssetSettingsData";
+                string methodName = "GetYooDefaultCacheRoot";
+                return Convert.ToString(ReflectionHelper.InvokeInternalMethod(typeName, methodName));
             }
 
             /// <summary>
@@ -43,85 +51,228 @@ namespace OxGFrame.AssetLoader
             /// <returns></returns>
             public static string GetYooDefaultBuildinRoot()
             {
-                return _InvokeStringTypeMethod("GetYooDefaultBuildinRoot");
+                string typeName = "YooAssetSettingsData";
+                string methodName = "GetYooDefaultBuildinRoot";
+                return Convert.ToString(ReflectionHelper.InvokeInternalMethod(typeName, methodName));
             }
             #endregion
+        }
 
-            private static string _GetStringTypeFieldFromSetting(string fieldName)
-            {
-                Type settingsDataType = typeof(YooAsset.YooAssetSettingsData);
-                PropertyInfo settingProperty = settingsDataType.GetProperty("Setting", BindingFlags.NonPublic | BindingFlags.Static);
-                if (settingProperty == null)
-                {
-                    Debug.LogError("Property 'Setting' not found in YooAssetSettingsData.");
-                    return null;
-                }
-
-                object settingsInstance = settingProperty.GetValue(null);
-                if (settingsInstance == null)
-                {
-                    Debug.LogError("Failed to retrieve Setting instance.");
-                    return null;
-                }
-
-                Type settingsType = settingsInstance.GetType();
-                FieldInfo targetField = settingsType.GetField(fieldName, BindingFlags.Public | BindingFlags.Instance);
-                if (targetField == null)
-                {
-                    Debug.LogError($"Field '{fieldName}' not found in Setting instance.");
-                    return null;
-                }
-
-                return targetField.GetValue(settingsInstance) as string;
-            }
-
+        public static class DownloadSystemHelper
+        {
+            #region Methods
             /// <summary>
-            /// 透過 Reflection 方式取得 Yoo 內部 Setting 屬性中的參數
+            /// 获取 WWW 加载本地资源的路径
             /// </summary>
-            private static string _GetStringTypePropertyFromSetting(string propertyName)
-            {
-                Type settingsDataType = typeof(YooAsset.YooAssetSettingsData);
-                PropertyInfo settingProperty = settingsDataType.GetProperty("Setting", BindingFlags.NonPublic | BindingFlags.Static);
-                if (settingProperty == null)
-                {
-                    Debug.LogError("Property 'Setting' not found in YooAssetSettingsData.");
-                    return null;
-                }
-
-                object settingsInstance = settingProperty.GetValue(null);
-                if (settingsInstance == null)
-                {
-                    Debug.LogError("Failed to retrieve Setting instance.");
-                    return null;
-                }
-
-                Type settingsType = settingsInstance.GetType();
-                PropertyInfo targetProperty = settingsType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
-                if (targetProperty == null)
-                {
-                    Debug.LogError($"Property '{propertyName}' not found in Setting instance.");
-                    return null;
-                }
-
-                return targetProperty.GetValue(settingsInstance) as string;
-            }
-
-            /// <summary>
-            /// 透過 Reflection 方式取得 Yoo 內部參數
-            /// </summary>
-            /// <param name="methodName"></param>
+            /// <param name="path"></param>
             /// <returns></returns>
-            private static string _InvokeStringTypeMethod(string methodName)
+            public static string ConvertToWWWPath(string path)
             {
-                Type type = typeof(YooAsset.YooAssetSettingsData);
-                MethodInfo method = type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
-                if (method != null)
+                string typeName = "DownloadSystemHelper";
+                string methodName = "ConvertToWWWPath";
+                return Convert.ToString(ReflectionHelper.InvokeInternalMethod(typeName, methodName, path));
+            }
+            #endregion
+        }
+
+        public static class DefaultBuildinFileSystemDefine
+        {
+            #region Fields
+            /// <summary>
+            /// 内置清单二进制文件名称
+            /// </summary>
+            /// <returns></returns>
+            public static string BuildinCatalogBinaryFileName()
+            {
+                string typeName = "DefaultBuildinFileSystemDefine";
+                string fieldName = "BuildinCatalogBinaryFileName";
+                return Convert.ToString(ReflectionHelper.GetInternalField(typeName, fieldName));
+            }
+            #endregion
+        }
+
+        #region Reflection Helper
+        internal static class ReflectionHelper
+        {
+            /// <summary>
+            /// 緩存 YooAssembly
+            /// </summary>
+            private static Assembly _yooAssembly = null;
+
+            /// <summary>
+            /// 獲取內部類型
+            /// </summary>
+            /// <param name="typeName"></param>
+            /// <returns></returns>
+            public static Type GetInternalType(string typeName)
+            {
+                _TryCacheYooAssembly();
+                Type type = _yooAssembly.GetType($"YooAsset.{typeName}");
+                if (_CheckTypeIsNull(type))
+                    return null;
+                return type;
+            }
+
+            /// <summary>
+            /// 獲取內部屬性中的字段
+            /// </summary>
+            /// <param name="typeName"></param>
+            /// <param name="propertyName"></param>
+            /// <param name="fieldName"></param>
+            /// <returns></returns>
+            public static object GetFieldValueFromProperty(string typeName, string propertyName, string fieldName)
+            {
+                PropertyInfo property = GetInternalPropertyInfo(typeName, propertyName);
+                return GetFieldValueFromPropertyInfo(property, fieldName);
+            }
+
+            /// <summary>
+            /// 獲取內部屬性信息
+            /// </summary>
+            /// <param name="typeName"></param>
+            /// <param name="propertyName"></param>
+            /// <returns></returns>
+            public static PropertyInfo GetInternalPropertyInfo(string typeName, string propertyName)
+            {
+                Type type = GetInternalType(typeName);
+
+                PropertyInfo property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                if (_CheckPropertyIsNull(property))
+                    return null;
+
+                return property;
+            }
+
+            /// <summary>
+            /// 獲取內部屬性中的字段
+            /// </summary>
+            /// <param name="propertyInfo"></param>
+            /// <param name="fieldName"></param>
+            /// <returns></returns>
+            public static object GetFieldValueFromPropertyInfo(PropertyInfo propertyInfo, string fieldName)
+            {
+                object propertyInstance = propertyInfo.GetValue(null);
+                if (_CheckPropertyInstanceIsNull(propertyInstance))
+                    return null;
+
+                FieldInfo fieldInfo = propertyInstance.GetType().GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                if (_CheckFieldIsNull(fieldInfo))
+                    return null;
+
+                return fieldInfo.GetValue(propertyInstance);
+            }
+
+            /// <summary>
+            /// 獲取內部屬性
+            /// </summary>
+            /// <param name="typeName"></param>
+            /// <param name="propertyName"></param>
+            /// <returns></returns>
+            public static object GetInternalProperty(string typeName, string propertyName)
+            {
+                Type type = GetInternalType(typeName);
+
+                PropertyInfo property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                if (_CheckPropertyIsNull(property))
+                    return null;
+
+                return property.GetValue(null);
+            }
+
+            /// <summary>
+            /// 獲取內部字段
+            /// </summary>
+            /// <param name="typeName"></param>
+            /// <param name="fieldName"></param>
+            /// <returns></returns>
+            public static object GetInternalField(string typeName, string fieldName)
+            {
+                Type type = GetInternalType(typeName);
+
+                FieldInfo field = type.GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                if (_CheckFieldIsNull(field))
+                    return null;
+
+                return field.GetValue(null);
+            }
+
+            /// <summary>
+            /// 獲取內部方法
+            /// </summary>
+            /// <param name="typeName"></param>
+            /// <param name="methodName"></param>
+            /// <param name="parameters"></param>
+            /// <returns></returns>
+            public static object InvokeInternalMethod(string typeName, string methodName, params object[] parameters)
+            {
+                Type type = GetInternalType(typeName);
+
+                MethodInfo method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                if (_CheckMethodIsNull(method))
+                    return null;
+
+                return method.Invoke(null, parameters);
+            }
+
+            private static bool _CheckTypeIsNull(Type type)
+            {
+                if (type == null)
                 {
-                    return method.Invoke(null, null) as string;
+                    Debug.LogError($"Unable to find class {type.FullName}");
+                    return true;
                 }
-                Debug.LogError($"Method: \"{methodName}\" not found.");
-                return null;
+                return false;
+            }
+
+            private static bool _CheckPropertyInstanceIsNull(object propertyInstance)
+            {
+                if (propertyInstance == null)
+                {
+                    Debug.LogError("Failed to retrieve Property instance.");
+                    return true;
+                }
+                return false;
+            }
+
+            private static bool _CheckPropertyIsNull(PropertyInfo property)
+            {
+                if (property == null)
+                {
+                    Debug.LogError($"Unable to find property {property.Name}");
+                    return true;
+                }
+                return false;
+            }
+
+            private static bool _CheckFieldIsNull(FieldInfo field)
+            {
+                if (field == null)
+                {
+                    Debug.LogError($"Unable to find field {field.Name}");
+                    return true;
+                }
+                return false;
+            }
+
+            private static bool _CheckMethodIsNull(MethodInfo method)
+            {
+                if (method == null)
+                {
+                    Debug.LogError($"Unable to find method {method.Name}");
+                    return true;
+                }
+                return false;
+            }
+
+            /// <summary>
+            /// 緩存 YooAssembly
+            /// </summary>
+            private static void _TryCacheYooAssembly()
+            {
+                if (_yooAssembly == null)
+                    _yooAssembly = typeof(YooAssets).Assembly;
             }
         }
+        #endregion
     }
 }

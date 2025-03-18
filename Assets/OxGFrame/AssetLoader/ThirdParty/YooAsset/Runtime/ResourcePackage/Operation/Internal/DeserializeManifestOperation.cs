@@ -57,7 +57,7 @@ namespace YooAsset
 
                     // 读取文件标记
                     uint fileSign = _buffer.ReadUInt32();
-                    if (fileSign != YooAssetSettings.ManifestFileSign)
+                    if (fileSign != ManifestDefine.FileSign)
                     {
                         _steps = ESteps.Done;
                         Status = EOperationStatus.Failed;
@@ -67,11 +67,11 @@ namespace YooAsset
 
                     // 读取文件版本
                     string fileVersion = _buffer.ReadUTF8();
-                    if (fileVersion != YooAssetSettings.ManifestFileVersion)
+                    if (fileVersion != ManifestDefine.FileVersion)
                     {
                         _steps = ESteps.Done;
                         Status = EOperationStatus.Failed;
-                        Error = $"The manifest file version are not compatible : {fileVersion} != {YooAssetSettings.ManifestFileVersion}";
+                        Error = $"The manifest file version are not compatible : {fileVersion} != {ManifestDefine.FileVersion}";
                         return;
                     }
 

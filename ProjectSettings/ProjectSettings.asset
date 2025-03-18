@@ -814,8 +814,8 @@ PlayerSettings:
   webGLPowerPreference: 2
   scriptingDefineSymbols:
     Android: 
-    Standalone: 
-    WebGL: OXGFRAME_WEBGL_MODE
+    Standalone: OXGKIT_LOGGER_ON
+    WebGL: OXGFRAME_WEBGL_MODE;OXGKIT_LOGGER_ON
     iPhone: 
   additionalCompilerArguments: {}
   platformArchitecture: {}
