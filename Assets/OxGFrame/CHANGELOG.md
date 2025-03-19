@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.1.2] - 2025-03-19
+- Organized and adjusted OxGKit plugin dependencies (see [OxGKit.Utilities v1.4.0](https://github.com/michael811125/OxGKit/blob/master/Assets/OxGKit/Utilities/Scripts/CHANGELOG.md)).
+
 ## [3.1.1] - 2025-03-18
 - Fixed an issue where StreamingAssets WebRequest did not catch 404 errors.
 

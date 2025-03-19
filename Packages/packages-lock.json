@@ -30,19 +30,42 @@
       "dependencies": {},
       "hash": "7dbce4b94bd7f92c33de382439f662a0731a1db9"
     },
+    "com.michaelo.oxgkit.buttonsystem": {
+      "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/ButtonSystem/Scripts",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "a175b215e9ac53daa821ef029f3e9be89b6c6230"
+    },
     "com.michaelo.oxgkit.loggingsystem": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts",
       "depth": 0,
       "source": "git",
-      "dependencies": {},
-      "hash": "3419553f261644c7b9a45e283bf99cd2abb0bc1e"
+      "dependencies": {
+        "com.domybest.lwmybox": "git+https://github.com/michael811125/LWMyBox.git"
+      },
+      "hash": "a175b215e9ac53daa821ef029f3e9be89b6c6230"
+    },
+    "com.michaelo.oxgkit.timesystem": {
+      "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/TimeSystem/Scripts",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.michaelo.oxgkit.loggingsystem": "git+https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts",
+        "com.cysharp.unitask": "git+https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
+      },
+      "hash": "a175b215e9ac53daa821ef029f3e9be89b6c6230"
     },
     "com.michaelo.oxgkit.utilities": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts",
       "depth": 0,
       "source": "git",
-      "dependencies": {},
-      "hash": "7da9086d5035c4ce4fe66d62306fdaf41cab29ff"
+      "dependencies": {
+        "com.domybest.lwmybox": "git+https://github.com/michael811125/LWMyBox.git",
+        "com.michaelo.oxgkit.loggingsystem": "git+https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts",
+        "com.cysharp.unitask": "git+https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
+      },
+      "hash": "a175b215e9ac53daa821ef029f3e9be89b6c6230"
     },
     "com.unity.2d.animation": {
       "version": "9.1.3",
