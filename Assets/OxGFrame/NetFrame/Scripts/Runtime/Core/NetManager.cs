@@ -1,5 +1,5 @@
 ﻿using OxGKit.LoggingSystem;
-using OxGKit.Utilities.Timer;
+using OxGKit.TimeSystem;
 using System.Collections.Generic;
 using System.Linq;
 

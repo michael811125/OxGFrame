@@ -3,7 +3,7 @@ using MyBox;
 using Newtonsoft.Json;
 using OxGFrame.AssetLoader.Utility.SecureMemory;
 using OxGKit.LoggingSystem;
-using OxGKit.Utilities.Request;
+using OxGKit.Utilities.Requester;
 using System;
 using System.Collections.Generic;
 using System.IO;

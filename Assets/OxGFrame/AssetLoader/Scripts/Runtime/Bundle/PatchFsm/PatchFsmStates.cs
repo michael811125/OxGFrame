@@ -4,7 +4,7 @@ using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.PatchEvent;
 using OxGFrame.AssetLoader.Utility;
 using OxGKit.LoggingSystem;
-using OxGKit.Utilities.Request;
+using OxGKit.Utilities.Requester;
 using System;
 using System.Collections.Generic;
 using System.IO;
