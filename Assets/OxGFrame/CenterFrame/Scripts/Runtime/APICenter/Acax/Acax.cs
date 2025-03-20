@@ -1,6 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
+using OxGKit.LoggingSystem;
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine.Networking;
 
 namespace OxGFrame.CenterFrame.APICenter
@@ -9,6 +12,8 @@ namespace OxGFrame.CenterFrame.APICenter
 
     public static class Http
     {
+        private const int _MAX_REQUEST_TIME_SECONDS = 60;
+
         /// <summary>
         /// Callback C# and Xml = Acax
         /// </summary>
@@ -62,7 +67,8 @@ namespace OxGFrame.CenterFrame.APICenter
                 {
                     for (int row = 0; row < headers.GetLength(0); row++)
                     {
-                        if (headers.GetLength(1) != 2) continue;
+                        if (headers.GetLength(1) != 2)
+                            continue;
                         request.SetRequestHeader(headers[row, 0], headers[row, 1]);
                     }
                 }
@@ -73,7 +79,8 @@ namespace OxGFrame.CenterFrame.APICenter
                     Dictionary<string, object> jsonArgs = new Dictionary<string, object>();
                     for (int row = 0; row < body.GetLength(0); row++)
                     {
-                        if (body.GetLength(1) != 2) continue;
+                        if (body.GetLength(1) != 2)
+                            continue;
                         jsonArgs.Add((string)body[row, 0], body[row, 1]);
                     }
                     string json = JsonConvert.SerializeObject(jsonArgs);
@@ -84,22 +91,36 @@ namespace OxGFrame.CenterFrame.APICenter
                 // Response download buffer
                 request.downloadHandler = new DownloadHandlerBuffer();
 
-                // Start send request
-                await request.SendWebRequest();
+                var cts = new CancellationTokenSource();
+                cts.CancelAfterSlim(TimeSpan.FromSeconds(_MAX_REQUEST_TIME_SECONDS));
 
-                if (request.result == UnityWebRequest.Result.DataProcessingError ||
-                    request.result == UnityWebRequest.Result.ProtocolError ||
-                    request.result == UnityWebRequest.Result.ConnectionError)
+                try
                 {
-                    if (error != null)
-                        error(request.error);
-                    return null;
+                    // Start send request
+                    await request.SendWebRequest().WithCancellation(cts.Token);
+
+                    if (request.result == UnityWebRequest.Result.DataProcessingError ||
+                        request.result == UnityWebRequest.Result.ProtocolError ||
+                        request.result == UnityWebRequest.Result.ConnectionError)
+                    {
+                        cts?.Dispose();
+                        error?.Invoke(request.error);
+                        return null;
+                    }
+                    else
+                    {
+                        cts?.Dispose();
+                        success?.Invoke(request.downloadHandler.text);
+                        return request.downloadHandler.text;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    if (success != null)
-                        success(request.downloadHandler.text);
-                    return request.downloadHandler.text;
+                    cts?.Dispose();
+                    string msg = string.IsNullOrEmpty(request?.error) ? $"RequestAPI failed. URL: {url}, Exception: {ex}" : request.error;
+                    error?.Invoke(msg);
+                    Logging.PrintWarning<Logger>($"<color=#FF0000>{msg}</color>");
+                    return null;
                 }
             }
         }
@@ -113,7 +134,8 @@ namespace OxGFrame.CenterFrame.APICenter
                 {
                     for (int row = 0; row < headers.GetLength(0); row++)
                     {
-                        if (headers.GetLength(1) != 2) continue;
+                        if (headers.GetLength(1) != 2)
+                            continue;
                         request.SetRequestHeader(headers[row, 0], headers[row, 1]);
                     }
                 }
@@ -129,22 +151,36 @@ namespace OxGFrame.CenterFrame.APICenter
                 // Response download buffer
                 request.downloadHandler = new DownloadHandlerBuffer();
 
-                // Start send request
-                await request.SendWebRequest();
+                var cts = new CancellationTokenSource();
+                cts.CancelAfterSlim(TimeSpan.FromSeconds(_MAX_REQUEST_TIME_SECONDS));
 
-                if (request.result == UnityWebRequest.Result.DataProcessingError ||
-                    request.result == UnityWebRequest.Result.ProtocolError ||
-                    request.result == UnityWebRequest.Result.ConnectionError)
+                try
                 {
-                    if (error != null)
-                        error(request.error);
-                    return null;
+                    // Start send request
+                    await request.SendWebRequest().WithCancellation(cts.Token);
+
+                    if (request.result == UnityWebRequest.Result.DataProcessingError ||
+                        request.result == UnityWebRequest.Result.ProtocolError ||
+                        request.result == UnityWebRequest.Result.ConnectionError)
+                    {
+                        cts?.Dispose();
+                        error?.Invoke(request.error);
+                        return null;
+                    }
+                    else
+                    {
+                        cts?.Dispose();
+                        success?.Invoke(request.downloadHandler.text);
+                        return request.downloadHandler.text;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    if (success != null)
-                        success(request.downloadHandler.text);
-                    return request.downloadHandler.text;
+                    cts?.Dispose();
+                    string msg = string.IsNullOrEmpty(request?.error) ? $"RequestAPI failed. URL: {url}, Exception: {ex}" : request.error;
+                    error?.Invoke(msg);
+                    Logging.PrintWarning<Logger>($"<color=#FF0000>{msg}</color>");
+                    return null;
                 }
             }
         }
