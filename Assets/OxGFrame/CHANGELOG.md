@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [3.1.3] - 2025-03-21
+- Added Http.Acax timeout functionality.
+- Optimized Http.Acax code.
+- Fixed Http.Acax cts disposal error.
+
 ## [3.1.2] - 2025-03-19
 - Organized and adjusted OxGKit plugin dependencies (see [OxGKit.Utilities v1.4.0](https://github.com/michael811125/OxGKit/blob/master/Assets/OxGKit/Utilities/Scripts/CHANGELOG.md)).
 

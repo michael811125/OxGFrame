@@ -62,12 +62,12 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// 配置檔標檔頭
         /// </summary>
-        public const short cipherHeader = 0x584F;
+        public const short CIPHER_HEADER = 0x584F;
 
         /// <summary>
         /// 配置檔金鑰
         /// </summary>
-        public const byte cipher = 0x4D;
+        public const byte CIPHER = 0x4D;
 
         /// <summary>
         /// Patch 執行模式
@@ -245,7 +245,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
                 // Read header (non-encrypted)
                 var header = ReadInt16(data, ref pos);
-                if (header == cipherHeader)
+                if (header == CIPHER_HEADER)
                 {
                     // Read data without header
                     byte[] dataWithoutHeader = new byte[data.Length - 2];
@@ -253,7 +253,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     // Decrypt
                     for (int i = 0; i < dataWithoutHeader.Length; i++)
                     {
-                        dataWithoutHeader[i] ^= cipher << 1;
+                        dataWithoutHeader[i] ^= CIPHER << 1;
                     }
                     // To string
                     content = Encoding.UTF8.GetString(dataWithoutHeader);
