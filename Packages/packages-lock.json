@@ -44,7 +44,7 @@
       "dependencies": {
         "com.domybest.lwmybox": "git+https://github.com/michael811125/LWMyBox.git"
       },
-      "hash": "a53a3227b8da4f580a0525cc4b2b35efdebc8ebb"
+      "hash": "6c349fb268e62fb420f0ca6c04cf2fce71bb60a7"
     },
     "com.michaelo.oxgkit.timesystem": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/TimeSystem/Scripts",
@@ -65,7 +65,7 @@
         "com.michaelo.oxgkit.loggingsystem": "git+https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts",
         "com.cysharp.unitask": "git+https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
       },
-      "hash": "2ecb36f41c953e8690f33a30e044da301942ecd5"
+      "hash": "6c349fb268e62fb420f0ca6c04cf2fce71bb60a7"
     },
     "com.unity.2d.animation": {
       "version": "9.1.3",
