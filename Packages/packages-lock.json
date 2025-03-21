@@ -44,7 +44,7 @@
       "dependencies": {
         "com.domybest.lwmybox": "git+https://github.com/michael811125/LWMyBox.git"
       },
-      "hash": "2ecb36f41c953e8690f33a30e044da301942ecd5"
+      "hash": "a53a3227b8da4f580a0525cc4b2b35efdebc8ebb"
     },
     "com.michaelo.oxgkit.timesystem": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/TimeSystem/Scripts",
