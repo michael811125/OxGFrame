@@ -82,15 +82,14 @@
 			"path": "Samples~/EventCenterDemo"
 		}
 	],
-	"dependencies": 
-	{
-        "com.unity.scriptablebuildpipeline": "1.21.25",
-        "com.code-philosophy.hybridclr": "git+https://github.com/focus-creative-games/hybridclr_unity.git",
-        "com.cysharp.unitask": "git+https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
-        "com.domybest.lwmybox": "git+https://github.com/michael811125/LWMyBox.git",
-        "com.michaelo.oxgkit.loggingsystem": "git+https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts",
-        "com.michaelo.oxgkit.timesystem": "git+https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/TimeSystem/Scripts",
-        "com.michaelo.oxgkit.utilities": "git+https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts"
+	"dependencies": {
+		"com.unity.scriptablebuildpipeline": "1.21.25",
+		"com.code-philosophy.hybridclr": "https://github.com/focus-creative-games/hybridclr_unity.git",
+		"com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+		"com.domybest.lwmybox": "https://github.com/michael811125/LWMyBox.git",
+		"com.michaelo.oxgkit.loggingsystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts",
+		"com.michaelo.oxgkit.timesystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/TimeSystem/Scripts",
+		"com.michaelo.oxgkit.utilities": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts"
 	},
 	"author": {
 		"name": "MichaelO",
