@@ -119,8 +119,10 @@ namespace OxGFrame.CenterFrame.APICenter
                         request.result == UnityWebRequest.Result.ProtocolError ||
                         request.result == UnityWebRequest.Result.ConnectionError)
                     {
-                        error?.Invoke(request.error);
-                        return null;
+                        string errorMsg = request.error;
+                        error?.Invoke(errorMsg);
+                        Logging.PrintWarning<Logger>($"<color=#FF0000>RequestAPI failed. URL: {url}, ErrorMsg: {errorMsg}</color>");
+                        return errorMsg;
                     }
                     else
                     {
@@ -130,10 +132,10 @@ namespace OxGFrame.CenterFrame.APICenter
                 }
                 catch (Exception ex)
                 {
-                    string msg = string.IsNullOrEmpty(request?.error) ? $"RequestAPI failed. URL: {url}, Exception: {ex}" : request.error;
-                    error?.Invoke(msg);
-                    Logging.PrintWarning<Logger>($"<color=#FF0000>{msg}</color>");
-                    return null;
+                    string errorMsg = string.IsNullOrEmpty(request?.error) ? $"RequestAPI failed. URL: {url}, Exception: {ex}" : request.error;
+                    error?.Invoke(errorMsg);
+                    Logging.PrintWarning<Logger>($"<color=#FF0000>{errorMsg}</color>");
+                    return errorMsg;
                 }
             }
         }
