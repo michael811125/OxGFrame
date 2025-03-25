@@ -174,7 +174,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 else
                     url = await BundleConfig.GetHostServerAppConfigPath();
 
-                string hostCfgJson = await Requester.RequestText(url, null, PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage, null, false);
+                string hostCfgJson = await Requester.RequestText(url, null, (error) => { PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage(); }, null, false);
 
                 AppConfig hostCfg = JsonConvert.DeserializeObject<AppConfig>(hostCfgJson);
 
@@ -198,7 +198,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     // 從 StreamingAssets 中取得配置檔 (InApp)
                     string saCfgPath = BundleConfig.GetStreamingAssetsAppConfigPath();
-                    string saCfgJson = await Requester.RequestText(saCfgPath, null, PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage, null, false);
+                    string saCfgJson = await Requester.RequestText(saCfgPath, null, (error) => { PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage(); }, null, false);
 
                     // Local save path (Sandbox)
                     string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
@@ -219,7 +219,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     // 從 StreamingAssets 讀取配置檔 (StreamingAssets 使用 Request)
                     string saCfgPath = BundleConfig.GetStreamingAssetsAppConfigPath();
-                    string saCfgJson = await Requester.RequestText(saCfgPath, null, PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage, null, false);
+                    string saCfgJson = await Requester.RequestText(saCfgPath, null, (error) => { PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage(); }, null, false);
                     saCfg = JsonConvert.DeserializeObject<AppConfig>(saCfgJson);
 
                     // 從本地端讀取配置檔 (持久化路徑使用 File.Read)
@@ -583,7 +583,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 #region Create Downloader by Tags
                 string url = await BundleConfig.GetHostServerPatchConfigPath();
-                string hostCfgJson = await Requester.RequestText(url, null, PatchEvents.PatchDownloadFailed.SendEventMessage, null, false);
+                string hostCfgJson = await Requester.RequestText(url, null, (error) => { PatchEvents.PatchDownloadFailed.SendEventMessage(); }, null, false);
                 PatchConfig patchCfg = JsonConvert.DeserializeObject<PatchConfig>(hostCfgJson);
                 List<GroupInfo> patchGroupInfos = patchCfg.GROUP_INFOS;
 
