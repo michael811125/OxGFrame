@@ -8,7 +8,15 @@ using UnityEngine.Networking;
 
 namespace OxGFrame.CenterFrame.APICenter
 {
+    public struct ErrorInfo
+    {
+        public string url;
+        public string message;
+        public Exception exception;
+    }
+
     public delegate void ResponseHandle(string response);
+    public delegate void ResponseErrorHandle(ErrorInfo errorInfo);
 
     public static class Http
     {
@@ -23,13 +31,13 @@ namespace OxGFrame.CenterFrame.APICenter
         /// <param name="body"></param>
         /// <param name="success"></param>
         /// <param name="error"></param>
-        public static void Acax(string url, string method, string[,] headers, object[,] body, ResponseHandle success = null, ResponseHandle error = null, int? timeoutSeconds = null)
+        public static void Acax(string url, string method, string[,] headers, object[,] body, ResponseHandle success = null, ResponseErrorHandle error = null, int? timeoutSeconds = null)
         {
             method = method.ToUpper();
             RequestAPI(url, method, headers, body, success, error, timeoutSeconds).Forget();
         }
 
-        public static void Acax(string url, string method, string[,] headers, object body, ResponseHandle success = null, ResponseHandle error = null, int? timeoutSeconds = null)
+        public static void Acax(string url, string method, string[,] headers, object body, ResponseHandle success = null, ResponseErrorHandle error = null, int? timeoutSeconds = null)
         {
             method = method.ToUpper();
             RequestAPI(url, method, headers, body, success, error, timeoutSeconds).Forget();
@@ -45,20 +53,20 @@ namespace OxGFrame.CenterFrame.APICenter
         /// <param name="success"></param>
         /// <param name="error"></param>
         /// <returns></returns>
-        public async static UniTask<string> AcaxAsync(string url, string method, string[,] headers, object[,] body, ResponseHandle success = null, ResponseHandle error = null, int? timeoutSeconds = null)
+        public async static UniTask<string> AcaxAsync(string url, string method, string[,] headers, object[,] body, ResponseHandle success = null, ResponseErrorHandle error = null, int? timeoutSeconds = null)
         {
             method = method.ToUpper();
             return await RequestAPI(url, method, headers, body, success, error, timeoutSeconds);
         }
 
-        public async static UniTask<string> AcaxAsync(string url, string method, string[,] headers, object body, ResponseHandle success = null, ResponseHandle error = null, int? timeoutSeconds = null)
+        public async static UniTask<string> AcaxAsync(string url, string method, string[,] headers, object body, ResponseHandle success = null, ResponseErrorHandle error = null, int? timeoutSeconds = null)
         {
             method = method.ToUpper();
             return await RequestAPI(url, method, headers, body, success, error, timeoutSeconds);
         }
 
         #region Internal Methods
-        internal static async UniTask<string> RequestAPI(string url, string method, string[,] headers, object body, ResponseHandle success, ResponseHandle error, int? timeoutSeconds)
+        internal static async UniTask<string> RequestAPI(string url, string method, string[,] headers, object body, ResponseHandle success, ResponseErrorHandle error, int? timeoutSeconds)
         {
             using (UnityWebRequest request = new UnityWebRequest(url, method))
             {
@@ -119,10 +127,13 @@ namespace OxGFrame.CenterFrame.APICenter
                         request.result == UnityWebRequest.Result.ProtocolError ||
                         request.result == UnityWebRequest.Result.ConnectionError)
                     {
-                        string errorMsg = request.error;
-                        error?.Invoke(errorMsg);
-                        Logging.PrintWarning<Logger>($"<color=#FF0000>RequestAPI failed. URL: {url}, ErrorMsg: {errorMsg}</color>");
-                        return errorMsg;
+                        var errorInfo = new ErrorInfo();
+                        errorInfo.url = url;
+                        errorInfo.message = request.error;
+                        errorInfo.exception = null;
+                        error?.Invoke(errorInfo);
+                        Logging.PrintWarning<Logger>($"<color=#FF0000>RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}</color>");
+                        return null;
                     }
                     else
                     {
@@ -132,10 +143,13 @@ namespace OxGFrame.CenterFrame.APICenter
                 }
                 catch (Exception ex)
                 {
-                    string errorMsg = string.IsNullOrEmpty(request?.error) ? $"RequestAPI failed. URL: {url}, Exception: {ex}" : request.error;
-                    error?.Invoke(errorMsg);
-                    Logging.PrintWarning<Logger>($"<color=#FF0000>{errorMsg}</color>");
-                    return errorMsg;
+                    var errorInfo = new ErrorInfo();
+                    errorInfo.url = url;
+                    errorInfo.message = request?.error;
+                    errorInfo.exception = ex;
+                    error?.Invoke(errorInfo);
+                    Logging.PrintWarning<Logger>($"<color=#FF0000>RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}, Exception: {ex}</color>");
+                    return null;
                 }
             }
         }
