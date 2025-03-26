@@ -49,6 +49,15 @@ namespace OxGFrame.AssetLoader.Bundle
                 case BundleConfig.CryptogramType.AES:
                     _decryptionServices = new AesDecryption();
                     break;
+                case BundleConfig.CryptogramType.CHACHA20:
+                    _decryptionServices = new ChaCha20Decryption();
+                    break;
+                case BundleConfig.CryptogramType.XXTEA:
+                    _decryptionServices = new XXTEADecryption();
+                    break;
+                case BundleConfig.CryptogramType.OFFSETXOR:
+                    _decryptionServices = new OffsetXorDecryption();
+                    break;
             }
             Logging.Print<Logger>($"<color=#ffe45a>Init Bundle Decryption: {decryptType}</color>");
             #endregion

@@ -5,8 +5,8 @@ namespace OxGFrame.AssetLoader.Utility
 {
     public class CryptogramUtility
     {
-        #region AES
-        public static void AesEncryptBundleFiles(string dir, string key = null, string iv = null)
+        #region Offset
+        public static void OffsetEncryptBundleFiles(string dir, int dummySize)
         {
             // 取得目錄下所有檔案
             FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
@@ -16,11 +16,11 @@ namespace OxGFrame.AssetLoader.Utility
             {
                 // 執行各檔案的加密
                 string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
-                FileCryptogram.AES.WriteFile.AesEncryptFile(fPath, key, iv);
+                FileCryptogram.Offset.WriteFile.EncryptFile(fPath, dummySize);
             }
         }
 
-        public static void AesDecryptBundleFiles(string dir, string key = null, string iv = null)
+        public static void OffsetDecryptBundleFiles(string dir, int dummySize)
         {
             // 取得目錄下所有檔案
             FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
@@ -30,7 +30,7 @@ namespace OxGFrame.AssetLoader.Utility
             {
                 // 執行各檔案的解密
                 string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
-                FileCryptogram.AES.WriteFile.AesDecryptFile(fPath, key, iv);
+                FileCryptogram.Offset.WriteFile.DecryptFile(fPath, dummySize);
             }
         }
         #endregion
@@ -46,7 +46,7 @@ namespace OxGFrame.AssetLoader.Utility
             {
                 // 執行各檔案的加密
                 string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
-                FileCryptogram.XOR.WriteFile.XorEncryptFile(fPath, key);
+                FileCryptogram.XOR.WriteFile.EncryptFile(fPath, key);
             }
         }
 
@@ -60,7 +60,7 @@ namespace OxGFrame.AssetLoader.Utility
             {
                 // 執行各檔案的解密
                 string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
-                FileCryptogram.XOR.WriteFile.XorDecryptFile(fPath, key);
+                FileCryptogram.XOR.WriteFile.DecryptFile(fPath, key);
             }
         }
         #endregion
@@ -76,7 +76,7 @@ namespace OxGFrame.AssetLoader.Utility
             {
                 // 執行各檔案的加密
                 string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
-                FileCryptogram.HT2XOR.WriteFile.HT2XorEncryptFile(fPath, hKey, tKey, jKey);
+                FileCryptogram.HT2XOR.WriteFile.EncryptFile(fPath, hKey, tKey, jKey);
             }
         }
 
@@ -90,7 +90,7 @@ namespace OxGFrame.AssetLoader.Utility
             {
                 // 執行各檔案的解密
                 string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
-                FileCryptogram.HT2XOR.WriteFile.HT2XorDecryptFile(fPath, hKey, tKey, jKey);
+                FileCryptogram.HT2XOR.WriteFile.DecryptFile(fPath, hKey, tKey, jKey);
             }
         }
         #endregion
@@ -106,7 +106,7 @@ namespace OxGFrame.AssetLoader.Utility
             {
                 // 執行各檔案的加密
                 string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
-                FileCryptogram.HT2XORPlus.WriteFile.HT2XorPlusEncryptFile(fPath, hKey, tKey, j1Key, j2key);
+                FileCryptogram.HT2XORPlus.WriteFile.EncryptFile(fPath, hKey, tKey, j1Key, j2key);
             }
         }
 
@@ -120,13 +120,13 @@ namespace OxGFrame.AssetLoader.Utility
             {
                 // 執行各檔案的解密
                 string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
-                FileCryptogram.HT2XORPlus.WriteFile.HT2XorPlusDecryptFile(fPath, hKey, tKey, j1Key, j2key);
+                FileCryptogram.HT2XORPlus.WriteFile.DecryptFile(fPath, hKey, tKey, j1Key, j2key);
             }
         }
         #endregion
 
-        #region Offset
-        public static void OffsetEncryptBundleFiles(string dir, int randomSeed, int dummySize = 0)
+        #region AES
+        public static void AesEncryptBundleFiles(string dir, string key, string iv)
         {
             // 取得目錄下所有檔案
             FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
@@ -136,11 +136,11 @@ namespace OxGFrame.AssetLoader.Utility
             {
                 // 執行各檔案的加密
                 string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
-                FileCryptogram.Offset.WriteFile.OffsetEncryptFile(fPath, randomSeed, dummySize);
+                FileCryptogram.AES.WriteFile.EncryptFile(fPath, key, iv);
             }
         }
 
-        public static void OffsetDecryptBundleFiles(string dir, int dummySize = 0)
+        public static void AesDecryptBundleFiles(string dir, string key, string iv)
         {
             // 取得目錄下所有檔案
             FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
@@ -150,7 +150,97 @@ namespace OxGFrame.AssetLoader.Utility
             {
                 // 執行各檔案的解密
                 string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
-                FileCryptogram.Offset.WriteFile.OffsetDecryptFile(fPath, dummySize);
+                FileCryptogram.AES.WriteFile.DecryptFile(fPath, key, iv);
+            }
+        }
+        #endregion
+
+        #region ChaCha20
+        public static void ChaCha20EncryptBundleFiles(string dir, string key, string nonce, uint counter)
+        {
+            // 取得目錄下所有檔案
+            FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
+
+            // 對所有檔案進行加密
+            for (int i = 0; i < files.Length; i++)
+            {
+                // 執行各檔案的加密
+                string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
+                FileCryptogram.ChaCha20.WriteFile.EncryptFile(fPath, key, nonce, counter);
+            }
+        }
+
+        public static void ChaCha20DecryptBundleFiles(string dir, string key, string nonce, uint counter)
+        {
+            // 取得目錄下所有檔案
+            FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
+
+            // 對所有檔案進行解密
+            for (int i = 0; i < files.Length; i++)
+            {
+                // 執行各檔案的解密
+                string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
+                FileCryptogram.ChaCha20.WriteFile.DecryptFile(fPath, key, nonce, counter);
+            }
+        }
+        #endregion
+
+        #region XXTEA
+        public static void XXTEAEncryptBundleFiles(string dir, string key)
+        {
+            // 取得目錄下所有檔案
+            FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
+
+            // 對所有檔案進行加密
+            for (int i = 0; i < files.Length; i++)
+            {
+                // 執行各檔案的加密
+                string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
+                FileCryptogram.XXTEA.WriteFile.EncryptFile(fPath, key);
+            }
+        }
+
+        public static void XXTEADecryptBundleFiles(string dir, string key)
+        {
+            // 取得目錄下所有檔案
+            FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
+
+            // 對所有檔案進行解密
+            for (int i = 0; i < files.Length; i++)
+            {
+                // 執行各檔案的解密
+                string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
+                FileCryptogram.XXTEA.WriteFile.DecryptFile(fPath, key);
+            }
+        }
+        #endregion
+
+        #region OffsetXOR
+        public static void OffsetXorEncryptBundleFiles(string dir, byte key, int dummySize)
+        {
+            // 取得目錄下所有檔案
+            FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
+
+            // 對所有檔案進行加密
+            for (int i = 0; i < files.Length; i++)
+            {
+                // 執行各檔案的加密
+                string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
+                FileCryptogram.OffsetXOR.WriteFile.EncryptFile(fPath, key, dummySize);
+            }
+        }
+
+        public static void OffsetXorDecryptBundleFiles(string dir, byte key, int dummySize)
+        {
+            // 取得目錄下所有檔案
+            FileInfo[] files = BundleUtility.GetFilesRecursively(dir);
+
+            // 對所有檔案進行解密
+            for (int i = 0; i < files.Length; i++)
+            {
+                // 執行各檔案的解密
+                string fPath = Path.Combine(files[i].Directory.ToString(), files[i].Name);
+                FileCryptogram.OffsetXOR.WriteFile.DecryptFile(fPath, key, dummySize);
             }
         }
         #endregion

@@ -4,6 +4,7 @@ using OxGFrame.MediaFrame.AudioFrame;
 using OxGFrame.MediaFrame.Cacher;
 using OxGFrame.MediaFrame.VideoFrame;
 using OxGKit.LoggingSystem;
+using OxGKit.Utilities.Cacher;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
@@ -15,7 +16,11 @@ namespace OxGFrame.MediaFrame
         protected Dictionary<string, GameObject> _dictAssetCache = new Dictionary<string, GameObject>();  // 【常駐】所有資源緩存
         protected HashSet<string> _loadingFlags = new HashSet<string>();                                  // 用來標記正在加載中的資源 (暫存緩存)
         protected List<T> _listAllCache = new List<T>();                                                  // 【常駐】所有進入播放的影音柱列緩存 (只會在 Destroy 時, Remove 對應的緩存)
-        protected MediaLRUCache _mediaLruCache = new MediaLRUCache(128);
+
+        /// <summary>
+        /// 處理沒有啟用 onDestroyAndUnload 設置的資源
+        /// </summary>
+        protected LRUCache<string, string> _mediaLruCache = new LRUCache<string, string>(64, new MediaObjectRemoveCacheHandler());
 
         private static float _fdt;
 
@@ -62,7 +67,7 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 處理不常用的影音, 僅針對沒有啟用 onDestroyAndUnload 的設置
+        /// 處理不常用的資源, 僅針對沒有啟用 onDestroyAndUnload 的設置
         /// </summary>
         /// <typeparam name="U"></typeparam>
         /// <param name="assetName"></param>

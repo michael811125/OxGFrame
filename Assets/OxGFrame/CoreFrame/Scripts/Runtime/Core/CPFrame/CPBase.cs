@@ -112,7 +112,8 @@ namespace OxGFrame.CoreFrame.CPFrame
         public void SetLayerRecursively(string layerName)
         {
             int layer = LayerMask.NameToLayer(layerName);
-            if (layer == -1) return;
+            if (layer == -1)
+                return;
 
             this.gameObject.layer = layer;
             foreach (Transform child in this.gameObject.transform)
@@ -124,7 +125,8 @@ namespace OxGFrame.CoreFrame.CPFrame
         public void SetLayerRecursively(GameObject go, string layerName)
         {
             int layer = LayerMask.NameToLayer(layerName);
-            if (layer == -1) return;
+            if (layer == -1)
+                return;
 
             go.layer = layer;
             foreach (Transform child in go.transform)
@@ -161,7 +163,7 @@ namespace OxGFrame.CoreFrame.CPFrame
         internal sealed override void Hide(bool disabledPreClose = false) { }
 
         [System.Obsolete("This is not supported in this class.")]
-        protected sealed override void CloseSelf() { }
+        protected sealed override void CloseSelf(bool disabledPreClose = false, bool forceDestroy = false) { }
 
         [System.Obsolete("This is not supported in this class.")]
         protected sealed override void HideSelf() { }

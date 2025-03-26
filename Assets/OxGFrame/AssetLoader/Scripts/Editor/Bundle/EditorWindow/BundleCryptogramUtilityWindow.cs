@@ -55,7 +55,6 @@ namespace OxGFrame.AssetLoader.Editor
         private void _LoadSettingsData()
         {
             // Offset
-            this.randomSeed = this._setting.randomSeed;
             this.dummySize = this._setting.dummySize;
 
             // XOR
@@ -75,6 +74,18 @@ namespace OxGFrame.AssetLoader.Editor
             // AES
             this.aesKey = this._setting.aesKey;
             this.aesIv = this._setting.aesIv;
+
+            // ChaCha20
+            this.chacha20Key = this._setting.chacha20Key;
+            this.chacha20Nonce = this._setting.chacha20Nonce;
+            this.chacha20Counter = this._setting.chacha20Counter;
+
+            // XXTEA
+            this.xxteaKey = this._setting.xxteaKey;
+
+            // OffsetXOR
+            this.offsetXorKey = this._setting.offsetXorKey;
+            this.offsetXorDummySize = this._setting.offsetXorDummySize;
         }
 
         private void OnDisable()
@@ -119,24 +130,31 @@ namespace OxGFrame.AssetLoader.Editor
                 case CryptogramType.Offset:
                     this._DrawOffsetView();
                     break;
-                case CryptogramType.Xor:
+                case CryptogramType.XOR:
                     this._DrawXorView();
                     break;
-                case CryptogramType.HT2Xor:
+                case CryptogramType.HT2XOR:
                     this._DrawHT2XorView();
                     break;
-                case CryptogramType.HT2XorPlus:
+                case CryptogramType.HT2XORPlus:
                     this._DrawHT2XorPlusView();
                     break;
-                case CryptogramType.Aes:
+                case CryptogramType.AES:
                     this._DrawAesView();
+                    break;
+                case CryptogramType.ChaCha20:
+                    this._DrawChaCha20View();
+                    break;
+                case CryptogramType.XXTEA:
+                    this._DrawXXTEAView();
+                    break;
+                case CryptogramType.OffsetXOR:
+                    this._DrawOffsetXorView();
                     break;
             }
         }
 
         #region Offset
-        [SerializeField]
-        public int randomSeed = 1;
         [SerializeField]
         public int dummySize = 0;
         private void _DrawOffsetView()
@@ -155,9 +173,6 @@ namespace OxGFrame.AssetLoader.Editor
             centeredStyle.alignment = TextAnchor.UpperCenter;
             GUILayout.Label(new GUIContent("Offset Settings"), centeredStyle);
             EditorGUILayout.Space();
-
-            this.randomSeed = EditorGUILayout.IntField(new GUIContent("Random Seed", "Fixed random values."), this.randomSeed);
-            if (this.randomSeed <= 0) this.randomSeed = 1;
 
             this.dummySize = EditorGUILayout.IntField(new GUIContent("Offset Dummy Size", "Add dummy bytes into front of file (per byte = Random 0 ~ 255)."), this.dummySize);
             if (this.dummySize < 0) this.dummySize = 0;
@@ -288,9 +303,9 @@ namespace OxGFrame.AssetLoader.Editor
 
         #region AES
         [SerializeField]
-        public string aesKey = "file_key";
+        public string aesKey = "aes_key";
         [SerializeField]
-        public string aesIv = "file_iv";
+        public string aesIv = "aes_iv";
         private void _DrawAesView()
         {
             EditorGUILayout.Space();
@@ -317,6 +332,101 @@ namespace OxGFrame.AssetLoader.Editor
         }
         #endregion
 
+        #region ChaCha20
+        [SerializeField]
+        public string chacha20Key = "chacha20_key";
+        [SerializeField]
+        public string chacha20Nonce = "chacha20_nonce";
+        [SerializeField]
+        public uint chacha20Counter = 1;
+        private void _DrawChaCha20View()
+        {
+            EditorGUILayout.Space();
+
+            GUIStyle style = new GUIStyle();
+            var bg = new Texture2D(1, 1);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
+            Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+            bg.SetPixels(pixels);
+            bg.Apply();
+            style.normal.background = bg;
+            EditorGUILayout.BeginVertical(style);
+            var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+            centeredStyle.alignment = TextAnchor.UpperCenter;
+            GUILayout.Label(new GUIContent("ChaCha20 Settings"), centeredStyle);
+            EditorGUILayout.Space();
+
+            this.chacha20Key = EditorGUILayout.TextField("ChaCha20 KEY", this.chacha20Key);
+            this.chacha20Nonce = EditorGUILayout.TextField("ChaCha20 NONCE", this.chacha20Nonce);
+            this.chacha20Counter = Convert.ToUInt32(EditorGUILayout.IntField("ChaCha20 COUNTER", Convert.ToInt32(this.chacha20Counter)));
+
+            this._DrawOperateButtonsView(this.cryptogramType);
+
+            EditorGUILayout.EndVertical();
+        }
+        #endregion
+
+        #region XXTEA
+        [SerializeField]
+        public string xxteaKey = "xxtea_key";
+        private void _DrawXXTEAView()
+        {
+            EditorGUILayout.Space();
+
+            GUIStyle style = new GUIStyle();
+            var bg = new Texture2D(1, 1);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
+            Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+            bg.SetPixels(pixels);
+            bg.Apply();
+            style.normal.background = bg;
+            EditorGUILayout.BeginVertical(style);
+            var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+            centeredStyle.alignment = TextAnchor.UpperCenter;
+            GUILayout.Label(new GUIContent("XXTEA Settings"), centeredStyle);
+            EditorGUILayout.Space();
+
+            this.xxteaKey = EditorGUILayout.TextField("XXTEA KEY", this.xxteaKey);
+
+            this._DrawOperateButtonsView(this.cryptogramType);
+
+            EditorGUILayout.EndVertical();
+        }
+        #endregion
+
+        #region OffsetXOR
+        [SerializeField]
+        public int offsetXorKey = 1;
+        public int offsetXorDummySize = 1;
+        private void _DrawOffsetXorView()
+        {
+            EditorGUILayout.Space();
+
+            GUIStyle style = new GUIStyle();
+            var bg = new Texture2D(1, 1);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
+            Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+            bg.SetPixels(pixels);
+            bg.Apply();
+            style.normal.background = bg;
+            EditorGUILayout.BeginVertical(style);
+            var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+            centeredStyle.alignment = TextAnchor.UpperCenter;
+            GUILayout.Label(new GUIContent("OffsetXOR Settings"), centeredStyle);
+            EditorGUILayout.Space();
+
+            this.offsetXorKey = EditorGUILayout.IntField("OffsetXOR KEY (0 ~ 255)", this.offsetXorKey);
+            if (this.offsetXorKey < 0) this.offsetXorKey = 0;
+            else if (this.offsetXorKey > 255) this.offsetXorKey = 255;
+            this.offsetXorDummySize = EditorGUILayout.IntField(new GUIContent("OffsetXOR Dummy Size", "Add dummy bytes into front of file (per byte = Random 0 ~ 255)."), this.offsetXorDummySize);
+            if (this.offsetXorDummySize < 0) this.offsetXorDummySize = 0;
+
+            this._DrawOperateButtonsView(this.cryptogramType);
+
+            EditorGUILayout.EndVertical();
+        }
+        #endregion
+
         private void _DrawOperateButtonsView(CryptogramType cryptogramType)
         {
             EditorGUILayout.BeginHorizontal();
@@ -331,19 +441,19 @@ namespace OxGFrame.AssetLoader.Editor
                         CryptogramUtility.OffsetDecryptBundleFiles(this.sourceFolder, this.dummySize);
                         EditorUtility.DisplayDialog("Crytogram Message", "[OFFSET] Decrypt Process.", "OK");
                         break;
-                    case CryptogramType.Xor:
+                    case CryptogramType.XOR:
                         CryptogramUtility.XorDecryptBundleFiles(this.sourceFolder, (byte)this.xorKey);
                         EditorUtility.DisplayDialog("Crytogram Message", "[XOR] Decrypt Process.", "OK");
                         break;
-                    case CryptogramType.HT2Xor:
+                    case CryptogramType.HT2XOR:
                         CryptogramUtility.HT2XorDecryptBundleFiles(this.sourceFolder, (byte)this.hXorKey, (byte)this.tXorKey, (byte)this.jXorKey);
                         EditorUtility.DisplayDialog("Crytogram Message", "[Head-Tail 2 XOR] Decrypt Process.", "OK");
                         break;
-                    case CryptogramType.HT2XorPlus:
+                    case CryptogramType.HT2XORPlus:
                         CryptogramUtility.HT2XorPlusDecryptBundleFiles(this.sourceFolder, (byte)this.hXorPlusKey, (byte)this.tXorPlusKey, (byte)this.j1XorPlusKey, (byte)this.j2XorPlusKey);
                         EditorUtility.DisplayDialog("Crytogram Message", "[Head-Tail 2 XOR Plus] Decrypt Process.", "OK");
                         break;
-                    case CryptogramType.Aes:
+                    case CryptogramType.AES:
                         if (string.IsNullOrEmpty(this.aesKey) || string.IsNullOrEmpty(this.aesIv))
                         {
                             EditorUtility.DisplayDialog("Crytogram Message", "[AES] KEY or IV is Empty!!! Can't process.", "OK");
@@ -351,6 +461,28 @@ namespace OxGFrame.AssetLoader.Editor
                         }
                         CryptogramUtility.AesDecryptBundleFiles(this.sourceFolder, this.aesKey, this.aesIv);
                         EditorUtility.DisplayDialog("Crytogram Message", "[AES] Decrypt Process.", "OK");
+                        break;
+                    case CryptogramType.ChaCha20:
+                        if (string.IsNullOrEmpty(this.chacha20Key) || string.IsNullOrEmpty(this.chacha20Nonce))
+                        {
+                            EditorUtility.DisplayDialog("Crytogram Message", "[ChaCha20] KEY or NONCE is Empty!!! Can't process.", "OK");
+                            break;
+                        }
+                        CryptogramUtility.ChaCha20DecryptBundleFiles(this.sourceFolder, this.chacha20Key, this.chacha20Nonce, this.chacha20Counter);
+                        EditorUtility.DisplayDialog("Crytogram Message", "[ChaCha20] Decrypt Process.", "OK");
+                        break;
+                    case CryptogramType.XXTEA:
+                        if (string.IsNullOrEmpty(this.xxteaKey))
+                        {
+                            EditorUtility.DisplayDialog("Crytogram Message", "[XXTEA] KEY is Empty!!! Can't process.", "OK");
+                            break;
+                        }
+                        CryptogramUtility.XXTEADecryptBundleFiles(this.sourceFolder, this.xxteaKey);
+                        EditorUtility.DisplayDialog("Crytogram Message", "[XXTEA] Decrypt Process.", "OK");
+                        break;
+                    case CryptogramType.OffsetXOR:
+                        CryptogramUtility.OffsetXorDecryptBundleFiles(this.sourceFolder, (byte)this.offsetXorKey, this.offsetXorDummySize);
+                        EditorUtility.DisplayDialog("Crytogram Message", "[OffsetXOR] Decrypt Process.", "OK");
                         break;
                 }
             }
@@ -363,22 +495,22 @@ namespace OxGFrame.AssetLoader.Editor
                 switch (cryptogramType)
                 {
                     case CryptogramType.Offset:
-                        CryptogramUtility.OffsetEncryptBundleFiles(this.sourceFolder, this.randomSeed, this.dummySize);
+                        CryptogramUtility.OffsetEncryptBundleFiles(this.sourceFolder, this.dummySize);
                         EditorUtility.DisplayDialog("Crytogram Message", "[OFFSET] Encrypt Process.", "OK");
                         break;
-                    case CryptogramType.Xor:
+                    case CryptogramType.XOR:
                         CryptogramUtility.XorEncryptBundleFiles(this.sourceFolder, (byte)this.xorKey);
                         EditorUtility.DisplayDialog("Crytogram Message", "[XOR] Encrypt Process.", "OK");
                         break;
-                    case CryptogramType.HT2Xor:
+                    case CryptogramType.HT2XOR:
                         CryptogramUtility.HT2XorEncryptBundleFiles(this.sourceFolder, (byte)this.hXorKey, (byte)this.tXorKey, (byte)this.jXorKey);
                         EditorUtility.DisplayDialog("Crytogram Message", "[Head-Tail 2 XOR] Encrypt Process.", "OK");
                         break;
-                    case CryptogramType.HT2XorPlus:
+                    case CryptogramType.HT2XORPlus:
                         CryptogramUtility.HT2XorPlusEncryptBundleFiles(this.sourceFolder, (byte)this.hXorPlusKey, (byte)this.tXorPlusKey, (byte)this.j1XorPlusKey, (byte)this.j2XorPlusKey);
                         EditorUtility.DisplayDialog("Crytogram Message", "[Head-Tail 2 XOR Plus] Encrypt Process.", "OK");
                         break;
-                    case CryptogramType.Aes:
+                    case CryptogramType.AES:
                         if (string.IsNullOrEmpty(this.aesKey) || string.IsNullOrEmpty(this.aesIv))
                         {
                             EditorUtility.DisplayDialog("Crytogram Message", "[AES] KEY or IV is Empty!!! Can't process.", "OK");
@@ -386,6 +518,28 @@ namespace OxGFrame.AssetLoader.Editor
                         }
                         CryptogramUtility.AesEncryptBundleFiles(this.sourceFolder, this.aesKey, this.aesIv);
                         EditorUtility.DisplayDialog("Crytogram Message", "[AES] Encrypt Process.", "OK");
+                        break;
+                    case CryptogramType.ChaCha20:
+                        if (string.IsNullOrEmpty(this.chacha20Key) || string.IsNullOrEmpty(this.chacha20Nonce))
+                        {
+                            EditorUtility.DisplayDialog("Crytogram Message", "[ChaCha20] KEY or NONCE is Empty!!! Can't process.", "OK");
+                            break;
+                        }
+                        CryptogramUtility.ChaCha20EncryptBundleFiles(this.sourceFolder, this.chacha20Key, this.chacha20Nonce, this.chacha20Counter);
+                        EditorUtility.DisplayDialog("Crytogram Message", "[ChaCha20] Encrypt Process.", "OK");
+                        break;
+                    case CryptogramType.XXTEA:
+                        if (string.IsNullOrEmpty(this.xxteaKey))
+                        {
+                            EditorUtility.DisplayDialog("Crytogram Message", "[XXTEA] KEY is Empty!!! Can't process.", "OK");
+                            break;
+                        }
+                        CryptogramUtility.XXTEAEncryptBundleFiles(this.sourceFolder, this.xxteaKey);
+                        EditorUtility.DisplayDialog("Crytogram Message", "[XXTEA] Encrypt Process.", "OK");
+                        break;
+                    case CryptogramType.OffsetXOR:
+                        CryptogramUtility.OffsetXorEncryptBundleFiles(this.sourceFolder, (byte)this.offsetXorKey, this.offsetXorDummySize);
+                        EditorUtility.DisplayDialog("Crytogram Message", "[OffsetXOR] Encrypt Process.", "OK");
                         break;
                 }
             }

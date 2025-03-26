@@ -25,9 +25,15 @@ namespace OxGFrame.CoreFrame.UIFrame
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            if (this.allowInstantiate) this.onCloseAndDestroy = false;
-            if (this.onCloseAndDestroy) this.reverseChanges = false;
-            if (this.reverseChanges || this.uiSetting.stack || this.uiSetting.allowCloseStackByStack)
+            if (this.allowInstantiate)
+                this.onCloseAndDestroy = false;
+
+            if (this.onCloseAndDestroy)
+                this.reverseChanges = false;
+
+            if (this.reverseChanges ||
+                this.uiSetting.stack ||
+                this.uiSetting.allowCloseStackByStack)
             {
                 this.uiSetting.whenCloseAllToSkip = false;
                 this.uiSetting.whenHideAllToSkip = false;
@@ -117,7 +123,8 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         internal sealed override void Hide(bool disabledPreClose = false)
         {
-            if (!this.gameObject.activeSelf) return;
+            if (!this.gameObject.activeSelf)
+                return;
 
             this.Freeze();
 
@@ -129,11 +136,14 @@ namespace OxGFrame.CoreFrame.UIFrame
                 if (!this.isHidden)
                 {
                     // 如果有啟用 Mask, 則需要回收 Mask
-                    if (this.autoMask) this._RemoveMask();
-                    if (!disabledPreClose) this.OnPreClose();
+                    if (this.autoMask)
+                        this._RemoveMask();
+                    if (!disabledPreClose)
+                        this.OnPreClose();
                     this.OnClose();
                 }
-                else this.OnHide();
+                else
+                    this.OnHide();
 
                 this.gameObject.SetActive(false);
             };
@@ -176,9 +186,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         /// 子類調用關閉自己
         /// </summary>
-        protected sealed override void CloseSelf()
+        protected sealed override void CloseSelf(bool disabledPreClose = false, bool forceDestroy = false)
         {
-            UIManager.GetInstance().Close(this.assetName);
+            UIManager.GetInstance().Close(this.assetName, disabledPreClose, forceDestroy);
         }
 
         /// <summary>
@@ -191,7 +201,8 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         protected virtual void MaskEvent()
         {
-            if (this.maskSetting.isClickMaskToClose) UIManager.GetInstance().Close(this.assetName);
+            if (this.maskSetting.isClickMaskToClose)
+                UIManager.GetInstance().Close(this.assetName);
         }
 
         #region UI Transition Animation

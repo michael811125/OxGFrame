@@ -18,6 +18,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
         [Range(0, 10)]
         public float playbackSpeed = 1f;
         public SourceType sourceType = SourceType.Video;
+        public int maxPrepareTimeSeconds = VideoManager.MAX_PREPARE_TIME_SECONDS;
         // SourceType => VideoClip
         [Tooltip("Drag video clip. This is not supports [WebGL]"), ConditionalField(nameof(sourceType), false, SourceType.Video)]
         public VideoClip videoClip = null;
@@ -94,6 +95,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                     break;
                 case SourceType.Url:
                     {
+                        this._videoPlayer.source = VideoSource.Url;
                         string urlCfg = await this.urlSet.urlCfg.GetFileText();
                         string urlSet = this.urlSet.getUrlPathFromCfg ? GetValueFromUrlCfg(urlCfg, VIDEO_URLSET) : string.Empty;
                         string url = (!string.IsNullOrEmpty(urlSet)) ? $"{urlSet.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
@@ -109,7 +111,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this._videoPlayer.Prepare();
             Logging.Print<Logger>($"{this.mediaName} video is preparing...");
             var cts = new CancellationTokenSource();
-            cts.CancelAfterSlim(TimeSpan.FromSeconds(15f));
+            cts.CancelAfterSlim(TimeSpan.FromSeconds(this.maxPrepareTimeSeconds <= 0 ? VideoManager.MAX_PREPARE_TIME_SECONDS : this.maxPrepareTimeSeconds));
             try
             {
                 do

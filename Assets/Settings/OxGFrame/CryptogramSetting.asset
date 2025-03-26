@@ -12,15 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dddbfe034d2543d4b8d3c4ab0d2f77f1, type: 3}
   m_Name: CryptogramSetting
   m_EditorClassIdentifier: 
-  randomSeed: 1
-  dummySize: 1
-  xorKey: 1
-  hXorKey: 5
-  tXorKey: 6
-  jXorKey: 7
+  dummySize: 10
+  xorKey: 10
+  hXorKey: 10
+  tXorKey: 20
+  jXorKey: 30
   hXorPlusKey: 10
   tXorPlusKey: 20
-  j1XorPlusKey: 55
-  j2XorPlusKey: 11
+  j1XorPlusKey: 30
+  j2XorPlusKey: 40
   aesKey: aes_key
   aesIv: aes_iv
+  chacha20Key: chacha20_key
+  chacha20Nonce: chacha20_nonce
+  chacha20Counter: 1
+  xxteaKey: xxtea_key
+  offsetXorKey: 10
+  offsetXorDummySize: 20

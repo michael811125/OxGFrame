@@ -10,10 +10,13 @@ namespace OxGFrame.AssetLoader.Editor
         public enum CryptogramType
         {
             Offset,
-            Xor,
-            HT2Xor,
-            HT2XorPlus,
-            Aes
+            XOR,
+            HT2XOR,
+            HT2XORPlus,
+            AES,
+            ChaCha20,
+            XXTEA,
+            OffsetXOR
         }
 
         private static CryptogramSettingWindow _instance = null;
@@ -77,7 +80,6 @@ namespace OxGFrame.AssetLoader.Editor
         private void _LoadSettingsData()
         {
             // Offset
-            this.randomSeed = this._setting.randomSeed;
             this.dummySize = this._setting.dummySize;
 
             // XOR
@@ -97,6 +99,18 @@ namespace OxGFrame.AssetLoader.Editor
             // AES
             this.aesKey = this._setting.aesKey;
             this.aesIv = this._setting.aesIv;
+
+            // ChaCha20
+            this.chacha20Key = this._setting.chacha20Key;
+            this.chacha20Nonce = this._setting.chacha20Nonce;
+            this.chacha20Counter = this._setting.chacha20Counter;
+
+            // XXTEA
+            this.xxteaKey = this._setting.xxteaKey;
+
+            // OffsetXOR
+            this.offsetXorKey = this._setting.offsetXorKey;
+            this.offsetXorDummySize = this._setting.offsetXorDummySize;
         }
 
         private void _CryptogramType(CryptogramType cryptogramType)
@@ -106,24 +120,31 @@ namespace OxGFrame.AssetLoader.Editor
                 case CryptogramType.Offset:
                     this._DrawOffsetView();
                     break;
-                case CryptogramType.Xor:
+                case CryptogramType.XOR:
                     this._DrawXorView();
                     break;
-                case CryptogramType.HT2Xor:
+                case CryptogramType.HT2XOR:
                     this._DrawHT2XorView();
                     break;
-                case CryptogramType.HT2XorPlus:
+                case CryptogramType.HT2XORPlus:
                     this._DrawHT2XorPlusView();
                     break;
-                case CryptogramType.Aes:
+                case CryptogramType.AES:
                     this._DrawAesView();
+                    break;
+                case CryptogramType.ChaCha20:
+                    this._DrawChaCha20View();
+                    break;
+                case CryptogramType.XXTEA:
+                    this._DrawXXTEAView();
+                    break;
+                case CryptogramType.OffsetXOR:
+                    this._DrawOffsetXorView();
                     break;
             }
         }
 
         #region Offset
-        [SerializeField]
-        public int randomSeed = 1;
         [SerializeField]
         public int dummySize = 0;
         private void _DrawOffsetView()
@@ -144,8 +165,6 @@ namespace OxGFrame.AssetLoader.Editor
             EditorGUILayout.Space();
 
             EditorGUI.BeginChangeCheck();
-            this.randomSeed = EditorGUILayout.IntField(new GUIContent("Random Seed", "Fixed random values."), this.randomSeed);
-            if (this.randomSeed <= 0) this.randomSeed = 1;
             this.dummySize = EditorGUILayout.IntField(new GUIContent("Offset Dummy Size", "Add dummy bytes into front of file (per byte = Random 0 ~ 255)."), this.dummySize);
             if (this.dummySize < 0) this.dummySize = 0;
             if (EditorGUI.EndChangeCheck()) this._isDirty = true;
@@ -313,6 +332,107 @@ namespace OxGFrame.AssetLoader.Editor
         }
         #endregion
 
+        #region ChaCha20
+        [SerializeField]
+        public string chacha20Key = "chacha20_key";
+        [SerializeField]
+        public string chacha20Nonce = "chacha20_nonce";
+        [SerializeField]
+        public uint chacha20Counter = 1;
+        private void _DrawChaCha20View()
+        {
+            EditorGUILayout.Space();
+
+            GUIStyle style = new GUIStyle();
+            var bg = new Texture2D(1, 1);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
+            Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+            bg.SetPixels(pixels);
+            bg.Apply();
+            style.normal.background = bg;
+            EditorGUILayout.BeginVertical(style);
+            var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+            centeredStyle.alignment = TextAnchor.UpperCenter;
+            GUILayout.Label(new GUIContent("ChaCha20 Settings"), centeredStyle);
+            EditorGUILayout.Space();
+
+            EditorGUI.BeginChangeCheck();
+            this.chacha20Key = EditorGUILayout.TextField("ChaCha20 KEY", this.chacha20Key);
+            this.chacha20Nonce = EditorGUILayout.TextField("ChaCha20 NONCE", this.chacha20Nonce);
+            this.chacha20Counter = Convert.ToUInt32(EditorGUILayout.IntField("ChaCha20 COUNTER", Convert.ToInt32(this.chacha20Counter)));
+            if (EditorGUI.EndChangeCheck()) this._isDirty = true;
+
+            this._DrawOperateButtonsView(this.cryptogramType);
+
+            EditorGUILayout.EndVertical();
+        }
+        #endregion
+
+        #region XXTEA
+        [SerializeField]
+        public string xxteaKey = "xxtea_key";
+        private void _DrawXXTEAView()
+        {
+            EditorGUILayout.Space();
+
+            GUIStyle style = new GUIStyle();
+            var bg = new Texture2D(1, 1);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
+            Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+            bg.SetPixels(pixels);
+            bg.Apply();
+            style.normal.background = bg;
+            EditorGUILayout.BeginVertical(style);
+            var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+            centeredStyle.alignment = TextAnchor.UpperCenter;
+            GUILayout.Label(new GUIContent("XXTEA Settings"), centeredStyle);
+            EditorGUILayout.Space();
+
+            EditorGUI.BeginChangeCheck();
+            this.xxteaKey = EditorGUILayout.TextField("XXTEA KEY", this.xxteaKey);
+            if (EditorGUI.EndChangeCheck()) this._isDirty = true;
+
+            this._DrawOperateButtonsView(this.cryptogramType);
+
+            EditorGUILayout.EndVertical();
+        }
+        #endregion
+
+        #region OffsetXOR
+        [SerializeField]
+        public int offsetXorKey = 1;
+        public int offsetXorDummySize = 1;
+        private void _DrawOffsetXorView()
+        {
+            EditorGUILayout.Space();
+
+            GUIStyle style = new GUIStyle();
+            var bg = new Texture2D(1, 1);
+            ColorUtility.TryParseHtmlString("#1e3836", out Color color);
+            Color[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+            bg.SetPixels(pixels);
+            bg.Apply();
+            style.normal.background = bg;
+            EditorGUILayout.BeginVertical(style);
+            var centeredStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+            centeredStyle.alignment = TextAnchor.UpperCenter;
+            GUILayout.Label(new GUIContent("OffsetXOR Settings"), centeredStyle);
+            EditorGUILayout.Space();
+
+            EditorGUI.BeginChangeCheck();
+            this.offsetXorKey = EditorGUILayout.IntField("OffsetXOR KEY (0 ~ 255)", this.offsetXorKey);
+            if (this.offsetXorKey < 0) this.offsetXorKey = 0;
+            else if (this.offsetXorKey > 255) this.offsetXorKey = 255;
+            this.offsetXorDummySize = EditorGUILayout.IntField(new GUIContent("OffsetXOR Dummy Size", "Add dummy bytes into front of file (per byte = Random 0 ~ 255)."), this.offsetXorDummySize);
+            if (this.offsetXorDummySize < 0) this.offsetXorDummySize = 0;
+            if (EditorGUI.EndChangeCheck()) this._isDirty = true;
+
+            this._DrawOperateButtonsView(this.cryptogramType);
+
+            EditorGUILayout.EndVertical();
+        }
+        #endregion
+
         private void _DrawOperateButtonsView(CryptogramType cryptogramType)
         {
             EditorGUILayout.BeginHorizontal();
@@ -335,7 +455,6 @@ namespace OxGFrame.AssetLoader.Editor
             switch (cryptogramType)
             {
                 case CryptogramType.Offset:
-                    this._setting.randomSeed = this.randomSeed;
                     this._setting.dummySize = this.dummySize;
 
                     this._isDirty = false;
@@ -344,7 +463,7 @@ namespace OxGFrame.AssetLoader.Editor
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [OFFSET] Setting.", "OK");
                     break;
-                case CryptogramType.Xor:
+                case CryptogramType.XOR:
                     this._setting.xorKey = (byte)this.xorKey;
 
                     this._isDirty = false;
@@ -353,7 +472,7 @@ namespace OxGFrame.AssetLoader.Editor
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [XOR] Setting.", "OK");
                     break;
-                case CryptogramType.HT2Xor:
+                case CryptogramType.HT2XOR:
                     this._setting.hXorKey = (byte)this.hXorKey;
                     this._setting.tXorKey = (byte)this.tXorKey;
                     this._setting.jXorKey = (byte)this.jXorKey;
@@ -364,7 +483,7 @@ namespace OxGFrame.AssetLoader.Editor
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [Head-Tail 2 XOR] Setting.", "OK");
                     break;
-                case CryptogramType.HT2XorPlus:
+                case CryptogramType.HT2XORPlus:
                     this._setting.hXorPlusKey = (byte)this.hXorPlusKey;
                     this._setting.tXorPlusKey = (byte)this.tXorPlusKey;
                     this._setting.j1XorPlusKey = (byte)this.j1XorPlusKey;
@@ -376,7 +495,7 @@ namespace OxGFrame.AssetLoader.Editor
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [Head-Tail 2 XOR Plus] Setting.", "OK");
                     break;
-                case CryptogramType.Aes:
+                case CryptogramType.AES:
                     if (string.IsNullOrEmpty(this.aesKey) || string.IsNullOrEmpty(this.aesIv))
                     {
                         if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "[AES] KEY or IV is Empty!!! Can't process.", "OK");
@@ -391,6 +510,48 @@ namespace OxGFrame.AssetLoader.Editor
                     AssetDatabase.SaveAssets();
 
                     if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [AES] Setting.", "OK");
+                    break;
+                case CryptogramType.ChaCha20:
+                    if (string.IsNullOrEmpty(this.chacha20Key) || string.IsNullOrEmpty(this.chacha20Nonce))
+                    {
+                        if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "[ChaCha20] KEY or NONCE is Empty!!! Can't process.", "OK");
+                        break;
+                    }
+
+                    this._setting.chacha20Key = this.chacha20Key;
+                    this._setting.chacha20Nonce = this.chacha20Nonce;
+                    this._setting.chacha20Counter = this.chacha20Counter;
+
+                    this._isDirty = false;
+                    EditorUtility.SetDirty(this._setting);
+                    AssetDatabase.SaveAssets();
+
+                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [ChaCha20] Setting.", "OK");
+                    break;
+                case CryptogramType.XXTEA:
+                    if (string.IsNullOrEmpty(this.xxteaKey))
+                    {
+                        if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "[XXTEA] KEY is Empty!!! Can't process.", "OK");
+                        break;
+                    }
+
+                    this._setting.xxteaKey = this.xxteaKey;
+
+                    this._isDirty = false;
+                    EditorUtility.SetDirty(this._setting);
+                    AssetDatabase.SaveAssets();
+
+                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [XXTEA] Setting.", "OK");
+                    break;
+                case CryptogramType.OffsetXOR:
+                    this._setting.offsetXorKey = (byte)this.offsetXorKey;
+                    this._setting.offsetXorDummySize = this.offsetXorDummySize;
+
+                    this._isDirty = false;
+                    EditorUtility.SetDirty(this._setting);
+                    AssetDatabase.SaveAssets();
+
+                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [OffsetXOR] Setting.", "OK");
                     break;
             }
         }

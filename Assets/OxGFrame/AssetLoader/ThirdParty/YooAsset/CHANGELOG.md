@@ -2,6 +2,17 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.6] - 2025-03-25
+
+### Improvements
+
+- 构建管线新增了TaskCreateCatalog任务节点。
+- 内置文件系统的catalog文件现在存储在streammingAssets目录下。
+
+### Fixed
+
+- (#486) 修复了微信小游戏文件系统调用ClearUnusedBundleFiles时候的异常。
+
 ## [2.3.5-preview] - 2025-03-14
 
 ### Fixed

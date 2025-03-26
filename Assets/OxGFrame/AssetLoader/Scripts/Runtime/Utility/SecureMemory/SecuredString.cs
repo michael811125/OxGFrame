@@ -5,7 +5,7 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
     internal class SecuredString : IDisposable
     {
         /// <summary>
-        /// 是否啟用加密
+        /// 加密類型
         /// </summary>
         private readonly SecuredStringType _securedStringType;
 

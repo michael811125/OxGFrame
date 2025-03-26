@@ -56,6 +56,9 @@ namespace OxGFrame.AssetLoader.Bundle
             public const string HT2XOR = "HT2XOR";
             public const string HT2XORPLUS = "HT2XORPLUS";
             public const string AES = "AES";
+            public const string CHACHA20 = "CHACHA20";
+            public const string XXTEA = "XXTEA";
+            public const string OFFSETXOR = "OFFSETXOR";
         }
 
         #region 執行配置
@@ -132,6 +135,9 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <para> [HT2XOR, hKey, tKey, jKey] </para>
         /// <para> [HT2XORPlus, hKey, tKey, j1Key, j2key] </para>
         /// <para> [AES, key, iv] </para>
+        /// <para> [ChaCha20, key, nonce, counter] </para>
+        /// <para> [XXTEA, key] </para>
+        /// <para> [OFFSETXOR, key, dummySize] </para>
         /// </summary>
         private static SecuredString[] _decryptArgs = null;
         internal static SecuredString[] decryptArgs => _decryptArgs;
@@ -140,17 +146,17 @@ namespace OxGFrame.AssetLoader.Bundle
         /// Init decryption args
         /// </summary>
         /// <param name="args"></param>
-        /// <param name="secured"></param>
+        /// <param name="securedType"></param>
         /// <param name="saltSize"></param>
         /// <param name="dummySize"></param>
-        internal static void InitDecryptInfo(string args, SecuredStringType secured, int saltSize, int dummySize)
+        internal static void InitDecryptInfo(string args, SecuredStringType securedType, int saltSize, int dummySize)
         {
             if (_decryptArgs == null)
             {
                 // Check args first, if is none don't need to secure memory
                 bool isNone = args.Substring(0, CryptogramType.NONE.Length).ToUpper().Equals(CryptogramType.NONE);
                 if (isNone)
-                    secured = SecuredStringType.None;
+                    securedType = SecuredStringType.None;
 
                 // Parsing decrypt keys
                 string[] decryptKeys = args.Trim().Split(',');
@@ -158,7 +164,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 for (int i = 0; i < decryptKeys.Length; i++)
                 {
                     decryptKeys[i] = decryptKeys[i].Trim();
-                    _decryptArgs[i] = new SecuredString(decryptKeys[i], secured, saltSize, dummySize);
+                    _decryptArgs[i] = new SecuredString(decryptKeys[i], securedType, saltSize, dummySize);
                     decryptKeys[i] = null;
                 }
             }

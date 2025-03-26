@@ -67,7 +67,7 @@ namespace YooAsset
             }
 #elif UNITY_STANDALONE_OSX
             url = new System.Uri(path).ToString();
-#elif UNITY_STANDALONE
+#elif UNITY_STANDALONE || UNITY_WSA
             url = StringUtility.Format("file:///{0}", path);
 #else
             throw new System.NotImplementedException();
