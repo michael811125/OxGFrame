@@ -50,18 +50,22 @@ namespace OxGFrame.MediaFrame.Editor
                     {
                         case SourceType.Audio:
                             audioClip = this._target.audioClip;
-                            if (audioClip != null) this._audioLength.floatValue = this._target.audioLength = this._target.audioClip.length;
-                            else Debug.LogError("Cannot find AudioClip");
+                            if (audioClip != null)
+                                this._audioLength.floatValue = this._target.audioLength = this._target.audioClip.length;
+                            else
+                                Debug.LogError("Cannot find AudioClip");
                             break;
 
                         case SourceType.StreamingAssets:
                             audioClip = await this._target.GetAudioFromStreamingAssets(false);
-                            if (audioClip != null) this._audioLength.floatValue = this._target.audioLength = audioClip.length;
+                            if (audioClip != null)
+                                this._audioLength.floatValue = this._target.audioLength = audioClip.length;
                             break;
 
                         case SourceType.Url:
                             audioClip = await this._target.GetAudioFromURL(false);
-                            if (audioClip != null) this._audioLength.floatValue = this._target.audioLength = audioClip.length;
+                            if (audioClip != null)
+                                this._audioLength.floatValue = this._target.audioLength = audioClip.length;
                             break;
                     }
 

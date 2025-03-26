@@ -1,10 +1,18 @@
-﻿using System;
+﻿using OxGFrame.AssetLoader.Utility.SecureMemory;
+using System;
 using System.IO;
 using UnityEngine;
 using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
+    public interface IDecryptInitialize
+    {
+        bool CheckIsIntialized();
+
+        bool Initialize();
+    }
+
     public interface IDecryptStream
     {
         Stream DecryptStream(DecryptFileInfo fileInfo);
@@ -20,9 +28,26 @@ namespace OxGFrame.AssetLoader.Bundle
     /// <summary>
     /// 統一接口
     /// </summary>
-    public abstract class DecryptionServices : IDecryptionServices, IWebDecryptionServices, IDecryptStream, IDecryptData
+    public abstract class DecryptionServices : IDecryptionServices, IWebDecryptionServices, IDecryptStream, IDecryptData, IDecryptInitialize
     {
+        /// <summary>
+        /// 是否初始標記
+        /// </summary>
+        protected bool _isInitialized = false;
+
         #region OxGFrame Implements
+        public bool CheckIsIntialized()
+        {
+            if (this._isInitialized)
+                return true;
+
+            this._isInitialized = this.Initialize();
+
+            return this._isInitialized;
+        }
+
+        public abstract bool Initialize();
+
         public abstract byte[] DecryptData(DecryptFileInfo fileInfo);
 
         public abstract byte[] DecryptData(WebDecryptFileInfo fileInfo);
@@ -36,23 +61,55 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         #region IDecryptionServices
-        public abstract DecryptResult LoadAssetBundle(DecryptFileInfo fileInfo);
+        public DecryptResult LoadAssetBundle(DecryptFileInfo fileInfo)
+        {
+            DecryptResult result = new DecryptResult
+            {
+                ManagedStream = this.DecryptStream(fileInfo),
+            };
+            result.Result = AssetBundle.LoadFromStream(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
+            return result;
+        }
 
-        public abstract DecryptResult LoadAssetBundleAsync(DecryptFileInfo fileInfo);
+        public DecryptResult LoadAssetBundleAsync(DecryptFileInfo fileInfo)
+        {
+            DecryptResult result = new DecryptResult
+            {
+                ManagedStream = this.DecryptStream(fileInfo),
+            };
+            result.CreateRequest = AssetBundle.LoadFromStreamAsync(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
+            return result;
+        }
 
-        public abstract byte[] ReadFileData(DecryptFileInfo fileInfo);
+        public byte[] ReadFileData(DecryptFileInfo fileInfo)
+        {
+            return this.DecryptData(fileInfo);
+        }
 
-        public abstract string ReadFileText(DecryptFileInfo fileInfo);
+        public string ReadFileText(DecryptFileInfo fileInfo)
+        {
+            return System.Text.Encoding.UTF8.GetString(this.DecryptData(fileInfo));
+        }
         #endregion
 
         #region IWebDecryptionServices
-        public abstract WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo);
+        public WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo)
+        {
+            WebDecryptResult result = new WebDecryptResult();
+            result.Result = AssetBundle.LoadFromMemory(this.DecryptData(fileInfo), fileInfo.FileLoadCRC);
+            return result;
+        }
         #endregion
     }
 
     public class NoneDecryption : DecryptionServices
     {
         #region OxGFrame Implements
+        public override bool Initialize()
+        {
+            return true;
+        }
+
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
             string filePath = fileInfo.FileLoadPath;
@@ -73,119 +130,59 @@ namespace OxGFrame.AssetLoader.Bundle
             return fs;
         }
         #endregion
-
-        #region IDecryptionServices
-        public override DecryptResult LoadAssetBundle(DecryptFileInfo fileInfo)
-        {
-            DecryptResult result = new DecryptResult
-            {
-                ManagedStream = this.DecryptStream(fileInfo),
-            };
-            result.Result = AssetBundle.LoadFromStream(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return result;
-        }
-
-        public override DecryptResult LoadAssetBundleAsync(DecryptFileInfo fileInfo)
-        {
-            DecryptResult result = new DecryptResult
-            {
-                ManagedStream = this.DecryptStream(fileInfo),
-            };
-            result.CreateRequest = AssetBundle.LoadFromStreamAsync(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return result;
-        }
-
-        public override byte[] ReadFileData(DecryptFileInfo fileInfo)
-        {
-            return this.DecryptData(fileInfo);
-        }
-
-        public override string ReadFileText(DecryptFileInfo fileInfo)
-        {
-            return System.Text.Encoding.UTF8.GetString(this.DecryptData(fileInfo));
-        }
-        #endregion
-
-        #region IWebDecryptionServices
-        public override WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo)
-        {
-            WebDecryptResult result = new WebDecryptResult();
-            result.Result = AssetBundle.LoadFromMemory(this.DecryptData(fileInfo), fileInfo.FileLoadCRC);
-            return result;
-        }
-        #endregion
     }
 
     #region Offset
     public class OffsetDecryption : DecryptionServices
     {
+        protected int _dummySize;
+
         #region OxGFrame Implements
+        public override bool Initialize()
+        {
+            try
+            {
+                SecuredString[] decryptArgs = BundleConfig.decryptArgs;
+                this._dummySize = Convert.ToInt32(decryptArgs[1].Decrypt());
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            int dummySize = Convert.ToInt32(decryptArgs[1].Decrypt());
-            string filePath = fileInfo.FileLoadPath;
-            if (File.Exists(filePath) == false)
-                return null;
-            return FileCryptogram.Offset.OffsetDecryptBytes(filePath, dummySize);
+            if (this.CheckIsIntialized())
+            {
+                string filePath = fileInfo.FileLoadPath;
+                if (File.Exists(filePath) == false)
+                    return null;
+                return FileCryptogram.Offset.DecryptBytes(filePath, this._dummySize);
+            }
+            return null;
         }
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            int dummySize = Convert.ToInt32(decryptArgs[1].Decrypt());
-            if (FileCryptogram.Offset.OffsetDecryptBytes(ref fileInfo.FileData, dummySize))
-                return fileInfo.FileData;
+            if (this.CheckIsIntialized())
+            {
+                if (FileCryptogram.Offset.DecryptBytes(ref fileInfo.FileData, this._dummySize))
+                    return fileInfo.FileData;
+            }
             return null;
         }
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            int dummySize = Convert.ToInt32(decryptArgs[1].Decrypt());
-            string filePath = fileInfo.FileLoadPath;
-            return FileCryptogram.Offset.OffsetDecryptStream(filePath, dummySize);
-        }
-        #endregion
-
-        #region IDecryptionServices
-        public override DecryptResult LoadAssetBundle(DecryptFileInfo fileInfo)
-        {
-            DecryptResult result = new DecryptResult
+            if (this.CheckIsIntialized())
             {
-                ManagedStream = this.DecryptStream(fileInfo),
-            };
-            result.Result = AssetBundle.LoadFromStream(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return result;
-        }
-
-        public override DecryptResult LoadAssetBundleAsync(DecryptFileInfo fileInfo)
-        {
-            DecryptResult result = new DecryptResult
-            {
-                ManagedStream = this.DecryptStream(fileInfo),
-            };
-            result.CreateRequest = AssetBundle.LoadFromStreamAsync(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return result;
-        }
-
-        public override byte[] ReadFileData(DecryptFileInfo fileInfo)
-        {
-            return this.DecryptData(fileInfo);
-        }
-
-        public override string ReadFileText(DecryptFileInfo fileInfo)
-        {
-            return System.Text.Encoding.UTF8.GetString(this.DecryptData(fileInfo));
-        }
-        #endregion
-
-        #region IWebDecryptionServices
-        public override WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo)
-        {
-            WebDecryptResult result = new WebDecryptResult();
-            result.Result = AssetBundle.LoadFromMemory(this.DecryptData(fileInfo), fileInfo.FileLoadCRC);
-            return result;
+                string filePath = fileInfo.FileLoadPath;
+                return FileCryptogram.Offset.DecryptStream(filePath, this._dummySize);
+            }
+            return null;
         }
         #endregion
     }
@@ -194,73 +191,54 @@ namespace OxGFrame.AssetLoader.Bundle
     #region Xor
     public class XorDecryption : DecryptionServices
     {
+        protected byte _key;
+
         #region OxGFrame Implements
+        public override bool Initialize()
+        {
+            try
+            {
+                SecuredString[] decryptArgs = BundleConfig.decryptArgs;
+                this._key = Convert.ToByte(decryptArgs[1].Decrypt());
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            byte xorKey = Convert.ToByte(decryptArgs[1].Decrypt());
-            string filePath = fileInfo.FileLoadPath;
-            if (File.Exists(filePath) == false)
-                return null;
-            return FileCryptogram.XOR.XorDecryptBytes(filePath, xorKey);
+            if (this.CheckIsIntialized())
+            {
+                string filePath = fileInfo.FileLoadPath;
+                if (File.Exists(filePath) == false)
+                    return null;
+                return FileCryptogram.XOR.DecryptBytes(filePath, this._key);
+            }
+            return null;
         }
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            byte xorKey = Convert.ToByte(decryptArgs[1].Decrypt());
-            if (FileCryptogram.XOR.XorDecryptBytes(fileInfo.FileData, xorKey))
-                return fileInfo.FileData;
+            if (this.CheckIsIntialized())
+            {
+                if (FileCryptogram.XOR.DecryptBytes(fileInfo.FileData, this._key))
+                    return fileInfo.FileData;
+            }
             return null;
         }
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            byte xorKey = Convert.ToByte(decryptArgs[1].Decrypt());
-            string filePath = fileInfo.FileLoadPath;
-            return FileCryptogram.XOR.XorDecryptStream(filePath, xorKey);
-        }
-        #endregion
-
-        #region IDecryptionServices
-        public override DecryptResult LoadAssetBundle(DecryptFileInfo fileInfo)
-        {
-            DecryptResult result = new DecryptResult
+            if (this.CheckIsIntialized())
             {
-                ManagedStream = this.DecryptStream(fileInfo),
-            };
-            result.Result = AssetBundle.LoadFromStream(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return result;
-        }
-
-        public override DecryptResult LoadAssetBundleAsync(DecryptFileInfo fileInfo)
-        {
-            DecryptResult result = new DecryptResult
-            {
-                ManagedStream = this.DecryptStream(fileInfo),
-            };
-            result.CreateRequest = AssetBundle.LoadFromStreamAsync(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return result;
-        }
-
-        public override byte[] ReadFileData(DecryptFileInfo fileInfo)
-        {
-            return this.DecryptData(fileInfo);
-        }
-
-        public override string ReadFileText(DecryptFileInfo fileInfo)
-        {
-            return System.Text.Encoding.UTF8.GetString(this.DecryptData(fileInfo));
-        }
-        #endregion
-
-        #region IWebDecryptionServices
-        public override WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo)
-        {
-            WebDecryptResult result = new WebDecryptResult();
-            result.Result = AssetBundle.LoadFromMemory(this.DecryptData(fileInfo), fileInfo.FileLoadCRC);
-            return result;
+                string filePath = fileInfo.FileLoadPath;
+                return FileCryptogram.XOR.DecryptStream(filePath, this._key);
+            }
+            return null;
         }
         #endregion
     }
@@ -269,79 +247,58 @@ namespace OxGFrame.AssetLoader.Bundle
     #region HT2Xor
     public class HT2XorDecryption : DecryptionServices
     {
+        protected byte _hkey;
+        protected byte _tKey;
+        protected byte _jKey;
+
         #region OxGFrame Implements
+        public override bool Initialize()
+        {
+            try
+            {
+                SecuredString[] decryptArgs = BundleConfig.decryptArgs;
+                this._hkey = Convert.ToByte(decryptArgs[1].Decrypt());
+                this._tKey = Convert.ToByte(decryptArgs[2].Decrypt());
+                this._jKey = Convert.ToByte(decryptArgs[3].Decrypt());
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            byte hXorkey = Convert.ToByte(decryptArgs[1].Decrypt());
-            byte tXorkey = Convert.ToByte(decryptArgs[2].Decrypt());
-            byte jXorKey = Convert.ToByte(decryptArgs[3].Decrypt());
-            string filePath = fileInfo.FileLoadPath;
-            if (File.Exists(filePath) == false)
-                return null;
-            return FileCryptogram.HT2XOR.HT2XorDecryptBytes(filePath, hXorkey, tXorkey, jXorKey);
+            if (this.CheckIsIntialized())
+            {
+                string filePath = fileInfo.FileLoadPath;
+                if (File.Exists(filePath) == false)
+                    return null;
+                return FileCryptogram.HT2XOR.DecryptBytes(filePath, this._hkey, this._tKey, this._jKey);
+            }
+            return null;
         }
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            byte hXorkey = Convert.ToByte(decryptArgs[1].Decrypt());
-            byte tXorkey = Convert.ToByte(decryptArgs[2].Decrypt());
-            byte jXorKey = Convert.ToByte(decryptArgs[3].Decrypt());
-            if (FileCryptogram.HT2XOR.HT2XorDecryptBytes(fileInfo.FileData, hXorkey, tXorkey, jXorKey))
-                return fileInfo.FileData;
+            if (this.CheckIsIntialized())
+            {
+                if (FileCryptogram.HT2XOR.DecryptBytes(fileInfo.FileData, this._hkey, this._tKey, this._jKey))
+                    return fileInfo.FileData;
+            }
             return null;
         }
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            byte hXorkey = Convert.ToByte(decryptArgs[1].Decrypt());
-            byte tXorkey = Convert.ToByte(decryptArgs[2].Decrypt());
-            byte jXorKey = Convert.ToByte(decryptArgs[3].Decrypt());
-            string filePath = fileInfo.FileLoadPath;
-            return FileCryptogram.HT2XOR.HT2XorDecryptStream(filePath, hXorkey, tXorkey, jXorKey);
-        }
-        #endregion
-
-        #region IDecryptionServices
-        public override DecryptResult LoadAssetBundle(DecryptFileInfo fileInfo)
-        {
-            DecryptResult result = new DecryptResult
+            if (this.CheckIsIntialized())
             {
-                ManagedStream = this.DecryptStream(fileInfo),
-            };
-            result.Result = AssetBundle.LoadFromStream(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return result;
-        }
-
-        public override DecryptResult LoadAssetBundleAsync(DecryptFileInfo fileInfo)
-        {
-            DecryptResult result = new DecryptResult
-            {
-                ManagedStream = this.DecryptStream(fileInfo),
-            };
-            result.CreateRequest = AssetBundle.LoadFromStreamAsync(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return result;
-        }
-
-        public override byte[] ReadFileData(DecryptFileInfo fileInfo)
-        {
-            return this.DecryptData(fileInfo);
-        }
-
-        public override string ReadFileText(DecryptFileInfo fileInfo)
-        {
-            return System.Text.Encoding.UTF8.GetString(this.DecryptData(fileInfo));
-        }
-        #endregion
-
-        #region IWebDecryptionServices
-        public override WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo)
-        {
-            WebDecryptResult result = new WebDecryptResult();
-            result.Result = AssetBundle.LoadFromMemory(this.DecryptData(fileInfo), fileInfo.FileLoadCRC);
-            return result;
+                string filePath = fileInfo.FileLoadPath;
+                return FileCryptogram.HT2XOR.DecryptStream(filePath, this._hkey, this._tKey, this._jKey);
+            }
+            return null;
         }
         #endregion
     }
@@ -350,82 +307,60 @@ namespace OxGFrame.AssetLoader.Bundle
     #region HT2XorPlus
     public class HT2XorPlusDecryption : DecryptionServices
     {
+        protected byte _hKey;
+        protected byte _tKey;
+        protected byte _j1Key;
+        protected byte _j2Key;
+
         #region OxGFrame Implements
+        public override bool Initialize()
+        {
+            try
+            {
+                SecuredString[] decryptArgs = BundleConfig.decryptArgs;
+                this._hKey = Convert.ToByte(decryptArgs[1].Decrypt());
+                this._tKey = Convert.ToByte(decryptArgs[2].Decrypt());
+                this._j1Key = Convert.ToByte(decryptArgs[3].Decrypt());
+                this._j2Key = Convert.ToByte(decryptArgs[4].Decrypt());
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            byte hXorkey = Convert.ToByte(decryptArgs[1].Decrypt());
-            byte tXorkey = Convert.ToByte(decryptArgs[2].Decrypt());
-            byte j1XorKey = Convert.ToByte(decryptArgs[3].Decrypt());
-            byte j2XorKey = Convert.ToByte(decryptArgs[4].Decrypt());
-            string filePath = fileInfo.FileLoadPath;
-            if (File.Exists(filePath) == false)
-                return null;
-            return FileCryptogram.HT2XORPlus.HT2XorPlusDecryptBytes(filePath, hXorkey, tXorkey, j1XorKey, j2XorKey);
+            if (this.CheckIsIntialized())
+            {
+                string filePath = fileInfo.FileLoadPath;
+                if (File.Exists(filePath) == false)
+                    return null;
+                return FileCryptogram.HT2XORPlus.DecryptBytes(filePath, this._hKey, this._tKey, this._j1Key, this._j2Key);
+            }
+            return null;
         }
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            byte hXorkey = Convert.ToByte(decryptArgs[1].Decrypt());
-            byte tXorkey = Convert.ToByte(decryptArgs[2].Decrypt());
-            byte j1XorKey = Convert.ToByte(decryptArgs[3].Decrypt());
-            byte j2XorKey = Convert.ToByte(decryptArgs[4].Decrypt());
-            if (FileCryptogram.HT2XORPlus.HT2XorPlusDecryptBytes(fileInfo.FileData, hXorkey, tXorkey, j1XorKey, j2XorKey))
-                return fileInfo.FileData;
+            if (this.CheckIsIntialized())
+            {
+                if (FileCryptogram.HT2XORPlus.DecryptBytes(fileInfo.FileData, this._hKey, this._tKey, this._j1Key, this._j2Key))
+                    return fileInfo.FileData;
+            }
             return null;
         }
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            byte hXorkey = Convert.ToByte(decryptArgs[1].Decrypt());
-            byte tXorkey = Convert.ToByte(decryptArgs[2].Decrypt());
-            byte j1XorKey = Convert.ToByte(decryptArgs[3].Decrypt());
-            byte j2XorKey = Convert.ToByte(decryptArgs[4].Decrypt());
-            string filePath = fileInfo.FileLoadPath;
-            return FileCryptogram.HT2XORPlus.HT2XorPlusDecryptStream(filePath, hXorkey, tXorkey, j1XorKey, j2XorKey);
-        }
-        #endregion
-
-        #region IDecryptionServices
-        public override DecryptResult LoadAssetBundle(DecryptFileInfo fileInfo)
-        {
-            DecryptResult result = new DecryptResult
+            if (this.CheckIsIntialized())
             {
-                ManagedStream = this.DecryptStream(fileInfo),
-            };
-            result.Result = AssetBundle.LoadFromStream(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return result;
-        }
-
-        public override DecryptResult LoadAssetBundleAsync(DecryptFileInfo fileInfo)
-        {
-            DecryptResult result = new DecryptResult
-            {
-                ManagedStream = this.DecryptStream(fileInfo),
-            };
-            result.CreateRequest = AssetBundle.LoadFromStreamAsync(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return result;
-        }
-
-        public override byte[] ReadFileData(DecryptFileInfo fileInfo)
-        {
-            return this.DecryptData(fileInfo);
-        }
-
-        public override string ReadFileText(DecryptFileInfo fileInfo)
-        {
-            return System.Text.Encoding.UTF8.GetString(this.DecryptData(fileInfo));
-        }
-        #endregion
-
-        #region IWebDecryptionServices
-        public override WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo)
-        {
-            WebDecryptResult result = new WebDecryptResult();
-            result.Result = AssetBundle.LoadFromMemory(this.DecryptData(fileInfo), fileInfo.FileLoadCRC);
-            return result;
+                string filePath = fileInfo.FileLoadPath;
+                return FileCryptogram.HT2XORPlus.DecryptStream(filePath, this._hKey, this._tKey, this._j1Key, this._j2Key);
+            }
+            return null;
         }
         #endregion
     }
@@ -434,76 +369,230 @@ namespace OxGFrame.AssetLoader.Bundle
     #region AES
     public class AesDecryption : DecryptionServices
     {
+        protected string _key;
+        protected string _iv;
+
         #region OxGFrame Implements
+        public override bool Initialize()
+        {
+            try
+            {
+                SecuredString[] decryptArgs = BundleConfig.decryptArgs;
+                this._key = decryptArgs[1].Decrypt();
+                this._iv = decryptArgs[2].Decrypt();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            string aesKey = decryptArgs[1].Decrypt();
-            string aesIv = decryptArgs[2].Decrypt();
-            string filePath = fileInfo.FileLoadPath;
-            if (File.Exists(filePath) == false)
-                return null;
-            return FileCryptogram.AES.AesDecryptBytes(filePath, aesKey, aesIv);
+            if (this.CheckIsIntialized())
+            {
+                string filePath = fileInfo.FileLoadPath;
+                if (File.Exists(filePath) == false)
+                    return null;
+                return FileCryptogram.AES.DecryptBytes(filePath, this._key, this._iv);
+            }
+            return null;
         }
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            string aesKey = decryptArgs[1].Decrypt();
-            string aesIv = decryptArgs[2].Decrypt();
-            if (FileCryptogram.AES.AesDecryptBytes(fileInfo.FileData, aesKey, aesIv))
-                return fileInfo.FileData;
+            if (this.CheckIsIntialized())
+            {
+                if (FileCryptogram.AES.DecryptBytes(ref fileInfo.FileData, this._key, this._iv))
+                    return fileInfo.FileData;
+            }
             return null;
         }
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            OxGFrame.AssetLoader.Utility.SecureMemory.SecuredString[] decryptArgs = BundleConfig.decryptArgs;
-            string aesKey = decryptArgs[1].Decrypt();
-            string aesIv = decryptArgs[2].Decrypt();
-            string filePath = fileInfo.FileLoadPath;
-            return FileCryptogram.AES.AesDecryptStream(filePath, aesKey, aesIv);
+            if (this.CheckIsIntialized())
+            {
+                string filePath = fileInfo.FileLoadPath;
+                return FileCryptogram.AES.DecryptStream(filePath, this._key, this._iv);
+            }
+            return null;
         }
         #endregion
+    }
+    #endregion
 
-        #region IDecryptionServices
-        public override DecryptResult LoadAssetBundle(DecryptFileInfo fileInfo)
+    #region ChaCha20
+    public class ChaCha20Decryption : DecryptionServices
+    {
+        protected string _key;
+        protected string _nonce;
+        protected uint _counter;
+
+        #region OxGFrame Implements
+        public override bool Initialize()
         {
-            DecryptResult result = new DecryptResult
+            try
             {
-                ManagedStream = this.DecryptStream(fileInfo),
-            };
-            result.Result = AssetBundle.LoadFromStream(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return result;
-        }
-
-        public override DecryptResult LoadAssetBundleAsync(DecryptFileInfo fileInfo)
-        {
-            DecryptResult result = new DecryptResult
+                SecuredString[] decryptArgs = BundleConfig.decryptArgs;
+                this._key = decryptArgs[1].Decrypt();
+                this._nonce = decryptArgs[2].Decrypt();
+                this._counter = Convert.ToUInt32(decryptArgs[3].Decrypt());
+            }
+            catch
             {
-                ManagedStream = this.DecryptStream(fileInfo),
-            };
-            result.CreateRequest = AssetBundle.LoadFromStreamAsync(result.ManagedStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return result;
+                return false;
+            }
+
+            return true;
         }
 
-        public override byte[] ReadFileData(DecryptFileInfo fileInfo)
+        public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            return this.DecryptData(fileInfo);
+            if (this.CheckIsIntialized())
+            {
+                string filePath = fileInfo.FileLoadPath;
+                if (File.Exists(filePath) == false)
+                    return null;
+                return FileCryptogram.ChaCha20.DecryptBytes(filePath, this._key, this._nonce, this._counter);
+            }
+            return null;
         }
 
-        public override string ReadFileText(DecryptFileInfo fileInfo)
+        public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            return System.Text.Encoding.UTF8.GetString(this.DecryptData(fileInfo));
+            if (this.CheckIsIntialized())
+            {
+                if (FileCryptogram.ChaCha20.DecryptBytes(ref fileInfo.FileData, this._key, this._nonce, this._counter))
+                    return fileInfo.FileData;
+            }
+            return null;
+        }
+
+        public override Stream DecryptStream(DecryptFileInfo fileInfo)
+        {
+            if (this.CheckIsIntialized())
+            {
+                string filePath = fileInfo.FileLoadPath;
+                return FileCryptogram.ChaCha20.DecryptStream(filePath, this._key, this._nonce, this._counter);
+            }
+            return null;
         }
         #endregion
+    }
+    #endregion
 
-        #region IWebDecryptionServices
-        public override WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo)
+    #region XXTEA
+    public class XXTEADecryption : DecryptionServices
+    {
+        protected string _key;
+
+        #region OxGFrame Implements
+        public override bool Initialize()
         {
-            WebDecryptResult result = new WebDecryptResult();
-            result.Result = AssetBundle.LoadFromMemory(this.DecryptData(fileInfo), fileInfo.FileLoadCRC);
-            return result;
+            try
+            {
+                SecuredString[] decryptArgs = BundleConfig.decryptArgs;
+                this._key = decryptArgs[1].Decrypt();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public override byte[] DecryptData(DecryptFileInfo fileInfo)
+        {
+            if (this.CheckIsIntialized())
+            {
+                string filePath = fileInfo.FileLoadPath;
+                if (File.Exists(filePath) == false)
+                    return null;
+                return FileCryptogram.XXTEA.DecryptBytes(filePath, this._key);
+            }
+            return null;
+        }
+
+        public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
+        {
+            if (this.CheckIsIntialized())
+            {
+                if (FileCryptogram.XXTEA.DecryptBytes(ref fileInfo.FileData, this._key))
+                    return fileInfo.FileData;
+            }
+            return null;
+        }
+
+        public override Stream DecryptStream(DecryptFileInfo fileInfo)
+        {
+            if (this.CheckIsIntialized())
+            {
+                string filePath = fileInfo.FileLoadPath;
+                return FileCryptogram.XXTEA.DecryptStream(filePath, this._key);
+            }
+            return null;
+        }
+        #endregion
+    }
+    #endregion
+
+    #region OffsetXOR
+    public class OffsetXorDecryption : DecryptionServices
+    {
+        protected byte _key;
+        protected int _dummySize;
+
+        #region OxGFrame Implements
+        public override bool Initialize()
+        {
+            try
+            {
+                SecuredString[] decryptArgs = BundleConfig.decryptArgs;
+                this._key = Convert.ToByte(decryptArgs[1].Decrypt());
+                this._dummySize = this._dummySize = Convert.ToInt32(decryptArgs[2].Decrypt());
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public override byte[] DecryptData(DecryptFileInfo fileInfo)
+        {
+            if (this.CheckIsIntialized())
+            {
+                string filePath = fileInfo.FileLoadPath;
+                if (File.Exists(filePath) == false)
+                    return null;
+                return FileCryptogram.OffsetXOR.DecryptBytes(filePath, this._key, this._dummySize);
+            }
+            return null;
+        }
+
+        public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
+        {
+            if (this.CheckIsIntialized())
+            {
+                if (FileCryptogram.OffsetXOR.DecryptBytes(fileInfo.FileData, this._key, this._dummySize))
+                    return fileInfo.FileData;
+            }
+            return null;
+        }
+
+        public override Stream DecryptStream(DecryptFileInfo fileInfo)
+        {
+            if (this.CheckIsIntialized())
+            {
+                string filePath = fileInfo.FileLoadPath;
+                return FileCryptogram.OffsetXOR.DecryptStream(filePath, this._key, this._dummySize);
+            }
+            return null;
         }
         #endregion
     }

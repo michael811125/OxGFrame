@@ -1,0 +1,1 @@
+Reference: https://github.com/mcraiha/CSharp-ChaCha20-NetStandard/tree/netstandard20andnet6

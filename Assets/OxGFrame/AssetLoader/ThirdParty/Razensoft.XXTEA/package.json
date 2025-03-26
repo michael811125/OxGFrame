@@ -1,0 +1,8 @@
+{
+  "name": "com.razensoft.xxtea",
+  "displayName": "Razensoft.XXTEA",
+  "version": "1.0.0",
+  "unity": "2021.3",
+  "description": "A simple and fast zero-dependency cryptography cypher for Unity",
+  "license": "MIT"
+}

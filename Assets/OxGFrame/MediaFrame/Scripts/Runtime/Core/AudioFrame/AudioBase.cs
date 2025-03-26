@@ -20,6 +20,8 @@ namespace OxGFrame.MediaFrame.AudioFrame
         // SourceType => StreamingAssets, Url
         [Tooltip("Can select the \"CacheType\" from the AudioManager's inspector."), ConditionalField(nameof(sourceType), true, SourceType.Audio)]
         public bool requestCached = true;
+        [ConditionalField(new string[] { nameof(sourceType), nameof(requestCached) }, new bool[] { true }, new object[] { SourceType.Audio })]
+        public int maxRequestTimeSeconds = AudioManager.MAX_REQUEST_TIME_SECONDS;
         // SourceType => StreamingAssets
         [Tooltip("Default path is [StreamingAssets]. Just set that inside path and file name, Don't forget file name must with extension, ex: Audio/example.mp3"), ConditionalField(nameof(sourceType), false, SourceType.StreamingAssets)]
         public string fullPathName = "";
@@ -61,10 +63,10 @@ namespace OxGFrame.MediaFrame.AudioFrame
             switch (this.sourceType)
             {
                 case SourceType.StreamingAssets:
-                    this.audioClip = await this.GetAudioFromStreamingAssets(this.requestCached);
+                    this.audioClip = await this.GetAudioFromStreamingAssets(this.requestCached, this.maxRequestTimeSeconds <= 0 ? AudioManager.MAX_REQUEST_TIME_SECONDS : this.maxRequestTimeSeconds);
                     break;
                 case SourceType.Url:
-                    this.audioClip = await this.GetAudioFromURL(this.requestCached);
+                    this.audioClip = await this.GetAudioFromURL(this.requestCached, this.maxRequestTimeSeconds <= 0 ? AudioManager.MAX_REQUEST_TIME_SECONDS : this.maxRequestTimeSeconds);
                     break;
             }
 
@@ -101,19 +103,19 @@ namespace OxGFrame.MediaFrame.AudioFrame
             return this.isPrepared;
         }
 
-        public async UniTask<AudioClip> GetAudioFromStreamingAssets(bool cached)
+        public async UniTask<AudioClip> GetAudioFromStreamingAssets(bool cached, int requestTimeSeconds = AudioManager.MAX_REQUEST_TIME_SECONDS)
         {
             string pathName = System.IO.Path.Combine(GetRequestStreamingAssetsPath(), this.fullPathName);
-            var audioClip = await AudioManager.GetInstance().RequestAudio(pathName, this.audioFileType, null, null, null, cached);
+            var audioClip = await AudioManager.GetInstance().reuqester.SelfRequestAudio(pathName, this.audioFileType, null, null, null, cached, requestTimeSeconds);
             return audioClip;
         }
 
-        public async UniTask<AudioClip> GetAudioFromURL(bool cached)
+        public async UniTask<AudioClip> GetAudioFromURL(bool cached, int requestTimeSeconds = AudioManager.MAX_REQUEST_TIME_SECONDS)
         {
             string urlCfg = await this.urlSet.urlCfg.GetFileText();
             string urlSet = this.urlSet.getUrlPathFromCfg ? GetValueFromUrlCfg(urlCfg, AUDIO_URLSET) : string.Empty;
             string url = (!string.IsNullOrEmpty(urlSet)) ? $"{urlSet.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
-            var audioClip = await AudioManager.GetInstance().RequestAudio(url, this.audioFileType, null, null, null, cached);
+            var audioClip = await AudioManager.GetInstance().reuqester.SelfRequestAudio(url, this.audioFileType, null, null, null, cached, requestTimeSeconds);
             return audioClip;
         }
 

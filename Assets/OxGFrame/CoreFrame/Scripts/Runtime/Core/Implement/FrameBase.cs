@@ -281,7 +281,7 @@ namespace OxGFrame.CoreFrame
         /// <summary>
         /// 調用關閉自己
         /// </summary>
-        protected abstract void CloseSelf();
+        protected abstract void CloseSelf(bool disabledPreClose, bool forceDestroy);
 
         /// <summary>
         /// 調用隱藏自己
