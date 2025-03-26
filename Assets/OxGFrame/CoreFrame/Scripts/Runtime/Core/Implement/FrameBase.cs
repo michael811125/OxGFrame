@@ -278,6 +278,8 @@ namespace OxGFrame.CoreFrame
             this.collector = null;
         }
 
+        protected abstract void CloseSelf();
+
         /// <summary>
         /// 調用關閉自己
         /// </summary>
