@@ -70,56 +70,56 @@ namespace OxGFrame.CenterFrame.APICenter
         {
             using (UnityWebRequest request = new UnityWebRequest(url, method))
             {
-                // Header args
-                if (headers != null && headers.Length > 0)
-                {
-                    for (int row = 0; row < headers.GetLength(0); row++)
-                    {
-                        if (headers.GetLength(1) != 2)
-                            continue;
-                        request.SetRequestHeader(headers[row, 0], headers[row, 1]);
-                    }
-                }
-
-                // Body args
-                if (body != null)
-                {
-                    string json = null;
-                    if (body is object[,] bodyArray)
-                    {
-                        if (bodyArray.Length > 0)
-                        {
-                            Dictionary<string, object> jsonArgs = new Dictionary<string, object>();
-                            for (int row = 0; row < bodyArray.GetLength(0); row++)
-                            {
-                                if (bodyArray.GetLength(1) != 2)
-                                    continue;
-                                jsonArgs.Add((string)bodyArray[row, 0], bodyArray[row, 1]);
-                            }
-                            json = JsonConvert.SerializeObject(jsonArgs);
-                        }
-                    }
-                    else
-                    {
-                        json = JsonConvert.SerializeObject(body);
-                    }
-
-                    if (!string.IsNullOrEmpty(json))
-                    {
-                        byte[] jsonBinary = System.Text.Encoding.UTF8.GetBytes(json);
-                        request.uploadHandler = new UploadHandlerRaw(jsonBinary);
-                    }
-                }
-
-                // Response download buffer
-                request.downloadHandler = new DownloadHandlerBuffer();
-
-                timeoutSeconds ??= _MAX_REQUEST_TIME_SECONDS;
-                var cts = new CancellationTokenSource();
-                cts.CancelAfterSlim(TimeSpan.FromSeconds((int)timeoutSeconds));
-
                 try
                 {
+                    // Header args
+                    if (headers != null && headers.Length > 0)
+                    {
+                        for (int row = 0; row < headers.GetLength(0); row++)
+                        {
+                            if (headers.GetLength(1) != 2)
+                                continue;
+                            request.SetRequestHeader(headers[row, 0], headers[row, 1]);
+                        }
+                    }
+
+                    // Body args
+                    if (body != null)
+                    {
+                        string json = null;
+                        if (body is object[,] bodyArray)
+                        {
+                            if (bodyArray.Length > 0)
+                            {
+                                Dictionary<string, object> jsonArgs = new Dictionary<string, object>();
+                                for (int row = 0; row < bodyArray.GetLength(0); row++)
+                                {
+                                    if (bodyArray.GetLength(1) != 2)
+                                        continue;
+                                    jsonArgs.Add((string)bodyArray[row, 0], bodyArray[row, 1]);
+                                }
+                                json = JsonConvert.SerializeObject(jsonArgs);
+                            }
+                        }
+                        else
+                        {
+                            json = JsonConvert.SerializeObject(body);
+                        }
+
+                        if (!string.IsNullOrEmpty(json))
+                        {
+                            byte[] jsonBinary = System.Text.Encoding.UTF8.GetBytes(json);
+                            request.uploadHandler = new UploadHandlerRaw(jsonBinary);
+                        }
+                    }
+
+                    // Response download buffer
+                    request.downloadHandler = new DownloadHandlerBuffer();
+
+                    timeoutSeconds ??= _MAX_REQUEST_TIME_SECONDS;
+                    var cts = new CancellationTokenSource();
+                    cts.CancelAfterSlim(TimeSpan.FromSeconds((int)timeoutSeconds));
+
                     // Start send request
                     await request.SendWebRequest().WithCancellation(cts.Token);
 
