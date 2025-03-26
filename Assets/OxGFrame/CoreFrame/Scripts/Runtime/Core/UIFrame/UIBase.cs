@@ -186,7 +186,15 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         /// 子類調用關閉自己
         /// </summary>
-        protected sealed override void CloseSelf(bool disabledPreClose = false, bool forceDestroy = false)
+        protected sealed override void CloseSelf()
+        {
+            this.CloseSelf(false, false);
+        }
+
+        /// <summary>
+        /// 子類調用關閉自己
+        /// </summary>
+        protected sealed override void CloseSelf(bool disabledPreClose, bool forceDestroy)
         {
             UIManager.GetInstance().Close(this.assetName, disabledPreClose, forceDestroy);
         }

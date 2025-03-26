@@ -61,7 +61,12 @@ namespace OxGFrame.CoreFrame.SRFrame
             this.gameObject.SetActive(false);
         }
 
-        protected sealed override void CloseSelf(bool disabledPreClose = false, bool forceDestroy = false)
+        protected sealed override void CloseSelf()
+        {
+            this.CloseSelf(false, false);
+        }
+
+        protected sealed override void CloseSelf(bool disabledPreClose, bool forceDestroy)
         {
             SRManager.GetInstance().Close(this.assetName, disabledPreClose, forceDestroy);
         }

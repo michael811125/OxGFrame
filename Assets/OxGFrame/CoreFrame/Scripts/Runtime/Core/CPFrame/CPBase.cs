@@ -163,7 +163,10 @@ namespace OxGFrame.CoreFrame.CPFrame
         internal sealed override void Hide(bool disabledPreClose = false) { }
 
         [System.Obsolete("This is not supported in this class.")]
-        protected sealed override void CloseSelf(bool disabledPreClose = false, bool forceDestroy = false) { }
+        protected sealed override void CloseSelf() { }
+
+        [System.Obsolete("This is not supported in this class.")]
+        protected sealed override void CloseSelf(bool disabledPreClose, bool forceDestroy) { }
 
         [System.Obsolete("This is not supported in this class.")]
         protected sealed override void HideSelf() { }
