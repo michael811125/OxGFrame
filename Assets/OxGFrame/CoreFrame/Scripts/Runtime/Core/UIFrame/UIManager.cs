@@ -10,6 +10,9 @@ namespace OxGFrame.CoreFrame.UIFrame
 {
     internal class UIManager : FrameManager<UIBase>
     {
+        /// <summary>
+        /// 反切緩存結構體
+        /// </summary>
         private struct ReverseCache
         {
             public UIBase uiBase;
@@ -17,10 +20,25 @@ namespace OxGFrame.CoreFrame.UIFrame
             public int extraStack;
         }
 
-        private Dictionary<string, UICanvas> _dictUICanvas = new Dictionary<string, UICanvas>();                    // Canvas 物件節點
-        private Dictionary<string, int> _dictStackCounter = new Dictionary<string, int>();                          // 堆疊式計數緩存 (Key = id + NodeType)
-        private Dictionary<string, List<ReverseCache>> _dictReverse = new Dictionary<string, List<ReverseCache>>(); // 反切緩存
-        private Dictionary<string, List<string>> _dictStackByStack = new Dictionary<string, List<string>>();        // 逐步堆關閉
+        /// <summary>
+        /// Canvas 物件節點
+        /// </summary>
+        private Dictionary<string, UICanvas> _dictUICanvas = new Dictionary<string, UICanvas>();
+
+        /// <summary>
+        /// 堆疊式計數緩存 (Key = id + NodeType)
+        /// </summary>
+        private Dictionary<string, int> _dictStackCounter = new Dictionary<string, int>();
+
+        /// <summary>
+        /// 反切緩存
+        /// </summary>
+        private Dictionary<string, List<ReverseCache>> _dictReverse = new Dictionary<string, List<ReverseCache>>();
+
+        /// <summary>
+        /// 逐步堆關閉
+        /// </summary>
+        private Dictionary<string, List<string>> _dictStackByStack = new Dictionary<string, List<string>>();
 
         private static readonly object _locker = new object();
         private static UIManager _instance = null;
@@ -210,20 +228,28 @@ namespace OxGFrame.CoreFrame.UIFrame
         #region 實作 Loading
         protected override UIBase Instantiate(UIBase uiBase, string assetName, AddIntoCache addIntoCache, Transform parent)
         {
+            // 暫存來源組件與標記 (用於還原來源組件設置)
+            UIBase sourceComponent = uiBase;
+            bool sourceMonoDriveFlag = false;
+            if (sourceComponent.monoDrive)
+            {
+                // 記錄標記
+                sourceMonoDriveFlag = sourceComponent.monoDrive;
+                // 動態加載時, 必須取消 monoDrive
+                sourceComponent.monoDrive = false;
+            }
+
             // 先從來源物件中取得 UIBase, 需先取得 UICanvas 環境, 後續 Instantiate 時才能取得正常比例
             UICanvas uiCanvas = null;
-            if (uiBase != null)
+            // 先檢查與設置 UICanvas 環境
+            if (this.SetupAndCheckUICanvas(sourceComponent.uiSetting.canvasName))
             {
-                // 先檢查與設置 UICanvas 環境
-                if (this.SetupAndCheckUICanvas(uiBase.uiSetting.canvasName))
-                {
-                    uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasName);
-                }
+                uiCanvas = this.GetUICanvas(sourceComponent.uiSetting.canvasName);
             }
 
             if (uiCanvas == null)
             {
-                Logging.Print<Logger>($"<color=#FFD600>【Loading Failed】Not found UICanvas:</color> <color=#FF6ECB>{uiBase.uiSetting.canvasName}</color>");
+                Logging.Print<Logger>($"<color=#FFD600>【Loading Failed】Not found UICanvas:</color> <color=#FF6ECB>{sourceComponent.uiSetting.canvasName}</color>");
                 return null;
             }
 
@@ -234,24 +260,26 @@ namespace OxGFrame.CoreFrame.UIFrame
             else
                 rootParent = uiCanvas.uiRoot.transform;
             // instantiate 【UI Prefab】 (需先指定 Instantiate Parent 為 UIRoot 不然 Canvas 初始會跑掉)
-            GameObject instPref = Instantiate(uiBase.gameObject, (parent != null) ? parent : rootParent);
+            GameObject instGo = Instantiate(sourceComponent.gameObject, (parent != null) ? parent : rootParent);
 
             // 激活檢查, 如果主體 Active 為 false 必須打開
-            if (!instPref.activeSelf)
-                instPref.SetActive(true);
+            if (!instGo.activeSelf)
+                instGo.SetActive(true);
 
             // Replace Name
-            instPref.name = instPref.name.Replace("(Clone)", "");
+            instGo.name = instGo.name.Replace("(Clone)", "");
             // 取得 UIBase 組件
-            uiBase = instPref.GetComponent<UIBase>();
+            uiBase = instGo.GetComponent<UIBase>();
             if (uiBase == null)
                 return null;
 
+            // 加入緩存
             addIntoCache?.Invoke(uiBase);
 
             // 調整 Canvas 相關組件參數
             this._AdjustCanvas(uiCanvas, uiBase);
 
+            // 設置 assetName 作為 key
             uiBase.SetNames(assetName);
             // Clone 取得 UIBase 組件後, 也需要初始 UI 相關配置, 不然後面無法正常運作
             uiBase.OnCreate();
@@ -270,6 +298,10 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             // 最後設置完畢後, 關閉 GameObject 的 Active 為 false
             uiBase.gameObject.SetActive(false);
+
+            // 還原來源設置
+            if (sourceMonoDriveFlag)
+                sourceComponent.monoDrive = true;
 
             return uiBase;
         }

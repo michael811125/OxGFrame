@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
+using OxGFrame.AssetLoader;
 using OxGKit.LoggingSystem;
 using System;
 using System.Threading;
@@ -18,7 +19,6 @@ namespace OxGFrame.MediaFrame.VideoFrame
         [Range(0, 10)]
         public float playbackSpeed = 1f;
         public SourceType sourceType = SourceType.Video;
-        public int maxPrepareTimeSeconds = VideoManager.MAX_PREPARE_TIME_SECONDS;
         // SourceType => VideoClip
         [Tooltip("Drag video clip. This is not supports [WebGL]"), ConditionalField(nameof(sourceType), false, SourceType.Video)]
         public VideoClip videoClip = null;
@@ -39,13 +39,21 @@ namespace OxGFrame.MediaFrame.VideoFrame
         [SerializeField]
         protected VideoAspectRatio _aspectRatio = VideoAspectRatio.FitHorizontally;
 
-        internal override async UniTask<bool> Init()
+#if OXGFRAME_VIDEOFRAME_MONODRIVE_FIXEDUPDATE_ON
+        private void FixedUpdate()
+        {
+            if (this.monoDrive)
+                this.HandleFixedUpdate(Time.fixedDeltaTime);
+        }
+#endif
+
+        internal sealed override async UniTask<bool> Init()
         {
             this._videoPlayer = this.GetComponent<VideoPlayer>();
             bool isInitialized = await this._InitVideo();
 
             if (isInitialized)
-                this._isInit = true; // Mark all init is finished.
+                this._isInit = true;
 
             return this._isInit;
         }
@@ -111,7 +119,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this._videoPlayer.Prepare();
             Logging.Print<Logger>($"{this.mediaName} video is preparing...");
             var cts = new CancellationTokenSource();
-            cts.CancelAfterSlim(TimeSpan.FromSeconds(this.maxPrepareTimeSeconds <= 0 ? VideoManager.MAX_PREPARE_TIME_SECONDS : this.maxPrepareTimeSeconds));
+            cts.CancelAfterSlim(TimeSpan.FromSeconds(this.maxPrepareTimeSeconds <= 0 ? MAX_PREPARE_TIME_SECONDS : this.maxPrepareTimeSeconds));
             try
             {
                 do
@@ -204,7 +212,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this._videoPlayer.targetCameraAlpha = this._targetCamera.alpha;
         }
 
-        protected override void OnFixedUpdate(float dt = 0f)
+        protected sealed override void OnFixedUpdate(float dt = 0f)
         {
             if (this._videoPlayer == null)
                 return;
@@ -215,31 +223,13 @@ namespace OxGFrame.MediaFrame.VideoFrame
             if (this.IsPaused())
                 return;
 
-            if (this.CurrentRemainingLength() > 0f)
-            {
-                this._currentRemainingLength -= dt;
-                if (this.CurrentRemainingLength() <= 0f)
-                {
-                    if (this._loops >= 0)
-                    {
-                        this._videoPlayer.Stop();
+            if (!this.IsPlaying())
+                return;
 
-                        this._loops--;
-                        if (this._loops <= 0)
-                        {
-                            this._currentRemainingLength = 0;
-                            if (this.autoEndToStop)
-                                this.StopSelf();
-                        }
-                        else
-                            this._videoPlayer.Play();
-                    }
-                    this._currentRemainingLength = this.Length();
-                }
-            }
+            this.ProcessLooping(this._videoPlayer, dt);
         }
 
-        internal override void Play(int loops, float volume)
+        public sealed override void Play(int loops, float volume)
         {
             if (this._videoPlayer == null)
                 return;
@@ -259,13 +249,17 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this._videoPlayer.Play();
 
-            this._isPaused = false; // 取消暫停標記
+            this._isPlaying = true;
+            this._isPaused = false;
         }
 
-        internal override void Stop()
+        public sealed override void Stop()
         {
             if (this._videoPlayer == null)
                 return;
+
+            this._isPlaying = false;
+            this._isPaused = false;
 
             this._videoPlayer.Stop();
             this.ResetLength();
@@ -279,57 +273,67 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this._endEvent = null;
 
             this.gameObject.SetActive(false);
+
+            // Only for mono drive
+            if (this.monoDrive)
+            {
+                if (this.onStopAndDestroy)
+                    Destroy(this.gameObject);
+            }
         }
 
-        internal override void Pause()
+        public sealed override void Pause()
         {
             if (this._videoPlayer == null)
                 return;
 
-            this._isPaused = true; // 標記暫停
+            this._isPlaying = false;
+            this._isPaused = true;
+
             this._videoPlayer.Pause();
         }
 
-        public override bool IsPlaying()
+        public sealed override bool IsPlaying()
         {
-            if (this._videoPlayer == null)
-                return false;
-            return this._videoPlayer.isPlaying;
+            return this._isPlaying;
         }
 
-        public override bool IsPaused()
+        public sealed override bool IsPaused()
         {
             return this._isPaused;
         }
 
-        public override bool IsLooping()
+        public sealed override bool IsLooping()
         {
             if (this._videoPlayer == null)
                 return false;
             return this._videoPlayer.isLooping;
         }
 
-        protected override void StopSelf()
+        protected sealed override void StopSelf()
         {
-            VideoManager.GetInstance().Stop(this);
+            if (this.monoDrive)
+                this.Stop();
+            else
+                VideoManager.GetInstance().Stop(this);
         }
 
-        public override float Length()
+        public sealed override float Length()
         {
             return this._mediaLength;
         }
 
-        public override float CurrentLength()
+        public sealed override float CurrentLength()
         {
             return this._mediaLength - this._currentRemainingLength;
         }
 
-        public override float CurrentRemainingLength()
+        public sealed override float CurrentRemainingLength()
         {
             return this._currentRemainingLength;
         }
 
-        public override void OnRelease()
+        public sealed override void OnRelease()
         {
             // RenderTexture 需要額外釋放, 避免內存膨脹
             if (this._targetRt != null)
@@ -403,20 +407,30 @@ namespace OxGFrame.MediaFrame.VideoFrame
             return this._videoPlayer;
         }
 
-        private void OnDestroy()
+        internal protected sealed override void DetectOnDestroy()
         {
-            if (Time.frameCount == 0 ||
-                !Application.isPlaying)
-                return;
-
-            try
+            if (this.monoDrive)
             {
-                if (!this.isDestroying)
-                    VideoManager.GetInstance().Stop(this, true, true);
+                this.OnRelease();
+                if (this.onDestroyAndUnload)
+                    AssetLoaders.UnloadAsset(this.assetName).Forget();
+                this.assetName = null;
+                this.mediaName = null;
             }
-            catch
+            else
             {
-                /* Nothing to do */
+                if (Time.frameCount == 0 || !Application.isPlaying)
+                    return;
+
+                try
+                {
+                    if (!this.isDestroying)
+                        VideoManager.GetInstance().Stop(this, true, true);
+                }
+                catch
+                {
+                    /* Nothing to do */
+                }
             }
         }
     }

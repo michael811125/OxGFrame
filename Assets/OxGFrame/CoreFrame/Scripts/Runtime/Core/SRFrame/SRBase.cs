@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using OxGFrame.AssetLoader;
 using UnityEngine;
 
 namespace OxGFrame.CoreFrame.SRFrame
@@ -7,6 +8,74 @@ namespace OxGFrame.CoreFrame.SRFrame
     {
         [Tooltip("SceneResource Settings")]
         public SRSetting srSetting = new SRSetting();
+
+        private void Awake()
+        {
+            if (this.monoDrive)
+            {
+                this.SetNames($"{nameof(this.monoDrive)}_{this.name}");
+                this.OnCreate();
+                this.InitFirst();
+            }
+        }
+
+        private async UniTaskVoid OnEnable()
+        {
+            if (this.monoDrive)
+            {
+                if (!this._isInitFirst)
+                    return;
+                if (this.isMonoDriveDetected)
+                    return;
+                await this.OnPreShow();
+                this.OnShow(null);
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (this.monoDrive)
+            {
+                this.OnPreClose();
+                this.OnClose();
+                if (this.onCloseAndDestroy)
+                    Destroy(this.gameObject);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (this.monoDrive)
+            {
+                this.OnRelease();
+                this.Dispose();
+                AssetLoaders.UnloadAsset(this.assetName).Forget();
+            }
+        }
+
+#if OXGFRAME_SRFRAME_MONODRIVE_UPDATE_ON
+        private void Update()
+        {
+            if (this.monoDrive)
+                this.HandleUpdate(Time.deltaTime);
+        }
+#endif
+
+#if OXGFRAME_SRFRAME_MONODRIVE_FIXEDUPDATE_ON
+        private void FixedUpdate()
+        {
+            if (this.monoDrive)
+                this.HandleFixedUpdate(Time.fixedDeltaTime);
+        }
+#endif
+
+#if OXGFRAME_SRFRAME_MONODRIVE_LATEUPDATE_ON
+        private void LateUpdate()
+        {
+            if (this.monoDrive)
+                this.HandleLateUpdate(Time.deltaTime);
+        }
+#endif
 
         public override void OnCreate() { }
 

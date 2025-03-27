@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
+using OxGFrame.AssetLoader;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,14 +14,29 @@ namespace OxGFrame.CoreFrame.UIFrame
         [HideInInspector] public Canvas canvas;
         [HideInInspector] public GraphicRaycaster graphicRaycaster;
 
+        /// <summary>
+        /// 是否啟用反切
+        /// </summary>
         [Tooltip("Use reverse changes"), ConditionalField(nameof(onCloseAndDestroy), true)]
         public bool reverseChanges = false;
+
+        /// <summary>
+        /// 定義 UI 類型, 用於取決於要新增至 UIRoot 中哪個對應的節點
+        /// </summary>
         [Tooltip("UI Settings")]
-        public UISetting uiSetting = new UISetting();       // 定義 UI 類型, 用於取決於要新增至 UIRoot 中哪個對應的節點
+        public UISetting uiSetting = new UISetting();
+
+        /// <summary>
+        /// 是否自動生成 Mask
+        /// </summary>
         [Tooltip("If checked, will auto create a mask")]
-        public bool autoMask = false;                       // 是否自動生成 Mask
+        public bool autoMask = false;
+
+        /// <summary>
+        ///  Mask 設定
+        /// </summary>
         [ConditionalField(nameof(autoMask)), Tooltip("Mask Settings")]
-        public MaskSetting maskSetting = new MaskSetting(); // Mask 設定
+        public MaskSetting maskSetting = new MaskSetting();
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -45,7 +61,72 @@ namespace OxGFrame.CoreFrame.UIFrame
         {
             this.canvas = this.GetComponent<Canvas>();
             this.graphicRaycaster = this.GetComponent<GraphicRaycaster>();
+
+            if (this.monoDrive)
+            {
+                this.SetNames($"{nameof(this.monoDrive)}_{this.name}");
+                this.OnCreate();
+                this.InitFirst();
+            }
         }
+
+        private async UniTaskVoid OnEnable()
+        {
+            if (this.monoDrive)
+            {
+                if (!this._isInitFirst)
+                    return;
+                if (this.isMonoDriveDetected)
+                    return;
+                await this.OnPreShow();
+                this.OnShow(null);
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (this.monoDrive)
+            {
+                this.OnPreClose();
+                this.OnClose();
+                if (this.onCloseAndDestroy)
+                    Destroy(this.gameObject);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (this.monoDrive)
+            {
+                this.OnRelease();
+                this.Dispose();
+                AssetLoaders.UnloadAsset(this.assetName).Forget();
+            }
+        }
+
+#if OXGFRAME_UIFRAME_MONODRIVE_UPDATE_ON
+        private void Update()
+        {
+            if (this.monoDrive)
+                this.HandleUpdate(Time.deltaTime);
+        }
+#endif
+
+#if OXGFRAME_UIFRAME_MONODRIVE_FIXEDUPDATE_ON
+        private void FixedUpdate()
+        {
+            if (this.monoDrive)
+                this.HandleFixedUpdate(Time.fixedDeltaTime);
+        }
+#endif
+
+#if OXGFRAME_UIFRAME_MONODRIVE_LATEUPDATE_ON
+        private void LateUpdate()
+        {
+            if (this.monoDrive)
+                this.HandleLateUpdate(Time.deltaTime);
+        }
+#endif
 
         /// <summary>
         /// 僅執行一次, 只交由 UIManager 加載資源時呼叫初始參數

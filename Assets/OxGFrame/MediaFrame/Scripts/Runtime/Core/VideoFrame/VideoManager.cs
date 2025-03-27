@@ -6,11 +6,6 @@ namespace OxGFrame.MediaFrame.VideoFrame
 {
     internal class VideoManager : MediaManager<VideoBase>
     {
-        /// <summary>
-        /// 最大準備 Timeout Seconds
-        /// </summary>
-        internal const int MAX_PREPARE_TIME_SECONDS = 60;
-
         private static readonly object _locker = new object();
         private static VideoManager _instance = null;
         public static VideoManager GetInstance()

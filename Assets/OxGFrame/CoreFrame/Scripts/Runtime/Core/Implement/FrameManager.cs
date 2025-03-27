@@ -9,6 +9,9 @@ using UnityEngine;
 
 namespace OxGFrame.CoreFrame
 {
+    /// <summary>
+    /// 信息刷新結構體
+    /// </summary>
     public struct RefreshInfo
     {
         public string assetName;
@@ -31,8 +34,16 @@ namespace OxGFrame.CoreFrame
             LateUpdate
         }
 
+        /// <summary>
+        /// 緩存回調
+        /// </summary>
+        /// <param name="fBase"></param>
         protected delegate void AddIntoCache(T fBase);
 
+        /// <summary>
+        /// 核心緩存機制
+        /// </summary>
+        /// <typeparam name="U"></typeparam>
         protected class FrameStack<U> where U : T
         {
             public bool isPreloadMode { get; private set; }
@@ -120,17 +131,25 @@ namespace OxGFrame.CoreFrame
         public bool enabledFixedUpdate = false;
         public bool enabledLateUpdate = false;
 
-        public float currentCount { get; protected set; }                                                     // [計算進度條用] 加載數量
-        public float totalCount { get; protected set; }                                                       // [計算進度條用] 總加載數量
+        /// <summary>
+        /// [計算進度條用] 加載數量
+        /// </summary>
+        public float currentCount { get; protected set; }
 
-        protected Dictionary<string, FrameStack<T>> _dictAllCache = new Dictionary<string, FrameStack<T>>();  // 【常駐】所有緩存 (只會在 Destroy 時, Remove 對應的緩存)
-        protected HashSet<string> _loadingFlags = new HashSet<string>();                                      // 用來標記正在加載中的資源 (暫存緩存)
+        /// <summary>
+        /// [計算進度條用] 總加載數量
+        /// </summary>
+        public float totalCount { get; protected set; }
 
-        ~FrameManager()
-        {
-            this._dictAllCache = null;
-            this._loadingFlags = null;
-        }
+        /// <summary>
+        /// 【常駐】所有緩存 (只會在 Destroy 時, Remove 對應的緩存)
+        /// </summary>
+        protected Dictionary<string, FrameStack<T>> _dictAllCache = new Dictionary<string, FrameStack<T>>();
+
+        /// <summary>
+        /// 用來標記正在加載中的資源 (暫存緩存)
+        /// </summary>
+        protected HashSet<string> _loadingFlags = new HashSet<string>();
 
         private static float _dt;
         private static float _fdt;
