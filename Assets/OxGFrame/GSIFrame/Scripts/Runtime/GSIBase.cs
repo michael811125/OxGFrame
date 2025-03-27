@@ -4,10 +4,20 @@ namespace OxGFrame.GSIFrame
 {
     public abstract class GSIBase
     {
+        /// <summary>
+        /// 辨識碼
+        /// </summary>
         public int id { get; private set; }
-        public bool runUpdate { get; private set; } // 是否運行 Update 的開關
 
-        private bool _isInitialized = false;        // init flag
+        /// <summary>
+        /// 是否運行 Update 的開關
+        /// </summary>
+        public bool runUpdate { get; private set; }
+
+        /// <summary>
+        /// 初始標記
+        /// </summary>
+        private bool _isInitialized = false;
 
         /// <summary>
         /// 設置 Id

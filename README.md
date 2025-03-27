@@ -25,6 +25,11 @@ https://github.com/michael811125/OxGFrame/assets/30960759/5e41e84a-029d-4392-814
 
 ---
 
+## Wiki
+- [Coding Style wiki (代碼風格)](https://github.com/michael811125/OxGFrame/wiki/Coding-Style)
+- [Macro Defitions wiki (宏定義)](https://github.com/michael811125/OxGFrame/wiki/Macro-Definitions)
+- [Roadmap wiki](https://github.com/michael811125/OxGFrame/wiki/Roadmap)
+
 ## 基本介紹
 
 OxGFrame 是基於 Unity 用於加快遊戲開發的框架，並且使用 UniTask 進行異步處理，從資源加載 (AssetLoader)、遊戲介面 (UIFrame)、場景資源 (SRFrame)、Unity 場景 (USFrame)、模板物件 (CPFrame)、音樂音效 (AudioFrame)、影片 (VideoFrame)、遊戲階段整合 (GSIFrame)、網路 (NetFrame)、事件中心 (CenterFrame)，能夠簡單入手與有效的加快開發效率，並且支持多平台 Win、OSX、Android、iOS、WebGL。
@@ -41,10 +46,6 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 相關模板建立的選單 (Create menu items)
 
 ![](Docs/img_2.png)
-
-[Roadmap wiki](https://github.com/michael811125/OxGFrame/wiki/Roadmap)
-
-[Coding Style wiki](https://github.com/michael811125/OxGFrame/wiki/Coding-Style)
 
 ---
 

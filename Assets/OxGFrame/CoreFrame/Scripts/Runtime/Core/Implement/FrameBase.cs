@@ -18,7 +18,9 @@ namespace OxGFrame.CoreFrame
         public class Collector : IDisposable
         {
             #region 依照綁定類型建立緩存容器
-            // 用於存放綁定物件的緩存 (GameObject)
+            /// <summary>
+            /// 用於存放綁定物件的緩存 (GameObject)
+            /// </summary>
             private Dictionary<string, List<GameObject>> _nodes = new Dictionary<string, List<GameObject>>();
             #endregion
 
@@ -113,43 +115,131 @@ namespace OxGFrame.CoreFrame
         }
         #endregion
 
-        [HideInInspector] public Collector collector { get; private set; } = new Collector(); // 綁定物件收集器
-        [HideInInspector] public string assetName { get; protected set; } = string.Empty;     // (Bundle) AssetName = (Resource) PathName
-        [HideInInspector] public int groupId { get; protected set; } = 0;                     // 群組 id
-        [HideInInspector] public bool isHidden { get; protected set; } = false;               // 檢查是否隱藏 (主要區分 Close & Hide 行為)
+        /// <summary>
+        /// 綁定物件收集器
+        /// </summary>
+        [HideInInspector]
+        public Collector collector { get; private set; } = new Collector();
 
-        [HideInInspector] protected bool _isBinded { get; private set; } = false;             // 檢查是否綁定的開關
-        [HideInInspector] protected bool _isInitFirst { get; private set; } = false;          // 是否初次初始
+        /// <summary>
+        /// (Bundle) AssetName = (Resource) PathName
+        /// </summary>
+        [HideInInspector]
+        public string assetName { get; protected set; } = string.Empty;
 
+        /// <summary>
+        /// 群組 id
+        /// </summary>
+        [HideInInspector]
+        public int groupId { get; protected set; } = 0;
+
+        /// <summary>
+        /// 檢查是否隱藏 (主要區分 Close & Hide 行為)
+        /// </summary>
+        [HideInInspector]
+        public bool isHidden { get; protected set; } = false;
+
+        /// <summary>
+        /// 檢查是否綁定的開關
+        /// </summary>
+        [HideInInspector]
+        protected bool _isBinded { get; private set; } = false;
+
+        /// <summary>
+        /// 是否初次初始
+        /// </summary>
+        [HideInInspector]
+        protected bool _isInitFirst { get; private set; } = false;
+
+        /// <summary>
+        /// Flag for controlling the call order of OnShow (Used to indicate whether monoDrive is detected as enabled)
+        /// </summary>
+        internal bool isMonoDriveDetected = false;
+
+        /// <summary>
+        /// If checked, it can be directly placed in the scene and driven by MonoBehaviour
+        /// </summary>
+        [Tooltip("If checked, it can be directly placed in the scene and driven by MonoBehaviour")]
+        public bool monoDrive = false;
+
+        /// <summary>
+        /// 是否允許多實例     
+        /// </summary>
         [Tooltip("Allow instantiate, but when close will destroy directly")]
-        public bool allowInstantiate = false;                                                 // 是否允許多實例            
+        public bool allowInstantiate = false;
+
+        /// <summary>
+        /// 是否關閉時就 DestroyUI
+        /// </summary>
         [Tooltip("If checked, will destroy on close"), ConditionalField(nameof(allowInstantiate), true)]
-        public bool onCloseAndDestroy = false;                                                // 是否關閉時就 DestroyUI
+        public bool onCloseAndDestroy = false;
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (this.allowInstantiate)
+                this.onCloseAndDestroy = false;
+        }
+#endif
 
         internal virtual void HandleUpdate(float dt)
         {
-            if (!this._isInitFirst) return;
+            if (!this._isInitFirst)
+                return;
             this.OnUpdate(dt);
         }
 
         internal virtual void HandleFixedUpdate(float dt)
         {
-            if (!this._isInitFirst) return;
+            if (!this._isInitFirst)
+                return;
             this.OnFixedUpdate(dt);
         }
 
         internal virtual void HandleLateUpdate(float dt)
         {
-            if (!this._isInitFirst) return;
+            if (!this._isInitFirst)
+                return;
             this.OnLateUpdate(dt);
         }
 
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            if (this.allowInstantiate) this.onCloseAndDestroy = false;
-        }
-#endif
+        #region For MonoDrive
+        /// <summary>
+        /// Drive by self MonoBehaviour Update
+        /// </summary>
+        /// <param name="dt"></param>
+        protected void DriveSelfUpdate(float dt) => this.HandleUpdate(dt);
+
+        /// <summary>
+        /// Drive by other MonoBehaviour Update
+        /// </summary>
+        /// <param name="dt"></param>
+        public void DriveUpdate(float dt) => this.HandleUpdate(dt);
+
+        /// <summary>
+        /// Drive by self MonoBehaviour FixedUpdate
+        /// </summary>
+        /// <param name="dt"></param>
+        protected void DriveSelfFixedUpdate(float dt) => this.HandleFixedUpdate(dt);
+
+        /// <summary>
+        /// Drive by other MonoBehaviour Update
+        /// </summary>
+        /// <param name="dt"></param>
+        public void DriveFixedUpdate(float dt) => this.HandleFixedUpdate(dt);
+
+        /// <summary>
+        /// Drive by self MonoBehaviour LateUpdate
+        /// </summary>
+        /// <param name="dt"></param>
+        protected void DriveSelfLateUpdate(float dt) => this.HandleLateUpdate(dt);
+
+        /// <summary>
+        /// Drive by other MonoBehaviour LateUpdate
+        /// </summary>
+        /// <param name="dt"></param>
+        public void DriveLateUpdate(float dt) => this.HandleLateUpdate(dt);
+        #endregion
 
         /// <summary>
         /// 起始初始 (僅執行一次)
@@ -278,6 +368,9 @@ namespace OxGFrame.CoreFrame
             this.collector = null;
         }
 
+        /// <summary>
+        /// 調用關閉自己
+        /// </summary>
         protected abstract void CloseSelf();
 
         /// <summary>

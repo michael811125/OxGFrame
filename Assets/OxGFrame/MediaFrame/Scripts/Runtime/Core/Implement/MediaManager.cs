@@ -13,9 +13,20 @@ namespace OxGFrame.MediaFrame
 {
     internal abstract class MediaManager<T> : MonoBehaviour where T : MediaBase
     {
-        protected Dictionary<string, GameObject> _dictAssetCache = new Dictionary<string, GameObject>();  // 【常駐】所有資源緩存
-        protected HashSet<string> _loadingFlags = new HashSet<string>();                                  // 用來標記正在加載中的資源 (暫存緩存)
-        protected List<T> _listAllCache = new List<T>();                                                  // 【常駐】所有進入播放的影音柱列緩存 (只會在 Destroy 時, Remove 對應的緩存)
+        /// <summary>
+        /// 【常駐】所有資源緩存
+        /// </summary>
+        protected Dictionary<string, GameObject> _dictAssetCache = new Dictionary<string, GameObject>();
+
+        /// <summary>
+        /// 用來標記正在加載中的資源 (暫存緩存)
+        /// </summary>
+        protected HashSet<string> _loadingFlags = new HashSet<string>();
+
+        /// <summary>
+        /// 【常駐】所有進入播放的影音柱列緩存 (只會在 Destroy 時, Remove 對應的緩存)
+        /// </summary>
+        protected List<T> _listAllCache = new List<T>();
 
         /// <summary>
         /// 處理沒有啟用 onDestroyAndUnload 設置的資源
@@ -184,7 +195,8 @@ namespace OxGFrame.MediaFrame
                 go = await this.LoadingAsset(packageName, assetName); // 開始加載
                 this._loadingFlags.Remove(assetName);                 // 移除 LoadingFlag
             }
-            else go = this.GetAssetFromCache(assetName); // 如果判斷沒有要執行加載程序, 就直接從 AllCache 中取得
+            else
+                go = this.GetAssetFromCache(assetName); // 如果判斷沒有要執行加載程序, 就直接從 AllCache 中取得
 
             return go;
         }
@@ -197,15 +209,31 @@ namespace OxGFrame.MediaFrame
         /// <returns></returns>
         protected async virtual UniTask<U> CloneAsset<U>(string assetName, GameObject go, UnityEngine.Object sourceClip, Transform parent, Transform spwanParent) where U : T
         {
-            if (go == null) return default;
+            if (go == null)
+                return default;
 
-            GameObject instGo = Instantiate(go, (parent != null) ? parent : spwanParent);
+            U sourceComponent = go.GetComponent<U>();
+            bool sourceMonoDriveFlag = false;
+            if (sourceComponent != null)
+            {
+                if (sourceComponent.monoDrive)
+                {
+                    // 記錄標記
+                    sourceMonoDriveFlag = sourceComponent.monoDrive;
+                    // 動態加載時, 必須取消 monoDrive
+                    sourceComponent.monoDrive = false;
+                }
+            }
+
+            GameObject instGo = Instantiate(sourceComponent.gameObject, (parent != null) ? parent : spwanParent);
             instGo.name = instGo.name.Replace("(Clone)", "");
             U mBase = instGo.GetComponent<U>();
-            if (mBase == null) return default;
+            if (mBase == null)
+                return default;
 
             // 激活檢查, 如果主體 Active 為 false 必須打開
-            if (!instGo.activeSelf) instGo.SetActive(true);
+            if (!instGo.activeSelf)
+                instGo.SetActive(true);
 
             // 先加入緩存
             this._listAllCache.Add(mBase);
@@ -244,6 +272,10 @@ namespace OxGFrame.MediaFrame
                 return default;
 
             mBase.gameObject.SetActive(false);
+
+            // 還原來源設置
+            if (sourceMonoDriveFlag)
+                sourceComponent.monoDrive = true;
 
             return mBase;
         }

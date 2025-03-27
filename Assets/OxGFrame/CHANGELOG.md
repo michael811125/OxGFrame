@@ -1,6 +1,79 @@
 # CHANGELOG
 
+## [3.2.1] - 2025-03-27
+
+# English
+
+- CoreFrame
+  - SRFrame, UIFrame, CPFrame
+  - Added support for SRBase and UIBase for MonoDrive, allowing them to be placed in the scene for static loading (without affecting the initial dynamic loading process).
+    - Note: If MonoDrive is enabled, control and configuration by the manager will be lost, and you must manage and cache manually.
+    - Additionally, after enabling MonoDrive, if you want to activate Update, you must use the following macros:
+      - **SRFrame**: OXGFRAME_SRFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_SRFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_SRFRAME_MONODRIVE_LATEUPDATE_ON (use as needed based on development requirements)
+      - **UIFrame**: OXGFRAME_UIFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_UIFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_UIFRAME_MONODRIVE_LATEUPDATE_ON (use as needed based on development requirements)
+      - **CPFrame**: OXGFRAME_CPFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_CPFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_CPFRAME_MONODRIVE_LATEUPDATE_ON (use as needed based on development requirements)
+- MediaFrame
+  - AudioFrame
+    - Added support for AudioBase for MonoDrive, allowing it to be placed in the scene for static loading (without affecting the initial dynamic loading process).
+      - Note: If MonoDrive is enabled, control and configuration by the manager will be lost, and you must manage and cache manually.
+      - Additionally, after enabling MonoDrive, if you want to activate Update, you must use the following macro:
+        - **AudioFrame**: OXGFRAME_AUDIOFRAME_MONODRIVE_FIXEDUPDATE_ON (must be used if MonoDrive is enabled for Audio)
+    - Added the maxPrepareTimeSeconds parameter.
+	- Modified the access permissions for the Play, Stop, and Pause methods (can be called when MonoDrive is enabled and manual management is desired).
+	- Adjusted the Audio preparation process.
+	- Fixed the IsPlaying() state to ensure it is set to false after Stop.
+    - Fixed the IsPaused() state to ensure it is set to false after Stop.
+  - VideoFrame
+    - Added support for VideoBase for MonoDrive, allowing it to be placed in the scene for static loading (without affecting the initial dynamic loading process).
+      - Note: If MonoDrive is enabled, control and configuration by the manager will be lost, and you must manage and cache manually.
+      - Additionally, after enabling MonoDrive, if you want to activate Update, you must use the following macro:
+        - **VideoFrame**: OXGFRAME_VIDEOFRAME_MONODRIVE_FIXEDUPDATE_ON (must be used if MonoDrive is enabled for Video)
+	- Modified the access permissions for the Play, Stop, and Pause methods (can be called when MonoDrive is enabled and manual management is desired).
+	- Fixed the IsPlaying() state to ensure it is set to false after Stop.
+    - Fixed the IsPaused() state to ensure it is set to false after Stop.
+- Others
+  - [Macro Definitions wiki](https://github.com/michael811125/OxGFrame/wiki/Macro-Definitions)
+
+---
+
+# 中文
+
+- CoreFrame
+  - SRFrame, UIFRame, CPFrame
+  - 新增 SRBase, UIBse 對於 MonoDrive 的支持，可事先放置於場景中靜態加載 (不影響動態加載的初始流程)。
+    - 注意：如果啟用 MonoDrive，將失去管理器的控管與配置，必須自行控管與緩存。
+    - 另外，啟用 MonoDrive 後，如果要激活 Update 則必須使用以下宏 (Macro)：
+	  - **SRFrame**: OXGFRAME_SRFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_SRFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_SRFRAME_MONODRIVE_LATEUPDATE_ON (依開發需求，決定是否使用)
+	  - **UIFrame**: OXGFRAME_UIFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_UIFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_UIFRAME_MONODRIVE_LATEUPDATE_ON (依開發需求，決定是否使用)
+	  - **CPFrame**: OXGFRAME_CPFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_CPFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_CPFRAME_MONODRIVE_LATEUPDATE_ON (依開發需求，決定是否使用)
+- MediaFrame
+  - AudioFrame
+    - 新增 AudioBase 對於 MonoDrive 的支持，可事先放置於場景中靜態加載 (不影響動態加載的初始流程)。
+	  - 注意：如果啟用 MonoDrive，將失去管理器的控管與配置，必須自行控管與緩存。
+      - 另外，啟用 MonoDrive 後，如果要激活 Update 則必須使用以下宏 (Macro)：
+	    - **AudioFrame**: OXGFRAME_AUDIOFRAME_MONODRIVE_FIXEDUPDATE_ON (Audio 如果有啟用 MonoDrive 的需求，必須使用)
+    - 新增 maxPrepareTimeSeconds 參數。
+	- 修改 Play, Stop, Pause 方法的存取權限 (當啟用 MonoDirve 時，又想要自行管理時，可以調用)。
+	- 調整 Audio 準備流程。
+	- 修正 IsPlaying() 狀態，必須在 Stop 之後設置為 false。
+	- 修正 IsPaused() 狀態，必須在 Stop 之後設置為 false。
+  - VideoFrame
+    - 新增 VideoBase 對於 MonoDrive 的支持，可事先放置於場景中靜態加載 (不影響動態加載的初始流程)。
+      - 注意：如果啟用 MonoDrive，將失去管理器的控管與配置，必須自行控管與緩存。
+      - 另外，啟用 MonoDrive 後，如果要激活 Update 則必須使用以下宏 (Macro)：
+	    - **VideoFrame**: OXGFRAME_VIDEOFRAME_MONODRIVE_FIXEDUPDATE_ON (Video 如果有啟用 MonoDrive 的需求，必須使用)
+    - 修改 Play, Stop, Pause 方法的存取權限 (當啟用 MonoDirve 時，又想要自行管理時，可以調用)。
+	- 修正 IsPlaying() 狀態，必須在 Stop 之後設置為 false。
+	- 修正 IsPaused() 狀態，必須在 Stop 之後設置為 false。
+- Others
+  - [Macro Defitions wiki](https://github.com/michael811125/OxGFrame/wiki/Macro-Definitions)
+
 ## [3.2.0] - 2025-03-26
+
+# English
+
+## Recommended to upgrade to this version
+
 - AssetLoader  
   - Added Tests.  
   - Added support for OffsetXOR encryption/decryption - runtime passed.  
@@ -19,13 +92,13 @@
   - Added Tests (TODO).  
   - Added MediaObjectRemoveCacheHandler (requires [oxgkit.utilities v1.4.5 or higher](https://github.com/michael811125/OxGKit/blob/master/Assets/OxGKit/Utilities/Scripts/CHANGELOG.md)).  
   - Removed MediaLRUCache.  
-- AudioFrame  
-  - Added MaxRequestTimeSeconds (Timeout) configuration.  
-  - Adjusted the Request method in AudioManager.  
-  - Removed the RequestAudio method and unified instance creation using Requester (requires [oxgkit.utilities v1.4.5 or higher](https://github.com/michael811125/OxGKit/blob/master/Assets/OxGKit/Utilities/Scripts/CHANGELOG.md)).  
-- VideoFrame  
-  - Added MaxPrepareTimeSeconds (Timeout) configuration.  
-  - Fixed an issue where SourceType.Url did not correctly set the source as VideoSource.Url.  
+  - AudioFrame  
+    - Added MaxRequestTimeSeconds (Timeout) configuration.  
+    - Adjusted the Request method in AudioManager.  
+    - Removed the RequestAudio method and unified instance creation using Requester (requires [oxgkit.utilities v1.4.5 or higher](https://github.com/michael811125/OxGKit/blob/master/Assets/OxGKit/Utilities/Scripts/CHANGELOG.md)).  
+  - VideoFrame  
+    - Added MaxPrepareTimeSeconds (Timeout) configuration.  
+    - Fixed an issue where SourceType.Url did not correctly set the source as VideoSource.Url.  
 - CenterFrame  
   - Added Tests.  
   - Adjusted Acax's ErrorCallback return type to ErrorInfo -> { string url, string message, Exception exception }.  
@@ -34,33 +107,133 @@
 - Hotfixer  
   - Added Tests (TODO).  
 - NetFrame  
-  - Added Tests (TODO).  
+  - Added Tests (TODO). 
+
+---
+  
+# 中文
+
+## 建議升級至此版本
+
+  - AssetLoader
+  - 新增 Tests。
+  - 新增支持 OffsetXOR 加解密 - runtime passed。
+  - 新增支持 ChaCha20 Bundle 加解密 - runtime passed (Reference: [CSharp-ChaCha20-NetStandard](https://github.com/mcraiha/CSharp-ChaCha20-NetStandard/tree/netstandard20andnet6))。
+  - 新增支持 XXTEA Bundle 加解密 - runtime passed (Reference: [Razensoft.XXTEA](https://github.com/Razenpok/Razensoft.XXTEA/tree/master))。
+  - 調整 PatchFsmStates 中 Requester 的 error function ([oxgkit.utilities v1.4.3 or higher](https://github.com/michael811125/OxGKit/blob/master/Assets/OxGKit/Utilities/Scripts/CHANGELOG.md))。
+  - 優化大幅度減少獲取解密 Key 所產生的 GC。
+  - 優化 DecryptionServices 代碼，提高維護性。
+  - 優化 FileCryptogram 代碼，提高維護性。
+  - 移除 Offset random seed (不影響加解密)。
+  - 更新 YooAssets to [v2.3.6](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.6)。
+- CoreFrame
+  - 新增 Tests (TODO)。
+  - 新增 CloseSelf(bool disabledPreClose = false, bool forceDestroy = false) 方法參數。
+- MediaFrame
+  - 新增 Tests (TODO)。
+  - 新增 MediaObjectRemoveCacheHandler (依賴 [oxgkit.utilities v1.4.5 or higher](https://github.com/michael811125/OxGKit/blob/master/Assets/OxGKit/Utilities/Scripts/CHANGELOG.md))。
+  - 移除 MediaLRUCache。
+  - AudioFrame
+    - 新增 MaxRequestTimeSeconds (Timeout) 配置。
+	- 調整 AudioManager Request 方法。
+	- 移除 RequestAudio 方法，統一使用 Requester 進行實例 (依賴 [oxgkit.utilities v1.4.5 or higher](https://github.com/michael811125/OxGKit/blob/master/Assets/OxGKit/Utilities/Scripts/CHANGELOG.md))。
+  - VideoFrame
+    - 新增 MaxPrepareTimeSeconds (Timeout) 配置。
+	- 修正 SourceType.Url 沒有正確指定 source 為 VideoSource.Url 的問題。
+- CenterFrame
+  - 新增 Tests。
+  - 調整 Acax 的 ErrorCallback 返回 ErrorInfo -> { string url, string message, Exception exception }。
+- GSIFrame
+  - 新增 Tests (TODO)。
+- Hotfixer
+  - 新增 Tests (TODO)。
+- NetFrame
+  - 新增 Tests (TODO)。
 
 ## [3.1.3] - 2025-03-21
+
+# English
 - Added Http.Acax timeout functionality.
 - Optimized Http.Acax code.
 - Fixed Http.Acax cts disposal error.
 
+---
+
+# 中文
+- 新增 Http.Acax Timeout 功能。
+- 優化 Http.Acax 代碼。
+- 修正 Http.Acax cts dispose 錯誤問題。
+
 ## [3.1.2] - 2025-03-19
+
+# English
 - Organized and adjusted OxGKit plugin dependencies (see [OxGKit.Utilities v1.4.0](https://github.com/michael811125/OxGKit/blob/master/Assets/OxGKit/Utilities/Scripts/CHANGELOG.md)).
 
+---
+
+# 中文
+- 整理並調整 OxGKit 插件依賴性 (查看 [OxGKit.Utilities v1.4.0](https://github.com/michael811125/OxGKit/blob/master/Assets/OxGKit/Utilities/Scripts/CHANGELOG.md))。
+
 ## [3.1.1] - 2025-03-18
+
+# English
 - Fixed an issue where StreamingAssets WebRequest did not catch 404 errors.
 
+---
+
+# 中文
+- 修正 StreamingAssets WebRequest 尚未捕捉到 404 error 的錯誤。
+
 ## [3.1.0] - 2025-03-18
+
+# English
+
+Fixed StreamingAssetsHelper 404 request error in [v3.1.1](https://github.com/michael811125/OxGFrame/releases/tag/v3.1.1).
+
 - Modified StreamingAssetsHelper to dynamically detect built-in resources (by checking if the BuildinCatalog.bytes file exists in the Package folder, indicating that the package is present).
 - Modified the code in YooAssetBridge.
 - Updated YooAsset to use the request for the BuildinCatalog.bytes file as the built-in catalog.
 - Removed builtinpkgcatalog.json and the MenuItem pre-export option.
 
+---
+
+# 中文
+
+修正 StreamginAssetsHelper 404 請求錯誤於 [v3.1.1](https://github.com/michael811125/OxGFrame/releases/tag/v3.1.1)。
+
+- 修改 StreamingAssetsHelper 改為動態檢測內置資源的方式 (透過檢查 Package 文件夾中是否有 BuildinCatalog.bytes 文件，如果有表示該 Package 存在)。
+- 修改 YooAssetBridge 代碼。
+- 更新 YooAsset，將以請求 BuildinCatalog.bytes 文件作為內置清單。
+- 移除 builtinpkgcatalog.json，也移除 MenuItem 輸出選項。
+
 ## [3.0.2] - 2025-03-14
+
+# English
 - Modified BuildinCatalog generation and reading methods.
 - Upgraded YooAsset to v2.3.5-preview (latest commit).
 
+---
+
+# 中文
+- 調整 BuildinCatalog 的生成與讀取方式。
+- 升級 YooAsset 至 v2.3.5-preview (最新提交)。
+
 ## [3.0.1] - 2025-03-11
-- Modified SBP dependency version (v1.21.25).
+
+# English
+- modified SBP dependency version (v1.21.25).
+
+---
+
+# 中文
+- 調整 SBP 依賴版本 (v1.21.25)。
 
 ## [3.0.0] - 2025-03-11
+
+# English
+
+### Note: Upgraded to [3.0.1](https://github.com/michael811125/OxGFrame/releases/tag/v3.0.1) to fix SBP compatibility issues.
+
 - **Hotfixer**
   - Added the OXGFRAME_HYBRIDCLR_DISABLED symbol, which skips the AOTAssemblies metadata loading process during CheckHotfix, but the initial loading of Hotfix Package and HotfixAssemblies will still be executed. (If HybridCLR functionality is disabled, it is recommended to use this symbol to skip the Hotfix process).
   - Added the Hotfixers.IsDisabled() method, which checks whether the OXGFRAME_HYBRIDCLR_DISABLED symbol is active.
@@ -107,6 +280,59 @@
   - Upgraded [UnityWebSocket](https://github.com/psygames/UnityWebSocket) to v2.8.6.
 - Updated all Samples.
 - Upgraded SBP dependencies to the latest (2.2.11).
+
+---
+
+# 中文
+
+### Note: 升至 [3.0.1](https://github.com/michael811125/OxGFrame/releases/tag/v3.0.1) 修正 SBP 兼容性問題。
+
+- **Hotfixer**
+  - 新增 OXGFRAME_HYBRIDCLR_DISABLED symbol，CheckHotfix 時，將略過處理 AOTAssemblies 補元數據加載流程，不過 Hotfix Package 初始跟 HotfixAssemblies 加載依然會執行 (如果關閉 HybridCLR 功能，建議加上此標籤略過處理 Hotfix 流程)。
+  - 新增 Hotfixers.IsDisabled() 方法，返回檢查 OXGFRAME_HYBRIDCLR_DISABLED symbol 是否激活。
+- **AssetLoader**
+  - **Others**
+    - 升級 Yoo 版本至最新 ([2.3.4-preview](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.4-preview))，2.2.x 以上 WebGL 支持多 Package 開發。
+    - 新增使用 byte[] 加解密方法。
+    - 新增實現 IWebDecryptionServices 接口 for WebGL。
+  - **PatchLauncher**
+    - 新增 SecuredStringType (None, XORWithDummy, AES) 選項更清楚說明，取代之前的 bool SecuredString，預設建議為 None 或 XORWithDummy (更少 GC)。
+    - 新增 PlayMode - WebGLRemoteMode，部署 CDN 遠端資源與配置文件，將會請求遠端資源與比對遠端 App 版號。
+    - 調整 PlayMode - WebGLMode，不需要部署 CDN 資源與配置文件，僅請求 StreamingAssets 中的資源與 App 版號。
+    - 調整優化 SecuredString 結構與實現方式。
+  - **AssetPatcher**
+    - 新增 builtinpkgcatalog.json 用於查找是否有內置 package，方便初始 package 是否採用 file system 進行 built-in query，builtinpkgcatalog.json 會在 OnPreprocessBuild 時自動構建 (因為 Yoo 採用新的 file system，所以不同於以前的 built-in query 方式)。
+    - 新增 UnloadPackage 方法，從內存銷毀並釋放 package，但 sandbox 的 cache files 依然存在。
+    - 新增 UnloadPackageAndClearCacheFiles 方法，參數為 destroyPackage，可以選擇是否一併從內存銷毀並釋放 package。
+    - 新增 GetBuiltinRootPath 方法，獲取內置資源的根目錄。
+    - 調整 Release 改為異步處理。
+    - 移除 PatchLauncher 中的 BuiltinQueryMode 選項，新版的 Yoo 預設支持 Builtin Query 功能。
+    - 移除 PatchSetting.yooSettings，改為使用 YooAssetBridge。
+  - **AssetLoaders**
+    - 調整 Unload 為異步處理。
+    - 調整 Release 為異步處理。
+- **CoreFrame**
+  - **UIFrame**
+    - 優化 UIMaskPool 與 UIFreezePool 生成方式，物件池不足時，只產生一個。
+    - 優化 UIMaskPool 與 UIFreezePool，處理物件池最大持有回收數量，避免物件池膨脹。
+  - **USFrame**
+    - 調整 LoadSceneAsync 跟 LoadScene 所有相關方法，新增 LocalPhysicsMode 參數。
+- **MediaFrame**
+  - **VideoFrame**
+    - 新增 GetPlaySpeed() 方法。
+    - 修正 playbackSpeed 沒有連動更新問題。
+- **GSIFrame**
+  - 調整 GSIManager 的 Start 跟 Update 方法名稱 (Obsolete)，改為使用 DriveStart，DriveUpdate。
+- **NetFrame**
+  - 新增 NetFrames API 方法。
+  - 新增 MirrorNetworking [TCP](https://github.com/MirrorNetworking/Telepathy)、[KCP2k](https://github.com/MirrorNetworking/kcp2k) libs。
+  - 新增 KCP (Reliable UDP) -> KcpNetProvider 基於 MirrorNetworking KCP2k 實現 (Reference: [F8Framework](https://github.com/TippingGame/F8Framework))。
+  - 調整 TCP 改成使用 MirrorNetworking.Telepathy 實現 (Reference: [F8Framework](https://github.com/TippingGame/F8Framework))。
+  - 調整 WebsocketNetProvider 名稱為 WebSocketNetProvider。
+  - 調整 WebsocketNetOption 名稱為 WebSocketNetOption。
+  - 升級 UnityWebSocket 至 v2.8.6。
+- 更新所有 Samples。
+- 升級 SBP 依賴至最新 (2.2.11)。
 
 ## [2.14.1] - 2025-03-07
 - Modified video loading preparation to avoid blocking caused by "wait until".

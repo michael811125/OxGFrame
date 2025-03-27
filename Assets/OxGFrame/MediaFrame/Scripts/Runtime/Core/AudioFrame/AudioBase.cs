@@ -1,6 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
+using OxGFrame.AssetLoader;
 using OxGKit.LoggingSystem;
+using System;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -41,13 +44,21 @@ namespace OxGFrame.MediaFrame.AudioFrame
         [SerializeField, ConditionalField(nameof(_mixerGroupSourceType), false, MixerGroupSourceType.Find)]
         protected string _mixerGroupName = "";
 
-        internal override async UniTask<bool> Init()
+#if OXGFRAME_AUDIOFRAME_MONODRIVE_FIXEDUPDATE_ON
+        private void FixedUpdate()
+        {
+            if (this.monoDrive)
+                this.HandleFixedUpdate(Time.fixedDeltaTime);
+        }
+#endif
+
+        internal sealed override async UniTask<bool> Init()
         {
             this._audioSource = this.GetComponent<AudioSource>();
             bool isInitialized = await this._InitAudio();
 
             if (isInitialized)
-                this._isInit = true; // Mark all init is finished.
+                this._isInit = true;
 
             return this._isInit;
         }
@@ -96,6 +107,26 @@ namespace OxGFrame.MediaFrame.AudioFrame
             this._audioSource.loop = (this.loops == -1) ? true : false;
             this._mediaLength = this._currentRemainingLength = (this.audioLength > 0) ? this.audioLength : this.audioClip.length;
 
+            Logging.Print<Logger>($"{this.mediaName} audio is preparing...");
+            var cts = new CancellationTokenSource();
+            cts.CancelAfterSlim(TimeSpan.FromSeconds(this.maxPrepareTimeSeconds <= 0 ? MAX_PREPARE_TIME_SECONDS : this.maxPrepareTimeSeconds));
+            try
+            {
+                do
+                {
+                    if (this._audioSource.clip != null && this._audioSource.clip.loadState == AudioDataLoadState.Loaded)
+                        break;
+                    // load balancing
+                    await UniTask.Yield(PlayerLoopTiming.FixedUpdate, cts.Token);
+                } while (true);
+                Logging.Print<Logger>($"{this.mediaName} audio is prepared");
+            }
+            catch (OperationCanceledException ex)
+            {
+                Logging.PrintException<Logger>(ex);
+                return false;
+            }
+
             this.isPrepared = true;
 
             Logging.Print<Logger>($"<color=#00EEFF>【Init Once】 Audio length: {this._mediaLength} (s)</color>");
@@ -119,7 +150,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             return audioClip;
         }
 
-        protected override void OnFixedUpdate(float dt = 0f)
+        protected sealed override void OnFixedUpdate(float dt = 0f)
         {
             if (this._audioSource == null)
                 return;
@@ -130,31 +161,13 @@ namespace OxGFrame.MediaFrame.AudioFrame
             if (this.IsPaused())
                 return;
 
-            if (this.CurrentRemainingLength() > 0f)
-            {
-                this._currentRemainingLength -= dt;
-                if (this.CurrentRemainingLength() <= 0f)
-                {
-                    if (this._loops >= 0)
-                    {
-                        this._audioSource.Stop();
+            if (!this.IsPlaying())
+                return;
 
-                        this._loops--;
-                        if (this._loops <= 0)
-                        {
-                            this._currentRemainingLength = 0;
-                            if (this.autoEndToStop)
-                                this.StopSelf();
-                        }
-                        else
-                            this._audioSource.Play();
-                    }
-                    this._currentRemainingLength = this.Length();
-                }
-            }
+            this.ProcessLooping(this._audioSource, dt);
         }
 
-        internal override void Play(int loops, float volume)
+        public sealed override void Play(int loops, float volume)
         {
             if (this._audioSource == null ||
                 this._audioSource.clip == null)
@@ -184,13 +197,17 @@ namespace OxGFrame.MediaFrame.AudioFrame
             else
                 this._audioSource.UnPause();
 
-            this._isPaused = false; // 取消暫停標記
+            this._isPlaying = true;
+            this._isPaused = false;
         }
 
-        internal override void Stop()
+        public sealed override void Stop()
         {
             if (this._audioSource == null)
                 return;
+
+            this._isPlaying = false;
+            this._isPaused = false;
 
             this._audioSource.Stop();
             this.ResetLength();
@@ -200,57 +217,67 @@ namespace OxGFrame.MediaFrame.AudioFrame
             this._endEvent = null;
 
             this.gameObject.SetActive(false);
+
+            // Only for mono drive
+            if (this.monoDrive)
+            {
+                if (this.onStopAndDestroy)
+                    Destroy(this.gameObject);
+            }
         }
 
-        internal override void Pause()
+        public sealed override void Pause()
         {
             if (this._audioSource == null)
                 return;
 
-            this._isPaused = true; // 標記暫停
+            this._isPlaying = false;
+            this._isPaused = true;
+
             this._audioSource.Pause();
         }
 
-        public override bool IsPlaying()
+        public sealed override bool IsPlaying()
         {
-            if (this._audioSource == null)
-                return false;
-            return this._audioSource.isPlaying;
+            return this._isPlaying;
         }
 
-        public override bool IsPaused()
+        public sealed override bool IsPaused()
         {
             return this._isPaused;
         }
 
-        public override bool IsLooping()
+        public sealed override bool IsLooping()
         {
             if (this._audioSource == null)
                 return false;
             return this._audioSource.loop;
         }
 
-        protected override void StopSelf()
+        protected sealed override void StopSelf()
         {
-            AudioManager.GetInstance().Stop(this);
+            if (this.monoDrive)
+                this.Stop();
+            else
+                AudioManager.GetInstance().Stop(this);
         }
 
-        public override float Length()
+        public sealed override float Length()
         {
             return this._mediaLength;
         }
 
-        public override float CurrentLength()
+        public sealed override float CurrentLength()
         {
             return this._mediaLength - this._currentRemainingLength;
         }
 
-        public override float CurrentRemainingLength()
+        public sealed override float CurrentRemainingLength()
         {
             return this._currentRemainingLength;
         }
 
-        public override void OnRelease()
+        public sealed override void OnRelease()
         {
             this._endEvent?.Invoke();
 
@@ -268,20 +295,30 @@ namespace OxGFrame.MediaFrame.AudioFrame
             return this._audioSource;
         }
 
-        private void OnDestroy()
+        internal protected sealed override void DetectOnDestroy()
         {
-            if (Time.frameCount == 0 ||
-                !Application.isPlaying)
-                return;
-
-            try
+            if (this.monoDrive)
             {
-                if (!this.isDestroying)
-                    AudioManager.GetInstance().Stop(this, true, true);
+                this.OnRelease();
+                if (this.onDestroyAndUnload)
+                    AssetLoaders.UnloadAsset(this.assetName).Forget();
+                this.assetName = null;
+                this.mediaName = null;
             }
-            catch
+            else
             {
-                /* Nothing to do */
+                if (Time.frameCount == 0 || !Application.isPlaying)
+                    return;
+
+                try
+                {
+                    if (!this.isDestroying)
+                        AudioManager.GetInstance().Stop(this, true, true);
+                }
+                catch
+                {
+                    /* Nothing to do */
+                }
             }
         }
     }

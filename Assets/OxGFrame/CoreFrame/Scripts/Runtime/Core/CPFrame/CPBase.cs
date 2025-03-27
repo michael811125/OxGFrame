@@ -7,58 +7,11 @@ namespace OxGFrame.CoreFrame.CPFrame
     [HidePropertiesInInspector("onCloseAndDestroy", "allowInstantiate")]
     public class CPBase : FrameBase
     {
-        /// <summary>
-        /// If checked, it can be directly placed in the scene and driven by MonoBehaviour
-        /// </summary>
-        [Tooltip("If checked, it can be directly placed in the scene and driven by MonoBehaviour")]
-        public bool monoDrive = false;
-
-        /// <summary>
-        /// Flag for controlling the call order of OnShow
-        /// </summary>
-        internal bool initFirstByMono = false;
-
-        /// <summary>
-        /// Drive by self MonoBehaviour Update
-        /// </summary>
-        /// <param name="dt"></param>
-        protected void DriveSelfUpdate(float dt) => this.HandleUpdate(dt);
-
-        /// <summary>
-        /// Drive by other MonoBehaviour Update
-        /// </summary>
-        /// <param name="dt"></param>
-        public void DriveUpdate(float dt) => this.HandleUpdate(dt);
-
-        /// <summary>
-        /// Drive by self MonoBehaviour FixedUpdate
-        /// </summary>
-        /// <param name="dt"></param>
-        protected void DriveSelfFixedUpdate(float dt) => this.HandleFixedUpdate(dt);
-
-        /// <summary>
-        /// Drive by other MonoBehaviour Update
-        /// </summary>
-        /// <param name="dt"></param>
-        public void DriveFixedUpdate(float dt) => this.HandleFixedUpdate(dt);
-
-        /// <summary>
-        /// Drive by self MonoBehaviour LateUpdate
-        /// </summary>
-        /// <param name="dt"></param>
-        protected void DriveSelfLateUpdate(float dt) => this.HandleLateUpdate(dt);
-
-        /// <summary>
-        /// Drive by other MonoBehaviour LateUpdate
-        /// </summary>
-        /// <param name="dt"></param>
-        public void DriveLateUpdate(float dt) => this.HandleLateUpdate(dt);
-
         private void Awake()
         {
             if (this.monoDrive)
             {
-                this.SetNames(this.name);
+                this.SetNames($"{nameof(this.monoDrive)}_{this.name}");
                 this.OnCreate();
                 this.InitFirst();
             }
@@ -68,7 +21,7 @@ namespace OxGFrame.CoreFrame.CPFrame
         {
             if (!this._isInitFirst)
                 return;
-            if (this.initFirstByMono)
+            if (this.isMonoDriveDetected)
                 return;
             this.OnShow();
         }
@@ -84,6 +37,30 @@ namespace OxGFrame.CoreFrame.CPFrame
             this.Dispose();
             AssetLoaders.UnloadAsset(this.assetName).Forget();
         }
+
+#if OXGFRAME_CPFRAME_MONODRIVE_UPDATE_ON
+        private void Update()
+        {
+            if (this.monoDrive)
+                this.HandleUpdate(Time.deltaTime);
+        }
+#endif
+
+#if OXGFRAME_CPFRAME_MONODRIVE_FIXEDUPDATE_ON
+        private void FixedUpdate()
+        {
+            if (this.monoDrive)
+                this.HandleFixedUpdate(Time.fixedDeltaTime);
+        }
+#endif
+
+#if OXGFRAME_CPFRAME_MONODRIVE_LATEUPDATE_ON
+        private void LateUpdate()
+        {
+            if (this.monoDrive)
+                this.HandleLateUpdate(Time.deltaTime);
+        }
+#endif
 
         public override void OnCreate() { }
 
@@ -155,6 +132,12 @@ namespace OxGFrame.CoreFrame.CPFrame
 
         [System.Obsolete("This is not supported in this class.")]
         protected override void OnShow(object obj) { }
+
+        [System.Obsolete("This is not supported in this class.")]
+        protected override void OnHide() { }
+
+        [System.Obsolete("This is not supported in this class.")]
+        protected override void OnReveal() { }
 
         [System.Obsolete("This is not supported in this class.")]
         public override void OnReceiveAndRefresh(object obj = null) { }

@@ -7,8 +7,15 @@ namespace OxGFrame.CoreFrame.CPFrame
 {
     internal class CPManager
     {
-        public float currentCount { get; protected set; } // [計算進度條用] 加載數量
-        public float totalCount { get; protected set; }   // [計算進度條用] 總加載數量
+        /// <summary>
+        /// [計算進度條用] 加載數量
+        /// </summary>
+        public float currentCount { get; protected set; }
+
+        /// <summary>
+        ///  [計算進度條用] 總加載數量
+        /// </summary>
+        public float totalCount { get; protected set; }
 
         private static readonly object _locker = new object();
         private static CPManager _instance = null;
@@ -122,7 +129,7 @@ namespace OxGFrame.CoreFrame.CPFrame
             bool active = instGo.activeSelf;
             if (!active)
             {
-                cpBase.initFirstByMono = cpBase.monoDrive;
+                cpBase.isMonoDriveDetected = cpBase.monoDrive;
                 instGo.SetActive(true);
             }
 
@@ -139,7 +146,7 @@ namespace OxGFrame.CoreFrame.CPFrame
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
-            cpBase.initFirstByMono = false;
+            cpBase.isMonoDriveDetected = false;
 
             return cpBase;
         }
@@ -192,7 +199,7 @@ namespace OxGFrame.CoreFrame.CPFrame
             bool active = instGo.activeSelf;
             if (!active)
             {
-                cpBase.initFirstByMono = cpBase.monoDrive;
+                cpBase.isMonoDriveDetected = cpBase.monoDrive;
                 instGo.SetActive(true);
             }
 
@@ -209,7 +216,7 @@ namespace OxGFrame.CoreFrame.CPFrame
 
             // 最後還原本身預製體的 Active
             instGo.SetActive(active);
-            cpBase.initFirstByMono = false;
+            cpBase.isMonoDriveDetected = false;
 
             return cpBase;
         }

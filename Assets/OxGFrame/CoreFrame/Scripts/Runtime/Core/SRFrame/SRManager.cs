@@ -43,20 +43,34 @@ namespace OxGFrame.CoreFrame.SRFrame
         #region 實作 Loading
         protected override SRBase Instantiate(SRBase srBase, string assetName, AddIntoCache addIntoCache, Transform parent)
         {
-            GameObject instPref = Instantiate(srBase.gameObject, (parent != null) ? parent : this.transform);
+            // 暫存來源組件與標記 (用於還原來源組件設置)
+            SRBase sourceComponent = srBase;
+            bool sourceMonoDriveFlag = false;
+            if (sourceComponent.monoDrive)
+            {
+                // 記錄標記
+                sourceMonoDriveFlag = sourceComponent.monoDrive;
+                // 動態加載時, 必須取消 monoDrive
+                sourceComponent.monoDrive = false;
+            }
+
+            GameObject instGo = Instantiate(sourceComponent.gameObject, (parent != null) ? parent : this.transform);
 
             // 激活檢查, 如果主體 Active 為 false 必須打開
-            if (!instPref.activeSelf)
-                instPref.SetActive(true);
+            if (!instGo.activeSelf)
+                instGo.SetActive(true);
 
             // Replace Name
-            instPref.name = instPref.name.Replace("(Clone)", "");
-            srBase = instPref.GetComponent<SRBase>();
+            instGo.name = instGo.name.Replace("(Clone)", "");
+            // 取得 SRBase 組件
+            srBase = instGo.GetComponent<SRBase>();
             if (srBase == null)
                 return null;
 
+            // 加入緩存
             addIntoCache?.Invoke(srBase);
 
+            // 設置 assetName 作為 key
             srBase.SetNames(assetName);
             // Clone 取得 SRBase 組件後, 也初始 SRBase 相關設定
             srBase.OnCreate();
@@ -70,6 +84,10 @@ namespace OxGFrame.CoreFrame.SRFrame
 
             // 最後設置完畢後, 關閉 GameObject 的 Active 為 false
             srBase.gameObject.SetActive(false);
+
+            // 還原來源設置
+            if (sourceMonoDriveFlag)
+                sourceComponent.monoDrive = true;
 
             return srBase;
         }
