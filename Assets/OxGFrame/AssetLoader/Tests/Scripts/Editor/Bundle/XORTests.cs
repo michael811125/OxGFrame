@@ -26,7 +26,7 @@ namespace OxGFrame.AssetLoader.Editor.Tests
             stopwatch.Start();
             bool encryptResult = XOR.EncryptBytes(testBytes, key);
             stopwatch.Stop();
-            UnityEngine.Debug.Log($"[EncryptDecryptBytesFromData] XOR.EncryptBytes execution time: {stopwatch.ElapsedMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
+            UnityEngine.Debug.Log($"[EncryptDecryptBytesFromData] XOR.EncryptBytes execution time: {stopwatch.Elapsed.TotalMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
             Assert.IsTrue(encryptResult, "In-place encryption failed");
 
             stopwatch.Reset();
@@ -34,7 +34,7 @@ namespace OxGFrame.AssetLoader.Editor.Tests
             stopwatch.Start();
             bool decryptResult = XOR.DecryptBytes(testBytes, key);
             stopwatch.Stop();
-            UnityEngine.Debug.Log($"[EncryptDecryptBytesFromData] XOR.DecryptBytes execution time: {stopwatch.ElapsedMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
+            UnityEngine.Debug.Log($"[EncryptDecryptBytesFromData] XOR.DecryptBytes execution time: {stopwatch.Elapsed.TotalMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
             Assert.IsTrue(decryptResult, "In-place decryption failed");
 
             Assert.AreEqual(originalBytes, testBytes, "Decrypted content does not match the original content");
@@ -53,7 +53,7 @@ namespace OxGFrame.AssetLoader.Editor.Tests
             stopwatch.Start();
             bool encryptResult = XOR.WriteFile.EncryptFile(tempFile, key);
             stopwatch.Stop();
-            UnityEngine.Debug.Log($"[EncryptDecryptWriteFile] XOR.WriteFile.EncryptFile execution time: {stopwatch.ElapsedMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
+            UnityEngine.Debug.Log($"[EncryptDecryptWriteFile] XOR.WriteFile.EncryptFile execution time: {stopwatch.Elapsed.TotalMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
             Assert.IsTrue(encryptResult, "File encryption failed");
 
             stopwatch.Reset();
@@ -61,7 +61,7 @@ namespace OxGFrame.AssetLoader.Editor.Tests
             stopwatch.Start();
             bool decryptResult = XOR.WriteFile.DecryptFile(tempFile, key);
             stopwatch.Stop();
-            UnityEngine.Debug.Log($"[EncryptDecryptWriteFile] XOR.WriteFile.DecryptFile execution time: {stopwatch.ElapsedMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
+            UnityEngine.Debug.Log($"[EncryptDecryptWriteFile] XOR.WriteFile.DecryptFile execution time: {stopwatch.Elapsed.TotalMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
             Assert.IsTrue(decryptResult, "File decryption failed");
 
             byte[] decryptedData = File.ReadAllBytes(tempFile);
@@ -83,7 +83,7 @@ namespace OxGFrame.AssetLoader.Editor.Tests
             stopwatch.Start();
             byte[] encryptedBytes = XOR.EncryptBytes(tempFile, key);
             stopwatch.Stop();
-            UnityEngine.Debug.Log($"[EncryptDecryptBytesFromFile] XOR.EncryptBytes execution time: {stopwatch.ElapsedMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
+            UnityEngine.Debug.Log($"[EncryptDecryptBytesFromFile] XOR.EncryptBytes execution time: {stopwatch.Elapsed.TotalMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
             Assert.IsNotNull(encryptedBytes, "Encrypted bytes returned null");
             Assert.IsNotEmpty(encryptedBytes, "Encrypted bytes are empty");
 
@@ -95,7 +95,7 @@ namespace OxGFrame.AssetLoader.Editor.Tests
             stopwatch.Start();
             byte[] decryptedBytes = XOR.DecryptBytes(encryptedFile, key);
             stopwatch.Stop();
-            UnityEngine.Debug.Log($"[EncryptDecryptBytesFromFile] XOR.DecryptBytes execution time: {stopwatch.ElapsedMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
+            UnityEngine.Debug.Log($"[EncryptDecryptBytesFromFile] XOR.DecryptBytes execution time: {stopwatch.Elapsed.TotalMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
             Assert.IsNotNull(decryptedBytes, "Decrypted bytes returned null");
             Assert.AreEqual(testData, decryptedBytes, "Decrypted content does not match the original content");
 
@@ -129,7 +129,7 @@ namespace OxGFrame.AssetLoader.Editor.Tests
                     Assert.AreEqual(testData, decryptedData, "Stream decrypted content does not match");
                 }
             }
-            UnityEngine.Debug.Log($"[DecryptStream] XOR.DecryptStream execution time: {stopwatch.ElapsedMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
+            UnityEngine.Debug.Log($"[DecryptStream] XOR.DecryptStream execution time: {stopwatch.Elapsed.TotalMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
 
             File.Delete(tempFile);
         }
