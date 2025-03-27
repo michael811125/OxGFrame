@@ -121,6 +121,7 @@ namespace OxGFrame.AssetLoader.Editor.Tests
             stopwatch.Start();
             using (Stream decryptedStream = AES.DecryptStream(tempFile, key, iv))
             {
+                stopwatch.Stop();
                 Assert.IsNotNull(decryptedStream, "Decrypted stream is null");
                 using (MemoryStream ms = new MemoryStream())
                 {
@@ -129,7 +130,6 @@ namespace OxGFrame.AssetLoader.Editor.Tests
                     Assert.AreEqual(testData, decryptedData, "Stream decrypted content does not match");
                 }
             }
-            stopwatch.Stop();
             UnityEngine.Debug.Log($"[DecryptStream] AES.DecryptStream execution time: {stopwatch.ElapsedMilliseconds} ms, DataSize: {BundleUtility.GetBytesToString(dataSize)}");
 
             File.Delete(tempFile);
