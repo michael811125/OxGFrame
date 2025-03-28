@@ -1,13 +1,9 @@
-﻿using Cysharp.Threading.Tasks;
-using OxGFrame.AssetLoader.Bundle;
-using OxGKit.LoggingSystem;
+﻿using OxGFrame.AssetLoader.Bundle;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using UnityEngine.Networking;
 
 namespace OxGFrame.AssetLoader.Utility
 {
@@ -76,7 +72,7 @@ namespace OxGFrame.AssetLoader.Utility
 
         #region MD5
         /// <summary>
-        /// 【FilePath】生成檔案的 MD5 碼
+        /// 【FilePath】生成文件的 MD5 碼
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
@@ -110,7 +106,7 @@ namespace OxGFrame.AssetLoader.Utility
         }
 
         /// <summary>
-        /// 【FileInfo】生成檔案的 MD5 碼
+        /// 【FileInfo】生成文件的 MD5 碼
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
@@ -154,7 +150,7 @@ namespace OxGFrame.AssetLoader.Utility
 
         #region Folder
         /// <summary>
-        /// 刪除目錄 (包含底下所有的檔案與資料夾)
+        /// 刪除目錄 (包含底下所有的文件與資料夾)
         /// </summary>
         /// <param name="dir"></param>
         public static void DeleteFolder(string dir)
@@ -174,7 +170,7 @@ namespace OxGFrame.AssetLoader.Utility
         }
 
         /// <summary>
-        /// 取得路徑目錄下所有檔案
+        /// 取得路徑目錄下所有文件
         /// </summary>
         /// <param name="dir"></param>
         /// <returns></returns>
@@ -184,15 +180,15 @@ namespace OxGFrame.AssetLoader.Utility
             FileInfo[] files;
             List<FileInfo> combineFiles = new List<FileInfo>();
 
-            // STEP1. 先執行來源目錄下的檔案
+            // STEP1. 先執行來源目錄下的文件
             root = new DirectoryInfo(dir); // 取得該路徑目錄
-            files = root.GetFiles();       // 取得該路徑目錄中的所有檔案
+            files = root.GetFiles();       // 取得該路徑目錄中的所有文件
             foreach (var file in files)
             {
                 combineFiles.Add(file);
             }
 
-            // STEP2. 再執行來源目錄下的目錄檔案 (Recursively)
+            // STEP2. 再執行來源目錄下的目錄文件 (Recursively)
             foreach (string dirPath in Directory.GetDirectories(dir, "*", SearchOption.AllDirectories))
             {
                 root = new DirectoryInfo(dirPath);
@@ -243,34 +239,6 @@ namespace OxGFrame.AssetLoader.Utility
                 }
             }
             System.Diagnostics.Process.Start(dir);
-        }
-        #endregion
-
-        #region File Request
-        /// <summary>
-        /// 從 StreamingAssets 中複製檔案 (for Android, iOS, WebGL)
-        /// </summary>
-        /// <param name="sourceFile"></param>
-        /// <param name="destFile"></param>
-        /// <returns></returns>
-        public static async UniTask RequestAndCopyFileFromStreamingAssets(string sourceFile, string destFile, CancellationTokenSource cts = null)
-        {
-            using (UnityWebRequest request = UnityWebRequest.Get(sourceFile))
-            {
-                if (cts != null) await request.SendWebRequest().WithCancellation(cts.Token);
-                else await request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
-                {
-                    Logging.Print<Logger>("<color=#FF0000>Request failed. Cannot find file in StreamingAssets.</color>");
-                    Logging.Print<Logger>(request.error);
-                }
-                else
-                {
-                    string json = request.downloadHandler.text;
-                    File.WriteAllText(destFile, json);
-                }
-            }
         }
         #endregion
 

@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## [3.2.2] - 2025-03-28
+
+# Englsh
+
+- AssetLoader
+  - Adjusted Offset Decrypt to use Span<byte>.
+  - Adjusted AppConfig comparison process to avoid duplicate requests for configuration files.
+  - Removed the BundleUtility.RequestAndCopyFileFromStreamingAssets method.
+
+---
+
+# 中文
+- AssetLoader
+  - 調整 Offset Decrypt 使用 Span<byte>。
+  - 調整 AppConfig 比對流程，避免重複請求配置文件。
+  - 移除 BundleUtility.RequestAndCopyFileFromStreamingAssets 方法。
+
 ## [3.2.1] - 2025-03-27
 
 # English

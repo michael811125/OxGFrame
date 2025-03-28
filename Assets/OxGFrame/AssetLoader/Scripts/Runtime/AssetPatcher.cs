@@ -3,6 +3,7 @@ using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.Utility;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using YooAsset;
 using static OxGFrame.AssetLoader.Utility.DownloadSpeedCalculator;
@@ -218,7 +219,7 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static string GetPatchVersion(bool encode = false, int encodeLength = 6, string separator = "-")
         {
-            string[] versions = PatchManager.patchVersions;
+            string[] versions = PatchManager.patchVersions.Values.ToArray();
             string newestVersion = BundleUtility.NewestPackageVersion(versions);
             string patchVersion = string.IsNullOrEmpty(newestVersion) ? string.Empty : newestVersion;
 

@@ -545,7 +545,7 @@ namespace OxGFrame.AssetLoader.Editor
                     FileInfo[] files = BundleUtility.GetFilesRecursively(newestVersionPath);
                     foreach (var file in files)
                     {
-                        // 累加檔案大小
+                        // 累加文件大小
                         packageSize += file.Length;
                     }
 

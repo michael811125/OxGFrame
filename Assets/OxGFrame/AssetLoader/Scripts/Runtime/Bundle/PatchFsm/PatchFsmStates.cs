@@ -166,7 +166,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 string url;
 
-                // 判斷是否離線版, 如果是離線版則請求 StreamingAssets 中的 Cfg
+                // 如果是離線模式或 WebGL 模式, 則以 StreamingAssets 的 appconfig 為主
                 if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode ||
                     BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
                     url = saCfgPath;
@@ -174,10 +174,16 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 else
                     url = await BundleConfig.GetHostServerAppConfigPath();
 
-                string hostCfgJson = await Requester.RequestText(url, null, (error) => { PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage(); }, null, false);
+                string hostCfgJson = await Requester.RequestText(url);
+                if (string.IsNullOrEmpty(hostCfgJson))
+                {
+                    PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage();
+                    Logging.PrintError<Logger>($"<color=#FF0000>Failed to request app config from URL: {url}</color>.");
+                    return;
+                }
 
                 AppConfig hostCfg = JsonConvert.DeserializeObject<AppConfig>(hostCfgJson);
-
+                // 處理 App 版號比對
                 await this._AppVersionComparison(hostCfg);
             }
 
@@ -193,100 +199,110 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 }
 
                 // 把資源配置文件拷貝到持久化目錄 Application.persistentDataPath
-                // ※備註: 因為更新文件後是需要改寫版本號, 而在手機平台上的 StreamingAssets 是不可寫入的
+                // ※備註: 因為更新文件後是需要改寫版本號, 而在行動平台上的 StreamingAssets 是不可寫入的
                 if (!File.Exists(BundleConfig.GetLocalSandboxAppConfigPath()))
                 {
-                    // 從 StreamingAssets 中取得配置檔 (InApp)
+                    // 從 StreamingAssets 中取得配置文件 (InApp)
                     string saCfgPath = BundleConfig.GetStreamingAssetsAppConfigPath();
-                    string saCfgJson = await Requester.RequestText(saCfgPath, null, (error) => { PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage(); }, null, false);
 
                     // Local save path (Sandbox)
                     string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
 
-                    // Save to Sandbox
+                    // Request appconfig from StreamginAssets and Save to local Sandbox
+                    string saCfgJson = await Requester.RequestText(saCfgPath, null, null, null, false);
                     if (!string.IsNullOrEmpty(saCfgJson))
                     {
-                        await BundleUtility.RequestAndCopyFileFromStreamingAssets(saCfgPath, localCfgPath);
+                        File.WriteAllText(localCfgPath, saCfgJson);
                     }
                     else
                     {
-                        Logging.Print<Logger>("<color=#FF0000>Cannot find bundle config from StreamingAssets.</color>");
+                        PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage();
+                        Logging.PrintError<Logger>($"<color=#FF0000>Cannot find app config from StreamingAssets.</color>");
                         return;
                     }
                 }
-                // 如果本地已經有配置檔, 則需要去比對主程式版本, 並且從新 App 中的配置檔寫入至本地配置檔中
+                // 如果本地已經有配置文件, 則需要去比對主程式版本, 並且從新 App 中的配置文件寫入至本地配置文件中
                 else
                 {
-                    // 從 StreamingAssets 讀取配置檔 (StreamingAssets 使用 Request)
+                    // 從 StreamingAssets 讀取配置文件 (StreamingAssets 使用 Request)
                     string saCfgPath = BundleConfig.GetStreamingAssetsAppConfigPath();
-                    string saCfgJson = await Requester.RequestText(saCfgPath, null, (error) => { PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage(); }, null, false);
+                    string saCfgJson = await Requester.RequestText(saCfgPath, null, null, null, false);
+                    if (string.IsNullOrEmpty(saCfgJson))
+                    {
+                        PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage();
+                        Logging.PrintError<Logger>($"<color=#FF0000>Cannot find app config from StreamingAssets.</color>");
+                        return;
+                    }
                     saCfg = JsonConvert.DeserializeObject<AppConfig>(saCfgJson);
 
-                    // 從本地端讀取配置檔 (持久化路徑使用 File.Read)
+                    // 從本地端讀取配置文件 (持久化路徑使用 File.Read)
                     string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
                     string localCfgJson = File.ReadAllText(localCfgPath);
                     localCfg = JsonConvert.DeserializeObject<AppConfig>(localCfgJson);
 
-                    // 如果是離線模式, Local Config = StreamingAssets Config
+                    // 如果是離線模式或 WebGL 模式, 則以 StreamingAssets 的 appconfig 為主 (Local Config = StreamingAssets Config)
                     if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode ||
                         BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
                     {
-                        // 寫入 StreamingAssets 的配置檔至 Local
+                        // 寫入 StreamingAssets 的配置文件至 Local
                         File.WriteAllText(localCfgPath, JsonConvert.SerializeObject(saCfg));
                     }
                     else
                     {
                         if (BundleConfig.semanticRule.patch)
                         {
-                            // 比對完整版號
+                            // 比對完整版號 X.Y.Z
                             if (saCfg.APP_VERSION != localCfg.APP_VERSION)
                             {
-                                // 寫入 StreamingAssets 的配置檔至 Local
+                                // 寫入 StreamingAssets 的配置文件至 Local
                                 File.WriteAllText(localCfgPath, JsonConvert.SerializeObject(saCfg));
                             }
                         }
                         else
                         {
-                            // 比對大小版號
+                            // 比對 X.Y 版號
                             string[] saAppVersionArgs = saCfg.APP_VERSION.Split('.');
                             string[] localAppVersionArgs = localCfg.APP_VERSION.Split('.');
 
                             string saVersion = $"{saAppVersionArgs[0]}.{saAppVersionArgs[1]}";
                             string localVersion = $"{localAppVersionArgs[0]}.{localAppVersionArgs[1]}";
 
-                            // 如果 StreamingAssets 中的 App 大小版號與 Local 大小版號不一致表示有更新 App, 則會重新寫入 AppConfig 至 Local
+                            // 如果 StreamingAssets 中的 App X.Y 版號與 Local X.Y 版號不一致表示有更新 App, 則會重新寫入 AppConfig 至 Local
                             if (saVersion != localVersion)
                             {
-                                // 寫入 StreamingAssets 的配置檔至 Local
+                                // 寫入 StreamingAssets 的配置文件至 Local
                                 File.WriteAllText(localCfgPath, JsonConvert.SerializeObject(saCfg));
                             }
                         }
                     }
                 }
 
+                // 開始 Local 與 Host 比對 App 版號
                 {
                     try
                     {
-                        // 重新讀取本地端配置檔
+                        // 重新讀取本地端配置文件
                         string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
                         string localCfgJson = File.ReadAllText(localCfgPath);
                         localCfg = JsonConvert.DeserializeObject<AppConfig>(localCfgJson);
                     }
                     catch
                     {
-                        Logging.Print<Logger>("<color=#FF0000>Read Local Config failed.</color>");
+                        PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage();
+                        Logging.PrintError<Logger>("<color=#FF0000>Read Local Config failed.</color>");
+                        return;
                     }
 
                     if (BundleConfig.semanticRule.patch)
                     {
-                        // 比對 Local 與 Host 的主程式完整版號
+                        // 比對 Local 與 Host 的主程式完整版號 X.Y.Z
                         if (localCfg.APP_VERSION != hostCfg.APP_VERSION)
                         {
                             // Do GoToAppStore
 
-                            // emit go to app store event
+                            // Emit go to app store event
                             PatchEvents.PatchGoToAppStore.SendEventMessage();
-                            // remove last group name
+                            // Remove last group name
                             PatchManager.DelLastGroupInfo();
 
                             Logging.Print<Logger>("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
@@ -303,21 +319,21 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     }
                     else
                     {
-                        // 比對大小版號
+                        // 比對 X.Y 版號
                         string[] localAppVersionArgs = localCfg.APP_VERSION.Split('.');
                         string[] hostAppVersionArgs = hostCfg.APP_VERSION.Split('.');
 
                         string localVersion = $"{localAppVersionArgs[0]}.{localAppVersionArgs[1]}";
                         string hostVersion = $"{hostAppVersionArgs[0]}.{hostAppVersionArgs[1]}";
 
-                        // 比對 Local 與 Host 的主程式大小版號
+                        // 比對 Local 與 Host 的主程式 X.Y 版號
                         if (localVersion != hostVersion)
                         {
                             // Do GoToAppStore
 
-                            // emit go to app store event
+                            // Emit go to app store event
                             PatchEvents.PatchGoToAppStore.SendEventMessage();
-                            // remove last group name
+                            // Remove last group name
                             PatchManager.DelLastGroupInfo();
 
                             Logging.Print<Logger>("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
@@ -329,7 +345,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             // 寫入完整版號至 Local
                             if (localCfg.APP_VERSION != hostCfg.APP_VERSION)
                             {
-                                // 寫入 Host 的配置檔至 Local
+                                // 寫入 Host 的配置文件至 Local
                                 string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
                                 File.WriteAllText(localCfgPath, JsonConvert.SerializeObject(hostCfg));
                             }
@@ -437,7 +453,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 var packages = appPackages.Concat(dlcPackages).ToArray();
 
                 bool succeed = false;
-                List<string> patchVersions = new List<string>();
+                Dictionary<string, string> patchVersions = new Dictionary<string, string>();
                 foreach (var package in packages)
                 {
                     var operation = package.RequestPackageVersionAsync();
@@ -446,20 +462,20 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     if (operation.Status == EOperationStatus.Succeed)
                     {
                         succeed = true;
-                        patchVersions.Add(operation.PackageVersion);
+                        patchVersions.TryAdd(package.PackageName, operation.PackageVersion);
                     }
                     else
                     {
                         succeed = false;
                         PatchEvents.PatchVersionUpdateFailed.SendEventMessage();
-                        Logging.Print<Logger>($"<color=#ff3696>Package: {package.PackageName} update version failed.</color>");
+                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {package.PackageName} update version failed.</color>");
                         break;
                     }
                 }
 
                 if (succeed)
                 {
-                    PatchManager.patchVersions = patchVersions.ToArray();
+                    PatchManager.patchVersions = patchVersions;
                     this._machine.ChangeState<FsmPatchManifestUpdate>();
                 }
             }
@@ -507,7 +523,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 bool succeed = false;
                 for (int i = 0; i < packages.Length; i++)
                 {
-                    var operation = packages[i].UpdatePackageManifestAsync(packageVersions[i]);
+                    packageVersions.TryGetValue(packages[i].PackageName, out string version);
+                    var operation = packages[i].UpdatePackageManifestAsync(version);
                     await operation;
 
                     if (operation.Status == EOperationStatus.Succeed)
@@ -519,15 +536,17 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     {
                         succeed = false;
                         PatchEvents.PatchManifestUpdateFailed.SendEventMessage();
-                        Logging.Print<Logger>($"<color=#ff3696>Package: {packages[i].PackageName} update manifest failed.</color>");
+                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {packages[i].PackageName} update manifest failed.</color>");
                         break;
                     }
                 }
 
                 if (succeed)
                 {
-                    if (BundleConfig.skipMainDownload) this._machine.ChangeState<FsmDownloadOver>();
-                    else this._machine.ChangeState<FsmCreateDownloader>();
+                    if (BundleConfig.skipMainDownload)
+                        this._machine.ChangeState<FsmDownloadOver>();
+                    else
+                        this._machine.ChangeState<FsmCreateDownloader>();
                 }
             }
         }
@@ -582,8 +601,15 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 Logging.Print<Logger>($"<color=#ffce54>Get last GroupName: {lastGroupInfo?.groupName}</color>");
 
                 #region Create Downloader by Tags
+                // 獲取 host patch config, 需要處理群組包下載邏輯
                 string url = await BundleConfig.GetHostServerPatchConfigPath();
-                string hostCfgJson = await Requester.RequestText(url, null, (error) => { PatchEvents.PatchDownloadFailed.SendEventMessage(); }, null, false);
+                string hostCfgJson = await Requester.RequestText(url, null, null, null, false);
+                if (string.IsNullOrEmpty(hostCfgJson))
+                {
+                    PatchEvents.PatchDownloadFailed.SendEventMessage();
+                    Logging.PrintError<Logger>($"<color=#FF0000>Failed to request patch config from URL: {url}</color>.");
+                    return;
+                }
                 PatchConfig patchCfg = JsonConvert.DeserializeObject<PatchConfig>(hostCfgJson);
                 List<GroupInfo> patchGroupInfos = patchCfg.GROUP_INFOS;
 
@@ -743,7 +769,9 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     Logging.Print<Logger>($"<color=#54beff>Found total group {newGroupInfos.Count} to choose download =>\n{JsonConvert.SerializeObject(newGroupInfos)}</color>");
                     PatchEvents.PatchCreateDownloader.SendEventMessage(newGroupInfos.Values.ToArray());
 
-                    // 開始等待使用者選擇是否開始下載
+                    /**
+                     * 開始等待使用者選擇是否開始下載
+                     */
                 }
                 else
                 {
@@ -754,7 +782,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
         }
 
         /// <summary>
-        /// 7. 下載資源檔案
+        /// 7. 下載資源文件
         /// </summary>
         public class FsmBeginDownload : IStateNode
         {
@@ -769,7 +797,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
             void IStateNode.OnEnter()
             {
-                // 下載資源檔案中
+                // 下載資源文件中
                 PatchEvents.PatchFsmState.SendEventMessage(this);
                 this._StartDownload().Forget();
             }
@@ -799,8 +827,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     if (lastGroupInfo != null)
                     {
-                        if (lastGroupInfo.groupName == PatchManager.DEFAULT_GROUP_TAG) mainDownloaders.Add(package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount));
-                        else mainDownloaders.Add(package.CreateResourceDownloader(lastGroupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount));
+                        if (lastGroupInfo.groupName == PatchManager.DEFAULT_GROUP_TAG)
+                            mainDownloaders.Add(package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount));
+                        else
+                            mainDownloaders.Add(package.CreateResourceDownloader(lastGroupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount));
                     }
                 }
 
@@ -858,7 +888,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     downloader.BeginDownload();
                     await downloader;
 
-                    if (downloader.Status != EOperationStatus.Succeed) return;
+                    if (downloader.Status != EOperationStatus.Succeed)
+                        return;
                 }
 
                 this._machine.ChangeState<FsmDownloadOver>();

@@ -458,7 +458,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
         }
 
         /// <summary>
-        /// 6. 下載資源檔案
+        /// 6. 下載資源文件
         /// </summary>
         public class FsmBeginDownload : IStateNode
         {
@@ -475,7 +475,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
             void IStateNode.OnEnter()
             {
-                // 下載資源檔案中
+                // 下載資源文件中
                 PackageEvents.PatchFsmState.SendEventMessage(this._hashId, this);
                 (this._machine.Owner as PackageOperation).MarkBeginState();
                 this._StartDownload().Forget();
