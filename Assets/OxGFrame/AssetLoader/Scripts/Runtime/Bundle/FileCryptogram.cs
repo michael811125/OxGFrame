@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.IO.Pipes;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
@@ -18,7 +17,7 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// Offset 加密文件 【檢測OK】
+                /// Offset 加密文件
                 /// </summary>
                 /// <param name="sourceFile"></param>
                 /// <param name="dummySize"></param>
@@ -83,7 +82,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
 
                 /// <summary>
-                /// Offset 解密文件 【檢測OK】
+                /// Offset 解密文件
                 /// </summary>
                 /// <param name="encryptFile"></param>
                 /// <param name="dummySize"></param>
@@ -138,7 +137,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Offset 加密文件 【檢測OK】
+            /// Offset 加密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="dummySize"></param>
@@ -189,7 +188,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Offset 解密文件 【檢測OK】
+            /// Offset 解密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="dummySize"></param>
@@ -208,22 +207,28 @@ namespace OxGFrame.AssetLoader.Bundle
                         // 跳過 dummySize
                         fsDecrypt.Seek(dummySize, SeekOrigin.Begin);
 
-                        // 創建一個 byte[] 來存放解密後的資料
-                        byte[] offsetDatabytes = new byte[totalLength];
+                        // 創建一個 Span<byte> 來存放解密後的資料
+                        byte[] resultArray = new byte[totalLength];
+                        Span<byte> resultSpan = new Span<byte>(resultArray);
 
                         // 逐步讀取數據
-                        int bytesRead;
                         int offset = 0;
                         byte[] buffer = new byte[BUFFER_SIZE];
-                        while ((bytesRead = fsDecrypt.Read(buffer, 0, buffer.Length)) > 0)
+                        while (offset < totalLength)
                         {
-                            int bytesToWrite = (int)Math.Min(bytesRead, totalLength - offset);
-                            Buffer.BlockCopy(buffer, 0, offsetDatabytes, offset, bytesToWrite);
+                            int bytesRead = fsDecrypt.Read(buffer, 0, buffer.Length);
+                            if (bytesRead == 0)
+                                break;
+
+                            int bytesToWrite = Math.Min(bytesRead, (int)(totalLength - offset));
+                            // 使用 Span.Slice 來指定目標區域
+                            new Span<byte>(resultArray, offset, bytesToWrite).Clear();
+                            new Span<byte>(buffer, 0, bytesRead).Slice(0, bytesToWrite).CopyTo(resultSpan.Slice(offset, bytesToWrite));
                             offset += bytesToWrite;
                         }
 
                         // 返回解密後的 byte[]
-                        return offsetDatabytes;
+                        return resultArray;
                     }
                 }
                 catch (Exception ex)
@@ -234,7 +239,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Offset 加密文件 【檢測OK】
+            /// Offset 加密文件
             /// </summary>
             /// <param name="rawBytes"></param>
             /// <param name="dummySize"></param>
@@ -250,8 +255,10 @@ namespace OxGFrame.AssetLoader.Bundle
                     byte[] offsetDatabytes = new byte[totalLength];
                     for (int i = 0; i < totalLength; i++)
                     {
-                        if (dummySize > 0 && i < dummySize) offsetDatabytes[i] = (byte)(UnityEngine.Random.Range(0, 256));
-                        else offsetDatabytes[i] = dataBytes[i - dummySize];
+                        if (dummySize > 0 && i < dummySize)
+                            offsetDatabytes[i] = (byte)(UnityEngine.Random.Range(0, 256));
+                        else
+                            offsetDatabytes[i] = dataBytes[i - dummySize];
                     }
                     rawBytes = offsetDatabytes;
                 }
@@ -265,7 +272,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Offset 解密文件 【檢測OK】
+            /// Offset 解密文件
             /// </summary>
             /// <param name="encryptBytes"></param>
             /// <param name="dummySize"></param>
@@ -275,9 +282,8 @@ namespace OxGFrame.AssetLoader.Bundle
                 try
                 {
                     int totalLength = encryptBytes.Length - dummySize;
-                    byte[] offsetDatabytes = new byte[totalLength];
-                    Buffer.BlockCopy(encryptBytes, dummySize, offsetDatabytes, 0, totalLength);
-                    encryptBytes = offsetDatabytes;
+                    Span<byte> encryptSpan = encryptBytes.AsSpan(dummySize, totalLength);
+                    encryptBytes = encryptSpan.ToArray();
                 }
                 catch (Exception ex)
                 {
@@ -289,7 +295,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// 返回 Offset 解密 Stream 【檢測OK】
+            /// 返回 Offset 解密 Stream
             /// </summary>
             /// <param name="encryptFile"></param>
             /// <param name="dummySize"></param>
@@ -337,7 +343,7 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// XOR 加密文件 【檢測OK】
+                /// XOR 加密文件
                 /// </summary>
                 /// <param name="sourceFile"></param>
                 /// <param name="key"></param>
@@ -382,7 +388,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 /// <summary>
-                /// XOR 解密文件 【檢測OK】
+                /// XOR 解密文件
                 /// </summary>
                 /// <param name="encryptFile"></param>
                 /// <param name="key"></param>
@@ -395,7 +401,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// XOR 加密文件 【檢測OK】
+            /// XOR 加密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="key"></param>
@@ -435,7 +441,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// XOR 解密文件 【檢測OK】
+            /// XOR 解密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="key"></param>
@@ -447,7 +453,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// XOR 加密文件 【檢測OK】
+            /// XOR 加密文件
             /// </summary>
             /// <param name="rawBytes"></param>
             /// <param name="key"></param>
@@ -471,7 +477,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// XOR 解密文件 【檢測OK】
+            /// XOR 解密文件
             /// </summary>
             /// <param name="encryptBytes"></param>
             /// <param name="key"></param>
@@ -495,7 +501,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// 返回 XOR 解密 Stream 【檢測OK】
+            /// 返回 XOR 解密 Stream
             /// </summary>
             /// <param name="encryptFile"></param>
             /// <param name="key"></param>
@@ -545,7 +551,7 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// Head-Tail 2 XOR 加密文件 【檢測OK】
+                /// Head-Tail 2 XOR 加密文件
                 /// </summary>
                 /// <param name="sourceFile"></param>
                 /// <param name="hKey"></param>
@@ -605,7 +611,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 /// <summary>
-                /// Head-Tail 2 XOR 解密文件 【檢測OK】
+                /// Head-Tail 2 XOR 解密文件
                 /// </summary>
                 /// <param name="encryptFile"></param>
                 /// <param name="hKey"></param>
@@ -665,7 +671,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail 2 XOR 加密文件 【檢測OK】
+            /// Head-Tail 2 XOR 加密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="hKey"></param>
@@ -722,7 +728,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail 2 XOR 解密文件 【檢測OK】
+            /// Head-Tail 2 XOR 解密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="hKey"></param>
@@ -779,7 +785,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail 2 XOR 加密文件 【檢測OK】
+            /// Head-Tail 2 XOR 加密文件
             /// </summary>
             /// <param name="rawBytes"></param>
             /// <param name="hKey"></param>
@@ -813,7 +819,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail 2 XOR 解密文件 【檢測OK】
+            /// Head-Tail 2 XOR 解密文件
             /// </summary>
             /// <param name="encryptBytes"></param>
             /// <param name="hKey"></param>
@@ -845,7 +851,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// 返回 Head-Tail 2 XOR 解密 Stream 【檢測OK】
+            /// 返回 Head-Tail 2 XOR 解密 Stream
             /// </summary>
             /// <param name="encryptFile"></param>
             /// <param name="hKey"></param>
@@ -912,7 +918,7 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// Head-Tail 2 XOR Plus 加密文件 【檢測OK】
+                /// Head-Tail 2 XOR Plus 加密文件
                 /// </summary>
                 /// <param name="sourceFile"></param>
                 /// <param name="hKey"></param>
@@ -981,7 +987,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 /// <summary>
-                /// Head-Tail 2 XOR Plus 解密文件 【檢測OK】
+                /// Head-Tail 2 XOR Plus 解密文件
                 /// </summary>
                 /// <param name="encryptFile"></param>
                 /// <param name="hKey"></param>
@@ -1052,7 +1058,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail 2 XOR Plus 加密文件 【檢測OK】
+            /// Head-Tail 2 XOR Plus 加密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="hKey"></param>
@@ -1120,7 +1126,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail 2 XOR Plus 解密文件 【檢測OK】
+            /// Head-Tail 2 XOR Plus 解密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="hKey"></param>
@@ -1188,7 +1194,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail 2 XOR Plus 加密文件 【檢測OK】
+            /// Head-Tail 2 XOR Plus 加密文件
             /// </summary>
             /// <param name="rawBytes"></param>
             /// <param name="hKey"></param>
@@ -1227,7 +1233,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// Head-Tail 2 XOR Plus 解密文件 【檢測OK】
+            /// Head-Tail 2 XOR Plus 解密文件
             /// </summary>
             /// <param name="encryptBytes"></param>
             /// <param name="hKey"></param>
@@ -1239,22 +1245,23 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 try
                 {
-                    int length = encryptBytes.Length;
+                    Span<byte> span = encryptBytes;
+                    int length = span.Length;
 
                     // jump 2 plus decrypt
                     for (int i = 0; i < length >> 1; i++)
                     {
                         int s1 = i << 1;
                         int s2 = s1 + 1;
-                        encryptBytes[s1] ^= j1Key;
+                        span[s1] ^= j1Key;
                         if (s2 < length)
-                            encryptBytes[s2] ^= j2Key;
+                            span[s2] ^= j2Key;
                     }
 
                     // head decrypt
-                    encryptBytes[0] ^= hKey;
+                    span[0] ^= hKey;
                     // tail decrypt
-                    encryptBytes[length - 1] ^= tKey;
+                    span[length - 1] ^= tKey;
                 }
                 catch (Exception ex)
                 {
@@ -1266,7 +1273,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// 返回 Head-Tail 2 XOR Plus 解密 Stream 【檢測OK】
+            /// 返回 Head-Tail 2 XOR Plus 解密 Stream
             /// </summary>
             /// <param name="encryptFile"></param>
             /// <param name="hKey"></param>
@@ -1344,7 +1351,7 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// AES 加密文件 【檢測OK】
+                /// AES 加密文件
                 /// </summary>
                 /// <param name="sourceFile"></param>
                 /// <param name="key"></param>
@@ -1366,7 +1373,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
                             // 讀取整個文件數據
                             byte[] dataBytes = File.ReadAllBytes(sourceFile);
-                            // 刪除原始檔案以便覆蓋寫入
+                            // 刪除原始文件以便覆蓋寫入
                             File.Delete(sourceFile);
 
                             using (FileStream fsEncrypt = new FileStream(sourceFile, FileMode.Create, FileAccess.Write))
@@ -1387,7 +1394,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 /// <summary>
-                /// AES 解密文件 【檢測OK】
+                /// AES 解密文件
                 /// </summary>
                 /// <param name="encryptFile"></param>
                 /// <param name="key"></param>
@@ -1429,7 +1436,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// AES 加密文件 【檢測OK】
+            /// AES 加密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="key"></param>
@@ -1472,7 +1479,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// AES 解密文件 【檢測OK】
+            /// AES 解密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="key"></param>
@@ -1514,7 +1521,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// AES 加密文件 【檢測OK】
+            /// AES 加密文件
             /// </summary>
             /// <param name="rawBytes"></param>
             /// <param name="key"></param>
@@ -1555,7 +1562,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// AES 解密文件 【檢測OK】
+            /// AES 解密文件
             /// </summary>
             /// <param name="encryptBytes"></param>
             /// <param name="key"></param>
@@ -1594,7 +1601,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// 返回 AES 解密 Stream 【檢測OK】
+            /// 返回 AES 解密 Stream
             /// </summary>
             /// <param name="encryptFile"></param>
             /// <param name="key"></param>
@@ -1676,7 +1683,7 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// ChaCha20 加密文件 【檢測OK】
+                /// ChaCha20 加密文件
                 /// </summary>
                 /// <param name="sourceFile"></param>
                 /// <param name="key"></param>
@@ -1702,7 +1709,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 /// <summary>
-                /// ChaCha20 解密文件 【檢測OK】
+                /// ChaCha20 解密文件
                 /// </summary>
                 /// <param name="encryptFile"></param>
                 /// <param name="key"></param>
@@ -1729,7 +1736,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// ChaCha20 加密文件 【檢測OK】
+            /// ChaCha20 加密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="key"></param>
@@ -1753,7 +1760,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// ChaCha20 解密文件 【檢測OK】
+            /// ChaCha20 解密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="key"></param>
@@ -1777,7 +1784,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// ChaCha20 加密位元組 【檢測OK】
+            /// ChaCha20 加密位元組
             /// </summary>
             /// <param name="rawBytes"></param>
             /// <param name="key"></param>
@@ -1801,7 +1808,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// ChaCha20 解密位元組 【檢測OK】
+            /// ChaCha20 解密位元組
             /// </summary>
             /// <param name="encryptBytes"></param>
             /// <param name="key"></param>
@@ -1824,7 +1831,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// 返回 ChaCha20 解密 Stream 【檢測OK】
+            /// 返回 ChaCha20 解密 Stream
             /// </summary>
             /// <param name="encryptFile"></param>
             /// <param name="key"></param>
@@ -1852,7 +1859,7 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// XXTEA 加密文件 【檢測OK】
+                /// XXTEA 加密文件
                 /// </summary>
                 /// <param name="sourceFile"></param>
                 /// <param name="key"></param>
@@ -1875,7 +1882,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 /// <summary>
-                /// XXTEA 解密文件 【檢測OK】
+                /// XXTEA 解密文件
                 /// </summary>
                 /// <param name="encryptFile"></param>
                 /// <param name="key"></param>
@@ -1899,7 +1906,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// XXTEA 加密文件 【檢測OK】
+            /// XXTEA 加密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="key"></param>
@@ -1919,7 +1926,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// XXTEA 解密文件 【檢測OK】
+            /// XXTEA 解密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="key"></param>
@@ -1939,7 +1946,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// XXTEA 加密位元組 【檢測OK】
+            /// XXTEA 加密位元組
             /// </summary>
             /// <param name="rawBytes"></param>
             /// <param name="key"></param>
@@ -1961,7 +1968,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// XXTEA 解密位元組 【檢測OK】
+            /// XXTEA 解密位元組
             /// </summary>
             /// <param name="encryptBytes"></param>
             /// <param name="key"></param>
@@ -1982,7 +1989,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// 返回 XXTEA 解密 Stream 【檢測OK】
+            /// 返回 XXTEA 解密 Stream
             /// </summary>
             /// <param name="encryptFile"></param>
             /// <param name="key"></param>
@@ -2008,7 +2015,7 @@ namespace OxGFrame.AssetLoader.Bundle
             public class WriteFile
             {
                 /// <summary>
-                /// OffsetXOR 加密文件 【檢測OK】
+                /// OffsetXOR 加密文件
                 /// </summary>
                 /// <param name="sourceFile"></param>
                 /// <param name="key"></param>
@@ -2028,7 +2035,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 /// <summary>
-                /// OffsetXOR 解密文件 【檢測OK】
+                /// OffsetXOR 解密文件
                 /// </summary>
                 /// <param name="encryptFile"></param>
                 /// <param name="key"></param>
@@ -2049,7 +2056,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// OffsetXOR 加密文件 【檢測OK】
+            /// OffsetXOR 加密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="key"></param>
@@ -2066,7 +2073,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// OffsetXOR 解密文件 【檢測OK】
+            /// OffsetXOR 解密文件
             /// </summary>
             /// <param name="filePath"></param>
             /// <param name="key"></param>
@@ -2083,7 +2090,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// OffsetXOR 加密文件 【檢測OK】
+            /// OffsetXOR 加密文件
             /// </summary>
             /// <param name="rawBytes"></param>
             /// <param name="key"></param>
@@ -2103,7 +2110,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// OffsetXOR 解密文件 【檢測OK】
+            /// OffsetXOR 解密文件
             /// </summary>
             /// <param name="encryptBytes"></param>
             /// <param name="key"></param>
@@ -2123,7 +2130,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
 
             /// <summary>
-            /// 返回 OffsetXOR 解密 Stream 【檢測OK】
+            /// 返回 OffsetXOR 解密 Stream
             /// </summary>
             /// <param name="encryptFile"></param>
             /// <param name="key"></param>

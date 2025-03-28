@@ -1,17 +1,34 @@
 # CHANGELOG
 
+## [3.2.2] - 2025-03-28
+
+# Englsh
+
+- AssetLoader
+  - Adjusted Offset Decrypt to use Span<byte>.
+  - Adjusted AppConfig comparison process to avoid duplicate requests for configuration files.
+  - Removed the BundleUtility.RequestAndCopyFileFromStreamingAssets method.
+
+---
+
+# 中文
+- AssetLoader
+  - 調整 Offset Decrypt 使用 Span<byte>。
+  - 調整 AppConfig 比對流程，避免重複請求配置文件。
+  - 移除 BundleUtility.RequestAndCopyFileFromStreamingAssets 方法。
+
 ## [3.2.1] - 2025-03-27
 
 # English
 
 - CoreFrame
   - SRFrame, UIFrame, CPFrame
-  - Added support for SRBase and UIBase for MonoDrive, allowing them to be placed in the scene for static loading (without affecting the initial dynamic loading process).
-    - Note: If MonoDrive is enabled, control and configuration by the manager will be lost, and you must manage and cache manually.
-    - Additionally, after enabling MonoDrive, if you want to activate Update, you must use the following macros:
-      - **SRFrame**: OXGFRAME_SRFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_SRFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_SRFRAME_MONODRIVE_LATEUPDATE_ON (use as needed based on development requirements)
-      - **UIFrame**: OXGFRAME_UIFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_UIFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_UIFRAME_MONODRIVE_LATEUPDATE_ON (use as needed based on development requirements)
-      - **CPFrame**: OXGFRAME_CPFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_CPFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_CPFRAME_MONODRIVE_LATEUPDATE_ON (use as needed based on development requirements)
+    - Added support for SRBase and UIBase for MonoDrive, allowing them to be placed in the scene for static loading (without affecting the initial dynamic loading process).
+      - Note: If MonoDrive is enabled, control and configuration by the manager will be lost, and you must manage and cache manually.
+      - Additionally, after enabling MonoDrive, if you want to activate Update, you must use the following macros:
+        - **SRFrame**: OXGFRAME_SRFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_SRFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_SRFRAME_MONODRIVE_LATEUPDATE_ON (use as needed based on development requirements)
+        - **UIFrame**: OXGFRAME_UIFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_UIFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_UIFRAME_MONODRIVE_LATEUPDATE_ON (use as needed based on development requirements)
+        - **CPFrame**: OXGFRAME_CPFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_CPFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_CPFRAME_MONODRIVE_LATEUPDATE_ON (use as needed based on development requirements)
 - MediaFrame
   - AudioFrame
     - Added support for AudioBase for MonoDrive, allowing it to be placed in the scene for static loading (without affecting the initial dynamic loading process).
@@ -40,12 +57,12 @@
 
 - CoreFrame
   - SRFrame, UIFRame, CPFrame
-  - 新增 SRBase, UIBse 對於 MonoDrive 的支持，可事先放置於場景中靜態加載 (不影響動態加載的初始流程)。
-    - 注意：如果啟用 MonoDrive，將失去管理器的控管與配置，必須自行控管與緩存。
-    - 另外，啟用 MonoDrive 後，如果要激活 Update 則必須使用以下宏 (Macro)：
-	  - **SRFrame**: OXGFRAME_SRFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_SRFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_SRFRAME_MONODRIVE_LATEUPDATE_ON (依開發需求，決定是否使用)
-	  - **UIFrame**: OXGFRAME_UIFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_UIFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_UIFRAME_MONODRIVE_LATEUPDATE_ON (依開發需求，決定是否使用)
-	  - **CPFrame**: OXGFRAME_CPFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_CPFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_CPFRAME_MONODRIVE_LATEUPDATE_ON (依開發需求，決定是否使用)
+    - 新增 SRBase, UIBse 對於 MonoDrive 的支持，可事先放置於場景中靜態加載 (不影響動態加載的初始流程)。
+      - 注意：如果啟用 MonoDrive，將失去管理器的控管與配置，必須自行控管與緩存。
+      - 另外，啟用 MonoDrive 後，如果要激活 Update 則必須使用以下宏 (Macro)：
+	    - **SRFrame**: OXGFRAME_SRFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_SRFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_SRFRAME_MONODRIVE_LATEUPDATE_ON (依開發需求，決定是否使用)
+	    - **UIFrame**: OXGFRAME_UIFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_UIFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_UIFRAME_MONODRIVE_LATEUPDATE_ON (依開發需求，決定是否使用)
+	    - **CPFrame**: OXGFRAME_CPFRAME_MONODRIVE_UPDATE_ON, OXGFRAME_CPFRAME_MONODRIVE_FIXEDUPDATE_ON, OXGFRAME_CPFRAME_MONODRIVE_LATEUPDATE_ON (依開發需求，決定是否使用)
 - MediaFrame
   - AudioFrame
     - 新增 AudioBase 對於 MonoDrive 的支持，可事先放置於場景中靜態加載 (不影響動態加載的初始流程)。

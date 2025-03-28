@@ -1,11 +1,12 @@
-﻿using OxGFrame.AssetLoader.PatchEvent;
+﻿using Newtonsoft.Json;
+using OxGFrame.AssetLoader.PatchEvent;
+using OxGFrame.AssetLoader.PatchFsm;
+using OxGKit.LoggingSystem;
+using System.Collections.Generic;
 using UniFramework.Event;
 using UniFramework.Machine;
 using UnityEngine;
-using OxGFrame.AssetLoader.PatchFsm;
 using YooAsset;
-using Newtonsoft.Json;
-using OxGKit.LoggingSystem;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
@@ -39,7 +40,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         internal static string platform = string.Empty;
         internal static string appVersion = string.Empty;
-        internal static string[] patchVersions;
+        internal static Dictionary<string, string> patchVersions;
         internal ResourceDownloaderOperation[] mainDownloaders;
 
         private bool _isCheck = false;
