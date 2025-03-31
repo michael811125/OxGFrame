@@ -550,19 +550,19 @@ namespace OxGFrame.AssetLoader.Editor
                     }
 
                     {
-                        string versionName = Path.GetFileNameWithoutExtension(newestVersionPath);
-                        string refineVersionName = versionName.Replace("-", string.Empty);
+                        string separator = "-";
+                        string versionDateString = Path.GetFileNameWithoutExtension(newestVersionPath);
+                        string refineVersionDateString = versionDateString.Replace(separator, string.Empty);
                         #region Encode
-                        string versionHash = BundleUtility.GetVersionHash("-", versionName, 1 << 5);
-                        // Default length is 6
-                        string versionNumber1 = BundleUtility.GetVersionNumber(versionHash, 6);
+                        // Default length
+                        string encodedVersionNum1 = BundleUtility.GetVersionNumber(versionDateString, 11, separator);
                         // Just show more
-                        string versionNumber2 = BundleUtility.GetVersionNumber(versionHash, 32);
+                        string encodedVersionNum2 = BundleUtility.GetVersionNumber(versionDateString, 32, separator);
                         #endregion
 
                         packageInfo.packageName = packageName;
-                        packageInfo.packageVersion = refineVersionName;
-                        packageInfo.packageVersionEncoded = $"{versionNumber1}-{versionNumber2}";
+                        packageInfo.packageVersion = refineVersionDateString;
+                        packageInfo.packageVersionEncoded = $"{encodedVersionNum1}-{encodedVersionNum2}";
                         packageInfo.packageSize = packageSize;
                     }
 

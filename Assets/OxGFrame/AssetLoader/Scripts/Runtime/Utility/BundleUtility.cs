@@ -250,14 +250,16 @@ namespace OxGFrame.AssetLoader.Utility
         /// <returns></returns>
         public static string NewestPackageVersion(string[] versions)
         {
-            if (versions == null || (versions != null && versions.Length == 0)) return string.Empty;
+            if (versions == null || (versions != null && versions.Length == 0))
+                return string.Empty;
 
             #region Newest Filter
             Dictionary<string, decimal> packageVersions = new Dictionary<string, decimal>();
             foreach (var version in versions)
             {
                 if (string.IsNullOrEmpty(version) ||
-                    version.IndexOf('-') <= -1) continue;
+                    version.IndexOf('-') <= -1)
+                    continue;
 
                 string major = version.Substring(0, version.LastIndexOf("-"));
                 string minor = version.Substring(version.LastIndexOf("-") + 1, version.Length - version.LastIndexOf("-") - 1);
@@ -271,7 +273,8 @@ namespace OxGFrame.AssetLoader.Utility
                 string refineVersionName = $"{major}{minor}";
                 if (decimal.TryParse(refineVersionName, out decimal value))
                 {
-                    if (!packageVersions.ContainsKey(version)) packageVersions.Add(version, value);
+                    if (!packageVersions.ContainsKey(version))
+                        packageVersions.Add(version, value);
                 }
             }
 
@@ -282,53 +285,107 @@ namespace OxGFrame.AssetLoader.Utility
         }
 
         /// <summary>
-        /// Get version hash
+        /// Get version number
         /// </summary>
-        /// <param name="separator"></param>
-        /// <param name="seed"></param>
+        /// <param name="dateString"></param>
         /// <param name="length"></param>
+        /// <param name="separator"></param>
         /// <returns></returns>
-        public static string GetVersionHash(string separator, string seed, int length)
+        public static string GetVersionNumber(string dateString, int length, string separator)
         {
-            if (string.IsNullOrEmpty(seed)) return seed;
+            if (string.IsNullOrEmpty(dateString))
+                return dateString;
 
-            byte[] bytes = Encoding.UTF8.GetBytes(seed);
-            using (var md5 = System.Security.Cryptography.MD5.Create())
+            int minLength = 11;
+            int maxLength = 32;
+
+            // YYYY-MM-DD-TotalMinues
+            string[] dateArgs = dateString.Split(separator);
+
+            // Years
+            int firstDashIndex = dateString.IndexOf(separator);
+            string year = firstDashIndex != -1 ? dateString.Substring(0, firstDashIndex) : dateArgs[0];
+
+            // MM-DD to days
+            string dayOfYear = GetDayOfYear(dateString, 3);
+
+            // One day to minues
+            int lastDashIndex = dateString.LastIndexOf(separator);
+            string totalMinues = lastDashIndex != -1 ? dateString.Substring(lastDashIndex + 1) : dateArgs[3];
+            totalMinues = totalMinues.PadLeft(4, '0');
+
+            string combinedVersion = year + dayOfYear + totalMinues;
+
+            if (length > minLength && length <= maxLength)
             {
-                byte[] hash = md5.ComputeHash(bytes);
-                string version = BitConverter.ToString(hash).Replace(separator, "");
-                version = version.Substring(0, length);
-                return version;
+                int count = length - combinedVersion.Length;
+                // 控制交替, true = 先從前面開始
+                bool addToFront = true;
+                // 用於記錄前面補了幾次
+                int frontAdded = 0;
+                int maxFrontCount = 10;
+
+                while (count > 0)
+                {
+                    if (addToFront && frontAdded < maxFrontCount)
+                    {
+                        combinedVersion = GenerateRandomNumberString(1) + combinedVersion;
+                        frontAdded++;
+                    }
+                    else
+                    {
+                        combinedVersion += GenerateRandomNumberString(1);
+                    }
+
+                    // 交替加前或加後
+                    addToFront = !addToFront;
+                    count--;
+                }
             }
+
+            return combinedVersion;
+        }
+
+        #region Internal Methods
+        internal static string GenerateRandomNumberString(int length)
+        {
+            var random = new System.Random();
+            char[] buffer = new char[length];
+            for (int i = 0; i < length; i++)
+            {
+                buffer[i] = (char)('0' + random.Next(0, 10));
+            }
+            return new string(buffer);
         }
 
         /// <summary>
-        /// Get version number
+        /// 輸入日期字符串 (yyyy-MM-dd) 返回一年中的第幾天
         /// </summary>
-        /// <param name="seed"></param>
-        /// <param name="length"></param>
+        /// <param name="dateString"></param>
         /// <returns></returns>
-        public static string GetVersionNumber(string seed, int length)
+        internal static int GetDayOfYear(string dateString)
         {
-            if (string.IsNullOrEmpty(seed)) return seed;
-
-            byte[] bytes = Encoding.UTF8.GetBytes(seed);
-            using (var md5 = System.Security.Cryptography.MD5.Create())
-            {
-                byte[] hash = md5.ComputeHash(bytes);
-                ulong version = BitConverter.ToUInt64(hash, 0);
-                string versionString = version.ToString();
-                if (versionString.Length < length)
-                {
-                    versionString = versionString.PadRight(length, '0');
-                }
-                else if (versionString.Length > length)
-                {
-                    versionString = versionString.Substring(0, length);
-                }
-                return versionString;
-            }
+            int lastDashIndex = dateString.LastIndexOf('-');
+            dateString = lastDashIndex != -1 ? dateString.Substring(0, lastDashIndex) : dateString;
+            DateTime date = DateTime.ParseExact(dateString, "yyyy-MM-dd", null);
+            return date.DayOfYear;
         }
+
+        internal static string GetDayOfYear(string dateString, int padLength = 3)
+        {
+            return GetDayOfYear(dateString).ToString().PadLeft(padLength, '0');
+        }
+
+        /// <summary>
+        /// Get package version by current date
+        /// </summary>
+        /// <returns></returns>
+        internal static string GetDefaultPackageVersion()
+        {
+            int totalMinutes = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+            return DateTime.Now.ToString("yyyy-MM-dd") + "-" + totalMinutes;
+        }
+        #endregion
         #endregion
 
         #region Disk Operation
