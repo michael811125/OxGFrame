@@ -214,7 +214,7 @@ namespace OxGFrame.AssetLoader
 
         /// <summary>
         /// Get newest patch version (Recommend use encode to display)
-        /// <para> Min and Max length = 12 to 16 </para>
+        /// <para> Min and Max length = 11 to 32 </para>
         /// </summary>
         /// <returns></returns>
         public static string GetPatchVersion(bool encode = false, int length = 11, string separator = "-")
