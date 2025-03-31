@@ -1,7 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.Utility;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -215,9 +214,10 @@ namespace OxGFrame.AssetLoader
 
         /// <summary>
         /// Get newest patch version (Recommend use encode to display)
+        /// <para> Min and Max length = 12 to 16 </para>
         /// </summary>
         /// <returns></returns>
-        public static string GetPatchVersion(bool encode = false, int encodeLength = 6, string separator = "-")
+        public static string GetPatchVersion(bool encode = false, int length = 11, string separator = "-")
         {
             string[] versions = PatchManager.patchVersions.Values.ToArray();
             string newestVersion = BundleUtility.NewestPackageVersion(versions);
@@ -225,26 +225,15 @@ namespace OxGFrame.AssetLoader
 
             // For simulate mode
             if (string.IsNullOrEmpty(patchVersion))
-                patchVersion = GetDefaultPackageVersion();
+                patchVersion = BundleUtility.GetDefaultPackageVersion();
 
             if (encode)
             {
-                string versionHash = BundleUtility.GetVersionHash(separator, patchVersion, 1 << 5);
-                string versionNumber = BundleUtility.GetVersionNumber(versionHash, encodeLength);
+                string versionNumber = BundleUtility.GetVersionNumber(patchVersion, length, separator);
                 return versionNumber;
             }
 
             return patchVersion;
-        }
-
-        /// <summary>
-        /// Get package version by current date
-        /// </summary>
-        /// <returns></returns>
-        internal static string GetDefaultPackageVersion()
-        {
-            int totalMinutes = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
-            return DateTime.Now.ToString("yyyy-MM-dd") + "-" + totalMinutes;
         }
         #endregion
 
