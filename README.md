@@ -80,7 +80,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 ### AssetLoader (dependence YooAsset)
 
 資源加載器模塊，支援動態 Async 或 Sync 加載 (Dynamic Loading)，採用計數管理方式進行資源管控 (支援 Resources 與 AssetBundle)，如果直接使用 AssetLoaders API 進行 Load 跟 Instantiate，則在 Destroy 物件時，需要連帶調用 Unload (成對呼叫 Load & Unload)。
-其中 AssetBundle 集成 YooAsset 實現資源熱更新方案，並且實現 YooAsset 提供的加密介面，其中實現加解密方式有 Offset (偏移量方式)、XOR、HT2XOR (Head-Tail 2 XOR)、AES 實現檔案加密。
+其中 AssetBundle 集成 YooAsset 實現資源熱更新方案，並且實現 YooAsset 提供的加密介面，其中實現加解密方式有 Offset (偏移量方式)、XOR、HT2XOR (Head-Tail 2 XOR)、HT2XOR-Plus (Head-Tail 2 XOR Plus)、AES、ChaCha20、XXTEA、OffsetXOR 實現文件加密。
 
 ※備註 : Use "res#" will load from Resources else load from Bundle
 
@@ -88,11 +88,11 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 
 **選擇使用 Bundle 開發時，需要先將 PatchLauncher 拖曳至場景中，才能驅動相關配置。【如果使用 PakcageManager 安裝的，透過 Samples Import PatchLauncher Prefab】**
 
-- FileCryptogram (檔案加解密)
-  - 運算效率 OFFSET > HT2XOR >= HT2XORPlus > XOR > AES
-  - 內存占用 OFFSET > AES > HT2XORPlus = HT2XOR = XOR 
-  - AB 包體積增加 OFFSET > AES > HT2XORPlus = HT2XOR = XOR
-  - 破解難度 AES > HT2XORPlus > HT2XOR > XOR > OFFSET
+- FileCryptogram (文件加解密 - 僅供參考)
+  - 運算效率 Offset > HT2XOR >= HT2XORPlus > XOR > OffsetXOR > XXTEA > ChaCha20 > AES
+  - 內存占用 Offset ~= OffsetXOR > AES ~= ChaCha20 > XXTEA > HT2XORPlus = HT2XOR = XOR 
+  - AB 包體積增加 Offset ~= OffsetXOR > AES ~= ChaCha20 > XXTEA > HT2XORPlus = HT2XOR = XOR
+  - 破解難度 AES ~= ChaCha20 > XXTEA > OffsetXOR > HT2XORPlus > HT2XOR > XOR > Offset
 
 #### 群組分包舉例
   - 最小運行包
@@ -363,7 +363,7 @@ https://github.com/michael811125/OxGFrame/assets/30960759/8e4f63e9-b955-4f91-8ac
 
 #### Media [murlconfig] (Media URL Config) 格式
 
-如果音訊跟影片來源存放於 Server，可以使用 URL 的方式進行檔案請求，格式如下 **(如果不透過 murlconfig.txt 指定 URL 的話，也可以輸入完整資源 URL 至 Prefab 中，不過缺點就是對於未來更動 URL，要進行更改維護就會非常麻煩)**
+如果音訊跟影片來源存放於 Server，可以使用 URL 的方式進行文件請求，格式如下 **(如果不透過 murlconfig.txt 指定 URL 的話，也可以輸入完整資源 URL 至 Prefab 中，不過缺點就是對於未來更動 URL，要進行更改維護就會非常麻煩)**
 
 ```
 # audio_urlset = Audio Source Url Path
@@ -432,15 +432,18 @@ video_urlset 127.0.0.1/video/
 - NetManager (網路節點管理器)
 - NetNode (網路節點)
 - INetProvider (網路供應者)
-  - TcpNetProvider (TCP/IP)
-  - WebsocketNetProvider (WebSocket)
+  - TcpNetProvider (TCP)
+  - KcpNetProvider (KCP)
+  - WebSocketNetProvider (WebSocket)
 - NetOption (連線配置)
   - TcpNetOption
-  - WebsocketNetOption 
+  - KcpNetOption
+  - WebSocketNetOption 
 - INetTips (網路狀態提示接口)
 
-**目前有提供的 NetProvider (可自行擴展 KCP, UDP...)**
-- TCP/IP
+**目前有提供的 NetProvider (可自行擴展)**
+- TCP
+- KCP
 - WebSocket
 
 ---
