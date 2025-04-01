@@ -830,8 +830,10 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 try
                 {
+                    int length = encryptBytes.Length;
+
                     // jump 2 encrypt
-                    for (int i = 0; i < encryptBytes.Length >> 1; i++)
+                    for (int i = 0; i < length >> 1; i++)
                     {
                         encryptBytes[i << 1] ^= jKey;
                     }
@@ -839,7 +841,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     // head encrypt
                     encryptBytes[0] ^= hKey;
                     // tail encrypt
-                    encryptBytes[encryptBytes.Length - 1] ^= tKey;
+                    encryptBytes[length - 1] ^= tKey;
 
                     return true;
                 }
@@ -1245,23 +1247,22 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 try
                 {
-                    Span<byte> span = encryptBytes;
-                    int length = span.Length;
+                    int length = encryptBytes.Length;
 
                     // jump 2 plus decrypt
                     for (int i = 0; i < length >> 1; i++)
                     {
                         int s1 = i << 1;
                         int s2 = s1 + 1;
-                        span[s1] ^= j1Key;
+                        encryptBytes[s1] ^= j1Key;
                         if (s2 < length)
-                            span[s2] ^= j2Key;
+                            encryptBytes[s2] ^= j2Key;
                     }
 
                     // head decrypt
-                    span[0] ^= hKey;
+                    encryptBytes[0] ^= hKey;
                     // tail decrypt
-                    span[length - 1] ^= tKey;
+                    encryptBytes[length - 1] ^= tKey;
                 }
                 catch (Exception ex)
                 {
