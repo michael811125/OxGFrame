@@ -4,6 +4,7 @@ namespace YooAsset
     public class FileSystemParametersDefine
     {
         public const string FILE_VERIFY_LEVEL = "FILE_VERIFY_LEVEL";
+        public const string INSTALL_CLEAR_MODE = "INSTALL_CLEAR_MODE";
         public const string REMOTE_SERVICES = "REMOTE_SERVICES";
         public const string DECRYPTION_SERVICES = "DECRYPTION_SERVICES";
         public const string APPEND_FILE_EXTENSION = "APPEND_FILE_EXTENSION";

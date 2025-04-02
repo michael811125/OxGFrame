@@ -14,6 +14,7 @@ namespace YooAsset
         internal readonly List<SceneHandle> SceneHandles = new List<SceneHandle>(100);
         private long _sceneCreateIndex = 0;
         private IBundleQuery _bundleQuery;
+        private int _bundleLoadingMaxConcurrency;
 
         /// <summary>
         /// 所属包裹
@@ -25,6 +26,11 @@ namespace YooAsset
         /// </summary>
         public bool LockLoadOperation = false;
 
+        /// <summary>
+        /// 统计正在加载的Bundle文件数量
+        /// </summary>
+        public int BundleLoadingCounter = 0;
+
 
         public ResourceManager(string packageName)
         {
@@ -34,8 +40,9 @@ namespace YooAsset
         /// <summary>
         /// 初始化
         /// </summary>
-        public void Initialize(IBundleQuery bundleServices)
+        public void Initialize(InitializeParameters parameters, IBundleQuery bundleServices)
         {
+            _bundleLoadingMaxConcurrency = parameters.BundleLoadingMaxConcurrency;
             _bundleQuery = bundleServices;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
         }
@@ -309,6 +316,10 @@ namespace YooAsset
         internal bool HasAnyLoader()
         {
             return LoaderDic.Count > 0;
+        }
+        internal bool BundleLoadingIsBusy()
+        {
+            return BundleLoadingCounter >= _bundleLoadingMaxConcurrency;
         }
 
         private LoadBundleFileOperation CreateBundleFileLoaderInternal(BundleInfo bundleInfo)

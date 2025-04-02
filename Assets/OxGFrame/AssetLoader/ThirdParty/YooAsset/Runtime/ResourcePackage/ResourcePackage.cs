@@ -100,7 +100,7 @@ namespace YooAsset
             var playModeImpl = new PlayModeImpl(PackageName, _playMode);
             _bundleQuery = playModeImpl;
             _playModeImpl = playModeImpl;
-            _resourceManager.Initialize(_bundleQuery);
+            _resourceManager.Initialize(parameters, _bundleQuery);
 
             // 初始化资源系统
             InitializationOperation initializeOperation;
@@ -161,6 +161,10 @@ namespace YooAsset
             if (parameters is EditorSimulateModeParameters)
                 throw new Exception($"Editor simulate mode only support unity editor.");
 #endif
+
+            // 检测初始化参数
+            if (parameters.BundleLoadingMaxConcurrency <= 0)
+                throw new Exception($"{nameof(parameters.BundleLoadingMaxConcurrency)} value must be greater than zero.");
 
             // 鉴定运行模式
             if (parameters is EditorSimulateModeParameters)

@@ -2,6 +2,62 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.7] - 2025-04-01
+
+### Improvements
+
+- (#526) 运行时资源清单的哈希值验证兼容了MD5和CRC32两种方式。
+- (#515) 优化了资源路径大小写不敏感的逻辑代码，减少字符串操作产生的GC。
+- (#523) UnloadUnusedAssetsOperation方法支持了分帧处理。
+
+### Fixed
+
+- (#520) 修复了UWP平台获取WWW加载路径未适配的问题。
+
+### Added
+
+- 新增了文件系统初始化参数：INSTALL_CLEAR_MODE
+
+  ```csharp
+  /// <summary>
+  /// 覆盖安装清理模式
+  /// </summary>
+  public enum EOverwriteInstallClearMode
+  {
+      /// <summary>
+      /// 不做任何处理
+      /// </summary>
+      None = 0,
+   
+      /// <summary>
+      /// 清理所有缓存文件（包含资源文件和清单文件）
+      /// </summary>
+      ClearAllCacheFiles = 1,
+   
+      /// <summary>
+      /// 清理所有缓存的资源文件
+      /// </summary>
+      ClearAllBundleFiles = 2,
+   
+      /// <summary>
+      /// 清理所有缓存的清单文件
+      /// </summary>
+      ClearAllManifestFiles = 3,
+  }
+  ```
+
+- 新增了初始化参数：BundleLoadingMaxConcurrency
+
+  ```csharp
+  public abstract class InitializeParameters
+  {
+      /// <summary>
+      /// 同时加载Bundle文件的最大并发数
+      /// </summary>
+      public int BundleLoadingMaxConcurrency = int.MaxValue;
+  }
+  ```
+
 ## [2.3.6] - 2025-03-25
 
 ### Improvements

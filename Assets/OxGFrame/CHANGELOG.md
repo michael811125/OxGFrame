@@ -1,8 +1,26 @@
 # CHANGELOG
 
+## [3.2.3] - 2025-04-02
+
+# English
+
+- AssetLoader  
+  - Adjusted PatchVersion encoding display format (minimum 11 digits, maximum 32 digits).  
+  - Adjusted in-place encryption and decryption method.  
+  - Updated YooAsset to [v2.3.7](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.7).  
+
+---
+
+# 中文
+
+- AssetLoader
+  - 調整 PatchVersion 編碼顯示方式 (至少 11 位數，最大 32 位數)。
+  - 調整原地加解方式。
+  - 更新 YooAsset 至 [v2.3.7](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.7)。
+
 ## [3.2.2] - 2025-03-28
 
-# Englsh
+# English
 
 - AssetLoader
   - Adjusted Offset Decrypt to use Span<byte>.
@@ -12,6 +30,7 @@
 ---
 
 # 中文
+
 - AssetLoader
   - 調整 Offset Decrypt 使用 Span<byte>。
   - 調整 AppConfig 比對流程，避免重複請求配置文件。
