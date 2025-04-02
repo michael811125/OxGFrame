@@ -9,7 +9,8 @@ namespace YooAsset
         private enum ESteps
         {
             None,
-            LoadFile,
+            CheckConcurrency,
+            LoadBundleFile,
             Done,
         }
 
@@ -57,17 +58,32 @@ namespace YooAsset
         }
         internal override void InternalStart()
         {
-            _steps = ESteps.LoadFile;
+            _steps = ESteps.CheckConcurrency;
         }
         internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
 
-            if (_steps == ESteps.LoadFile)
+            if (_steps == ESteps.CheckConcurrency)
+            {
+                if (IsWaitForAsyncComplete)
+                {
+                    _steps = ESteps.LoadBundleFile;
+                }
+                else
+                {
+                    if (_resourceManager.BundleLoadingIsBusy())
+                        return;
+                    _steps = ESteps.LoadBundleFile;
+                }
+            }
+
+            if (_steps == ESteps.LoadBundleFile)
             {
                 if (_loadBundleOp == null)
                 {
+                    _resourceManager.BundleLoadingCounter++;
                     _loadBundleOp = LoadBundleInfo.LoadBundleFile();
                     _loadBundleOp.StartOperation();
                     AddChildOperation(_loadBundleOp);
@@ -103,6 +119,9 @@ namespace YooAsset
                     Status = EOperationStatus.Failed;
                     Error = _loadBundleOp.Error;
                 }
+
+                // 统计计数减少
+                _resourceManager.BundleLoadingCounter--;
             }
         }
         internal override void InternalWaitForAsyncComplete()

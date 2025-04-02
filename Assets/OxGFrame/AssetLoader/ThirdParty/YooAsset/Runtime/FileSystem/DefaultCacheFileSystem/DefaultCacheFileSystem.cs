@@ -66,6 +66,11 @@ namespace YooAsset
         public EFileVerifyLevel FileVerifyLevel { private set; get; } = EFileVerifyLevel.Middle;
 
         /// <summary>
+        /// 自定义参数：覆盖安装缓存清理模式
+        /// </summary>
+        public EOverwriteInstallClearMode InstallClearMode { private set; get; } = EOverwriteInstallClearMode.ClearAllManifestFiles;
+
+        /// <summary>
         /// 自定义参数：数据文件追加文件格式
         /// </summary>
         public bool AppendFileExtension { private set; get; } = false;
@@ -188,6 +193,10 @@ namespace YooAsset
             {
                 FileVerifyLevel = (EFileVerifyLevel)value;
             }
+            else if (name == FileSystemParametersDefine.INSTALL_CLEAR_MODE)
+            {
+                InstallClearMode = (EOverwriteInstallClearMode)value;
+            }
             else if (name == FileSystemParametersDefine.APPEND_FILE_EXTENSION)
             {
                 AppendFileExtension = Convert.ToBoolean(value);
@@ -227,8 +236,8 @@ namespace YooAsset
                 _packageRoot = packageRoot;
 
             _cacheBundleFilesRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.BundleFilesFolderName);
-            _tempFilesRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.TempFilesFolderName);
             _cacheManifestFilesRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.ManifestFilesFolderName);
+            _tempFilesRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.TempFilesFolderName);
         }
         public virtual void OnDestroy()
         {
@@ -500,7 +509,18 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 删除所有清单文件
+        /// 删除所有缓存的资源文件
+        /// </summary>
+        public void DeleteAllBundleFiles()
+        {
+            if (Directory.Exists(_cacheBundleFilesRoot))
+            {
+                Directory.Delete(_cacheBundleFilesRoot, true);
+            }
+        }
+
+        /// <summary>
+        /// 删除所有缓存的清单文件
         /// </summary>
         public void DeleteAllManifestFiles()
         {

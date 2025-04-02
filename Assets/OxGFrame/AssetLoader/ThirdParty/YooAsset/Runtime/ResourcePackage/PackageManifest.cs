@@ -138,9 +138,6 @@ namespace YooAsset
             if (string.IsNullOrEmpty(location))
                 return string.Empty;
 
-            if (LocationToLower)
-                location = location.ToLower();
-
             if (AssetPathMapping1.TryGetValue(location, out string assetPath))
                 return assetPath;
             else
@@ -306,9 +303,6 @@ namespace YooAsset
                 YooLogger.Error("Failed to mapping location to asset path, The location is null or empty.");
                 return string.Empty;
             }
-
-            if (LocationToLower)
-                location = location.ToLower();
 
             if (AssetPathMapping1.TryGetValue(location, out string assetPath))
             {

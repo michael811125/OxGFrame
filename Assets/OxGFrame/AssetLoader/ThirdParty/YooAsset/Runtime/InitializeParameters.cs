@@ -38,6 +38,10 @@ namespace YooAsset
     /// </summary>
     public abstract class InitializeParameters
     {
+        /// <summary>
+        /// 同时加载Bundle文件的最大并发数
+        /// </summary>
+        public int BundleLoadingMaxConcurrency = int.MaxValue;
     }
 
     /// <summary>
