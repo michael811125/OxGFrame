@@ -5,7 +5,7 @@
 # English
 
 - Added Dependency
-  - The Package Manager must install (Install via git URL): https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts.
+  - The Package Manager must install (Install via git URL): https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts
 
 - AssetLoader
   - Added OXGFRAME_WEAK_HOST_MODE macro definition.
@@ -23,7 +23,7 @@
 # 中文
 
 - 新增依賴
-  - Package Manager (Install via git URL) 需安裝： https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts。
+  - Package Manager (Install via git URL) 需安裝： https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts
 
 - AssetLoader
   - 新增 OXGFRAME_WEAK_HOST_MODE 宏定義。
