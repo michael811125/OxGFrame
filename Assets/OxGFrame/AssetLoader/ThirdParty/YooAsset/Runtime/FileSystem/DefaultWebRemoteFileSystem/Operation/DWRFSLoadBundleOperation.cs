@@ -34,19 +34,19 @@ namespace YooAsset
             {
                 if (_downloadAssetBundleOp == null)
                 {
-                    DownloadParam downloadParam = new DownloadParam(int.MaxValue, 60);
-                    downloadParam.MainURL = _fileSystem.RemoteServices.GetRemoteMainURL(_bundle.FileName);
-                    downloadParam.FallbackURL = _fileSystem.RemoteServices.GetRemoteFallbackURL(_bundle.FileName);
+                    DownloadFileOptions options = new DownloadFileOptions(int.MaxValue, 60);
+                    options.MainURL = _fileSystem.RemoteServices.GetRemoteMainURL(_bundle.FileName);
+                    options.FallbackURL = _fileSystem.RemoteServices.GetRemoteFallbackURL(_bundle.FileName);
 
                     if (_bundle.Encrypted)
                     {
-                        _downloadAssetBundleOp = new DownloadWebEncryptAssetBundleOperation(true, _fileSystem.DecryptionServices, _bundle, downloadParam);
+                        _downloadAssetBundleOp = new DownloadWebEncryptAssetBundleOperation(true, _fileSystem.DecryptionServices, _bundle, options);
                         _downloadAssetBundleOp.StartOperation();
                         AddChildOperation(_downloadAssetBundleOp);
                     }
                     else
                     {
-                        _downloadAssetBundleOp = new DownloadWebNormalAssetBundleOperation(_fileSystem.DisableUnityWebCache, _bundle, downloadParam);
+                        _downloadAssetBundleOp = new DownloadWebNormalAssetBundleOperation(_fileSystem.DisableUnityWebCache, _bundle, options);
                         _downloadAssetBundleOp.StartOperation();
                         AddChildOperation(_downloadAssetBundleOp);
                     }

@@ -46,6 +46,13 @@
       },
       "hash": "6e62add53b21f7d81873924ede0cf050cc534e79"
     },
+    "com.michaelo.oxgkit.saversystem": {
+      "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "ab80170f7690b1a6ee0215dd4a78b62ea31f2278"
+    },
     "com.michaelo.oxgkit.timesystem": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/TimeSystem/Scripts",
       "depth": 0,

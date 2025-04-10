@@ -315,27 +315,6 @@ namespace YooAsset
         #endregion
 
         /// <summary>
-        /// 注意：该类拷贝自编辑器
-        /// </summary>
-        private enum EFileNameStyle
-        {
-            /// <summary>
-            /// 哈希值名称
-            /// </summary>
-            HashName = 0,
-
-            /// <summary>
-            /// 资源包名称（不推荐）
-            /// </summary>
-            BundleName = 1,
-
-            /// <summary>
-            /// 资源包名称 + 哈希值名称
-            /// </summary>
-            BundleName_HashName = 2,
-        }
-
-        /// <summary>
         /// 获取资源文件的后缀名
         /// </summary>
         public static string GetRemoteBundleFileExtension(string bundleName)

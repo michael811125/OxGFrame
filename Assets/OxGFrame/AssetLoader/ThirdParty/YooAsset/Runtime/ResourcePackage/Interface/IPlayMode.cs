@@ -31,8 +31,8 @@ namespace YooAsset
         /// <summary>
         /// 清理缓存文件
         /// </summary>
-        ClearCacheFilesOperation ClearCacheFilesAsync(string clearMode, object clearParam);
-
+        ClearCacheFilesOperation ClearCacheFilesAsync(ClearCacheFilesOptions options);
+        
         // 下载相关
         ResourceDownloaderOperation CreateResourceDownloaderByAll(int downloadingMaxNumber, int failedTryAgain, int timeout);
         ResourceDownloaderOperation CreateResourceDownloaderByTags(string[] tags, int downloadingMaxNumber, int failedTryAgain, int timeout);

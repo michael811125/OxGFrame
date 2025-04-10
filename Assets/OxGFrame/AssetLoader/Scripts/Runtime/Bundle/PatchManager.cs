@@ -5,7 +5,6 @@ using OxGKit.LoggingSystem;
 using System.Collections.Generic;
 using UniFramework.Event;
 using UniFramework.Machine;
-using UnityEngine;
 using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
@@ -13,12 +12,9 @@ namespace OxGFrame.AssetLoader.Bundle
     internal class PatchManager
     {
         #region Last Group Info
-        internal const string DEFAULT_GROUP_TAG = "#all";
-        internal const string LAST_GROUP_INFO_KEY = "LAST_GROUP_INFO_KEY";
-
         internal static GroupInfo GetLastGroupInfo()
         {
-            string json = PlayerPrefs.GetString(LAST_GROUP_INFO_KEY, string.Empty);
+            string json = BundleConfig.saver.GetString(BundleConfig.LAST_GROUP_INFO_KEY, string.Empty);
             if (!string.IsNullOrEmpty(json)) return JsonConvert.DeserializeObject<GroupInfo>(json);
             return null;
         }
@@ -28,19 +24,39 @@ namespace OxGFrame.AssetLoader.Bundle
             if (groupInfo != null)
             {
                 string json = JsonConvert.SerializeObject(groupInfo);
-                PlayerPrefs.SetString(LAST_GROUP_INFO_KEY, json);
+                BundleConfig.saver.SaveString(BundleConfig.LAST_GROUP_INFO_KEY, json);
             }
         }
 
         internal static void DelLastGroupInfo()
         {
-            PlayerPrefs.DeleteKey(LAST_GROUP_INFO_KEY);
+            BundleConfig.saver.DeleteKey(BundleConfig.LAST_GROUP_INFO_KEY);
         }
         #endregion
 
+        /// <summary>
+        /// 平台
+        /// </summary>
         internal static string platform = string.Empty;
+
+        /// <summary>
+        /// 主程式版號
+        /// </summary>
         internal static string appVersion = string.Empty;
+
+        /// <summary>
+        /// 資源版號
+        /// </summary>
         internal static Dictionary<string, string> patchVersions;
+
+        /// <summary>
+        /// 是否為上次資源版號 (弱聯網模式)
+        /// </summary>
+        internal static bool isLastPackageVersions = false;
+
+        /// <summary>
+        /// 主下載器
+        /// </summary>
         internal ResourceDownloaderOperation[] mainDownloaders;
 
         private bool _isCheck = false;

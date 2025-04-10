@@ -3,6 +3,7 @@ using MyBox;
 using Newtonsoft.Json;
 using OxGFrame.AssetLoader.Utility.SecureMemory;
 using OxGKit.LoggingSystem;
+using OxGKit.SaverSystem;
 using OxGKit.Utilities.Requester;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,7 @@ namespace OxGFrame.AssetLoader.Bundle
             EditorSimulateMode,
             OfflineMode,
             HostMode,
+            WeakHostMode,
             WebGLMode,
             WebGLRemoteMode
         }
@@ -62,6 +64,36 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         #region 執行配置
+        /// <summary>
+        /// 數據儲存器
+        /// </summary>
+        internal static Saver saver = new PlayerPrefsSaver();
+
+        /// <summary>
+        /// 運行群包預設 Tag
+        /// </summary>
+        internal const string DEFAULT_GROUP_TAG = "#all";
+
+        /// <summary>
+        /// 上次運行群包持久數據儲存鍵值
+        /// </summary>
+        internal const string LAST_GROUP_INFO_KEY = "LAST_GROUP_INFO_KEY";
+
+        /// <summary>
+        /// 上次主程式版本持久數據儲存建鍵值 (弱聯網模式)
+        /// </summary>
+        internal const string LAST_APP_VERSION_KEY = "LAST_APP_VERSION_KEY";
+
+        /// <summary>
+        /// 上次資源配置持久數據儲存建鍵值 (弱聯網模式)
+        /// </summary>
+        internal const string LAST_PATCH_CONFIG_KEY = "LAST_PATCH_CONFIG_KEY";
+
+        /// <summary>
+        /// 上次資源版本持久數據儲存鍵值 (弱聯網模式)
+        /// </summary>
+        internal const string LAST_PACKAGE_VERSIONS_KEY = "LAST_PACKAGE_VERSIONS_KEY";
+
         /// <summary>
         /// 配置檔標檔頭
         /// </summary>
@@ -90,7 +122,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// 是否檢查磁碟空間
         /// </summary>
-        public static bool checkDiskSpace = true;
+        public static bool checkDiskSpace = false;
 
         /// <summary>
         /// App Preset Package 清單
@@ -273,21 +305,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 #endregion
 
                 // Parsing
-                var allWords = content.Split('\n');
-                var lines = new List<string>(allWords);
-
-                _urlCfgFileMap = new Dictionary<string, string>();
-                foreach (var readLine in lines)
-                {
-                    if (readLine.IndexOf('#') != -1 && readLine[0] == '#')
-                        continue;
-                    var args = readLine.Split(' ', 2);
-                    if (args.Length >= 2)
-                    {
-                        if (!_urlCfgFileMap.ContainsKey(args[0]))
-                            _urlCfgFileMap.Add(args[0], args[1].Replace("\n", "").Replace("\r", ""));
-                    }
-                }
+                _urlCfgFileMap = Saver.ParsingDataMap(content);
             }
 
             _urlCfgFileMap.TryGetValue(key, out string value);
@@ -321,6 +339,16 @@ namespace OxGFrame.AssetLoader.Bundle
                 string cfgJson = await Requester.RequestText(url, null, null, null, false);
                 if (!string.IsNullOrEmpty(cfgJson))
                     _hostAppConfig = JsonConvert.DeserializeObject<AppConfig>(cfgJson);
+                else
+                {
+                    // 弱聯網處理
+                    if (playMode == PlayMode.WeakHostMode)
+                    {
+                        cfgJson = saver.GetString(LAST_APP_VERSION_KEY, string.Empty);
+                        if (!string.IsNullOrEmpty(cfgJson))
+                            _hostAppConfig = JsonConvert.DeserializeObject<AppConfig>(cfgJson);
+                    }
+                }
             }
             return _hostAppConfig;
         }

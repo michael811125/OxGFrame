@@ -268,7 +268,10 @@ namespace YooAsset
         public ClearCacheFilesOperation ClearCacheFilesAsync(EFileClearMode clearMode, object clearParam = null)
         {
             DebugCheckInitialize(false);
-            var operation = _playModeImpl.ClearCacheFilesAsync(clearMode.ToString(), clearParam);
+            ClearCacheFilesOptions options = new ClearCacheFilesOptions();
+            options.ClearMode = clearMode.ToString();
+            options.ClearParam = clearParam;
+            var operation = _playModeImpl.ClearCacheFilesAsync(options);
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
@@ -281,7 +284,10 @@ namespace YooAsset
         public ClearCacheFilesOperation ClearCacheFilesAsync(string clearMode, object clearParam = null)
         {
             DebugCheckInitialize(false);
-            var operation = _playModeImpl.ClearCacheFilesAsync(clearMode, clearParam);
+            ClearCacheFilesOptions options = new ClearCacheFilesOptions();
+            options.ClearMode = clearMode;
+            options.ClearParam = clearParam;
+            var operation = _playModeImpl.ClearCacheFilesAsync(options);
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }

@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## [3.3.0] - 2025-04-11
+
+# English
+
+- Added Dependency
+  - The Package Manager must install (Install via git URL): https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts.
+
+- AssetLoader
+  - Added support for WeakHostMode (Weak Online Mode), requiring an internet connection for the first startup to complete the initial configuration record and patch download.
+    - Note: Does not support Skip Download (downloading while playing). When the network is lost, the integrity of the last patch version list will be verified.
+	- Additionally, if the network is suddenly lost and a repair is attempted, when the patch integrity check fails, a PatchVersionUpdateFailed event will be triggered (since the process of obtaining the patch version must be restarted, and as long as the network is restored, the remote version can be correctly retrieved for an update).
+  - Modified the default encode length for AssetPatcher.GetPatchVersion() to 16.
+  - Fixed the handling of AssetPatcher.UnloadPackageAndClearCacheFiles(), so that the Manifest file deletion only occurs when destroyPackage = true.
+  - Fixed PatchFsmStates to ensure the handling of Preset DLC Packages initial process.
+  - Fixed PatchVersion encoding to a fixed value.
+  - Updated YooAsset commit hash to 4e257ab27dc1470e66d6eeac9f9902343eb44c7a.
+
+---
+
+# 中文
+
+- 新增依賴
+  - Package Manager (Install via git URL) 需安裝： https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts。
+
+- AssetLoader
+  - 新增支持 WeakHostMode (弱聯網模式)，首次啟動必須聯機，以完成初始配置紀錄與資源下載。
+    - 注意：不支持 Skip Download (邊玩邊下載)，當失去聯網時，會驗證上一次資源版本的清單內容完整性。
+	- 另外，如果突然失去聯網又進行 Repair 時，當驗證到資源不完整，則會發送 PatchVersionUpdateFailed 事件 (因為必須重新從獲取資源版本的流程開始運行, 只要網絡恢復, 則可以正確獲取到遠端版本進行更新)。
+  - 修改 AssetPatcher.GetPatchVersion() 預設 encode 長度為 16。
+  - 修正 AssetPatcher.UnloadPackageAndClearCacheFiles() 處理，當 destroyPackage = true 時，才會執行 Manifest file 的刪除。
+  - 修正 PatchFsmStates 確保處理 Preset DLC Packages 初始流程。
+  - 修正 PatchVersion 編碼為固定數值。
+  - 更新 YooAsset commit hash 至 4e257ab27dc1470e66d6eeac9f9902343eb44c7a。
+
 ## [3.2.3] - 2025-04-02
 
 # English

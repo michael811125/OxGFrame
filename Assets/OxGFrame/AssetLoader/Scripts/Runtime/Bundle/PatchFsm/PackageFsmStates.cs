@@ -175,6 +175,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                             // Host Mode or WebGL Mode
                             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
+                                BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode ||
                                 BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
                             {
                                 hostServer = string.IsNullOrEmpty(hostServer) ? await BundleConfig.GetDlcHostServerUrl(packageDetail.packageName, packageDetail.dlcVersion, packageDetail.withoutPlatform) : hostServer;
@@ -189,6 +190,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                             // Host Mode or WebGL Mode
                             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
+                                BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode ||
                                 BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
                             {
                                 hostServer = await BundleConfig.GetHostServerUrl(packageDetail.packageName);
@@ -266,8 +268,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 bool succeed = false;
                 List<string> patchVersions = new List<string>();
+                string currentPackageName = string.Empty;
                 foreach (var package in packages)
                 {
+                    currentPackageName = package.PackageName;
                     var operation = package.RequestPackageVersionAsync();
                     await operation;
 
@@ -279,8 +283,6 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     else
                     {
                         succeed = false;
-                        PackageEvents.PatchVersionUpdateFailed.SendEventMessage(this._hashId);
-                        Logging.Print<Logger>($"<color=#ff3696>Package: {package.PackageName} update version failed.</color>");
                         break;
                     }
                 }
@@ -288,7 +290,38 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 if (succeed)
                 {
                     this._machine.SetBlackboardValue(PackageOperation.KEY_PACKAGE_VERSIONS, patchVersions.ToArray());
+                    this._machine.SetBlackboardValue(PackageOperation.KEY_IS_LAST_PACKAGE_VERSIONS, false);
                     this._machine.ChangeState<FsmPatchManifestUpdate>();
+                }
+                else
+                {
+                    #region Weak Host Mode
+                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    {
+                        patchVersions.Clear();
+                        foreach (var package in packages)
+                        {
+                            // 獲取上一次本地資源版號
+                            string lastVersion = BundleConfig.saver.GetData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, package.PackageName, string.Empty);
+                            if (string.IsNullOrEmpty(lastVersion))
+                            {
+                                PackageEvents.PatchVersionUpdateFailed.SendEventMessage(this._hashId);
+                                Logging.Print<Logger>($"<color=#ff3696>Package: {package.PackageName}. Local version record not found, resources need to be updated!</color>");
+                                return;
+                            }
+                            patchVersions.Add(lastVersion);
+                        }
+
+                        this._machine.SetBlackboardValue(PackageOperation.KEY_PACKAGE_VERSIONS, patchVersions.ToArray());
+                        this._machine.SetBlackboardValue(PackageOperation.KEY_IS_LAST_PACKAGE_VERSIONS, true);
+                        this._machine.ChangeState<FsmPatchManifestUpdate>();
+                    }
+                    #endregion
+                    else
+                    {
+                        PackageEvents.PatchVersionUpdateFailed.SendEventMessage(this._hashId);
+                        Logging.Print<Logger>($"<color=#ff3696>Package: {currentPackageName} update version failed.</color>");
+                    }
                 }
             }
         }
@@ -333,26 +366,53 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 var packageVersions = (string[])this._machine.GetBlackboardValue(PackageOperation.KEY_PACKAGE_VERSIONS);
 
                 bool succeed = false;
+                string currentPackageName = string.Empty;
                 for (int i = 0; i < packages.Length; i++)
                 {
+                    currentPackageName = packages[i].PackageName;
+                    string version = packageVersions[i];
                     var operation = packages[i].UpdatePackageManifestAsync(packageVersions[i]);
                     await operation;
 
                     if (operation.Status == EOperationStatus.Succeed)
                     {
+                        #region Weak Host Mode
+                        if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                        {
+                            // 儲存本地資源版本
+                            BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, currentPackageName, version);
+                        }
+                        #endregion
+
                         succeed = true;
                         Logging.Print<Logger>($"<color=#85cf0f>Package: {packages[i].PackageName} <color=#00c1ff>Update</color> completed successfully.</color>");
                     }
                     else
                     {
                         succeed = false;
-                        PackageEvents.PatchManifestUpdateFailed.SendEventMessage(this._hashId);
-                        Logging.Print<Logger>($"<color=#ff3696>Package: {packages[i].PackageName} update manifest failed.</color>");
                         break;
                     }
                 }
 
-                if (succeed) this._machine.ChangeState<FsmCreateDownloader>();
+                if (succeed)
+                {
+                    this._machine.ChangeState<FsmCreateDownloader>();
+                }
+                else
+                {
+                    #region Weak Host Mode
+                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    {
+                        PackageEvents.PatchManifestUpdateFailed.SendEventMessage(this._hashId);
+                        Logging.Print<Logger>($"<color=#ff3696>Package: {currentPackageName}. Failed to load the local resource manifest file. Resource update is required!</color>");
+                    }
+                    #endregion
+                    else
+                    {
+                        PackageEvents.PatchManifestUpdateFailed.SendEventMessage(this._hashId);
+                        Logging.Print<Logger>($"<color=#ff3696>Package: {currentPackageName} update manifest failed.</color>");
+                    }
+                }
             }
         }
 
@@ -399,6 +459,9 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     return;
                 }
 
+                // 判斷目前是否獲取的是本地版號 (如果是的話, 表示目前處於弱聯網)
+                bool isLastPackageVersions = Convert.ToBoolean(this._machine.GetBlackboardValue(PackageOperation.KEY_IS_LAST_PACKAGE_VERSIONS));
+
                 #region Create Downloader by Tags
                 // Get packages
                 var packages = (this._machine.Owner as PackageOperation).GetPackages();
@@ -443,11 +506,27 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 if (groupInfo.totalCount > 0)
                 {
-                    bool skipDownload = (this._machine.Owner as PackageOperation).skipDownload;
-                    if (skipDownload) this._machine.ChangeState<FsmDownloadOver>();
-                    else if ((this._machine.Owner as PackageOperation).IsBegin()) this._machine.ChangeState<FsmBeginDownload>();
+                    #region Weak Host Mode
+                    if (isLastPackageVersions)
+                    {
+                        string errorMsg = "Local resources are incomplete. Update required!";
+                        Logging.Print<Logger>($"<color=#ff3696>GroupName: {groupInfo.groupName}. {errorMsg}</color>");
+                        // 當突然失去聯網時, 必須重新從獲取資源版本的流程開始運行, 因為當網絡恢復時, 則可以正確獲取遠端版本進行更新
+                        PackageEvents.PatchVersionUpdateFailed.SendEventMessage(this._hashId);
+                    }
+                    #endregion
+                    else
+                    {
+                        bool skipDownload = (this._machine.Owner as PackageOperation).skipDownload;
+                        if (skipDownload && !isLastPackageVersions)
+                            this._machine.ChangeState<FsmDownloadOver>();
+                        else if ((this._machine.Owner as PackageOperation).IsBegin())
+                            this._machine.ChangeState<FsmBeginDownload>();
 
-                    // 開始等待使用者選擇是否開始下載
+                        /**
+                         * 開始等待使用者選擇是否開始下載
+                         */
+                    }
                 }
                 else
                 {

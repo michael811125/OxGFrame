@@ -12,13 +12,13 @@ namespace YooAsset
         private string _tempFilePath;
         private ESteps _steps = ESteps.None;
 
-        internal DownloadNormalFileOperation(DefaultCacheFileSystem fileSystem, PackageBundle bundle, DownloadParam param) : base(bundle, param)
+        internal DownloadNormalFileOperation(DefaultCacheFileSystem fileSystem, PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
         {
             _fileSystem = fileSystem;
         }
         internal override void InternalStart()
         {
-            _isReuqestLocalFile = DownloadSystemHelper.IsRequestLocalFile(Param.MainURL);
+            _isReuqestLocalFile = DownloadSystemHelper.IsRequestLocalFile(Options.MainURL);
             _tempFilePath = _fileSystem.GetTempFilePath(Bundle);
             _steps = ESteps.CheckExists;
         }

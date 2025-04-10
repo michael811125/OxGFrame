@@ -15,13 +15,13 @@ namespace YooAsset
         private ESteps _steps = ESteps.None;
 
 
-        internal DownloadResumeFileOperation(DefaultCacheFileSystem fileSystem, PackageBundle bundle, DownloadParam param) : base(bundle, param)
+        internal DownloadResumeFileOperation(DefaultCacheFileSystem fileSystem, PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
         {
             _fileSystem = fileSystem;
         }
         internal override void InternalStart()
         {
-            _isReuqestLocalFile = DownloadSystemHelper.IsRequestLocalFile(Param.MainURL);
+            _isReuqestLocalFile = DownloadSystemHelper.IsRequestLocalFile(Options.MainURL);
             _tempFilePath = _fileSystem.GetTempFilePath(Bundle);
             _steps = ESteps.CheckExists;
         }

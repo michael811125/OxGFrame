@@ -67,6 +67,7 @@ namespace OxGFrame.AssetLoader.Bundle
         private StateMachine _patchFsm;
 
         internal const string KEY_PACKAGE_VERSIONS = "packageVersions";
+        internal const string KEY_IS_LAST_PACKAGE_VERSIONS = "lastPackageVersions";
 
         protected PackageOperation()
         {

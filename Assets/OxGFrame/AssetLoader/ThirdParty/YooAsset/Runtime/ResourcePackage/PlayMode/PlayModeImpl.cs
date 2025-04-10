@@ -97,9 +97,9 @@ namespace YooAsset
         /// <summary>
         /// 清理缓存文件
         /// </summary>
-        ClearCacheFilesOperation IPlayMode.ClearCacheFilesAsync(string clearMode, object clearParam)
+        ClearCacheFilesOperation IPlayMode.ClearCacheFilesAsync(ClearCacheFilesOptions options)
         {
-            var operation = new ClearCacheFilesOperation(this, clearMode, clearParam);
+            var operation = new ClearCacheFilesOperation(this, options);
             return operation;
         }
 
