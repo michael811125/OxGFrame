@@ -8,6 +8,7 @@
   - The Package Manager must install (Install via git URL): https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts.
 
 - AssetLoader
+  - Added OXGFRAME_WEAK_HOST_MODE macro definition.
   - Added support for WeakHostMode (Weak Online Mode), requiring an internet connection for the first startup to complete the initial configuration record and patch download.
     - Note: Does not support Skip Download (downloading while playing). When the network is lost, the integrity of the last patch version list will be verified.
 	- Additionally, if the network is suddenly lost and a repair is attempted, when the patch integrity check fails, a PatchVersionUpdateFailed event will be triggered (since the process of obtaining the patch version must be restarted, and as long as the network is restored, the remote version can be correctly retrieved for an update).
@@ -25,6 +26,7 @@
   - Package Manager (Install via git URL) 需安裝： https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts。
 
 - AssetLoader
+  - 新增 OXGFRAME_WEAK_HOST_MODE 宏定義。
   - 新增支持 WeakHostMode (弱聯網模式)，首次啟動必須聯機，以完成初始配置紀錄與資源下載。
     - 注意：不支持 Skip Download (邊玩邊下載)，當失去聯網時，會驗證上一次資源版本的清單內容完整性。
 	- 另外，如果突然失去聯網又進行 Repair 時，當驗證到資源不完整，則會發送 PatchVersionUpdateFailed 事件 (因為必須重新從獲取資源版本的流程開始運行, 只要網絡恢復, 則可以正確獲取到遠端版本進行更新)。
