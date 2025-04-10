@@ -58,8 +58,8 @@ namespace YooAsset
                 // 注意：边玩边下下载器引用计数没有Release
                 if (_downloadFileOp == null)
                 {
-                    DownloadParam downloadParam = new DownloadParam(int.MaxValue, 60);
-                    _downloadFileOp = _fileSystem.DownloadFileAsync(_bundle, downloadParam);
+                    DownloadFileOptions options = new DownloadFileOptions(int.MaxValue, 60);
+                    _downloadFileOp = _fileSystem.DownloadFileAsync(_bundle, options);
                     _downloadFileOp.StartOperation();
                     AddChildOperation(_downloadFileOp);
                 }
@@ -297,8 +297,8 @@ namespace YooAsset
                 // 注意：边玩边下下载器引用计数没有Release
                 if (_downloadFileOp == null)
                 {
-                    DownloadParam downloadParam = new DownloadParam(int.MaxValue, 60);
-                    _downloadFileOp = _fileSystem.DownloadFileAsync(_bundle, downloadParam);
+                    DownloadFileOptions options = new DownloadFileOptions(int.MaxValue, 60);
+                    _downloadFileOp = _fileSystem.DownloadFileAsync(_bundle, options);
                     _downloadFileOp.StartOperation();
                     AddChildOperation(_downloadFileOp);
                 }

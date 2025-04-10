@@ -323,39 +323,67 @@ namespace OxGFrame.AssetLoader.Utility
                 bool addToFront = true;
                 // 用於記錄前面補了幾次
                 int frontAdded = 0;
+                // 前面最大補充數量
                 int maxFrontCount = 10;
+                // 用於記錄後面補了幾次
+                int backAdded = 0;
 
                 while (count > 0)
                 {
                     if (addToFront && frontAdded < maxFrontCount)
                     {
-                        combinedVersion = GenerateRandomNumberString(1) + combinedVersion;
                         frontAdded++;
                     }
                     else
                     {
-                        combinedVersion += GenerateRandomNumberString(1);
+                        backAdded++;
                     }
 
                     // 交替加前或加後
                     addToFront = !addToFront;
                     count--;
                 }
+
+                if (frontAdded > 0)
+                    combinedVersion = GetDeterministicPadding($"{dateString}_{nameof(frontAdded)}", frontAdded) + combinedVersion;
+                if (backAdded > 0)
+                    combinedVersion += GetDeterministicPadding($"{dateString}_{nameof(backAdded)}", backAdded);
             }
 
             return combinedVersion;
         }
 
         #region Internal Methods
-        internal static string GenerateRandomNumberString(int length)
+        /// <summary>
+        /// 根據輸入產生固定長度的可預測數字字串
+        /// </summary>
+        internal static string GetDeterministicPadding(string input, int length)
         {
-            var random = new System.Random();
-            char[] buffer = new char[length];
-            for (int i = 0; i < length; i++)
+            if (length == 0)
+                return string.Empty;
+
+            using (var sha = System.Security.Cryptography.SHA256.Create())
             {
-                buffer[i] = (char)('0' + random.Next(0, 10));
+                var bytes = System.Text.Encoding.UTF8.GetBytes(input);
+                var hashBytes = sha.ComputeHash(bytes);
+                var sb = new System.Text.StringBuilder();
+
+                foreach (var b in hashBytes)
+                {
+                    // 只取 0~9 數字
+                    sb.Append((b % 10).ToString());
+                    if (sb.Length >= length)
+                        break;
+                }
+
+                // 若還不夠長就重複填充
+                while (sb.Length < length)
+                {
+                    sb.Append(sb.ToString());
+                }
+
+                return sb.ToString().Substring(0, length);
             }
-            return new string(buffer);
         }
 
         /// <summary>

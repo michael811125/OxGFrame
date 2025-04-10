@@ -118,6 +118,12 @@ namespace UniFramework.Machine
             if (string.IsNullOrEmpty(nodeName))
                 throw new ArgumentNullException();
 
+            if (_curNode == null)
+            {
+                Run(nodeName);
+                return;
+            }
+
             IStateNode node = TryGetNode(nodeName);
             if (node == null)
             {

@@ -33,7 +33,7 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static string GetDefaultGroupTag()
         {
-            return PatchManager.DEFAULT_GROUP_TAG;
+            return BundleConfig.DEFAULT_GROUP_TAG;
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace OxGFrame.AssetLoader
         /// <para> Min and Max length = 11 to 32 </para>
         /// </summary>
         /// <returns></returns>
-        public static string GetPatchVersion(bool encode = false, int length = 11, string separator = "-")
+        public static string GetPatchVersion(bool encode = false, int length = 16, string separator = "-")
         {
             string[] versions = PatchManager.patchVersions.Values.ToArray();
             string newestVersion = BundleUtility.NewestPackageVersion(versions);
@@ -314,6 +314,7 @@ namespace OxGFrame.AssetLoader
 
             // Host Mode or WebGL Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
+                BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode ||
                 BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
             {
                 hostServer = await BundleConfig.GetHostServerUrl(packageInfo.packageName);
@@ -338,6 +339,7 @@ namespace OxGFrame.AssetLoader
 
             // Host Mode or WebGL Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
+                BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode ||
                 BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
             {
                 hostServer = string.IsNullOrEmpty(hostServer) ? await BundleConfig.GetDlcHostServerUrl(packageInfo.packageName, packageInfo.dlcVersion, packageInfo.withoutPlatform) : hostServer;

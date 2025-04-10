@@ -177,9 +177,23 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 string hostCfgJson = await Requester.RequestText(url);
                 if (string.IsNullOrEmpty(hostCfgJson))
                 {
-                    PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage();
-                    Logging.PrintError<Logger>($"<color=#FF0000>Failed to request app config from URL: {url}</color>.");
-                    return;
+                    // 弱聯網處理
+                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    {
+                        hostCfgJson = BundleConfig.saver.GetString(BundleConfig.LAST_APP_VERSION_KEY, string.Empty);
+                        if (string.IsNullOrEmpty(hostCfgJson))
+                        {
+                            PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage();
+                            Logging.PrintError<Logger>($"<color=#FF0000>[{nameof(BundleConfig.PlayMode.WeakHostMode)}] Failed to request the app config from the URL: {url}</color>.");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage();
+                        Logging.PrintError<Logger>($"<color=#FF0000>Failed to request the app config from the URL: {url}</color>.");
+                        return;
+                    }
                 }
 
                 AppConfig hostCfg = JsonConvert.DeserializeObject<AppConfig>(hostCfgJson);
@@ -311,6 +325,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         }
                         else
                         {
+                            string hostCfgJson = JsonConvert.SerializeObject(hostCfg);
+
+                            // 儲存本地主程式版號
+                            BundleConfig.saver.SaveString(BundleConfig.LAST_APP_VERSION_KEY, hostCfgJson);
                             PatchManager.platform = hostCfg.PLATFORM;
                             PatchManager.appVersion = hostCfg.APP_VERSION;
                             Logging.Print<Logger>($"<color=#00ff00>【App Version Passed (X.Y.Z)】LOCAL APP_VER: v{localCfg.APP_VERSION} == SERVER APP_VER: v{hostCfg.APP_VERSION}</color>");
@@ -342,14 +360,18 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         }
                         else
                         {
+                            string hostCfgJson = JsonConvert.SerializeObject(hostCfg);
+
                             // 寫入完整版號至 Local
                             if (localCfg.APP_VERSION != hostCfg.APP_VERSION)
                             {
                                 // 寫入 Host 的配置文件至 Local
                                 string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
-                                File.WriteAllText(localCfgPath, JsonConvert.SerializeObject(hostCfg));
+                                File.WriteAllText(localCfgPath, hostCfgJson);
                             }
 
+                            // 儲存本地主程式版號
+                            BundleConfig.saver.SaveString(BundleConfig.LAST_APP_VERSION_KEY, hostCfgJson);
                             PatchManager.platform = hostCfg.PLATFORM;
                             PatchManager.appVersion = hostCfg.APP_VERSION;
                             Logging.Print<Logger>($"<color=#00ff00>【App Version Passed (X.Y)】LOCAL APP_VER: v{localVersion} ({localCfg.APP_VERSION}) == SERVER APP_VER: v{hostVersion} ({hostCfg.APP_VERSION})</color>");
@@ -400,7 +422,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     return;
                 }
 
-                bool isInitialized = await PackageManager.InitPresetAppPackages();
+                // 確保 preset packages 初始
+                bool appInitialized = await PackageManager.InitPresetAppPackages();
+                bool dlcInitialized = await PackageManager.InitPresetDlcPackages();
+                bool isInitialized = appInitialized && dlcInitialized;
                 if (isInitialized)
                 {
                     Logging.Print<Logger>("<color=#ffcf67>(Init) Init Patch</color>");
@@ -453,9 +478,11 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 var packages = appPackages.Concat(dlcPackages).ToArray();
 
                 bool succeed = false;
+                string currentPackageName = string.Empty;
                 Dictionary<string, string> patchVersions = new Dictionary<string, string>();
                 foreach (var package in packages)
                 {
+                    currentPackageName = package.PackageName;
                     var operation = package.RequestPackageVersionAsync();
                     await operation;
 
@@ -467,8 +494,6 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     else
                     {
                         succeed = false;
-                        PatchEvents.PatchVersionUpdateFailed.SendEventMessage();
-                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {package.PackageName} update version failed.</color>");
                         break;
                     }
                 }
@@ -476,7 +501,38 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 if (succeed)
                 {
                     PatchManager.patchVersions = patchVersions;
+                    PatchManager.isLastPackageVersions = false;
                     this._machine.ChangeState<FsmPatchManifestUpdate>();
+                }
+                else
+                {
+                    #region Weak Host Mode
+                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    {
+                        patchVersions.Clear();
+                        foreach (var package in packages)
+                        {
+                            // 獲取上一次本地資源版號
+                            string lastVersion = BundleConfig.saver.GetData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, package.PackageName, string.Empty);
+                            if (string.IsNullOrEmpty(lastVersion))
+                            {
+                                PatchEvents.PatchVersionUpdateFailed.SendEventMessage();
+                                Logging.Print<Logger>($"<color=#ff3696>Package: {package.PackageName}. Local version record not found, resources need to be updated!</color>");
+                                return;
+                            }
+                            patchVersions.TryAdd(package.PackageName, lastVersion);
+                        }
+
+                        PatchManager.patchVersions = patchVersions;
+                        PatchManager.isLastPackageVersions = true;
+                        this._machine.ChangeState<FsmPatchManifestUpdate>();
+                    }
+                    #endregion
+                    else
+                    {
+                        PatchEvents.PatchVersionUpdateFailed.SendEventMessage();
+                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {currentPackageName} update version failed.</color>");
+                    }
                 }
             }
         }
@@ -514,6 +570,9 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
 
+                // 判斷目前是否獲取的是本地版號 (如果是的話, 表示目前處於弱聯網)
+                bool isLastPackageVersions = PatchManager.isLastPackageVersions;
+
                 // Combine packages
                 var appPackages = PackageManager.GetPresetAppPackages();
                 var dlcPackages = PackageManager.GetPresetDlcPackages();
@@ -521,32 +580,55 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 var packageVersions = PatchManager.patchVersions;
 
                 bool succeed = false;
+                string currentPackageName = string.Empty;
                 for (int i = 0; i < packages.Length; i++)
                 {
+                    currentPackageName = packages[i].PackageName;
                     packageVersions.TryGetValue(packages[i].PackageName, out string version);
                     var operation = packages[i].UpdatePackageManifestAsync(version);
                     await operation;
 
                     if (operation.Status == EOperationStatus.Succeed)
                     {
+                        #region Weak Host Mode
+                        if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                        {
+                            // 儲存本地資源版本
+                            BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, currentPackageName, version);
+                        }
+                        #endregion
+
                         succeed = true;
                         Logging.Print<Logger>($"<color=#85cf0f>Package: {packages[i].PackageName} <color=#00c1ff>Update</color> completed successfully.</color>");
                     }
                     else
                     {
                         succeed = false;
-                        PatchEvents.PatchManifestUpdateFailed.SendEventMessage();
-                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {packages[i].PackageName} update manifest failed.</color>");
                         break;
                     }
                 }
 
                 if (succeed)
                 {
-                    if (BundleConfig.skipMainDownload)
+                    if (BundleConfig.skipMainDownload && !isLastPackageVersions)
                         this._machine.ChangeState<FsmDownloadOver>();
                     else
                         this._machine.ChangeState<FsmCreateDownloader>();
+                }
+                else
+                {
+                    #region Weak Host Mode
+                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    {
+                        PatchEvents.PatchManifestUpdateFailed.SendEventMessage();
+                        Logging.Print<Logger>($"<color=#ff3696>Package: {currentPackageName}. Failed to load the local resource manifest file. Resource update is required!</color>");
+                    }
+                    #endregion
+                    else
+                    {
+                        PatchEvents.PatchManifestUpdateFailed.SendEventMessage();
+                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {currentPackageName} update manifest failed.</color>");
+                    }
                 }
             }
         }
@@ -595,7 +677,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     return;
                 }
 
-                string defaultGroupTag = PatchManager.DEFAULT_GROUP_TAG;
+                // 判斷目前是否獲取的是本地版號 (如果是的話, 表示目前處於弱聯網)
+                bool isLastPackageVersions = PatchManager.isLastPackageVersions;
+
+                string defaultGroupTag = BundleConfig.DEFAULT_GROUP_TAG;
 
                 GroupInfo lastGroupInfo = PatchManager.GetLastGroupInfo();
                 Logging.Print<Logger>($"<color=#ffce54>Get last GroupName: {lastGroupInfo?.groupName}</color>");
@@ -604,12 +689,35 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 // 獲取 host patch config, 需要處理群組包下載邏輯
                 string url = await BundleConfig.GetHostServerPatchConfigPath();
                 string hostCfgJson = await Requester.RequestText(url, null, null, null, false);
+                bool isLastHostCfgJson = false;
                 if (string.IsNullOrEmpty(hostCfgJson))
                 {
-                    PatchEvents.PatchDownloadFailed.SendEventMessage();
-                    Logging.PrintError<Logger>($"<color=#FF0000>Failed to request patch config from URL: {url}</color>.");
-                    return;
+                    // 弱聯網處理
+                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    {
+                        hostCfgJson = BundleConfig.saver.GetString(BundleConfig.LAST_PATCH_CONFIG_KEY, string.Empty);
+                        if (string.IsNullOrEmpty(hostCfgJson))
+                        {
+                            string errorMsg = $"Failed to request patch config from URL: {url}";
+                            PatchEvents.PatchDownloadFailed.SendEventMessage(errorMsg);
+                            Logging.PrintError<Logger>($"<color=#FF0000>[{nameof(BundleConfig.PlayMode.WeakHostMode)}] {errorMsg}</color>.");
+                            return;
+                        }
+                        else
+                            isLastHostCfgJson = true;
+                    }
+                    else
+                    {
+                        string errorMsg = $"Failed to request patch config from URL: {url}";
+                        PatchEvents.PatchDownloadFailed.SendEventMessage(errorMsg);
+                        Logging.PrintError<Logger>($"<color=#FF0000>{errorMsg}</color>.");
+                        return;
+                    }
                 }
+
+                // 儲存本地資源群包配置數據
+                if (!isLastHostCfgJson)
+                    BundleConfig.saver.SaveString(BundleConfig.LAST_PATCH_CONFIG_KEY, hostCfgJson);
                 PatchConfig patchCfg = JsonConvert.DeserializeObject<PatchConfig>(hostCfgJson);
                 List<GroupInfo> patchGroupInfos = patchCfg.GROUP_INFOS;
 
@@ -765,13 +873,25 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 if (newGroupInfos.Count > 0)
                 {
-                    Logging.Print<Logger>($"<color=#ffce54>Auto check last GroupName: {lastGroupInfo?.groupName}</color>");
-                    Logging.Print<Logger>($"<color=#54beff>Found total group {newGroupInfos.Count} to choose download =>\n{JsonConvert.SerializeObject(newGroupInfos)}</color>");
-                    PatchEvents.PatchCreateDownloader.SendEventMessage(newGroupInfos.Values.ToArray());
+                    #region Weak Host Mode
+                    if (isLastPackageVersions)
+                    {
+                        string errorMsg = "Local resources are incomplete. Update required!";
+                        Logging.Print<Logger>($"<color=#ff3696>{errorMsg}</color>");
+                        // 當突然失去聯網時, 必須重新從獲取資源版本的流程開始運行, 因為當網絡恢復時, 則可以正確獲取遠端版本進行更新
+                        PatchEvents.PatchVersionUpdateFailed.SendEventMessage();
+                    }
+                    #endregion
+                    else
+                    {
+                        Logging.Print<Logger>($"<color=#ffce54>Auto check last GroupName: {lastGroupInfo?.groupName}</color>");
+                        Logging.Print<Logger>($"<color=#54beff>Found total group {newGroupInfos.Count} to choose download =>\n{JsonConvert.SerializeObject(newGroupInfos)}</color>");
+                        PatchEvents.PatchCreateDownloader.SendEventMessage(newGroupInfos.Values.ToArray());
 
-                    /**
-                     * 開始等待使用者選擇是否開始下載
-                     */
+                        /**
+                         * 開始等待使用者選擇是否開始下載
+                         */
+                    }
                 }
                 else
                 {
@@ -827,7 +947,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     if (lastGroupInfo != null)
                     {
-                        if (lastGroupInfo.groupName == PatchManager.DEFAULT_GROUP_TAG)
+                        if (lastGroupInfo.groupName == BundleConfig.DEFAULT_GROUP_TAG)
                             mainDownloaders.Add(package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount));
                         else
                             mainDownloaders.Add(package.CreateResourceDownloader(lastGroupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount));

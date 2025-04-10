@@ -18,7 +18,7 @@ namespace YooAsset
         }
 
         // 下载参数
-        protected readonly DownloadParam Param;
+        protected readonly DownloadFileOptions Options;
 
         // 请求相关
         protected UnityWebRequest _webRequest;
@@ -35,10 +35,10 @@ namespace YooAsset
         protected int FailedTryAgain;
 
 
-        internal DefaultDownloadFileOperation(PackageBundle bundle, DownloadParam param) : base(bundle)
+        internal DefaultDownloadFileOperation(PackageBundle bundle, DownloadFileOptions options) : base(bundle)
         {
-            Param = param;
-            FailedTryAgain = param.FailedTryAgain;
+            Options = options;
+            FailedTryAgain = options.FailedTryAgain;
         }
 
         /// <summary>
@@ -49,9 +49,9 @@ namespace YooAsset
             // 轮流返回请求地址
             _requestCount++;
             if (_requestCount % 2 == 0)
-                return Param.FallbackURL;
+                return Options.FallbackURL;
             else
-                return Param.MainURL;
+                return Options.MainURL;
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace YooAsset
                 }
 
                 float offset = UnityEngine.Time.realtimeSinceStartup - _latestDownloadRealtime;
-                if (offset > Param.Timeout)
+                if (offset > Options.Timeout)
                 {
                     YooLogger.Warning($"Download request timeout : {_requestURL}");
                     if (_webRequest != null)

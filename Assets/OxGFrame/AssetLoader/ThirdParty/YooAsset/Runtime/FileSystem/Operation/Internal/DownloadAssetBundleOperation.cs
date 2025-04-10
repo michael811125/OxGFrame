@@ -4,7 +4,7 @@ namespace YooAsset
 {
     internal abstract class DownloadAssetBundleOperation : DefaultDownloadFileOperation
     {
-        internal DownloadAssetBundleOperation(PackageBundle bundle, DownloadParam param) : base(bundle, param)
+        internal DownloadAssetBundleOperation(PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
         {
         }
 

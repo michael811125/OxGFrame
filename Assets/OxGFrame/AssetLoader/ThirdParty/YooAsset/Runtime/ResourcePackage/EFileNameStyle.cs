@@ -1,9 +1,6 @@
 ﻿
-namespace YooAsset.Editor
+namespace YooAsset
 {
-    /// <summary>
-    /// 补丁包内的文件样式
-    /// </summary>
     public enum EFileNameStyle
     {
         /// <summary>

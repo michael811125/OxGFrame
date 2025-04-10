@@ -209,11 +209,6 @@ bundle_fallback_ip 127.0.0.1
 store_link http://
 ```
 
-#### Build 防呆宏
-- OXGFRAME_OFFLINE_MODE
-- OXGFRAME_HOST_MODE
-- OXGFRAME_WEBGL_MODE
-
 ---
 
 ### CoreFrame (dependence AssetLoader)

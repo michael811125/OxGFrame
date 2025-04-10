@@ -74,7 +74,7 @@ namespace YooAsset
         /// <summary>
         /// 创建下载任务
         /// </summary>
-        public FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadParam param)
+        public FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadFileOptions options)
         {
             // 查询旧的下载器
             if (_downloaders.TryGetValue(bundle.BundleGUID, out var oldDownloader))
@@ -83,29 +83,29 @@ namespace YooAsset
             }
 
             // 设置请求URL
-            if (string.IsNullOrEmpty(param.ImportFilePath))
+            if (string.IsNullOrEmpty(options.ImportFilePath))
             {
-                param.MainURL = _fileSystem.RemoteServices.GetRemoteMainURL(bundle.FileName);
-                param.FallbackURL = _fileSystem.RemoteServices.GetRemoteFallbackURL(bundle.FileName);
+                options.MainURL = _fileSystem.RemoteServices.GetRemoteMainURL(bundle.FileName);
+                options.FallbackURL = _fileSystem.RemoteServices.GetRemoteFallbackURL(bundle.FileName);
             }
             else
             {
                 // 注意：把本地文件路径指定为远端下载地址
-                param.MainURL = DownloadSystemHelper.ConvertToWWWPath(param.ImportFilePath);
-                param.FallbackURL = param.MainURL;
+                options.MainURL = DownloadSystemHelper.ConvertToWWWPath(options.ImportFilePath);
+                options.FallbackURL = options.MainURL;
             }
 
             // 创建新的下载器
             DefaultDownloadFileOperation newDownloader;
             if (bundle.FileSize >= _fileSystem.ResumeDownloadMinimumSize)
             {
-                newDownloader = new DownloadResumeFileOperation(_fileSystem, bundle, param);
+                newDownloader = new DownloadResumeFileOperation(_fileSystem, bundle, options);
                 AddChildOperation(newDownloader);
                 _downloaders.Add(bundle.BundleGUID, newDownloader);
             }
             else
             {
-                newDownloader = new DownloadNormalFileOperation(_fileSystem, bundle, param);
+                newDownloader = new DownloadNormalFileOperation(_fileSystem, bundle, options);
                 AddChildOperation(newDownloader);
                 _downloaders.Add(bundle.BundleGUID, newDownloader);
             }

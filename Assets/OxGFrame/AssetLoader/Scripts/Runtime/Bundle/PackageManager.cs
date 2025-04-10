@@ -66,7 +66,7 @@ namespace OxGFrame.AssetLoader.Bundle
             bool appInitialized = await InitPresetAppPackages();
             bool dlcInitialized = await InitPresetDlcPackages();
             Logging.Print<Logger>($"<color=#ffe45a>appInitialized: {appInitialized}, dlcInitialized: {dlcInitialized}</color>");
-            isInitialized = dlcInitialized && appInitialized;
+            isInitialized = appInitialized && dlcInitialized;
             #endregion
 
             #region Set Default Package
@@ -145,14 +145,14 @@ namespace OxGFrame.AssetLoader.Bundle
             var package = RegisterPackage(packageName);
             if (package.InitializeStatus == EOperationStatus.Succeed)
             {
-                // updated state default is true
-                bool updated = true;
-                if (autoUpdate) updated = await UpdatePackage(packageName);
+                // The default initialized state is true
+                bool isInitialized = true;
+                if (autoUpdate) isInitialized = await UpdatePackage(packageName);
                 Logging.Print<Logger>($"<color=#e2ec00>Package: {packageName} is initialized. Status: {package.InitializeStatus}.</color>");
-                return updated;
+                return isInitialized;
             }
 
-            // Simulate Mode
+            #region Simulate Mode
             InitializationOperation initializationOperation = null;
             if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
             {
@@ -162,8 +162,9 @@ namespace OxGFrame.AssetLoader.Bundle
                 createParameters.EditorFileSystemParameters = FileSystemParameters.CreateDefaultEditorFileSystemParameters(packageRoot);
                 initializationOperation = package.InitializeAsync(createParameters);
             }
+            #endregion
 
-            // Offline Mode
+            #region Offline Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode)
             {
                 var createParameters = new OfflinePlayModeParameters();
@@ -184,9 +185,11 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
                 initializationOperation = package.InitializeAsync(createParameters);
             }
+            #endregion
 
-            // Host Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
+            #region Host Mode, Weak Host Mode
+            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
+                BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
             {
                 var createParameters = new HostPlayModeParameters();
                 var remoteServices = new HostServers(hostServer, fallbackHostServer);
@@ -195,6 +198,8 @@ namespace OxGFrame.AssetLoader.Bundle
                 if (builtinExists)
                 {
                     createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(decryptionServices);
+                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                        createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.COPY_BUILDIN_PACKAGE_MANIFEST, true);
                 }
                 else
                 {
@@ -202,6 +207,8 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
                 createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices, decryptionServices);
                 createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.RESUME_DOWNLOAD_MINMUM_SIZE, BundleConfig.breakpointFileSizeThreshold);
+                if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.INSTALL_CLEAR_MODE, EOverwriteInstallClearMode.None);
                 // Only raw file build pipeline need to append extension
                 if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
                 {
@@ -210,8 +217,9 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
                 initializationOperation = package.InitializeAsync(createParameters);
             }
+            #endregion
 
-            // WebGL Mode
+            #region WebGL Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
             {
                 var createParameters = new WebPlayModeParameters();
@@ -232,8 +240,9 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
                 initializationOperation = package.InitializeAsync(createParameters);
             }
+            #endregion
 
-            // WebGL Remote Mode
+            #region WebGL Remote Mode
             if (BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
             {
                 var createParameters = new WebPlayModeParameters();
@@ -258,16 +267,17 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
                 initializationOperation = package.InitializeAsync(createParameters);
             }
+            #endregion
 
             await initializationOperation;
 
             if (initializationOperation.Status == EOperationStatus.Succeed)
             {
-                // updated state default is true
-                bool updated = true;
-                if (autoUpdate) updated = await UpdatePackage(packageName);
+                // The default initialized state is true
+                bool isInitialized = true;
+                if (autoUpdate) isInitialized = await UpdatePackage(packageName);
                 Logging.Print<Logger>($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Init</color> completed successfully.</color>");
-                return updated;
+                return isInitialized;
             }
             else
             {
@@ -294,6 +304,14 @@ namespace OxGFrame.AssetLoader.Bundle
                 await manifestOperation;
                 if (manifestOperation.Status == EOperationStatus.Succeed)
                 {
+                    #region Weak Host Mode
+                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    {
+                        // 儲存本地資源版本
+                        BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, packageName, version);
+                    }
+                    #endregion
+
                     Logging.Print<Logger>($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Update</color> completed successfully.</color>");
                     return true;
                 }
@@ -305,8 +323,47 @@ namespace OxGFrame.AssetLoader.Bundle
             }
             else
             {
-                Logging.Print<Logger>($"<color=#ff3696>Package: {packageName} update version failed.</color>");
-                return false;
+                #region Weak Host Mode
+                if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                {
+                    // 獲取本地資源版本
+                    string lastVersion = BundleConfig.saver.GetData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, packageName, string.Empty);
+                    if (string.IsNullOrEmpty(lastVersion))
+                    {
+                        Logging.Print<Logger>($"<color=#ff3696>Package: {package.PackageName}. Local version record not found, resources need to be updated!</color>");
+                        return false;
+                    }
+                    else
+                    {
+                        var manifestOperation = package.UpdatePackageManifestAsync(lastVersion);
+                        await manifestOperation;
+                        if (manifestOperation.Status == EOperationStatus.Succeed)
+                        {
+                            Logging.Print<Logger>($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Update</color> completed successfully.</color>");
+
+                            // 驗證本地清單內容的完整性
+                            var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+                            if (downloader.TotalDownloadCount > 0)
+                            {
+                                Logging.Print<Logger>($"<color=#ff3696>Package: {packageName}. Local resources are incomplete. Update required!</color>");
+                                return false;
+                            }
+
+                            return true;
+                        }
+                        else
+                        {
+                            Logging.Print<Logger>($"<color=#ff3696>Package: {packageName}. Failed to load the local resource manifest file. Resource update is required!</color>");
+                            return false;
+                        }
+                    }
+                }
+                #endregion
+                else
+                {
+                    Logging.Print<Logger>($"<color=#ff3696>Package: {packageName} update version failed.</color>");
+                    return false;
+                }
             }
         }
 
@@ -390,17 +447,34 @@ namespace OxGFrame.AssetLoader.Bundle
 
             try
             {
-                // Clear package cache files from sandbox
+                // Operation Tasks
+                List<ClearCacheFilesOperation> operations = new List<ClearCacheFilesOperation>();
+
+                // Clear cache files from sandbox
                 var clearAllBundleFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearAllBundleFiles);
-                var clearAllManifestFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearAllManifestFiles);
-                await clearAllBundleFilesOperation;
-                await clearAllManifestFilesOperation;
+                operations.Add(clearAllBundleFilesOperation);
 
-                if (clearAllBundleFilesOperation.Status == EOperationStatus.Succeed &&
-                    clearAllManifestFilesOperation.Status == EOperationStatus.Succeed)
-                    processed = true;
-
+                // Clear manifest files from sandbox
                 if (destroyPackage)
+                {
+                    var clearAllManifestFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearAllManifestFiles);
+                    operations.Add(clearAllManifestFilesOperation);
+                }
+
+                foreach (var operation in operations)
+                {
+                    await operation;
+                    if (operation.Status == EOperationStatus.Succeed)
+                        processed = true;
+                    else
+                    {
+                        processed = false;
+                        break;
+                    }
+                }
+
+                // Must ensure that processed is true
+                if (processed && destroyPackage)
                     processed = await _UnloadPackage(package);
 
                 return processed;

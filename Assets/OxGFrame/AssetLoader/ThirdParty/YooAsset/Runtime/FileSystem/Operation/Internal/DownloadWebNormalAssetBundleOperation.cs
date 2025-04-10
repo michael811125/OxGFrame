@@ -9,7 +9,7 @@ namespace YooAsset
         private DownloadHandlerAssetBundle _downloadhandler;
         private ESteps _steps = ESteps.None;
 
-        internal DownloadWebNormalAssetBundleOperation(bool disableUnityWebCache, PackageBundle bundle, DownloadParam param) : base(bundle, param)
+        internal DownloadWebNormalAssetBundleOperation(bool disableUnityWebCache, PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
         {
             _disableUnityWebCache = disableUnityWebCache;
         }

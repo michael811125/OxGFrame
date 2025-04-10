@@ -1,6 +1,40 @@
 ﻿
 namespace YooAsset
 {
+    internal class DownloadFileOptions
+    {
+        /// <summary>
+        /// 失败后重试次数
+        /// </summary>
+        public readonly int FailedTryAgain;
+
+        /// <summary>
+        /// 超时时间
+        /// </summary>
+        public readonly int Timeout;
+
+        /// <summary>
+        /// 主资源地址
+        /// </summary>
+        public string MainURL { set; get; }
+
+        /// <summary>
+        /// 备用资源地址
+        /// </summary>
+        public string FallbackURL { set; get; }
+
+        /// <summary>
+        /// 导入的本地文件路径
+        /// </summary>
+        public string ImportFilePath { set; get; }
+
+        public DownloadFileOptions(int failedTryAgain, int timeout)
+        {
+            FailedTryAgain = failedTryAgain;
+            Timeout = timeout;
+        }
+    }
+
     internal abstract class FSDownloadFileOperation : AsyncOperationBase
     {
         public PackageBundle Bundle { private set; get; }

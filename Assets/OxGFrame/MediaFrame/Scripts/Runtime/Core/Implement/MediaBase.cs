@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using MyBox;
 using OxGKit.LoggingSystem;
+using OxGKit.SaverSystem;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -423,24 +424,8 @@ namespace OxGFrame.MediaFrame
                 return string.Empty;
 
             var content = urlCfg;
-            var allWords = content.Split('\n');
-            var lines = new List<string>(allWords);
-
-            var fileMap = new Dictionary<string, string>();
-            foreach (var readLine in lines)
-            {
-                Logging.Print<Logger>($"readline: {readLine}");
-                if (readLine.IndexOf('#') != -1 && readLine[0] == '#')
-                    continue;
-                var args = readLine.Split(' ', 2);
-                if (args.Length >= 2)
-                {
-                    Logging.Print<Logger>($"args => key: {args[0]}, value: {args[1]}");
-                    if (!fileMap.ContainsKey(args[0])) fileMap.Add(args[0], args[1].Replace("\n", "").Replace("\r", ""));
-                }
-            }
-
-            fileMap.TryGetValue(key, out string value);
+            var dataMap = Saver.ParsingDataMap(content);
+            dataMap.TryGetValue(key, out string value);
             return value;
         }
 

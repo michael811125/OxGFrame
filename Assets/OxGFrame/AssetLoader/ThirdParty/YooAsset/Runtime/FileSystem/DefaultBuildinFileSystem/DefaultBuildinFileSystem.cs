@@ -109,15 +109,15 @@ namespace YooAsset
             var operation = new DBFSRequestPackageVersionOperation(this);
             return operation;
         }
-        public virtual FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
+        public virtual FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, ClearCacheFilesOptions options)
         {
-            return _unpackFileSystem.ClearCacheFilesAsync(manifest, clearMode, clearParam);
+            return _unpackFileSystem.ClearCacheFilesAsync(manifest, options);
         }
-        public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadParam param)
+        public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadFileOptions options)
         {
             // 注意：业务层的解压下载器会依赖内置文件系统的下载方法
-            param.ImportFilePath = GetBuildinFileLoadPath(bundle);
-            return _unpackFileSystem.DownloadFileAsync(bundle, param);
+            options.ImportFilePath = GetBuildinFileLoadPath(bundle);
+            return _unpackFileSystem.DownloadFileAsync(bundle, options);
         }
         public virtual FSLoadBundleOperation LoadBundleFile(PackageBundle bundle)
         {

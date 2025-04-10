@@ -10,7 +10,7 @@ namespace YooAsset
         private DownloadHandlerBuffer _downloadhandler;
         private ESteps _steps = ESteps.None;
 
-        internal DownloadWebEncryptAssetBundleOperation(bool checkTimeout, IWebDecryptionServices decryptionServices, PackageBundle bundle, DownloadParam param) : base(bundle, param)
+        internal DownloadWebEncryptAssetBundleOperation(bool checkTimeout, IWebDecryptionServices decryptionServices, PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
         {
             _checkTimeout = checkTimeout;
             _decryptionServices = decryptionServices;

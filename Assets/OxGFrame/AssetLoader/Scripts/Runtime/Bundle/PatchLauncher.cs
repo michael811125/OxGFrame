@@ -10,11 +10,11 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         [Separator("Patch Options")]
         public BundleConfig.PlayMode playMode = BundleConfig.PlayMode.EditorSimulateMode;
-        [Tooltip("If checked, the patch field will compare whole version."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WebGLRemoteMode)]
+        [Tooltip("If checked, the patch field will compare whole version."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WeakHostMode, BundleConfig.PlayMode.WebGLRemoteMode)]
         public BundleConfig.SemanticRule semanticRule = new BundleConfig.SemanticRule();
         [Tooltip("If checked, will skip preset packages download step of the patch (force download while playing)."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode)]
         public bool skipMainDownload = false;
-        [Tooltip("If checked, will check disk space is it enough while patch checking."), ConditionalField(new string[] { nameof(playMode), nameof(skipMainDownload) }, new bool[] { false, true }, BundleConfig.PlayMode.HostMode)]
+        [Tooltip("If checked, will check disk space is it enough while patch checking."), ConditionalField(nameof(playMode), false, BundleConfig.PlayMode.HostMode, BundleConfig.PlayMode.WeakHostMode)]
         public bool checkDiskSpace = true;
 
         [Separator("Preset App Packages")]
@@ -53,6 +53,8 @@ namespace OxGFrame.AssetLoader.Bundle
             this.playMode = BundleConfig.PlayMode.OfflineMode;
 #elif !UNITY_EDITOR && OXGFRAME_HOST_MODE
             this.playMode = BundleConfig.PlayMode.HostMode;
+#elif !UNITY_EDITOR && OXGFRAME_WEAK_HOST_MODE
+            this.playMode = BundleConfig.PlayMode.WeakHostMode;
 #elif !UNITY_EDITOR && OXGFRAME_WEBGL_MODE
             this.playMode = BundleConfig.PlayMode.WebGLMode;
 #elif !UNITY_EDITOR && OXGFRAME_WEBGL_REMOTE_MODE
@@ -60,15 +62,20 @@ namespace OxGFrame.AssetLoader.Bundle
 #endif
             BundleConfig.playMode = this.playMode;
             // For Host Mode
-            if (this.playMode == BundleConfig.PlayMode.HostMode)
+            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode)
             {
                 BundleConfig.semanticRule = this.semanticRule;
                 BundleConfig.skipMainDownload = this.skipMainDownload;
                 BundleConfig.checkDiskSpace = this.checkDiskSpace;
             }
-            // For WebGL Mode
-            else if (this.playMode == BundleConfig.PlayMode.WebGLMode ||
-                     BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
+            // For Weak Host Mode (Does not support skipping download)
+            else if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+            {
+                BundleConfig.semanticRule = this.semanticRule;
+                BundleConfig.checkDiskSpace = this.checkDiskSpace;
+            }
+            // For WebGL Remote Mode
+            else if (BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
             {
                 BundleConfig.semanticRule = this.semanticRule;
             }
@@ -114,6 +121,10 @@ namespace OxGFrame.AssetLoader.Bundle
                 case BundleConfig.PlayMode.HostMode:
                     this.playMode = BundleConfig.PlayMode.EditorSimulateMode;
                     Debug.Log($"<color=#ff1f4c>[Host Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    break;
+                case BundleConfig.PlayMode.WeakHostMode:
+                    this.playMode = BundleConfig.PlayMode.EditorSimulateMode;
+                    Debug.Log($"<color=#ff1f4c>[Weak Host Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
                     break;
             }
 #else
