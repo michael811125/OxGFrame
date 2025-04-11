@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## [3.3.1] - 2025-04-11
+
+# English
+
+- CenterFrame  
+  - APICenter  
+    - Added Acax support for Native WebRequest (using System.Net WebRequest).
+      - HttpNativeWebRequest.Acax  
+      - HttpNativeWebRequest.AcaxAsync  
+    - Added Acax support for Native HttpClient (using System.Net.Http HttpClient).
+      - HttpNativeClient.Acax  
+      - HttpNativeClient.AcaxAsync
+
+---
+
+# 中文
+
+- CenterFrame
+  - APICenter
+    - 新增 Acax 支持 Native WebRequest (使用 System.Net WebRequest)。
+	  - HttpNativeWebRequest.Acax
+	  - HttpNativeWebRequest.AcaxAsync
+	- 新增 Acax 支持 Native HttpClient (使用 System.Net.Http HttpClient)。
+      - HttpNativeClient.Acax
+      - HttpNativeClient.AcaxAsync
+
 ## [3.3.0] - 2025-04-11
 
 # English

@@ -1,25 +1,21 @@
 ﻿using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
-using OxGKit.LoggingSystem;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace OxGFrame.CenterFrame.APICenter
 {
-    public struct ErrorInfo
-    {
-        public string url;
-        public string message;
-        public Exception exception;
-    }
-
-    public delegate void ResponseHandle(string response);
-    public delegate void ResponseErrorHandle(ErrorInfo errorInfo);
-
+    /// <summary>
+    /// Use UnityWebRequest
+    /// </summary>
     public static class Http
     {
+        /// <summary>
+        /// Default request timeout in seconds
+        /// </summary>
         private const int _MAX_REQUEST_TIME_SECONDS = 60;
 
         /// <summary>
@@ -31,6 +27,7 @@ namespace OxGFrame.CenterFrame.APICenter
         /// <param name="body"></param>
         /// <param name="success"></param>
         /// <param name="error"></param>
+        /// <param name="timeoutSeconds"></param>
         public static void Acax(string url, string method, string[,] headers, object[,] body, ResponseHandle success = null, ResponseErrorHandle error = null, int? timeoutSeconds = null)
         {
             method = method.ToUpper();
@@ -52,6 +49,7 @@ namespace OxGFrame.CenterFrame.APICenter
         /// <param name="body"></param>
         /// <param name="success"></param>
         /// <param name="error"></param>
+        /// <param name="timeoutSeconds"></param>
         /// <returns></returns>
         public async static UniTask<string> AcaxAsync(string url, string method, string[,] headers, object[,] body, ResponseHandle success = null, ResponseErrorHandle error = null, int? timeoutSeconds = null)
         {
@@ -79,7 +77,10 @@ namespace OxGFrame.CenterFrame.APICenter
                         {
                             if (headers.GetLength(1) != 2)
                                 continue;
-                            request.SetRequestHeader(headers[row, 0], headers[row, 1]);
+
+                            string headerName = headers[row, 0];
+                            string headerValue = headers[row, 1];
+                            request.SetRequestHeader(headerName, headerValue);
                         }
                     }
 
@@ -132,7 +133,7 @@ namespace OxGFrame.CenterFrame.APICenter
                         errorInfo.message = request.error;
                         errorInfo.exception = null;
                         error?.Invoke(errorInfo);
-                        Logging.PrintWarning<Logger>($"<color=#FF0000>RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}</color>");
+                        Debug.LogWarning($"RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}");
                         return null;
                     }
                     else
@@ -148,7 +149,7 @@ namespace OxGFrame.CenterFrame.APICenter
                     errorInfo.message = request?.error;
                     errorInfo.exception = ex;
                     error?.Invoke(errorInfo);
-                    Logging.PrintWarning<Logger>($"<color=#FF0000>RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}, Exception: {ex}</color>");
+                    Debug.LogWarning($"RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}, Exception: {ex}");
                     return null;
                 }
             }
