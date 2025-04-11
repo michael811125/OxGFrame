@@ -133,7 +133,7 @@ namespace OxGFrame.CenterFrame.APICenter
                         errorInfo.message = request.error;
                         errorInfo.exception = null;
                         error?.Invoke(errorInfo);
-                        Debug.LogWarning($"RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}");
+                        Debug.LogError($"RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}");
                         return null;
                     }
                     else
@@ -149,7 +149,7 @@ namespace OxGFrame.CenterFrame.APICenter
                     errorInfo.message = request?.error;
                     errorInfo.exception = ex;
                     error?.Invoke(errorInfo);
-                    Debug.LogWarning($"RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}, Exception: {ex}");
+                    Debug.LogError($"RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}, Exception: {ex}");
                     return null;
                 }
             }

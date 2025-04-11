@@ -148,7 +148,7 @@ namespace OxGFrame.CenterFrame.APICenter
                 errorInfo.message = ex.Message;
                 errorInfo.exception = ex;
                 error?.Invoke(errorInfo);
-                Debug.LogWarning($"RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}, Exception: {ex}");
+                Debug.LogError($"RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}, Exception: {ex}");
                 return null;
             }
         }
