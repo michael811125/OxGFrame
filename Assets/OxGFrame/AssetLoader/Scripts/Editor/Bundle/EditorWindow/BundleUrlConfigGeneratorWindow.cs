@@ -74,9 +74,6 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void OnGUI()
         {
-            // operation type area
-            EditorGUI.BeginChangeCheck();
-
             this._DrawExportBundleUrlConfigToStreamingAssetsView();
             this._DrawBundleUrlPlansView();
         }
