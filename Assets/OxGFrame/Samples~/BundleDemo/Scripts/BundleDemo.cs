@@ -571,7 +571,8 @@ public class BundleDemo : MonoBehaviour
     public void ReleaseBundle()
     {
         // Destroy all first
-        foreach (Transform t in this.container.transform) Destroy(t.gameObject);
+        foreach (Transform t in this.container.transform)
+            Destroy(t.gameObject);
         // Release all
         AssetLoaders.ReleaseBundleAssets().Forget();
     }

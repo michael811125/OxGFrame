@@ -122,7 +122,7 @@ namespace YooAsset
         {
             if (_disableUnityWebCache)
             {
-                var downloadhandler = new DownloadHandlerAssetBundle(_requestURL, 0);
+                var downloadhandler = new DownloadHandlerAssetBundle(_requestURL, Bundle.UnityCRC);
 #if UNITY_2020_3_OR_NEWER
                 downloadhandler.autoLoadAssetBundle = false;
 #endif
@@ -132,9 +132,8 @@ namespace YooAsset
             {
                 // 注意：优先从浏览器缓存里获取文件
                 // The file hash defining the version of the asset bundle.
-                uint unityCRC = Bundle.UnityCRC;
                 Hash128 fileHash = Hash128.Parse(Bundle.FileHash);
-                var downloadhandler = new DownloadHandlerAssetBundle(_requestURL, fileHash, unityCRC);
+                var downloadhandler = new DownloadHandlerAssetBundle(_requestURL, fileHash, Bundle.UnityCRC);
 #if UNITY_2020_3_OR_NEWER
                 downloadhandler.autoLoadAssetBundle = false;
 #endif

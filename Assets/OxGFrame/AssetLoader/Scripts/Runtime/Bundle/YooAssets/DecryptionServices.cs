@@ -81,6 +81,13 @@ namespace OxGFrame.AssetLoader.Bundle
             return result;
         }
 
+        public DecryptResult LoadAssetBundleFallback(DecryptFileInfo fileInfo)
+        {
+            DecryptResult result = new DecryptResult();
+            result.Result = AssetBundle.LoadFromMemory(this.DecryptData(fileInfo), fileInfo.FileLoadCRC);
+            return result;
+        }
+
         public byte[] ReadFileData(DecryptFileInfo fileInfo)
         {
             return this.DecryptData(fileInfo);

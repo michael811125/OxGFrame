@@ -17,12 +17,12 @@ MonoBehaviour:
   UniqueBundleName: 1
   Packages:
   - PackageName: DefaultPackage
-    PackageDesc: 
+    PackageDesc: For BundleDemo
     EnableAddressable: 1
     LocationToLower: 0
     IncludeAssetGUID: 0
-    IgnoreDefaultType: 1
     AutoCollectShaders: 1
+    IgnoreRuleName: NormalIgnoreRule
     Groups:
     - GroupName: ModelGroup
       GroupDesc: 
@@ -37,9 +37,17 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
+  - PackageName: ScenePackage
+    PackageDesc: For USFrameDemo
+    EnableAddressable: 1
+    LocationToLower: 0
+    IncludeAssetGUID: 0
+    AutoCollectShaders: 1
+    IgnoreRuleName: NormalIgnoreRule
+    Groups:
     - GroupName: SceneGroup
       GroupDesc: 
-      AssetTags: scenes
+      AssetTags: 
       ActiveRuleName: EnableGroup
       Collectors:
       - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo01.unity
@@ -60,90 +68,6 @@ MonoBehaviour:
         UserData: 
       - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo03.unity
         CollectorGUID: 42b42b7f9b5995748ba85a54431669b3
-        CollectorType: 0
-        AddressRuleName: AddressByFileName
-        PackRuleName: PackSeparately
-        FilterRuleName: CollectAll
-        AssetTags: 
-        UserData: 
-    - GroupName: HotfixGroup
-      GroupDesc: 
-      AssetTags: prefabs
-      ActiveRuleName: EnableGroup
-      Collectors:
-      - CollectPath: Assets/OxGFrame/Samples/HotfixerDemo/Prefabs
-        CollectorGUID: c24c14d4ff838c84dbc48cc507fd01aa
-        CollectorType: 0
-        AddressRuleName: AddressByFileName
-        PackRuleName: PackSeparately
-        FilterRuleName: CollectAll
-        AssetTags: 
-        UserData: 
-  - PackageName: OtherPackage
-    PackageDesc: 
-    EnableAddressable: 1
-    LocationToLower: 0
-    IncludeAssetGUID: 0
-    IgnoreDefaultType: 1
-    AutoCollectShaders: 1
-    Groups:
-    - GroupName: ModelGroup
-      GroupDesc: 
-      AssetTags: models
-      ActiveRuleName: EnableGroup
-      Collectors:
-      - CollectPath: Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab
-        CollectorGUID: b4ea3356cddbd8b41926c28adefdfbc5
-        CollectorType: 0
-        AddressRuleName: AddressByFileName
-        PackRuleName: PackSeparately
-        FilterRuleName: CollectAll
-        AssetTags: 
-        UserData: 
-    - GroupName: SceneGroup
-      GroupDesc: 
-      AssetTags: scenes
-      ActiveRuleName: EnableGroup
-      Collectors:
-      - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo01.unity
-        CollectorGUID: 97102f27cdcc74846bb0909829b431cd
-        CollectorType: 0
-        AddressRuleName: AddressByFileName
-        PackRuleName: PackSeparately
-        FilterRuleName: CollectAll
-        AssetTags: 
-        UserData: 
-      - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo02.unity
-        CollectorGUID: 9f25400e0da4e034294d5e153b0533ab
-        CollectorType: 0
-        AddressRuleName: AddressByFileName
-        PackRuleName: PackSeparately
-        FilterRuleName: CollectAll
-        AssetTags: 
-        UserData: 
-      - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo03.unity
-        CollectorGUID: 42b42b7f9b5995748ba85a54431669b3
-        CollectorType: 0
-        AddressRuleName: AddressByFileName
-        PackRuleName: PackSeparately
-        FilterRuleName: CollectAll
-        AssetTags: 
-        UserData: 
-  - PackageName: DlcPackage
-    PackageDesc: 
-    EnableAddressable: 1
-    LocationToLower: 0
-    IncludeAssetGUID: 0
-    IgnoreDefaultType: 1
-    AutoCollectShaders: 1
-    Groups:
-    - GroupName: ModelGroup
-      GroupDesc: 
-      AssetTags: models
-      ActiveRuleName: EnableGroup
-      Collectors:
-      - CollectPath: Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab
-        CollectorGUID: b4ea3356cddbd8b41926c28adefdfbc5
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackSeparately
@@ -151,12 +75,12 @@ MonoBehaviour:
         AssetTags: 
         UserData: 
   - PackageName: HotfixPackage
-    PackageDesc: 
+    PackageDesc: For HotfixerDemo
     EnableAddressable: 1
     LocationToLower: 0
     IncludeAssetGUID: 0
-    IgnoreDefaultType: 1
     AutoCollectShaders: 1
+    IgnoreRuleName: NormalIgnoreRule
     Groups:
     - GroupName: Scene
       GroupDesc: Hotfix Main Scene
@@ -197,71 +121,71 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
+    - GroupName: HotfixPrefabs
+      GroupDesc: Hotfix Assets
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/OxGFrame/Samples/HotfixerDemo/Prefabs
+        CollectorGUID: c24c14d4ff838c84dbc48cc507fd01aa
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
   - PackageName: Dlc1Package
-    PackageDesc: 
+    PackageDesc: For BundleDLCDemo
     EnableAddressable: 1
     LocationToLower: 0
     IncludeAssetGUID: 0
-    IgnoreDefaultType: 1
     AutoCollectShaders: 1
+    IgnoreRuleName: NormalIgnoreRule
     Groups:
-    - GroupName: ModelGroup
-      GroupDesc: 
-      AssetTags: models
+    - GroupName: Prefabs
+      GroupDesc: DLC 1
+      AssetTags: 
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab
-        CollectorGUID: b4ea3356cddbd8b41926c28adefdfbc5
+      - CollectPath: Assets/OxGFrame/Samples/BundleDLCDemo/Prefabs/Capsule.prefab
+        CollectorGUID: a2f88a1515adec546a3555423c1d59f1
         CollectorType: 0
         AddressRuleName: AddressByFileName
-        PackRuleName: PackSeparately
+        PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
-    - GroupName: SceneGroup
-      GroupDesc: 
-      AssetTags: scenes
-      ActiveRuleName: EnableGroup
-      Collectors:
-      - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo01.unity
-        CollectorGUID: 97102f27cdcc74846bb0909829b431cd
+      - CollectPath: Assets/OxGFrame/Samples/BundleDLCDemo/Prefabs/Cube.prefab
+        CollectorGUID: 062e86de15713fc4898cbacec1ae3259
         CollectorType: 0
         AddressRuleName: AddressByFileName
-        PackRuleName: PackSeparately
+        PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
-      - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo02.unity
-        CollectorGUID: 9f25400e0da4e034294d5e153b0533ab
+      - CollectPath: Assets/OxGFrame/Samples/BundleDLCDemo/Prefabs/Cylinder.prefab
+        CollectorGUID: 76c27ff314194c3439c37ca8413e49ec
         CollectorType: 0
         AddressRuleName: AddressByFileName
-        PackRuleName: PackSeparately
-        FilterRuleName: CollectAll
-        AssetTags: 
-        UserData: 
-      - CollectPath: Assets/OxGFrame/Samples/USFrameDemo/Scenes/LevelDemo03.unity
-        CollectorGUID: 42b42b7f9b5995748ba85a54431669b3
-        CollectorType: 0
-        AddressRuleName: AddressByFileName
-        PackRuleName: PackSeparately
+        PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
   - PackageName: Dlc2Package
-    PackageDesc: 
+    PackageDesc: For BundleDLCDemo
     EnableAddressable: 1
     LocationToLower: 0
     IncludeAssetGUID: 0
-    IgnoreDefaultType: 1
     AutoCollectShaders: 1
+    IgnoreRuleName: NormalIgnoreRule
     Groups:
-    - GroupName: ModelGroup
-      GroupDesc: 
-      AssetTags: models
+    - GroupName: Prefabs
+      GroupDesc: DLC 2
+      AssetTags: 
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/OxGFrame/Samples/BundleDemo/Prefabs/model_01.prefab
-        CollectorGUID: b4ea3356cddbd8b41926c28adefdfbc5
+      - CollectPath: Assets/OxGFrame/Samples/BundleDLCDemo/Prefabs/Sphere.prefab
+        CollectorGUID: 5261cf8a88d4676478e0944f8c9f0586
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackSeparately

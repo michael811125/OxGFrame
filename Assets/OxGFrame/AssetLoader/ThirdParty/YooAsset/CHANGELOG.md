@@ -2,6 +2,95 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.10] - 2025-06-17
+
+### Improvements
+
+- 小游戏扩展库已经独立，可以单独导入到项目工程。
+- 编辑器里的TableView视图新增了AssetObjectCell类。
+- (#552) 微信小游戏文件系统类，增加了URL合法性的初始化检测机制。
+- (#566) 重构了资源构建页面，方便扩展自定义界面。
+- (#573) 完善了AssetDependencyDB的输出日志，可以正确输出丢失的引用资产信息。
+
+### Fixed
+
+- 修复太空战机DEMO在退出运行模式时的报错。
+- (#551) 修复了Unity2019, Unity2020的代码兼容性报错。
+- (#569) 修复了TVOS平台的兼容问题。  
+- (#564) 修复了TiktokFileSystem文件系统里appendTimeTicks无效的问题。
+
+### Added
+
+- (#562) 新增了解密方法。
+
+  ```csharp
+  public interface IDecryptionServices
+  {
+      /// <summary>
+      /// 后备方式获取解密的资源包对象
+      /// 注意：当正常解密方法失败后，会触发后备加载！
+      /// 说明：建议通过LoadFromMemory()方法加载资源对象作为保底机制。
+      /// issues : https://github.com/tuyoogame/YooAsset/issues/562
+      /// </summary>
+      DecryptResult LoadAssetBundleFallback(DecryptFileInfo fileInfo);    
+  }
+  ```
+
+
+
+## [2.3.9] - 2025-05-13
+
+### Improvements
+
+- 增加了YOO_ASSET_EXPERIMENT宏，用于控制实验性代码的开关。
+- 构建管线目前会输出构建日志到输出目录下，方便查看引擎在构建时主动清空的控制台日志。
+- 优化了收集器tag传染扩散逻辑，避免Group里配置了Tag导致的无意义的警告信息。
+- 扩展工程内PanelMonitor代码默认关闭状态。
+
+### Fixed
+
+- (#528) 修复了AssetDependencyDatabase在查询引擎资源对象是否存在的时效问题。
+
+### Added
+
+- (#542) 新增了资源管理系统销毁方法。
+
+  该方法会销毁所有的资源包裹和异步操作任务，以及卸载所有AssetBundle对象！
+
+  ```csharp
+  public class YooAssets
+  {
+      /// <summary>
+      /// 销毁资源系统
+      /// </summary>
+      public static void Destroy();
+  }
+  ```
+
+- 新增了SBP构建管线的构建参数
+
+  ```csharp
+  /// <summary>
+  /// 从AssetBundle文件头里剥离Unity版本信息
+  /// </summary>
+  public bool StripUnityVersion = false;
+  ```
+
+- 新增了构建错误码：BuiltinShadersBundleNameIsNull 
+
+## [2.3.8] - 2025-04-17
+
+### Improvements
+
+- 扩展工程里增加了“图集丢失变白块的解决方案”的相关代码。
+
+### Fixed
+
+- (#528) 修复了微信小游戏平台WXFSClearUnusedBundleFiles无法清理的问题。
+- (#531) 修复了微信小游戏平台WXFSClearUnusedBundleFiles没有适配BundleName_HashName命名方式。
+- (#533) 修复了Editor程序集下无法访问YooAsset.Editor程序集里的internal字段的问题。
+- (#534) 修复了资源报告窗口AssetView视图里，依赖资源包列表显示不准确的问题。
+
 ## [2.3.7] - 2025-04-01
 
 ### Improvements

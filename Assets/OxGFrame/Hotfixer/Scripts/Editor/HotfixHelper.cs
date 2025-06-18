@@ -1,5 +1,7 @@
 ﻿using HybridCLR.Editor;
 using HybridCLR.Editor.Commands;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -8,6 +10,8 @@ namespace OxGFrame.Hotfixer.Editor
 {
     public static class HotfixHelper
     {
+        internal const string MENU_ROOT = "OxGFrame/Hotfixer/";
+
         internal const string HOTFIX_COLLECTOR_DIR = "HotfixCollector";
         internal const string AOT_DLLS_DIR = "AOTDlls";
         internal const string HOTFIX_DLLS_DIR = "HotfixDlls";
@@ -121,6 +125,163 @@ namespace OxGFrame.Hotfixer.Editor
             {
                 return (bytes / (1024 * 1024 * 1024 * 1f)).ToString("f2") + "GB";
             }
+        }
+
+        /// <summary>
+        /// 產生 Hotfix Dll 配置檔至輸出路徑 (Export HotfixDllConfig to StreamingAssets [for Built-in])
+        /// </summary>
+        /// <param name="aotDlls"></param>
+        /// <param name="hotfixDlls"></param>
+        /// <param name="outputPath"></param>
+        public static void ExportHotfixDllConfig(List<string> aotDlls, List<string> hotfixDlls, bool cipher)
+        {
+            HotfixDllConfig config = new HotfixDllConfig(aotDlls, hotfixDlls);
+
+            // 寫入配置文件
+            WriteConfig(config, cipher ? ConfigFileType.Bytes : ConfigFileType.Json);
+
+            Debug.Log($"<color=#00FF00>【Export {HotfixConfig.HOTFIX_DLL_CFG_NAME} Completes】</color>");
+        }
+
+        [MenuItem("Assets/OxGFrame/Hotfixer/Convert hotfixdllconfig.conf (BYTES [Cipher] <-> JSON [Plaintext])", false, -99)]
+        private static void _ConvertConfigFile()
+        {
+            UnityEngine.Object selectedObject = Selection.activeObject;
+
+            if (selectedObject != null)
+            {
+                // 獲取選中的資源的相對路徑
+                string assetPath = AssetDatabase.GetAssetPath(selectedObject);
+
+                // 檢查選中的文件是否位於 StreamingAssets 資料夾內
+                if (assetPath.StartsWith("Assets/StreamingAssets"))
+                {
+                    // Application.dataPath 返回的是 Assets 資料夾的完整路徑
+                    string fullPath = Path.Combine(Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length), assetPath);
+
+                    // 確保文件存在
+                    if (File.Exists(fullPath))
+                    {
+                        string fileName = HotfixConfig.HOTFIX_DLL_CFG_NAME;
+                        if (fullPath.IndexOf(fileName) == -1)
+                        {
+                            Debug.LogWarning($"Incorrect file selected. Please select the {fileName} file.");
+                            return;
+                        }
+
+                        // 讀取文件內容
+                        byte[] data = File.ReadAllBytes(fullPath);
+                        var info = BinaryHelper.DecryptToString(data);
+                        HotfixDllConfig config = null;
+                        bool isJsonConvertible;
+
+                        try
+                        {
+                            config = JsonUtility.FromJson<HotfixDllConfig>(info.content);
+                            isJsonConvertible = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            isJsonConvertible = false;
+                            Debug.LogException(new Exception("Convert failed: The content format is not valid JSON or it does not match the expected structure.", ex));
+                        }
+
+                        if (isJsonConvertible && config != null)
+                        {
+                            // 根據文件類型進行轉換
+                            switch (info.type)
+                            {
+                                case ConfigFileType.Json:
+                                    // JSON to Bytes
+                                    WriteConfig(config, ConfigFileType.Bytes);
+                                    break;
+                                case ConfigFileType.Bytes:
+                                    // Bytes to JSON
+                                    WriteConfig(config, ConfigFileType.Json);
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError($"File does not exist at path: {fullPath}");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("Selected file is not in StreamingAssets folder.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("No file selected.");
+            }
+        }
+
+        /// <summary>
+        /// 寫入配置文件
+        /// </summary>
+        /// <param name="hotfixDllConfig"></param>
+        /// <param name="configFileType"></param>
+        internal static void WriteConfig(HotfixDllConfig hotfixDllConfig, ConfigFileType configFileType = ConfigFileType.Bytes)
+        {
+            string fileName = HotfixConfig.HOTFIX_DLL_CFG_NAME;
+            string savePath = Path.Combine(Application.streamingAssetsPath, fileName);
+
+            // 獲取文件夾路徑
+            string directoryPath = Path.GetDirectoryName(savePath);
+
+            // 檢查文件夾是否存在, 如果不存在則創建
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+                Debug.Log($"<color=#00d6ff>Created directory: {directoryPath}</color>");
+            }
+
+            switch (configFileType)
+            {
+                // Json 類型
+                case ConfigFileType.Json:
+                    {
+                        // 將配置轉換為 JSON 字符串
+                        string json = JsonUtility.ToJson(hotfixDllConfig, true);
+
+                        // 寫入文件
+                        File.WriteAllText(savePath, json);
+                        AssetDatabase.Refresh();
+                        Debug.Log($"<color=#00d6ff>Saved Hotfix Dll Config JSON to: {savePath}</color>");
+                    }
+                    break;
+
+                // Bytes 類型
+                case ConfigFileType.Bytes:
+                    {
+                        // 將配置轉換為 JSON 字符串
+                        string json = JsonUtility.ToJson(hotfixDllConfig, false);
+
+                        // Binary
+                        var writeBuffer = BinaryHelper.EncryptToBytes(json);
+
+                        // 寫入配置文件
+                        File.WriteAllBytes(savePath, writeBuffer);
+                        AssetDatabase.Refresh();
+                        Debug.Log($"<color=#00d6ff>Saved Hotfix Dll Config BYTES to: {savePath}</color>");
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 寫入文字文件檔
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <param name="outputPath"></param>
+        internal static void WriteTxt(string txt, string outputPath)
+        {
+            // 寫入配置文件
+            var file = File.CreateText(outputPath);
+            file.Write(txt);
+            file.Close();
         }
     }
 }

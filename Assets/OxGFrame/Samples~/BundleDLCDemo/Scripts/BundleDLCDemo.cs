@@ -43,7 +43,8 @@ public class BundleDLCDemo : MonoBehaviour
         this._isInitialized = false;
 
         // Wait Until IsInitialized
-        while (!AssetPatcher.IsInitialized()) yield return null;
+        while (!AssetPatcher.IsInitialized())
+            yield return null;
 
         #region 1. Create package operations
         this._packageOperations = new PackageOperation[]

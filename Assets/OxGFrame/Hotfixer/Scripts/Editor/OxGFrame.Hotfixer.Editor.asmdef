@@ -2,7 +2,10 @@
     "name": "OxGFrame.Hotfixer.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:2373f786d14518f44b0f475db77ba4de"
+        "GUID:2373f786d14518f44b0f475db77ba4de",
+        "GUID:352d9ecbfdfabfd4dbccfe69f910465c",
+        "GUID:9a7df4668a66d1343b85d9ed3789bd2d",
+        "GUID:ee5764c352d7b554794013cb99153ff5"
     ],
     "includePlatforms": [
         "Editor"

@@ -559,6 +559,21 @@ namespace YooAsset
             };
             return DecryptionServices.LoadAssetBundleAsync(fileInfo);
         }
+
+        /// <summary>
+        /// 加载加密资源文件
+        /// </summary>
+        public DecryptResult LoadEncryptedAssetBundleFallback(PackageBundle bundle)
+        {
+            string filePath = GetCacheBundleFileLoadPath(bundle);
+            var fileInfo = new DecryptFileInfo()
+            {
+                BundleName = bundle.BundleName,
+                FileLoadCRC = bundle.UnityCRC,
+                FileLoadPath = filePath,
+            };
+            return DecryptionServices.LoadAssetBundleFallback(fileInfo);
+        }
         #endregion
     }
 }
