@@ -69,9 +69,6 @@ namespace OxGFrame.MediaFrame.Editor
 
         private void OnGUI()
         {
-            // operation type area
-            EditorGUI.BeginChangeCheck();
-
             this._DrawExportMediaUrlConfigToStreamingAssetsView();
             this._DrawMediaUrlPlansView();
         }

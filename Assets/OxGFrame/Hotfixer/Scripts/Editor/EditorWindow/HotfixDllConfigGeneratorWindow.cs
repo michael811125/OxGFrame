@@ -29,7 +29,8 @@ namespace OxGFrame.Hotfixer.Editor
         public List<HotfixDllPlan> hotfixDllPlans = new List<HotfixDllPlan>();
         private int _choicePlanIndex = 0;
 
-        private Vector2 _scrollview;
+        private Vector2 _scrollview1;
+        private Vector2 _scrollview2;
 
         private SerializedObject _serObj;
         private SerializedProperty _aotDllsPty;
@@ -78,9 +79,6 @@ namespace OxGFrame.Hotfixer.Editor
 
         private void OnGUI()
         {
-            // operation type area
-            EditorGUI.BeginChangeCheck();
-
             this._DrawExportHotfixDllConfigToStreamingAssetsView();
             this._DrawHotfixDllPlansView();
         }
@@ -103,9 +101,11 @@ namespace OxGFrame.Hotfixer.Editor
             EditorGUILayout.Space();
 
             // draw here
+            this._scrollview1 = EditorGUILayout.BeginScrollView(this._scrollview1, true, true);
             this._DrawAotDllsView();
             this._DrawHotfixDllsView();
             this._DrawProcessButtonView();
+            EditorGUILayout.EndScrollView();
 
             EditorGUILayout.EndVertical();
         }
@@ -208,7 +208,7 @@ namespace OxGFrame.Hotfixer.Editor
         #region Preset Hotfix Dll Plans
         private void _DrawHotfixDllPlansView()
         {
-            this._scrollview = EditorGUILayout.BeginScrollView(this._scrollview, true, true);
+            this._scrollview2 = EditorGUILayout.BeginScrollView(this._scrollview2, true, true);
 
             EditorGUILayout.Space();
 
