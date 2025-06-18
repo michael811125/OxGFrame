@@ -10,9 +10,9 @@ namespace OxGFrame.Hotfixer.Editor
         [SerializeField]
         public string planName = string.Empty;
         [SerializeField]
-        public List<string> aotDlls = new List<string>() { "*.dll" };
+        public List<string> aotDlls = new List<string>();
         [SerializeField]
-        public List<string> hotfixDlls = new List<string>() { "*.dll" };
+        public List<string> hotfixDlls = new List<string>();
 
         public HotfixDllPlan()
         {
