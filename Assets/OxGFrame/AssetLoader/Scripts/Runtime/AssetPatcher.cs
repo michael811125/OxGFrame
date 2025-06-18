@@ -881,7 +881,7 @@ namespace OxGFrame.AssetLoader
         #endregion
 
         /// <summary>
-        /// Release packages
+        /// Release all packages and bundle settings for quit game
         /// </summary>
         public async static UniTask Release()
         {

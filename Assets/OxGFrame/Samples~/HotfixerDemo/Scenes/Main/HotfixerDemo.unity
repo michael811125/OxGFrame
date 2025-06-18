@@ -801,6 +801,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a5fef340e1f24940b2ea7530ddfc383, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loadFromConfig: 1
 --- !u!4 &1874060586
 Transform:
   m_ObjectHideFlags: 0
@@ -1001,6 +1002,11 @@ PrefabInstance:
       propertyPath: listAppPackages.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5015912702362567919, guid: 992bffa5c79679749861326baa5441c6,
+        type: 3}
+      propertyPath: listAppPackages.Array.data[0].packageName
+      value: DefaultPackage
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1011,8 +1017,8 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1876016254}
-  - {fileID: 1874060586}
   - {fileID: 766935731}
   - {fileID: 696595745}
   - {fileID: 1959239798}
   - {fileID: 197656118}
+  - {fileID: 1874060586}

@@ -208,8 +208,11 @@ namespace OxGFrame.AssetLoader.Bundle
         internal static void ReleaseSecuredString()
         {
             if (_decryptArgs != null)
+            {
                 foreach (var decryptArg in _decryptArgs)
                     decryptArg.Dispose();
+                _decryptArgs = null;
+            }
         }
         #endregion
 

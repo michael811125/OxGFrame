@@ -52,7 +52,7 @@ namespace YooAsset.Editor
             if (Succeed)
             {
                 var reproterWindow = AssetArtReporterWindow.OpenWindow();
-                reproterWindow.ImportSingleReprotFile(ReprotFilePath);
+                reproterWindow.ImportSingleReprotFile(Report);
             }
         }
     }

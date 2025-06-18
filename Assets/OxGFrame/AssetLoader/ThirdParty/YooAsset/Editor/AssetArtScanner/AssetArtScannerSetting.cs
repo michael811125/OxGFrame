@@ -46,7 +46,7 @@ namespace YooAsset.Editor
             }
             catch (Exception e)
             {
-                return new ScannerResult(e.Message);
+                return new ScannerResult(e.StackTrace);
             }
         }
 

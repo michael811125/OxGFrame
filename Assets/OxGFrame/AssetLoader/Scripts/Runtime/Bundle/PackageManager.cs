@@ -930,12 +930,20 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         public async static UniTask Release()
         {
-            isReleased = true;
-            var packages = YooAssets.GetAllPackages();
-            foreach (var package in packages)
+            if (!isReleased)
             {
-                await package.DestroyAsync();
-                YooAssets.RemovePackage(package);
+                isReleased = true;
+
+                // 遍歷卸載
+                var packages = YooAssets.GetAllPackages();
+                foreach (var package in packages)
+                {
+                    await package.DestroyAsync();
+                    YooAssets.RemovePackage(package);
+                }
+
+                // 強制銷毀
+                YooAssets.Destroy();
             }
         }
 

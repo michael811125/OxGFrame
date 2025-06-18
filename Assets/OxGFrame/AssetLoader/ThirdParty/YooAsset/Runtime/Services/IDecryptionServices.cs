@@ -52,6 +52,14 @@ namespace YooAsset
         DecryptResult LoadAssetBundleAsync(DecryptFileInfo fileInfo);
 
         /// <summary>
+        /// 后备方式获取解密的资源包对象
+        /// 注意：当正常解密方法失败后，会触发后备加载！
+        /// 说明：建议通过LoadFromMemory()方法加载资源对象作为保底机制。
+        /// issues : https://github.com/tuyoogame/YooAsset/issues/562
+        /// </summary>
+        DecryptResult LoadAssetBundleFallback(DecryptFileInfo fileInfo);
+        
+        /// <summary>
         /// 获取解密的字节数据
         /// </summary>
         byte[] ReadFileData(DecryptFileInfo fileInfo);

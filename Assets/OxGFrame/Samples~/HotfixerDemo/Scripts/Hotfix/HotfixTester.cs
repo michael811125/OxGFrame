@@ -10,15 +10,9 @@ public class HotfixTester : MonoBehaviour
 
     private bool _isLoaded = false;
 
-    private void Start()
-    {
-        // Check patch
-        AssetPatcher.Check();
-    }
-
     private void Update()
     {
-        if (AssetPatcher.IsDone() && !this._isLoaded)
+        if (!this._isLoaded)
         {
             this._isLoaded = true;
 
@@ -33,7 +27,7 @@ public class HotfixTester : MonoBehaviour
             // Hotfix use Load AssetBundle and Instantiate
             UniTask.Void(async () =>
             {
-                var go = await AssetLoaders.InstantiateAssetAsync<GameObject>("HotfixPrefab");
+                var go = await AssetLoaders.InstantiateAssetAsync<GameObject>("HotfixPackage", "HotfixPrefab");
                 var com = go.GetComponent<HotfixPrefab>();
                 msg = com.GetMessageFromHotfixPrefab();
                 this.printer.text += msg;

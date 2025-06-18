@@ -196,6 +196,32 @@ namespace YooAsset.Editor
             }
         }
 
+        /// <summary>
+        /// 导入单个报告对象
+        /// </summary>
+        public void ImportSingleReprotFile(ScanReport report)
+        {
+            _reportCombiner = new ScanReportCombiner();
+
+            try
+            {
+                _reportCombiner.Combine(report);
+
+                // 刷新页面
+                RefreshToolbar();
+                FillTableView();
+                RebuildView();
+            }
+            catch (System.Exception e)
+            {
+                _reportCombiner = null;
+                _titleLabel.text = "导入报告失败！";
+                _descLabel.text = e.Message;
+                UnityEngine.Debug.LogError(e.StackTrace);
+            }
+        }
+
+
         private void ImportSingleBtn_clicked()
         {
             string selectFilePath = EditorUtility.OpenFilePanel("导入报告", _lastestOpenFolder, "json");
@@ -446,15 +472,31 @@ namespace YooAsset.Editor
                 var column = new TableColumn(header.HeaderTitle, header.HeaderTitle, columnStyle);
                 column.MakeCell = () =>
                 {
-                    var label = new Label();
-                    label.style.marginLeft = 3f;
-                    label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                    return label;
+                    if (header.HeaderType == EHeaderType.AssetObject)
+                    {
+                        var objectFiled = new ObjectField();
+                        return objectFiled;
+                    }
+                    else
+                    {
+                        var label = new Label();
+                        label.style.marginLeft = 3f;
+                        label.style.unityTextAlign = TextAnchor.MiddleLeft;
+                        return label;
+                    }
                 };
                 column.BindCell = (VisualElement element, ITableData data, ITableCell cell) =>
                 {
-                    var infoLabel = element as Label;
-                    infoLabel.text = (string)cell.GetDisplayObject();
+                    if (header.HeaderType == EHeaderType.AssetObject)
+                    {
+                        var objectFiled = element as ObjectField;
+                        objectFiled.value = (UnityEngine.Object)cell.GetDisplayObject();
+                    }
+                    else
+                    {
+                        var infoLabel = element as Label;
+                        infoLabel.text = (string)cell.GetDisplayObject();
+                    }
                 };
                 _elementTableView.AddColumn(column);
             }
@@ -479,6 +521,10 @@ namespace YooAsset.Editor
                     if (header.HeaderType == EHeaderType.AssetPath)
                     {
                         tableData.AddAssetPathCell(scanInfo.HeaderTitle, scanInfo.ScanInfo);
+                    }
+                    else if (header.HeaderType == EHeaderType.AssetObject)
+                    {
+                        tableData.AddAssetObjectCell(scanInfo.HeaderTitle, scanInfo.ScanInfo);
                     }
                     else if (header.HeaderType == EHeaderType.StringValue)
                     {

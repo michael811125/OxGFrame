@@ -46,7 +46,8 @@ public class USFrameDemo : MonoBehaviour
     private void Update()
     {
         // Make sure play mode is initialized
-        if (!AssetPatcher.IsInitialized()) return;
+        if (!AssetPatcher.IsInitialized())
+            return;
 
         #region From Build
         if (Keyboard.current.numpad1Key.wasReleasedThisFrame)

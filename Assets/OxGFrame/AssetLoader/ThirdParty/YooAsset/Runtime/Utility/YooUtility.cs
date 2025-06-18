@@ -35,6 +35,20 @@ namespace YooAsset
         }
 
         /// <summary>
+        /// URL地址是否包含双斜杠
+        /// 注意：只检查协议之后的部分
+        /// </summary>
+        public static bool HasDoubleSlashes(string url)
+        {
+            if (url == null)
+                throw new ArgumentNullException();
+
+            int protocolIndex = url.IndexOf("://");
+            string partToCheck = protocolIndex == -1 ? url : url.Substring(protocolIndex + 3);
+            return partToCheck.Contains("//") || partToCheck.Contains(@"\\");
+        }
+
+        /// <summary>
         /// 合并路径
         /// </summary>
         public static string Combine(string path1, string path2)

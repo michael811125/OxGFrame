@@ -259,10 +259,13 @@ namespace YooAsset.Editor
         }
         private List<string> GetAssetTags(AssetBundleCollectorGroup group)
         {
-            List<string> tags = EditorTools.StringToStringList(group.AssetTags, ';');
-            List<string> temper = EditorTools.StringToStringList(AssetTags, ';');
-            tags.AddRange(temper);
-            return tags;
+            List<string> result = EditorTools.StringToStringList(AssetTags, ';');
+            if (CollectorType == ECollectorType.MainAssetCollector)
+            {
+                List<string> temps = EditorTools.StringToStringList(group.AssetTags, ';');
+                result.AddRange(temps);
+            }
+            return result;
         }
         private List<AssetInfo> GetAllDependencies(CollectCommand command, string mainAssetPath)
         {
