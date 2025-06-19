@@ -30,7 +30,7 @@
 # 中文
 
 - Hotfixer
-  - 新增 MenuItem -> OxGFrame/Hotfixer/Hotfix Dll Config Generator (hotfixdllconfig.conf)，支持密文跟明文.
+  - 新增 MenuItem -> OxGFrame/Hotfixer/Hotfix Dll Config Generator (hotfixdllconfig.conf)，支持密文跟明文。
   - 新增 hotfixdllconfig.conf 直接轉換密文與明文，編輯器右鍵 -> OxGFrame/Hotfixer/Convert hotfixdllconfig.conf (BYTES \[Cipher\] \<-\> JSON \[Plaintext\])。
   - 新增 CheckHotfix 多載方法，支持自動加載 hotfixdllconfig.conf 熱更 dlls 清單。
 ```csharp
