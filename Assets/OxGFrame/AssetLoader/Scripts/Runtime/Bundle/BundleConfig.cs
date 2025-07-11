@@ -15,6 +15,9 @@ namespace OxGFrame.AssetLoader.Bundle
 {
     public static class BundleConfig
     {
+        /// <summary>
+        /// 版號控管
+        /// </summary>
         [Serializable]
         public class SemanticRule
         {
@@ -33,6 +36,9 @@ namespace OxGFrame.AssetLoader.Bundle
             public bool patch => this._patch;
         }
 
+        /// <summary>
+        /// 資源運行模式
+        /// </summary>
         public enum PlayMode
         {
             EditorSimulateMode,
@@ -43,6 +49,9 @@ namespace OxGFrame.AssetLoader.Bundle
             WebGLRemoteMode
         }
 
+        /// <summary>
+        /// 資源運行管線模式
+        /// </summary>
         public enum BuildMode
         {
             BuiltinBuildPipeline = 1,
@@ -50,6 +59,9 @@ namespace OxGFrame.AssetLoader.Bundle
             RawFileBuildPipeline = 2
         }
 
+        /// <summary>
+        /// 加解密類型
+        /// </summary>
         public class CryptogramType
         {
             public const string NONE = "NONE";
@@ -63,7 +75,7 @@ namespace OxGFrame.AssetLoader.Bundle
             public const string OFFSETXOR = "OFFSETXOR";
         }
 
-        #region 執行配置
+        #region Runtime Setup
         /// <summary>
         /// 數據儲存器
         /// </summary>
@@ -160,6 +172,21 @@ namespace OxGFrame.AssetLoader.Bundle
         public static uint breakpointFileSizeThreshold = 20 * 1 << 20;
 
         /// <summary>
+        /// 資源讀取緩衝大小 (AssetBundle.LoadFromStream)
+        /// </summary>
+        public static uint bundleLoadReadBufferSize = 32 * 1 << 10;
+
+        /// <summary>
+        /// 資源解密讀取緩衝大小
+        /// </summary>
+        public static uint bundleDecryptReadBufferSize = 32 * 1 << 10;
+
+        /// <summary>
+        /// 每帧執行消耗的最大時間切片 (毫秒)
+        /// </summary>
+        public static long operationSystemMaxTimeSlice = 30;
+
+        /// <summary>
         /// 解密 Key
         /// <para> [NONE] </para>
         /// <para> [OFFSET, dummySize] </para>
@@ -171,50 +198,11 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <para> [XXTEA, key] </para>
         /// <para> [OFFSETXOR, key, dummySize] </para>
         /// </summary>
-        private static SecuredString[] _decryptArgs = null;
-        internal static SecuredString[] decryptArgs => _decryptArgs;
+        private static SecuredString[] _bundleDecryptArgs = null;
+        internal static SecuredString[] bundleDecryptArgs => _bundleDecryptArgs;
 
-        /// <summary>
-        /// Init decryption args
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="securedType"></param>
-        /// <param name="saltSize"></param>
-        /// <param name="dummySize"></param>
-        internal static void InitDecryptInfo(string args, SecuredStringType securedType, int saltSize, int dummySize)
-        {
-            if (_decryptArgs == null)
-            {
-                // Check args first, if is none don't need to secure memory
-                bool isNone = args.Substring(0, CryptogramType.NONE.Length).ToUpper().Equals(CryptogramType.NONE);
-                if (isNone)
-                    securedType = SecuredStringType.None;
-
-                // Parsing decrypt keys
-                string[] decryptKeys = args.Trim().Split(',');
-                _decryptArgs = new SecuredString[decryptKeys.Length];
-                for (int i = 0; i < decryptKeys.Length; i++)
-                {
-                    decryptKeys[i] = decryptKeys[i].Trim();
-                    _decryptArgs[i] = new SecuredString(decryptKeys[i], securedType, saltSize, dummySize);
-                    decryptKeys[i] = null;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Release secure string
-        /// </summary>
-        internal static void ReleaseSecuredString()
-        {
-            if (_decryptArgs != null)
-            {
-                foreach (var decryptArg in _decryptArgs)
-                    decryptArg.Dispose();
-                _decryptArgs = null;
-            }
-        }
-        #endregion
+        private static SecuredString[] _manifestDecryptArgs = null;
+        internal static SecuredString[] manifestDecryptArgs => _manifestDecryptArgs;
 
         /// <summary>
         /// 緩存 url config
@@ -230,6 +218,62 @@ namespace OxGFrame.AssetLoader.Bundle
         /// 緩存 host app config
         /// </summary>
         private static AppConfig _hostAppConfig = null;
+
+        /// <summary>
+        /// Init bundle decryption args
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="securedType"></param>
+        /// <param name="saltSize"></param>
+        /// <param name="dummySize"></param>
+        internal static void InitBundleDecryptInfo(string args, SecuredStringType securedType, int saltSize, int dummySize)
+        {
+            _InitDecryptInfo(ref _bundleDecryptArgs, args, securedType, saltSize, dummySize);
+        }
+
+        /// <summary>
+        /// Init manifest decryption args
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="securedType"></param>
+        /// <param name="saltSize"></param>
+        /// <param name="dummySize"></param>
+        internal static void InitManifestDecryptInfo(string args, SecuredStringType securedType, int saltSize, int dummySize)
+        {
+            _InitDecryptInfo(ref _manifestDecryptArgs, args, securedType, saltSize, dummySize);
+        }
+
+        private static void _InitDecryptInfo(ref SecuredString[] decryptArgs, string args, SecuredStringType securedType, int saltSize, int dummySize)
+        {
+            if (decryptArgs == null)
+            {
+                // Check args first, if is none don't need to secure memory
+                bool isNone = args.Substring(0, CryptogramType.NONE.Length).ToUpper().Equals(CryptogramType.NONE);
+                if (isNone)
+                    securedType = SecuredStringType.None;
+
+                // Parsing decrypt keys
+                string[] decryptKeys = args.Trim().Split(',');
+                decryptArgs = new SecuredString[decryptKeys.Length];
+                for (int i = 0; i < decryptKeys.Length; i++)
+                {
+                    decryptKeys[i] = decryptKeys[i].Trim();
+                    decryptArgs[i] = new SecuredString(decryptKeys[i], securedType, saltSize, dummySize);
+                    decryptKeys[i] = null;
+                }
+            }
+        }
+
+        private static void _ReleaseSecuredString(ref SecuredString[] decryptArgs)
+        {
+            if (decryptArgs != null)
+            {
+                foreach (var decryptArg in decryptArgs)
+                    decryptArg.Dispose();
+                decryptArgs = null;
+            }
+        }
+        #endregion
 
         #region Header Helper
         public static void WriteInt16(short value, byte[] buffer, ref int pos)
@@ -265,6 +309,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
         #endregion
 
+        #region Endpoint & Path Operations
         /// <summary>
         /// 取得 burlconfig 佈署配置檔的數據
         /// </summary>
@@ -559,5 +604,27 @@ namespace OxGFrame.AssetLoader.Bundle
             return Application.streamingAssetsPath;
 #endif
         }
+        #endregion
+
+        /// <summary>
+        /// Release
+        /// </summary>
+        internal static void Release()
+        {
+            saver = null;
+
+            semanticRule = null;
+
+            listAppPackages = null;
+            listDlcPackages = null;
+
+            _urlCfgFileMap = null;
+            _builtinAppConfig = null;
+            _hostAppConfig = null;
+
+            _ReleaseSecuredString(ref _bundleDecryptArgs);
+            _ReleaseSecuredString(ref _manifestDecryptArgs);
+        }
+
     }
 }

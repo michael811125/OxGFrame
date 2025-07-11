@@ -171,6 +171,7 @@ public class HotfixerDemo : MonoBehaviour
         // [Recommend do hotfix in background (While Logo showing)]
 
         // Start hotfix files download and load all (Use YooAsset to collect files)
+
         if (!this.loadFromConfig)
         {
             Hotfixers.CheckHotfix

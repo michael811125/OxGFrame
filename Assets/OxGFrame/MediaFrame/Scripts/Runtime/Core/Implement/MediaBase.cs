@@ -2,8 +2,8 @@
 using MyBox;
 using OxGKit.LoggingSystem;
 using OxGKit.SaverSystem;
+using OxGKit.Utilities.Requester;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Video;
@@ -57,7 +57,7 @@ namespace OxGFrame.MediaFrame
                     case RequestType.StreamingAssets:
                         string pathName = System.IO.Path.Combine(GetRequestStreamingAssetsPath(), this.fullPathName);
                         if (string.IsNullOrEmpty(_urlCfgContent))
-                            _urlCfgContent = await OxGKit.Utilities.Requester.Requester.RequestText(pathName, null, null, null, false);
+                            _urlCfgContent = await Requester.RequestText(pathName, null, null, null, false);
                         return _urlCfgContent;
                 }
 

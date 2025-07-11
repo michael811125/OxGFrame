@@ -16,14 +16,14 @@ namespace OxGFrame.NetFrame
         public event EventHandler<object> OnOpen;
         public event EventHandler<byte[]> OnBinary;
         public event EventHandler<string> OnMessage;
-        public event EventHandler<string> OnError;
+        public event EventHandler<object> OnError;
         public event EventHandler<object> OnClose;
 
         public void CreateConnect(NetOption netOption)
         {
             if (netOption == null)
             {
-                Logging.Print<Logger>("<color=#ff2732>ERROR: Connect failed, NetOption cannot be null.</color>");
+                Logging.PrintError<Logger>("<color=#ff2732>ERROR: Connection failed because NetOption is null.</color>");
                 return;
             }
 
@@ -34,7 +34,7 @@ namespace OxGFrame.NetFrame
 
             if (string.IsNullOrEmpty(host))
             {
-                Logging.Print<Logger>("<color=##FF0000>ERROR: KCP Connect failed, NetOption Host cannot be null or empty.</color>");
+                Logging.PrintError<Logger>("<color=#ff2732>ERROR: KCP connection failed. NetOption.Host cannot be null or empty.</color>");
                 return;
             }
 

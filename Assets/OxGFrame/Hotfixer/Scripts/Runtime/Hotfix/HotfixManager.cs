@@ -181,7 +181,7 @@ namespace OxGFrame.Hotfixer
         {
             if (this._isDone)
             {
-                Logging.Print<Logger>("<color=#ff8686>Hotfix all are loaded. Please run reset and try again.</color>");
+                Logging.PrintWarning<Logger>("<color=#ff8686>Hotfix all are loaded. Please run 'Reset' method and try again.</color>");
                 return;
             }
 

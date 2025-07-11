@@ -11,6 +11,7 @@ namespace YooAsset
             CheckExists,
             CreateRequest,
             CheckRequest,
+            CopyBuildinBundle,
             VerifyTempFile,
             CheckVerifyTempFile,
             TryAgain,

@@ -306,7 +306,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             if (string.IsNullOrEmpty(lastVersion))
                             {
                                 PackageEvents.PatchVersionUpdateFailed.SendEventMessage(this._hashId);
-                                Logging.Print<Logger>($"<color=#ff3696>Package: {package.PackageName}. Local version record not found, resources need to be updated!</color>");
+                                Logging.PrintError<Logger>($"<color=#ff3696>Package: {package.PackageName}. Local version record not found, resources need to be updated (Please connect to the network)!</color>");
                                 return;
                             }
                             patchVersions.Add(lastVersion);
@@ -320,7 +320,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     else
                     {
                         PackageEvents.PatchVersionUpdateFailed.SendEventMessage(this._hashId);
-                        Logging.Print<Logger>($"<color=#ff3696>Package: {currentPackageName} update version failed.</color>");
+                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {currentPackageName} update version failed.</color>");
                     }
                 }
             }
@@ -404,13 +404,13 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
                     {
                         PackageEvents.PatchManifestUpdateFailed.SendEventMessage(this._hashId);
-                        Logging.Print<Logger>($"<color=#ff3696>Package: {currentPackageName}. Failed to load the local resource manifest file. Resource update is required!</color>");
+                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {currentPackageName}. Failed to load the local resource manifest file. Resource update is required (Please connect to the network)!</color>");
                     }
                     #endregion
                     else
                     {
                         PackageEvents.PatchManifestUpdateFailed.SendEventMessage(this._hashId);
-                        Logging.Print<Logger>($"<color=#ff3696>Package: {currentPackageName} update manifest failed.</color>");
+                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {currentPackageName} update manifest failed.</color>");
                     }
                 }
             }
@@ -509,8 +509,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     #region Weak Host Mode
                     if (isLastPackageVersions)
                     {
-                        string errorMsg = "Local resources are incomplete. Update required!";
-                        Logging.Print<Logger>($"<color=#ff3696>GroupName: {groupInfo.groupName}. {errorMsg}</color>");
+                        string errorMsg = "Local resources are incomplete. Update required (Please connect to the network)!";
+                        Logging.PrintError<Logger>($"<color=#ff3696>GroupName: {groupInfo.groupName}. {errorMsg}</color>");
                         // 當突然失去聯網時, 必須重新從獲取資源版本的流程開始運行, 因為當網絡恢復時, 則可以正確獲取遠端版本進行更新
                         PackageEvents.PatchVersionUpdateFailed.SendEventMessage(this._hashId);
                     }
@@ -611,7 +611,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     if (patchTotalMegabytes > availableDiskSpaceMegabytes)
                     {
                         PackageEvents.PatchCheckDiskNotEnoughSpace.SendEventMessage(availableDiskSpaceMegabytes, (ulong)totalBytes);
-                        Logging.Print<Logger>($"<color=#ff2c48>Disk Not Enough Space!!! Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}</color>, <color=#2cbbff>Patch Total Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}</color>");
+                        Logging.PrintError<Logger>($"<color=#ff2c48>Disk Not Enough Space!!! Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}</color>, <color=#2cbbff>Patch Total Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}</color>");
                         return;
                     }
                 }

@@ -83,7 +83,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             if (this.audioClip == null)
             {
-                Logging.Print<Logger>($"<color=#FF0000>Cannot find AudioClip: {this.mediaName}</color>");
+                Logging.PrintError<Logger>($"<color=#ff3356>Cannot find AudioClip: {this.mediaName}</color>");
                 return false;
             }
 

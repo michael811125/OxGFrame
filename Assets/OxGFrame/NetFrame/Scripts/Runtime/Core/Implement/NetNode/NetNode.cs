@@ -65,7 +65,7 @@ namespace OxGFrame.NetFrame
             return socket;
         }
 
-        private void _Initialize(INetProvider socket, INetTips netTips = null)
+        private void _Initialize(INetProvider socket, INetTips netTips)
         {
             this._netProvider = socket;
             this._InitNetEvents();
@@ -75,9 +75,9 @@ namespace OxGFrame.NetFrame
 
         private void _InitNetEvents()
         {
-            this._netProvider.OnOpen += (sender, status) =>
+            this._netProvider.OnOpen += (sender, payload) =>
             {
-                this._OnOpen(status);
+                this._OnOpen(payload);
             };
 
             this._netProvider.OnBinary += (sender, binary) =>
@@ -90,14 +90,14 @@ namespace OxGFrame.NetFrame
                 this._OnMessage(text);
             };
 
-            this._netProvider.OnError += (sender, error) =>
+            this._netProvider.OnError += (sender, payload) =>
             {
-                this._OnError(error);
+                this._OnError(payload);
             };
 
-            this._netProvider.OnClose += (sender, status) =>
+            this._netProvider.OnClose += (sender, payload) =>
             {
-                this._OnClose(status);
+                this._OnClose(payload);
             };
         }
 
@@ -105,7 +105,7 @@ namespace OxGFrame.NetFrame
         {
             if (this._netProvider == null)
             {
-                Logging.PrintError<Logger>("The socket cannot be null, Please init first.");
+                Logging.PrintError<Logger>("NetProvider cannot be null. Please initialize it first.");
                 return;
             }
 
@@ -124,7 +124,7 @@ namespace OxGFrame.NetFrame
             this._netTips = netTips;
         }
 
-        private void _NetStatusHandler(NetStatus status, object args)
+        private void _NetStatusHandler(NetStatus status, object payload)
         {
             this._netStatus = status;
             switch (this._netStatus)
@@ -133,13 +133,13 @@ namespace OxGFrame.NetFrame
                     this._netTips?.OnConnecting();
                     break;
                 case NetStatus.CONNECTED:
-                    this._netTips?.OnConnected(args);
+                    this._netTips?.OnConnected(payload);
                     break;
                 case NetStatus.CONNECTION_ERROR:
-                    this._netTips?.OnConnectionError(Convert.ToString(args));
+                    this._netTips?.OnConnectionError(payload);
                     break;
                 case NetStatus.DISCONNECTED:
-                    this._netTips?.OnDisconnected(args);
+                    this._netTips?.OnDisconnected(payload);
                     break;
                 case NetStatus.RECONNECTING:
                     this._netTips?.OnReconnecting();
@@ -155,9 +155,9 @@ namespace OxGFrame.NetFrame
             this._ProcessAutoReconnect();
         }
 
-        private void _OnOpen(object status)
+        private void _OnOpen(object payload)
         {
-            this._NetStatusHandler(NetStatus.CONNECTED, status);
+            this._NetStatusHandler(NetStatus.CONNECTED, payload);
 
             this._isCloseForce = false;
             this._ResetAutoReconnect();
@@ -177,14 +177,14 @@ namespace OxGFrame.NetFrame
             this._responseMessageHandler?.Invoke(text);
         }
 
-        private void _OnError(string msg)
+        private void _OnError(object payload)
         {
-            this._NetStatusHandler(NetStatus.CONNECTION_ERROR, msg);
+            this._NetStatusHandler(NetStatus.CONNECTION_ERROR, payload);
         }
 
-        private void _OnClose(object status)
+        private void _OnClose(object payload)
         {
-            this._NetStatusHandler(NetStatus.DISCONNECTED, status);
+            this._NetStatusHandler(NetStatus.DISCONNECTED, payload);
 
             this._StopTicker();
             if (this._isCloseForce)

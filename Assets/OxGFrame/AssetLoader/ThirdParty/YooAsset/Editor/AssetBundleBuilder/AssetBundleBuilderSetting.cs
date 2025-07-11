@@ -67,15 +67,27 @@ namespace YooAsset.Editor
             EditorPrefs.SetString(key, buildinFileCopyParams);
         }
 
-        // EncyptionClassName
-        public static string GetPackageEncyptionClassName(string packageName, string buildPipeline)
+        // EncyptionServicesClassName
+        public static string GetPackageEncyptionServicesClassName(string packageName, string buildPipeline)
         {
-            string key = $"{Application.productName}_{packageName}_{buildPipeline}_EncyptionClassName";
-            return EditorPrefs.GetString(key, string.Empty);
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_EncyptionServicesClassName";
+            return EditorPrefs.GetString(key, $"{typeof(EncryptionNone).FullName}");
         }
-        public static void SetPackageEncyptionClassName(string packageName, string buildPipeline, string encyptionClassName)
+        public static void SetPackageEncyptionServicesClassName(string packageName, string buildPipeline, string encyptionClassName)
         {
-            string key = $"{Application.productName}_{packageName}_{buildPipeline}_EncyptionClassName";
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_EncyptionServicesClassName";
+            EditorPrefs.SetString(key, encyptionClassName);
+        }
+
+        // ManifestServicesClassName
+        public static string GetPackageManifestServicesClassName(string packageName, string buildPipeline)
+        {
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_ManifestServicesClassName";
+            return EditorPrefs.GetString(key, $"{typeof(ManifestNone).FullName}");
+        }
+        public static void SetPackageManifestServicesClassName(string packageName, string buildPipeline, string encyptionClassName)
+        {
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_ManifestServicesClassName";
             EditorPrefs.SetString(key, encyptionClassName);
         }
 

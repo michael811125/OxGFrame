@@ -5,7 +5,6 @@ using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.Hotfixer.HotfixEvent;
 using OxGKit.LoggingSystem;
 using System;
-using System.Linq;
 using System.Reflection;
 using UniFramework.Machine;
 using UnityEngine;
@@ -367,7 +366,11 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 #endif
                                 // Unload after load
                                 await AssetLoaders.UnloadAsset(dllName);
-                                Logging.Print<Logger>($"<color=#32fff5>Load <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}, ret: {err}</color>");
+                                Logging.Print<Logger>($"<color=#32fff5>Loaded <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}, ret: {err}</color>");
+                            }
+                            else
+                            {
+                                Logging.PrintError<Logger>($"<color=#ff3632>Failed to load <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}</color>");
                             }
                         }
                     }
@@ -430,7 +433,14 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                                 var newLength = dllName.Length - fileExtension.Length;
                                 var newDllName = dllName.Substring(0, newLength);
                                 // 直接查找獲取 Hotfix 程序集
-                                hotfixAsm = System.AppDomain.CurrentDomain.GetAssemblies().First(a => a.GetName().Name == newDllName);
+                                foreach (var asm in System.AppDomain.CurrentDomain.GetAssemblies())
+                                {
+                                    if (asm.GetName().Name == newDllName)
+                                    {
+                                        hotfixAsm = asm;
+                                        break;
+                                    }
+                                }
                             }
                             else
                             {
@@ -457,7 +467,11 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                             if (hotfixAsm != null)
                             {
                                 HotfixManager.GetInstance().AddHotfixAssembly(dllName, hotfixAsm);
-                                Logging.Print<Logger>($"<color=#32fff5>Load <color=#ffde4c>Hotfix Assembly</color>: <color=#e2b3ff>{dllName}</color></color>");
+                                Logging.Print<Logger>($"<color=#32fff5>Loaded <color=#ffde4c>Hotfix Assembly</color>: <color=#e2b3ff>{dllName}</color></color>");
+                            }
+                            else
+                            {
+                                Logging.PrintError<Logger>($"<color=#ff3632>Failed to load <color=#ffde4c>Hotfix Assembly</color>: <color=#e2b3ff>{dllName}</color></color>");
                             }
                         }
                     }

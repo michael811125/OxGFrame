@@ -211,9 +211,9 @@ namespace OxGFrame.CoreFrame.USFrame
                         else go.SetActive(active);
                     }
                 }
-                else Logging.Print<Logger>($"<color=#ff8233>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...</color>");
+                else Logging.PrintWarning<Logger>($"<color=#ff8233>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...</color>");
             }
-            else Logging.Print<Logger>($"<color=#ff33ae>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene not is valid!!!</color>");
+            else Logging.PrintError<Logger>($"<color=#ff33ae>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene not is valid!!!</color>");
         }
 
         #region Bundle

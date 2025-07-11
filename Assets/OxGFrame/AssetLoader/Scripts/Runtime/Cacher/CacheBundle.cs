@@ -64,7 +64,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     if (this.GetRetryCounter(assetName).IsRetryActive())
                     {
                         this.RemoveLoadingFlags(assetName);
-                        Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                        Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
                     }
                     else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
                     return;
@@ -125,7 +125,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                     else
                     {
-                        Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+                        Logging.PrintError<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or Asset: {assetName} location invalid.</color>");
                     }
 
                     if (loaded)
@@ -172,7 +172,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     if (this.GetRetryCounter(assetName).IsRetryActive())
                     {
                         this.RemoveLoadingFlags(assetName);
-                        Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                        Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
                     }
                     else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
                     return;
@@ -226,7 +226,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                     else
                     {
-                        Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+                        Logging.PrintError<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or Asset: {assetName} location invalid.</color>");
                     }
 
                     if (loaded)
@@ -263,7 +263,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.GetRetryCounter(assetName).IsRetryActive())
                 {
                     this.RemoveLoadingFlags(assetName);
-                    Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                    Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
                 }
                 else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
                 return default;
@@ -309,7 +309,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
                 else
                 {
-                    Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+                    Logging.PrintError<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or Asset: {assetName} location invalid.</color>");
                 }
 
                 if (loaded)
@@ -365,7 +365,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.GetRetryCounter(assetName).IsRetryActive())
                 {
                     this.RemoveLoadingFlags(assetName);
-                    Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                    Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
                 }
                 else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
                 return default;
@@ -404,7 +404,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
                 else
                 {
-                    Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+                    Logging.PrintError<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or Asset: {assetName} location invalid.</color>");
                 }
 
                 if (loaded)
@@ -536,7 +536,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.GetRetryCounter(assetName).IsRetryActive())
                 {
                     this.RemoveLoadingFlags(assetName);
-                    Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                    Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
                 }
                 else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
                 return null;
@@ -622,7 +622,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+                Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or Asset: {assetName} location invalid.</color>");
             }
 
             if (!suspendLoaded)
@@ -656,7 +656,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.GetRetryCounter(assetName).IsRetryActive())
                 {
                     this.RemoveLoadingFlags(assetName);
-                    Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                    Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
                 }
                 else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
                 return null;
@@ -735,7 +735,7 @@ namespace OxGFrame.AssetLoader.Cacher
             }
             else
             {
-                Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+                Logging.PrintError<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or Asset: {assetName} location invalid.</color>");
             }
 
             // (Caution) If use sync to load scene.isLoaded return false -> Why??
@@ -918,7 +918,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     if (this.GetRetryCounter(assetName).IsRetryActive())
                     {
                         this.RemoveLoadingFlags(assetName);
-                        Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                        Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
                     }
                     else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
                     return;
@@ -979,7 +979,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                     else
                     {
-                        Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+                        Logging.PrintError<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or Asset: {assetName} location invalid.</color>");
                     }
 
                     if (loaded)
@@ -1026,7 +1026,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     if (this.GetRetryCounter(assetName).IsRetryActive())
                     {
                         this.RemoveLoadingFlags(assetName);
-                        Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                        Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
                     }
                     else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
                     return;
@@ -1080,7 +1080,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
                     else
                     {
-                        Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+                        Logging.PrintError<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or Asset: {assetName} location invalid.</color>");
                     }
 
                     if (loaded)
@@ -1117,7 +1117,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.GetRetryCounter(assetName).IsRetryActive())
                 {
                     this.RemoveLoadingFlags(assetName);
-                    Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                    Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
                 }
                 else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
                 return null;
@@ -1163,7 +1163,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
                 else
                 {
-                    Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+                    Logging.PrintError<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or Asset: {assetName} location invalid.</color>");
                 }
 
                 if (loaded)
@@ -1209,7 +1209,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.GetRetryCounter(assetName).IsRetryActive())
                 {
                     this.RemoveLoadingFlags(assetName);
-                    Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                    Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
                 }
                 else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
                 return null;
@@ -1248,7 +1248,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
                 else
                 {
-                    Logging.Print<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or location invalid.</color>");
+                    Logging.PrintError<Logger>($"<color=#ff33ae>Package: {packageName} doesn't exist or Asset: {assetName} location invalid.</color>");
                 }
 
                 if (loaded)

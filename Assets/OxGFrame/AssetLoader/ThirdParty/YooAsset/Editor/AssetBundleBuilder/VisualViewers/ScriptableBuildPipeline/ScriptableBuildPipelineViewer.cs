@@ -16,7 +16,8 @@ namespace YooAsset.Editor
         protected TemplateContainer Root;
         protected TextField _buildOutputField;
         protected TextField _buildVersionField;
-        protected PopupField<Type> _encryptionField;
+        protected PopupField<Type> _encryptionServicesField;
+        protected PopupField<Type> _manifestServicesField;
         protected EnumField _compressionField;
         protected EnumField _outputNameStyleField;
         protected EnumField _copyBuildinFileOptionField;
@@ -44,8 +45,9 @@ namespace YooAsset.Editor
             SetBuildVersionField(_buildVersionField);
 
             // 加密方法
-            var encryptionContainer = Root.Q("EncryptionContainer");
-            _encryptionField = CreateEncryptionField(encryptionContainer);
+            var popupContainer = Root.Q("PopupContainer");
+            _encryptionServicesField = CreateEncryptionServicesField(popupContainer);
+            _manifestServicesField = CreateManifestServicesField(popupContainer);
 
             // 压缩方式选项
             _compressionField = Root.Q<EnumField>("Compression");
@@ -58,6 +60,7 @@ namespace YooAsset.Editor
             // 首包文件拷贝参数
             _copyBuildinFileTagsField = Root.Q<TextField>("CopyBuildinFileParam");
             SetCopyBuildinFileTagsField(_copyBuildinFileTagsField);
+            SetCopyBuildinFileTagsVisible(_copyBuildinFileTagsField);
 
             // 首包文件拷贝选项
             _copyBuildinFileOptionField = Root.Q<EnumField>("CopyBuildinFileOption");
@@ -118,7 +121,8 @@ namespace YooAsset.Editor
             buildParameters.ClearBuildCacheFiles = clearBuildCache;
             buildParameters.UseAssetDependencyDB = useAssetDependencyDB;
             buildParameters.BuiltinShadersBundleName = builtinShaderBundleName;
-            buildParameters.EncryptionServices = CreateEncryptionInstance();
+            buildParameters.EncryptionServices = CreateEncryptionServicesInstance();
+            buildParameters.ManifestServices = CreateManifestServicesInstance();
 
             ScriptableBuildPipeline pipeline = new ScriptableBuildPipeline();
             var buildResult = pipeline.Run(buildParameters, true);

@@ -4,24 +4,11 @@ using YooAsset;
 
 namespace OxGFrame.AssetLoader.Editor
 {
-    public static class CryptogramSettingSetup
-    {
-        public static CryptogramSetting cryptogramSetting;
-
-        public static CryptogramSetting GetCryptogramSetting()
-        {
-            if (cryptogramSetting == null) cryptogramSetting = EditorTool.LoadSettingData<CryptogramSetting>();
-            return cryptogramSetting;
-        }
-    }
-
     public class OffsetEncryption : IEncryptionServices
     {
         private int? _dummySize = null;
 
-        public OffsetEncryption()
-        {
-        }
+        public OffsetEncryption() { }
 
         public OffsetEncryption(int dummySize)
         {
@@ -60,9 +47,7 @@ namespace OxGFrame.AssetLoader.Editor
     {
         private byte? _xorKey = null;
 
-        public XorEncryption()
-        {
-        }
+        public XorEncryption() { }
 
         public XorEncryption(byte xorKey)
         {
@@ -103,9 +88,7 @@ namespace OxGFrame.AssetLoader.Editor
         private byte? _tXorKey = null;
         private byte? _jXorKey = null;
 
-        public HT2XorEncryption()
-        {
-        }
+        public HT2XorEncryption() { }
 
         public HT2XorEncryption(byte hXorKey, byte tXorKey, byte jXorKey)
         {
@@ -151,9 +134,7 @@ namespace OxGFrame.AssetLoader.Editor
         private byte? _j1XorKey = null;
         private byte? _j2XorKey = null;
 
-        public HT2XorPlusEncryption()
-        {
-        }
+        public HT2XorPlusEncryption() { }
 
         public HT2XorPlusEncryption(byte hXorKey, byte tXorKey, byte j1XorKey, byte j2XorKey)
         {
@@ -199,9 +180,7 @@ namespace OxGFrame.AssetLoader.Editor
         private string _aesKey = null;
         private string _aesIv = null;
 
-        public AesEncryption()
-        {
-        }
+        public AesEncryption() { }
 
         public AesEncryption(string aesKey, string aesIv)
         {
@@ -244,9 +223,7 @@ namespace OxGFrame.AssetLoader.Editor
         private string _chacha20Nonce = null;
         private uint? _chacha20Counter = null;
 
-        public ChaCha20Encryption()
-        {
-        }
+        public ChaCha20Encryption() { }
 
         public ChaCha20Encryption(string chacha20Key, string chacha20Nonce, uint chacha20Counter)
         {
@@ -289,9 +266,7 @@ namespace OxGFrame.AssetLoader.Editor
     {
         private string _xxteaKey = null;
 
-        public XXTEAEncryption()
-        {
-        }
+        public XXTEAEncryption() { }
 
         public XXTEAEncryption(string xxteaKey)
         {
@@ -331,9 +306,7 @@ namespace OxGFrame.AssetLoader.Editor
         private byte? _offsetXorKey = null;
         private int? _offsetXorDummySize = null;
 
-        public OffsetXorEncryption()
-        {
-        }
+        public OffsetXorEncryption() { }
 
         public OffsetXorEncryption(byte offsetXorKey, int offsetXorDummySize)
         {

@@ -10,31 +10,27 @@ namespace OxGFrame.AssetLoader
         public const string META_FILE_EXTENSION = ".meta";
 
         // AppConfig 配置文件
-        public const string APP_CFG_BAK_EXTENSION = ".bak";          // APP 配置文件擴展名 (Backup)
-        public const string APP_CFG_EXTENSION = ".json";             // APP 配置文件擴展名
-        public string appCfgName = "appconfig";                      // APP 配置文件的名稱 
+        public const string APP_CFG_BAK_EXTENSION = ".bak";            // APP 配置文件擴展名 (Backup)
+        public const string APP_CFG_EXTENSION = ".json";               // APP 配置文件擴展名
+        public string appCfgName = "appconfig";                        // APP 配置文件的名稱 
 
-        // PatchConfig 配置文件
-        public const string PATCH_CFG_BAK_EXTENSION = ".bak";        // 補丁配置文件擴展名 (Backup)
-        public const string PATCH_CFG_EXTENSION = ".json";           // 補丁配置文件擴展名
-        public string patchCfgName = "patchconfig";                  // 補丁配置文件的名稱 
-
-        // BuiltinPackageCatalog 配置文件
-        public const string BUILTIN_CATALOG_EXTENSION = ".json";     // 內置 Package 查詢清單文件擴展名
-        public string builtinPkgCatalogName = "builtinpkgcatalog";
+        // PatchConfig 配置文件                                         
+        public const string PATCH_CFG_BAK_EXTENSION = ".bak";          // 補丁配置文件擴展名 (Backup)
+        public const string PATCH_CFG_EXTENSION = ".json";             // 補丁配置文件擴展名
+        public string patchCfgName = "patchconfig";                    // 補丁配置文件的名稱 
 
         // 佈署配置檔中的 KEY
-        public const string BUNDLE_IP = "bundle_ip";
-        public const string BUNDLE_FALLBACK_IP = "bundle_fallback_ip";
-        public const string STORE_LINK = "store_link";
+        public const string BUNDLE_IP = "bundle_ip";                   // 資源鏈接請求鍵值
+        public const string BUNDLE_FALLBACK_IP = "bundle_fallback_ip"; // 資源備援鏈接請求鍵值
+        public const string STORE_LINK = "store_link";                 // 商店鏈接
 
         // 佈署配置檔
-        public const string BUNDLE_URL_CFG_EXTENSION = ".conf";       // 主程式配置文件擴展名 (Backup)
+        public const string BUNDLE_URL_CFG_EXTENSION = ".conf";         // 主程式配置文件擴展名 (Backup)
         public string bundleUrlCfgName = "burlconfig";
 
         // Bundle 輸出歸類名稱
-        public string rootFolderName = "CDN";                         // Root 文件夾名稱
-        public string dlcFolderName = "DLC";                          // DLC 文件夾名稱
+        public string rootFolderName = "CDN";                           // Root 文件夾名稱
+        public string dlcFolderName = "DLC";                            // DLC 文件夾名稱
 
         private static PatchSetting _setting = null;
         public static PatchSetting setting

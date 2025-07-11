@@ -116,7 +116,7 @@ namespace OxGFrame.NetFrame
             if (this._netNodes.ContainsKey(nnId))
                 this._netNodes[nnId].Connect(netOption);
             else
-                Logging.PrintWarning<Logger>(string.Format("The NodeId: {0} can't be found! Connection failed.", nnId));
+                Logging.PrintError<Logger>($"The NodeId: {nnId} can't be found! Connection failed.");
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace OxGFrame.NetFrame
             }
             else
             {
-                Logging.PrintWarning<Logger>(string.Format("The NodeId: {0} can't be found! Send failed.", nnId));
+                Logging.PrintError<Logger>($"The NodeId: {nnId} can't be found! Send failed.");
                 return false;
             }
         }
@@ -168,7 +168,7 @@ namespace OxGFrame.NetFrame
             }
             else
             {
-                Logging.PrintWarning<Logger>(string.Format("The NodeId: {0} can't be found! Send failed.", nnId));
+                Logging.PrintError<Logger>($"The NodeId: {nnId} can't be found! Send failed.");
                 return false;
             }
         }

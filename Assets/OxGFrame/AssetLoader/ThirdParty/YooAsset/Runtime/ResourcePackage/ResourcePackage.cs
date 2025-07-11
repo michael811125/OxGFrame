@@ -361,21 +361,21 @@ namespace YooAsset
         /// 资源回收
         /// 说明：尝试卸载指定的资源
         /// </summary>
-        public void TryUnloadUnusedAsset(string location)
+        public void TryUnloadUnusedAsset(string location, int loopCount = 10)
         {
             DebugCheckInitialize();
             AssetInfo assetInfo = ConvertLocationToAssetInfo(location, null);
-            _resourceManager.TryUnloadUnusedAsset(assetInfo);
+            _resourceManager.TryUnloadUnusedAsset(assetInfo, loopCount);
         }
 
         /// <summary>
         /// 资源回收
         /// 说明：尝试卸载指定的资源
         /// </summary>
-        public void TryUnloadUnusedAsset(AssetInfo assetInfo)
+        public void TryUnloadUnusedAsset(AssetInfo assetInfo, int loopCount = 10)
         {
             DebugCheckInitialize();
-            _resourceManager.TryUnloadUnusedAsset(assetInfo);
+            _resourceManager.TryUnloadUnusedAsset(assetInfo, loopCount);
         }
         #endregion
 

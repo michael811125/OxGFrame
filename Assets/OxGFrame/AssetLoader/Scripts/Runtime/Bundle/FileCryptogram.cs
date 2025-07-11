@@ -8,7 +8,7 @@ namespace OxGFrame.AssetLoader.Bundle
 {
     public class FileCryptogram
     {
-        public const int BUFFER_SIZE = 16384;
+        public static uint readBufferSize = BundleConfig.bundleDecryptReadBufferSize;
 
         public class Offset
         {
@@ -35,9 +35,9 @@ namespace OxGFrame.AssetLoader.Bundle
                         long totalLength = fileLength + dummySize;
 
                         // 建立緩衝區
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         // 用來存放偏移後的字節
-                        byte[] offsetBytes = new byte[BUFFER_SIZE];
+                        byte[] offsetBytes = new byte[readBufferSize];
                         // 已處理的字節數
                         long bytesProcessed = 0;
 
@@ -97,7 +97,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         long totalLength = fileLength - dummySize;
 
                         // 創建緩衝區
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         // 已處理的字節數
                         long bytesProcessed = 0;
 
@@ -166,7 +166,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         }
 
                         // 逐步讀取原始文件數據, 並存入加密後的 byte[]
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         int bytesRead;
                         int offset = dummySize;
 
@@ -213,7 +213,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
                         // 逐步讀取數據
                         int offset = 0;
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         while (offset < totalLength)
                         {
                             int bytesRead = fsDecrypt.Read(buffer, 0, buffer.Length);
@@ -313,7 +313,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         fsDecrypt.Seek(dummySize, SeekOrigin.Begin);
 
                         // 創建緩衝區進行讀取和寫入操作
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         int bytesRead;
                         long bytesToRead = totalLength;
 
@@ -357,7 +357,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         using (FileStream fsRead = new FileStream(sourceFile, FileMode.Open, FileAccess.Read))
                         using (FileStream fsWrite = new FileStream(tempFile, FileMode.Create, FileAccess.Write))
                         {
-                            byte[] buffer = new byte[BUFFER_SIZE];
+                            byte[] buffer = new byte[readBufferSize];
                             int bytesRead;
 
                             while ((bytesRead = fsRead.Read(buffer, 0, buffer.Length)) > 0)
@@ -414,7 +414,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     using (FileStream fsRead = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     using (MemoryStream msWrite = new MemoryStream((int)fsRead.Length))
                     {
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         int bytesRead;
 
                         while ((bytesRead = fsRead.Read(buffer, 0, buffer.Length)) > 0)
@@ -517,7 +517,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         MemoryStream msDecrypt = new MemoryStream((int)fsDecrypt.Length);
 
                         // 使用一個緩衝區來逐步讀取文件
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         int bytesRead;
 
                         // 逐步讀取文件內容, 並對每個字節進行 XOR 解密
@@ -564,7 +564,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     {
                         using (var stream = new FileStream(sourceFile, FileMode.Open, FileAccess.ReadWrite))
                         {
-                            byte[] buffer = new byte[BUFFER_SIZE];
+                            byte[] buffer = new byte[readBufferSize];
                             long fileLength = stream.Length;
 
                             // 加密文件頭
@@ -624,7 +624,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     {
                         using (var stream = new FileStream(encryptFile, FileMode.Open, FileAccess.ReadWrite))
                         {
-                            byte[] buffer = new byte[BUFFER_SIZE];
+                            byte[] buffer = new byte[readBufferSize];
                             long fileLength = stream.Length;
 
                             // 首先處理主體部分 (每隔 2 字節解密)
@@ -684,7 +684,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         long fileLength = fileStream.Length;
 
                         using (var memoryStream = new MemoryStream((int)fileLength))
@@ -741,7 +741,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         long fileLength = fileStream.Length;
 
                         using (var memoryStream = new MemoryStream((int)fileLength))
@@ -868,7 +868,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     using (FileStream fsDecrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
                         // 使用一個緩衝區來逐步讀取文件
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         int bytesRead;
                         long totalBytesRead = 0;
                         long fileLength = fsDecrypt.Length;
@@ -934,7 +934,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     {
                         using (var stream = new FileStream(sourceFile, FileMode.Open, FileAccess.ReadWrite))
                         {
-                            byte[] buffer = new byte[BUFFER_SIZE];
+                            byte[] buffer = new byte[readBufferSize];
                             long fileLength = stream.Length;
 
                             // 加密文件頭
@@ -1003,7 +1003,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     {
                         using (var stream = new FileStream(encryptFile, FileMode.Open, FileAccess.ReadWrite))
                         {
-                            byte[] buffer = new byte[BUFFER_SIZE];
+                            byte[] buffer = new byte[readBufferSize];
                             long fileLength = stream.Length;
 
                             // 每隔 2 字節解密
@@ -1074,7 +1074,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         long fileLength = fileStream.Length;
 
                         using (var memoryStream = new MemoryStream((int)fileLength))
@@ -1142,7 +1142,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         long fileLength = fileStream.Length;
 
                         using (var memoryStream = new MemoryStream((int)fileLength))
@@ -1290,7 +1290,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     using (FileStream fsDecrypt = new FileStream(encryptFile, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
                         // 使用一個緩衝區來逐步讀取文件
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         int bytesRead;
                         long totalBytesRead = 0;
                         long fileLength = fsDecrypt.Length;
@@ -1461,7 +1461,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
                         using (CryptoStream cs = new CryptoStream(msEncrypted, aes.CreateEncryptor(), CryptoStreamMode.Write))
                         {
-                            byte[] buffer = new byte[BUFFER_SIZE];
+                            byte[] buffer = new byte[readBufferSize];
                             int bytesRead;
                             while ((bytesRead = fsInput.Read(buffer, 0, buffer.Length)) > 0)
                             {
@@ -1504,7 +1504,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
                         using (CryptoStream cs = new CryptoStream(fsInput, aes.CreateDecryptor(), CryptoStreamMode.Read))
                         {
-                            byte[] buffer = new byte[BUFFER_SIZE];
+                            byte[] buffer = new byte[readBufferSize];
                             int bytesRead;
                             while ((bytesRead = cs.Read(buffer, 0, buffer.Length)) > 0)
                             {
@@ -1626,7 +1626,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         using (CryptoStream cs = new CryptoStream(fsDecrypt, aes.CreateDecryptor(), CryptoStreamMode.Read))
                         {
                             MemoryStream msDecrypt = new MemoryStream();
-                            byte[] buffer = new byte[BUFFER_SIZE];
+                            byte[] buffer = new byte[readBufferSize];
                             int bytesRead;
 
                             while ((bytesRead = cs.Read(buffer, 0, buffer.Length)) > 0)
@@ -2146,7 +2146,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         var msDecrypt = new MemoryStream((int)totalLength);
 
                         // 使用一個緩衝區來逐步讀取文件
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        byte[] buffer = new byte[readBufferSize];
                         int bytesRead;
 
                         // 逐步讀取文件內容, 並對每個字節進行 XOR 解密

@@ -12,7 +12,7 @@ namespace OxGFrame.Hotfixer
         {
             if (string.IsNullOrEmpty(url))
             {
-                Debug.LogWarning($"<color=#FF0000>Request failed. URL is null or empty.</color>");
+                Debug.LogError($"<color=#FF0000>Request failed. URL is null or empty.</color>");
                 errorAction?.Invoke();
                 yield break;
             }
@@ -33,7 +33,7 @@ namespace OxGFrame.Hotfixer
             // 檢查是否超時
             if (timer >= maxTime && !www.isDone)
             {
-                Debug.Log($"<color=#FF0000>Request timed out. URL: {url}, SpentTime: {timer} (s)</color>");
+                Debug.LogError($"<color=#FF0000>Request timed out. URL: {url}, SpentTime: {timer} (s)</color>");
                 errorAction?.Invoke();
                 www.Dispose();
                 yield break;
@@ -42,7 +42,7 @@ namespace OxGFrame.Hotfixer
             // 檢查是否有錯誤
             if (!string.IsNullOrEmpty(www.error))
             {
-                Debug.Log($"<color=#FF0000>Request failed. URL: {url}, Error: {www.error}, SpentTime: {timer} (s)</color>");
+                Debug.LogError($"<color=#FF0000>Request failed. URL: {url}, Error: {www.error}, SpentTime: {timer} (s)</color>");
                 errorAction?.Invoke();
                 www.Dispose();
                 yield break;
@@ -59,7 +59,7 @@ namespace OxGFrame.Hotfixer
         {
             if (string.IsNullOrEmpty(url))
             {
-                Debug.LogWarning($"<color=#FF0000>Request failed. URL is null or empty.</color>");
+                Debug.LogError($"<color=#FF0000>Request failed. URL is null or empty.</color>");
                 errorAction?.Invoke();
                 yield break;
             }
@@ -80,7 +80,7 @@ namespace OxGFrame.Hotfixer
             // 檢查是否超時
             if (timer >= maxTime && !www.isDone)
             {
-                Debug.Log($"<color=#FF0000>Request timed out. URL: {url}, SpentTime: {timer} (s)</color>");
+                Debug.LogError($"<color=#FF0000>Request timed out. URL: {url}, SpentTime: {timer} (s)</color>");
                 errorAction?.Invoke();
                 www.Dispose();
                 yield break;
@@ -89,7 +89,7 @@ namespace OxGFrame.Hotfixer
             // 檢查是否有錯誤
             if (!string.IsNullOrEmpty(www.error))
             {
-                Debug.Log($"<color=#FF0000>Request failed. URL: {url}, Error: {www.error}, SpentTime: {timer} (s)</color>");
+                Debug.LogError($"<color=#FF0000>Request failed. URL: {url}, Error: {www.error}, SpentTime: {timer} (s)</color>");
                 errorAction?.Invoke();
                 www.Dispose();
                 yield break;

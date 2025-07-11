@@ -82,32 +82,43 @@ namespace YooAsset
                 return oldDownloader;
             }
 
-            // 设置请求URL
+            // 获取下载地址
             if (string.IsNullOrEmpty(options.ImportFilePath))
             {
+                // 注意：如果是解压文件系统类，这里会返回本地内置文件的下载路径
                 options.MainURL = _fileSystem.RemoteServices.GetRemoteMainURL(bundle.FileName);
                 options.FallbackURL = _fileSystem.RemoteServices.GetRemoteFallbackURL(bundle.FileName);
             }
             else
             {
-                // 注意：把本地文件路径指定为远端下载地址
+                // 注意：把本地导入文件路径转换为下载器请求地址
                 options.MainURL = DownloadSystemHelper.ConvertToWWWPath(options.ImportFilePath);
                 options.FallbackURL = options.MainURL;
             }
 
             // 创建新的下载器
             DefaultDownloadFileOperation newDownloader;
-            if (bundle.FileSize >= _fileSystem.ResumeDownloadMinimumSize)
+            bool isRequestLocalFile = DownloadSystemHelper.IsRequestLocalFile(options.MainURL);
+            if (isRequestLocalFile)
             {
-                newDownloader = new DownloadResumeFileOperation(_fileSystem, bundle, options);
+                newDownloader = new DownloadLocalFileOperation(_fileSystem, bundle, options);
                 AddChildOperation(newDownloader);
                 _downloaders.Add(bundle.BundleGUID, newDownloader);
             }
             else
             {
-                newDownloader = new DownloadNormalFileOperation(_fileSystem, bundle, options);
-                AddChildOperation(newDownloader);
-                _downloaders.Add(bundle.BundleGUID, newDownloader);
+                if (bundle.FileSize >= _fileSystem.ResumeDownloadMinimumSize)
+                {
+                    newDownloader = new DownloadResumeFileOperation(_fileSystem, bundle, options);
+                    AddChildOperation(newDownloader);
+                    _downloaders.Add(bundle.BundleGUID, newDownloader);
+                }
+                else
+                {
+                    newDownloader = new DownloadNormalFileOperation(_fileSystem, bundle, options);
+                    AddChildOperation(newDownloader);
+                    _downloaders.Add(bundle.BundleGUID, newDownloader);
+                }
             }
             return newDownloader;
         }

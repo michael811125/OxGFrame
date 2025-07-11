@@ -35,7 +35,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "6e62add53b21f7d81873924ede0cf050cc534e79"
+      "hash": "8d7693d293baa3f6b3400acbba92c4b383085470"
     },
     "com.michaelo.oxgkit.loggingsystem": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts",
@@ -44,14 +44,14 @@
       "dependencies": {
         "com.domybest.lwmybox": "https://github.com/michael811125/LWMyBox.git"
       },
-      "hash": "95d3f3f616757f2f97c4d7b6ab512a57ed47ad4b"
+      "hash": "8d7693d293baa3f6b3400acbba92c4b383085470"
     },
     "com.michaelo.oxgkit.saversystem": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "ab80170f7690b1a6ee0215dd4a78b62ea31f2278"
+      "hash": "8d7693d293baa3f6b3400acbba92c4b383085470"
     },
     "com.michaelo.oxgkit.timesystem": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/TimeSystem/Scripts",
@@ -61,7 +61,7 @@
         "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
         "com.michaelo.oxgkit.loggingsystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts"
       },
-      "hash": "95d3f3f616757f2f97c4d7b6ab512a57ed47ad4b"
+      "hash": "8d7693d293baa3f6b3400acbba92c4b383085470"
     },
     "com.michaelo.oxgkit.utilities": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts",
@@ -72,7 +72,7 @@
         "com.domybest.lwmybox": "https://github.com/michael811125/LWMyBox.git",
         "com.michaelo.oxgkit.loggingsystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts"
       },
-      "hash": "95d3f3f616757f2f97c4d7b6ab512a57ed47ad4b"
+      "hash": "8d7693d293baa3f6b3400acbba92c4b383085470"
     },
     "com.unity.2d.animation": {
       "version": "9.1.3",

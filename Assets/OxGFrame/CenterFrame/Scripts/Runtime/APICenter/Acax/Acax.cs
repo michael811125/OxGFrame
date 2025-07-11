@@ -1,9 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
+using OxGKit.LoggingSystem;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using UnityEngine;
 using UnityEngine.Networking;
 
 namespace OxGFrame.CenterFrame.APICenter
@@ -133,7 +133,7 @@ namespace OxGFrame.CenterFrame.APICenter
                         errorInfo.message = request.error;
                         errorInfo.exception = null;
                         error?.Invoke(errorInfo);
-                        Debug.LogError($"RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}");
+                        Logging.PrintError<Logger>($"RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}");
                         return null;
                     }
                     else
@@ -149,7 +149,7 @@ namespace OxGFrame.CenterFrame.APICenter
                     errorInfo.message = request?.error;
                     errorInfo.exception = ex;
                     error?.Invoke(errorInfo);
-                    Debug.LogError($"RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}, Exception: {ex}");
+                    Logging.PrintError<Logger>($"RequestAPI failed. URL: {errorInfo.url}, ErrorMsg: {errorInfo.message}, Exception: {ex}");
                     return null;
                 }
             }

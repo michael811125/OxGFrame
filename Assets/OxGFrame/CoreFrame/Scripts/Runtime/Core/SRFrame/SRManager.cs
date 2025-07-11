@@ -139,7 +139,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             var srBase = await this.LoadIntoAllCache(packageName, assetName, priority, progression, false, parent);
             if (srBase == null)
             {
-                Logging.PrintWarning<Logger>($"SR: {assetName} => Asset not found at this path!!!");
+                Logging.PrintError<Logger>($"SR -> Asset not found at path or name: {assetName}");
                 return null;
             }
 

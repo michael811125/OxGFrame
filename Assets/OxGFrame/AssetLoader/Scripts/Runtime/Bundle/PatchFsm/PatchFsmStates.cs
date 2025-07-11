@@ -231,7 +231,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     else
                     {
                         PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage();
-                        Logging.PrintError<Logger>($"<color=#FF0000>Cannot find app config from StreamingAssets.</color>");
+                        Logging.PrintError<Logger>($"<color=#ff0000>Cannot find the app configuration in StreamingAssets.</color>");
                         return;
                     }
                 }
@@ -244,7 +244,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     if (string.IsNullOrEmpty(saCfgJson))
                     {
                         PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage();
-                        Logging.PrintError<Logger>($"<color=#FF0000>Cannot find app config from StreamingAssets.</color>");
+                        Logging.PrintError<Logger>($"<color=#ff0000>Cannot find the app configuration in StreamingAssets.</color>");
                         return;
                     }
                     saCfg = JsonConvert.DeserializeObject<AppConfig>(saCfgJson);
@@ -303,7 +303,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     catch
                     {
                         PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage();
-                        Logging.PrintError<Logger>("<color=#FF0000>Read Local Config failed.</color>");
+                        Logging.PrintError<Logger>("<color=#ff0000>Failed to read local config file.</color>");
                         return;
                     }
 
@@ -319,8 +319,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             // Remove last group name
                             PatchManager.DelLastGroupInfo();
 
-                            Logging.Print<Logger>("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
-                            Logging.Print<Logger>($"<color=#ff8c00>【App Version Unpassed (X.Y.Z)】LOCAL APP_VER: v{localCfg.APP_VERSION} != SERVER APP_VER: v{hostCfg.APP_VERSION}</color>");
+                            Logging.PrintWarning<Logger>("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
+                            Logging.PrintWarning<Logger>($"<color=#ff8c00>【App Version Unpassed (X.Y.Z)】LOCAL APP_VER: v{localCfg.APP_VERSION} != SERVER APP_VER: v{hostCfg.APP_VERSION}</color>");
                             return;
                         }
                         else
@@ -354,8 +354,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             // Remove last group name
                             PatchManager.DelLastGroupInfo();
 
-                            Logging.Print<Logger>("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
-                            Logging.Print<Logger>($"<color=#ff8c00>【App Version Unpassed (X.Y)】LOCAL APP_VER: v{localVersion} ({localCfg.APP_VERSION}) != SERVER APP_VER: v{hostVersion} ({hostCfg.APP_VERSION})</color>");
+                            Logging.PrintWarning<Logger>("<color=#ff8c00>Application version inconsistent, require to update application (go to store)</color>");
+                            Logging.PrintWarning<Logger>($"<color=#ff8c00>【App Version Unpassed (X.Y)】LOCAL APP_VER: v{localVersion} ({localCfg.APP_VERSION}) != SERVER APP_VER: v{hostVersion} ({hostCfg.APP_VERSION})</color>");
                             return;
                         }
                         else
@@ -517,7 +517,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             if (string.IsNullOrEmpty(lastVersion))
                             {
                                 PatchEvents.PatchVersionUpdateFailed.SendEventMessage();
-                                Logging.Print<Logger>($"<color=#ff3696>Package: {package.PackageName}. Local version record not found, resources need to be updated!</color>");
+                                Logging.PrintError<Logger>($"<color=#ff3696>Package: {package.PackageName}. Local version record not found, resources need to be updated (Please connect to the network)!</color>");
                                 return;
                             }
                             patchVersions.TryAdd(package.PackageName, lastVersion);
@@ -621,7 +621,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
                     {
                         PatchEvents.PatchManifestUpdateFailed.SendEventMessage();
-                        Logging.Print<Logger>($"<color=#ff3696>Package: {currentPackageName}. Failed to load the local resource manifest file. Resource update is required!</color>");
+                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {currentPackageName}. Failed to load the local resource manifest file. Resource update is required (Please connect to the network)!</color>");
                     }
                     #endregion
                     else
@@ -700,7 +700,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         {
                             string errorMsg = $"Failed to request patch config from URL: {url}";
                             PatchEvents.PatchDownloadFailed.SendEventMessage(errorMsg);
-                            Logging.PrintError<Logger>($"<color=#FF0000>[{nameof(BundleConfig.PlayMode.WeakHostMode)}] {errorMsg}</color>.");
+                            Logging.PrintError<Logger>($"<color=#ff0000>[{nameof(BundleConfig.PlayMode.WeakHostMode)}] {errorMsg}</color>.");
                             return;
                         }
                         else
@@ -710,7 +710,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     {
                         string errorMsg = $"Failed to request patch config from URL: {url}";
                         PatchEvents.PatchDownloadFailed.SendEventMessage(errorMsg);
-                        Logging.PrintError<Logger>($"<color=#FF0000>{errorMsg}</color>.");
+                        Logging.PrintError<Logger>($"<color=#ff0000>{errorMsg}</color>.");
                         return;
                     }
                 }
@@ -876,8 +876,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     #region Weak Host Mode
                     if (isLastPackageVersions)
                     {
-                        string errorMsg = "Local resources are incomplete. Update required!";
-                        Logging.Print<Logger>($"<color=#ff3696>{errorMsg}</color>");
+                        string errorMsg = "Local resources are incomplete. Update required (Please connect to the network)!";
+                        Logging.PrintError<Logger>($"<color=#ff3696>{errorMsg}</color>");
                         // 當突然失去聯網時, 必須重新從獲取資源版本的流程開始運行, 因為當網絡恢復時, 則可以正確獲取遠端版本進行更新
                         PatchEvents.PatchVersionUpdateFailed.SendEventMessage();
                     }
@@ -977,7 +977,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     if (patchTotalMegabytes > availableDiskSpaceMegabytes)
                     {
                         PatchEvents.PatchCheckDiskNotEnoughSpace.SendEventMessage(availableDiskSpaceMegabytes, (ulong)totalBytes);
-                        Logging.Print<Logger>($"<color=#ff2c48>Disk Not Enough Space!!! Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}</color>, <color=#2cbbff>Patch Total Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}</color>");
+                        Logging.PrintError<Logger>($"<color=#ff2c48>Disk Not Enough Space!!! Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}</color>, <color=#2cbbff>Patch Total Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}</color>");
                         return;
                     }
                 }

@@ -18,20 +18,36 @@ namespace OxGFrame.AssetLoader.Bundle
         public bool checkDiskSpace = true;
 
         [Separator("Preset App Packages")]
-        [Tooltip("The first element will be default app package.\n\nNote: The presets will combine in main download of the patch.")]
+        [Tooltip("The first element will be 'default app package'.\n\nNote: The presets will combine in main download of the patch.")]
         public List<AppPackageInfoWithBuild> listAppPackages = new List<AppPackageInfoWithBuild>() { new AppPackageInfoWithBuild() { packageName = "DefaultPackage" } };
 
-        [Separator("Preset DLC Packages"), Tooltip("The preset DLC packages must be fixed versions.\n\nNote: The presets will combine in main download of the patch.")]
+        [Separator("Preset DLC Packages")]
+        [Tooltip("The preset DLC packages must be fixed versions.\n\nNote: The presets will combine in main download of the patch.")]
         public List<DlcPackageInfoWithBuild> listDlcPackages = new List<DlcPackageInfoWithBuild>();
 
+        [Separator("Process Options")]
+        [Tooltip("Set the maximum time slice per frame (in milliseconds) for YooAsset's async system.")]
+        public long operationSystemMaxTimeSlice = BundleConfig.operationSystemMaxTimeSlice;
+
         [Separator("Download Options")]
+        [Tooltip("Maximum number of concurrent downloads.")]
         public int maxConcurrencyDownloadCount = BundleConfig.maxConcurrencyDownloadCount;
+        [Tooltip("Number of retry attempts on download failure.")]
         public int failedRetryCount = BundleConfig.failedRetryCount;
-        [Tooltip("If file size >= [BreakpointFileSizeThreshold] that file will enable breakpoint mechanism (for all downloaders).")]
+        [Tooltip("If the file size is ≥ 'BreakpointFileSizeThreshold' (in bytes), the breakpoint (resumable) mechanism will be enabled for all downloaders.")]
         public uint breakpointFileSizeThreshold = BundleConfig.breakpointFileSizeThreshold;
 
+        [Separator("Load Options")]
+        [Tooltip("Size of the managed read buffer (in bytes) used by AssetBundle.LoadFromStream.")]
+        public uint bundleLoadReadBufferSize = BundleConfig.bundleLoadReadBufferSize;
+        [Tooltip("Size of the managed read buffer (in bytes) used by FileCryptogram decryption operations.")]
+        public uint bundleDecryptReadBufferSize = BundleConfig.bundleDecryptReadBufferSize;
+
         [Separator("Cryptogram Options")]
-        [SerializeField] private DecryptInfo _decryptInfo = new DecryptInfo();
+        [SerializeField, OverrideLabel("Bundle Decrypt Info")]
+        private DecryptInfo _decryptInfo = new DecryptInfo();
+        [SerializeField, OverrideLabel("Manifest Decrypt Info")]
+        private DecryptInfo _manifestDecryptInfo = new DecryptInfo();
 
         private async void Awake()
         {
@@ -86,6 +102,10 @@ namespace OxGFrame.AssetLoader.Bundle
             BundleConfig.listDlcPackages = this.listDlcPackages;
             #endregion
 
+            #region Process Options
+            BundleConfig.operationSystemMaxTimeSlice = this.operationSystemMaxTimeSlice;
+            #endregion
+
             #region Download Options
             BundleConfig.maxConcurrencyDownloadCount = this.maxConcurrencyDownloadCount <= 0 ? BundleConfig.DEFAULT_MAX_CONCURRENCY_MAX_DOWNLOAD_COUNT : this.maxConcurrencyDownloadCount;
             BundleConfig.failedRetryCount = this.failedRetryCount <= 0 ? BundleConfig.DEFAULT_FAILED_RETRY_COUNT : this.failedRetryCount;
@@ -93,9 +113,17 @@ namespace OxGFrame.AssetLoader.Bundle
             BundleConfig.breakpointFileSizeThreshold = this.breakpointFileSizeThreshold;
             #endregion
 
+            #region Load Options
+            // Set managed read buffer size
+            BundleConfig.bundleLoadReadBufferSize = this.bundleLoadReadBufferSize;
+            BundleConfig.bundleDecryptReadBufferSize = this.bundleDecryptReadBufferSize;
+            #endregion
+
             #region Cryptogram Options
-            BundleConfig.InitDecryptInfo(this._decryptInfo.GetDecryptArgs(), this._decryptInfo.scuredStringType, this._decryptInfo.GetSaltSize(), this._decryptInfo.GetDummySize());
+            BundleConfig.InitBundleDecryptInfo(this._decryptInfo.GetDecryptArgs(), this._decryptInfo.scuredStringType, this._decryptInfo.GetSaltSize(), this._decryptInfo.GetDummySize());
+            BundleConfig.InitManifestDecryptInfo(this._manifestDecryptInfo.GetDecryptArgs(), this._manifestDecryptInfo.scuredStringType, this._manifestDecryptInfo.GetSaltSize(), this._manifestDecryptInfo.GetDummySize());
             this._decryptInfo.Dispose();
+            this._manifestDecryptInfo.Dispose();
             #endregion
 
             // Init Settings and Setup Preset App Packages
