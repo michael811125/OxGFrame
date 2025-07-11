@@ -10,12 +10,35 @@ namespace OxGFrame.AssetLoader.Bundle
 {
     internal static class PackageManager
     {
+        /// <summary>
+        /// 初始標記
+        /// </summary>
         internal static bool isInitialized = false;
+
+        /// <summary>
+        /// 釋放標記
+        /// </summary>
         internal static bool isReleased = false;
 
+        /// <summary>
+        /// 當前預設包裹名稱
+        /// </summary>
         private static string _currentPackageName;
+
+        /// <summary>
+        /// 當前預設包裹
+        /// </summary>
         private static ResourcePackage _currentPackage;
-        private static DecryptionServices _decryptionServices;
+
+        /// <summary>
+        /// 資源解密服務
+        /// </summary>
+        private static DecryptionServices _bundleDecryptionServices;
+
+        /// <summary>
+        /// 清單解密服務
+        /// </summary>
+        private static DecryptionServices _manifestDecryptionServices;
 
         /// <summary>
         /// Init settings
@@ -24,55 +47,89 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             #region Init YooAssets
             YooAssets.Initialize();
-            YooAssets.SetOperationSystemMaxTimeSlice(30);
+            YooAssets.SetOperationSystemMaxTimeSlice(BundleConfig.operationSystemMaxTimeSlice);
             #endregion
 
             #region Init Decryption Type
             // Init decryption type
-            var decryptType = BundleConfig.decryptArgs[0].Decrypt().ToUpper();
+            var decryptType = BundleConfig.bundleDecryptArgs[0].Decrypt().ToUpper();
             switch (decryptType)
             {
                 case BundleConfig.CryptogramType.NONE:
                     break;
                 case BundleConfig.CryptogramType.OFFSET:
-                    _decryptionServices = new OffsetDecryption();
+                    _bundleDecryptionServices = new OffsetDecryption(FileProcessCategory.Bundle);
                     break;
                 case BundleConfig.CryptogramType.XOR:
-                    _decryptionServices = new XorDecryption();
+                    _bundleDecryptionServices = new XorDecryption(FileProcessCategory.Bundle);
                     break;
                 case BundleConfig.CryptogramType.HT2XOR:
-                    _decryptionServices = new HT2XorDecryption();
+                    _bundleDecryptionServices = new HT2XorDecryption(FileProcessCategory.Bundle);
                     break;
                 case BundleConfig.CryptogramType.HT2XORPLUS:
-                    _decryptionServices = new HT2XorPlusDecryption();
+                    _bundleDecryptionServices = new HT2XorPlusDecryption(FileProcessCategory.Bundle);
                     break;
                 case BundleConfig.CryptogramType.AES:
-                    _decryptionServices = new AesDecryption();
+                    _bundleDecryptionServices = new AesDecryption(FileProcessCategory.Bundle);
                     break;
                 case BundleConfig.CryptogramType.CHACHA20:
-                    _decryptionServices = new ChaCha20Decryption();
+                    _bundleDecryptionServices = new ChaCha20Decryption(FileProcessCategory.Bundle);
                     break;
                 case BundleConfig.CryptogramType.XXTEA:
-                    _decryptionServices = new XXTEADecryption();
+                    _bundleDecryptionServices = new XXTEADecryption(FileProcessCategory.Bundle);
                     break;
                 case BundleConfig.CryptogramType.OFFSETXOR:
-                    _decryptionServices = new OffsetXorDecryption();
+                    _bundleDecryptionServices = new OffsetXorDecryption(FileProcessCategory.Bundle);
                     break;
             }
             Logging.Print<Logger>($"<color=#ffe45a>Init Bundle Decryption: {decryptType}</color>");
+
+            decryptType = BundleConfig.manifestDecryptArgs[0].Decrypt().ToUpper();
+            switch (decryptType)
+            {
+                case BundleConfig.CryptogramType.NONE:
+                    break;
+                case BundleConfig.CryptogramType.OFFSET:
+                    _manifestDecryptionServices = new OffsetDecryption(FileProcessCategory.Manifest);
+                    break;
+                case BundleConfig.CryptogramType.XOR:
+                    _manifestDecryptionServices = new XorDecryption(FileProcessCategory.Manifest);
+                    break;
+                case BundleConfig.CryptogramType.HT2XOR:
+                    _manifestDecryptionServices = new HT2XorDecryption(FileProcessCategory.Manifest);
+                    break;
+                case BundleConfig.CryptogramType.HT2XORPLUS:
+                    _manifestDecryptionServices = new HT2XorPlusDecryption(FileProcessCategory.Manifest);
+                    break;
+                case BundleConfig.CryptogramType.AES:
+                    _manifestDecryptionServices = new AesDecryption(FileProcessCategory.Manifest);
+                    break;
+                case BundleConfig.CryptogramType.CHACHA20:
+                    _manifestDecryptionServices = new ChaCha20Decryption(FileProcessCategory.Manifest);
+                    break;
+                case BundleConfig.CryptogramType.XXTEA:
+                    _manifestDecryptionServices = new XXTEADecryption(FileProcessCategory.Manifest);
+                    break;
+                case BundleConfig.CryptogramType.OFFSETXOR:
+                    _manifestDecryptionServices = new OffsetXorDecryption(FileProcessCategory.Manifest);
+                    break;
+            }
+            Logging.Print<Logger>($"<color=#ffe45a>Init Manifest Decryption: {decryptType}</color>");
             #endregion
 
             #region Init Preset Packages
             bool appInitialized = await InitPresetAppPackages();
             bool dlcInitialized = await InitPresetDlcPackages();
-            Logging.Print<Logger>($"<color=#ffe45a>appInitialized: {appInitialized}, dlcInitialized: {dlcInitialized}</color>");
-            isInitialized = appInitialized && dlcInitialized;
             #endregion
 
             #region Set Default Package
             // Set default package by first element (only for preset app packages)
             SetDefaultPackage(0);
             #endregion
+
+            isInitialized = appInitialized && dlcInitialized;
+
+            Logging.Print<Logger>($"<color=#ffe45a>InitSetup -> Initialized: {isInitialized}</color>");
         }
 
         /// <summary>
@@ -90,7 +147,15 @@ namespace OxGFrame.AssetLoader.Bundle
                     {
                         // autoUpdate = true, 因為新版 Yoo 必須獲取版號與 manifest 才能進行資源加載
                         bool isInitialized = await AssetPatcher.InitAppPackage(packageInfo, true);
-                        if (!isInitialized) return false;
+                        if (isInitialized)
+                        {
+                            Logging.Print<Logger>($"<color=#85cf0f>Successfully initialized preset App package: <color=#ffe45a>{packageInfo.packageName}</color>.</color>");
+                        }
+                        else
+                        {
+                            Logging.PrintError<Logger>($"<color=#ff3696>Initialization failed for preset App package: <color=#ff8427>{packageInfo.packageName}</color>.</color>");
+                            return false;
+                        }
                     }
                 }
                 return true;
@@ -117,7 +182,15 @@ namespace OxGFrame.AssetLoader.Bundle
                     {
                         // autoUpdate = true, 因為新版 Yoo 必須獲取版號與 manifest 才能進行資源加載
                         bool isInitialized = await AssetPatcher.InitDlcPackage(packageInfo, true);
-                        if (!isInitialized) return false;
+                        if (isInitialized)
+                        {
+                            Logging.Print<Logger>($"<color=#85cf0f>Successfully initialized preset DLC package: <color=#ffe45a>{packageInfo.packageName}</color>.</color>");
+                        }
+                        else
+                        {
+                            Logging.PrintError<Logger>($"<color=#ff3696>Initialization failed for preset DLC package: <color=#ff8427>{packageInfo.packageName}</color>.</color>");
+                            return false;
+                        }
                     }
                 }
                 return true;
@@ -168,21 +241,23 @@ namespace OxGFrame.AssetLoader.Bundle
             if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode)
             {
                 var createParameters = new OfflinePlayModeParameters();
-                var decryptionServices = _decryptionServices;
+                var bundleDecryptionServices = _bundleDecryptionServices;
+                var manifestDecryptionServices = _manifestDecryptionServices;
                 bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
                 if (builtinExists)
                 {
-                    createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(decryptionServices);
+                    createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(bundleDecryptionServices);
+                    createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+
+                    // Only raw file build pipeline need to append extension
+                    if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                        createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
                 }
                 else
                 {
                     createParameters.BuildinFileSystemParameters = null;
                 }
-                // Only raw file build pipeline need to append extension
-                if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                {
-                    createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
-                }
+
                 initializationOperation = package.InitializeAsync(createParameters);
             }
             #endregion
@@ -193,28 +268,39 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 var createParameters = new HostPlayModeParameters();
                 var remoteServices = new HostServers(hostServer, fallbackHostServer);
-                var decryptionServices = _decryptionServices;
+                var bundleDecryptionServices = _bundleDecryptionServices;
+                var manifestDecryptionServices = _manifestDecryptionServices;
                 bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
                 if (builtinExists)
                 {
-                    createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(decryptionServices);
+                    createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(bundleDecryptionServices);
+                    createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+
                     if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
                         createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.COPY_BUILDIN_PACKAGE_MANIFEST, true);
+
+                    // Only raw file build pipeline need to append extension
+                    if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                        createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
                 }
                 else
                 {
                     createParameters.BuildinFileSystemParameters = null;
                 }
-                createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices, decryptionServices);
+
+                #region Cache File System
+                createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices, bundleDecryptionServices);
                 createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.RESUME_DOWNLOAD_MINMUM_SIZE, BundleConfig.breakpointFileSizeThreshold);
+                createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+
                 if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
                     createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.INSTALL_CLEAR_MODE, EOverwriteInstallClearMode.None);
+
                 // Only raw file build pipeline need to append extension
                 if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                {
-                    createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
                     createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
-                }
+                #endregion
+
                 initializationOperation = package.InitializeAsync(createParameters);
             }
             #endregion
@@ -223,21 +309,23 @@ namespace OxGFrame.AssetLoader.Bundle
             if (BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
             {
                 var createParameters = new WebPlayModeParameters();
-                var decryptionServices = _decryptionServices;
+                var bundleDecryptionServices = _bundleDecryptionServices;
+                var manifestDecryptionServices = _manifestDecryptionServices;
                 bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
                 if (builtinExists)
                 {
-                    createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(decryptionServices);
+                    createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(bundleDecryptionServices);
+                    createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+
+                    // Only raw file build pipeline need to append extension
+                    if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                        createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
                 }
                 else
                 {
                     createParameters.WebServerFileSystemParameters = null;
                 }
-                // Only raw file build pipeline need to append extension
-                if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                {
-                    createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
-                }
+
                 initializationOperation = package.InitializeAsync(createParameters);
             }
             #endregion
@@ -247,24 +335,33 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 var createParameters = new WebPlayModeParameters();
                 var remoteServices = new HostServers(hostServer, fallbackHostServer);
-                var decryptionServices = _decryptionServices;
+                var bundleDecryptionServices = _bundleDecryptionServices;
+                var manifestDecryptionServices = _manifestDecryptionServices;
                 bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
                 if (builtinExists)
                 {
-                    createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(decryptionServices);
+                    createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(bundleDecryptionServices);
+                    createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+
+                    // Only raw file build pipeline need to append extension
+                    if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                        createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
                 }
                 else
                 {
                     createParameters.WebServerFileSystemParameters = null;
                 }
-                createParameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices, decryptionServices);
+
+                #region Web Remote File System
+                createParameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices, bundleDecryptionServices);
                 createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.RESUME_DOWNLOAD_MINMUM_SIZE, BundleConfig.breakpointFileSizeThreshold);
+                createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+
                 // Only raw file build pipeline need to append extension
                 if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                {
-                    createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
                     createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
-                }
+                #endregion
+
                 initializationOperation = package.InitializeAsync(createParameters);
             }
             #endregion
@@ -276,12 +373,12 @@ namespace OxGFrame.AssetLoader.Bundle
                 // The default initialized state is true
                 bool isInitialized = true;
                 if (autoUpdate) isInitialized = await UpdatePackage(packageName);
-                Logging.Print<Logger>($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Init</color> completed successfully.</color>");
+                Logging.Print<Logger>($"<color=#85cf0f>Package: <color=#ffe45a>{packageName}</color> <color=#00c1ff>Init</color> completed successfully.</color>");
                 return isInitialized;
             }
             else
             {
-                Logging.Print<Logger>($"<color=#ff3696>Package: {packageName} init failed.</color>");
+                Logging.PrintError<Logger>($"<color=#ff3696>Package: <color=#ff8427>{packageName}</color> initialization failed.</color>");
                 return false;
             }
         }
@@ -312,12 +409,12 @@ namespace OxGFrame.AssetLoader.Bundle
                     }
                     #endregion
 
-                    Logging.Print<Logger>($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Update</color> completed successfully.</color>");
+                    Logging.Print<Logger>($"<color=#85cf0f>Package: <color=#ffe45a>{packageName}</color> <color=#00c1ff>Update</color> completed successfully.</color>");
                     return true;
                 }
                 else
                 {
-                    Logging.Print<Logger>($"<color=#ff3696>Package: {packageName} update manifest failed.</color>");
+                    Logging.PrintError<Logger>($"<color=#ff3696>Package: <color=#ff8427>{packageName}</color> update manifest failed.</color>");
                     return false;
                 }
             }
@@ -330,7 +427,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     string lastVersion = BundleConfig.saver.GetData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, packageName, string.Empty);
                     if (string.IsNullOrEmpty(lastVersion))
                     {
-                        Logging.Print<Logger>($"<color=#ff3696>Package: {package.PackageName}. Local version record not found, resources need to be updated!</color>");
+                        Logging.PrintError<Logger>($"<color=#ff3696>Package: <color=#ff8427>{packageName}</color>. Local version record not found, resources need to be updated (Please connect to the network)!</color>");
                         return false;
                     }
                     else
@@ -345,7 +442,7 @@ namespace OxGFrame.AssetLoader.Bundle
                             var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
                             if (downloader.TotalDownloadCount > 0)
                             {
-                                Logging.Print<Logger>($"<color=#ff3696>Package: {packageName}. Local resources are incomplete. Update required!</color>");
+                                Logging.PrintError<Logger>($"<color=#ff3696>Package: <color=#ff8427>{packageName}</color>. Local resources are incomplete. Update required (Please connect to the network)!</color>");
                                 return false;
                             }
 
@@ -353,7 +450,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         }
                         else
                         {
-                            Logging.Print<Logger>($"<color=#ff3696>Package: {packageName}. Failed to load the local resource manifest file. Resource update is required!</color>");
+                            Logging.PrintError<Logger>($"<color=#ff3696>Package: <color=#ff8427>{packageName}</color>. Failed to load the local resource manifest file. Resource update is required (Please connect to the network)!</color>");
                             return false;
                         }
                     }
@@ -361,7 +458,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 #endregion
                 else
                 {
-                    Logging.Print<Logger>($"<color=#ff3696>Package: {packageName} update version failed.</color>");
+                    Logging.PrintError<Logger>($"<color=#ff3696>Package: <color=#ff8427>{packageName}</color> update version failed.</color>");
                     return false;
                 }
             }
@@ -481,7 +578,7 @@ namespace OxGFrame.AssetLoader.Bundle
             }
             catch (Exception ex)
             {
-                Logging.PrintWarning<Logger>(ex);
+                Logging.PrintException<Logger>(ex);
                 processed = false;
                 return processed;
             }
@@ -556,7 +653,8 @@ namespace OxGFrame.AssetLoader.Bundle
                 _currentPackageName = package.PackageName;
                 _currentPackage = package;
             }
-            else Logging.Print<Logger>($"<color=#ff2478>Switch default package failed! Cannot find package: {packageName}.</color>");
+            else
+                Logging.PrintError<Logger>($"<color=#ff2478>Switch default package failed! Cannot find package: {packageName}.</color>");
         }
 
         /// <summary>
@@ -565,7 +663,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static IDecryptionServices GetDecryptionService()
         {
-            return _decryptionServices;
+            return _bundleDecryptionServices;
         }
 
         /// <summary>
@@ -756,7 +854,7 @@ namespace OxGFrame.AssetLoader.Bundle
             if (idx >= BundleConfig.listAppPackages.Count)
             {
                 idx = BundleConfig.listAppPackages.Count - 1;
-                Logging.Print<Logger>($"<color=#ff41d5>Package Idx Warning: {idx} is out of range will be auto set last idx.</color>");
+                Logging.PrintWarning<Logger>($"<color=#ff41d5>Package Idx Warning: {idx} is out of range will be auto set last idx.</color>");
             }
             else if (idx < 0) idx = 0;
 

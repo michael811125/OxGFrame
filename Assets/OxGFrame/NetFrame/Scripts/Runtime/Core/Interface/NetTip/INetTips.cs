@@ -1,16 +1,14 @@
-﻿using System;
-
-namespace OxGFrame.NetFrame
+﻿namespace OxGFrame.NetFrame
 {
     public interface INetTips
     {
         void OnConnecting();
 
-        void OnConnected(object status);
+        void OnConnected(object payload);
 
-        void OnConnectionError(string msg);
+        void OnConnectionError(object payload);
 
-        void OnDisconnected(object status);
+        void OnDisconnected(object payload);
 
         void OnReconnecting();
     }

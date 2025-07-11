@@ -10,7 +10,7 @@ namespace OxGFrame.NetFrame
 
         event EventHandler<string> OnMessage;
 
-        event EventHandler<string> OnError;
+        event EventHandler<object> OnError;
 
         event EventHandler<object> OnClose;
 

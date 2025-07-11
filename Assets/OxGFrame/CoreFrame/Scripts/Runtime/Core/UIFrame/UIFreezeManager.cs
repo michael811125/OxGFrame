@@ -64,7 +64,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 if (uiFreezeNode == null ||
                     !uiFreezeNode.GetComponent<UIFreeze>())
                 {
-                    Logging.Print<Logger>(string.Format("No matching object found: {0}, doesn't need to recycle!", NODE_NAME));
+                    Logging.PrintWarning<Logger>($"No matching object found: {NODE_NAME}, doesn't need to recycle!");
                     return false;
                 }
 

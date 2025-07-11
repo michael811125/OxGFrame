@@ -211,9 +211,7 @@ namespace OxGFrame.GSIFrame
         {
             if (this._dictGameStage.ContainsKey(id))
             {
-#if UNITY_EDITOR
-                Logging.Print<Logger>($"Failed to add GameStage ({gameStage.GetType().Name}). Already has same GameStageId in cache");
-#endif
+                Logging.PrintWarning<Logger>($"Failed to add GameStage '{gameStage?.GetType().Name}': a GameStage with the same ID already exists in the cache.");
                 return;
             }
 
@@ -239,7 +237,8 @@ namespace OxGFrame.GSIFrame
         /// <param name="id"></param>
         public void DeleteGameStage(int id)
         {
-            if (this._dictGameStage.ContainsKey(id)) this._dictGameStage.Remove(id);
+            if (this._dictGameStage.ContainsKey(id))
+                this._dictGameStage.Remove(id);
         }
 
         /// <summary>
@@ -262,13 +261,11 @@ namespace OxGFrame.GSIFrame
         {
             this._incomingId = id;
 
-#if UNITY_EDITOR
             var gameStage = this.GetGameStage<GSIBase>(id);
             if (this._incomingId == this._currentId)
-                Logging.Print<Logger>(string.Format("<color=#ff54ac> 【>>>>>> Same GameStage (Change Failed - <color=#ffb12a>Try Force</color>) <<<<<<】Id: {0}, Stage: {1}</color>", this._incomingId, gameStage?.GetType().Name));
+                Logging.PrintWarning<Logger>($"<color=#ff54ac> 【>>>>>> Same GameStage (Change Failed - <color=#ffb12a>Try Force</color>) <<<<<<】Id: {this._incomingId}, Stage: {gameStage?.GetType().Name}</color>");
             else
-                Logging.Print<Logger>(string.Format("<color=#00B8FF> 【>>>>>> Change GameStage <<<<<<】Id: {0}, Stage: {1}</color>", this._incomingId, gameStage?.GetType().Name));
-#endif
+                Logging.Print<Logger>($"<color=#00B8FF> 【>>>>>> Change GameStage <<<<<<】Id: {this._incomingId}, Stage: {gameStage?.GetType().Name}</color>");
         }
 
         /// <summary>
@@ -289,10 +286,8 @@ namespace OxGFrame.GSIFrame
         /// <param name="id"></param>
         public void ChangeGameStageForce(int id)
         {
-#if UNITY_EDITOR
             var gameStage = this.GetGameStage<GSIBase>(id);
-            Logging.Print<Logger>(string.Format("<color=#00B8FF> 【>>>>>> Change GameStage <color=#ffb12a>Force</color> <<<<<<】Id: {0}, Stage: {1}</color>", id, gameStage?.GetType().Name));
-#endif
+            Logging.Print<Logger>($"<color=#00B8FF> 【>>>>>> Change GameStage <color=#ffb12a>Force</color> <<<<<<】Id: {id}, Stage: {gameStage?.GetType().Name}</color>");
 
             this.ReleaseGameStage();                 // 立即釋放原本的 GameStage
             this._currentId = this._incomingId = id; // 立即指定 currentId & incomingId = id
@@ -328,10 +323,10 @@ namespace OxGFrame.GSIFrame
             // 透過當前的 GameStageId 取出 GameStage, 並且指定至當前 GameStage 中
             this._currentGameStage = this.GetGameStage<GSIBase>(this._currentId);
             // 開始進行 GameStage 初始流程
-            if (this._currentGameStage != null) this._currentGameStage.BeginInit().Forget();
-#if UNITY_EDITOR
-            else Logging.Print<Logger>(string.Format("Cannot find GameStage. Id: {0}", this._currentId));
-#endif
+            if (this._currentGameStage != null)
+                this._currentGameStage.BeginInit().Forget();
+            else
+                Logging.PrintError<Logger>($"Failed to change stage: GameStage with Id {this._currentId} not found.");
         }
 
         /// <summary>

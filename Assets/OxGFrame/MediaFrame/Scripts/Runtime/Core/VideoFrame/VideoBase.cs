@@ -86,7 +86,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                     this._videoPlayer.clip = this.videoClip;
                     if (this.videoClip == null)
                     {
-                        Logging.Print<Logger>($"<color=#FF0000>Cannot find VideoClip: {this.mediaName}</color>");
+                        Logging.PrintError<Logger>($"<color=#ff3356>Cannot find VideoClip: {this.mediaName}</color>");
                         return false;
                     }
                     break;
@@ -96,7 +96,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                         string url = System.IO.Path.Combine(Application.streamingAssetsPath, this.fullPathName);
                         if (!this.TrySetUrl(url))
                         {
-                            Logging.Print<Logger>($"<color=#FF0000>Cannot find VideoClip: {this.mediaName}</color>");
+                            Logging.PrintError<Logger>($"<color=#ff3356>Cannot find VideoClip: {this.mediaName}</color>");
                             return false;
                         }
                     }
@@ -109,7 +109,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                         string url = (!string.IsNullOrEmpty(urlSet)) ? $"{urlSet.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
                         if (!this.TrySetUrl(url))
                         {
-                            Logging.Print<Logger>($"<color=#FF0000>Cannot find VideoClip: {this.mediaName}</color>");
+                            Logging.PrintError<Logger>($"<color=#ff3356>Cannot find VideoClip: {this.mediaName}</color>");
                             return false;
                         }
                     }

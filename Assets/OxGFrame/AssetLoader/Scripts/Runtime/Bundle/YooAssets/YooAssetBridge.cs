@@ -24,17 +24,6 @@ namespace OxGFrame.AssetLoader
 
             #region Methods
             /// <summary>
-            /// 获取 YOO 的 Resources 目录的全路径
-            /// </summary>
-            /// <returns></returns>
-            public static string GetYooResourcesFullPath()
-            {
-                string typeName = "YooAssetSettingsData";
-                string methodName = "GetYooResourcesFullPath";
-                return Convert.ToString(ReflectionHelper.InvokeInternalMethod(typeName, methodName));
-            }
-
-            /// <summary>
             /// 获取 YOO 默认的缓存文件根目录
             /// </summary>
             /// <returns></returns>

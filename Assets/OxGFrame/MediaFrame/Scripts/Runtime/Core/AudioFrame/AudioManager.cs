@@ -57,7 +57,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 {
                     _instance = FindObjectOfType<AudioManager>();
                     if (_instance == null)
-                        Logging.PrintWarning<Logger>("<color=#FF0000>Cannot find 【AudioManager Component】, Please to check your 【AudioManager GameObject】.</color>");
+                        Logging.PrintError<Logger>("<color=#ff0000>Cannot find the 'AudioManager' component. Please check your 'AudioManager' GameObject in the scene.</color>");
                 }
             }
             return _instance;
@@ -263,7 +263,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.LoadAndPlay(audBase, loops, volume);
 
-            Logging.Print<Logger>(string.Format("Play Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));
+            Logging.Print<Logger>($"Play Audio: {audBase?.mediaName}, Current Length: {audBase?.CurrentLength()} (s)");
         }
 
         /// <summary>
@@ -288,7 +288,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                     switch (main.audioType.soundType)
                     {
                         case SoundType.Sole:
-                            Logging.PrintWarning<Logger>(string.Format("【Audio => SoundType: {0}】{1} already played!!!", main.audioType.soundType, assetName));
+                            Logging.PrintWarning<Logger>($"【Audio => SoundType: {main.audioType.soundType}】{assetName} has already been played!!!");
                             return audBases;
                     }
                 }
@@ -307,7 +307,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 AudioBase audBase = await this.CloneAsset<AudioBase>(assetName, go, sourceClip, parent, spawnParent);
                 if (audBase == null)
                 {
-                    Logging.PrintWarning<Logger>(string.Format("Asset not found at this path!!!【Audio】: {0}", assetName));
+                    Logging.PrintError<Logger>($"Audio -> No matching component found at path or name: {assetName}");
                     return new AudioBase[] { null };
                 }
 
@@ -357,7 +357,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.ExitAndStop(audBase, false, disabledEndEvent);
 
-            Logging.Print<Logger>(string.Format("Stop Audio: {0}", audBase?.mediaName));
+            Logging.Print<Logger>($"Stop Audio: {audBase?.mediaName}");
 
             // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
             if (audBase.isPrepared)
@@ -425,7 +425,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.ExitAndStop(audBase, true, false);
 
-            Logging.Print<Logger>(string.Format("Pause Audio: {0}, Current Length: {1} (s)", audBase?.mediaName, audBase?.CurrentLength()));
+            Logging.Print<Logger>($"Pause Audio: {audBase?.mediaName}, Current Length: {audBase?.CurrentLength()} (s)");
         }
 
         /// <summary>

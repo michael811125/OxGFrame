@@ -60,7 +60,7 @@ namespace YooAsset
         /// <summary>
         /// 尝试卸载指定资源的资源包（包括依赖资源）
         /// </summary>
-        public void TryUnloadUnusedAsset(AssetInfo assetInfo)
+        public void TryUnloadUnusedAsset(AssetInfo assetInfo, int loopCount)
         {
             if (assetInfo.IsInvalid)
             {
@@ -68,32 +68,37 @@ namespace YooAsset
                 return;
             }
 
-            // 卸载主资源包加载器
-            string mainBundleName = _bundleQuery.GetMainBundleName(assetInfo);
-            var mainLoader = TryGetBundleFileLoader(mainBundleName);
-            if (mainLoader != null)
+            while (loopCount > 0)
             {
-                mainLoader.TryDestroyProviders();
-                if (mainLoader.CanDestroyLoader())
-                {
-                    string bundleName = mainLoader.LoadBundleInfo.Bundle.BundleName;
-                    mainLoader.DestroyLoader();
-                    LoaderDic.Remove(bundleName);
-                }
-            }
+                loopCount--;
 
-            // 卸载依赖资源包加载器
-            string[] dependBundleNames = _bundleQuery.GetDependBundleNames(assetInfo);
-            foreach (var dependBundleName in dependBundleNames)
-            {
-                var dependLoader = TryGetBundleFileLoader(dependBundleName);
-                if (dependLoader != null)
+                // 卸载主资源包加载器
+                string mainBundleName = _bundleQuery.GetMainBundleName(assetInfo);
+                var mainLoader = TryGetBundleFileLoader(mainBundleName);
+                if (mainLoader != null)
                 {
-                    if (dependLoader.CanDestroyLoader())
+                    mainLoader.TryDestroyProviders();
+                    if (mainLoader.CanDestroyLoader())
                     {
-                        string bundleName = dependLoader.LoadBundleInfo.Bundle.BundleName;
-                        dependLoader.DestroyLoader();
+                        string bundleName = mainLoader.LoadBundleInfo.Bundle.BundleName;
+                        mainLoader.DestroyLoader();
                         LoaderDic.Remove(bundleName);
+                    }
+                }
+
+                // 卸载依赖资源包加载器
+                string[] dependBundleNames = _bundleQuery.GetDependBundleNames(assetInfo);
+                foreach (var dependBundleName in dependBundleNames)
+                {
+                    var dependLoader = TryGetBundleFileLoader(dependBundleName);
+                    if (dependLoader != null)
+                    {
+                        if (dependLoader.CanDestroyLoader())
+                        {
+                            string bundleName = dependLoader.LoadBundleInfo.Bundle.BundleName;
+                            dependLoader.DestroyLoader();
+                            LoaderDic.Remove(bundleName);
+                        }
                     }
                 }
             }

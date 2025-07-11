@@ -64,7 +64,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.LoadAndPlay(vidBase, loops, volume);
 
-            Logging.Print<Logger>(string.Format("Play Video: {0}", vidBase?.mediaName));
+            Logging.Print<Logger>($"Play Video: {vidBase?.mediaName}");
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 VideoBase main = vidBases[0];
                 if (main.IsPlaying())
                 {
-                    Logging.PrintWarning<Logger>(string.Format("【Video】{0} already played!!!", assetName));
+                    Logging.PrintWarning<Logger>($"【Video】{assetName} has already been played!!!");
                     return vidBases;
                 }
 
@@ -103,7 +103,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 VideoBase vidBase = await this.CloneAsset<VideoBase>(assetName, go, sourceClip, parent, spawnParent);
                 if (vidBase == null)
                 {
-                    Logging.PrintWarning<Logger>(string.Format("Asset not found at this path!!!【Video】: {0}", assetName));
+                    Logging.PrintError<Logger>($"Video -> No matching component found at path or name: {assetName}");
                     return new VideoBase[] { null };
                 }
 
@@ -153,7 +153,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.ExitAndStop(vidBase, false, disabledEndEvent);
 
-            Logging.Print<Logger>(string.Format("Stop Video: {0}", vidBase?.mediaName));
+            Logging.Print<Logger>($"Stop Video: {vidBase?.mediaName}");
 
             // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
             if (vidBase.isPrepared)
@@ -221,7 +221,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.ExitAndStop(vidBase, true, false);
 
-            Logging.Print<Logger>(string.Format("Pause Video: {0}, Current Length: {1} (s)", vidBase?.mediaName, vidBase?.CurrentLength()));
+            Logging.Print<Logger>($"Pause Video: {vidBase?.mediaName}, Current Length: {vidBase?.CurrentLength()} (s)");
         }
 
         /// <summary>

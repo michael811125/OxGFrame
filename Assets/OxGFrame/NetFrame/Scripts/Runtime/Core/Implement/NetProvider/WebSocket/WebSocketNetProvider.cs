@@ -11,21 +11,21 @@ namespace OxGFrame.NetFrame
         public event EventHandler<object> OnOpen;
         public event EventHandler<byte[]> OnBinary;
         public event EventHandler<string> OnMessage;
-        public event EventHandler<string> OnError;
+        public event EventHandler<object> OnError;
         public event EventHandler<object> OnClose;
 
         public void CreateConnect(NetOption netOption)
         {
             if (netOption == null)
             {
-                Logging.Print<Logger>("<color=#ff2732>ERROR: Connect failed, NetOption cannot be null.</color>");
+                Logging.PrintError<Logger>("<color=#ff2732>ERROR: Connection failed because NetOption is null.</color>");
                 return;
             }
 
             string url = (netOption as WebSocketNetOption).url;
             if (string.IsNullOrEmpty(url))
             {
-                Logging.Print<Logger>("<color=##FF0000>ERROR: WebSocket Connect failed, NetOption URL cannot be null or empty.</color>");
+                Logging.PrintError<Logger>("<color=#ff2732>ERROR: WebSocket connection failed. NetOption.url cannot be null or empty.</color>");
                 return;
             }
 

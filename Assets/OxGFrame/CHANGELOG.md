@@ -1,5 +1,43 @@
 # CHANGELOG
 
+## [3.4.0] - 2025-07-11
+
+# English
+
+- Organized debug printing levels (Print, PrintWarning, PrintError, PrintException) to implement clear log level differentiation.
+
+- AssetLoader
+  - Added PatchLauncher configuration for Manifest Decrypt Info.
+  - Added `PatchLauncher.operationSystemMaxTimeSlice` parameter configuration (Process Options) to set the YooAsset asynchronous system’s maximum time slice consumed per frame (in milliseconds).
+  - Added `PatchLauncher.bundleLoadReadBufferSize` parameter configuration (Load Options) to configure the AssetBundle read buffer size (in bytes).  
+  - Added `PatchLauncher.bundleDecryptReadBufferSize` parameter configuration (Load Options) to configure the AssetBundle decryption read buffer size (in bytes).  
+  - Added an implementation of `ManifestServices` for encrypting and decrypting YooAsset manifest file.
+  - Optimized the `BundleConfig` release workflow.
+  - Removed the `YooAssetBridge.YooAssetSettingsData.GetYooResourcesFullPath()` method.
+  - Removed the MenuItem **OxGFrame Pre-Export Built-in Catalog File (BuildinCatalog)** used by YooAsset.
+  - Removed the unused `BuiltinPackageCatalog` class, including its `PatchSetting` configuration parameters.
+  - Upgraded YooAsset to [v2.3.12](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.12).
+- NetFrame
+  - Modified the `INetTips.OnConnectionError` parameter type to `object`.
+
+# 中文
+
+- 整理 Debug 打印層級 (Print, PrintWarning, PrintError, PrintException)，實現 Log Level 的區分。
+
+- AssetLoader
+  - 新增 PatchLauncher 對於 Manifest Decrypt Info 的配置。
+  - 新增 PatchLauncher.operationSystemMaxTimeSlice 參數配置 (Process Options)，用於 YooAsset 的異步系統設置參數，每幀執行消耗的最大時間切片。
+  - 新增 PatchLauncher.bundleLoadReadBufferSizeh 參數配置 (Load Options)，用於配置資源讀取緩衝大小。
+  - 新增 PatchLauncher.bundleDecryptReadBufferSize 參數配置 (Load Options)，用於配置資源解密讀取緩衝大小。
+  - 新增 ManifestServices 實作，用於 YooAsset Manifest 清單的加解密。
+  - 優化 BundleConfig 釋放流程。
+  - 移除 YooAssetBridge.YooAssetSettingsData.GetYooResourcesFullPath() 方法。
+  - 移除 MenuItem -> OxGFrame Pre-Export Built-in Catalog File (BuildinCatalog) used by YooAsset。
+  - 移除未使用類別 BuiltinPackageCatalog，包含 PatchSetting 配置參數。
+  - 更新 YooAsset 至 [v2.3.12](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.12)。
+- NetFrame
+  - 修改 INetTips OnConnectionError 參數為 object 型別。
+
 ## [3.3.2] - 2025-06-18
 
 # English

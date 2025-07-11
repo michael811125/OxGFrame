@@ -71,11 +71,11 @@ namespace OxGFrame.AssetLoader.Bundle
             bool exists = Directory.Exists(dirPath);
             if (exists)
             {
-                Logging.Print<Logger>($"<color=#00FF00>【Try Query Builtin-Package】Search succeeded (Package exists). Package: {packageName}</color>");
+                Logging.Print<Logger>($"<color=#00FF00>【Try Query Builtin-Package】Package exists. Package: {packageName}</color>");
                 return true;
             }
 
-            Logging.Print<Logger>($"<color=#FF0000>【Try Query Builtin-Package】Search failed (Package doesn't exist). Package: {packageName}</color>");
+            Logging.PrintWarning<Logger>($"<color=#FF0000>【Try Query Builtin-Package】Package doesn't exist. Package: {packageName}</color>");
             return false;
         }
         #endregion
@@ -112,27 +112,27 @@ namespace OxGFrame.AssetLoader.Bundle
                     request.result == UnityWebRequest.Result.ProtocolError ||
                     request.result == UnityWebRequest.Result.ConnectionError)
                 {
-                    Logging.Print<Logger>($"<color=#ff1743>【Try Query Builtin-Package】Request failed (Package doesn't exist). Built-in package not found. URL: {url}</color>");
+                    Logging.PrintWarning<Logger>($"<color=#ff1743>【Try Query Builtin-Package】Package doesn't exist (Built-in package not found). URL: {url}</color>");
                     request.Dispose();
                     return false;
                 }
 
                 if (request.downloadedBytes > 0 && request.responseCode < 400)
                 {
-                    Logging.Print<Logger>($"<color=#19ff17>【Try Query Builtin-Package】Request succeeded (Package exists). Built-in package found. Code: {request.responseCode}, PartialBytes: {request.downloadedBytes}, URL: {url}</color>");
+                    Logging.Print<Logger>($"<color=#19ff17>【Try Query Builtin-Package】Package exists (Built-in package found). Code: {request.responseCode}, PartialBytes: {request.downloadedBytes}, URL: {url}</color>");
                     request.Dispose();
                     return true;
                 }
             }
             catch (OperationCanceledException ex) when (ex.CancellationToken == cts.Token)
             {
-                Logging.PrintWarning<Logger>($"【Try Query Builtin-Package】Request timed out. URL: {url}");
+                Logging.PrintError<Logger>($"【Try Query Builtin-Package】Request timed out. URL: {url}");
                 request.Dispose();
                 return false;
             }
             catch (Exception ex)
             {
-                Logging.PrintWarning<Logger>($"【Try Query Builtin-Package】Request failed (Package doesn't exist) The package may not exist. URL: {url}, Exception: {ex}");
+                Logging.PrintError<Logger>($"【Try Query Builtin-Package】Request failed (Package doesn't exist) The package may not exist. URL: {url}, Exception: {ex}");
                 request.Dispose();
                 return false;
             }
@@ -140,38 +140,5 @@ namespace OxGFrame.AssetLoader.Bundle
             return false;
         }
         #endregion
-
-#if UNITY_EDITOR
-        internal class PreprocessExporter
-        {
-            /// <summary>
-            /// From YooAsset DefaultBuildinFileSystemBuild
-            /// </summary>
-            /// <exception cref="System.Exception"></exception>
-            [UnityEditor.MenuItem("YooAsset/" + "OxGFrame Pre-Export Built-in Catalog File (BuildinCatalog) used by YooAsset", false, 1099)]
-            private static void _ExportBuiltinCatalogFile()
-            {
-                string rootPath = YooAssetBridge.YooAssetSettingsData.GetYooDefaultBuildinRoot();
-                DirectoryInfo rootDirectory = new DirectoryInfo(rootPath);
-                if (rootDirectory.Exists == false)
-                {
-                    UnityEngine.Debug.LogWarning($"Cannot found StreamingAssets root directory : {rootPath}");
-                    return;
-                }
-
-                DirectoryInfo[] subDirectories = rootDirectory.GetDirectories();
-                foreach (var subDirectory in subDirectories)
-                {
-                    string packageName = subDirectory.Name;
-                    string pacakgeDirectory = subDirectory.FullName;
-                    bool result = DefaultBuildinFileSystemBuild.CreateBuildinCatalogFile(packageName, pacakgeDirectory);
-                    if (result == false)
-                    {
-                        throw new System.Exception($"Create package {packageName} catalog file failed ! See the detail error in console !");
-                    }
-                }
-            }
-        }
-#endif
     }
 }

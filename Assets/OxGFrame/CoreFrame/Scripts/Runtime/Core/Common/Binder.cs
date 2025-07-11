@@ -80,7 +80,7 @@ namespace OxGFrame.CoreFrame
                 heads.Length < 2 ||
                 !FrameConfig.BIND_COMPONENTS.ContainsKey(bindType))
             {
-                Logging.Print<Logger>($"{name} => Naming format error. Please check the bind name.");
+                Logging.PrintError<Logger>($"Invalid naming format for '{name}'. Please check the bind name.");
                 return;
             }
 

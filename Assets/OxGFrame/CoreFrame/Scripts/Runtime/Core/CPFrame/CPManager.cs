@@ -39,7 +39,7 @@ namespace OxGFrame.CoreFrame.CPFrame
 
             if (obj == null)
             {
-                Logging.PrintWarning<Logger>(string.Format("【 path: {0} 】asset not found at this path!!!", assetName));
+                Logging.PrintError<Logger>($"CP -> Asset not found at path or name: {assetName}");
                 return null;
             }
 
@@ -54,7 +54,7 @@ namespace OxGFrame.CoreFrame.CPFrame
 
             if (obj == null)
             {
-                Logging.PrintWarning<Logger>(string.Format("【 path: {0} 】asset not found at this path!!!", assetName));
+                Logging.PrintError<Logger>($"CP -> Asset not found at path or name: {assetName}");
                 return null;
             }
 

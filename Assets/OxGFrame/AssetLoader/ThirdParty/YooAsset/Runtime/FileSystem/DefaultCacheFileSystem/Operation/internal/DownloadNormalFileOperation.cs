@@ -8,7 +8,6 @@ namespace YooAsset
     {
         private readonly DefaultCacheFileSystem _fileSystem;
         private VerifyTempFileOperation _verifyOperation;
-        private bool _isReuqestLocalFile;
         private string _tempFilePath;
         private ESteps _steps = ESteps.None;
 
@@ -18,7 +17,6 @@ namespace YooAsset
         }
         internal override void InternalStart()
         {
-            _isReuqestLocalFile = DownloadSystemHelper.IsRequestLocalFile(Options.MainURL);
             _tempFilePath = _fileSystem.GetTempFilePath(Bundle);
             _steps = ESteps.CheckExists;
         }
@@ -133,15 +131,6 @@ namespace YooAsset
             // 重新尝试下载
             if (_steps == ESteps.TryAgain)
             {
-                //TODO 拷贝本地文件失败后不再尝试！
-                if (_isReuqestLocalFile)
-                {
-                    Status = EOperationStatus.Failed;
-                    _steps = ESteps.Done;
-                    YooLogger.Error(Error);
-                    return;
-                }
-
                 if (FailedTryAgain <= 0)
                 {
                     Status = EOperationStatus.Failed;
@@ -168,20 +157,17 @@ namespace YooAsset
         {
             while (true)
             {
-                //TODO 如果是导入或解压本地文件，执行等待完毕
-                if (_isReuqestLocalFile)
+                if (ExecuteWhileDone())
                 {
-                    InternalUpdate();
-                    if (IsDone)
-                        break;
-                }
-                else
-                {
-                    if (ExecuteWhileDone())
+                    //TODO 尝试同步加载远端的资源文件失败
+                    if (Status == EOperationStatus.Failed)
                     {
-                        _steps = ESteps.Done;
-                        break;
+                        YooLogger.Error($"Try load bundle {Bundle.BundleName} from remote !");
+                        YooLogger.Error($"The load remote bundle url : {_requestURL}");
                     }
+
+                    _steps = ESteps.Done;
+                    break;
                 }
             }
         }

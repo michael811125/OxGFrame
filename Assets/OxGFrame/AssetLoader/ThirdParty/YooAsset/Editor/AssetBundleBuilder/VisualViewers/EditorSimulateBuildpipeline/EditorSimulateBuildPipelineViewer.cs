@@ -74,7 +74,6 @@ namespace YooAsset.Editor
             buildParameters.FileNameStyle = fileNameStyle;
             buildParameters.BuildinFileCopyOption = buildinFileCopyOption;
             buildParameters.BuildinFileCopyParams = buildinFileCopyParams;
-            buildParameters.EncryptionServices = CreateEncryptionInstance();
 
             EditorSimulateBuildPipeline pipeline = new EditorSimulateBuildPipeline();
             var buildResult = pipeline.Run(buildParameters, true);

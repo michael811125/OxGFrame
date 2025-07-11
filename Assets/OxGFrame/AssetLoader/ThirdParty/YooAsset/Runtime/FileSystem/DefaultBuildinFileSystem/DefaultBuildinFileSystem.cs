@@ -88,6 +88,16 @@ namespace YooAsset
         ///  自定义参数：解密方法类
         /// </summary>
         public IDecryptionServices DecryptionServices { private set; get; }
+
+        /// <summary>
+        /// 自定义参数：资源清单服务类
+        /// </summary>
+        public IManifestServices ManifestServices { private set; get; }
+
+        /// <summary>
+        /// 自定义参数：拷贝内置文件服务类
+        /// </summary>
+        public ICopyLocalFileServices CopyLocalFileServices { private set; get; }
         #endregion
 
 
@@ -174,6 +184,14 @@ namespace YooAsset
             {
                 DecryptionServices = (IDecryptionServices)value;
             }
+            else if (name == FileSystemParametersDefine.MANIFEST_SERVICES)
+            {
+                ManifestServices = (IManifestServices)value;
+            }
+            else if (name == FileSystemParametersDefine.COPY_LOCAL_FILE_SERVICES)
+            {
+                CopyLocalFileServices = (ICopyLocalFileServices)value;
+            }
             else
             {
                 YooLogger.Warning($"Invalid parameter : {name}");
@@ -196,6 +214,7 @@ namespace YooAsset
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.INSTALL_CLEAR_MODE, InstallClearMode);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, AppendFileExtension);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.DECRYPTION_SERVICES, DecryptionServices);
+            _unpackFileSystem.SetParameter(FileSystemParametersDefine.COPY_LOCAL_FILE_SERVICES, CopyLocalFileServices);
             _unpackFileSystem.OnCreate(packageName, null);
         }
         public virtual void OnDestroy()

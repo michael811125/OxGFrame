@@ -123,7 +123,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             }
             else
             {
-                Logging.Print<Logger>($"<color=#FFD600>【Setup Failed】Not found UICanvas:</color> <color=#FF6ECB>{canvasName}</color>");
+                Logging.PrintError<Logger>($"<color=#ff7100>【Setup Failed】Not found UICanvas:</color> <color=#ff6ecb>{canvasName}</color>");
                 return false;
             }
 
@@ -249,7 +249,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             if (uiCanvas == null)
             {
-                Logging.Print<Logger>($"<color=#FFD600>【Loading Failed】Not found UICanvas:</color> <color=#FF6ECB>{sourceComponent.uiSetting.canvasName}</color>");
+                Logging.PrintError<Logger>($"<color=#ff7100>【Loading Failed】Not found UICanvas:</color> <color=#ff6ecb>{sourceComponent.uiSetting.canvasName}</color>");
                 return null;
             }
 
@@ -326,7 +326,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 var uiCanvas = this.GetUICanvas(uiBase.uiSetting.canvasName);
                 if (uiCanvas == null)
                 {
-                    Logging.Print<Logger>($"<color=#FF0068>When UI <color=#FF9000>[{uiBase.assetName}]</color> to set parent failed. Not found UICanvas:</color> <color=#FF9000>[{uiBase.uiSetting.canvasName}]</color>");
+                    Logging.PrintError<Logger>($"<color=#FF0068>Failed to set parent for UI <color=#FF9000>[{uiBase.assetName}]</color>. UICanvas not found: <color=#FF9000>[{uiBase.uiSetting.canvasName}]</color></color>");
                     return false;
                 }
 
@@ -461,7 +461,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             var uiBase = await this.LoadIntoAllCache(packageName, assetName, priority, progression, false);
             if (uiBase == null)
             {
-                Logging.PrintWarning<Logger>($"UI: {assetName} => Asset not found at this path!!!");
+                Logging.PrintError<Logger>($"UI -> Asset not found at path or name: {assetName}");
                 return null;
             }
 

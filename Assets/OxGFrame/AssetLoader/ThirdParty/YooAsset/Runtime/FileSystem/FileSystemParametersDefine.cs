@@ -7,6 +7,7 @@ namespace YooAsset
         public const string INSTALL_CLEAR_MODE = "INSTALL_CLEAR_MODE";
         public const string REMOTE_SERVICES = "REMOTE_SERVICES";
         public const string DECRYPTION_SERVICES = "DECRYPTION_SERVICES";
+        public const string MANIFEST_SERVICES = "MANIFEST_SERVICES";
         public const string APPEND_FILE_EXTENSION = "APPEND_FILE_EXTENSION";
         public const string DISABLE_CATALOG_FILE = "DISABLE_CATALOG_FILE";
         public const string DISABLE_UNITY_WEB_CACHE = "DISABLE_UNITY_WEB_CACHE";
@@ -18,5 +19,6 @@ namespace YooAsset
         public const string ASYNC_SIMULATE_MAX_FRAME = "ASYNC_SIMULATE_MAX_FRAME";
         public const string COPY_BUILDIN_PACKAGE_MANIFEST = "COPY_BUILDIN_PACKAGE_MANIFEST";
         public const string COPY_BUILDIN_PACKAGE_MANIFEST_DEST_ROOT = "COPY_BUILDIN_PACKAGE_MANIFEST_DEST_ROOT";
+        public const string COPY_LOCAL_FILE_SERVICES = "COPY_LOCAL_FILE_SERVICES";
     }
 }

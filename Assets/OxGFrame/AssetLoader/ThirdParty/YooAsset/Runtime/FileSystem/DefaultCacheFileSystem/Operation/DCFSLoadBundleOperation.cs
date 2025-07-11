@@ -228,9 +228,6 @@ namespace YooAsset
             {
                 if (ExecuteWhileDone())
                 {
-                    if (_downloadFileOp != null && _downloadFileOp.Status == EOperationStatus.Failed)
-                        YooLogger.Error($"Try load bundle {_bundle.BundleName} from remote !");
-
                     _steps = ESteps.Done;
                     break;
                 }
@@ -360,10 +357,6 @@ namespace YooAsset
             {
                 if (ExecuteWhileDone())
                 {
-                    //TODO 拷贝本地文件失败也会触发该错误！
-                    if (_downloadFileOp != null && _downloadFileOp.Status == EOperationStatus.Failed)
-                        YooLogger.Error($"Try load bundle {_bundle.BundleName} from remote !");
-
                     _steps = ESteps.Done;
                     break;
                 }

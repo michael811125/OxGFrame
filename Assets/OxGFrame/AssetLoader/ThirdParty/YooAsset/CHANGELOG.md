@@ -2,6 +2,65 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.12] - 2025-07-01
+
+### Improvements
+
+- 优化了同步接口导致的资源拷贝和资源验证性能开销高的现象。
+- 微信小游戏和抖音小游戏支持资源清单加密。
+
+### Fixed
+
+- (#579) 修复了2.3.10版本资源包构建页面里CopyBuildinFileParam无法编辑问题。
+- (#572) 修复了资源收集页面指定收集的预制体名称变动的问题。
+- (#582) 修复了非递归收集依赖时，依赖列表中才包含主资源的问题。
+
+### Added
+
+- 新增初始化参数：WebGLForceSyncLoadAsset
+
+  ```csharp
+  public abstract class InitializeParameters
+  {
+      /// <summary>
+      /// WebGL平台强制同步加载资源对象
+      /// </summary>Add commentMore actions
+      public bool WebGLForceSyncLoadAsset = false;
+  }
+  ```
+
+- (#576) 新增了资源清单服务类：IManifestServices
+
+  ```csharp
+  /// <summary>
+  /// 资源清单文件处理服务接口
+  /// </summary>
+  public interface IManifestServices
+  {
+      /// <summary>
+      /// 处理资源清单（压缩和加密）
+      /// </summary>
+      byte[] ProcessManifest(byte[] fileData);
+          
+      /// <summary>
+      /// 还原资源清单（解压和解密）
+      /// </summary>
+      byte[] RestoreManifest(byte[] fileData);
+  } 
+  ```
+
+- (#585) 新增了本地文件拷贝服务类：ICopyLocalFileServices
+
+  ```csharp
+  /// <summary>
+  /// 本地文件拷贝服务类
+  /// </summary>
+  public interface ICopyLocalFileServices
+  {
+      void CopyFile(LocalFileInfo sourceFileInfo, string destFilePath);
+  }
+  ```
+
 ## [2.3.10] - 2025-06-17
 
 ### Improvements

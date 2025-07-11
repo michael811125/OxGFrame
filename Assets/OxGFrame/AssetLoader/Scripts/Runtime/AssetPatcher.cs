@@ -885,8 +885,8 @@ namespace OxGFrame.AssetLoader
         /// </summary>
         public async static UniTask Release()
         {
-            BundleConfig.ReleaseSecuredString();
             await PackageManager.Release();
+            BundleConfig.Release();
         }
     }
 }
