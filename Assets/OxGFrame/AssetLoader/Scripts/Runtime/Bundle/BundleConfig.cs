@@ -343,12 +343,12 @@ namespace OxGFrame.AssetLoader.Bundle
                     }
                     // To string
                     content = Encoding.UTF8.GetString(dataWithoutHeader);
-                    Logging.Print<Logger>($"<color=#4eff9e>[Source is Cipher] Check -> burlconfig.conf:</color>\n{content}");
+                    Logging.Print<Logger>($"<color=#4eff9e>[Source is Cipher] Check -> burlconfig.conf</color>");
                 }
                 else
                 {
                     content = Encoding.UTF8.GetString(data);
-                    Logging.Print<Logger>($"<color=#4eff9e>[Source is Plaintext] Check -> burlconfig.conf:</color>\n{content}");
+                    Logging.Print<Logger>($"<color=#4eff9e>[Source is Plaintext] Check -> burlconfig.conf</color>");
                 }
                 #endregion
 

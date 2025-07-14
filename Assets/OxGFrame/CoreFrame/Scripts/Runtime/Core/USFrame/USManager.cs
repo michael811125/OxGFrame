@@ -9,6 +9,9 @@ using UnityEngine.SceneManagement;
 
 namespace OxGFrame.CoreFrame.USFrame
 {
+    /// <summary>
+    /// Encapsulate the handling type for AdditiveScene
+    /// </summary>
     public struct AdditiveSceneInfo
     {
         public string sceneName;
@@ -18,9 +21,19 @@ namespace OxGFrame.CoreFrame.USFrame
 
     internal class USManager
     {
-        public static int sceneCount { get { return SceneManager.sceneCount; } }
+        /// <summary>
+        /// Gets the number of currently loaded scenes
+        /// </summary>
+        public static int sceneCount => SceneManager.sceneCount;
 
+        /// <summary>
+        /// The number of scenes that have been processed so far (for progress tracking)
+        /// </summary>
         private float _currentCount;
+
+        /// <summary>
+        /// The total number of scenes to process (for progress tracking)
+        /// </summary>
         private float _totalCount;
 
         private static readonly object _locker = new object();
@@ -187,6 +200,15 @@ namespace OxGFrame.CoreFrame.USFrame
             }
         }
 
+        public async UniTask SetActiveSceneRootGameObjectsAsync(string sceneName, bool active, int framesInterval, int activeObjectsPerInterval, string[] withoutRootGameObjectNames = null)
+        {
+            Scene[] filterScenes = this.GetAllScenes(sceneName);
+            foreach (var scene in filterScenes)
+            {
+                await this.SetActiveSceneRootGameObjectsAsync(scene, active, framesInterval, activeObjectsPerInterval, withoutRootGameObjectNames);
+            }
+        }
+
         public void SetActiveSceneRootGameObjects(Scene scene, bool active, string[] withoutRootGameObjectNames = null)
         {
             if (scene.IsValid() && scene.isLoaded)
@@ -209,6 +231,52 @@ namespace OxGFrame.CoreFrame.USFrame
                             if (!without) go.SetActive(active);
                         }
                         else go.SetActive(active);
+                    }
+                }
+                else Logging.PrintWarning<Logger>($"<color=#ff8233>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...</color>");
+            }
+            else Logging.PrintError<Logger>($"<color=#ff33ae>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene not is valid!!!</color>");
+        }
+
+        public async UniTask SetActiveSceneRootGameObjectsAsync(Scene scene, bool active, int framesInterval, int activeObjectsPerInterval, string[] withoutRootGameObjectNames = null)
+        {
+            if (scene.IsValid() && scene.isLoaded)
+            {
+                if (scene.isLoaded)
+                {
+                    // Calculate num of process
+                    int processed = 0;
+
+                    foreach (var go in scene.GetRootGameObjects())
+                    {
+                        if (withoutRootGameObjectNames != null && withoutRootGameObjectNames.Length > 0)
+                        {
+                            bool without = false;
+                            for (int i = 0; i < withoutRootGameObjectNames.Length; i++)
+                            {
+                                if (go.name == withoutRootGameObjectNames[i])
+                                {
+                                    without = true;
+                                    break;
+                                }
+                            }
+                            if (!without)
+                            {
+                                go.SetActive(active);
+                                processed++;
+                            }
+                        }
+                        else
+                        {
+                            go.SetActive(active);
+                            processed++;
+                        }
+
+                        if (framesInterval > 0 && activeObjectsPerInterval > 0)
+                        {
+                            if (processed % activeObjectsPerInterval == 0)
+                                await UniTask.DelayFrame(framesInterval);
+                        }
                     }
                 }
                 else Logging.PrintWarning<Logger>($"<color=#ff8233>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...</color>");
