@@ -6,6 +6,7 @@ using OxGFrame.Hotfixer.HotfixEvent;
 using OxGKit.LoggingSystem;
 using System;
 using System.Reflection;
+using System.Xml.Linq;
 using UniFramework.Machine;
 using UnityEngine;
 using YooAsset;
@@ -327,7 +328,6 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
             void IStateNode.OnExit()
             {
-                HotfixManager.GetInstance().ReleaseAOTAssemblyNames();
             }
 
             private async UniTask _LoadAOTAssemblies()
@@ -410,7 +410,6 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
             void IStateNode.OnExit()
             {
-                HotfixManager.GetInstance().ReleaseHotfixAssemblyNames();
             }
 
             private async UniTask _LoadHotfixAssemblies()

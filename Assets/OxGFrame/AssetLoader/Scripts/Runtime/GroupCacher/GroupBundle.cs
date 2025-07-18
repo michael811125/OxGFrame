@@ -117,7 +117,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                     Logging.Print<Logger>($"【Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
                 }
 
-                CacheBundle.GetInstance().UnloadRawFileAsync(keyGroup.assetName, forceUnload);
+                CacheBundle.GetInstance().UnloadRawFileAsync(keyGroup.assetName, forceUnload).Forget();
             }
         }
 
@@ -132,7 +132,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                     // 依照計數次數釋放
                     for (int i = keyGroup.refCount; i > 0; i--)
                     {
-                        CacheBundle.GetInstance().UnloadRawFileAsync(keyGroup.assetName, false);
+                        CacheBundle.GetInstance().UnloadRawFileAsync(keyGroup.assetName, false).Forget();
                     }
 
                     // 完成後, 直接刪除緩存
@@ -245,7 +245,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                     Logging.Print<Logger>($"【Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
                 }
 
-                CacheBundle.GetInstance().UnloadAsset(keyGroup.assetName, forceUnload);
+                CacheBundle.GetInstance().UnloadAsset(keyGroup.assetName, forceUnload).Forget();
             }
         }
 
@@ -260,7 +260,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                     // 依照計數次數釋放
                     for (int i = keyGroup.refCount; i > 0; i--)
                     {
-                        CacheBundle.GetInstance().UnloadAsset(keyGroup.assetName, false);
+                        CacheBundle.GetInstance().UnloadAsset(keyGroup.assetName, false).Forget();
                     }
 
                     // 完成後, 直接刪除緩存

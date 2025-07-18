@@ -9,6 +9,48 @@ namespace OxGFrame.Hotfixer
     public static class Hotfixers
     {
         /// <summary>
+        /// Get AOT assembly names
+        /// <para> Strings that include '.dll' extension </para>
+        /// <para> Note: When you execute CheckHotfix method, it will be set </para>
+        /// </summary>
+        /// <returns></returns>
+        public static string[] GetAOTAssemblyNames()
+        {
+            return HotfixManager.GetInstance().GetAOTAssemblyNames();
+        }
+
+        /// <summary>
+        /// Get AOT assembly names without extensions
+        /// <para> Note: When you execute CheckHotfix method, it will be set </para>
+        /// </summary>
+        /// <returns></returns>
+        public static string[] GetAotAssemblyNamesWithoutExtensions()
+        {
+            return HotfixManager.GetInstance().GetAotAssemblyNamesWithoutExtensions();
+        }
+
+        /// <summary>
+        /// Get Hotfix assembly names
+        /// <para> Strings that include '.dll' extension </para>
+        /// <para> Note: When you execute CheckHotfix method, it will be set </para>
+        /// </summary>
+        /// <returns></returns>
+        public static string[] GetHotfixAssemblyNames()
+        {
+            return HotfixManager.GetInstance().GetHotfixAssemblyNames();
+        }
+
+        /// <summary>
+        /// Get Hotfix assembly names without extensions
+        /// <para> Note: When you execute CheckHotfix method, it will be set </para>
+        /// </summary>
+        /// <returns></returns>
+        public static string[] GetHotfixAssemblyNamesWithoutExtensions()
+        {
+            return HotfixManager.GetInstance().GetHotfixAssemblyNamesWithoutExtensions();
+        }
+
+        /// <summary>
         /// Reset hotfix flgas and cache
         /// </summary>
         public static void Reset()

@@ -7,12 +7,12 @@ namespace OxGFrame.Hotfixer
         /// <summary>
         /// 配置檔標檔頭
         /// </summary>
-        public const short CIPHER_HEADER = 0x584F;
+        internal const short CIPHER_HEADER = 0x584F;
 
         /// <summary>
         /// 配置檔金鑰
         /// </summary>
-        public const byte CIPHER = 0x6D;
+        internal const byte CIPHER = 0x6D;
 
         /// <summary>
         /// 佈署配置檔

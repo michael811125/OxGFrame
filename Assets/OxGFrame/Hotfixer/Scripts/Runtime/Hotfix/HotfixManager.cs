@@ -2,6 +2,7 @@
 using OxGFrame.Hotfixer.HotfixEvent;
 using OxGFrame.Hotfixer.HotfixFsm;
 using OxGKit.LoggingSystem;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UniFramework.Event;
@@ -19,9 +20,11 @@ namespace OxGFrame.Hotfixer
         private bool _isCheck = false;
         private bool _isDone = false;
 
-        private string[] _aotAssemblies;
-        private string[] _hotfixAssemblies;
-        private Dictionary<string, Assembly> _dictHotfixAssemblies;
+        private string[] _aotAssemblies = null;
+        private string[] _hotfixAssemblies = null;
+        private string[] _aotAssembliesWithoutExtensions = null;
+        private string[] _hotfixAssembliesWithoutExtensions = null;
+        private Dictionary<string, Assembly> _dictHotfixAssemblies = null;
 
         private EventGroup _userEvents;
         private StateMachine _hotfixFsm;
@@ -103,6 +106,8 @@ namespace OxGFrame.Hotfixer
         {
             this._isCheck = false;
             this._isDone = false;
+            this.ReleaseAOTAssemblyNames();
+            this.ReleaseHotfixAssemblyNames();
             this._dictHotfixAssemblies.Clear();
         }
 
@@ -117,9 +122,17 @@ namespace OxGFrame.Hotfixer
             return this._aotAssemblies;
         }
 
+        public string[] GetAotAssemblyNamesWithoutExtensions()
+        {
+            if (this._aotAssembliesWithoutExtensions == null)
+                this._aotAssembliesWithoutExtensions = this._TrimExtensionsFromStrings(this._aotAssemblies, ".dll");
+            return this._aotAssembliesWithoutExtensions;
+        }
+
         public void ReleaseAOTAssemblyNames()
         {
             this._aotAssemblies = null;
+            this._aotAssembliesWithoutExtensions = null;
         }
 
         public string[] GetHotfixAssemblyNames()
@@ -127,9 +140,17 @@ namespace OxGFrame.Hotfixer
             return this._hotfixAssemblies;
         }
 
+        public string[] GetHotfixAssemblyNamesWithoutExtensions()
+        {
+            if (this._hotfixAssembliesWithoutExtensions == null)
+                this._hotfixAssembliesWithoutExtensions = this._TrimExtensionsFromStrings(this._hotfixAssemblies, ".dll");
+            return this._hotfixAssembliesWithoutExtensions;
+        }
+
         public void ReleaseHotfixAssemblyNames()
         {
             this._hotfixAssemblies = null;
+            this._hotfixAssembliesWithoutExtensions = null;
         }
 
         public void AddHotfixAssembly(string assemblyName, Assembly assembly)
@@ -149,35 +170,15 @@ namespace OxGFrame.Hotfixer
         #region Hotfix Operation
         public void CheckHotfix(string packageName, string[] aotAssemblies, string[] hotfixAssemblies)
         {
-            if (this._isDone)
-            {
-                Logging.Print<Logger>("<color=#ff8686>Hotfix all are loaded.</color>");
-                return;
-            }
-
-            if (!this._isCheck)
-            {
-                this._isCheck = true;
-
-                // Hotfix package name
-                this.packageName = packageName;
-
-                // Add AOT assemblies
-                this._aotAssemblies = aotAssemblies;
-
-                // Add Hotfix assemblies
-                this._hotfixAssemblies = hotfixAssemblies;
-
-                // Run hotfix procedure
-                this._hotfixFsm.Run<HotfixFsmStates.FsmHotfixPrepare>();
-            }
-            else
-            {
-                Logging.PrintWarning<Logger>("Hotfix Checking...");
-            }
+            this._CheckHotfix(packageName, null, aotAssemblies, hotfixAssemblies);
         }
 
         public void CheckHotfix(PackageInfoWithBuild packageInfoWithBuild, string[] aotAssemblies, string[] hotfixAssemblies)
+        {
+            this._CheckHotfix(null, packageInfoWithBuild, aotAssemblies, hotfixAssemblies);
+        }
+
+        private void _CheckHotfix(string packageName, PackageInfoWithBuild packageInfoWithBuild, string[] aotAssemblies, string[] hotfixAssemblies)
         {
             if (this._isDone)
             {
@@ -189,13 +190,10 @@ namespace OxGFrame.Hotfixer
             {
                 this._isCheck = true;
 
-                // Hotfix package info
+                // Hotfix params
+                this.packageName = packageName;
                 this.packageInfoWithBuild = packageInfoWithBuild;
-
-                // Add AOT assemblies
                 this._aotAssemblies = aotAssemblies;
-
-                // Add Hotfix assemblies
                 this._hotfixAssemblies = hotfixAssemblies;
 
                 // Run hotfix procedure
@@ -251,5 +249,35 @@ namespace OxGFrame.Hotfixer
             }
         }
         #endregion
+
+        /// <summary>
+        /// 移除字串清單擴展名
+        /// </summary>
+        /// <param name="names"></param>
+        /// <param name="ext"></param>
+        /// <returns></returns>
+        private string[] _TrimExtensionsFromStrings(string[] names, string ext)
+        {
+            if (names == null)
+                return null;
+
+            int n = names.Length;
+            var result = new string[n];
+            for (int i = 0; i < n; i++)
+            {
+                var s = names[i];
+                if (!string.IsNullOrEmpty(s) &&
+                    s.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
+                {
+                    result[i] = s.Substring(0, s.Length - ext.Length);
+                }
+                else
+                {
+                    result[i] = s;
+                }
+            }
+
+            return result;
+        }
     }
 }
