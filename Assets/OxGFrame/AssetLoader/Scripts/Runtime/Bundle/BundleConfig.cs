@@ -613,6 +613,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         internal static void Release()
         {
+            saver.Dispose();
             saver = null;
 
             semanticRule = null;
