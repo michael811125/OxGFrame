@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## [3.4.1] - 2025-07-18
+
+# English
+
+- Adjusted access modifiers for certain parameters.
+
+- AssetLoader
+  - Adjusted `appconfig.json` to differentiate write contents between built‑in and CDN.
+  - Adjusted `BundleHelper.ExportAppConfig` method to remove the `semanticRule` parameter.
+- Hotfixer
+  - Added `GetAOTAssemblyNames` to get a cached list of AOT assembly names (including the “.dll” extension, e.g. `"mscorlib.dll"`).
+  - Added `GetHotfixAssemblyNames` to get a cached list of Hotfix assembly names (including the “.dll” extension, e.g. `"HotfixerDemo.Hotfix.Runtime.dll"`).
+  - Added `GetAotAssemblyNamesWithoutExtensions` to get a cached list of AOT assembly names (without the “.dll” extension, e.g. `"mscorlib"`).
+  - Added `GetHotfixAssemblyNamesWithoutExtensions` to get a cached list of Hotfix assembly names (without the “.dll” extension, e.g. `"HotfixerDemo.Hotfix.Runtime"`).
+- CoreFrame
+  - USFrame
+    - Added `SetActiveSceneRootGameObjectsAsync`, an asynchronous method that spreads work across frames and lets you specify how many scene root GameObjects to activate per frame.
+
+# 中文
+
+- 調整部分參數存取權限。
+
+- AssetLoader
+  - 調整 appconfig.json 區分內置與 CDN 的寫入內容。
+  - 調整 BundleHelper.ExportAppConfig 方法，移除 semanticRule 參數。
+- Hotfixer
+  - 新增 GetAOTAssemblyNames 獲取 AOT 程序集名稱緩存清單方法 (包含 .dll 擴展名 -> ex: "mscorlib.dll")。
+  - 新增 GetHotfixAssemblyNames 獲取 Hotfix 程序集名稱緩存清單方法 (包含 .dll 擴展名 -> ex: "HotfixerDemo.Hotfix.Runtime.dll")。
+  - 新增 GetAotAssemblyNamesWithoutExtensions 獲取 AOT 程序集名稱緩存清單方法 (不包含 .dll 擴展名 -> ex: "mscorlib")。
+  - 新增 GetHotfixAssemblyNamesWithoutExtensions 獲取 Hotfix 程序集名稱緩存清單方法 (不包含 .dll 擴展名 -> ex: "HotfixerDemo.Hotfix.Runtime")。
+- CoreFrame
+  - USFrame
+    - 新增 SetActiveSceneRootGameObjectsAsync 異步方法，支持分散幀處理，可以設置每幾幀要顯示幾個場景根物件。
+
 ## [3.4.0] - 2025-07-11
 
 # English
