@@ -23,17 +23,16 @@ namespace OxGFrame.AssetLoader.Editor
         /// 輸出 App 配置檔至輸出路徑 (Export AppConfig to StreamingAssets [for Built-in])
         /// </summary>
         /// <param name="productName"></param>
-        /// <param name="semanticRule"></param>
         /// <param name="appVersion"></param>
         /// <param name="outputPath"></param>
         /// <param name="activeBuildTarget"></param>
         /// <param name="buildTarget"></param>
-        public static void ExportAppConfig(string productName, SemanticRule semanticRule, string appVersion, string outputPath, bool activeBuildTarget, BuildTarget buildTarget)
+        public static void ExportAppConfig(string productName, string appVersion, string outputPath, bool activeBuildTarget, BuildTarget buildTarget)
         {
             if (!Directory.Exists(outputPath)) Directory.CreateDirectory(outputPath);
 
             // 生成配置檔數據
-            var cfg = GenerateAppConfig(productName, semanticRule, appVersion, activeBuildTarget, buildTarget);
+            var cfg = GenerateAppConfig(productName, null, appVersion, activeBuildTarget, buildTarget);
 
             // 配置檔序列化, 將進行寫入
             string jsonCfg = JsonConvert.SerializeObject(cfg, Formatting.Indented);

@@ -854,6 +854,11 @@ namespace OxGFrame.CoreFrame
                 USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, active, withoutRootGameObjectNames);
             }
 
+            public async static UniTask SetActiveSceneRootGameObjectsAsync(string sceneName, bool active, int framesInterval = 1, int activeObjectsPerInterval = 3, params string[] withoutRootGameObjectNames)
+            {
+                await USManager.GetInstance().SetActiveSceneRootGameObjectsAsync(sceneName, active, framesInterval, activeObjectsPerInterval, withoutRootGameObjectNames);
+            }
+
             /// <summary>
             /// Set active all root game objects in scene
             /// </summary>
@@ -863,6 +868,11 @@ namespace OxGFrame.CoreFrame
             public static void SetActiveSceneRootGameObjects(Scene scene, bool active, string[] withoutRootGameObjectNames = null)
             {
                 USManager.GetInstance().SetActiveSceneRootGameObjects(scene, active, withoutRootGameObjectNames);
+            }
+
+            public async static UniTask SetActiveSceneRootGameObjectsAsync(Scene scene, bool active, int framesInterval = 1, int activeObjectsPerInterval = 3, params string[] withoutRootGameObjectNames)
+            {
+                await USManager.GetInstance().SetActiveSceneRootGameObjectsAsync(scene, active, framesInterval, activeObjectsPerInterval, withoutRootGameObjectNames);
             }
 
             /// <summary>

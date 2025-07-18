@@ -360,6 +360,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         }
                         else
                         {
+                            // 僅 CDN 使用 (local 不需要序列化儲存該參數)
+                            hostCfg.SEMANTIC_RULE = null;
+
+                            // 序列化 Host 配置文件
                             string hostCfgJson = JsonConvert.SerializeObject(hostCfg);
 
                             // 寫入完整版號至 Local

@@ -109,12 +109,12 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// 配置檔標檔頭
         /// </summary>
-        public const short CIPHER_HEADER = 0x584F;
+        internal const short CIPHER_HEADER = 0x584F;
 
         /// <summary>
         /// 配置檔金鑰
         /// </summary>
-        public const byte CIPHER = 0x4D;
+        internal const byte CIPHER = 0x4D;
 
         /// <summary>
         /// Patch 執行模式
@@ -343,12 +343,12 @@ namespace OxGFrame.AssetLoader.Bundle
                     }
                     // To string
                     content = Encoding.UTF8.GetString(dataWithoutHeader);
-                    Logging.Print<Logger>($"<color=#4eff9e>[Source is Cipher] Check -> burlconfig.conf:</color>\n{content}");
+                    Logging.Print<Logger>($"<color=#4eff9e>[Source is Cipher] Check -> burlconfig.conf</color>");
                 }
                 else
                 {
                     content = Encoding.UTF8.GetString(data);
-                    Logging.Print<Logger>($"<color=#4eff9e>[Source is Plaintext] Check -> burlconfig.conf:</color>\n{content}");
+                    Logging.Print<Logger>($"<color=#4eff9e>[Source is Plaintext] Check -> burlconfig.conf</color>");
                 }
                 #endregion
 
@@ -402,7 +402,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得 StreamingAssets 中的 Bundle URL
+        /// 獲取 APP 包裹位於 Host 上的端點
         /// </summary>
         /// <returns></returns>
         public static async UniTask<string> GetHostServerUrl(string packageName)
@@ -413,7 +413,8 @@ namespace OxGFrame.AssetLoader.Bundle
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
             string appVersion = appConfig.APP_VERSION;
-            string refineAppVersion = appConfig.SEMANTIC_RULE.PATCH ? $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}.{appVersion.Split('.')[2]}" : $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
+            bool ruleIncludesPatchVersion = appConfig.SEMANTIC_RULE != null ? appConfig.SEMANTIC_RULE.PATCH : false;
+            string refineAppVersion = ruleIncludesPatchVersion ? $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}.{appVersion.Split('.')[2]}" : $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
             string rootFolderName = PatchSetting.setting.rootFolderName;
 
             // 預設組合路徑
@@ -421,7 +422,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得 StreamingAssets 中的 Bundle Fallback URL
+        /// 獲取 APP 包裹位於 Host 上的端點 (Fallback)
         /// </summary>
         /// <returns></returns>
         public static async UniTask<string> GetFallbackHostServerUrl(string packageName)
@@ -432,7 +433,8 @@ namespace OxGFrame.AssetLoader.Bundle
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
             string appVersion = appConfig.APP_VERSION;
-            string refineAppVersion = appConfig.SEMANTIC_RULE.PATCH ? $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}.{appVersion.Split('.')[2]}" : $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
+            bool ruleIncludesPatchVersion = appConfig.SEMANTIC_RULE != null ? appConfig.SEMANTIC_RULE.PATCH : false;
+            string refineAppVersion = ruleIncludesPatchVersion ? $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}.{appVersion.Split('.')[2]}" : $@"v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}";
             string rootFolderName = PatchSetting.setting.rootFolderName;
 
             // 預設組合路徑
@@ -440,7 +442,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得 StreamingAssets 中的 Bundle URL (DLC)
+        /// 獲取 DLC 包裹位於 Host 上的端點
         /// </summary>
         /// <param name="packageName"></param>
         /// <param name="dlcVersion"></param>
@@ -462,7 +464,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得 StreamingAssets 中的 Bundle Fallback URL (DLC)
+        /// 獲取 DLC 包裹位於 Host 上的端點 (Fallback)
         /// </summary>
         /// <returns></returns>
         public static async UniTask<string> GetDlcFallbackHostServerUrl(string packageName, string dlcVersion, bool withoutPlatform = false)
@@ -559,7 +561,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得資源伺服器的 AppConfig (URL)
+        /// 取得資源服務器的 AppConfig (URL)
         /// </summary>
         /// <returns></returns>
         public static async UniTask<string> GetHostServerAppConfigPath()
@@ -576,7 +578,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 取得資源伺服器的 PatchConfig (URL)
+        /// 取得資源服務器的 PatchConfig (URL)
         /// </summary>
         /// <returns></returns>
         public static async UniTask<string> GetHostServerPatchConfigPath()
@@ -611,6 +613,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         internal static void Release()
         {
+            saver.Dispose();
             saver = null;
 
             semanticRule = null;

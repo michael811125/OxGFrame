@@ -1,0 +1,12 @@
+[
+  {
+    "planName": "Hotfixer Demo Dll Plan",
+    "aotDlls": [
+      "mscorlib.dll",
+      "UniTask.dll"
+    ],
+    "hotfixDlls": [
+      "HotfixerDemo.Hotfix.Runtime.dll"
+    ]
+  }
+]

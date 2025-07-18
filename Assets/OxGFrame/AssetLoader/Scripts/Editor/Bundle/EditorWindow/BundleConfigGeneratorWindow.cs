@@ -641,7 +641,7 @@ namespace OxGFrame.AssetLoader.Editor
                 {
                     case OperationType.ExportAppConfigToStreamingAssets:
                         outputPath = Application.streamingAssetsPath;
-                        BundleHelper.ExportAppConfig(this.productName, this.semanticRule, this.appVersion, outputPath, this.activeBuildTarget, this.buildTarget);
+                        BundleHelper.ExportAppConfig(this.productName, this.appVersion, outputPath, this.activeBuildTarget, this.buildTarget);
                         EditorUtility.DisplayDialog("Process Message", "Export AppConfig To StreamingAssets.", "OK");
                         AssetDatabase.Refresh();
                         string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION}";
