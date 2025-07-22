@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [3.4.2] - 2025-07-22
+
+# English
+
+- Hotfixer
+  - Fixed an issue where `packageName` was not correctly set when initializing the Hotfix Package using `packageInfoWithBuild`.
+
+# 中文
+
+- Hotfixer
+  - 修正使用 packageInfoWithBuild 初始 Hotfix Package 時，未正確設置 packgeaName 的問題。
+
 ## [3.4.1] - 2025-07-18
 
 # English
