@@ -191,7 +191,7 @@ namespace OxGFrame.Hotfixer
                 this._isCheck = true;
 
                 // Hotfix params
-                this.packageName = packageName;
+                this.packageName = string.IsNullOrEmpty(packageName) ? packageInfoWithBuild.packageName : packageName;
                 this.packageInfoWithBuild = packageInfoWithBuild;
                 this._aotAssemblies = aotAssemblies;
                 this._hotfixAssemblies = hotfixAssemblies;

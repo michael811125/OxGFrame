@@ -6,7 +6,6 @@ using OxGFrame.Hotfixer.HotfixEvent;
 using OxGKit.LoggingSystem;
 using System;
 using System.Reflection;
-using System.Xml.Linq;
 using UniFramework.Machine;
 using UnityEngine;
 using YooAsset;
@@ -32,7 +31,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
             void IStateNode.OnEnter()
             {
                 HotfixEvents.HotfixFsmState.SendEventMessage(this);
-                Logging.Print<Logger>("<color=#00cf6b>(Powered by HybridCLR) Hotfix Work</color>");
+                Logging.Print<Logger>("<color=#00cf6b>(Powered by HybridCLR) Hotfix is now running...</color>");
                 this._machine.ChangeState<FsmInitHotfixPackage>();
             }
 
