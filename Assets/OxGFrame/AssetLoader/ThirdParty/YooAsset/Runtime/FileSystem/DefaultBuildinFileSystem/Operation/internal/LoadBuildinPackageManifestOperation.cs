@@ -46,7 +46,7 @@ namespace YooAsset
                 {
                     string filePath = _fileSystem.GetBuildinPackageManifestFilePath(_packageVersion);
                     string url = DownloadSystemHelper.ConvertToWWWPath(filePath);
-                    _webDataRequestOp = new UnityWebDataRequestOperation(url);
+                    _webDataRequestOp = new UnityWebDataRequestOperation(url, 60);
                     _webDataRequestOp.StartOperation();
                     AddChildOperation(_webDataRequestOp);
                 }

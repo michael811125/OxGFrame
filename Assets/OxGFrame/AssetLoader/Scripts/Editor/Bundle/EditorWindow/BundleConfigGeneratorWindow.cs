@@ -868,12 +868,12 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void _ExportBundlePlans()
         {
-            string savePath = EditorStorage.GetData(keySaver, $"bundlePlanFIlePath", Application.dataPath);
+            string savePath = EditorStorage.GetData(keySaver, $"bundlePlanFilePath", Application.dataPath);
             var filePath = EditorUtility.SaveFilePanel("Save Bundle Plan Json File", savePath, "BundlePlan", "json");
 
             if (!string.IsNullOrEmpty(filePath))
             {
-                EditorStorage.SaveData(keySaver, $"bundlePlanFIlePath", Path.GetDirectoryName(filePath));
+                EditorStorage.SaveData(keySaver, $"bundlePlanFilePath", Path.GetDirectoryName(filePath));
                 string json = JsonConvert.SerializeObject(this.bundlePlans, Formatting.Indented);
                 BundleHelper.WriteTxt(json, filePath);
                 AssetDatabase.Refresh();
@@ -882,12 +882,12 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void _ImportBundlePlans()
         {
-            string loadPath = EditorStorage.GetData(keySaver, $"bundlePlanFIlePath", Application.dataPath);
+            string loadPath = EditorStorage.GetData(keySaver, $"bundlePlanFilePath", Application.dataPath);
             string filePath = EditorUtility.OpenFilePanel("Select Bundle Plan Json File", !string.IsNullOrEmpty(loadPath) ? loadPath : Application.dataPath, "json");
 
             if (!string.IsNullOrEmpty(filePath))
             {
-                EditorStorage.SaveData(keySaver, $"bundlePlanFIlePath", Path.GetDirectoryName(filePath));
+                EditorStorage.SaveData(keySaver, $"bundlePlanFilePath", Path.GetDirectoryName(filePath));
                 string json = File.ReadAllText(filePath);
                 this.bundlePlans = JsonConvert.DeserializeObject<List<BundlePlan>>(json);
 

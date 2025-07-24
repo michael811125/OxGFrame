@@ -1,4 +1,5 @@
-﻿using OxGFrame.AssetLoader.Utility;
+﻿using OxGFrame.AssetLoader.Bundle;
+using OxGFrame.AssetLoader.Utility;
 using System;
 using System.IO;
 using System.Linq;

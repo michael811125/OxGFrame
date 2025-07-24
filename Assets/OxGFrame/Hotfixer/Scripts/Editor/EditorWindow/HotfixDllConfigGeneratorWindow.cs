@@ -371,12 +371,12 @@ namespace OxGFrame.Hotfixer.Editor
 
         private void _ExportHotfixDllPlans()
         {
-            string savePath = EditorStorage.GetData(keySaver, $"hotfixDllPlanFIlePath", Application.dataPath);
+            string savePath = EditorStorage.GetData(keySaver, $"hotfixDllPlanFilePath", Application.dataPath);
             var filePath = EditorUtility.SaveFilePanel("Save Hotfix Dll Plan Json File", savePath, "HotfixDllPlan", "json");
 
             if (!string.IsNullOrEmpty(filePath))
             {
-                EditorStorage.SaveData(keySaver, $"hotfixDllPlanFIlePath", Path.GetDirectoryName(filePath));
+                EditorStorage.SaveData(keySaver, $"hotfixDllPlanFilePath", Path.GetDirectoryName(filePath));
                 string json = JsonConvert.SerializeObject(this.hotfixDllPlans, Formatting.Indented);
                 HotfixHelper.WriteTxt(json, filePath);
                 AssetDatabase.Refresh();
@@ -385,12 +385,12 @@ namespace OxGFrame.Hotfixer.Editor
 
         private void _ImportHotfixDllPlans()
         {
-            string loadPath = EditorStorage.GetData(keySaver, $"hotfixDllPlanFIlePath", Application.dataPath);
+            string loadPath = EditorStorage.GetData(keySaver, $"hotfixDllPlanFilePath", Application.dataPath);
             string filePath = EditorUtility.OpenFilePanel("Select Hotfix Dll Plan Json File", !string.IsNullOrEmpty(loadPath) ? loadPath : Application.dataPath, "json");
 
             if (!string.IsNullOrEmpty(filePath))
             {
-                EditorStorage.SaveData(keySaver, $"hotfixDllPlanFIlePath", Path.GetDirectoryName(filePath));
+                EditorStorage.SaveData(keySaver, $"hotfixDllPlanFilePath", Path.GetDirectoryName(filePath));
                 string json = File.ReadAllText(filePath);
                 this.hotfixDllPlans = JsonConvert.DeserializeObject<List<HotfixDllPlan>>(json);
 

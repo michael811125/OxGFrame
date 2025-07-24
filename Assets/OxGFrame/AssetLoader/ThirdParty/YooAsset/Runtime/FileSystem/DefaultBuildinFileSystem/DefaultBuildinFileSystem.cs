@@ -92,7 +92,7 @@ namespace YooAsset
         /// <summary>
         /// 自定义参数：资源清单服务类
         /// </summary>
-        public IManifestServices ManifestServices { private set; get; }
+        public IManifestRestoreServices ManifestServices { private set; get; }
 
         /// <summary>
         /// 自定义参数：拷贝内置文件服务类
@@ -125,7 +125,7 @@ namespace YooAsset
         }
         public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadFileOptions options)
         {
-            // 注意：业务层的解压下载器会依赖内置文件系统的下载方法
+            // 注意：业务层的解压器会依赖该方法
             options.ImportFilePath = GetBuildinFileLoadPath(bundle);
             return _unpackFileSystem.DownloadFileAsync(bundle, options);
         }
@@ -186,7 +186,7 @@ namespace YooAsset
             }
             else if (name == FileSystemParametersDefine.MANIFEST_SERVICES)
             {
-                ManifestServices = (IManifestServices)value;
+                ManifestServices = (IManifestRestoreServices)value;
             }
             else if (name == FileSystemParametersDefine.COPY_LOCAL_FILE_SERVICES)
             {

@@ -1,7 +1,7 @@
 ﻿using MyBox;
 using UnityEngine;
 
-namespace OxGFrame.AssetLoader.Editor
+namespace OxGFrame.AssetLoader.Bundle
 {
     [CreateAssetMenu(fileName = nameof(CryptogramSetting), menuName = "OxGFrame/Create Settings/Create Cryptogram Setting")]
     public class CryptogramSetting : ScriptableObject

@@ -1,4 +1,5 @@
-﻿using OxGFrame.AssetLoader.Utility.SecureMemory;
+﻿using OxGFrame.AssetLoader.Utility;
+using OxGFrame.AssetLoader.Utility.SecureMemory;
 using System;
 using System.IO;
 using UnityEngine;
@@ -7,10 +8,12 @@ using YooAsset;
 namespace OxGFrame.AssetLoader.Bundle
 {
     /// <summary>
-    /// 處理解密文件種類
+    /// 處理文件解密操作類型
     /// </summary>
-    public enum FileProcessCategory
+    public enum FileOperationType
     {
+        None,
+        Custom,
         Bundle,
         Manifest
     }
@@ -47,7 +50,7 @@ namespace OxGFrame.AssetLoader.Bundle
     /// 解密服務統一接口
     /// </summary>
     public abstract class DecryptionServices :
-        IManifestServices,
+        IManifestRestoreServices,
         IDecryptionServices,
         IWebDecryptionServices,
         IDecryptStream,
@@ -62,11 +65,13 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// 解密處理種類
         /// </summary>
-        protected FileProcessCategory _fileProcessCategory = FileProcessCategory.Bundle;
+        protected FileOperationType _fileOperationType = FileOperationType.None;
 
-        public DecryptionServices(FileProcessCategory fileProcessCategory)
+        public DecryptionServices() { }
+
+        public DecryptionServices(FileOperationType fileOperationType)
         {
-            this._fileProcessCategory = fileProcessCategory;
+            this._fileOperationType = fileOperationType;
         }
 
         #region OxGFrame Implements
@@ -145,11 +150,6 @@ namespace OxGFrame.AssetLoader.Bundle
         #endregion
 
         #region IManifestServices
-        public byte[] ProcessManifest(byte[] fileData)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public byte[] RestoreManifest(byte[] fileData)
         {
             return this.DecryptData(fileData);
@@ -162,25 +162,45 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         private int _dummySize;
 
-        public OffsetDecryption(FileProcessCategory fileProcessCategory) : base(fileProcessCategory)
+        public OffsetDecryption() { }
+
+        public OffsetDecryption(int dummySize)
         {
+            this._fileOperationType = FileOperationType.Custom;
+            this._dummySize = dummySize;
         }
+
+        public OffsetDecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
 
         #region OxGFrame Implements
         public override bool Initialize()
         {
             try
             {
-                switch (this._fileProcessCategory)
+                switch (this._fileOperationType)
                 {
-                    case FileProcessCategory.Bundle:
+                    case FileOperationType.None:
+                        {
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            if (cryptogramSettings != null)
+                            {
+                                this._dummySize = cryptogramSettings.dummySize;
+                            }
+                        }
+                        break;
+
+                    // Nothing to do
+                    case FileOperationType.Custom:
+                        break;
+
+                    case FileOperationType.Bundle:
                         {
                             SecuredString[] decryptArgs = BundleConfig.bundleDecryptArgs;
                             this._dummySize = Convert.ToInt32(decryptArgs[1].Decrypt());
                         }
                         break;
 
-                    case FileProcessCategory.Manifest:
+                    case FileOperationType.Manifest:
                         {
                             SecuredString[] decryptArgs = BundleConfig.manifestDecryptArgs;
                             this._dummySize = Convert.ToInt32(decryptArgs[1].Decrypt());
@@ -246,25 +266,45 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         private byte _key;
 
-        public XorDecryption(FileProcessCategory fileProcessCategory) : base(fileProcessCategory)
+        public XorDecryption() { }
+
+        public XorDecryption(byte key)
         {
+            this._fileOperationType = FileOperationType.Custom;
+            this._key = key;
         }
+
+        public XorDecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
 
         #region OxGFrame Implements
         public override bool Initialize()
         {
             try
             {
-                switch (this._fileProcessCategory)
+                switch (this._fileOperationType)
                 {
-                    case FileProcessCategory.Bundle:
+                    case FileOperationType.None:
+                        {
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            if (cryptogramSettings != null)
+                            {
+                                this._key = cryptogramSettings.xorKey;
+                            }
+                        }
+                        break;
+
+                    // Nothing to do
+                    case FileOperationType.Custom:
+                        break;
+
+                    case FileOperationType.Bundle:
                         {
                             SecuredString[] decryptArgs = BundleConfig.bundleDecryptArgs;
                             this._key = Convert.ToByte(decryptArgs[1].Decrypt());
                         }
                         break;
 
-                    case FileProcessCategory.Manifest:
+                    case FileOperationType.Manifest:
                         {
                             SecuredString[] decryptArgs = BundleConfig.manifestDecryptArgs;
                             this._key = Convert.ToByte(decryptArgs[1].Decrypt());
@@ -332,18 +372,42 @@ namespace OxGFrame.AssetLoader.Bundle
         private byte _tKey;
         private byte _jKey;
 
-        public HT2XorDecryption(FileProcessCategory fileProcessCategory) : base(fileProcessCategory)
+        public HT2XorDecryption() { }
+
+        public HT2XorDecryption(byte hkey, byte tKey, byte jKey)
         {
+            this._fileOperationType = FileOperationType.Custom;
+            this._hkey = hkey;
+            this._tKey = tKey;
+            this._jKey = jKey;
         }
+
+        public HT2XorDecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
 
         #region OxGFrame Implements
         public override bool Initialize()
         {
             try
             {
-                switch (this._fileProcessCategory)
+                switch (this._fileOperationType)
                 {
-                    case FileProcessCategory.Bundle:
+                    case FileOperationType.None:
+                        {
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            if (cryptogramSettings != null)
+                            {
+                                this._hkey = cryptogramSettings.hXorKey;
+                                this._tKey = cryptogramSettings.tXorKey;
+                                this._jKey = cryptogramSettings.jXorKey;
+                            }
+                        }
+                        break;
+
+                    // Nothing to do
+                    case FileOperationType.Custom:
+                        break;
+
+                    case FileOperationType.Bundle:
                         {
                             SecuredString[] decryptArgs = BundleConfig.bundleDecryptArgs;
                             this._hkey = Convert.ToByte(decryptArgs[1].Decrypt());
@@ -352,7 +416,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         }
                         break;
 
-                    case FileProcessCategory.Manifest:
+                    case FileOperationType.Manifest:
                         {
                             SecuredString[] decryptArgs = BundleConfig.manifestDecryptArgs;
                             this._hkey = Convert.ToByte(decryptArgs[1].Decrypt());
@@ -423,18 +487,44 @@ namespace OxGFrame.AssetLoader.Bundle
         private byte _j1Key;
         private byte _j2Key;
 
-        public HT2XorPlusDecryption(FileProcessCategory fileProcessCategory) : base(fileProcessCategory)
+        public HT2XorPlusDecryption() { }
+
+        public HT2XorPlusDecryption(byte hKey, byte tKey, byte j1Key, byte j2Key)
         {
+            this._fileOperationType = FileOperationType.Custom;
+            this._hKey = hKey;
+            this._tKey = tKey;
+            this._j1Key = j1Key;
+            this._j2Key = j2Key;
         }
+
+        public HT2XorPlusDecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
 
         #region OxGFrame Implements
         public override bool Initialize()
         {
             try
             {
-                switch (this._fileProcessCategory)
+                switch (this._fileOperationType)
                 {
-                    case FileProcessCategory.Bundle:
+                    case FileOperationType.None:
+                        {
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            if (cryptogramSettings != null)
+                            {
+                                this._hKey = cryptogramSettings.hXorPlusKey;
+                                this._tKey = cryptogramSettings.tXorPlusKey;
+                                this._j1Key = cryptogramSettings.j1XorPlusKey;
+                                this._j2Key = cryptogramSettings.j2XorPlusKey;
+                            }
+                        }
+                        break;
+
+                    // Nothing to do
+                    case FileOperationType.Custom:
+                        break;
+
+                    case FileOperationType.Bundle:
                         {
                             SecuredString[] decryptArgs = BundleConfig.bundleDecryptArgs;
                             this._hKey = Convert.ToByte(decryptArgs[1].Decrypt());
@@ -444,7 +534,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         }
                         break;
 
-                    case FileProcessCategory.Manifest:
+                    case FileOperationType.Manifest:
                         {
                             SecuredString[] decryptArgs = BundleConfig.manifestDecryptArgs;
                             this._hKey = Convert.ToByte(decryptArgs[1].Decrypt());
@@ -514,18 +604,40 @@ namespace OxGFrame.AssetLoader.Bundle
         private string _key;
         private string _iv;
 
-        public AesDecryption(FileProcessCategory fileProcessCategory) : base(fileProcessCategory)
+        public AesDecryption() { }
+
+        public AesDecryption(string key, string iv)
         {
+            this._fileOperationType = FileOperationType.Custom;
+            this._key = key;
+            this._iv = iv;
         }
+
+        public AesDecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
 
         #region OxGFrame Implements
         public override bool Initialize()
         {
             try
             {
-                switch (this._fileProcessCategory)
+                switch (this._fileOperationType)
                 {
-                    case FileProcessCategory.Bundle:
+                    case FileOperationType.None:
+                        {
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            if (cryptogramSettings != null)
+                            {
+                                this._key = cryptogramSettings.aesKey;
+                                this._iv = cryptogramSettings.aesIv;
+                            }
+                        }
+                        break;
+
+                    // Nothing to do
+                    case FileOperationType.Custom:
+                        break;
+
+                    case FileOperationType.Bundle:
                         {
                             SecuredString[] decryptArgs = BundleConfig.bundleDecryptArgs;
                             this._key = decryptArgs[1].Decrypt();
@@ -533,7 +645,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         }
                         break;
 
-                    case FileProcessCategory.Manifest:
+                    case FileOperationType.Manifest:
                         {
                             SecuredString[] decryptArgs = BundleConfig.manifestDecryptArgs;
                             this._key = decryptArgs[1].Decrypt();
@@ -602,18 +714,42 @@ namespace OxGFrame.AssetLoader.Bundle
         private string _nonce;
         private uint _counter;
 
-        public ChaCha20Decryption(FileProcessCategory fileProcessCategory) : base(fileProcessCategory)
+        public ChaCha20Decryption() { }
+
+        public ChaCha20Decryption(string key, string nonce, uint counter)
         {
+            this._fileOperationType = FileOperationType.Custom;
+            this._key = key;
+            this._nonce = nonce;
+            this._counter = counter;
         }
+
+        public ChaCha20Decryption(FileOperationType fileOperationType) : base(fileOperationType) { }
 
         #region OxGFrame Implements
         public override bool Initialize()
         {
             try
             {
-                switch (this._fileProcessCategory)
+                switch (this._fileOperationType)
                 {
-                    case FileProcessCategory.Bundle:
+                    case FileOperationType.None:
+                        {
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            if (cryptogramSettings != null)
+                            {
+                                this._key = cryptogramSettings.chacha20Key;
+                                this._nonce = cryptogramSettings.chacha20Nonce;
+                                this._counter = cryptogramSettings.chacha20Counter;
+                            }
+                        }
+                        break;
+
+                    // Nothing to do
+                    case FileOperationType.Custom:
+                        break;
+
+                    case FileOperationType.Bundle:
                         {
                             SecuredString[] decryptArgs = BundleConfig.bundleDecryptArgs;
                             this._key = decryptArgs[1].Decrypt();
@@ -622,7 +758,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         }
                         break;
 
-                    case FileProcessCategory.Manifest:
+                    case FileOperationType.Manifest:
                         {
                             SecuredString[] decryptArgs = BundleConfig.manifestDecryptArgs;
                             this._key = decryptArgs[1].Decrypt();
@@ -690,25 +826,45 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         private string _key;
 
-        public XXTEADecryption(FileProcessCategory fileProcessCategory) : base(fileProcessCategory)
+        public XXTEADecryption() { }
+
+        public XXTEADecryption(string key)
         {
+            this._fileOperationType = FileOperationType.Custom;
+            this._key = key;
         }
+
+        public XXTEADecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
 
         #region OxGFrame Implements
         public override bool Initialize()
         {
             try
             {
-                switch (this._fileProcessCategory)
+                switch (this._fileOperationType)
                 {
-                    case FileProcessCategory.Bundle:
+                    case FileOperationType.None:
+                        {
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            if (cryptogramSettings != null)
+                            {
+                                this._key = cryptogramSettings.xxteaKey;
+                            }
+                        }
+                        break;
+
+                    // Nothing to do
+                    case FileOperationType.Custom:
+                        break;
+
+                    case FileOperationType.Bundle:
                         {
                             SecuredString[] decryptArgs = BundleConfig.bundleDecryptArgs;
                             this._key = decryptArgs[1].Decrypt();
                         }
                         break;
 
-                    case FileProcessCategory.Manifest:
+                    case FileOperationType.Manifest:
                         {
                             SecuredString[] decryptArgs = BundleConfig.manifestDecryptArgs;
                             this._key = decryptArgs[1].Decrypt();
@@ -775,18 +931,40 @@ namespace OxGFrame.AssetLoader.Bundle
         private byte _key;
         private int _dummySize;
 
-        public OffsetXorDecryption(FileProcessCategory fileProcessCategory) : base(fileProcessCategory)
+        public OffsetXorDecryption() { }
+
+        public OffsetXorDecryption(byte key, int dummySize)
         {
+            this._fileOperationType = FileOperationType.Custom;
+            this._key = key;
+            this._dummySize = dummySize;
         }
+
+        public OffsetXorDecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
 
         #region OxGFrame Implements
         public override bool Initialize()
         {
             try
             {
-                switch (this._fileProcessCategory)
+                switch (this._fileOperationType)
                 {
-                    case FileProcessCategory.Bundle:
+                    case FileOperationType.None:
+                        {
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            if (cryptogramSettings != null)
+                            {
+                                this._key = cryptogramSettings.offsetXorKey;
+                                this._dummySize = cryptogramSettings.offsetXorDummySize;
+                            }
+                        }
+                        break;
+
+                    // Nothing to do
+                    case FileOperationType.Custom:
+                        break;
+
+                    case FileOperationType.Bundle:
                         {
                             SecuredString[] decryptArgs = BundleConfig.bundleDecryptArgs;
                             this._key = Convert.ToByte(decryptArgs[1].Decrypt());
@@ -794,7 +972,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         }
                         break;
 
-                    case FileProcessCategory.Manifest:
+                    case FileOperationType.Manifest:
                         {
                             SecuredString[] decryptArgs = BundleConfig.manifestDecryptArgs;
                             this._key = Convert.ToByte(decryptArgs[1].Decrypt());

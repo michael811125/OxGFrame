@@ -15,6 +15,7 @@ namespace YooAsset
         private readonly DefaultWebRemoteFileSystem _fileSystem;
         private readonly string _packageVersion;
         private readonly string _packageHash;
+        private readonly int _timeout;
         private UnityWebDataRequestOperation _webDataRequestOp;
         private DeserializeManifestOperation _deserializer;
         private int _requestCount = 0;
@@ -26,11 +27,12 @@ namespace YooAsset
         public PackageManifest Manifest { private set; get; }
 
 
-        internal LoadWebRemotePackageManifestOperation(DefaultWebRemoteFileSystem fileSystem, string packageVersion, string packageHash)
+        internal LoadWebRemotePackageManifestOperation(DefaultWebRemoteFileSystem fileSystem, string packageVersion, string packageHash, int timeout)
         {
             _fileSystem = fileSystem;
             _packageVersion = packageVersion;
             _packageHash = packageHash;
+            _timeout = timeout;
         }
         internal override void InternalStart()
         {
@@ -48,7 +50,7 @@ namespace YooAsset
                 {
                     string fileName = YooAssetSettingsData.GetManifestBinaryFileName(_fileSystem.PackageName, _packageVersion);
                     string url = GetWebRequestURL(fileName);
-                    _webDataRequestOp = new UnityWebDataRequestOperation(url);
+                    _webDataRequestOp = new UnityWebDataRequestOperation(url, _timeout);
                     _webDataRequestOp.StartOperation();
                     AddChildOperation(_webDataRequestOp);
                 }

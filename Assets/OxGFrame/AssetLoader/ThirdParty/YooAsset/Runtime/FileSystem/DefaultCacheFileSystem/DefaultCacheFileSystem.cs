@@ -76,6 +76,11 @@ namespace YooAsset
         public bool AppendFileExtension { private set; get; } = false;
 
         /// <summary>
+        /// 自定义参数：禁用边玩边下机制
+        /// </summary>
+        public bool DisableOnDemandDownload { private set; get; } = false;
+
+        /// <summary>
         /// 自定义参数：最大并发连接数
         /// </summary>
         public int DownloadMaxConcurrency { private set; get; } = int.MaxValue;
@@ -103,7 +108,7 @@ namespace YooAsset
         /// <summary>
         /// 自定义参数：资源清单服务类
         /// </summary>
-        public IManifestServices ManifestServices { private set; get; }
+        public IManifestRestoreServices ManifestServices { private set; get; }
 
         /// <summary>
         /// 自定义参数：拷贝内置文件服务类
@@ -166,12 +171,23 @@ namespace YooAsset
         }
         public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadFileOptions options)
         {
-            var downloader = DownloadCenter.DownloadFileAsync(bundle, options);
-            downloader.Reference(); //增加下载器的引用计数
+            // 获取下载地址
+            if (string.IsNullOrEmpty(options.ImportFilePath))
+            {
+                // 注意：如果是解压文件系统类，这里会返回本地内置文件的下载路径
+                string mainURL = RemoteServices.GetRemoteMainURL(bundle.FileName);
+                string fallbackURL = RemoteServices.GetRemoteFallbackURL(bundle.FileName);
+                options.SetURL(mainURL, fallbackURL);
+            }
+            else
+            {
+                // 注意：把本地导入文件路径转换为下载器请求地址
+                string mainURL = DownloadSystemHelper.ConvertToWWWPath(options.ImportFilePath);
+                options.SetURL(mainURL, mainURL);
+            }
 
-            // 注意：将下载器进行包裹，可以避免父类任务终止的时候，连带子任务里的下载器也一起被终止！
-            var wrapper = new DownloadFileWrapper(downloader);
-            return wrapper;
+            var downloader = new DownloadPackageBundleOperation(this, bundle, options);
+            return downloader;
         }
         public virtual FSLoadBundleOperation LoadBundleFile(PackageBundle bundle)
         {
@@ -211,6 +227,10 @@ namespace YooAsset
             {
                 AppendFileExtension = Convert.ToBoolean(value);
             }
+            else if (name == FileSystemParametersDefine.DISABLE_ONDEMAND_DOWNLOAD)
+            {
+                DisableOnDemandDownload = Convert.ToBoolean(value);
+            }
             else if (name == FileSystemParametersDefine.DOWNLOAD_MAX_CONCURRENCY)
             {
                 DownloadMaxConcurrency = Convert.ToInt32(value);
@@ -233,7 +253,7 @@ namespace YooAsset
             }
             else if (name == FileSystemParametersDefine.MANIFEST_SERVICES)
             {
-                ManifestServices = (IManifestServices)value;
+                ManifestServices = (IManifestRestoreServices)value;
             }
             else if (name == FileSystemParametersDefine.COPY_LOCAL_FILE_SERVICES)
             {

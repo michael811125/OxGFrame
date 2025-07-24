@@ -1,5 +1,6 @@
 ﻿using OxGFrame.AssetLoader.Bundle;
 using System.IO;
+using UnityEngine;
 
 namespace OxGFrame.AssetLoader.Utility
 {
@@ -244,5 +245,57 @@ namespace OxGFrame.AssetLoader.Utility
             }
         }
         #endregion
+
+        internal static class CryptogramSettingSetup
+        {
+            private static CryptogramSetting _cryptogramSetting;
+
+            public static CryptogramSetting GetCryptogramSetting()
+            {
+                if (_cryptogramSetting == null)
+                    _cryptogramSetting = LoadSettingData<CryptogramSetting>();
+                return _cryptogramSetting;
+            }
+
+            /// <summary>
+            /// 加載相關配置文件
+            /// </summary>
+            internal static TSetting LoadSettingData<TSetting>() where TSetting : ScriptableObject
+            {
+#if UNITY_EDITOR
+                var settingType = typeof(TSetting);
+                var guids = UnityEditor.AssetDatabase.FindAssets($"t:{settingType.Name}");
+                if (guids.Length == 0)
+                {
+                    Debug.LogWarning($"Create new {settingType.Name}.asset");
+                    var setting = ScriptableObject.CreateInstance<TSetting>();
+                    string filePath = $"Assets/{settingType.Name}.asset";
+                    UnityEditor.AssetDatabase.CreateAsset(setting, filePath);
+                    UnityEditor.AssetDatabase.SaveAssets();
+                    UnityEditor.AssetDatabase.Refresh();
+                    return setting;
+                }
+                else
+                {
+                    if (guids.Length != 1)
+                    {
+                        foreach (var guid in guids)
+                        {
+                            string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                            Debug.LogWarning($"Found multiple file : {path}");
+                        }
+                        throw new System.Exception($"Found multiple {settingType.Name} files !");
+                    }
+
+                    string filePath = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
+                    var setting = UnityEditor.AssetDatabase.LoadAssetAtPath<TSetting>(filePath);
+                    return setting;
+                }
+#else
+                return default;
+#endif
+            }
+        }
+
     }
 }

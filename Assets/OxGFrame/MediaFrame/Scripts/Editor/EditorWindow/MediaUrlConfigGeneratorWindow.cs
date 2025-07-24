@@ -311,12 +311,12 @@ namespace OxGFrame.MediaFrame.Editor
 
         private void _ExportMediaUrlPlans()
         {
-            string savePath = EditorStorage.GetData(keySaver, $"mediaUrlPlanFIlePath", Application.dataPath);
+            string savePath = EditorStorage.GetData(keySaver, $"mediaUrlPlanFilePath", Application.dataPath);
             var filePath = EditorUtility.SaveFilePanel("Save Media Url Plan Json File", savePath, "MediaUrlPlan", "json");
 
             if (!string.IsNullOrEmpty(filePath))
             {
-                EditorStorage.SaveData(keySaver, $"mediaUrlPlanFIlePath", Path.GetDirectoryName(filePath));
+                EditorStorage.SaveData(keySaver, $"mediaUrlPlanFilePath", Path.GetDirectoryName(filePath));
                 string json = JsonConvert.SerializeObject(this.mediaUrlPlans, Formatting.Indented);
                 MediaHelper.WriteTxt(json, filePath);
                 AssetDatabase.Refresh();
@@ -325,12 +325,12 @@ namespace OxGFrame.MediaFrame.Editor
 
         private void _ImportMediaUrlPlans()
         {
-            string loadPath = EditorStorage.GetData(keySaver, $"mediaUrlPlanFIlePath", Application.dataPath);
+            string loadPath = EditorStorage.GetData(keySaver, $"mediaUrlPlanFilePath", Application.dataPath);
             string filePath = EditorUtility.OpenFilePanel("Select Media Url Plan Json File", !string.IsNullOrEmpty(loadPath) ? loadPath : Application.dataPath, "json");
 
             if (!string.IsNullOrEmpty(filePath))
             {
-                EditorStorage.SaveData(keySaver, $"mediaUrlPlanFIlePath", Path.GetDirectoryName(filePath));
+                EditorStorage.SaveData(keySaver, $"mediaUrlPlanFilePath", Path.GetDirectoryName(filePath));
                 string json = File.ReadAllText(filePath);
                 this.mediaUrlPlans = JsonConvert.DeserializeObject<List<MediaUrlPlan>>(json);
 

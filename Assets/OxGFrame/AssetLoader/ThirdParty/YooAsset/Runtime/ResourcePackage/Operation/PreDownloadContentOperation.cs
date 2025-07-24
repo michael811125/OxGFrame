@@ -107,11 +107,11 @@ namespace YooAsset
             if (Status != EOperationStatus.Succeed)
             {
                 YooLogger.Warning($"{nameof(PreDownloadContentOperation)} status is not succeed !");
-                return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain, timeout);
+                return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain);
             }
 
             List<BundleInfo> downloadList = _impl.GetDownloadListByAll(_manifest);
-            var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain, timeout);
+            var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain);
             return operation;
         }
 
@@ -127,11 +127,11 @@ namespace YooAsset
             if (Status != EOperationStatus.Succeed)
             {
                 YooLogger.Warning($"{nameof(PreDownloadContentOperation)} status is not succeed !");
-                return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain, timeout);
+                return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain);
             }
 
             List<BundleInfo> downloadList = _impl.GetDownloadListByTags(_manifest, new string[] { tag });
-            var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain, timeout);
+            var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain);
             return operation;
         }
 
@@ -147,11 +147,11 @@ namespace YooAsset
             if (Status != EOperationStatus.Succeed)
             {
                 YooLogger.Warning($"{nameof(PreDownloadContentOperation)} status is not succeed !");
-                return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain, timeout);
+                return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain);
             }
 
             List<BundleInfo> downloadList = _impl.GetDownloadListByTags(_manifest, tags);
-            var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain, timeout);
+            var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain);
             return operation;
         }
 
@@ -167,7 +167,7 @@ namespace YooAsset
             if (Status != EOperationStatus.Succeed)
             {
                 YooLogger.Warning($"{nameof(PreDownloadContentOperation)} status is not succeed !");
-                return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain, timeout);
+                return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain);
             }
 
             List<AssetInfo> assetInfos = new List<AssetInfo>();
@@ -175,7 +175,7 @@ namespace YooAsset
             assetInfos.Add(assetInfo);
 
             List<BundleInfo> downloadList = _impl.GetDownloadListByPaths(_manifest, assetInfos.ToArray(), recursiveDownload);
-            var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain, timeout);
+            var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain);
             return operation;
         }
 
@@ -191,7 +191,7 @@ namespace YooAsset
             if (Status != EOperationStatus.Succeed)
             {
                 YooLogger.Warning($"{nameof(PreDownloadContentOperation)} status is not succeed !");
-                return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain, timeout);
+                return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain);
             }
 
             List<AssetInfo> assetInfos = new List<AssetInfo>(locations.Length);
@@ -202,7 +202,7 @@ namespace YooAsset
             }
 
             List<BundleInfo> downloadList = _impl.GetDownloadListByPaths(_manifest, assetInfos.ToArray(), recursiveDownload);
-            var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain, timeout);
+            var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain);
             return operation;
         }
     }
