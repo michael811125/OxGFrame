@@ -49,16 +49,25 @@ namespace YooAsset
                 }
                 else
                 {
-                    _steps = ESteps.DownloadFile;
+                    if (_fileSystem.DisableOnDemandDownload)
+                    {
+                        _steps = ESteps.Done;
+                        Status = EOperationStatus.Failed;
+                        Error = $"The bundle not cached : {_bundle.BundleName}";
+                        YooLogger.Warning(Error);
+                    }
+                    else
+                    {
+                        _steps = ESteps.DownloadFile;
+                    }
                 }
             }
 
             if (_steps == ESteps.DownloadFile)
             {
-                // 注意：边玩边下下载器引用计数没有Release
                 if (_downloadFileOp == null)
                 {
-                    DownloadFileOptions options = new DownloadFileOptions(int.MaxValue, 60);
+                    DownloadFileOptions options = new DownloadFileOptions(int.MaxValue);
                     _downloadFileOp = _fileSystem.DownloadFileAsync(_bundle, options);
                     _downloadFileOp.StartOperation();
                     AddChildOperation(_downloadFileOp);
@@ -303,10 +312,9 @@ namespace YooAsset
 
             if (_steps == ESteps.DownloadFile)
             {
-                // 注意：边玩边下下载器引用计数没有Release
                 if (_downloadFileOp == null)
                 {
-                    DownloadFileOptions options = new DownloadFileOptions(int.MaxValue, 60);
+                    DownloadFileOptions options = new DownloadFileOptions(int.MaxValue);
                     _downloadFileOp = _fileSystem.DownloadFileAsync(_bundle, options);
                     _downloadFileOp.StartOperation();
                     AddChildOperation(_downloadFileOp);

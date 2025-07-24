@@ -801,7 +801,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a5fef340e1f24940b2ea7530ddfc383, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadFromConfig: 1
+  loadFromConfig: 0
 --- !u!4 &1874060586
 Transform:
   m_ObjectHideFlags: 0

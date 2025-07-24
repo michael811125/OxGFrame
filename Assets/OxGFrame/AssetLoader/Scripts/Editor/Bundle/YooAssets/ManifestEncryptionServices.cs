@@ -4,7 +4,7 @@ using YooAsset;
 
 namespace OxGFrame.AssetLoader.Editor
 {
-    public class ManifestOffsetEncryption : IManifestServices
+    public class ManifestOffsetEncryption : IManifestProcessServices
     {
         private int? _dummySize = null;
 
@@ -43,7 +43,7 @@ namespace OxGFrame.AssetLoader.Editor
         }
     }
 
-    public class ManifestXorEncryption : IManifestServices
+    public class ManifestXorEncryption : IManifestProcessServices
     {
         private byte? _xorKey = null;
 
@@ -82,7 +82,7 @@ namespace OxGFrame.AssetLoader.Editor
         }
     }
 
-    public class ManifestHT2XorEncryption : IManifestServices
+    public class ManifestHT2XorEncryption : IManifestProcessServices
     {
         private byte? _hXorKey = null;
         private byte? _tXorKey = null;
@@ -129,7 +129,7 @@ namespace OxGFrame.AssetLoader.Editor
         }
     }
 
-    public class ManifestHT2XorPlusEncryption : IManifestServices
+    public class ManifestHT2XorPlusEncryption : IManifestProcessServices
     {
         private byte? _hXorKey = null;
         private byte? _tXorKey = null;
@@ -180,7 +180,7 @@ namespace OxGFrame.AssetLoader.Editor
         }
     }
 
-    public class ManifestAesEncryption : IManifestServices
+    public class ManifestAesEncryption : IManifestProcessServices
     {
         private string _aesKey = null;
         private string _aesIv = null;
@@ -223,7 +223,7 @@ namespace OxGFrame.AssetLoader.Editor
         }
     }
 
-    public class ManifestChaCha20Encryption : IManifestServices
+    public class ManifestChaCha20Encryption : IManifestProcessServices
     {
         private string _chacha20Key = null;
         private string _chacha20Nonce = null;
@@ -246,18 +246,30 @@ namespace OxGFrame.AssetLoader.Editor
             string nonce = string.IsNullOrEmpty(this._chacha20Nonce) ? cryptogramSettings.chacha20Nonce : this._chacha20Nonce;
             uint counter = this._chacha20Counter == null ? (uint)cryptogramSettings.chacha20Counter : (uint)this._chacha20Counter;
 
-            if (FileCryptogram.ChaCha20.DecryptBytes(ref fileData, key, nonce, counter))
+            if (FileCryptogram.ChaCha20.EncryptBytes(ref fileData, key, nonce, counter))
+            {
+                Debug.Log($"Manifest ChaCha20 Cryptogram => key: {key}, nonce: {nonce}, counter: {counter}");
+
                 return fileData;
+            }
             return null;
         }
 
         public byte[] RestoreManifest(byte[] fileData)
         {
+            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+
+            string key = string.IsNullOrEmpty(this._chacha20Key) ? cryptogramSettings.chacha20Key : this._chacha20Key;
+            string nonce = string.IsNullOrEmpty(this._chacha20Nonce) ? cryptogramSettings.chacha20Nonce : this._chacha20Nonce;
+            uint counter = this._chacha20Counter == null ? (uint)cryptogramSettings.chacha20Counter : (uint)this._chacha20Counter;
+
+            if (FileCryptogram.ChaCha20.DecryptBytes(ref fileData, key, nonce, counter))
+                return fileData;
             return null;
         }
     }
 
-    public class ManifestXXTEAEncryption : IManifestServices
+    public class ManifestXXTEAEncryption : IManifestProcessServices
     {
         private string _xxteaKey = null;
 
@@ -296,7 +308,7 @@ namespace OxGFrame.AssetLoader.Editor
         }
     }
 
-    public class ManifestOffsetXorEncryption : IManifestServices
+    public class ManifestOffsetXorEncryption : IManifestProcessServices
     {
         private byte? _offsetXorKey = null;
         private int? _offsetXorDummySize = null;

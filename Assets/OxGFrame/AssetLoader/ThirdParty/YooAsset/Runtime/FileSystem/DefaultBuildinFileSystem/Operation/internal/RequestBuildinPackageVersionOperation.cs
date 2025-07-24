@@ -39,7 +39,7 @@ namespace YooAsset
                 {
                     string filePath = _fileSystem.GetBuildinPackageVersionFilePath();
                     string url = DownloadSystemHelper.ConvertToWWWPath(filePath);
-                    _webTextRequestOp = new UnityWebTextRequestOperation(url);
+                    _webTextRequestOp = new UnityWebTextRequestOperation(url, 60);
                     _webTextRequestOp.StartOperation();
                     AddChildOperation(_webTextRequestOp);
                 }

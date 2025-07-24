@@ -1,9 +1,9 @@
 ﻿using OxGKit.LoggingSystem;
+using System.IO;
 using UnityEngine;
 
 namespace OxGFrame.AssetLoader
 {
-    [CreateAssetMenu(fileName = nameof(PatchSetting), menuName = "OxGFrame/Create Settings/Create Patch Setting")]
     public class PatchSetting : ScriptableObject
     {
         // Common
@@ -58,5 +58,55 @@ namespace OxGFrame.AssetLoader
                 Logging.Print<Logger>("<color=#84ffe5>[OxGFrame.AssetLoader] use user setting.</color>");
             }
         }
+
+#if UNITY_EDITOR
+        [UnityEditor.MenuItem("Assets/Create/OxGFrame/Create Settings/Create Patch Setting in Resources", priority = 1000)]
+        private static void _CreatePatchSetting()
+        {
+            string selectedPath = _GetSelectedPathOrFallback();
+
+            string folderPath = Path.Combine(selectedPath, "Resources");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+                UnityEditor.AssetDatabase.Refresh();
+            }
+
+            string assetPath = Path.Combine(folderPath, $"{nameof(PatchSetting)}.asset");
+
+            // 檢查是否已經存在
+            PatchSetting existingAsset = UnityEditor.AssetDatabase.LoadAssetAtPath<PatchSetting>(assetPath);
+            if (existingAsset != null)
+            {
+                UnityEditor.EditorUtility.DisplayDialog("Already Exists", $"{nameof(PatchSetting)}.asset already exists.", "OK");
+                UnityEditor.Selection.activeObject = existingAsset;
+                return;
+            }
+
+            // 建立新的 PatchSetting
+            var asset = ScriptableObject.CreateInstance<PatchSetting>();
+            UnityEditor.AssetDatabase.CreateAsset(asset, assetPath.Replace("\\", "/"));
+            UnityEditor.AssetDatabase.SaveAssets();
+            UnityEditor.AssetDatabase.Refresh();
+
+            UnityEditor.EditorUtility.FocusProjectWindow();
+            UnityEditor.Selection.activeObject = asset;
+        }
+
+        private static string _GetSelectedPathOrFallback()
+        {
+            string path = "Assets";
+            foreach (Object obj in UnityEditor.Selection.GetFiltered(typeof(UnityEditor.DefaultAsset), UnityEditor.SelectionMode.Assets))
+            {
+                path = UnityEditor.AssetDatabase.GetAssetPath(obj);
+                if (File.Exists(path))
+                {
+                    path = Path.GetDirectoryName(path);
+                }
+                break;
+            }
+            return path;
+        }
+#endif
     }
 }

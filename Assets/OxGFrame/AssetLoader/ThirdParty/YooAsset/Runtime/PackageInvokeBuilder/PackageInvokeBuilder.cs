@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace YooAsset
 {
-    public static class PakcageInvokeBuilder
+    public static class PackageInvokeBuilder
     {
         /// <summary>
         /// 调用Editro类来执行构建资源包任务
@@ -32,7 +32,7 @@ namespace YooAsset
 #else
 namespace YooAsset
 { 
-    public static class PakcageInvokeBuilder
+    public static class PackageInvokeBuilder
     {
         public static PackageInvokeBuildResult InvokeBuilder(PackageInvokeBuildParam buildParam)
         {

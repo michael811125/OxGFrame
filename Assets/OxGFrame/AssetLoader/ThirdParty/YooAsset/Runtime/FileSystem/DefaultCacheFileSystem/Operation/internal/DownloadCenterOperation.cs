@@ -6,8 +6,8 @@ namespace YooAsset
     internal class DownloadCenterOperation : AsyncOperationBase
     {
         private readonly DefaultCacheFileSystem _fileSystem;
-        protected readonly Dictionary<string, DefaultDownloadFileOperation> _downloaders = new Dictionary<string, DefaultDownloadFileOperation>(1000);
-        protected readonly List<string> _removeDownloadList = new List<string>(1000);
+        protected readonly Dictionary<string, UnityDownloadFileOperation> _downloaders = new Dictionary<string, UnityDownloadFileOperation>(1000);
+        protected readonly List<string> _removeList = new List<string>(1000);
 
         public DownloadCenterOperation(DefaultCacheFileSystem fileSystem)
         {
@@ -19,31 +19,34 @@ namespace YooAsset
         internal override void InternalUpdate()
         {
             // 获取可移除的下载器集合
-            _removeDownloadList.Clear();
+            _removeList.Clear();
             foreach (var valuePair in _downloaders)
             {
                 var downloader = valuePair.Value;
                 downloader.UpdateOperation();
+                if (downloader.IsDone)
+                {
+                    _removeList.Add(valuePair.Key);
+                    continue;
+                }
 
                 // 注意：主动终止引用计数为零的下载任务
                 if (downloader.RefCount <= 0)
                 {
-                    _removeDownloadList.Add(valuePair.Key);
+                    _removeList.Add(valuePair.Key);
                     downloader.AbortOperation();
-                    continue;
-                }
-
-                if (downloader.IsDone)
-                {
-                    _removeDownloadList.Add(valuePair.Key);
                     continue;
                 }
             }
 
             // 移除下载器
-            foreach (var key in _removeDownloadList)
+            foreach (var key in _removeList)
             {
-                _downloaders.Remove(key);
+                if (_downloaders.TryGetValue(key, out var downloader))
+                {
+                    Childs.Remove(downloader);
+                    _downloaders.Remove(key);
+                }
             }
 
             // 最大并发数检测
@@ -74,34 +77,21 @@ namespace YooAsset
         /// <summary>
         /// 创建下载任务
         /// </summary>
-        public FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadFileOptions options)
+        public UnityDownloadFileOperation DownloadFileAsync(PackageBundle bundle, string url)
         {
             // 查询旧的下载器
             if (_downloaders.TryGetValue(bundle.BundleGUID, out var oldDownloader))
             {
+                oldDownloader.Reference();
                 return oldDownloader;
             }
 
-            // 获取下载地址
-            if (string.IsNullOrEmpty(options.ImportFilePath))
-            {
-                // 注意：如果是解压文件系统类，这里会返回本地内置文件的下载路径
-                options.MainURL = _fileSystem.RemoteServices.GetRemoteMainURL(bundle.FileName);
-                options.FallbackURL = _fileSystem.RemoteServices.GetRemoteFallbackURL(bundle.FileName);
-            }
-            else
-            {
-                // 注意：把本地导入文件路径转换为下载器请求地址
-                options.MainURL = DownloadSystemHelper.ConvertToWWWPath(options.ImportFilePath);
-                options.FallbackURL = options.MainURL;
-            }
-
             // 创建新的下载器
-            DefaultDownloadFileOperation newDownloader;
-            bool isRequestLocalFile = DownloadSystemHelper.IsRequestLocalFile(options.MainURL);
+            UnityDownloadFileOperation newDownloader;
+            bool isRequestLocalFile = DownloadSystemHelper.IsRequestLocalFile(url);
             if (isRequestLocalFile)
             {
-                newDownloader = new DownloadLocalFileOperation(_fileSystem, bundle, options);
+                newDownloader = new UnityDownloadLocalFileOperation(_fileSystem, bundle, url);
                 AddChildOperation(newDownloader);
                 _downloaders.Add(bundle.BundleGUID, newDownloader);
             }
@@ -109,17 +99,19 @@ namespace YooAsset
             {
                 if (bundle.FileSize >= _fileSystem.ResumeDownloadMinimumSize)
                 {
-                    newDownloader = new DownloadResumeFileOperation(_fileSystem, bundle, options);
+                    newDownloader = new UnityDownloadResumeFileOperation(_fileSystem, bundle, url);
                     AddChildOperation(newDownloader);
                     _downloaders.Add(bundle.BundleGUID, newDownloader);
                 }
                 else
                 {
-                    newDownloader = new DownloadNormalFileOperation(_fileSystem, bundle, options);
+                    newDownloader = new UnityDownloadNormalFileOperation(_fileSystem, bundle, url);
                     AddChildOperation(newDownloader);
                     _downloaders.Add(bundle.BundleGUID, newDownloader);
                 }
             }
+
+            newDownloader.Reference();
             return newDownloader;
         }
 

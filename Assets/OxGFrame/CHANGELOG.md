@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## [3.4.3] - 2025-07-24
+
+# English
+
+- Added **BuildTool Extension** (importable via Package Manager Samples), enabling CLI-based construction of both main application and asset bundles (can be referenced or used directly).  
+  - Also includes a `MenuItem` → `OxGFrame/Extensions/BuildTool/Build Bundles by Bundle Map JSON` editor tool for asset bundle building via the JSON map.
+
+- AssetLoader  
+  - Modified interfaces for Manifest Services (`IManifestProcessServices`, `IManifestRestoreServices`).  
+    - Note: When building with YooAsset, the Manifest encryption/decryption **Process** and **Restore** options must be the same.
+  - Modified `PatchSetting.asset` creation logic to automatically generate a `Resources` folder for placement.
+  - Upgraded YooAsset to [v2.3.14](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.14)
+
+# 中文
+
+- 新增 BuildTool Extension (從 Package Manager 的 Samples 進行匯入)，可以使用 CLI 構建主程序跟資源 (可以參考或直接使用)。
+  - 額外包含 MenuItem -> OxGFrame/Extensions/BuildTool/Build Bundles by Bundle Map JSON 編輯器可直接進行資源構建。
+
+- AssetLoader
+  - 修改 Manifest Services 接口 (IManifestProcessServices, IManifestRestoreServices)。
+    - 說明：如果使用 YooAsset 構建資源時，針對 Manifest 加解密選項的 Process 跟 Restore 必須選擇一樣。
+  - 修改建立 PatchSetting.asset 時，會自動創建 Resources 文件夾進行放置。
+  - 更新 YooAsset 至 [v2.3.14](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.14)。
+
 ## [3.4.2] - 2025-07-22
 
 # English

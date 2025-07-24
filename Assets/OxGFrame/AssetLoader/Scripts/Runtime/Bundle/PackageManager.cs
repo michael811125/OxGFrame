@@ -58,28 +58,28 @@ namespace OxGFrame.AssetLoader.Bundle
                 case BundleConfig.CryptogramType.NONE:
                     break;
                 case BundleConfig.CryptogramType.OFFSET:
-                    _bundleDecryptionServices = new OffsetDecryption(FileProcessCategory.Bundle);
+                    _bundleDecryptionServices = new OffsetDecryption(FileOperationType.Bundle);
                     break;
                 case BundleConfig.CryptogramType.XOR:
-                    _bundleDecryptionServices = new XorDecryption(FileProcessCategory.Bundle);
+                    _bundleDecryptionServices = new XorDecryption(FileOperationType.Bundle);
                     break;
                 case BundleConfig.CryptogramType.HT2XOR:
-                    _bundleDecryptionServices = new HT2XorDecryption(FileProcessCategory.Bundle);
+                    _bundleDecryptionServices = new HT2XorDecryption(FileOperationType.Bundle);
                     break;
                 case BundleConfig.CryptogramType.HT2XORPLUS:
-                    _bundleDecryptionServices = new HT2XorPlusDecryption(FileProcessCategory.Bundle);
+                    _bundleDecryptionServices = new HT2XorPlusDecryption(FileOperationType.Bundle);
                     break;
                 case BundleConfig.CryptogramType.AES:
-                    _bundleDecryptionServices = new AesDecryption(FileProcessCategory.Bundle);
+                    _bundleDecryptionServices = new AesDecryption(FileOperationType.Bundle);
                     break;
                 case BundleConfig.CryptogramType.CHACHA20:
-                    _bundleDecryptionServices = new ChaCha20Decryption(FileProcessCategory.Bundle);
+                    _bundleDecryptionServices = new ChaCha20Decryption(FileOperationType.Bundle);
                     break;
                 case BundleConfig.CryptogramType.XXTEA:
-                    _bundleDecryptionServices = new XXTEADecryption(FileProcessCategory.Bundle);
+                    _bundleDecryptionServices = new XXTEADecryption(FileOperationType.Bundle);
                     break;
                 case BundleConfig.CryptogramType.OFFSETXOR:
-                    _bundleDecryptionServices = new OffsetXorDecryption(FileProcessCategory.Bundle);
+                    _bundleDecryptionServices = new OffsetXorDecryption(FileOperationType.Bundle);
                     break;
             }
             Logging.Print<Logger>($"<color=#ffe45a>Init Bundle Decryption: {decryptType}</color>");
@@ -90,28 +90,28 @@ namespace OxGFrame.AssetLoader.Bundle
                 case BundleConfig.CryptogramType.NONE:
                     break;
                 case BundleConfig.CryptogramType.OFFSET:
-                    _manifestDecryptionServices = new OffsetDecryption(FileProcessCategory.Manifest);
+                    _manifestDecryptionServices = new OffsetDecryption(FileOperationType.Manifest);
                     break;
                 case BundleConfig.CryptogramType.XOR:
-                    _manifestDecryptionServices = new XorDecryption(FileProcessCategory.Manifest);
+                    _manifestDecryptionServices = new XorDecryption(FileOperationType.Manifest);
                     break;
                 case BundleConfig.CryptogramType.HT2XOR:
-                    _manifestDecryptionServices = new HT2XorDecryption(FileProcessCategory.Manifest);
+                    _manifestDecryptionServices = new HT2XorDecryption(FileOperationType.Manifest);
                     break;
                 case BundleConfig.CryptogramType.HT2XORPLUS:
-                    _manifestDecryptionServices = new HT2XorPlusDecryption(FileProcessCategory.Manifest);
+                    _manifestDecryptionServices = new HT2XorPlusDecryption(FileOperationType.Manifest);
                     break;
                 case BundleConfig.CryptogramType.AES:
-                    _manifestDecryptionServices = new AesDecryption(FileProcessCategory.Manifest);
+                    _manifestDecryptionServices = new AesDecryption(FileOperationType.Manifest);
                     break;
                 case BundleConfig.CryptogramType.CHACHA20:
-                    _manifestDecryptionServices = new ChaCha20Decryption(FileProcessCategory.Manifest);
+                    _manifestDecryptionServices = new ChaCha20Decryption(FileOperationType.Manifest);
                     break;
                 case BundleConfig.CryptogramType.XXTEA:
-                    _manifestDecryptionServices = new XXTEADecryption(FileProcessCategory.Manifest);
+                    _manifestDecryptionServices = new XXTEADecryption(FileOperationType.Manifest);
                     break;
                 case BundleConfig.CryptogramType.OFFSETXOR:
-                    _manifestDecryptionServices = new OffsetXorDecryption(FileProcessCategory.Manifest);
+                    _manifestDecryptionServices = new OffsetXorDecryption(FileOperationType.Manifest);
                     break;
             }
             Logging.Print<Logger>($"<color=#ffe45a>Init Manifest Decryption: {decryptType}</color>");
