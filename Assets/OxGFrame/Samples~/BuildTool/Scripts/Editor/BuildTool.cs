@@ -1095,7 +1095,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             public const string identifierName = "-identifierName";                       // App Identifier Name
             public const string il2CppConfiguration = "-il2CppConfiguration";             // il2Cpp compiler configuration (Debug, Release, Master)
             public const string scriptingBackends = "-scriptingBackends";                 // Use Mono or IL2CPP to compile
-            public const string targetDevice = "-targetDevice";                           // android => Target Architectures, ios => Target Device
+            public const string targetDevice = "-targetDevice";                           // Android => Target Architectures, iOS => Target Device
             public const string bundleUrlParams = "-bundleUrlParams";                     // Bundle Url config [bundle_ip, bundle_fallback_ip, store_link]
             public const string strippingLevel = "-strippingLevel";                       // Managed stripping level (0 = Disabled, 1 = Low, 2 = Medium, 3 = High, 4 = Minimal)
 
@@ -1108,37 +1108,37 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             public const string iosSdkVersion = "-iosSdkVersion";                         // iOS SDK version [Device SDK], [Simulator SDK]
 
             // Bundle
-            public const string bundleMap = "-bundleMap";                                 // bundle_map.json (Reference CICDNodejs)
+            public const string bundleMap = "-bundleMap";                                 // bundle map JSON
         }
 
         private static Dictionary<string, string> _dictArgs = new Dictionary<string, string>()
-    {
-        // Common
-        { ArgName.buildMode, null },
-        { ArgName.destination, null },
-        { ArgName.defineSymbols, null },
-        { ArgName.productName, null },
-        { ArgName.buildVersion, null },
-        { ArgName.companyName, null },
-        { ArgName.displayProductName, null },
-        { ArgName.identifierName, null },
-        { ArgName.il2CppConfiguration, null },
-        { ArgName.scriptingBackends, null },
-        { ArgName.targetDevice, null },
-        { ArgName.bundleUrlParams, null },
-        { ArgName.strippingLevel, null },
-
-        // Android
-        { ArgName.androidKeystoreArgs, null },
-        { ArgName.enableAndroidAppBundle, null },
-        { ArgName.versionCode, null },
+        {
+            // Common
+            { ArgName.buildMode, null },
+            { ArgName.destination, null },
+            { ArgName.defineSymbols, null },
+            { ArgName.productName, null },
+            { ArgName.buildVersion, null },
+            { ArgName.companyName, null },
+            { ArgName.displayProductName, null },
+            { ArgName.identifierName, null },
+            { ArgName.il2CppConfiguration, null },
+            { ArgName.scriptingBackends, null },
+            { ArgName.targetDevice, null },
+            { ArgName.bundleUrlParams, null },
+            { ArgName.strippingLevel, null },
         
-        // iOS
-        { ArgName.iosSdkVersion, null },
-
-        // Bundle
-        { ArgName.bundleMap, null },
-    };
+            // Android
+            { ArgName.androidKeystoreArgs, null },
+            { ArgName.enableAndroidAppBundle, null },
+            { ArgName.versionCode, null },
+            
+            // iOS
+            { ArgName.iosSdkVersion, null },
+        
+            // Bundle
+            { ArgName.bundleMap, null },
+        };
 
         static CommandParser()
         {
