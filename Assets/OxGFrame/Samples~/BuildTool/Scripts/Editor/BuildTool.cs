@@ -157,7 +157,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                     // Windows => Export type
                     {
 #if UNITY_STANDALONE_WIN
-                    UnityEditor.WindowsStandalone.UserBuildSettings.createSolution = false;
+                        UnityEditor.WindowsStandalone.UserBuildSettings.createSolution = false;
 #endif
                     }
                     break;
@@ -167,7 +167,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                     // Windows => Export type
                     {
 #if UNITY_STANDALONE_WIN
-                    UnityEditor.WindowsStandalone.UserBuildSettings.createSolution = false;
+                        UnityEditor.WindowsStandalone.UserBuildSettings.createSolution = false;
 #endif
                     }
                     break;
@@ -556,6 +556,8 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                     string compressOption = pkg["compressOption"]?.Value<string>();
                     string fileNameStyle = pkg["fileNameStyle"]?.Value<string>();
                     string builtinCopyOption = pkg["builtinCopyOption"]?.Value<string>();
+                    bool? clearBuildCacheFiles = pkg["clearBuildCacheFiles"]?.Value<bool>();
+                    bool? useAssetDependencyDB = pkg["useAssetDependencyDB"]?.Value<bool>();
 
                     // 參數
                     string[] args;
@@ -641,96 +643,96 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                         case BundleConfig.CryptogramType.OFFSET:
                             if (args.Length > 1)
                             {
-                                manifestEncryptionServices = new ManifestOffsetEncryption(Convert.ToInt32(args[1]));
+                                manifestEncryptionServices = new OffsetEncryption(Convert.ToInt32(args[1]));
                                 manifestDecryptionServices = new OffsetDecryption(Convert.ToInt32(args[1]));
                             }
                             else
                             {
-                                manifestEncryptionServices = new ManifestOffsetEncryption();
+                                manifestEncryptionServices = new OffsetEncryption();
                                 manifestDecryptionServices = new OffsetDecryption();
                             }
                             break;
                         case BundleConfig.CryptogramType.XOR:
                             if (args.Length > 1)
                             {
-                                manifestEncryptionServices = new ManifestXorEncryption(Convert.ToByte(args[1]));
+                                manifestEncryptionServices = new XorEncryption(Convert.ToByte(args[1]));
                                 manifestDecryptionServices = new XorDecryption(Convert.ToByte(args[1]));
                             }
                             else
                             {
-                                manifestEncryptionServices = new ManifestXorEncryption();
+                                manifestEncryptionServices = new XorEncryption();
                                 manifestDecryptionServices = new XorDecryption();
                             }
                             break;
                         case BundleConfig.CryptogramType.HT2XOR:
                             if (args.Length > 3)
                             {
-                                manifestEncryptionServices = new ManifestHT2XorEncryption(Convert.ToByte(args[1]), Convert.ToByte(args[2]), Convert.ToByte(args[3]));
+                                manifestEncryptionServices = new HT2XorEncryption(Convert.ToByte(args[1]), Convert.ToByte(args[2]), Convert.ToByte(args[3]));
                                 manifestDecryptionServices = new HT2XorDecryption(Convert.ToByte(args[1]), Convert.ToByte(args[2]), Convert.ToByte(args[3]));
                             }
                             else
                             {
-                                manifestEncryptionServices = new ManifestHT2XorEncryption();
+                                manifestEncryptionServices = new HT2XorEncryption();
                                 manifestDecryptionServices = new HT2XorDecryption();
                             }
                             break;
                         case BundleConfig.CryptogramType.HT2XORPLUS:
                             if (args.Length > 4)
                             {
-                                manifestEncryptionServices = new ManifestHT2XorPlusEncryption(Convert.ToByte(args[1]), Convert.ToByte(args[2]), Convert.ToByte(args[3]), Convert.ToByte(args[4]));
+                                manifestEncryptionServices = new HT2XorPlusEncryption(Convert.ToByte(args[1]), Convert.ToByte(args[2]), Convert.ToByte(args[3]), Convert.ToByte(args[4]));
                                 manifestDecryptionServices = new HT2XorPlusDecryption(Convert.ToByte(args[1]), Convert.ToByte(args[2]), Convert.ToByte(args[3]), Convert.ToByte(args[4]));
                             }
                             else
                             {
-                                manifestEncryptionServices = new ManifestHT2XorPlusEncryption();
+                                manifestEncryptionServices = new HT2XorPlusEncryption();
                                 manifestDecryptionServices = new HT2XorPlusDecryption();
                             }
                             break;
                         case BundleConfig.CryptogramType.AES:
                             if (args.Length > 2)
                             {
-                                manifestEncryptionServices = new ManifestAesEncryption(args[1], args[2]);
+                                manifestEncryptionServices = new AesEncryption(args[1], args[2]);
                                 manifestDecryptionServices = new AesDecryption(args[1], args[2]);
                             }
                             else
                             {
-                                manifestEncryptionServices = new ManifestAesEncryption();
+                                manifestEncryptionServices = new AesEncryption();
                                 manifestDecryptionServices = new AesDecryption();
                             }
                             break;
                         case BundleConfig.CryptogramType.CHACHA20:
                             if (args.Length > 3)
                             {
-                                manifestEncryptionServices = new ManifestChaCha20Encryption(args[1], args[2], Convert.ToUInt32(args[3]));
+                                manifestEncryptionServices = new ChaCha20Encryption(args[1], args[2], Convert.ToUInt32(args[3]));
                                 manifestDecryptionServices = new ChaCha20Decryption(args[1], args[2], Convert.ToUInt32(args[3]));
                             }
                             else
                             {
-                                manifestEncryptionServices = new ManifestChaCha20Encryption();
+                                manifestEncryptionServices = new ChaCha20Encryption();
                                 manifestDecryptionServices = new ChaCha20Decryption();
                             }
                             break;
                         case BundleConfig.CryptogramType.XXTEA:
                             if (args.Length > 1)
                             {
-                                manifestEncryptionServices = new ManifestXXTEAEncryption(args[1]);
+                                manifestEncryptionServices = new XXTEAEncryption(args[1]);
                                 manifestDecryptionServices = new XXTEADecryption(args[1]);
                             }
                             else
                             {
-                                manifestEncryptionServices = new ManifestXXTEAEncryption();
+                                manifestEncryptionServices = new XXTEAEncryption();
                                 manifestDecryptionServices = new XXTEADecryption();
                             }
                             break;
                         case BundleConfig.CryptogramType.OFFSETXOR:
                             if (args.Length > 2)
                             {
-                                manifestEncryptionServices = new ManifestOffsetXorEncryption(Convert.ToByte(args[1]), Convert.ToInt32(args[2]));
+                                manifestEncryptionServices = new OffsetXorEncryption(Convert.ToByte(args[1]), Convert.ToInt32(args[2]));
                                 manifestDecryptionServices = new OffsetXorDecryption(Convert.ToByte(args[1]), Convert.ToInt32(args[2]));
                             }
                             else
                             {
-                                manifestEncryptionServices = new ManifestOffsetXorEncryption();
+                                manifestEncryptionServices = new OffsetXorEncryption();
                                 manifestDecryptionServices = new OffsetXorDecryption();
                             }
                             break;
@@ -796,6 +798,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                     }
 
                     // 構建模式
+                    // Reference: https://www.yooasset.com/docs/guide-editor/AssetBundleBuilder
                     buildPipeline = buildPipeline.ToUpper();
                     switch (buildPipeline)
                     {
@@ -820,8 +823,8 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 buildParameters.FileNameStyle = bundleNameStyle;
                                 buildParameters.BuildinFileCopyOption = bundleCopyOption;
                                 buildParameters.BuildinFileCopyParams = string.Empty;
-                                buildParameters.ClearBuildCacheFiles = false; // 不清理构建缓存，启用增量构建，可以提高打包速度！
-                                buildParameters.UseAssetDependencyDB = true;  // 使用资源依赖关系数据库，可以提高打包速度！
+                                buildParameters.ClearBuildCacheFiles = clearBuildCacheFiles ?? false;
+                                buildParameters.UseAssetDependencyDB = useAssetDependencyDB ?? true;
 
                                 // 執行構建
                                 BuiltinBuildPipeline pipeline = new BuiltinBuildPipeline();
@@ -859,8 +862,8 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 buildParameters.FileNameStyle = bundleNameStyle;
                                 buildParameters.BuildinFileCopyOption = bundleCopyOption;
                                 buildParameters.BuildinFileCopyParams = string.Empty;
-                                buildParameters.ClearBuildCacheFiles = false; // 不清理构建缓存，启用增量构建，可以提高打包速度！
-                                buildParameters.UseAssetDependencyDB = true;  // 使用资源依赖关系数据库，可以提高打包速度！
+                                buildParameters.ClearBuildCacheFiles = clearBuildCacheFiles ?? false;
+                                buildParameters.UseAssetDependencyDB = useAssetDependencyDB ?? true;
                                 buildParameters.BuiltinShadersBundleName = _GetBuiltinShaderBundleName(packageName);
 
                                 // 執行構建
@@ -897,8 +900,8 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 buildParameters.FileNameStyle = bundleNameStyle;
                                 buildParameters.BuildinFileCopyOption = bundleCopyOption;
                                 buildParameters.BuildinFileCopyParams = string.Empty;
-                                buildParameters.ClearBuildCacheFiles = false; // 不清理构建缓存，启用增量构建，可以提高打包速度！
-                                buildParameters.UseAssetDependencyDB = true;  // 使用资源依赖关系数据库，可以提高打包速度！
+                                buildParameters.ClearBuildCacheFiles = clearBuildCacheFiles ?? false;
+                                buildParameters.UseAssetDependencyDB = useAssetDependencyDB ?? true;
 
                                 // 執行構建
                                 RawFileBuildPipeline pipeline = new RawFileBuildPipeline();
@@ -918,9 +921,14 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             }
 
             if (successfulResultsBuilder.Length > 0)
+            {
                 Debug.Log(successfulResultsBuilder.ToString());
+            }
             if (failedResultsBuilder.Length > 0)
+            {
                 Debug.LogError(failedResultsBuilder.ToString());
+                throw new Exception(failedResultsBuilder.ToString());
+            }
             #endregion
 
             #region 3. 輸出 CDN 目錄
@@ -1108,7 +1116,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             public const string iosSdkVersion = "-iosSdkVersion";                         // iOS SDK version [Device SDK], [Simulator SDK]
 
             // Bundle
-            public const string bundleMap = "-bundleMap";                                 // bundle map JSON
+            public const string bundleMap = "-bundleMap";                                 // Bundle map JSON (Custom format by oxgframe)
         }
 
         private static Dictionary<string, string> _dictArgs = new Dictionary<string, string>()
