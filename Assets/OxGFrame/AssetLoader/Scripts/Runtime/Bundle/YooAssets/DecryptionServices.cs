@@ -67,13 +67,6 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         protected FileOperationType _fileOperationType = FileOperationType.None;
 
-        public DecryptionServices() { }
-
-        public DecryptionServices(FileOperationType fileOperationType)
-        {
-            this._fileOperationType = fileOperationType;
-        }
-
         #region OxGFrame Implements
         public bool CheckIsIntialized()
         {
@@ -170,7 +163,10 @@ namespace OxGFrame.AssetLoader.Bundle
             this._dummySize = dummySize;
         }
 
-        public OffsetDecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
+        public OffsetDecryption(FileOperationType fileOperationType)
+        {
+            this._fileOperationType = fileOperationType;
+        }
 
         #region OxGFrame Implements
         public override bool Initialize()
@@ -274,7 +270,10 @@ namespace OxGFrame.AssetLoader.Bundle
             this._key = key;
         }
 
-        public XorDecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
+        public XorDecryption(FileOperationType fileOperationType)
+        {
+            this._fileOperationType = fileOperationType;
+        }
 
         #region OxGFrame Implements
         public override bool Initialize()
@@ -382,7 +381,10 @@ namespace OxGFrame.AssetLoader.Bundle
             this._jKey = jKey;
         }
 
-        public HT2XorDecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
+        public HT2XorDecryption(FileOperationType fileOperationType)
+        {
+            this._fileOperationType = fileOperationType;
+        }
 
         #region OxGFrame Implements
         public override bool Initialize()
@@ -498,7 +500,10 @@ namespace OxGFrame.AssetLoader.Bundle
             this._j2Key = j2Key;
         }
 
-        public HT2XorPlusDecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
+        public HT2XorPlusDecryption(FileOperationType fileOperationType)
+        {
+            this._fileOperationType = fileOperationType;
+        }
 
         #region OxGFrame Implements
         public override bool Initialize()
@@ -613,7 +618,10 @@ namespace OxGFrame.AssetLoader.Bundle
             this._iv = iv;
         }
 
-        public AesDecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
+        public AesDecryption(FileOperationType fileOperationType)
+        {
+            this._fileOperationType = fileOperationType;
+        }
 
         #region OxGFrame Implements
         public override bool Initialize()
@@ -724,7 +732,10 @@ namespace OxGFrame.AssetLoader.Bundle
             this._counter = counter;
         }
 
-        public ChaCha20Decryption(FileOperationType fileOperationType) : base(fileOperationType) { }
+        public ChaCha20Decryption(FileOperationType fileOperationType)
+        {
+            this._fileOperationType = fileOperationType;
+        }
 
         #region OxGFrame Implements
         public override bool Initialize()
@@ -834,7 +845,10 @@ namespace OxGFrame.AssetLoader.Bundle
             this._key = key;
         }
 
-        public XXTEADecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
+        public XXTEADecryption(FileOperationType fileOperationType)
+        {
+            this._fileOperationType = fileOperationType;
+        }
 
         #region OxGFrame Implements
         public override bool Initialize()
@@ -940,7 +954,10 @@ namespace OxGFrame.AssetLoader.Bundle
             this._dummySize = dummySize;
         }
 
-        public OffsetXorDecryption(FileOperationType fileOperationType) : base(fileOperationType) { }
+        public OffsetXorDecryption(FileOperationType fileOperationType)
+        {
+            this._fileOperationType = fileOperationType;
+        }
 
         #region OxGFrame Implements
         public override bool Initialize()

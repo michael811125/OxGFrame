@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## [3.4.4] - 2025-07-25
+
+# English
+
+- Adjusted the instantiation approach of the BuildTool's Manifest Encryption Services interface (No impact on usage). Existing imported samples need to be updated.
+  - Added the ClearBuildCacheFiles option.
+  - Added the UseAssetDependencyDB option.
+
+- AssetLoader  
+  - Adjusted the implementation of the ManifestEncryptionServices interface to unify and consolidate its structure (No impact on usage).
+
+
+# 中文
+
+- 調整 BuildTool 的 Manifest Encryption Services 接口實例 (不影響使用)，已經匯入的需要再次進行更新。
+  - 新增 ClearBuildCacheFiles 選項。
+  - 新增 UseAssetDependencyDB 選項。
+
+- AssetLoader
+  - 調整 ManifestEncryptionServices 接口進行統一整併實現 (不影響使用)。
+
 ## [3.4.3] - 2025-07-24
 
 # English

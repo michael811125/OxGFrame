@@ -37,6 +37,8 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             public string compressOption;
             public string fileNameStyle;
             public string builtinCopyOption;
+            public bool clearBuildCacheFiles;
+            public bool useAssetDependencyDB;
             public string exportArgs;
         }
 
@@ -68,6 +70,8 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             public ExportType exportType;
             public bool withoutPlatform;
             public string dlcVersion = "latest";
+            public bool clearBuildCacheFiles;
+            public bool useAssetDependencyDB;
 
             private List<Type> _bundleEncryptionClassTypes = new List<Type>();
             private List<Type> _manifestEncryptionClassTypes = new List<Type>();
@@ -324,11 +328,15 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                 // 壓縮方法
                 package.compressOption = pkgInfo.compressOption.ToString();
 
-                // Bundle 輸出名稱
+                // 輸出名稱規則
                 package.fileNameStyle = pkgInfo.fileNameStyle.ToString();
 
                 // 內置選項
                 package.builtinCopyOption = pkgInfo.copyOption.ToString();
+
+                // 附加選項
+                package.clearBuildCacheFiles = pkgInfo.clearBuildCacheFiles;
+                package.useAssetDependencyDB = pkgInfo.useAssetDependencyDB;
 
                 // 輸出類型
                 string exportArgs = string.Empty;
@@ -500,9 +508,8 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             EditorGUILayout.BeginHorizontal();
 
             // Label 靠左顯示
-            GUIStyle coloredLabel = new GUIStyle(EditorStyles.boldLabel);
-            coloredLabel.normal.textColor = Color.yellow;
-            EditorGUILayout.LabelField("Package List:", coloredLabel, GUILayout.Width(position.width - 210f));
+            GUIStyle coloredLabel = new GUIStyle(EditorStyles.boldLabel) { richText = true };
+            EditorGUILayout.LabelField("<color=yellow>Package List <color=green>(Please make sure to convert to JSON before executing the build)</color>:</color>", coloredLabel, GUILayout.Width(position.width - 210f));
 
             EditorGUILayout.EndHorizontal();
 
@@ -654,6 +661,10 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                     EditorGUILayout.PropertyField(packageProp.FindPropertyRelative("compressOption"));
                     EditorGUILayout.PropertyField(packageProp.FindPropertyRelative("fileNameStyle"));
                     EditorGUILayout.PropertyField(packageProp.FindPropertyRelative("copyOption"));
+                    EditorGUILayout.PropertyField(packageProp.FindPropertyRelative("clearBuildCacheFiles"));
+                    EditorGUILayout.PropertyField(packageProp.FindPropertyRelative("useAssetDependencyDB"));
+
+                    // 顯示輸出選項
                     EditorGUILayout.PropertyField(packageProp.FindPropertyRelative("exportType"));
                     if (this.collectorPackages[i].exportType == PackageInfo.ExportType.DLC)
                     {
@@ -710,7 +721,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                     if (GUILayout.Button("Convert to JSON and Build by JSON"))
                     {
                         string packageName = this.collectorPackages[i].packageName;
-                        this._BuildByJson(packageName, () => { this._ConvertToJSON(packageName); });
+                        EditorApplication.delayCall += () => this._BuildByJson(packageName, () => { this._ConvertToJSON(packageName); });
                     }
                     GUI.backgroundColor = bc;
 
@@ -799,7 +810,11 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                     foreach (var pkg in exportBundleMap.packages)
                     {
                         PackageInfo packageInfo = new PackageInfo();
+
+                        // 包裹名稱
                         packageInfo.packageName = pkg.packageName;
+
+                        // 構建管線
                         EBuildPipeline buildPipeline;
                         if (pkg.buildPipeline == "BBP")
                             buildPipeline = EBuildPipeline.BuiltinBuildPipeline;
@@ -810,17 +825,33 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                         else
                             buildPipeline = EBuildPipeline.EditorSimulateBuildPipeline;
                         packageInfo.buildPipeline = buildPipeline;
+
+                        // Bundle 加密方法
                         string[] encryptionClassNames = packageInfo.bundleEncryptionClassNames.ToArray();
                         for (int i = 0; i < encryptionClassNames.Length; i++)
                             encryptionClassNames[i] = encryptionClassNames[i].ToLower();
                         packageInfo.selectedBundleEncryptionIndex = Array.FindIndex(encryptionClassNames, e => e.Contains(pkg.bundleEncryptionArgs));
+
+                        // Manifest 加密方法
                         encryptionClassNames = packageInfo.manifestEncryptionClassNames.ToArray();
                         for (int i = 0; i < encryptionClassNames.Length; i++)
                             encryptionClassNames[i] = encryptionClassNames[i].ToLower();
                         packageInfo.selectedManifestEncryptionIndex = Array.FindIndex(encryptionClassNames, e => e.Contains(pkg.manifestEncryptionArgs));
+
+                        // 壓縮方法
                         packageInfo.compressOption = Enum.Parse<ECompressOption>(pkg.compressOption);
+
+                        // 輸出名稱規則
                         packageInfo.fileNameStyle = Enum.Parse<EFileNameStyle>(pkg.fileNameStyle);
+
+                        // 內置選項
                         packageInfo.copyOption = Enum.Parse<EBuildinFileCopyOption>(pkg.builtinCopyOption);
+
+                        // 附加選項
+                        packageInfo.clearBuildCacheFiles = pkg.clearBuildCacheFiles;
+                        packageInfo.useAssetDependencyDB = pkg.useAssetDependencyDB;
+
+                        // 輸出類型
                         string[] exportArgs = pkg.exportArgs.Split(",");
                         for (int i = 0; i < exportArgs.Length; i++)
                             exportArgs[i] = exportArgs[i].Trim();
@@ -907,9 +938,10 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             // 顯示 Build 按鈕
             bc = GUI.backgroundColor;
             GUI.backgroundColor = new Color32(158, 139, 255, 255);
+
             if (GUILayout.Button("Build by JSON", GUILayout.MaxWidth(210f)))
             {
-                this._BuildByJson(null);
+                EditorApplication.delayCall += () => this._BuildByJson(null);
             }
             GUI.backgroundColor = bc;
 
@@ -940,6 +972,11 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                 catch (Exception ex)
                 {
                     Debug.LogException(ex);
+
+                    if (ex.ToString().IndexOf("[ErrorCode115]") != -1)
+                    {
+                        Debug.LogWarning("The target folder with the same date and version already exists. Please wait 1 minute and try building again, or try enabling the [ClearBuildCacheFiles] option.");
+                    }
                 }
             }
         }
