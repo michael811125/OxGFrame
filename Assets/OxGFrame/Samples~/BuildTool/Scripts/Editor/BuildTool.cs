@@ -16,6 +16,7 @@ using YooAsset.Editor;
 
 namespace OxGFrame.Extensions.BuildTool.Editor
 {
+    #region 自定義參數
     public class TargetDevice
     {
         public class Android
@@ -30,10 +31,10 @@ namespace OxGFrame.Extensions.BuildTool.Editor
 
             public static readonly AndroidArchitecture[] architectures = new AndroidArchitecture[]
             {
-            AndroidArchitecture.ARMv7,
-            AndroidArchitecture.ARM64,
-            AndroidArchitecture.X86,
-            AndroidArchitecture.X86_64
+                AndroidArchitecture.ARMv7,
+                AndroidArchitecture.ARM64,
+                AndroidArchitecture.X86,
+                AndroidArchitecture.X86_64
             };
 
             public class BuildAppMode
@@ -54,9 +55,9 @@ namespace OxGFrame.Extensions.BuildTool.Editor
 
             public static readonly iOSTargetDevice[] targetDevices = new iOSTargetDevice[]
             {
-            iOSTargetDevice.iPhoneOnly,
-            iOSTargetDevice.iPadOnly,
-            iOSTargetDevice.iPhoneAndiPad
+                iOSTargetDevice.iPhoneOnly,
+                iOSTargetDevice.iPadOnly,
+                iOSTargetDevice.iPhoneAndiPad
             };
 
             public class SDK
@@ -85,7 +86,9 @@ namespace OxGFrame.Extensions.BuildTool.Editor
         public const string NONE = "NONE";
         public const string DEBUG = "DEBUG";
     }
+    #endregion
 
+    #region 構建工具
     public static class BuildTool
     {
         public static void HybridCLRInstaller()
@@ -134,7 +137,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                 fullOutPath = Path.Combine(Application.dataPath, destination);
             // 去除副檔名以獲取文件夾路徑
             string directoryPath = Path.GetDirectoryName(fullOutPath);
-            // 創建目錄（如果不存在）
+            // 創建目錄 (如果不存在)
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
 
@@ -342,13 +345,23 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                 case BuildTarget.StandaloneWindows64:
                 case BuildTarget.StandaloneOSX:
                 case BuildTarget.Android:
+                case BuildTarget.iOS:
                 case BuildTarget.WebGL:
                     // Scripting Backends
                     {
                         string scriptingBackends = CommandParser.GetArgument(CommandParser.ArgName.scriptingBackends);
                         if (string.IsNullOrEmpty(scriptingBackends))
                             scriptingBackends = ScriptingBackends.IL2CPP;
-                        scriptingBackends = scriptingBackends.ToUpper();
+                        scriptingBackends = scriptingBackends.Trim().ToUpper();
+
+                        // iOS 只能使用 IL2CPP (安全檢測)
+                        if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS &&
+                            scriptingBackends == ScriptingBackends.MONO)
+                        {
+                            scriptingBackends = ScriptingBackends.IL2CPP;
+                            Debug.Log("Detected scripting backend 'Mono' for iOS, which is not supported. Switching to IL2CPP automatically.");
+                        }
+
                         switch (scriptingBackends)
                         {
                             case ScriptingBackends.MONO:
@@ -365,7 +378,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                     string il2cppMode = CommandParser.GetArgument(CommandParser.ArgName.il2CppConfiguration);
                                     if (string.IsNullOrEmpty(il2cppMode))
                                         il2cppMode = IL2CppMode.RELEASE;
-                                    il2cppMode = il2cppMode.ToUpper();
+                                    il2cppMode = il2cppMode.Trim().ToUpper();
                                     switch (il2cppMode)
                                     {
                                         case IL2CppMode.RELEASE:
@@ -415,7 +428,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             // 關閉 SplashScreen
             if (Application.HasProLicense())
             {
-                Debug.Log("UNITY IS PRO!\n Deactivating SplashScreen");
+                Debug.Log("UNITY IS PRO!\nDeactivating SplashScreen");
                 PlayerSettings.SplashScreen.show = false;
                 PlayerSettings.SplashScreen.showUnityLogo = false;
             }
@@ -529,7 +542,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             }
             #endregion
 
-            #region 4. 構建 Bundles
+            #region 4. 構建 Bundles (YooAsset)
             // Build map (json)
             if (string.IsNullOrEmpty(bundleMap))
                 throw new ArgumentException("The argument '-bundleMap' cannot be null or empty.");
@@ -931,7 +944,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             }
             #endregion
 
-            #region 3. 輸出 CDN 目錄
+            #region 3. 輸出 CDN 目錄 (OxGFrame)
             if (!onlyBuiltin)
             {
                 // 產品名稱
@@ -1087,7 +1100,9 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             return DateTime.Now.ToString("yyyy-MM-dd") + "-" + totalMinutes;
         }
     }
+    #endregion
 
+    #region 參數解析器
     public static class CommandParser
     {
         public static class ArgName
@@ -1173,4 +1188,5 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             return null;
         }
     }
+    #endregion
 }
