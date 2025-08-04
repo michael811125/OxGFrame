@@ -552,12 +552,16 @@ namespace OxGFrame.CoreFrame
         /// 開啟預顯加載 UI
         /// </summary>
         /// <param name="groupId"></param>
-        /// <param name="bundleName"></param>
+        /// <param name="packageName"></param>
         /// <param name="assetName"></param>
+        /// <param name="awaitingUIExtraDuration"></param>
+        /// <param name="priority"></param>
         /// <returns></returns>
-        protected async virtual UniTask ShowAwaiting(int groupId, string packageName, string assetName, uint priority)
+        protected async virtual UniTask ShowAwaiting(int groupId, string packageName, string assetName, float awaitingUIExtraDuration, uint priority)
         {
-            await UIFrame.UIManager.GetInstance().Show(groupId, packageName, assetName, null, null, priority);
+            var ui = await UIFrame.UIManager.GetInstance().Show(groupId, packageName, assetName, null, null, 0f, priority);
+            if (ui != null && awaitingUIExtraDuration > 0f)
+                await UniTask.Delay(TimeSpan.FromSeconds(awaitingUIExtraDuration));
         }
 
         /// <summary>
@@ -574,14 +578,18 @@ namespace OxGFrame.CoreFrame
         /// 顯示, 可透過 id 進行群組分類
         /// </summary>
         /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
         /// <param name="assetName"></param>
         /// <param name="obj"></param>
         /// <param name="awaitingUIAssetName"></param>
+        /// <param name="awaitingUIExtraDuration"></param>
+        /// <param name="priority"></param>
         /// <param name="progression"></param>
+        /// <param name="parent"></param>
         /// <returns></returns>
-        public async virtual UniTask<T> Show(int groupId, string packageName, string assetName, object obj = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
+        public async virtual UniTask<T> Show(int groupId, string packageName, string assetName, object obj = null, string awaitingUIAssetName = null, float awaitingUIExtraDuration = 0f, uint priority = 0, Progression progression = null, Transform parent = null)
         {
-            await this.ShowAwaiting(groupId, packageName, awaitingUIAssetName, priority);
+            await this.ShowAwaiting(groupId, packageName, awaitingUIAssetName, awaitingUIExtraDuration, priority);
             return default;
         }
         #endregion

@@ -230,49 +230,50 @@ namespace OxGFrame.CoreFrame
             /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <param name="parent"></param>
+            /// <param name="awaitingUIExtraDuration"> Sec Time </param>
             /// <returns></returns>
-            public static async UniTask<UIBase> Show(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
+            public static async UniTask<UIBase> Show(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
+                return await UIManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent);
             }
 
-            public static async UniTask<UIBase> Show(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
+            public static async UniTask<UIBase> Show(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f)
             {
-                return await UIManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
+                return await UIManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent);
             }
 
-            public static async UniTask<UIBase> Show(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
-            {
-                var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
-            }
-
-            public static async UniTask<UIBase> Show(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
-            {
-                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
-            }
-
-            public static async UniTask<T> Show<T>(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : UIBase
+            public static async UniTask<UIBase> Show(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : UIBase
+            public static async UniTask<UIBase> Show(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f)
             {
-                return await UIManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : UIBase
+            public static async UniTask<T> Show<T>(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f) where T : UIBase
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+                return await UIManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent) as T;
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : UIBase
+            public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f) where T : UIBase
             {
-                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+                return await UIManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f) where T : UIBase
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f) where T : UIBase
+            {
+                return await UIManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent) as T;
             }
             #endregion
 
@@ -596,49 +597,50 @@ namespace OxGFrame.CoreFrame
             /// <param name="priority"></param>
             /// <param name="progression"></param>
             /// <param name="parent"></param>
+            /// <param name="awaitingUIExtraDuration"> Sec Time </param>
             /// <returns></returns>
-            public static async UniTask<SRBase> Show(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
+            public static async UniTask<SRBase> Show(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await SRManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
+                return await SRManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent);
             }
 
-            public static async UniTask<SRBase> Show(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
+            public static async UniTask<SRBase> Show(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f)
             {
-                return await SRManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
+                return await SRManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent);
             }
 
-            public static async UniTask<SRBase> Show(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
-            {
-                var packageName = AssetPatcher.GetDefaultPackageName();
-                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
-            }
-
-            public static async UniTask<SRBase> Show(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null)
-            {
-                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent);
-            }
-
-            public static async UniTask<T> Show<T>(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : SRBase
+            public static async UniTask<SRBase> Show(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f)
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await SRManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : SRBase
+            public static async UniTask<SRBase> Show(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f)
             {
-                return await SRManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent);
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : SRBase
+            public static async UniTask<T> Show<T>(string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f) where T : SRBase
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
-                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+                return await SRManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent) as T;
             }
 
-            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null) where T : SRBase
+            public static async UniTask<T> Show<T>(string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f) where T : SRBase
             {
-                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, priority, progression, parent) as T;
+                return await SRManager.GetInstance().Show(DEFAULT_GROUP_ID, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f) where T : SRBase
+            {
+                var packageName = AssetPatcher.GetDefaultPackageName();
+                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent) as T;
+            }
+
+            public static async UniTask<T> Show<T>(int groupId, string packageName, string assetName, object data = null, string awaitingUIAssetName = null, uint priority = 0, Progression progression = null, Transform parent = null, float awaitingUIExtraDuration = 0f) where T : SRBase
+            {
+                return await SRManager.GetInstance().Show(groupId, packageName, assetName, data, awaitingUIAssetName, awaitingUIExtraDuration, priority, progression, parent) as T;
             }
             #endregion
 
