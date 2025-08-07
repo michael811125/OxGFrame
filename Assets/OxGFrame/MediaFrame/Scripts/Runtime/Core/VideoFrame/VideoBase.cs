@@ -164,7 +164,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.isPrepared = true;
 
-            Logging.Print<Logger>($"<color=#00EEFF>【Init Once】 Video length: {this._mediaLength} (s)</color>");
+            Logging.Print<Logger>($"<color=#00EEFF>【Init Once】 Asset Name: {this.mediaName}, Video length: {this._mediaLength} (s).</color>");
 
             return this.isPrepared;
         }
