@@ -139,7 +139,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.isPrepared = true;
 
-            Logging.Print<Logger>($"<color=#00EEFF>【Init Once】 Audio length: {this._mediaLength} (s)</color>");
+            Logging.Print<Logger>($"<color=#00EEFF>【Init Once】 Asset Name: {this.mediaName}, Audio length: {this._mediaLength} (s). AudioSource => Time: {this._audioSource.time}, TimeSamples: {this._audioSource.timeSamples}; AudioClip => Time: {this._audioSource.clip.length}, Samples: {this._audioSource.clip.samples}, Freq: {this._audioSource.clip.frequency}.</color>");
 
             return this.isPrepared;
         }
@@ -192,12 +192,6 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             if (this._loops == -1)
                 this._audioSource.loop = true;
-
-            if (!this._audioSource.clip.preloadAudioData)
-            {
-                this._audioSource.clip.LoadAudioData();
-                Logging.Print<Logger>($"Load AudioName: {this.mediaName}, AudioSource => Time: {this._audioSource.time}, TimeSamples: {this._audioSource.timeSamples}; AudioClip => Time: {this._audioSource.clip.length}, Samples: {this._audioSource.clip.samples}, Freq: {this._audioSource.clip.frequency}");
-            }
 
             volume = (volume > 0f) ? volume : this._audioSource.volume;
             this._audioSource.volume = volume;
