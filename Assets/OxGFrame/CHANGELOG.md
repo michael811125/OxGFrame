@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [3.4.5] - 2025-08-07
+
+# English
+
+- CoreFrame
+  - Added an `awaitingUIExtraDuration` parameter to control the buffer time for the awaiting window.
+- MediaFrame
+  - Modified the preparation logic in `VideoBase`.
+  - Fixed an issue where `AudioBase` did not correctly execute its preparation process, which occasionally caused playback problems.
+
+# 中文
+
+- CoreFrame
+  - 新增 awaitingUIExtraDuration 參數，可以控制等待窗體的緩衝時間。
+- MediaFrame
+  - 調整 VideoBase 執行準備邏輯。
+  - 修正 AudioBase 沒有正常執行準備流程，導致偶發出現播放問題。
+
 ## [3.4.4] - 2025-07-25
 
 # English

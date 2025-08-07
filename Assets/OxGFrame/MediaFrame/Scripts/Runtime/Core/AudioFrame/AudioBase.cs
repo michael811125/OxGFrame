@@ -107,14 +107,23 @@ namespace OxGFrame.MediaFrame.AudioFrame
             this._audioSource.loop = (this.loops == -1) ? true : false;
             this._mediaLength = this._currentRemainingLength = (this.audioLength > 0) ? this.audioLength : this.audioClip.length;
 
-            Logging.Print<Logger>($"{this.mediaName} audio is preparing...");
+            #region Prepare
+            // To make sure audio is ready to play
+            if (this._audioSource.clip != null &&
+                this._audioSource.clip.loadState != AudioDataLoadState.Loaded)
+            {
+                this._audioSource.clip.LoadAudioData();
+                Logging.Print<Logger>($"{this.mediaName} audio preparation started...");
+            }
+
             var cts = new CancellationTokenSource();
             cts.CancelAfterSlim(TimeSpan.FromSeconds(this.maxPrepareTimeSeconds <= 0 ? MAX_PREPARE_TIME_SECONDS : this.maxPrepareTimeSeconds));
             try
             {
                 do
                 {
-                    if (this._audioSource.clip != null && this._audioSource.clip.loadState == AudioDataLoadState.Loaded)
+                    if (this._audioSource.clip != null &&
+                        this._audioSource.clip.loadState == AudioDataLoadState.Loaded)
                         break;
                     // load balancing
                     await UniTask.Yield(PlayerLoopTiming.FixedUpdate, cts.Token);
@@ -126,6 +135,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 Logging.PrintException<Logger>(ex);
                 return false;
             }
+            #endregion
 
             this.isPrepared = true;
 
