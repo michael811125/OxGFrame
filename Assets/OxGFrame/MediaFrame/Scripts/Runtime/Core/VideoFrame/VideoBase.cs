@@ -116,8 +116,13 @@ namespace OxGFrame.MediaFrame.VideoFrame
                     break;
             }
 
-            this._videoPlayer.Prepare();
-            Logging.Print<Logger>($"{this.mediaName} video is preparing...");
+            #region Prepare
+            if (!this._videoPlayer.isPrepared)
+            {
+                this._videoPlayer.Prepare();
+                Logging.Print<Logger>($"{this.mediaName} video preparation started...");
+            }
+
             var cts = new CancellationTokenSource();
             cts.CancelAfterSlim(TimeSpan.FromSeconds(this.maxPrepareTimeSeconds <= 0 ? MAX_PREPARE_TIME_SECONDS : this.maxPrepareTimeSeconds));
             try
@@ -136,6 +141,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 Logging.PrintException<Logger>(ex);
                 return false;
             }
+            #endregion
 
             this._videoPlayer.SetDirectAudioMute(0, true);
             this._videoPlayer.playOnAwake = false;
