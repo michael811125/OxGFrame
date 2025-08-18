@@ -194,7 +194,7 @@ namespace OxGFrame.CoreFrame.Editor
             string[] bindArgs = Binder.GetAccessModifierSplitNameBySeparator(bindInfo);
 
             // MyObj*Txt$public => ["MyObj*Txt", "public"]
-            string bindName = bindArgs[0];
+            string fullBindName = bindArgs[0];
             string variableAccessModifier = (bindArgs.Length > 1) ? bindArgs[1] : null;
 
             // 匹配 Attr []
@@ -213,52 +213,70 @@ namespace OxGFrame.CoreFrame.Editor
             }
             else
             {
-                MatchCollection attrMatches = Regex.Matches(bindName, pattern);
+                MatchCollection attrMatches = Regex.Matches(fullBindName, pattern);
                 if (attrMatches.Count > 0)
                 {
                     // 將匹配的子字符串存入陣列
                     attrNames = attrMatches.Cast<Match>().Select(m => m.Value).ToArray();
                     // 將所有方括號替換為空字串
-                    bindName = Regex.Replace(bindName, pattern, "");
+                    fullBindName = Regex.Replace(fullBindName, pattern, "");
                 }
             }
             #endregion
 
-            // 組件結尾檢測
-            string[] tails = Binder.GetTailSplitNameBySeparator(bindName);
-            string variableName, componentName;
+            // 組件結尾檢測 => fullBindName = MyObj*Txt*Img = [MyObj, Txt, Img]
+            string[] tails = Binder.GetTailSplitNameBySeparator(fullBindName);
+            string variableName;
+            List<string> bindNames = new List<string>();
+            List<string> componentNames = new List<string>();
 
             if (tails != null &&
                 tails.Length >= 2)
             // Component
             {
-                variableName = tails[0] + tails[1];
-                componentName = tails[1];
+                variableName = tails[0];
+                // Multi Components
+                for (int i = 1; i < tails.Length; i++)
+                {
+                    // 合併綁定名稱 = MyObj*Txt
+                    bindNames.Add($"{tails[0]}*{tails[i]}");
+                    componentNames.Add(tails[i]);
+                }
             }
             // GameObject
             else
             {
-                variableName = bindName;
-                componentName = _DEF_COMPONENT_NAME;
+                variableName = tails[0];
+                bindNames.Add(tails[0]);
+                componentNames.Add(_DEF_COMPONENT_NAME);
             }
 
-            // 修正 Case
-            switch (_settings.variableCaseType)
+            for (int i = 0; i < bindNames.Count; i++)
             {
-                case BindCodeSetting.CaseType.CamelCase:
-                    variableName = char.ToLower(variableName[0]) + variableName.Substring(1);
-                    break;
-                case BindCodeSetting.CaseType.PascalCase:
-                    variableName = char.ToUpper(variableName[0]) + variableName.Substring(1);
-                    break;
-            }
+                string bindName = bindNames[i];
+                string componentName = componentNames[i];
+                string finalBindName = componentName.Equals(_DEF_COMPONENT_NAME) ? variableName : variableName + componentName;
+                string finalVariableName = string.Empty;
 
-            // 搜集綁定資訊
-            if (_collectBindInfos.ContainsKey(bindName))
-            {
-                _collectBindInfos[bindName].count++;
+                // 修正 Case
+                switch (_settings.variableCaseType)
+                {
+                    case BindCodeSetting.CaseType.CamelCase:
+                        finalVariableName = char.ToLower(finalBindName[0]) + finalBindName.Substring(1);
+                        break;
+                    case BindCodeSetting.CaseType.PascalCase:
+                        finalVariableName = char.ToUpper(finalBindName[0]) + finalBindName.Substring(1);
+                        break;
+                }
+
+                // 搜集綁定資訊
+                if (_collectBindInfos.ContainsKey(bindName))
+                {
+                    _collectBindInfos[bindName].count++;
+                }
+                else
+                    _collectBindInfos.Add(bindName, new BindInfo(attrNames, variableAccessModifier, bindName, finalVariableName, componentName, 1));
             }
-            else _collectBindInfos.Add(bindName, new BindInfo(attrNames, variableAccessModifier, bindName, variableName, componentName, 1));
         }
         #endregion
 

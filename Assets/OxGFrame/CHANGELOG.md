@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [3.4.6] - 2025-08-18
+
+# English
+
+- CoreFrame
+  - Added support for binding rules that allow multiple components.
+    - Example: _Node@MyObj*Txt*Img*BtnPlus → parsed into bindings: _myObjTxt, _myObjImg, _myObjBtnPlus.
+
+# 中文
+
+- CoreFrame
+  - 新增支持綁定規則允許多組件。
+    - 例如：_Node@MyObj*Txt*Img*BtnPlus -> 解析綁定為 _myObjTxt, _myObjImg, _myObjBtnPlus。
+
 ## [3.4.5] - 2025-08-07
 
 # English

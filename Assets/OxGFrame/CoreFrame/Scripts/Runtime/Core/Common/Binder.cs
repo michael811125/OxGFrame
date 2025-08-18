@@ -1,5 +1,7 @@
 ﻿using OxGFrame.CoreFrame.CPFrame;
 using OxGKit.LoggingSystem;
+using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -63,17 +65,37 @@ namespace OxGFrame.CoreFrame
             string[] bindArgs = GetAccessModifierSplitNameBySeparator(bindInfo);
 
             // MyObj*Txt$public => ["MyObj*Txt", "public"]
-            string bindName = bindArgs[0];
+            string fullBindName = bindArgs[0];
 
             // 匹配 Attr []
             string pattern = @"\[(.*?)\]";
-            MatchCollection attrMatches = Regex.Matches(bindName, pattern);
+            MatchCollection attrMatches = Regex.Matches(fullBindName, pattern);
             if (attrMatches.Count > 0)
             {
                 // 將所有方括號替換為空字串
-                bindName = Regex.Replace(bindName, pattern, "");
+                fullBindName = Regex.Replace(fullBindName, pattern, "");
             }
             #endregion
+
+            // 組件結尾檢測 => fullBindName = MyObj*Txt*Img = [MyObj, Txt, Img]
+            string[] tails = GetTailSplitNameBySeparator(fullBindName);
+            List<string> bindNames = new List<string>();
+
+            // Multi Components
+            if (tails != null &&
+                tails.Length >= 2)
+            {
+                for (int i = 1; i < tails.Length; i++)
+                {
+                    // 合併綁定名稱 = MyObj*Txt
+                    bindNames.Add($"{tails[0]}*{tails[i]}");
+                }
+            }
+            // GameObject
+            else
+            {
+                bindNames.Add($"{tails[0]}");
+            }
 
             // 再去判斷取得後的字串陣列是否綁定格式資格
             if (heads == null ||
@@ -87,8 +109,9 @@ namespace OxGFrame.CoreFrame
             // 找到對應的綁定類型後, 進行綁定
             if (FrameConfig.BIND_COMPONENTS[bindType] == "GameObject")
             {
-                // 綁定至 FrameBase 中對應的容器, 此時進行完成綁定
-                fBase.collector.AddNode(bindName, go);
+                // 綁定至收集器, 此時進行完成綁定
+                foreach (var bindName in bindNames)
+                    fBase.collector.AddNode(bindName, go);
             }
         }
         #endregion
@@ -139,7 +162,7 @@ namespace OxGFrame.CoreFrame
 
         /// <summary>
         /// 透過【BIND_HEAD_SEPARATOR】執行 Split 字串, 返回取得字串陣列
-        /// ※備註: (Example) _Node@MyObj*Txt => ["_Node", "MyObj*Txt"]
+        /// <para> ※備註: (Example) _Node@MyObj*Txt => ["_Node", "MyObj*Txt"] </para>
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -148,12 +171,12 @@ namespace OxGFrame.CoreFrame
             if (string.IsNullOrEmpty(name))
                 return null;
 
-            return name.Split(FrameConfig.BIND_HEAD_SEPARATOR);
+            return name.Split(FrameConfig.BIND_HEAD_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
         }
 
         /// <summary>
         /// 透過【BIND_TAIL_SEPARATOR】執行 Split 字串, 返回取得字串陣列
-        /// ※備註: (Example) MyObj*Txt => ["MyObj", "Txt"]
+        /// <para> ※備註: (Example) MyObj*Txt => ["MyObj", "Txt"] </para>
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -162,12 +185,12 @@ namespace OxGFrame.CoreFrame
             if (string.IsNullOrEmpty(name))
                 return null;
 
-            return name.Split(FrameConfig.BIND_TAIL_SEPARATOR);
+            return name.Split(FrameConfig.BIND_TAIL_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
         }
 
         /// <summary>
         /// 透過【BIND_ACCESS_MODIFIER_SEPARATOR】執行 Split 字串, 返回取得字串陣列
-        /// ※備註: (Example) MyObj*Txt$public => ["MyObj*Txt", "public"]
+        /// <para> ※備註: (Example) MyObj*Txt$public => ["MyObj*Txt", "public"] </para>
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -176,7 +199,7 @@ namespace OxGFrame.CoreFrame
             if (string.IsNullOrEmpty(name))
                 return null;
 
-            return name.Split(FrameConfig.BIND_ACCESS_MODIFIER_SEPARATOR);
+            return name.Split(FrameConfig.BIND_ACCESS_MODIFIER_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
         }
         #endregion
     }
