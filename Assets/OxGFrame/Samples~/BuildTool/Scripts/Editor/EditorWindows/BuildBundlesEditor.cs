@@ -153,6 +153,8 @@ namespace OxGFrame.Extensions.BuildTool.Editor
         private SerializedProperty _hotfixCompile;
         private SerializedProperty _collectorPackagesPty;
 
+        private string _tempJsonInput;
+
         internal static string projectPath;
         internal static string keySaver;
 
@@ -191,6 +193,8 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                 this.groups = JsonConvert.DeserializeObject<List<GroupInfo>>(json);
             this.generateAll = Convert.ToBoolean(EditorStorage.GetData(keySaver, "generateAll", "true"));
             this.hotfixCompile = Convert.ToBoolean(EditorStorage.GetData(keySaver, "hotfixCompile", "true"));
+
+            this._tempJsonInput = null;
 
             this._InitCollectorPackages();
         }
@@ -252,7 +256,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             this._collectorPackagesPty = this._serObj.FindProperty("collectorPackages");
         }
 
-        private void _ConvertToJSON(string targetPackageName = null)
+        private void _ConvertToJSON(string targetPackageName = null, bool useTempJson = false)
         {
             List<Package> packages = new List<Package>();
             foreach (var pkgInfo in this.collectorPackages)
@@ -361,8 +365,17 @@ namespace OxGFrame.Extensions.BuildTool.Editor
 
             // 讓 TextArea 失去焦點
             GUI.FocusControl(null);
-            this.jsonInput = JsonConvert.SerializeObject(exportBundleMap, Formatting.Indented);
-            EditorStorage.SaveString(keySaver + "jsonInput", this.jsonInput);
+
+            string json = JsonConvert.SerializeObject(exportBundleMap, Formatting.Indented);
+            if (!useTempJson)
+            {
+                this.jsonInput = json;
+                EditorStorage.SaveString(keySaver + "jsonInput", this.jsonInput);
+            }
+            else
+            {
+                this._tempJsonInput = json;
+            }
         }
 
         private void _DrawResizableSplitter(float windowWidth, float windowHeight, float topHeight)
@@ -718,10 +731,10 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                     GUI.backgroundColor = bc;
 
                     GUI.backgroundColor = new Color32(158, 139, 255, 255);
-                    if (GUILayout.Button("Convert to JSON and Build by JSON"))
+                    if (GUILayout.Button("Build Only"))
                     {
                         string packageName = this.collectorPackages[i].packageName;
-                        EditorApplication.delayCall += () => this._BuildByJson(packageName, () => { this._ConvertToJSON(packageName); });
+                        EditorApplication.delayCall += () => this._BuildByJson(packageName, () => { this._ConvertToJSON(packageName, true); });
                     }
                     GUI.backgroundColor = bc;
 
@@ -964,7 +977,8 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                 try
                 {
                     action?.Invoke();
-                    BuildTool.BuildBundles(this.jsonInput, this.productName, this.appVersion, false, this.isClearOutputPath);
+                    BuildTool.BuildBundles(string.IsNullOrEmpty(this._tempJsonInput) ? this.jsonInput : this._tempJsonInput, this.productName, this.appVersion, false, this.isClearOutputPath);
+                    this._tempJsonInput = null;
                     EditorUtility.DisplayDialog("Build Message", "All bundles builded.", "OK");
                     string exportFolder = Path.Combine(EditorTools.GetProjectPath(), "ExportBundles", PatchSetting.setting.rootFolderName);
                     if (this.autoReveal) EditorUtility.RevealInFinder(exportFolder);
