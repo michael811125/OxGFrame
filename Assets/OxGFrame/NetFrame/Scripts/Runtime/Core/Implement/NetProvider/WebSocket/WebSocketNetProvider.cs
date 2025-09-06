@@ -18,14 +18,14 @@ namespace OxGFrame.NetFrame
         {
             if (netOption == null)
             {
-                Logging.PrintError<Logger>("<color=#ff2732>ERROR: Connection failed because NetOption is null.</color>");
+                Logging.PrintError<Logger>("ERROR: Connection failed because NetOption is null.");
                 return;
             }
 
             string url = (netOption as WebSocketNetOption).url;
             if (string.IsNullOrEmpty(url))
             {
-                Logging.PrintError<Logger>("<color=#ff2732>ERROR: WebSocket connection failed. NetOption.url cannot be null or empty.</color>");
+                Logging.PrintError<Logger>("ERROR: WebSocket connection failed. NetOption.url cannot be null or empty.");
                 return;
             }
 
@@ -37,8 +37,7 @@ namespace OxGFrame.NetFrame
             this._client.OnClose += this._OnCloseHandler;
 
             this._client.ConnectAsync();
-
-            Logging.Print<Logger>($"URL: {url} => WebSocket is Connected.");
+            Logging.PrintInfo<Logger>($"Endpoint: {url} => {nameof(WebSocketNetProvider)} is Connected.");
         }
 
         #region Handlers
@@ -82,7 +81,7 @@ namespace OxGFrame.NetFrame
                 try
                 {
                     this._client.SendAsync(buffer);
-                    Logging.Print<Logger>($"<color=#C9FF49>[Binary] WebSocket - Try Send Size: {buffer.Length} bytes.</color>");
+                    Logging.Print<Logger>($"[Binary] WebSocket - Try Send Size: {buffer.Length} bytes.");
                     return true;
                 }
                 catch (Exception ex)
@@ -102,7 +101,7 @@ namespace OxGFrame.NetFrame
                 try
                 {
                     this._client.SendAsync(text);
-                    Logging.Print<Logger>($"<color=#C9FF49>[Text] WebSocket - Try Send: {text}.</color>");
+                    Logging.Print<Logger>($"[Text] WebSocket - Try Send: {text}.");
                     return true;
                 }
                 catch (Exception ex)

@@ -44,7 +44,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 bool exists = _queryPackages.Contains(packageName);
                 if (exists)
                 {
-                    Logging.Print<Logger>($"<color=#00FF00>【Try Query Builtin-Package】Search succeeded (Package exists). Package: {packageName}</color>");
+                    Logging.PrintInfo<Logger>($"【Try Query Builtin-Package】Search succeeded (Package exists). Package: {packageName}");
                     return true;
                 }
 
@@ -71,11 +71,11 @@ namespace OxGFrame.AssetLoader.Bundle
             bool exists = Directory.Exists(dirPath);
             if (exists)
             {
-                Logging.Print<Logger>($"<color=#00FF00>【Try Query Builtin-Package】Package exists. Package: {packageName}</color>");
+                Logging.PrintInfo<Logger>($"【Try Query Builtin-Package】Package exists. Package: {packageName}");
                 return true;
             }
 
-            Logging.PrintWarning<Logger>($"<color=#FF0000>【Try Query Builtin-Package】Package doesn't exist. Package: {packageName}</color>");
+            Logging.PrintWarning<Logger>($"【Try Query Builtin-Package】Package doesn't exist. Package: {packageName}");
             return false;
         }
         #endregion
@@ -112,14 +112,14 @@ namespace OxGFrame.AssetLoader.Bundle
                     request.result == UnityWebRequest.Result.ProtocolError ||
                     request.result == UnityWebRequest.Result.ConnectionError)
                 {
-                    Logging.PrintWarning<Logger>($"<color=#ff1743>【Try Query Builtin-Package】Package doesn't exist (Built-in package not found). URL: {url}</color>");
+                    Logging.PrintWarning<Logger>($"【Try Query Builtin-Package】Package doesn't exist (Built-in package not found). URL: {url}");
                     request.Dispose();
                     return false;
                 }
 
                 if (request.downloadedBytes > 0 && request.responseCode < 400)
                 {
-                    Logging.Print<Logger>($"<color=#19ff17>【Try Query Builtin-Package】Package exists (Built-in package found). Code: {request.responseCode}, PartialBytes: {request.downloadedBytes}, URL: {url}</color>");
+                    Logging.PrintInfo<Logger>($"【Try Query Builtin-Package】Package exists (Built-in package found). Code: {request.responseCode}, PartialBytes: {request.downloadedBytes}, URL: {url}");
                     request.Dispose();
                     return true;
                 }

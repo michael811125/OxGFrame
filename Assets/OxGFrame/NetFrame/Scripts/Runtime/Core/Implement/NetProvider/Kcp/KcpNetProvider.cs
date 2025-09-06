@@ -23,7 +23,7 @@ namespace OxGFrame.NetFrame
         {
             if (netOption == null)
             {
-                Logging.PrintError<Logger>("<color=#ff2732>ERROR: Connection failed because NetOption is null.</color>");
+                Logging.PrintError<Logger>("ERROR: Connection failed because NetOption is null.");
                 return;
             }
 
@@ -34,7 +34,7 @@ namespace OxGFrame.NetFrame
 
             if (string.IsNullOrEmpty(host))
             {
-                Logging.PrintError<Logger>("<color=#ff2732>ERROR: KCP connection failed. NetOption.Host cannot be null or empty.</color>");
+                Logging.PrintError<Logger>("ERROR: KCP connection failed. NetOption.Host cannot be null or empty.");
                 return;
             }
 
@@ -51,6 +51,7 @@ namespace OxGFrame.NetFrame
             {
                 // Open connection
                 this._client.Connect(host, (ushort)port);
+                Logging.PrintInfo<Logger>($"Endpoint: {host}:{port} => {nameof(KcpNetProvider)} is Connected.");
             }
             catch (Exception ex)
             {
@@ -103,7 +104,7 @@ namespace OxGFrame.NetFrame
                 {
                     var segment = new ArraySegment<byte>(buffer);
                     this._client.Send(segment, kcpChannel);
-                    Logging.Print<Logger>($"<color=#c9ff49>[Binary] KCP - Try Send Size: {buffer.Length} bytes.</color>");
+                    Logging.Print<Logger>($"[Binary] KCP - Try Send Size: {buffer.Length} bytes.");
                     return true;
                 }
                 catch (Exception ex)

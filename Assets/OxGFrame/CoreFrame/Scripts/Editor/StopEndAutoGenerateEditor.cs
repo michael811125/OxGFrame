@@ -35,7 +35,7 @@ namespace OxGFrame.CoreFrame.Editor
             {
                 if (select.GetInstanceID() != select.transform.root.gameObject.GetInstanceID())
                 {
-                    Debug.Log($"<color=#ff2486>Selected is not a root node => Selected: <color=#ffb824>{select.name}</color>, Root: <color=#ffec24>{select.transform.root.name}</color></color>", select.transform.root);
+                    Debug.Log($"Selected is not a root node => Selected: {select.name}, Root: {select.transform.root.name}", select.transform.root);
                     return false;
                 }
             }
@@ -97,7 +97,7 @@ namespace OxGFrame.CoreFrame.Editor
                 if (endNode == null)
                 {
                     endNode = _listGos[lastIdx];
-                    Debug.Log($"<color=#fff472>Last node is a bind object, doesn't need to generate stop end symbol: <color=#72e4ff>{endNode.name}</color></color>", endNode);
+                    Debug.Log($"Last node is a bind object, doesn't need to generate stop end symbol: {endNode.name}", endNode);
                     return;
                 }
 
@@ -105,7 +105,7 @@ namespace OxGFrame.CoreFrame.Editor
                 Undo.RecordObject(endNode, $"Modified Name with Stop End {endNode.name}");
                 endNode.name = $"{endNode.name}{FrameConfig.BIND_STOP_END}";
 
-                Debug.Log($"<color=#b5ff72>Auto generate stop end symbol ({FrameConfig.BIND_STOP_END}) => EndNode: <color=#72e4ff>{endNode.name}</color></color>", endNode);
+                Debug.Log($"Auto generate stop end symbol ({FrameConfig.BIND_STOP_END}) => EndNode: {endNode.name}", endNode);
             }
             else
             {
@@ -116,7 +116,7 @@ namespace OxGFrame.CoreFrame.Editor
                     Undo.RecordObject(firstChild, $"Modified Name with Stop End {firstChild.name}");
                     firstChild.name = $"{firstChild.name}{FrameConfig.BIND_STOP_END}";
 
-                    Debug.Log($"<color=#ff72b3>There are no any bind objects, generate stop end symbol to first child: <color=#72e4ff>{firstChild.name}</color></color>", firstChild);
+                    Debug.Log($"There are no any bind objects, generate stop end symbol to first child: {firstChild.name}", firstChild);
                 }
                 // Transform (Prefab)
                 else if (_listGos.Count > 1 && !_listGos[0].name.Contains("(Environment)"))
@@ -125,7 +125,7 @@ namespace OxGFrame.CoreFrame.Editor
                     Undo.RecordObject(firstChild, $"Modified Name with Stop End {firstChild.name}");
                     firstChild.name = $"{firstChild.name}{FrameConfig.BIND_STOP_END}";
 
-                    Debug.Log($"<color=#ff72b3>There are no any bind objects, generate stop end symbol to first child: <color=#72e4ff>{firstChild.name}</color></color>", firstChild);
+                    Debug.Log($"There are no any bind objects, generate stop end symbol to first child: {firstChild.name}", firstChild);
                 }
             }
         }

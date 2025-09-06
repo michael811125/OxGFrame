@@ -215,7 +215,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                     if (isInitialized)
                     {
-                        Logging.Print<Logger>("<color=#ffcf67>(Init) Init Patch</color>");
+                        Logging.Print<Logger>("(Init) Init Patch");
                         this._machine.ChangeState<FsmPatchVersionUpdate>();
                     }
                     else
@@ -306,7 +306,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             if (string.IsNullOrEmpty(lastVersion))
                             {
                                 PackageEvents.PatchVersionUpdateFailed.SendEventMessage(this._hashId);
-                                Logging.PrintError<Logger>($"<color=#ff3696>Package: {package.PackageName}. Local version record not found, resources need to be updated (Please connect to the network)!</color>");
+                                Logging.PrintError<Logger>($"Package: {package.PackageName}. Local version record not found, resources need to be updated (Please connect to the network)!");
                                 return;
                             }
                             patchVersions.Add(lastVersion);
@@ -320,7 +320,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     else
                     {
                         PackageEvents.PatchVersionUpdateFailed.SendEventMessage(this._hashId);
-                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {currentPackageName} update version failed.</color>");
+                        Logging.PrintError<Logger>($"Package: {currentPackageName} update version failed.");
                     }
                 }
             }
@@ -385,7 +385,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         #endregion
 
                         succeed = true;
-                        Logging.Print<Logger>($"<color=#85cf0f>Package: {packages[i].PackageName} <color=#00c1ff>Update</color> completed successfully.</color>");
+                        Logging.PrintInfo<Logger>($"Package: {packages[i].PackageName} Update completed successfully.");
                     }
                     else
                     {
@@ -404,13 +404,13 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
                     {
                         PackageEvents.PatchManifestUpdateFailed.SendEventMessage(this._hashId);
-                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {currentPackageName}. Failed to load the local resource manifest file. Resource update is required (Please connect to the network)!</color>");
+                        Logging.PrintError<Logger>($"Package: {currentPackageName}. Failed to load the local resource manifest file. Resource update is required (Please connect to the network)!");
                     }
                     #endregion
                     else
                     {
                         PackageEvents.PatchManifestUpdateFailed.SendEventMessage(this._hashId);
-                        Logging.PrintError<Logger>($"<color=#ff3696>Package: {currentPackageName} update manifest failed.</color>");
+                        Logging.PrintError<Logger>($"Package: {currentPackageName} update manifest failed.");
                     }
                 }
             }
@@ -510,7 +510,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     if (isLastPackageVersions)
                     {
                         string errorMsg = "Local resources are incomplete. Update required (Please connect to the network)!";
-                        Logging.PrintError<Logger>($"<color=#ff3696>GroupName: {groupInfo.groupName}. {errorMsg}</color>");
+                        Logging.PrintError<Logger>($"GroupName: {groupInfo.groupName}. {errorMsg}");
                         // 當突然失去聯網時, 必須重新從獲取資源版本的流程開始運行, 因為當網絡恢復時, 則可以正確獲取遠端版本進行更新
                         PackageEvents.PatchVersionUpdateFailed.SendEventMessage(this._hashId);
                     }
@@ -530,7 +530,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 }
                 else
                 {
-                    Logging.Print<Logger>($"<color=#54ff75><color=#ffce54>GroupName: {groupInfo.groupName}</color> not found any download files!!!</color>");
+                    Logging.PrintInfo<Logger>($"GroupName: {groupInfo.groupName} not found any download files!!!");
                     this._machine.ChangeState<FsmDownloadOver>();
                 }
             }
@@ -576,7 +576,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 // Get groupInfo
                 GroupInfo groupInfo = (this._machine.Owner as PackageOperation).groupInfo;
 
-                Logging.Print<Logger>($"<color=#54ffad>Start Download Group Name: {groupInfo?.groupName}, Tags: {JsonConvert.SerializeObject(groupInfo?.tags)}</color>");
+                Logging.PrintInfo<Logger>($"Start Download Group Name: {groupInfo?.groupName}, Tags: {JsonConvert.SerializeObject(groupInfo?.tags)}");
 
                 List<ResourceDownloaderOperation> downloaders = new List<ResourceDownloaderOperation>();
                 foreach (var package in packages)
@@ -607,11 +607,11 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     // Check disk space
                     int availableDiskSpaceMegabytes = BundleUtility.CheckAvailableDiskSpaceMegabytes();
                     int patchTotalMegabytes = (int)(totalBytes / (1 << 20));
-                    Logging.Print<Logger>($"<color=#2cff96>[Disk Space Check] Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}</color>, <color=#2cbbff>Patch Total Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}</color>");
+                    Logging.PrintInfo<Logger>($"[Disk Space Check] Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}, Patch Total Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}");
                     if (patchTotalMegabytes > availableDiskSpaceMegabytes)
                     {
                         PackageEvents.PatchCheckDiskNotEnoughSpace.SendEventMessage(availableDiskSpaceMegabytes, (ulong)totalBytes);
-                        Logging.PrintError<Logger>($"<color=#ff2c48>Disk Not Enough Space!!! Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}</color>, <color=#2cbbff>Patch Total Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}</color>");
+                        Logging.PrintError<Logger>($"Disk Not Enough Space!!! Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}, Patch Total Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}");
                         return;
                     }
                 }

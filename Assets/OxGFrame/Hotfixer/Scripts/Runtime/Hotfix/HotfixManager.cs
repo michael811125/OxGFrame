@@ -49,34 +49,34 @@ namespace OxGFrame.Hotfixer
                 switch (msgData.stateNode)
                 {
                     case HotfixFsmStates.FsmHotfixPrepare:
-                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixPrepare <<<< </color>");
+                        Logging.Print<Logger>(" >>>> HotfixFsmStates.FsmHotfixPrepare <<<< ");
                         break;
                     case HotfixFsmStates.FsmInitHotfixPackage:
-                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmInitHotfixPackage <<<< </color>");
+                        Logging.Print<Logger>(" >>>> HotfixFsmStates.FsmInitHotfixPackage <<<< ");
                         break;
                     case HotfixFsmStates.FsmUpdateHotfixPackage:
-                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmUpdateHotfixPackage <<<< </color>");
+                        Logging.Print<Logger>(" >>>> HotfixFsmStates.FsmUpdateHotfixPackage <<<< ");
                         break;
                     case HotfixFsmStates.FsmHotfixCreateDownloader:
-                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixCreateDownloader <<<< </color>");
+                        Logging.Print<Logger>(" >>>> HotfixFsmStates.FsmHotfixCreateDownloader <<<< ");
                         break;
                     case HotfixFsmStates.FsmHotfixBeginDownload:
-                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixBeginDownload <<<< </color>");
+                        Logging.Print<Logger>(" >>>> HotfixFsmStates.FsmHotfixBeginDownload <<<< ");
                         break;
                     case HotfixFsmStates.FsmHotfixDownloadOver:
-                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixDownloadOver <<<< </color>");
+                        Logging.Print<Logger>(" >>>> HotfixFsmStates.FsmHotfixDownloadOver <<<< ");
                         break;
                     case HotfixFsmStates.FsmHotfixClearCache:
-                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixClearCache <<<< </color>");
+                        Logging.Print<Logger>(" >>>> HotfixFsmStates.FsmHotfixClearCache <<<< ");
                         break;
                     case HotfixFsmStates.FsmLoadAOTAssemblies:
-                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmLoadAOTAssemblies <<<< </color>");
+                        Logging.Print<Logger>(" >>>> HotfixFsmStates.FsmLoadAOTAssemblies <<<< ");
                         break;
                     case HotfixFsmStates.FsmLoadHotfixAssemblies:
-                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmLoadHotfixAssemblies <<<< </color>");
+                        Logging.Print<Logger>(" >>>> HotfixFsmStates.FsmLoadHotfixAssemblies <<<< ");
                         break;
                     case HotfixFsmStates.FsmHotfixDone:
-                        Logging.Print<Logger>("<color=#00e7aa> >>>> HotfixFsmStates.FsmHotfixDone <<<< </color>");
+                        Logging.Print<Logger>(" >>>> HotfixFsmStates.FsmHotfixDone <<<< ");
                         break;
                 }
             });
@@ -182,7 +182,7 @@ namespace OxGFrame.Hotfixer
         {
             if (this._isDone)
             {
-                Logging.PrintWarning<Logger>("<color=#ff8686>Hotfix all are loaded. Please run 'Reset' method and try again.</color>");
+                Logging.PrintWarning<Logger>("Hotfix all are loaded. Please run 'Reset' method and try again.");
                 return;
             }
 

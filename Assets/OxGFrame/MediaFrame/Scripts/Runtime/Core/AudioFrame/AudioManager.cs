@@ -57,7 +57,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 {
                     _instance = FindObjectOfType<AudioManager>();
                     if (_instance == null)
-                        Logging.PrintError<Logger>("<color=#ff0000>Cannot find the 'AudioManager' component. Please check your 'AudioManager' GameObject in the scene.</color>");
+                        Logging.PrintError<Logger>("Cannot find the 'AudioManager' component. Please check your 'AudioManager' GameObject in the scene.");
                 }
             }
             return _instance;
@@ -207,7 +207,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
             string log = string.Empty;
             for (int i = 0; i < snapshots.Length; i++)
             {
-                log += $"<color=#FFA8AF>{snapshots[i].name} : {weights[i]}</color>;  ";
+                log += $"{snapshots[i].name} : {weights[i]};  ";
             }
             Logging.Print<Logger>($"{log}");
         }
@@ -263,7 +263,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.LoadAndPlay(audBase, loops, volume);
 
-            Logging.Print<Logger>($"Play Audio: {audBase?.mediaName}, Current Length: {audBase?.CurrentLength()} (s)");
+            Logging.PrintInfo<Logger>($"Play Audio: {audBase?.mediaName}, Current Length: {audBase?.CurrentLength()} (s)");
         }
 
         /// <summary>
@@ -357,7 +357,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.ExitAndStop(audBase, false, disabledEndEvent);
 
-            Logging.Print<Logger>($"Stop Audio: {audBase?.mediaName}");
+            Logging.PrintInfo<Logger>($"Stop Audio: {audBase?.mediaName}");
 
             // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
             if (audBase.isPrepared)
@@ -425,7 +425,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.ExitAndStop(audBase, true, false);
 
-            Logging.Print<Logger>($"Pause Audio: {audBase?.mediaName}, Current Length: {audBase?.CurrentLength()} (s)");
+            Logging.PrintInfo<Logger>($"Pause Audio: {audBase?.mediaName}, Current Length: {audBase?.CurrentLength()} (s)");
         }
 
         /// <summary>

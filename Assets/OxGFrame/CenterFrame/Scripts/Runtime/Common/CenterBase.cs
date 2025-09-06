@@ -110,7 +110,7 @@ namespace OxGFrame.CenterFrame
         {
             if (this.HasInCache(id))
             {
-                Logging.PrintWarning<Logger>($"<color=#FF0000>Repeat registration. Id: {id}, Reg: {@class.GetType().Name}</color>");
+                Logging.PrintWarning<Logger>($"Repeat registration. Id: {id}, Reg: {@class.GetType().Name}");
                 return;
             }
 
@@ -142,7 +142,7 @@ namespace OxGFrame.CenterFrame
         {
             if (!this.HasInCache(id))
             {
-                Logging.PrintError<Logger>($"<color=#ff952f>Cannot find event with Id: {id}</color>");
+                Logging.PrintError<Logger>($"Cannot find event with Id: {id}");
                 return default;
             }
 

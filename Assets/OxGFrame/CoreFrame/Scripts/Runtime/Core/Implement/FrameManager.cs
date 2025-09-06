@@ -423,7 +423,7 @@ namespace OxGFrame.CoreFrame
                     {
                         // 直接標記加載完成
                         progression?.Invoke(1, 1, 1);
-                        Logging.Print<Logger>($"<color=#FF9149>{stack.assetName} => 【Allow Instantiate + Preload Mode】skip cache process.</color>");
+                        Logging.Print<Logger>($"{stack.assetName} => 【Allow Instantiate + Preload Mode】skip cache process.");
                         return null;
                     }
                     // 允所多實例時, 需要重覆加載 (確保 ref 正確, 不過會多 1 次, 需要額外減去)
@@ -669,7 +669,7 @@ namespace OxGFrame.CoreFrame
                 // 額外卸載
                 AssetLoaders.UnloadAsset(assetName).Forget();
 
-                Logging.Print<Logger>($"<color=#ffa2a3>[FrameManager] Extra Unload Asset: {assetName}</color>");
+                Logging.Print<Logger>($"[FrameManager] Extra Unload Asset: {assetName}");
             }
 
             // 柱列為空, 則刪除資源緩存
@@ -679,9 +679,7 @@ namespace OxGFrame.CoreFrame
             // 卸載
             AssetLoaders.UnloadAsset(assetName).Forget();
 
-            Logging.Print<Logger>($"<color=#ffb6db>[FrameManager] Unload Asset: {assetName}</color>");
-
-            Logging.Print<Logger>($"<color=#ff9d55>[FrameManager] Destroy Object: {assetName}</color>");
+            Logging.PrintInfo<Logger>($"[FrameManager] Destroy + Unload Asset: {assetName}");
         }
         #endregion
 

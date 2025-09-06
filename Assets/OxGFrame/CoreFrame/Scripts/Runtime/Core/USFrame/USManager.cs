@@ -233,9 +233,9 @@ namespace OxGFrame.CoreFrame.USFrame
                         else go.SetActive(active);
                     }
                 }
-                else Logging.PrintWarning<Logger>($"<color=#ff8233>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...</color>");
+                else Logging.PrintWarning<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...");
             }
-            else Logging.PrintError<Logger>($"<color=#ff33ae>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene not is valid!!!</color>");
+            else Logging.PrintError<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene not is valid!!!");
         }
 
         public async UniTask SetActiveSceneRootGameObjectsAsync(Scene scene, bool active, int framesInterval, int activeObjectsPerInterval, string[] withoutRootGameObjectNames = null)
@@ -279,9 +279,9 @@ namespace OxGFrame.CoreFrame.USFrame
                         }
                     }
                 }
-                else Logging.PrintWarning<Logger>($"<color=#ff8233>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...</color>");
+                else Logging.PrintWarning<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...");
             }
-            else Logging.PrintError<Logger>($"<color=#ff33ae>Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene not is valid!!!</color>");
+            else Logging.PrintError<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene not is valid!!!");
         }
 
         #region Bundle
@@ -299,7 +299,7 @@ namespace OxGFrame.CoreFrame.USFrame
             var pack = await AssetLoaders.LoadSceneAsync(packageName, sceneName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
             if (pack != null)
             {
-                Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Bundle</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
+                Logging.PrintInfo<Logger>($"Load Scene From Bundle => sceneName: {sceneName}, mode: {loadSceneMode}");
                 return pack;
             }
 
@@ -320,7 +320,7 @@ namespace OxGFrame.CoreFrame.USFrame
             var pack = AssetLoaders.LoadScene(packageName, sceneName, loadSceneMode, localPhysicsMode, progression);
             if (pack != null)
             {
-                Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Bundle</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
+                Logging.PrintInfo<Logger>($"Load Scene From Bundle => sceneName: {sceneName}, mode: {loadSceneMode}");
                 return pack;
             }
 
@@ -373,7 +373,7 @@ namespace OxGFrame.CoreFrame.USFrame
                     await UniTask.Yield();
                 }
 
-                Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
+                Logging.PrintInfo<Logger>($"Load Scene From Build => sceneName: {sceneName}, mode: {loadSceneMode}");
             }
 
             return req;
@@ -399,7 +399,7 @@ namespace OxGFrame.CoreFrame.USFrame
                 this._currentCount++;
                 progression.Invoke(this._currentCount / this._totalCount, this._currentCount, this._totalCount);
             }
-            Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => sceneName: {sceneName}, mode: {loadSceneMode}</color>");
+            Logging.PrintInfo<Logger>($"Load Scene From Build => sceneName: {sceneName}, mode: {loadSceneMode}");
             // (Caution) If use sync to load scene.isLoaded return false -> Why??
             return scene;
         }
@@ -436,7 +436,7 @@ namespace OxGFrame.CoreFrame.USFrame
                     await UniTask.Yield();
                 }
 
-                Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => idx: {buildIndex}, mode: {loadSceneMode}</color>");
+                Logging.PrintInfo<Logger>($"Load Scene From Build => idx: {buildIndex}, mode: {loadSceneMode}");
             }
 
             return req;
@@ -463,7 +463,7 @@ namespace OxGFrame.CoreFrame.USFrame
                 this._currentCount++;
                 progression.Invoke(this._currentCount / this._totalCount, this._currentCount, this._totalCount);
             }
-            Logging.Print<Logger>($"<color=#4affc2>Load Scene From <color=#ffc04a>Build</color> => idx: {buildIndex}, mode: {loadSceneMode}</color>");
+            Logging.PrintInfo<Logger>($"Load Scene From Build => idx: {buildIndex}, mode: {loadSceneMode}");
             // (Caution) If use sync to load scene.isLoaded return false -> Why??
             return scene;
         }
@@ -487,7 +487,7 @@ namespace OxGFrame.CoreFrame.USFrame
                             if (sceneName == this.GetSceneAt(i).name)
                             {
                                 SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
-                                Logging.Print<Logger>($"<color=#ff4ae0>Unload Scene <color=#ffc04a>(Build)</color> => sceneName: {sceneName}</color>");
+                                Logging.PrintInfo<Logger>($"Unload Scene (Build) => sceneName: {sceneName}");
                             }
                         }
                     }
@@ -498,7 +498,7 @@ namespace OxGFrame.CoreFrame.USFrame
                             if (sceneName == this.GetSceneAt(i).name)
                             {
                                 SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
-                                Logging.Print<Logger>($"<color=#ff4ae0>Unload Scene <color=#ffc04a>(Build)</color> => sceneName: {sceneName}</color>");
+                                Logging.PrintInfo<Logger>($"Unload Scene (Build) => sceneName: {sceneName}");
                                 break;
                             }
                         }
@@ -526,7 +526,7 @@ namespace OxGFrame.CoreFrame.USFrame
                             if (buildIndex == this.GetSceneAt(i).buildIndex)
                             {
                                 SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
-                                Logging.Print<Logger>($"<color=#ff4ae0>Unload Scene <color=#ffc04a>(Build)</color> => sceneName: {this.GetSceneAt(i).name}, buildIdx: {this.GetSceneAt(i).buildIndex}</color>");
+                                Logging.PrintInfo<Logger>($"Unload Scene (Build) => sceneName: {this.GetSceneAt(i).name}, buildIdx: {this.GetSceneAt(i).buildIndex}");
                             }
                         }
                     }
@@ -540,7 +540,7 @@ namespace OxGFrame.CoreFrame.USFrame
                             if (buildIndex == this.GetSceneAt(i).buildIndex)
                             {
                                 SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
-                                Logging.Print<Logger>($"<color=#ff4ae0>Unload Scene <color=#ffc04a>(Build)</color> => sceneName: {this.GetSceneAt(i).name}, buildIdx: {this.GetSceneAt(i).buildIndex}</color>");
+                                Logging.PrintInfo<Logger>($"Unload Scene (Build) => sceneName: {this.GetSceneAt(i).name}, buildIdx: {this.GetSceneAt(i).buildIndex}");
                                 break;
                             }
                         }

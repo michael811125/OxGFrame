@@ -41,7 +41,7 @@ namespace OxGFrame.CoreFrame.Editor
                 {
                     if (content.Contains(pair.Key))
                     {
-                        sb.AppendLine($"<color=#ffe98d>Found <color=#ff7d39>deprecated API</color>: <color=#ff71d6>{pair.Key}</color> in <color=#39f5ff>{scriptPath}</color></color>");
+                        sb.AppendLine($"Found deprecated API: {pair.Key} in {scriptPath}");
                         content = content.Replace(pair.Key, pair.Value);
                         dirty = true;
                     }
@@ -64,11 +64,11 @@ namespace OxGFrame.CoreFrame.Editor
                     "OK"
                 );
 
-                sb.AppendLine("<color=#25ff56>API update completed.</color>");
+                sb.AppendLine("API update completed.");
             }
             else
             {
-                sb.AppendLine("<color=#25ff56>API already up-to-date.</color>");
+                sb.AppendLine("API already up-to-date.");
             }
 
             Debug.Log(sb.ToString());

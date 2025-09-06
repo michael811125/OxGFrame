@@ -149,7 +149,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             srBase.SetHidden(false);
             await this.LoadAndDisplay(srBase, obj);
 
-            Logging.Print<Logger>($"<color=#1effad>Show SR: <color=#ffdb1e>{assetName}</color></color>");
+            Logging.PrintInfo<Logger>($"Show SR: {assetName}");
 
             // 執行完畢後, 關閉預顯加載 UI
             this.CloseAwaiting(awaitingUIAssetName);
@@ -205,7 +205,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                     this.Destroy(srBase, assetName);
             }
 
-            Logging.Print<Logger>($"<color=#1effad>Close SR: <color=#ffdb1e>{assetName}</color></color>");
+            Logging.PrintInfo<Logger>($"Close SR: {assetName}");
         }
 
         public override void Close(string assetName, bool disabledPreClose = false, bool forceDestroy = false)
@@ -295,7 +295,7 @@ namespace OxGFrame.CoreFrame.SRFrame
 
                 this.LoadAndDisplay(srBase).Forget();
 
-                Logging.Print<Logger>($"<color=#1effad>Reveal SR: <color=#ffdb1e>{assetName}</color></color>");
+                Logging.PrintInfo<Logger>($"Reveal SR: {assetName}");
             }
         }
 
@@ -354,7 +354,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 this.ExitAndHide(srBase);
             }
 
-            Logging.Print<Logger>($"<color=#1effad>Hide SR: <color=#ffdb1e>{assetName}</color></color>");
+            Logging.PrintInfo<Logger>($"Hide SR: {assetName}");
         }
 
         public override void Hide(string assetName)

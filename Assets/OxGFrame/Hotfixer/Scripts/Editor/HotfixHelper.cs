@@ -61,7 +61,7 @@ namespace OxGFrame.Hotfixer.Editor
                 string dllPath = $"{aotAssembliesSrcDir}/{dll}.dll";
                 if (!File.Exists(dllPath))
                 {
-                    Debug.LogError($"<color=#ff868a>Add Metadata for AOT dll: <color=#42ddff>{dllPath}</color> is failed (File does not exist). The stripped AOT dlls can only be generated during BuildPlayer. Please do generate AOTDlls, after finished and then do copy again.</color>");
+                    Debug.LogError($"Add Metadata for AOT dll: {dllPath} is failed (File does not exist). The stripped AOT dlls can only be generated during BuildPlayer. Please do generate AOTDlls, after finished and then do copy again.");
                     continue;
                 }
                 FileInfo fileInfo = new FileInfo(dllPath);
@@ -70,10 +70,10 @@ namespace OxGFrame.Hotfixer.Editor
                 string dllBytesPath = $"{aotAssembliesDstDir}/{dll}.dll.bytes";
                 File.Copy(dllPath, dllBytesPath, true);
 
-                Debug.Log($"<color=#a4ff86>[Copy AOTAssemblies To HotfixCollector] (AOT) <color=#ffcbde>{dll}.dll.bytes</color>, <color=#ffb542>Size: {GetBytesToString(bytesSize)}</color>, <color=#42ddff>{dllPath}</color> -> <color=#c686ff>{dllBytesPath}</color></color>");
+                Debug.Log($"[Copy AOTAssemblies To HotfixCollector] (AOT) {dll}.dll.bytes, Size: {GetBytesToString(bytesSize)}, {dllPath} -> {dllBytesPath}");
             }
 
-            Debug.Log($"<color=#ffb542>AOT Assemblies TotalSize: {GetBytesToString(totalBytesSize)}</color>");
+            Debug.Log($"AOT Assemblies TotalSize: {GetBytesToString(totalBytesSize)}");
         }
 
         /// <summary>
@@ -100,10 +100,10 @@ namespace OxGFrame.Hotfixer.Editor
                 string dllBytesPath = $"{hotfixAssembliesDstDir}/{dll}.bytes";
                 File.Copy(dllPath, dllBytesPath, true);
 
-                Debug.Log($"<color=#a4ff86>[Copy Hotfix Assemblies To HotfixCollector] (Hotfix) <color=#ffcbde>{dll}.bytes</color>, <color=#ffb542>Size: {GetBytesToString(bytesSize)}</color>, <color=#42ddff>{dllPath}</color> -> <color=#c686ff>{dllBytesPath}</color></color>");
+                Debug.Log($"[Copy Hotfix Assemblies To HotfixCollector] (Hotfix) {dll}.bytes, Size: {GetBytesToString(bytesSize)}, {dllPath} -> {dllBytesPath}");
             }
 
-            Debug.Log($"<color=#ffb542>Hotfix Assemblies TotalSize: {GetBytesToString(totalBytesSize)}</color>");
+            Debug.Log($"Hotfix Assemblies TotalSize: {GetBytesToString(totalBytesSize)}");
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace OxGFrame.Hotfixer.Editor
             // 寫入配置文件
             WriteConfig(config, cipher ? ConfigFileType.Bytes : ConfigFileType.Json);
 
-            Debug.Log($"<color=#00FF00>【Export {HotfixConfig.HOTFIX_DLL_CFG_NAME} Completes】</color>");
+            Debug.Log($"【Export {HotfixConfig.HOTFIX_DLL_CFG_NAME} Completes】");
         }
 
         [MenuItem("Assets/OxGFrame/Hotfixer/Convert hotfixdllconfig.conf (BYTES [Cipher] <-> JSON [Plaintext])", false, -99)]
@@ -235,7 +235,7 @@ namespace OxGFrame.Hotfixer.Editor
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
-                Debug.Log($"<color=#00d6ff>Created directory: {directoryPath}</color>");
+                Debug.Log($"Created directory: {directoryPath}");
             }
 
             switch (configFileType)
@@ -249,7 +249,7 @@ namespace OxGFrame.Hotfixer.Editor
                         // 寫入文件
                         File.WriteAllText(savePath, json);
                         AssetDatabase.Refresh();
-                        Debug.Log($"<color=#00d6ff>Saved Hotfix Dll Config JSON to: {savePath}</color>");
+                        Debug.Log($"Saved Hotfix Dll Config JSON to: {savePath}");
                     }
                     break;
 
@@ -265,7 +265,7 @@ namespace OxGFrame.Hotfixer.Editor
                         // 寫入配置文件
                         File.WriteAllBytes(savePath, writeBuffer);
                         AssetDatabase.Refresh();
-                        Debug.Log($"<color=#00d6ff>Saved Hotfix Dll Config BYTES to: {savePath}</color>");
+                        Debug.Log($"Saved Hotfix Dll Config BYTES to: {savePath}");
                     }
                     break;
             }

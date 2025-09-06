@@ -82,7 +82,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     _bundleDecryptionServices = new OffsetXorDecryption(FileOperationType.Bundle);
                     break;
             }
-            Logging.Print<Logger>($"<color=#ffe45a>Init Bundle Decryption: {decryptType}</color>");
+            Logging.Print<Logger>($"Init Bundle Decryption: {decryptType}");
 
             decryptType = BundleConfig.manifestDecryptArgs[0].Decrypt().ToUpper();
             switch (decryptType)
@@ -114,7 +114,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     _manifestDecryptionServices = new OffsetXorDecryption(FileOperationType.Manifest);
                     break;
             }
-            Logging.Print<Logger>($"<color=#ffe45a>Init Manifest Decryption: {decryptType}</color>");
+            Logging.Print<Logger>($"Init Manifest Decryption: {decryptType}");
             #endregion
 
             #region Init Preset Packages
@@ -129,7 +129,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
             isInitialized = appInitialized && dlcInitialized;
 
-            Logging.Print<Logger>($"<color=#ffe45a>InitSetup -> Initialized: {isInitialized}</color>");
+            Logging.PrintInfo<Logger>($"InitSetup -> Initialized: {isInitialized}");
         }
 
         /// <summary>
@@ -149,11 +149,11 @@ namespace OxGFrame.AssetLoader.Bundle
                         bool isInitialized = await AssetPatcher.InitAppPackage(packageInfo, true);
                         if (isInitialized)
                         {
-                            Logging.Print<Logger>($"<color=#85cf0f>Successfully initialized preset App package: <color=#ffe45a>{packageInfo.packageName}</color>.</color>");
+                            Logging.PrintInfo<Logger>($"Successfully initialized preset App package: {packageInfo.packageName}.");
                         }
                         else
                         {
-                            Logging.PrintError<Logger>($"<color=#ff3696>Initialization failed for preset App package: <color=#ff8427>{packageInfo.packageName}</color>.</color>");
+                            Logging.PrintError<Logger>($"Initialization failed for preset App package: {packageInfo.packageName}.");
                             return false;
                         }
                     }
@@ -184,11 +184,11 @@ namespace OxGFrame.AssetLoader.Bundle
                         bool isInitialized = await AssetPatcher.InitDlcPackage(packageInfo, true);
                         if (isInitialized)
                         {
-                            Logging.Print<Logger>($"<color=#85cf0f>Successfully initialized preset DLC package: <color=#ffe45a>{packageInfo.packageName}</color>.</color>");
+                            Logging.PrintInfo<Logger>($"Successfully initialized preset DLC package: {packageInfo.packageName}.");
                         }
                         else
                         {
-                            Logging.PrintError<Logger>($"<color=#ff3696>Initialization failed for preset DLC package: <color=#ff8427>{packageInfo.packageName}</color>.</color>");
+                            Logging.PrintError<Logger>($"Initialization failed for preset DLC package: {packageInfo.packageName}.");
                             return false;
                         }
                     }
@@ -221,7 +221,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 // The default initialized state is true
                 bool isInitialized = true;
                 if (autoUpdate) isInitialized = await UpdatePackage(packageName);
-                Logging.Print<Logger>($"<color=#e2ec00>Package: {packageName} is initialized. Status: {package.InitializeStatus}.</color>");
+                Logging.PrintInfo<Logger>($"Package: {packageName} is initialized. Status: {package.InitializeStatus}.");
                 return isInitialized;
             }
 
@@ -373,12 +373,12 @@ namespace OxGFrame.AssetLoader.Bundle
                 // The default initialized state is true
                 bool isInitialized = true;
                 if (autoUpdate) isInitialized = await UpdatePackage(packageName);
-                Logging.Print<Logger>($"<color=#85cf0f>Package: <color=#ffe45a>{packageName}</color> <color=#00c1ff>Init</color> completed successfully.</color>");
+                Logging.PrintInfo<Logger>($"Package: {packageName} Init completed successfully.");
                 return isInitialized;
             }
             else
             {
-                Logging.PrintError<Logger>($"<color=#ff3696>Package: <color=#ff8427>{packageName}</color> initialization failed.</color>");
+                Logging.PrintError<Logger>($"Package: {packageName} initialization failed.");
                 return false;
             }
         }
@@ -409,12 +409,12 @@ namespace OxGFrame.AssetLoader.Bundle
                     }
                     #endregion
 
-                    Logging.Print<Logger>($"<color=#85cf0f>Package: <color=#ffe45a>{packageName}</color> <color=#00c1ff>Update</color> completed successfully.</color>");
+                    Logging.PrintInfo<Logger>($"Package: {packageName} Update completed successfully.");
                     return true;
                 }
                 else
                 {
-                    Logging.PrintError<Logger>($"<color=#ff3696>Package: <color=#ff8427>{packageName}</color> update manifest failed.</color>");
+                    Logging.PrintError<Logger>($"Package: {packageName} update manifest failed.");
                     return false;
                 }
             }
@@ -427,7 +427,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     string lastVersion = BundleConfig.saver.GetData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, packageName, string.Empty);
                     if (string.IsNullOrEmpty(lastVersion))
                     {
-                        Logging.PrintError<Logger>($"<color=#ff3696>Package: <color=#ff8427>{packageName}</color>. Local version record not found, resources need to be updated (Please connect to the network)!</color>");
+                        Logging.PrintError<Logger>($"Package: {packageName}. Local version record not found, resources need to be updated (Please connect to the network)!");
                         return false;
                     }
                     else
@@ -436,13 +436,13 @@ namespace OxGFrame.AssetLoader.Bundle
                         await manifestOperation;
                         if (manifestOperation.Status == EOperationStatus.Succeed)
                         {
-                            Logging.Print<Logger>($"<color=#85cf0f>Package: {packageName} <color=#00c1ff>Update</color> completed successfully.</color>");
+                            Logging.PrintInfo<Logger>($"Package: {packageName} Update completed successfully.");
 
                             // 驗證本地清單內容的完整性
                             var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
                             if (downloader.TotalDownloadCount > 0)
                             {
-                                Logging.PrintError<Logger>($"<color=#ff3696>Package: <color=#ff8427>{packageName}</color>. Local resources are incomplete. Update required (Please connect to the network)!</color>");
+                                Logging.PrintError<Logger>($"Package: {packageName}. Local resources are incomplete. Update required (Please connect to the network)!");
                                 return false;
                             }
 
@@ -450,7 +450,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         }
                         else
                         {
-                            Logging.PrintError<Logger>($"<color=#ff3696>Package: <color=#ff8427>{packageName}</color>. Failed to load the local resource manifest file. Resource update is required (Please connect to the network)!</color>");
+                            Logging.PrintError<Logger>($"Package: {packageName}. Failed to load the local resource manifest file. Resource update is required (Please connect to the network)!");
                             return false;
                         }
                     }
@@ -458,7 +458,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 #endregion
                 else
                 {
-                    Logging.PrintError<Logger>($"<color=#ff3696>Package: <color=#ff8427>{packageName}</color> update version failed.</color>");
+                    Logging.PrintError<Logger>($"Package: {packageName} update version failed.");
                     return false;
                 }
             }
@@ -473,7 +473,7 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
             {
-                Logging.Print<Logger>($"<color=#ffce00><color=#0fa>[{BundleConfig.PlayMode.EditorSimulateMode}]</color> Check Package In Local <color=#0fa>return true</color></color>");
+                Logging.Print<Logger>($"[{BundleConfig.PlayMode.EditorSimulateMode}] Check Package In Local return true");
                 return true;
             }
 
@@ -511,7 +511,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
                 if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
                 {
-                    Logging.Print<Logger>($"<color=#ffce00><color=#0fa>[{BundleConfig.PlayMode.EditorSimulateMode}]</color> Get Package Size In Local <color=#0fa>return 1</color></color>");
+                    Logging.Print<Logger>($"[{BundleConfig.PlayMode.EditorSimulateMode}] Get Package Size In Local return 1");
                     return 1;
                 }
 
@@ -654,7 +654,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 _currentPackage = package;
             }
             else
-                Logging.PrintError<Logger>($"<color=#ff2478>Switch default package failed! Cannot find package: {packageName}.</color>");
+                Logging.PrintError<Logger>($"Switch default package failed! Cannot find package: {packageName}.");
         }
 
         /// <summary>
@@ -854,7 +854,7 @@ namespace OxGFrame.AssetLoader.Bundle
             if (idx >= BundleConfig.listAppPackages.Count)
             {
                 idx = BundleConfig.listAppPackages.Count - 1;
-                Logging.PrintWarning<Logger>($"<color=#ff41d5>Package Idx Warning: {idx} is out of range will be auto set last idx.</color>");
+                Logging.PrintWarning<Logger>($"Package Idx Warning: {idx} is out of range will be auto set last idx.");
             }
             else if (idx < 0) idx = 0;
 

@@ -110,7 +110,7 @@ namespace OxGFrame.CoreFrame.Editor
                     {
                         if (select.GetInstanceID() == child.gameObject.GetInstanceID())
                         {
-                            Debug.Log($"<color=#ff2486>Including Child Node => Parent: <color=#ffb824>{selected.name}</color>, Child: <color=#ffec24>{child.name}</color></color>");
+                            Debug.Log($"Including Child Node => Parent: {selected.name}, Child: {child.name}");
                             return true;
                         }
                     }
@@ -433,7 +433,7 @@ namespace OxGFrame.CoreFrame.Editor
                 if (string.IsNullOrEmpty(targetCode))
                     continue;
 
-                Debug.Log($"<color=#39ffc2>Try comparing with parent class. ScriptPath: {scriptPaths[i]}</color>");
+                Debug.Log($"Try comparing with parent class. ScriptPath: {scriptPaths[i]}");
                 _builder = _RemoveDuplicateLines(_builder, targetCode);
             }
 
@@ -461,7 +461,7 @@ namespace OxGFrame.CoreFrame.Editor
         private static void _ShowClipboard(string content)
         {
             BindCodeClipboardWindow.ShowWindow(content);
-            Debug.Log("<color=#02ff8e>[Manual] Copy binding content to script!!!</color>");
+            Debug.Log("[Manual] Copy binding content to script!!!");
         }
 
         /// <summary>
@@ -499,13 +499,13 @@ namespace OxGFrame.CoreFrame.Editor
                 AssetDatabase.Refresh();
                 EditorUtility.SetDirty(_script);
 
-                Debug.Log("<color=#02ff8e>[Auto] Completed automatically binding content to script!!!</color>", _script);
+                Debug.Log("[Auto] Completed automatically binding content to script!!!", _script);
             }
             else
             {
-                Debug.Log($"<color=#ff026e>Unable to find specific replacement string in script. <color=#ffbc02>Script Name:{_script.name}</color></color>", _script);
-                Debug.Log($"<color=#ff026e>The pattern is ↓↓↓ (Copy the following into the script) ↓↓↓</color>", _script);
-                Debug.Log($"<color=#ffbc02>{_REPLACEMENT_PATTERN_HEAD}\n{_REPLACEMENT_PATTERN_END}</color>");
+                Debug.Log($"Unable to find specific replacement string in script. Script Name:{_script.name}", _script);
+                Debug.Log($"The pattern is ↓↓↓ (Copy the following into the script) ↓↓↓", _script);
+                Debug.Log($"{_REPLACEMENT_PATTERN_HEAD}\n{_REPLACEMENT_PATTERN_END}");
             }
         }
 
@@ -518,7 +518,7 @@ namespace OxGFrame.CoreFrame.Editor
         {
             if (script == null)
             {
-                Debug.Log("<color=#ff026e>Cannot find script (FrameBase => UIBase, SRBase, CPBase). Please drag the script onto the object!!!</color>");
+                Debug.Log("Cannot find script (FrameBase => UIBase, SRBase, CPBase). Please drag the script onto the object!!!");
                 return null;
             }
 
@@ -654,14 +654,14 @@ namespace OxGFrame.CoreFrame.Editor
             foreach (var v in targetMembers)
             {
                 sourceSection = _RemoveLineContaining(sourceSection, v, false);
-                Debug.Log($"<color=#ff7454>Removed the intersecting part of variables: <color=#ffb854>{v}</color></color>");
+                Debug.Log($"Removed the intersecting part of variables: {v}");
             }
 
             // 移除賦值
             foreach (var v in targetAssignments)
             {
                 sourceSection = _RemoveLineContaining(sourceSection, v, false);
-                Debug.Log($"<color=#ff7454>Removed the intersecting part of assignments: <color=#ffb854>{v}</color></color>");
+                Debug.Log($"Removed the intersecting part of assignments: {v}");
             }
 
             return sourceSection;

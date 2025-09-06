@@ -70,9 +70,9 @@ namespace OxGFrame.MediaFrame.Editor
                     }
 
                     if (audioClip != null)
-                        Debug.Log($"<color=#ffe700>AudioClip Info => Channel: {audioClip.channels}, Frequency: {audioClip.frequency}, Sample: {audioClip.samples}, Length: {audioClip.length}, State: {audioClip.loadState}</color>");
+                        Debug.Log($"AudioClip Info => Channel: {audioClip.channels}, Frequency: {audioClip.frequency}, Sample: {audioClip.samples}, Length: {audioClip.length}, State: {audioClip.loadState}");
                     else
-                        Debug.Log($"<color=#ff0000>AudioClip request failed!!!</color>");
+                        Debug.Log($"AudioClip request failed!!!");
 
                     serializedObject.ApplyModifiedProperties();
                 });
