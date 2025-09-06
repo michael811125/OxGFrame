@@ -12,7 +12,7 @@ namespace OxGFrame.Hotfixer
         {
             if (string.IsNullOrEmpty(url))
             {
-                Debug.LogError($"<color=#FF0000>Request failed. URL is null or empty.</color>");
+                Debug.LogError($"Request failed. URL is null or empty.");
                 errorAction?.Invoke();
                 yield break;
             }
@@ -33,7 +33,7 @@ namespace OxGFrame.Hotfixer
             // 檢查是否超時
             if (timer >= maxTime && !www.isDone)
             {
-                Debug.LogError($"<color=#FF0000>Request timed out. URL: {url}, SpentTime: {timer} (s)</color>");
+                Debug.LogError($"Request timed out. URL: {url}, SpentTime: {timer} (s)");
                 errorAction?.Invoke();
                 www.Dispose();
                 yield break;
@@ -42,14 +42,14 @@ namespace OxGFrame.Hotfixer
             // 檢查是否有錯誤
             if (!string.IsNullOrEmpty(www.error))
             {
-                Debug.LogError($"<color=#FF0000>Request failed. URL: {url}, Error: {www.error}, SpentTime: {timer} (s)</color>");
+                Debug.LogError($"Request failed. URL: {url}, Error: {www.error}, SpentTime: {timer} (s)");
                 errorAction?.Invoke();
                 www.Dispose();
                 yield break;
             }
 
             // 成功獲取內容
-            Debug.Log($"<color=#90ff67>Successfully requested text file. URL: {url}, SpentTime: {timer} (s)</color>");
+            Debug.Log($"Successfully requested text file. URL: {url}, SpentTime: {timer} (s)");
             successAction?.Invoke(www.text);
             www.Dispose();
             yield break;
@@ -59,7 +59,7 @@ namespace OxGFrame.Hotfixer
         {
             if (string.IsNullOrEmpty(url))
             {
-                Debug.LogError($"<color=#FF0000>Request failed. URL is null or empty.</color>");
+                Debug.LogError($"Request failed. URL is null or empty.");
                 errorAction?.Invoke();
                 yield break;
             }
@@ -80,7 +80,7 @@ namespace OxGFrame.Hotfixer
             // 檢查是否超時
             if (timer >= maxTime && !www.isDone)
             {
-                Debug.LogError($"<color=#FF0000>Request timed out. URL: {url}, SpentTime: {timer} (s)</color>");
+                Debug.LogError($"Request timed out. URL: {url}, SpentTime: {timer} (s)");
                 errorAction?.Invoke();
                 www.Dispose();
                 yield break;
@@ -89,14 +89,14 @@ namespace OxGFrame.Hotfixer
             // 檢查是否有錯誤
             if (!string.IsNullOrEmpty(www.error))
             {
-                Debug.LogError($"<color=#FF0000>Request failed. URL: {url}, Error: {www.error}, SpentTime: {timer} (s)</color>");
+                Debug.LogError($"Request failed. URL: {url}, Error: {www.error}, SpentTime: {timer} (s)");
                 errorAction?.Invoke();
                 www.Dispose();
                 yield break;
             }
 
             // 成功獲取內容
-            Debug.Log($"<color=#90ff67>Successfully requested bytes file. URL: {url}, SpentTime: {timer} (s)</color>");
+            Debug.Log($"Successfully requested bytes file. URL: {url}, SpentTime: {timer} (s)");
             successAction?.Invoke(www.bytes);
             www.Dispose();
             yield break;

@@ -83,7 +83,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             if (this.audioClip == null)
             {
-                Logging.PrintError<Logger>($"<color=#ff3356>Cannot find AudioClip: {this.mediaName}</color>");
+                Logging.PrintError<Logger>($"Cannot find AudioClip: {this.mediaName}");
                 return false;
             }
 
@@ -139,7 +139,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             this.isPrepared = true;
 
-            Logging.Print<Logger>($"<color=#00EEFF>【Init Once】 Asset Name: {this.mediaName}, Audio length: {this._mediaLength} (s). AudioSource => Time: {this._audioSource.time}, TimeSamples: {this._audioSource.timeSamples}; AudioClip => Time: {this._audioSource.clip.length}, Samples: {this._audioSource.clip.samples}, Freq: {this._audioSource.clip.frequency}.</color>");
+            Logging.Print<Logger>($"【Init Once】 Asset Name: {this.mediaName}, Audio length: {this._mediaLength} (s). AudioSource => Time: {this._audioSource.time}, TimeSamples: {this._audioSource.timeSamples}; AudioClip => Time: {this._audioSource.clip.length}, Samples: {this._audioSource.clip.samples}, Freq: {this._audioSource.clip.frequency}.");
 
             return this.isPrepared;
         }

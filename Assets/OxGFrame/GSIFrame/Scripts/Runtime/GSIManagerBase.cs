@@ -263,9 +263,9 @@ namespace OxGFrame.GSIFrame
 
             var gameStage = this.GetGameStage<GSIBase>(id);
             if (this._incomingId == this._currentId)
-                Logging.PrintWarning<Logger>($"<color=#ff54ac> 【>>>>>> Same GameStage (Change Failed - <color=#ffb12a>Try Force</color>) <<<<<<】Id: {this._incomingId}, Stage: {gameStage?.GetType().Name}</color>");
+                Logging.PrintWarning<Logger>($" 【>>>>>> Same GameStage (Change Failed - Try Force) <<<<<<】Id: {this._incomingId}, Stage: {gameStage?.GetType().Name}");
             else
-                Logging.Print<Logger>($"<color=#00B8FF> 【>>>>>> Change GameStage <<<<<<】Id: {this._incomingId}, Stage: {gameStage?.GetType().Name}</color>");
+                Logging.PrintInfo<Logger>($" 【>>>>>> Change GameStage <<<<<<】Id: {this._incomingId}, Stage: {gameStage?.GetType().Name}");
         }
 
         /// <summary>
@@ -287,7 +287,7 @@ namespace OxGFrame.GSIFrame
         public void ChangeGameStageForce(int id)
         {
             var gameStage = this.GetGameStage<GSIBase>(id);
-            Logging.Print<Logger>($"<color=#00B8FF> 【>>>>>> Change GameStage <color=#ffb12a>Force</color> <<<<<<】Id: {id}, Stage: {gameStage?.GetType().Name}</color>");
+            Logging.PrintInfo<Logger>($" 【>>>>>> Change GameStage Force <<<<<<】Id: {id}, Stage: {gameStage?.GetType().Name}");
 
             this.ReleaseGameStage();                 // 立即釋放原本的 GameStage
             this._currentId = this._incomingId = id; // 立即指定 currentId & incomingId = id

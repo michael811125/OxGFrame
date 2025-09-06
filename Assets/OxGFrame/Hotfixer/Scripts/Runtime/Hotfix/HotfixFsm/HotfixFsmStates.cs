@@ -31,7 +31,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
             void IStateNode.OnEnter()
             {
                 HotfixEvents.HotfixFsmState.SendEventMessage(this);
-                Logging.Print<Logger>("<color=#00cf6b>(Powered by HybridCLR) Hotfix is now running...</color>");
+                Logging.Print<Logger>("(Powered by HybridCLR) Hotfix is now running...");
                 this._machine.ChangeState<FsmInitHotfixPackage>();
             }
 
@@ -290,7 +290,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                 {
                     if (HotfixManager.GetInstance().IsDisabled())
                     {
-                        Logging.PrintWarning<Logger>("<color=#cfc100><color=#ff0000>[DISABLED]</color> Skip processing AOTAssemblies.</color>");
+                        Logging.PrintWarning<Logger>("[DISABLED] Skip processing AOTAssemblies.");
                         this._machine.ChangeState<FsmLoadHotfixAssemblies>();
                     }
                     else
@@ -365,11 +365,11 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 #endif
                                 // Unload after load
                                 await AssetLoaders.UnloadAsset(dllName);
-                                Logging.Print<Logger>($"<color=#32fff5>Loaded <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}, ret: {err}</color>");
+                                Logging.Print<Logger>($"Loaded AOT Assembly: {dllName}, mode: {mode}, ret: {err}");
                             }
                             else
                             {
-                                Logging.PrintError<Logger>($"<color=#ff3632>Failed to load <color=#ffde4c>AOT Assembly</color>: <color=#e2b3ff>{dllName}</color>, mode: {mode}</color>");
+                                Logging.PrintError<Logger>($"Failed to load AOT Assembly: {dllName}, mode: {mode}");
                             }
                         }
                     }
@@ -465,11 +465,11 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                             if (hotfixAsm != null)
                             {
                                 HotfixManager.GetInstance().AddHotfixAssembly(dllName, hotfixAsm);
-                                Logging.Print<Logger>($"<color=#32fff5>Loaded <color=#ffde4c>Hotfix Assembly</color>: <color=#e2b3ff>{dllName}</color></color>");
+                                Logging.Print<Logger>($"Loaded Hotfix Assembly: {dllName}");
                             }
                             else
                             {
-                                Logging.PrintError<Logger>($"<color=#ff3632>Failed to load <color=#ffde4c>Hotfix Assembly</color>: <color=#e2b3ff>{dllName}</color></color>");
+                                Logging.PrintError<Logger>($"Failed to load Hotfix Assembly: {dllName}");
                             }
                         }
                     }
@@ -498,6 +498,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
             {
                 HotfixEvents.HotfixFsmState.SendEventMessage(this);
                 HotfixManager.GetInstance().MarkAsDone();
+                Logging.PrintInfo<Logger>("(Powered by HybridCLR) Hotfix all done.");
             }
 
             void IStateNode.OnUpdate()

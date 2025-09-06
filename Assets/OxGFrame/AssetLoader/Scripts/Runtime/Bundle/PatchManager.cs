@@ -84,37 +84,37 @@ namespace OxGFrame.AssetLoader.Bundle
                 switch (msgData.stateNode)
                 {
                     case PatchFsmStates.FsmPatchRepair:
-                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmPatchRepair <<<< </color>");
+                        Logging.Print<Logger>(" >>>> PatchFsmStates.FsmPatchRepair <<<< ");
                         break;
                     case PatchFsmStates.FsmPatchPrepare:
-                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmPatchPrepare <<<< </color>");
+                        Logging.Print<Logger>(" >>>> PatchFsmStates.FsmPatchPrepare <<<< ");
                         break;
                     case PatchFsmStates.FsmAppVersionUpdate:
-                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmAppVersionUpdate <<<< </color>");
+                        Logging.Print<Logger>(" >>>> PatchFsmStates.FsmAppVersionUpdate <<<< ");
                         break;
                     case PatchFsmStates.FsmInitPatchMode:
-                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmInitPatchMode <<<< </color>");
+                        Logging.Print<Logger>(" >>>> PatchFsmStates.FsmInitPatchMode <<<< ");
                         break;
                     case PatchFsmStates.FsmPatchVersionUpdate:
-                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmPatchVersionUpdate <<<< </color>");
+                        Logging.Print<Logger>(" >>>> PatchFsmStates.FsmPatchVersionUpdate <<<< ");
                         break;
                     case PatchFsmStates.FsmPatchManifestUpdate:
-                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmPatchManifestUpdate <<<< </color>");
+                        Logging.Print<Logger>(" >>>> PatchFsmStates.FsmPatchManifestUpdate <<<< ");
                         break;
                     case PatchFsmStates.FsmCreateDownloader:
-                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmCreateDownloader <<<< </color>");
+                        Logging.Print<Logger>(" >>>> PatchFsmStates.FsmCreateDownloader <<<< ");
                         break;
                     case PatchFsmStates.FsmBeginDownload:
-                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmBeginDownloadFiles <<<< </color>");
+                        Logging.Print<Logger>(" >>>> PatchFsmStates.FsmBeginDownloadFiles <<<< ");
                         break;
                     case PatchFsmStates.FsmDownloadOver:
-                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmDownloadOver <<<< </color>");
+                        Logging.Print<Logger>(" >>>> PatchFsmStates.FsmDownloadOver <<<< ");
                         break;
                     case PatchFsmStates.FsmClearCache:
-                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmClearCache <<<< </color>");
+                        Logging.Print<Logger>(" >>>> PatchFsmStates.FsmClearCache <<<< ");
                         break;
                     case PatchFsmStates.FsmPatchDone:
-                        Logging.Print<Logger>("<color=#2dff4e> >>>> PatchFsmStates.FsmPatchDone <<<< </color>");
+                        Logging.Print<Logger>(" >>>> PatchFsmStates.FsmPatchDone <<<< ");
                         break;
                 }
             });

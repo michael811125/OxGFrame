@@ -42,7 +42,7 @@ namespace OxGFrame.AssetLoader.Editor
             string writePath = Path.Combine(outputPath, appCfgFileName);
             WriteTxt(jsonCfg, writePath);
 
-            Debug.Log($"<color=#00FF00>【Export {appCfgFileName} Completes】App Version: {cfg.APP_VERSION}</color>");
+            Debug.Log($"【Export {appCfgFileName} Completes】App Version: {cfg.APP_VERSION}");
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace OxGFrame.AssetLoader.Editor
             WriteTxt(jsonCfg, writePath);
             #endregion
 
-            Debug.Log($"<color=#00FF00>【Export Configs And App Bundles Completes】 App Version: {appCfg.APP_VERSION}</color>");
+            Debug.Log($"【Export Configs And App Bundles Completes】 App Version: {appCfg.APP_VERSION}");
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace OxGFrame.AssetLoader.Editor
             ExportNewestYooAssetBundles(inputPath, outputPath, appCfg.PLATFORM, productName, semanticRule, appVersion, exportPackages);
             #endregion
 
-            Debug.Log($"<color=#00FF00>【Export App Bundles Without Configs Completes】</color>");
+            Debug.Log($"【Export App Bundles Without Configs Completes】");
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace OxGFrame.AssetLoader.Editor
             ExportNewestYooAssetDlcBundles(inputPath, outputPath, platform, productName, dlcInfos);
             #endregion
 
-            Debug.Log($"<color=#00FF00>【Export DLC Bundles Completes】</color>");
+            Debug.Log($"【Export DLC Bundles Completes】");
         }
 
         /// <summary>
@@ -232,7 +232,7 @@ namespace OxGFrame.AssetLoader.Editor
             // 寫入配置文件
             File.WriteAllBytes(fullOutputPath, writeBuffer);
 
-            Debug.Log($"<color=#00FF00>【Export Source is Cipher: {cipher}, {bundleUrlFileName} Completes】</color>");
+            Debug.Log($"【Export Source is Cipher: {cipher}, {bundleUrlFileName} Completes】");
         }
         #endregion
 
@@ -404,7 +404,7 @@ namespace OxGFrame.AssetLoader.Editor
 
                 {
                     string versionName = Path.GetFileNameWithoutExtension(newestVersionPath);
-                    Debug.Log($"<color=#00FF00>【Copy Bundles】 Package Name: {packageName}, Package Version: {versionName}</color>");
+                    Debug.Log($"【Copy Bundles】 Package Name: {packageName}, Package Version: {versionName}");
                 }
             }
             #endregion
@@ -466,7 +466,7 @@ namespace OxGFrame.AssetLoader.Editor
 
                 {
                     string versionName = Path.GetFileNameWithoutExtension(newestVersionPath);
-                    Debug.Log($"<color=#00FF00>【Copy DLC Bundles】 Package Name: {packageName}, Package Version: {versionName}</color>");
+                    Debug.Log($"【Copy DLC Bundles】 Package Name: {packageName}, Package Version: {versionName}");
                 }
             }
             #endregion
@@ -496,7 +496,7 @@ namespace OxGFrame.AssetLoader.Editor
             // 版號規則
             cfg.SEMANTIC_RULE = semanticRule;
 
-            Debug.Log($"<color=#00FF00>【Generate】{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION} Completes.</color>");
+            Debug.Log($"【Generate】{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION} Completes.");
 
             return cfg;
         }
@@ -572,7 +572,7 @@ namespace OxGFrame.AssetLoader.Editor
 
             cfg.GROUP_INFOS = groupInfos;
 
-            Debug.Log($"<color=#00FF00>【Generate】PatchConfig Completes.</color>");
+            Debug.Log($"【Generate】PatchConfig Completes.");
 
             return cfg;
         }

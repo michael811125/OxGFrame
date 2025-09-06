@@ -23,7 +23,7 @@ namespace OxGFrame.NetFrame
         {
             if (netOption == null)
             {
-                Logging.PrintError<Logger>("<color=#ff2732>ERROR: Connection failed because NetOption is null.</color>");
+                Logging.PrintError<Logger>("ERROR: Connection failed because NetOption is null.");
                 return;
             }
 
@@ -34,7 +34,7 @@ namespace OxGFrame.NetFrame
 
             if (string.IsNullOrEmpty(host))
             {
-                Logging.PrintError<Logger>("<color=#ff2732>ERROR: TCP connection failed. NetOption.Host cannot be null or empty.</color>");
+                Logging.PrintError<Logger>("ERROR: TCP connection failed. NetOption.Host cannot be null or empty.");
                 return;
             }
 
@@ -48,6 +48,7 @@ namespace OxGFrame.NetFrame
             {
                 // Open connection
                 this._client.Connect(host, port);
+                Logging.PrintInfo<Logger>($"Endpoint: {host}:{port} => {nameof(TcpNetProvider)} is Connected.");
             }
             catch (Exception ex)
             {
@@ -85,7 +86,7 @@ namespace OxGFrame.NetFrame
                 {
                     var segment = new ArraySegment<byte>(buffer);
                     bool sent = this._client.Send(segment);
-                    Logging.Print<Logger>($"<color=#c9ff49>[Binary] TCP - Try Send Size: {buffer.Length} bytes.</color>");
+                    Logging.Print<Logger>($"[Binary] TCP - Try Send Size: {buffer.Length} bytes.");
                     return sent;
                 }
                 catch (Exception ex)

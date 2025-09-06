@@ -275,7 +275,7 @@ namespace OxGFrame.NetFrame
             if (this._outReceiveTicker.IsTickTimeout())
             {
                 this._outReceiveAction?.Invoke();
-                Logging.Print<Logger>("<color=#FFC100>NetNode timeout processing...</color>");
+                Logging.Print<Logger>("NetNode timeout processing...");
             }
         }
         #endregion
@@ -308,7 +308,7 @@ namespace OxGFrame.NetFrame
             if (this._hearBeatTicker.IsTickTimeout())
             {
                 this._heartBeatAction?.Invoke();
-                Logging.Print<Logger>("<color=#8EFF00>NetNode check heartbeat...</color>");
+                Logging.Print<Logger>("NetNode check heartbeat...");
             }
         }
         #endregion
@@ -364,7 +364,7 @@ namespace OxGFrame.NetFrame
                         this._autoReconnectCount -= 1;
 
                     this._reconnectAction?.Invoke();
-                    Logging.Print<Logger>("<color=#FF0000>NetNode try to reconnecting...</color>");
+                    Logging.Print<Logger>("NetNode try to reconnecting...");
                 }
             }
             else

@@ -86,7 +86,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                     this._videoPlayer.clip = this.videoClip;
                     if (this.videoClip == null)
                     {
-                        Logging.PrintError<Logger>($"<color=#ff3356>Cannot find VideoClip: {this.mediaName}</color>");
+                        Logging.PrintError<Logger>($"Cannot find VideoClip: {this.mediaName}");
                         return false;
                     }
                     break;
@@ -96,7 +96,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                         string url = System.IO.Path.Combine(Application.streamingAssetsPath, this.fullPathName);
                         if (!this.TrySetUrl(url))
                         {
-                            Logging.PrintError<Logger>($"<color=#ff3356>Cannot find VideoClip: {this.mediaName}</color>");
+                            Logging.PrintError<Logger>($"Cannot find VideoClip: {this.mediaName}");
                             return false;
                         }
                     }
@@ -109,7 +109,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                         string url = (!string.IsNullOrEmpty(urlSet)) ? $"{urlSet.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
                         if (!this.TrySetUrl(url))
                         {
-                            Logging.PrintError<Logger>($"<color=#ff3356>Cannot find VideoClip: {this.mediaName}</color>");
+                            Logging.PrintError<Logger>($"Cannot find VideoClip: {this.mediaName}");
                             return false;
                         }
                     }
@@ -164,7 +164,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.isPrepared = true;
 
-            Logging.Print<Logger>($"<color=#00EEFF>【Init Once】 Asset Name: {this.mediaName}, Video length: {this._mediaLength} (s).</color>");
+            Logging.Print<Logger>($"【Init Once】 Asset Name: {this.mediaName}, Video length: {this._mediaLength} (s).");
 
             return this.isPrepared;
         }

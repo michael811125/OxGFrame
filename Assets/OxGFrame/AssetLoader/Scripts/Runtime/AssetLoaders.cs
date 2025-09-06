@@ -280,13 +280,13 @@ namespace OxGFrame.AssetLoader
         public static async UniTask PreloadRawFileAsync(string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
         }
 
         public static async UniTask PreloadRawFileAsync(string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
-            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
         }
 
@@ -306,7 +306,7 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, priority, progression, maxRetryCount);
         }
 
@@ -324,20 +324,20 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, priority, progression, maxRetryCount);
         }
 
         public static void PreloadRawFile(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else CacheBundle.GetInstance().PreloadRawFile(packageName, new string[] { assetName }, progression, maxRetryCount);
         }
 
         public static void PreloadRawFile(string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
-            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else CacheBundle.GetInstance().PreloadRawFile(packageName, new string[] { assetName }, progression, maxRetryCount);
         }
 
@@ -357,7 +357,7 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else CacheBundle.GetInstance().PreloadRawFile(packageName, assetNames, progression, maxRetryCount);
         }
 
@@ -375,7 +375,7 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else CacheBundle.GetInstance().PreloadRawFile(packageName, assetNames, progression, maxRetryCount);
         }
 
@@ -393,7 +393,7 @@ namespace OxGFrame.AssetLoader
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+                Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
                 return default;
             }
             return await CacheBundle.GetInstance().LoadRawFileAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
@@ -403,7 +403,7 @@ namespace OxGFrame.AssetLoader
         {
             if (RefineResourcesPath(ref assetName))
             {
-                Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+                Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
                 return default;
             }
             return await CacheBundle.GetInstance().LoadRawFileAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
@@ -422,7 +422,7 @@ namespace OxGFrame.AssetLoader
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+                Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
                 return default;
             }
             return CacheBundle.GetInstance().LoadRawFile<T>(packageName, assetName, progression, maxRetryCount);
@@ -432,7 +432,7 @@ namespace OxGFrame.AssetLoader
         {
             if (RefineResourcesPath(ref assetName))
             {
-                Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+                Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
                 return default;
             }
             return CacheBundle.GetInstance().LoadRawFile<T>(packageName, assetName, progression, maxRetryCount);
@@ -441,7 +441,7 @@ namespace OxGFrame.AssetLoader
         public async static UniTask UnloadRawFile(string assetName, bool forceUnload = false)
         {
             if (RefineResourcesPath(ref assetName))
-                Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+                Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else if (!AssetPatcher.IsReleased())
                 await CacheBundle.GetInstance().UnloadRawFileAsync(assetName, forceUnload);
         }
@@ -994,13 +994,13 @@ namespace OxGFrame.AssetLoader
         public static async UniTask PreloadRawFileAsync(int groupId, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, new string[] { assetName }, priority, progression, maxRetryCount);
         }
 
         public static async UniTask PreloadRawFileAsync(int groupId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
-            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, new string[] { assetName }, priority, progression, maxRetryCount);
         }
 
@@ -1020,7 +1020,7 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, assetNames, priority, progression, maxRetryCount);
         }
 
@@ -1038,20 +1038,20 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, assetNames, priority, progression, maxRetryCount);
         }
 
         public static void PreloadRawFile(int groupId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else GroupBundle.GetInstance().PreloadRawFile(groupId, packageName, new string[] { assetName }, progression, maxRetryCount);
         }
 
         public static void PreloadRawFile(int groupId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
-            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else GroupBundle.GetInstance().PreloadRawFile(groupId, packageName, new string[] { assetName }, progression, maxRetryCount);
         }
 
@@ -1071,7 +1071,7 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else GroupBundle.GetInstance().PreloadRawFile(groupId, packageName, assetNames, progression, maxRetryCount);
         }
 
@@ -1089,7 +1089,7 @@ namespace OxGFrame.AssetLoader
                 if (RefineResourcesPath(ref assetNames[i])) refineAssetNames.Add(assetNames[i]);
             }
 
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else GroupBundle.GetInstance().PreloadRawFile(groupId, packageName, assetNames, progression, maxRetryCount);
         }
 
@@ -1108,7 +1108,7 @@ namespace OxGFrame.AssetLoader
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+                Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
                 return default;
             }
             else return await GroupBundle.GetInstance().LoadRawFileAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
@@ -1118,7 +1118,7 @@ namespace OxGFrame.AssetLoader
         {
             if (RefineResourcesPath(ref assetName))
             {
-                Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+                Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
                 return default;
             }
             else return await GroupBundle.GetInstance().LoadRawFileAsync<T>(groupId, packageName, assetName, priority, progression, maxRetryCount);
@@ -1138,7 +1138,7 @@ namespace OxGFrame.AssetLoader
             var packageName = AssetPatcher.GetDefaultPackageName();
             if (RefineResourcesPath(ref assetName))
             {
-                Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+                Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
                 return default;
             }
             else return GroupBundle.GetInstance().LoadRawFile<T>(groupId, packageName, assetName, progression, maxRetryCount);
@@ -1148,7 +1148,7 @@ namespace OxGFrame.AssetLoader
         {
             if (RefineResourcesPath(ref assetName))
             {
-                Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+                Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
                 return default;
             }
             else return GroupBundle.GetInstance().LoadRawFile<T>(groupId, packageName, assetName, progression, maxRetryCount);
@@ -1156,7 +1156,7 @@ namespace OxGFrame.AssetLoader
 
         public static void UnloadRawFile(int groupId, string assetName, bool forceUnload = false)
         {
-            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("<color=#ff4851>【Error】Only supports the bundle type.</color>");
+            if (RefineResourcesPath(ref assetName)) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else if (!AssetPatcher.IsReleased()) GroupBundle.GetInstance().UnloadRawFile(groupId, assetName, forceUnload);
         }
 

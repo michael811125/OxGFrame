@@ -51,9 +51,9 @@ namespace OxGFrame.AssetLoader.Cacher
                     if (this.GetRetryCounter(assetName).IsRetryActive())
                     {
                         this.RemoveLoadingFlags(assetName);
-                        Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                        Logging.PrintWarning<Logger>($"Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.");
                     }
-                    else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
+                    else Logging.PrintWarning<Logger>($"Asset: {assetName} Loading...");
                     return;
                 }
 
@@ -66,7 +66,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     this.currentCount++;
                     progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                     this.RemoveLoadingFlags(assetName);
-                    Logging.Print<Logger>($"<color=#fff6ba>【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: [{assetName}] already preloaded!!!</color>");
+                    Logging.PrintWarning<Logger>($"【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: [{assetName}] already preloaded!!!");
                     continue;
                 }
 
@@ -99,13 +99,13 @@ namespace OxGFrame.AssetLoader.Cacher
                     if (!this.HasInCache(assetName))
                     {
                         this._cacher.Add(assetName, pack);
-                        Logging.Print<Logger>($"<color=#ff9600>【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                        Logging.Print<Logger>($"【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}");
                     }
                 }
                 else
                 {
-                    if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheResource >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
-                    else Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheResource >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
+                    if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << CacheResource >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                    else Logging.Print<Logger>($"【Preload】 => << CacheResource >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                     this.GetRetryCounter(assetName).AddRetryCount();
                     await this.PreloadAssetAsync<T>(new string[] { assetName }, progression, maxRetryCount);
                     continue;
@@ -136,9 +136,9 @@ namespace OxGFrame.AssetLoader.Cacher
                     if (this.GetRetryCounter(assetName).IsRetryActive())
                     {
                         this.RemoveLoadingFlags(assetName);
-                        Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                        Logging.PrintWarning<Logger>($"Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.");
                     }
-                    else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
+                    else Logging.PrintWarning<Logger>($"Asset: {assetName} Loading...");
                     return;
                 }
 
@@ -151,7 +151,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     this.currentCount++;
                     progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                     this.RemoveLoadingFlags(assetName);
-                    Logging.Print<Logger>($"<color=#fff6ba>【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: [{assetName}] already preloaded!!!</color>");
+                    Logging.PrintWarning<Logger>($"【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: [{assetName}] already preloaded!!!");
                     continue;
                 }
 
@@ -174,13 +174,13 @@ namespace OxGFrame.AssetLoader.Cacher
                     if (!this.HasInCache(assetName))
                     {
                         this._cacher.Add(assetName, pack);
-                        Logging.Print<Logger>($"<color=#ff9600>【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                        Logging.Print<Logger>($"【Preload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}");
                     }
                 }
                 else
                 {
-                    if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheResource >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
-                    else Logging.Print<Logger>($"<color=#f7ff3e>【Preload】 => << CacheResource >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
+                    if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << CacheResource >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                    else Logging.Print<Logger>($"【Preload】 => << CacheResource >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                     this.GetRetryCounter(assetName).AddRetryCount();
                     this.PreloadAsset<T>(new string[] { assetName }, progression, maxRetryCount);
                     continue;
@@ -201,9 +201,9 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.GetRetryCounter(assetName).IsRetryActive())
                 {
                     this.RemoveLoadingFlags(assetName);
-                    Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                    Logging.PrintWarning<Logger>($"Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.");
                 }
-                else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
+                else Logging.PrintWarning<Logger>($"Asset: {assetName} Loading...");
                 return null;
             }
 
@@ -259,13 +259,13 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 // 引用計數++
                 pack.AddRef();
-                Logging.Print<Logger>($"<color=#90FF71>【Load】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
+                Logging.Print<Logger>($"【Load】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}");
             }
             else
             {
                 this.UnloadAsset(assetName, true);
-                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheResource >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
-                else Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheResource >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
+                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load】 => << CacheResource >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                else Logging.Print<Logger>($"【Load】 => << CacheResource >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                 this.GetRetryCounter(assetName).AddRetryCount();
                 return await this.LoadAssetAsync<T>(assetName, progression, maxRetryCount);
             }
@@ -285,9 +285,9 @@ namespace OxGFrame.AssetLoader.Cacher
                 if (this.GetRetryCounter(assetName).IsRetryActive())
                 {
                     this.RemoveLoadingFlags(assetName);
-                    Logging.PrintWarning<Logger>($"<color=#ff9b3e>Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.</color>");
+                    Logging.PrintWarning<Logger>($"Asset: {assetName} Load failed and cannot retry anymore!!! Please to check asset is existing.");
                 }
-                else Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
+                else Logging.PrintWarning<Logger>($"Asset: {assetName} Loading...");
                 return null;
             }
 
@@ -334,13 +334,13 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 // 引用計數++
                 pack.AddRef();
-                Logging.Print<Logger>($"<color=#90FF71>【Load】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}</color>");
+                Logging.Print<Logger>($"【Load】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}");
             }
             else
             {
                 this.UnloadAsset(assetName, true);
-                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheResource >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}</color>");
-                else Logging.Print<Logger>($"<color=#f7ff3e>【Load】 => << CacheResource >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}</color>");
+                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load】 => << CacheResource >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                else Logging.Print<Logger>($"【Load】 => << CacheResource >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                 this.GetRetryCounter(assetName).AddRetryCount();
                 return this.LoadAsset<T>(assetName, progression, maxRetryCount);
             }
@@ -356,7 +356,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
             if (this.HasInLoadingFlags(assetName) && !this.GetRetryCounter(assetName).IsRetryValid())
             {
-                Logging.Print<Logger>($"<color=#ff9b3e>Asset: {assetName} Loading...</color>");
+                Logging.PrintWarning<Logger>($"Asset: {assetName} Loading...");
                 return;
             }
 
@@ -367,7 +367,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 // 引用計數--
                 pack.DelRef();
 
-                Logging.Print<Logger>($"<color=#00e5ff>【<color=#ffcf92>Unload</color>】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}</color>");
+                Logging.Print<Logger>($"【Unload】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}");
 
                 if (forceUnload)
                 {
@@ -375,7 +375,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     this._cacher.Remove(assetName);
                     Resources.UnloadUnusedAssets();
 
-                    Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Force Unload Completes</color>】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                    Logging.PrintInfo<Logger>($"【Force Unload Completes】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}");
                 }
                 else if (this._cacher[assetName].refCount <= 0)
                 {
@@ -383,7 +383,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     this._cacher.Remove(assetName);
                     Resources.UnloadUnusedAssets();
 
-                    Logging.Print<Logger>($"<color=#00e5ff>【<color=#ff92ef>Unload Completes</color>】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}</color>");
+                    Logging.PrintInfo<Logger>($"【Unload Completes】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}");
                 }
             }
         }
@@ -404,7 +404,7 @@ namespace OxGFrame.AssetLoader.Cacher
             this._cacher.Clear();
             Resources.UnloadUnusedAssets();
 
-            Logging.Print<Logger>($"<color=#ff71b7>【Release All】 => Current << CacheResource >> Cache Count: {this.Count}</color>");
+            Logging.PrintInfo<Logger>($"【Release All】 => Current << CacheResource >> Cache Count: {this.Count}");
         }
         #endregion
     }

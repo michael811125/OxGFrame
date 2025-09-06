@@ -844,7 +844,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 var buildResult = pipeline.Run(buildParameters, true);
                                 if (buildResult.Success)
                                 {
-                                    successfulResultsBuilder.Append($"<color=#a6ff58>Build successful: {buildResult.OutputPackageDirectory}</color>\n");
+                                    successfulResultsBuilder.Append($"Build successful: {buildResult.OutputPackageDirectory}\n");
                                 }
                                 else
                                 {
@@ -884,7 +884,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 var buildResult = pipeline.Run(buildParameters, true);
                                 if (buildResult.Success)
                                 {
-                                    successfulResultsBuilder.Append($"<color=#06ff88>Build successful: {buildResult.OutputPackageDirectory}, BuildPipeline: <color=#ff69aa>{buildPipeline}</color>, Encryption: <color=#ff8806>{bundleEncryptionServices?.GetType()?.Name}</color>, CompressOption: <color=#eaff06>{bundleCompression}</color>, FileNameStyle: <color=#06f8ff>{bundleNameStyle}</color>, BuildinFileCopyOption: <color=#c263ff>{bundleCopyOption}</color></color>\n");
+                                    successfulResultsBuilder.Append($"Build successful: {buildResult.OutputPackageDirectory}, BuildPipeline: {buildPipeline}, Encryption: {bundleEncryptionServices?.GetType()?.Name}, CompressOption: {bundleCompression}, FileNameStyle: {bundleNameStyle}, BuildinFileCopyOption: {bundleCopyOption}\n");
                                 }
                                 else
                                 {
@@ -921,7 +921,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 var buildResult = pipeline.Run(buildParameters, true);
                                 if (buildResult.Success)
                                 {
-                                    successfulResultsBuilder.Append($"<color=#a6ff58>Build successful: {buildResult.OutputPackageDirectory}</color>\n");
+                                    successfulResultsBuilder.Append($"Build successful: {buildResult.OutputPackageDirectory}\n");
                                 }
                                 else
                                 {
@@ -1083,7 +1083,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             // For DLC
             BundleHelper.ExportIndividualDlcBundles(inputPath, outputPath, productName, dlcPackages, true, buildTarget, false);
 
-            Debug.Log($"<color=#a6ff58>Export Configs And Bundles For CDN.</color>\n");
+            Debug.Log($"Export Configs And Bundles For CDN.\n");
         }
 
         /// <summary>

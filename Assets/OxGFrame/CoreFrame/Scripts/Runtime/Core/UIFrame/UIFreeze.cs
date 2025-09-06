@@ -19,7 +19,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             freezeBtn.transition = Selectable.Transition.None;
             freezeBtn.onClick.AddListener(() =>
             {
-                Logging.PrintWarning<Logger>("<color=#42BBFF>UI has been frozen</color>");
+                Logging.PrintWarning<Logger>("UI has been frozen");
             });
         }
 

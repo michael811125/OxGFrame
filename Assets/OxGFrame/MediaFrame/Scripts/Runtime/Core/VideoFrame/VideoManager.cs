@@ -64,7 +64,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.LoadAndPlay(vidBase, loops, volume);
 
-            Logging.Print<Logger>($"Play Video: {vidBase?.mediaName}");
+            Logging.PrintInfo<Logger>($"Play Video: {vidBase?.mediaName}");
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.ExitAndStop(vidBase, false, disabledEndEvent);
 
-            Logging.Print<Logger>($"Stop Video: {vidBase?.mediaName}");
+            Logging.PrintInfo<Logger>($"Stop Video: {vidBase?.mediaName}");
 
             // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
             if (vidBase.isPrepared)
@@ -221,7 +221,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             this.ExitAndStop(vidBase, true, false);
 
-            Logging.Print<Logger>($"Pause Video: {vidBase?.mediaName}, Current Length: {vidBase?.CurrentLength()} (s)");
+            Logging.PrintInfo<Logger>($"Pause Video: {vidBase?.mediaName}, Current Length: {vidBase?.CurrentLength()} (s)");
         }
 
         /// <summary>

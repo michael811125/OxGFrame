@@ -35,7 +35,7 @@ namespace OxGFrame.MediaFrame.Editor
             // 寫入配置文件
             File.WriteAllLines(fullOutputPath, texts, System.Text.Encoding.UTF8);
 
-            Debug.Log($"<color=#00FF00>【Export {MediaConfig.MEDIA_URL_CFG_NAME} Completes】</color>");
+            Debug.Log($"【Export {MediaConfig.MEDIA_URL_CFG_NAME} Completes】");
         }
         #endregion
         #endregion

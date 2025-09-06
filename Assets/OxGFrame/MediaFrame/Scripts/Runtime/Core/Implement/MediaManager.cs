@@ -355,11 +355,11 @@ namespace OxGFrame.MediaFrame
                     // 卸載
                     AssetLoaders.UnloadAsset(assetName).Forget();
 
-                    Logging.Print<Logger>($"<color=#ffb6db>[MediaManager] Unload Asset: {assetName}</color>");
+                    Logging.PrintInfo<Logger>($"[MediaManager] Unload Asset: {assetName}");
                 }
             }
 
-            Logging.Print<Logger>($"<color=#ff9d55>[MediaManager] Destroy Object: {assetName}, <color=#ffdc55>All Count: {this._listAllCache.Count}</color></color>");
+            Logging.PrintInfo<Logger>($"[MediaManager] Destroy Object: {assetName}, All Count: {this._listAllCache.Count}");
         }
 
         /// <summary>

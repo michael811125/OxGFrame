@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [3.4.7] - 2025-09-07
+
+# English
+
+- Organized all code logging outputs to remove RichText colorization and handle coloring exclusively via the [OxGKit.LoggingSystem](https://github.com/michael811125/OxGKit#loggingsystem-dependence-lwmybox) logger.
+  - Must upgrade OxGKit.LoggingSystem to [v1.3.1](https://github.com/michael811125/OxGKit/blob/master/Assets/OxGKit/LoggingSystem/Scripts/CHANGELOG.md).
+
+# 中文
+
+- 整理所有代碼打印方式，移除 RichText 上色，統一由 [OxGKit.LoggingSystem](https://github.com/michael811125/OxGKit#loggingsystem-dependence-lwmybox) 日誌器實現上色。
+ - 必須升級 OxGKit.LoggingSystem 至 [v1.3.1](https://github.com/michael811125/OxGKit/blob/master/Assets/OxGKit/LoggingSystem/Scripts/CHANGELOG.md)。
+
 ## [3.4.6] - 2025-08-18
 
 # English

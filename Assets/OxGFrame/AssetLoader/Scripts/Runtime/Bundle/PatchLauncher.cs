@@ -131,8 +131,8 @@ namespace OxGFrame.AssetLoader.Bundle
 
             if (PackageManager.isInitialized)
             {
-                Logging.Print<Logger>($"<color=#32ff94>(Powered by YooAsset) Initialized Play Mode: {BundleConfig.playMode}</color>");
-                Logging.Print<Logger>("<color=#b5ff00>(Powered by YooAsset) PatchLauncher Setup Completes.</color>");
+                Logging.PrintInfo<Logger>($"(Powered by YooAsset) Initialized Play Mode: {BundleConfig.playMode}");
+                Logging.PrintInfo<Logger>("(Powered by YooAsset) PatchLauncher Setup Completes.");
             }
         }
 
@@ -144,15 +144,15 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 case BundleConfig.PlayMode.OfflineMode:
                     this.playMode = BundleConfig.PlayMode.EditorSimulateMode;
-                    Debug.Log($"<color=#ff1f4c>[Offline Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    Debug.Log($"[Offline Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.");
                     break;
                 case BundleConfig.PlayMode.HostMode:
                     this.playMode = BundleConfig.PlayMode.EditorSimulateMode;
-                    Debug.Log($"<color=#ff1f4c>[Host Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    Debug.Log($"[Host Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.");
                     break;
                 case BundleConfig.PlayMode.WeakHostMode:
                     this.playMode = BundleConfig.PlayMode.EditorSimulateMode;
-                    Debug.Log($"<color=#ff1f4c>[Weak Host Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    Debug.Log($"[Weak Host Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.");
                     break;
             }
 #else
@@ -161,7 +161,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 case BundleConfig.PlayMode.WebGLMode:
                 case BundleConfig.PlayMode.WebGLRemoteMode:
                     this.playMode = BundleConfig.PlayMode.EditorSimulateMode;
-                    Debug.Log($"<color=#ff1f4c>[WebGL Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.</color>");
+                    Debug.Log($"[WebGL Mode] is not supported on {UnityEditor.EditorUserBuildSettings.activeBuildTarget}.");
                     break;
             }
 #endif
