@@ -481,7 +481,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         var package = PackageManager.GetPackage(packageName);
                         await package?.UnloadUnusedAssetsAsync();
 
-                        Logging.PrintInfo<Logger>($"【Force Unload Completes】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
+                        Logging.Print<Logger>($"【Force Unload Completes】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
                     }
                     else if (this._cacher[assetName].refCount <= 0)
                     {
@@ -492,7 +492,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         var package = PackageManager.GetPackage(packageName);
                         await package?.UnloadUnusedAssetsAsync();
 
-                        Logging.PrintInfo<Logger>($"【Unload Completes】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
+                        Logging.Print<Logger>($"【Unload Completes】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
                     }
                 }
                 else Logging.PrintError<Logger>($"【Unload Type Error】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}");
@@ -517,7 +517,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
             }
 
-            Logging.PrintInfo<Logger>($"【Release All RawFiles】 => Current << CacheBundle >> Cache Count: {this.Count}");
+            Logging.Print<Logger>($"【Release All RawFiles】 => Current << CacheBundle >> Cache Count: {this.Count}");
         }
         #endregion
 
@@ -785,7 +785,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     // 遞迴完, 移除計數緩存
                     this._additiveSceneCounter.Remove(assetName);
 
-                    Logging.PrintInfo<Logger>($"【Unload Additive Scene Completes】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}");
+                    Logging.Print<Logger>($"【Unload Additive Scene Completes】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}");
                 }
                 else
                 {
@@ -832,7 +832,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._additiveSceneCounter.Remove(assetName);
                         await package?.UnloadUnusedAssetsAsync();
 
-                        Logging.PrintInfo<Logger>($"【Safety Unload Additive Scene Completes】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}");
+                        Logging.Print<Logger>($"【Safety Unload Additive Scene Completes】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}");
                     }
                     else
                     {
@@ -857,7 +857,7 @@ namespace OxGFrame.AssetLoader.Cacher
                                 var package = PackageManager.GetPackage(packageName);
                                 this._additiveSceneCounter.Remove(assetName);
                                 await package?.UnloadUnusedAssetsAsync();
-                                Logging.PrintInfo<Logger>($"【Unload Additive Scene Completes】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}");
+                                Logging.Print<Logger>($"【Unload Additive Scene Completes】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}");
                             }
                         }
                     }
@@ -893,7 +893,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 await package?.UnloadUnusedAssetsAsync();
             }
 
-            Logging.PrintInfo<Logger>($"【Release All Scenes (Addtive)】 => Current << CacheBundle >> Additive Scene Cache Count: {this._additiveSceneCounter.Count}");
+            Logging.Print<Logger>($"【Release All Scenes (Addtive)】 => Current << CacheBundle >> Additive Scene Cache Count: {this._additiveSceneCounter.Count}");
         }
         #endregion
 
@@ -1315,7 +1315,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         var package = PackageManager.GetPackage(packageName);
                         await package?.UnloadUnusedAssetsAsync();
 
-                        Logging.PrintInfo<Logger>($"【Force Unload Completes】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
+                        Logging.Print<Logger>($"【Force Unload Completes】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
                     }
                     else if (this._cacher[assetName].refCount <= 0)
                     {
@@ -1326,7 +1326,7 @@ namespace OxGFrame.AssetLoader.Cacher
                         var package = PackageManager.GetPackage(packageName);
                         await package?.UnloadUnusedAssetsAsync();
 
-                        Logging.PrintInfo<Logger>($"【Unload Completes】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
+                        Logging.Print<Logger>($"【Unload Completes】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
                     }
                 }
                 else Logging.PrintError<Logger>($"【Unload Type Error】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}");
@@ -1351,7 +1351,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
             }
 
-            Logging.PrintInfo<Logger>($"【Release All Assets】 => Current << CacheBundle >> Cache Count: {this.Count}");
+            Logging.Print<Logger>($"【Release All Assets】 => Current << CacheBundle >> Cache Count: {this.Count}");
         }
         #endregion
 
