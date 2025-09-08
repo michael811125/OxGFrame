@@ -108,13 +108,13 @@ namespace OxGFrame.AssetLoader.GroupCacher
                 if (forceUnload)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-                    Logging.PrintInfo<Logger>($"【Force Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
                 }
                 // 使用引用計數釋放
                 else if (keyGroup.refCount <= 0)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-                    Logging.PrintInfo<Logger>($"【Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
                 }
 
                 CacheBundle.GetInstance().UnloadRawFileAsync(keyGroup.assetName, forceUnload).Forget();
@@ -140,7 +140,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                 }
             }
 
-            Logging.PrintInfo<Logger>($"【Release Group RawFiles】 => Current << GroupBundle >> Cache Count: {this.Count}");
+            Logging.Print<Logger>($"【Release Group RawFiles】 => Current << GroupBundle >> Cache Count: {this.Count}");
         }
         #endregion
 
@@ -236,13 +236,13 @@ namespace OxGFrame.AssetLoader.GroupCacher
                 if (forceUnload)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-                    Logging.PrintInfo<Logger>($"【Force Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
                 }
                 // 使用引用計數釋放
                 else if (keyGroup.refCount <= 0)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-                    Logging.PrintInfo<Logger>($"【Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
                 }
 
                 CacheBundle.GetInstance().UnloadAsset(keyGroup.assetName, forceUnload).Forget();
@@ -268,7 +268,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                 }
             }
 
-            Logging.PrintInfo<Logger>($"【Release Group Assets】 => Current << GroupBundle >> Cache Count: {this.Count}");
+            Logging.Print<Logger>($"【Release Group Assets】 => Current << GroupBundle >> Cache Count: {this.Count}");
         }
         #endregion
     }

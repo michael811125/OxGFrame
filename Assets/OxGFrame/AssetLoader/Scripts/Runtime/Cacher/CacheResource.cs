@@ -375,7 +375,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     this._cacher.Remove(assetName);
                     Resources.UnloadUnusedAssets();
 
-                    Logging.PrintInfo<Logger>($"【Force Unload Completes】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}");
+                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}");
                 }
                 else if (this._cacher[assetName].refCount <= 0)
                 {
@@ -383,7 +383,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     this._cacher.Remove(assetName);
                     Resources.UnloadUnusedAssets();
 
-                    Logging.PrintInfo<Logger>($"【Unload Completes】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}");
+                    Logging.Print<Logger>($"【Unload Completes】 => Current << CacheResource >> Cache Count: {this.Count}, asset: {assetName}");
                 }
             }
         }
@@ -404,7 +404,7 @@ namespace OxGFrame.AssetLoader.Cacher
             this._cacher.Clear();
             Resources.UnloadUnusedAssets();
 
-            Logging.PrintInfo<Logger>($"【Release All】 => Current << CacheResource >> Cache Count: {this.Count}");
+            Logging.Print<Logger>($"【Release All】 => Current << CacheResource >> Cache Count: {this.Count}");
         }
         #endregion
     }
