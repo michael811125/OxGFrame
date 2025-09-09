@@ -70,10 +70,10 @@ namespace OxGFrame.Hotfixer.Editor
                 string dllBytesPath = $"{aotAssembliesDstDir}/{dll}.dll.bytes";
                 File.Copy(dllPath, dllBytesPath, true);
 
-                Debug.Log($"[Copy AOTAssemblies To HotfixCollector] (AOT) {dll}.dll.bytes, Size: {GetBytesToString(bytesSize)}, {dllPath} -> {dllBytesPath}");
+                Debug.Log($"<color=#a4ff86>[Copy AOTAssemblies To HotfixCollector] (AOT) <color=#ffcbde>{dll}.dll.bytes</color>, <color=#ffb542>Size: {GetBytesToString(bytesSize)}</color>, <color=#42ddff>{dllPath}</color> -> <color=#c686ff>{dllBytesPath}</color></color>");
             }
 
-            Debug.Log($"AOT Assemblies TotalSize: {GetBytesToString(totalBytesSize)}");
+            Debug.Log($"<color=#ffb542>AOT Assemblies TotalSize: {GetBytesToString(totalBytesSize)}</color>");
         }
 
         /// <summary>
@@ -100,10 +100,10 @@ namespace OxGFrame.Hotfixer.Editor
                 string dllBytesPath = $"{hotfixAssembliesDstDir}/{dll}.bytes";
                 File.Copy(dllPath, dllBytesPath, true);
 
-                Debug.Log($"[Copy Hotfix Assemblies To HotfixCollector] (Hotfix) {dll}.bytes, Size: {GetBytesToString(bytesSize)}, {dllPath} -> {dllBytesPath}");
+                Debug.Log($"<color=#a4ff86>[Copy Hotfix Assemblies To HotfixCollector] (Hotfix) <color=#ffcbde>{dll}.bytes</color>, <color=#ffb542>Size: {GetBytesToString(bytesSize)}</color>, <color=#42ddff>{dllPath}</color> -> <color=#c686ff>{dllBytesPath}</color></color>");
             }
 
-            Debug.Log($"Hotfix Assemblies TotalSize: {GetBytesToString(totalBytesSize)}");
+            Debug.Log($"<color=#ffb542>Hotfix Assemblies TotalSize: {GetBytesToString(totalBytesSize)}</color>");
         }
 
         /// <summary>
