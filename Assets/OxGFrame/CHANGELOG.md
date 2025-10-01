@@ -2,6 +2,9 @@
 
 ## [3.5.0] - 2025-10-01
 
+# English
+Please get help from ChatGPT or Google Translate.
+
 # 中文
 
 - AssetLoader
@@ -16,6 +19,7 @@
       - 獲取資源解密服務 (便於 CustomMode)。 
     - 新增 AssetPatcher.GetManifestDecryptionServices() 方法。
       - 獲取資源清單解密服務 (便於 CustomMode)。 
+	- 新增 OXGFRAME_CUSTOM_MODE 宏。
     - 新增 CustomMode，支持自定義 YooAsset 包裹運行模式 **(流程繁瑣，須注意初始步驟)**。
       - 用於：[微信小遊戲](https://www.yooasset.com/docs/MiniGame#%E5%BE%AE%E4%BF%A1%E5%B0%8F%E6%B8%B8%E6%88%8F)、[抖音小遊戲](https://www.yooasset.com/docs/MiniGame#%E6%8A%96%E9%9F%B3%E5%B0%8F%E6%B8%B8%E6%88%8F)、[支付寶小遊戲](https://www.yooasset.com/docs/MiniGame#%E6%94%AF%E4%BB%98%E5%AE%9D%E5%B0%8F%E6%B8%B8%E6%88%8F)、[TapTap 小遊戲](https://www.yooasset.com/docs/MiniGame#taptap%E5%B0%8F%E6%B8%B8%E6%88%8F)、[CustomPlayModeParameters (自定義運行模式)](https://www.yooasset.com/docs/guide-runtime/CodeTutorial1#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F--customplaymode)、等等...。
       - **注意：當使用 CustomMode，所有 YooAsset 包裹初始皆需要自行實現**。

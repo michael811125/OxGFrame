@@ -121,6 +121,8 @@ namespace OxGFrame.AssetLoader.Bundle
                     BundleConfig.playModeParameters = this.webGLRemoteModeParameters;
                     break;
                 case BundleConfig.PlayMode.CustomMode:
+                    if (this.customModeParameters.initializePresetPackages)
+                        this.customModeParameters.initializePresetPackages = false;
                     BundleConfig.playModeParameters = this.customModeParameters;
                     break;
             }
