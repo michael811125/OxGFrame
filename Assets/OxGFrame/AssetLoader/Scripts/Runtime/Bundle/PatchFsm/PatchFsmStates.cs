@@ -167,8 +167,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 string url;
 
                 // 如果是離線模式或 WebGL 模式, 則以 StreamingAssets 的 appconfig 為主
-                if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode ||
-                    BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
+                if (!BundleConfig.playModeParameters.fetchAppConfigFromServer)
                     url = saCfgPath;
                 // 反之, 從 Server 請求 Cfg
                 else
@@ -178,13 +177,13 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 if (string.IsNullOrEmpty(hostCfgJson))
                 {
                     // 弱聯網處理
-                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    if (BundleConfig.playModeParameters.enableLastLocalVersionsCheckInWeakNetwork)
                     {
                         hostCfgJson = BundleConfig.saver.GetString(BundleConfig.LAST_APP_VERSION_KEY, string.Empty);
                         if (string.IsNullOrEmpty(hostCfgJson))
                         {
                             PatchEvents.PatchAppVersionUpdateFailed.SendEventMessage();
-                            Logging.PrintError<Logger>($"[{nameof(BundleConfig.PlayMode.WeakHostMode)}] Failed to request the app config from the URL: {url}.");
+                            Logging.PrintError<Logger>($"[{nameof(BundleConfig.playModeParameters.enableLastLocalVersionsCheckInWeakNetwork)}] Failed to request the app config from the URL: {url}.");
                             return;
                         }
                     }
@@ -255,15 +254,14 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     localCfg = JsonConvert.DeserializeObject<AppConfig>(localCfgJson);
 
                     // 如果是離線模式或 WebGL 模式, 則以 StreamingAssets 的 appconfig 為主 (Local Config = StreamingAssets Config)
-                    if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode ||
-                        BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
+                    if (!BundleConfig.playModeParameters.fetchAppConfigFromServer)
                     {
                         // 寫入 StreamingAssets 的配置文件至 Local
                         File.WriteAllText(localCfgPath, JsonConvert.SerializeObject(saCfg));
                     }
                     else
                     {
-                        if (BundleConfig.semanticRule.patch)
+                        if (BundleConfig.playModeParameters.semanticRule.patch)
                         {
                             // 比對完整版號 X.Y.Z
                             if (saCfg.APP_VERSION != localCfg.APP_VERSION)
@@ -307,7 +305,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         return;
                     }
 
-                    if (BundleConfig.semanticRule.patch)
+                    if (BundleConfig.playModeParameters.semanticRule.patch)
                     {
                         // 比對 Local 與 Host 的主程式完整版號 X.Y.Z
                         if (localCfg.APP_VERSION != hostCfg.APP_VERSION)
@@ -502,16 +500,20 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     }
                 }
 
+                // 如果尚未配置 Preset packages, 直接標記成 true
+                if (packages.Length == 0)
+                    succeed = true;
+
                 if (succeed)
                 {
                     PatchManager.patchVersions = patchVersions;
-                    PatchManager.isLastPackageVersions = false;
+                    PatchManager.isLastPackageVersionInWeakHostMode = false;
                     this._machine.ChangeState<FsmPatchManifestUpdate>();
                 }
                 else
                 {
                     #region Weak Host Mode
-                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    if (BundleConfig.playModeParameters.enableLastLocalVersionsCheckInWeakNetwork)
                     {
                         patchVersions.Clear();
                         foreach (var package in packages)
@@ -528,7 +530,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         }
 
                         PatchManager.patchVersions = patchVersions;
-                        PatchManager.isLastPackageVersions = true;
+                        PatchManager.isLastPackageVersionInWeakHostMode = true;
                         this._machine.ChangeState<FsmPatchManifestUpdate>();
                     }
                     #endregion
@@ -575,7 +577,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
 
                 // 判斷目前是否獲取的是本地版號 (如果是的話, 表示目前處於弱聯網)
-                bool isLastPackageVersions = PatchManager.isLastPackageVersions;
+                bool isLastPackageVersionInWeakHostMode = PatchManager.isLastPackageVersionInWeakHostMode;
 
                 // Combine packages
                 var appPackages = PackageManager.GetPresetAppPackages();
@@ -594,14 +596,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                     if (operation.Status == EOperationStatus.Succeed)
                     {
-                        #region Weak Host Mode
-                        if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
-                        {
-                            // 儲存本地資源版本
-                            BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, currentPackageName, version);
-                        }
-                        #endregion
-
+                        // 儲存本地資源版本
+                        BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, currentPackageName, version);
                         succeed = true;
                         Logging.PrintInfo<Logger>($"Package: {packages[i].PackageName} Update completed successfully.");
                     }
@@ -612,9 +608,13 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     }
                 }
 
+                // 如果尚未配置 Preset packages, 直接標記成 true
+                if (packages.Length == 0)
+                    succeed = true;
+
                 if (succeed)
                 {
-                    if (BundleConfig.skipMainDownload && !isLastPackageVersions)
+                    if (!BundleConfig.playModeParameters.createPresetPackagesDownloader && !isLastPackageVersionInWeakHostMode)
                         this._machine.ChangeState<FsmDownloadOver>();
                     else
                         this._machine.ChangeState<FsmCreateDownloader>();
@@ -622,7 +622,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 else
                 {
                     #region Weak Host Mode
-                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    if (BundleConfig.playModeParameters.enableLastLocalVersionsCheckInWeakNetwork)
                     {
                         PatchEvents.PatchManifestUpdateFailed.SendEventMessage();
                         Logging.PrintError<Logger>($"Package: {currentPackageName}. Failed to load the local resource manifest file. Resource update is required (Please connect to the network)!");
@@ -672,141 +672,79 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
 
-                // EditorSimulateMode or OfflineMode skip directly
-                if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
-                    BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode ||
-                    BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
+                // EditorSimulateMode skip directly
+                if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
                 {
                     this._machine.ChangeState<FsmPatchDone>();
                     return;
                 }
-
-                // 判斷目前是否獲取的是本地版號 (如果是的話, 表示目前處於弱聯網)
-                bool isLastPackageVersions = PatchManager.isLastPackageVersions;
-
-                string defaultGroupTag = BundleConfig.DEFAULT_GROUP_TAG;
-
-                GroupInfo lastGroupInfo = PatchManager.GetLastGroupInfo();
-                Logging.PrintInfo<Logger>($"Get last GroupName: {lastGroupInfo?.groupName}");
-
-                #region Create Downloader by Tags
-                // 獲取 host patch config, 需要處理群組包下載邏輯
-                string url = await BundleConfig.GetHostServerPatchConfigPath();
-                string hostCfgJson = await Requester.RequestText(url, null, null, null, false);
-                bool isLastHostCfgJson = false;
-                if (string.IsNullOrEmpty(hostCfgJson))
-                {
-                    // 弱聯網處理
-                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
-                    {
-                        hostCfgJson = BundleConfig.saver.GetString(BundleConfig.LAST_PATCH_CONFIG_KEY, string.Empty);
-                        if (string.IsNullOrEmpty(hostCfgJson))
-                        {
-                            string errorMsg = $"Failed to request patch config from URL: {url}";
-                            PatchEvents.PatchDownloadFailed.SendEventMessage(errorMsg);
-                            Logging.PrintError<Logger>($"[{nameof(BundleConfig.PlayMode.WeakHostMode)}] {errorMsg}.");
-                            return;
-                        }
-                        else
-                            isLastHostCfgJson = true;
-                    }
-                    else
-                    {
-                        string errorMsg = $"Failed to request patch config from URL: {url}";
-                        PatchEvents.PatchDownloadFailed.SendEventMessage(errorMsg);
-                        Logging.PrintError<Logger>($"{errorMsg}.");
-                        return;
-                    }
-                }
-
-                // 儲存本地資源群包配置數據
-                if (!isLastHostCfgJson)
-                    BundleConfig.saver.SaveString(BundleConfig.LAST_PATCH_CONFIG_KEY, hostCfgJson);
-                PatchConfig patchCfg = JsonConvert.DeserializeObject<PatchConfig>(hostCfgJson);
-                List<GroupInfo> patchGroupInfos = patchCfg.GROUP_INFOS;
 
                 // Combine packages
                 var appPackages = PackageManager.GetPresetAppPackages();
                 var dlcPackages = PackageManager.GetPresetDlcPackages();
                 var packages = appPackages.Concat(dlcPackages).ToArray();
 
-                string key;
-                int totalDownloadCount;
-                long totalDownloadBytes;
-                Dictionary<string, GroupInfo> newGroupInfos = new Dictionary<string, GroupInfo>();
-                for (int i = 0; i < packages.Length; i++)
-                {
-                    var package = packages[i];
+                // 判斷目前是否獲取的是本地版號 (如果是的話, 表示目前處於弱聯網)
+                bool isLastPackageVersionInWeakHostMode = PatchManager.isLastPackageVersionInWeakHostMode;
 
-                    if (lastGroupInfo == null)
+                // 獲取預設群包標籤
+                string defaultGroupTag = BundleConfig.DEFAULT_GROUP_TAG;
+
+                // 獲取上一次群包訊息
+                GroupInfo lastGroupInfo = PatchManager.GetLastGroupInfo();
+                Logging.PrintInfo<Logger>($"Get last GroupName: {lastGroupInfo?.groupName}");
+
+                #region Create Downloader by Tags (群包處理)
+                Dictionary<string, GroupInfo> newGroupInfos = new Dictionary<string, GroupInfo>();
+                if (packages.Length > 0)
+                {
+                    #region GroupInfo request
+                    // 獲取 host patch config, 需要處理群組包下載邏輯
+                    string url = await BundleConfig.GetHostServerPatchConfigPath();
+                    string hostCfgJson = await Requester.RequestText(url, null, null, null, false);
+                    bool isLastHostCfgJson = false;
+                    if (string.IsNullOrEmpty(hostCfgJson))
                     {
-                        // all package
-                        var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
-                        totalDownloadCount = downloader.TotalDownloadCount;
-                        totalDownloadBytes = downloader.TotalDownloadBytes;
-                        key = defaultGroupTag;
-                        if (totalDownloadCount > 0)
+                        // 弱聯網處理
+                        if (BundleConfig.playModeParameters.enableLastLocalVersionsCheckInWeakNetwork)
                         {
-                            if (!newGroupInfos.ContainsKey(key))
+                            hostCfgJson = BundleConfig.saver.GetString(BundleConfig.LAST_PATCH_CONFIG_KEY, string.Empty);
+                            if (string.IsNullOrEmpty(hostCfgJson))
                             {
-                                newGroupInfos.Add
-                                (
-                                    key,
-                                    new GroupInfo()
-                                    {
-                                        groupName = key,
-                                        tags = new string[] { },
-                                        totalCount = totalDownloadCount,
-                                        totalBytes = totalDownloadBytes
-                                    }
-                                );
+                                string errorMsg = $"Failed to request patch config from URL: {url}";
+                                PatchEvents.PatchDownloadFailed.SendEventMessage(errorMsg);
+                                Logging.PrintError<Logger>($"[{(BundleConfig.playModeParameters.enableLastLocalVersionsCheckInWeakNetwork)}] {errorMsg}.");
+                                return;
                             }
                             else
-                            {
-                                newGroupInfos[key].totalCount += totalDownloadCount;
-                                newGroupInfos[key].totalBytes += totalDownloadBytes;
-                            }
+                                isLastHostCfgJson = true;
                         }
-
-                        // package by tags
-                        if (patchGroupInfos != null && patchGroupInfos.Count > 0)
+                        else
                         {
-                            foreach (var groupInfo in patchGroupInfos)
-                            {
-                                downloader = package.CreateResourceDownloader(groupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
-                                totalDownloadCount = downloader.TotalDownloadCount;
-                                totalDownloadBytes = downloader.TotalDownloadBytes;
-                                key = groupInfo.groupName;
-                                if (totalDownloadCount > 0)
-                                {
-                                    if (!newGroupInfos.ContainsKey(key))
-                                    {
-                                        newGroupInfos.Add
-                                        (
-                                            key,
-                                            new GroupInfo()
-                                            {
-                                                groupName = key,
-                                                tags = groupInfo.tags,
-                                                totalCount = totalDownloadCount,
-                                                totalBytes = totalDownloadBytes
-                                            }
-                                        );
-                                    }
-                                    else
-                                    {
-                                        newGroupInfos[key].totalCount += totalDownloadCount;
-                                        newGroupInfos[key].totalBytes += totalDownloadBytes;
-                                    }
-                                }
-                            }
+                            string errorMsg = $"Failed to request patch config from URL: {url}";
+                            PatchEvents.PatchDownloadFailed.SendEventMessage(errorMsg);
+                            Logging.PrintError<Logger>($"{errorMsg}.");
+                            return;
                         }
                     }
-                    else
+
+                    // 儲存本地資源群包配置數據
+                    if (!isLastHostCfgJson)
+                        BundleConfig.saver.SaveString(BundleConfig.LAST_PATCH_CONFIG_KEY, hostCfgJson);
+                    PatchConfig patchCfg = JsonConvert.DeserializeObject<PatchConfig>(hostCfgJson);
+                    List<GroupInfo> patchGroupInfos = patchCfg.GROUP_INFOS;
+                    #endregion
+
+                    string key;
+                    int totalDownloadCount;
+                    long totalDownloadBytes;
+                    for (int i = 0; i < packages.Length; i++)
                     {
-                        // all package
-                        if (defaultGroupTag == lastGroupInfo.groupName)
+                        var package = packages[i];
+
+                        if (lastGroupInfo == null)
                         {
+                            // all package
                             var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
                             totalDownloadCount = downloader.TotalDownloadCount;
                             totalDownloadBytes = downloader.TotalDownloadBytes;
@@ -833,15 +771,13 @@ namespace OxGFrame.AssetLoader.PatchFsm
                                     newGroupInfos[key].totalBytes += totalDownloadBytes;
                                 }
                             }
-                        }
-                        // package by tags
-                        else if (patchGroupInfos != null && patchGroupInfos.Count > 0)
-                        {
-                            foreach (var groupInfo in patchGroupInfos)
+
+                            // package by tags
+                            if (patchGroupInfos != null && patchGroupInfos.Count > 0)
                             {
-                                if (groupInfo.groupName == lastGroupInfo.groupName)
+                                foreach (var groupInfo in patchGroupInfos)
                                 {
-                                    var downloader = package.CreateResourceDownloader(groupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+                                    downloader = package.CreateResourceDownloader(groupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
                                     totalDownloadCount = downloader.TotalDownloadCount;
                                     totalDownloadBytes = downloader.TotalDownloadBytes;
                                     key = groupInfo.groupName;
@@ -867,18 +803,87 @@ namespace OxGFrame.AssetLoader.PatchFsm
                                             newGroupInfos[key].totalBytes += totalDownloadBytes;
                                         }
                                     }
-                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // all package
+                            if (defaultGroupTag == lastGroupInfo.groupName)
+                            {
+                                var downloader = package.CreateResourceDownloader(BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+                                totalDownloadCount = downloader.TotalDownloadCount;
+                                totalDownloadBytes = downloader.TotalDownloadBytes;
+                                key = defaultGroupTag;
+                                if (totalDownloadCount > 0)
+                                {
+                                    if (!newGroupInfos.ContainsKey(key))
+                                    {
+                                        newGroupInfos.Add
+                                        (
+                                            key,
+                                            new GroupInfo()
+                                            {
+                                                groupName = key,
+                                                tags = new string[] { },
+                                                totalCount = totalDownloadCount,
+                                                totalBytes = totalDownloadBytes
+                                            }
+                                        );
+                                    }
+                                    else
+                                    {
+                                        newGroupInfos[key].totalCount += totalDownloadCount;
+                                        newGroupInfos[key].totalBytes += totalDownloadBytes;
+                                    }
+                                }
+                            }
+                            // package by tags
+                            else if (patchGroupInfos != null && patchGroupInfos.Count > 0)
+                            {
+                                foreach (var groupInfo in patchGroupInfos)
+                                {
+                                    if (groupInfo.groupName == lastGroupInfo.groupName)
+                                    {
+                                        var downloader = package.CreateResourceDownloader(groupInfo.tags, BundleConfig.maxConcurrencyDownloadCount, BundleConfig.failedRetryCount);
+                                        totalDownloadCount = downloader.TotalDownloadCount;
+                                        totalDownloadBytes = downloader.TotalDownloadBytes;
+                                        key = groupInfo.groupName;
+                                        if (totalDownloadCount > 0)
+                                        {
+                                            if (!newGroupInfos.ContainsKey(key))
+                                            {
+                                                newGroupInfos.Add
+                                                (
+                                                    key,
+                                                    new GroupInfo()
+                                                    {
+                                                        groupName = key,
+                                                        tags = groupInfo.tags,
+                                                        totalCount = totalDownloadCount,
+                                                        totalBytes = totalDownloadBytes
+                                                    }
+                                                );
+                                            }
+                                            else
+                                            {
+                                                newGroupInfos[key].totalCount += totalDownloadCount;
+                                                newGroupInfos[key].totalBytes += totalDownloadBytes;
+                                            }
+                                        }
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
+                    #endregion
                 }
-                #endregion
 
                 if (newGroupInfos.Count > 0)
                 {
                     #region Weak Host Mode
-                    if (isLastPackageVersions)
+                    if (isLastPackageVersionInWeakHostMode)
                     {
                         string errorMsg = "Local resources are incomplete. Update required (Please connect to the network)!";
                         Logging.PrintError<Logger>($"{errorMsg}");
@@ -972,7 +977,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
 #if !UNITY_WEBGL
                 // Check flag if enabled
-                if (BundleConfig.checkDiskSpace)
+                if (BundleConfig.playModeParameters.enableDiskSpaceCheckForPresetPackagesDownloader)
                 {
                     // Check disk space
                     int availableDiskSpaceMegabytes = BundleUtility.CheckAvailableDiskSpaceMegabytes();
@@ -1013,7 +1018,11 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     await downloader;
 
                     if (downloader.Status != EOperationStatus.Succeed)
+                    {
+                        string errorMsg = $"Downloader did not succeed in completing the operation.";
+                        Logging.PrintError<Logger>($"{errorMsg}.");
                         return;
+                    }
                 }
 
                 this._machine.ChangeState<FsmDownloadOver>();

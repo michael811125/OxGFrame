@@ -35,7 +35,7 @@ namespace OxGFrame.CoreFrame.CPFrame
         {
             this.OnRelease();
             this.Dispose();
-            AssetLoaders.UnloadAsset(this.assetName).Forget();
+            AssetLoaders.UnloadAsset(this.assetName);
         }
 
 #if OXGFRAME_CPFRAME_MONODRIVE_UPDATE_ON

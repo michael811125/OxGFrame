@@ -11,8 +11,20 @@ namespace OxGFrame.AssetLoader.Cacher
 {
     internal class CacheBundle : AssetCache<BundlePack>
     {
-        private Dictionary<string, BundlePack> _additiveScenes; // 緩存 Scene BundlePack
-        private Dictionary<string, int> _additiveSceneCounter;  // 子場景堆疊式計數緩存
+        /// <summary>
+        /// 緩存 Scene BundlePack
+        /// </summary>
+        private Dictionary<string, BundlePack> _additiveScenes;
+
+        /// <summary>
+        /// 子場景堆疊式計數緩存
+        /// </summary>
+        private Dictionary<string, int> _additiveSceneCounter;
+
+        /// <summary>
+        /// 預設卸載循環處理次數
+        /// </summary>
+        private const int _DEFAULT_LOOP_COUNT = 3;
 
         public CacheBundle() : base()
         {
@@ -82,14 +94,14 @@ namespace OxGFrame.AssetLoader.Cacher
                         this.currentCount++;
                         progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         this.RemoveLoadingFlags(assetName);
-                        Logging.PrintWarning<Logger>($"【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: [{assetName}] already preloaded!!!");
+                        Logging.PrintWarning<Logger>($"【Preload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: [{assetName}] already preloaded!!!");
                         continue;
                     }
                     else
                     {
-                        await this.UnloadRawFileAsync(assetName, true);
-                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                        else Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                        this.UnloadRawFile(assetName, true);
+                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                        else Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                         this.GetRetryCounter(assetName).AddRetryCount();
                         await this.PreloadRawFileAsync(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
                         continue;
@@ -134,13 +146,13 @@ namespace OxGFrame.AssetLoader.Cacher
                         if (!this.HasInCache(assetName))
                         {
                             this._cacher.Add(assetName, pack);
-                            Logging.Print<Logger>($"【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
+                            Logging.Print<Logger>($"【Preload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}");
                         }
                     }
                     else
                     {
-                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                        else Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                        else Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                         this.GetRetryCounter(assetName).AddRetryCount();
                         await this.PreloadRawFileAsync(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
                         continue;
@@ -190,14 +202,14 @@ namespace OxGFrame.AssetLoader.Cacher
                         this.currentCount++;
                         progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         this.RemoveLoadingFlags(assetName);
-                        Logging.PrintWarning<Logger>($"【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: [{assetName}] already preloaded!!!");
+                        Logging.PrintWarning<Logger>($"【Preload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: [{assetName}] already preloaded!!!");
                         continue;
                     }
                     else
                     {
-                        this.UnloadRawFileAsync(assetName, true).Forget();
-                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                        else Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                        this.UnloadRawFile(assetName, true);
+                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                        else Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                         this.GetRetryCounter(assetName).AddRetryCount();
                         this.PreloadRawFile(packageName, new string[] { assetName }, progression, maxRetryCount);
                         continue;
@@ -235,13 +247,13 @@ namespace OxGFrame.AssetLoader.Cacher
                         if (!this.HasInCache(assetName))
                         {
                             this._cacher.Add(assetName, pack);
-                            Logging.Print<Logger>($"【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
+                            Logging.Print<Logger>($"【Preload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}");
                         }
                     }
                     else
                     {
-                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                        else Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                        else Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                         this.GetRetryCounter(assetName).AddRetryCount();
                         this.PreloadRawFile(packageName, new string[] { assetName }, progression, maxRetryCount);
                         continue;
@@ -339,13 +351,13 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 // 引用計數++
                 pack.AddRef();
-                Logging.Print<Logger>($"【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}");
+                Logging.Print<Logger>($"【Load】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}, ref: {pack.refCount}");
             }
             else
             {
-                await this.UnloadRawFileAsync(assetName, true);
-                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                else Logging.Print<Logger>($"【Load】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                this.UnloadRawFile(assetName, true);
+                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                else Logging.Print<Logger>($"【Load】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                 this.GetRetryCounter(assetName).AddRetryCount();
                 return await this.LoadRawFileAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
             }
@@ -434,13 +446,13 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 // 引用計數++
                 pack.AddRef();
-                Logging.Print<Logger>($"【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}");
+                Logging.Print<Logger>($"【Load】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}, ref: {pack.refCount}");
             }
             else
             {
-                this.UnloadRawFileAsync(assetName, true).Forget();
-                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                else Logging.Print<Logger>($"【Load】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                this.UnloadRawFile(assetName, true);
+                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                else Logging.Print<Logger>($"【Load】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                 this.GetRetryCounter(assetName).AddRetryCount();
                 return this.LoadRawFile<T>(packageName, assetName, progression, maxRetryCount);
             }
@@ -450,7 +462,7 @@ namespace OxGFrame.AssetLoader.Cacher
             return (T)data;
         }
 
-        public async UniTask UnloadRawFileAsync(string assetName, bool forceUnload)
+        public void UnloadRawFile(string assetName, bool forceUnload)
         {
             if (string.IsNullOrEmpty(assetName)) return;
 
@@ -470,7 +482,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     // 引用計數--
                     pack.DelRef();
 
-                    Logging.Print<Logger>($"【Unload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}");
+                    Logging.Print<Logger>($"【Unload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}");
 
                     if (forceUnload)
                     {
@@ -479,29 +491,30 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._cacher.Remove(assetName);
 
                         var package = PackageManager.GetPackage(packageName);
-                        await package?.UnloadUnusedAssetsAsync();
+                        package?.TryUnloadUnusedAsset(assetName, _DEFAULT_LOOP_COUNT);
 
-                        Logging.Print<Logger>($"【Force Unload Completes】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
+                        Logging.Print<Logger>($"【Force Unload Completes】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}");
                     }
-                    else if (this._cacher[assetName].refCount <= 0)
+                    else if (this._cacher[assetName].IsReleasable())
                     {
                         pack.UnloadRawFile();
                         this._cacher[assetName] = null;
                         this._cacher.Remove(assetName);
 
                         var package = PackageManager.GetPackage(packageName);
-                        await package?.UnloadUnusedAssetsAsync();
+                        package?.TryUnloadUnusedAsset(assetName, _DEFAULT_LOOP_COUNT);
 
-                        Logging.Print<Logger>($"【Unload Completes】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
+                        Logging.Print<Logger>($"【Unload Completes】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}");
                     }
                 }
-                else Logging.PrintError<Logger>($"【Unload Type Error】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}");
+                else Logging.PrintError<Logger>($"【Unload Type Error】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}");
             }
         }
 
-        public async UniTask ReleaseRawFilesAsync()
+        public void ReleaseRawFiles()
         {
-            if (this.Count == 0) return;
+            if (this.count == 0)
+                return;
 
             HashSet<ResourcePackage> packages = new HashSet<ResourcePackage>();
 
@@ -512,12 +525,20 @@ namespace OxGFrame.AssetLoader.Cacher
                 {
                     BundlePack pack = this.GetFromCache(assetName);
                     var package = PackageManager.GetPackage(pack.packageName);
-                    if (!packages.Contains(package)) packages.Add(package);
-                    await this.UnloadRawFileAsync(assetName, true);
+                    if (!packages.Contains(package))
+                        packages.Add(package);
+                    this.UnloadRawFile(assetName, true);
                 }
             }
 
-            Logging.Print<Logger>($"【Release All RawFiles】 => Current << CacheBundle >> Cache Count: {this.Count}");
+            // UnloadUnusedAssets
+            foreach (var package in packages)
+                this.UnloadUnusedAssets(package, false);
+
+            // 調用底層接口釋放資源
+            Resources.UnloadUnusedAssets();
+
+            Logging.Print<Logger>($"【Release All RawFiles】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}");
         }
         #endregion
 
@@ -602,14 +623,14 @@ namespace OxGFrame.AssetLoader.Cacher
                                             var count = this._additiveSceneCounter[assetName];
                                             string key = $"{assetName}#{count}";
                                             this._additiveScenes.Add(key, pack);
-                                            Logging.Print<Logger>($"【Load Scene Additive】 => << CacheBundle >> scene: {key}");
+                                            Logging.Print<Logger>($"【Load Scene Additive】 => << {nameof(CacheBundle)} >> scene: {key}");
                                         }
                                         else
                                         {
                                             var count = ++this._additiveSceneCounter[assetName];
                                             string key = $"{assetName}#{count}";
                                             this._additiveScenes.Add(key, pack);
-                                            Logging.Print<Logger>($"【Load Scene Additive】 => << CacheBundle >> scene: {key}");
+                                            Logging.Print<Logger>($"【Load Scene Additive】 => << {nameof(CacheBundle)} >> scene: {key}");
                                         }
                                     }
                                     break;
@@ -629,9 +650,9 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 if (!loaded || !pack.GetScene().isLoaded)
                 {
-                    await this.UnloadScene(assetName, true);
-                    if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load Scene】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                    else Logging.Print<Logger>($"【Load Scene】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                    this.UnloadScene(assetName, true);
+                    if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load Scene】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                    else Logging.Print<Logger>($"【Load Scene】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                     this.GetRetryCounter(assetName).AddRetryCount();
                     return await this.LoadSceneAsync(packageName, assetName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
                 }
@@ -711,14 +732,14 @@ namespace OxGFrame.AssetLoader.Cacher
                                             var count = this._additiveSceneCounter[assetName];
                                             string key = $"{assetName}#{count}";
                                             this._additiveScenes.Add(key, pack);
-                                            Logging.Print<Logger>($"【Load Scene Additive】 => << CacheBundle >> scene: {key}");
+                                            Logging.Print<Logger>($"【Load Scene Additive】 => << {nameof(CacheBundle)} >> scene: {key}");
                                         }
                                         else
                                         {
                                             var count = ++this._additiveSceneCounter[assetName];
                                             string key = $"{assetName}#{count}";
                                             this._additiveScenes.Add(key, pack);
-                                            Logging.Print<Logger>($"【Load Scene Additive】 => << CacheBundle >> scene: {key}");
+                                            Logging.Print<Logger>($"【Load Scene Additive】 => << {nameof(CacheBundle)} >> scene: {key}");
                                         }
                                     }
                                     break;
@@ -741,9 +762,9 @@ namespace OxGFrame.AssetLoader.Cacher
             // (Caution) If use sync to load scene.isLoaded return false -> Why??
             if (!loaded)
             {
-                this.UnloadScene(assetName, true).Forget();
-                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load Scene】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                else Logging.Print<Logger>($"【Load Scene】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                this.UnloadScene(assetName, true);
+                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load Scene】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                else Logging.Print<Logger>($"【Load Scene】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                 this.GetRetryCounter(assetName).AddRetryCount();
                 return this.LoadScene(packageName, assetName, loadSceneMode, localPhysicsMode, progression);
             }
@@ -753,7 +774,7 @@ namespace OxGFrame.AssetLoader.Cacher
             return pack;
         }
 
-        public async UniTask UnloadScene(string assetName, bool recursively)
+        public void UnloadScene(string assetName, bool recursively)
         {
             /**
              * Single Scene will auto unload and release
@@ -777,7 +798,7 @@ namespace OxGFrame.AssetLoader.Cacher
                                 this._additiveScenes[key] = null;
                                 this._additiveScenes.Remove(key);
 
-                                Logging.Print<Logger>($"【Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}");
+                                Logging.Print<Logger>($"【Unload Additive Scene】 => << {nameof(CacheBundle)} >> scene: {key}, count: {topCount}");
                             }
                         }
                     }
@@ -785,7 +806,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     // 遞迴完, 移除計數緩存
                     this._additiveSceneCounter.Remove(assetName);
 
-                    Logging.Print<Logger>($"【Unload Additive Scene Completes】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}");
+                    Logging.Print<Logger>($"【Unload Additive Scene Completes】 => << {nameof(CacheBundle)} >> sceneName: {assetName}, recursively: {recursively}");
                 }
                 else
                 {
@@ -823,16 +844,16 @@ namespace OxGFrame.AssetLoader.Cacher
                                     this._additiveScenes[key] = null;
                                     this._additiveScenes.Remove(key);
 
-                                    Logging.Print<Logger>($"【Safety Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}");
+                                    Logging.Print<Logger>($"【Safety Unload Additive Scene】 => << {nameof(CacheBundle)} >> scene: {key}, count: {topCount}");
                                 }
                             }
                         }
 
                         // 遞迴完, 移除計數緩存
                         this._additiveSceneCounter.Remove(assetName);
-                        await package?.UnloadUnusedAssetsAsync();
+                        package?.TryUnloadUnusedAsset(assetName, _DEFAULT_LOOP_COUNT);
 
-                        Logging.Print<Logger>($"【Safety Unload Additive Scene Completes】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}");
+                        Logging.Print<Logger>($"【Safety Unload Additive Scene Completes】 => << {nameof(CacheBundle)} >> sceneName: {assetName}, recursively: {recursively}");
                     }
                     else
                     {
@@ -847,7 +868,7 @@ namespace OxGFrame.AssetLoader.Cacher
                             this._additiveScenes[key] = null;
                             this._additiveScenes.Remove(key);
 
-                            Logging.Print<Logger>($"【Unload Additive Scene】 => << CacheBundle >> scene: {key}, count: {topCount}");
+                            Logging.Print<Logger>($"【Unload Additive Scene】 => << {nameof(CacheBundle)} >> scene: {key}, count: {topCount}");
 
                             topCount = --this._additiveSceneCounter[assetName];
 
@@ -856,17 +877,17 @@ namespace OxGFrame.AssetLoader.Cacher
                             {
                                 var package = PackageManager.GetPackage(packageName);
                                 this._additiveSceneCounter.Remove(assetName);
-                                await package?.UnloadUnusedAssetsAsync();
-                                Logging.Print<Logger>($"【Unload Additive Scene Completes】 => << CacheBundle >> sceneName: {assetName}, recursively: {recursively}");
+                                package?.TryUnloadUnusedAsset(assetName, _DEFAULT_LOOP_COUNT);
+                                Logging.Print<Logger>($"【Unload Additive Scene Completes】 => << {nameof(CacheBundle)} >> sceneName: {assetName}, recursively: {recursively}");
                             }
                         }
                     }
                 }
             }
-            else Logging.PrintError<Logger>($"【Unload Scene Invalid】 => << CacheBundle >> sceneName: {assetName} maybe not Additive or is Single");
+            else Logging.PrintError<Logger>($"【Unload Scene Invalid】 => << {nameof(CacheBundle)} >> sceneName: {assetName} maybe not Additive or is Single");
         }
 
-        public async UniTask ReleaseScenes()
+        public void ReleaseScenes()
         {
             if (this._additiveSceneCounter.Count == 0) return;
 
@@ -879,8 +900,9 @@ namespace OxGFrame.AssetLoader.Cacher
                 {
                     BundlePack pack = this.GetFromCache(assetName);
                     var package = PackageManager.GetPackage(pack.packageName);
-                    if (!packages.Contains(package)) packages.Add(package);
-                    await this.UnloadScene(assetName, true);
+                    if (!packages.Contains(package))
+                        packages.Add(package);
+                    this.UnloadScene(assetName, true);
                 }
             }
 
@@ -888,12 +910,14 @@ namespace OxGFrame.AssetLoader.Cacher
             this._additiveScenes.Clear();
             this._additiveSceneCounter.Clear();
 
+            // UnloadUnusedAssets
             foreach (var package in packages)
-            {
-                await package?.UnloadUnusedAssetsAsync();
-            }
+                this.UnloadUnusedAssets(package, false);
 
-            Logging.Print<Logger>($"【Release All Scenes (Addtive)】 => Current << CacheBundle >> Additive Scene Cache Count: {this._additiveSceneCounter.Count}");
+            // 調用底層接口釋放資源
+            Resources.UnloadUnusedAssets();
+
+            Logging.Print<Logger>($"【Release All Scenes (Addtive)】 => Current << {nameof(CacheBundle)} >> Additive Scene Cache Count: {this._additiveSceneCounter.Count}");
         }
         #endregion
 
@@ -936,14 +960,14 @@ namespace OxGFrame.AssetLoader.Cacher
                         this.currentCount++;
                         progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         this.RemoveLoadingFlags(assetName);
-                        Logging.PrintWarning<Logger>($"【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: [{assetName}] already preloaded!!!");
+                        Logging.PrintWarning<Logger>($"【Preload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: [{assetName}] already preloaded!!!");
                         continue;
                     }
                     else
                     {
-                        await this.UnloadAsset(assetName, true);
-                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                        else Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                        this.UnloadAsset(assetName, true);
+                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                        else Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                         this.GetRetryCounter(assetName).AddRetryCount();
                         await this.PreloadAssetAsync<T>(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
                         continue;
@@ -988,13 +1012,13 @@ namespace OxGFrame.AssetLoader.Cacher
                         if (!this.HasInCache(assetName))
                         {
                             this._cacher.Add(assetName, pack);
-                            Logging.Print<Logger>($"【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
+                            Logging.Print<Logger>($"【Preload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}");
                         }
                     }
                     else
                     {
-                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                        else Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                        else Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                         this.GetRetryCounter(assetName).AddRetryCount();
                         await this.PreloadAssetAsync<T>(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
                         continue;
@@ -1044,14 +1068,14 @@ namespace OxGFrame.AssetLoader.Cacher
                         this.currentCount++;
                         progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         this.RemoveLoadingFlags(assetName);
-                        Logging.PrintWarning<Logger>($"【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: [{assetName}] already preloaded!!!");
+                        Logging.PrintWarning<Logger>($"【Preload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: [{assetName}] already preloaded!!!");
                         continue;
                     }
                     else
                     {
-                        this.UnloadAsset(assetName, true).Forget();
-                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                        else Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                        this.UnloadAsset(assetName, true);
+                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                        else Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                         this.GetRetryCounter(assetName).AddRetryCount();
                         this.PreloadAsset<T>(packageName, new string[] { assetName }, progression, maxRetryCount);
                         continue;
@@ -1089,13 +1113,13 @@ namespace OxGFrame.AssetLoader.Cacher
                         if (!this.HasInCache(assetName))
                         {
                             this._cacher.Add(assetName, pack);
-                            Logging.Print<Logger>($"【Preload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
+                            Logging.Print<Logger>($"【Preload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}");
                         }
                     }
                     else
                     {
-                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                        else Logging.Print<Logger>($"【Preload】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                        if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                        else Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                         this.GetRetryCounter(assetName).AddRetryCount();
                         this.PreloadAsset<T>(packageName, new string[] { assetName }, progression, maxRetryCount);
                         continue;
@@ -1183,13 +1207,13 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 // 引用計數++
                 pack.AddRef();
-                Logging.Print<Logger>($"【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}");
+                Logging.Print<Logger>($"【Load】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}, ref: {pack.refCount}");
             }
             else
             {
-                await this.UnloadAsset(assetName, true);
-                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                else Logging.Print<Logger>($"【Load】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                this.UnloadAsset(assetName, true);
+                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                else Logging.Print<Logger>($"【Load】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                 this.GetRetryCounter(assetName).AddRetryCount();
                 return await this.LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
             }
@@ -1268,13 +1292,13 @@ namespace OxGFrame.AssetLoader.Cacher
             {
                 // 引用計數++
                 pack.AddRef();
-                Logging.Print<Logger>($"【Load】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {pack.refCount}");
+                Logging.Print<Logger>($"【Load】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}, ref: {pack.refCount}");
             }
             else
             {
-                this.UnloadAsset(assetName, true).Forget();
-                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load】 => << CacheBundle >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                else Logging.Print<Logger>($"【Load】 => << CacheBundle >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
+                this.UnloadAsset(assetName, true);
+                if (this.GetRetryCounter(assetName).IsRetryActive()) Logging.Print<Logger>($"【Load】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
+                else Logging.Print<Logger>($"【Load】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                 this.GetRetryCounter(assetName).AddRetryCount();
                 return this.LoadAsset<T>(packageName, assetName, progression, maxRetryCount);
             }
@@ -1284,7 +1308,7 @@ namespace OxGFrame.AssetLoader.Cacher
             return asset;
         }
 
-        public async UniTask UnloadAsset(string assetName, bool forceUnload)
+        public void UnloadAsset(string assetName, bool forceUnload)
         {
             if (string.IsNullOrEmpty(assetName)) return;
 
@@ -1304,7 +1328,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     // 引用計數--
                     pack.DelRef();
 
-                    Logging.Print<Logger>($"【Unload】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}");
+                    Logging.Print<Logger>($"【Unload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}");
 
                     if (forceUnload)
                     {
@@ -1313,29 +1337,30 @@ namespace OxGFrame.AssetLoader.Cacher
                         this._cacher.Remove(assetName);
 
                         var package = PackageManager.GetPackage(packageName);
-                        await package?.UnloadUnusedAssetsAsync();
+                        package?.TryUnloadUnusedAsset(assetName, _DEFAULT_LOOP_COUNT);
 
-                        Logging.Print<Logger>($"【Force Unload Completes】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
+                        Logging.Print<Logger>($"【Force Unload Completes】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}");
                     }
-                    else if (this._cacher[assetName].refCount <= 0)
+                    else if (this._cacher[assetName].IsReleasable())
                     {
                         pack.UnloadAsset();
                         this._cacher[assetName] = null;
                         this._cacher.Remove(assetName);
 
                         var package = PackageManager.GetPackage(packageName);
-                        await package?.UnloadUnusedAssetsAsync();
+                        package?.TryUnloadUnusedAsset(assetName, _DEFAULT_LOOP_COUNT);
 
-                        Logging.Print<Logger>($"【Unload Completes】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}");
+                        Logging.Print<Logger>($"【Unload Completes】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}");
                     }
                 }
-                else Logging.PrintError<Logger>($"【Unload Type Error】 => Current << CacheBundle >> Cache Count: {this.Count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}");
+                else Logging.PrintError<Logger>($"【Unload Type Error】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}");
             }
         }
 
-        public async UniTask ReleaseAssets()
+        public void ReleaseAssets()
         {
-            if (this.Count == 0) return;
+            if (this.count == 0)
+                return;
 
             HashSet<ResourcePackage> packages = new HashSet<ResourcePackage>();
 
@@ -1346,12 +1371,40 @@ namespace OxGFrame.AssetLoader.Cacher
                 {
                     BundlePack pack = this.GetFromCache(assetName);
                     var package = PackageManager.GetPackage(pack.packageName);
-                    if (!packages.Contains(package)) packages.Add(package);
-                    await this.UnloadAsset(assetName, true);
+                    if (!packages.Contains(package))
+                        packages.Add(package);
+                    this.UnloadAsset(assetName, true);
                 }
             }
 
-            Logging.Print<Logger>($"【Release All Assets】 => Current << CacheBundle >> Cache Count: {this.Count}");
+            // UnloadUnusedAssets
+            foreach (var package in packages)
+                this.UnloadUnusedAssets(package, false);
+
+            // 調用底層接口釋放資源
+            Resources.UnloadUnusedAssets();
+
+            Logging.Print<Logger>($"【Release All Assets】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}");
+        }
+        #endregion
+
+        #region Common
+        /// <summary>
+        /// 同步處理 UnloadUnusedAssets
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="tryResourcesUnloadUnusedAssets"></param>
+        internal void UnloadUnusedAssets(ResourcePackage package, bool tryResourcesUnloadUnusedAssets)
+        {
+            var operation = package?.UnloadUnusedAssetsAsync(_DEFAULT_LOOP_COUNT);
+
+            // 同步處理
+            if (operation != null)
+                operation.WaitForAsyncComplete();
+
+            // 調用底層接口釋放資源
+            if (tryResourcesUnloadUnusedAssets)
+                Resources.UnloadUnusedAssets();
         }
         #endregion
 

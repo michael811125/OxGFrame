@@ -151,16 +151,16 @@ namespace OxGFrame.AssetLoader
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="recursively"></param>
-        public async static UniTask UnloadScene(string assetName, bool recursively = false)
+        public static void UnloadScene(string assetName, bool recursively = false)
         {
             if (!AssetPatcher.IsReleased())
-                await CacheBundle.GetInstance().UnloadScene(assetName, recursively);
+                CacheBundle.GetInstance().UnloadScene(assetName, recursively);
         }
 
-        public async static UniTask ReleaseBundleScenes()
+        public static void ReleaseBundleScenes()
         {
             if (!AssetPatcher.IsReleased())
-                await CacheBundle.GetInstance().ReleaseScenes();
+                CacheBundle.GetInstance().ReleaseScenes();
         }
         #endregion
 
@@ -202,7 +202,7 @@ namespace OxGFrame.AssetLoader
                 // Get path from operation handle
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 string filePath = operation.GetRawFilePath();
-                await UnloadRawFile(assetName, true);
+                UnloadRawFile(assetName, true);
                 return filePath;
             }
 
@@ -225,7 +225,7 @@ namespace OxGFrame.AssetLoader
                 // Get path from operation handle
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 string filePath = operation.GetRawFilePath();
-                await UnloadRawFile(assetName, true);
+                UnloadRawFile(assetName, true);
                 return filePath;
             }
 
@@ -247,7 +247,7 @@ namespace OxGFrame.AssetLoader
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 // Get path from operation handle
                 string filePath = operation.GetRawFilePath();
-                UnloadRawFile(assetName, true).Forget();
+                UnloadRawFile(assetName, true);
                 return filePath;
             }
 
@@ -270,7 +270,7 @@ namespace OxGFrame.AssetLoader
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 // Get path from operation handle
                 string filePath = operation.GetRawFilePath();
-                UnloadRawFile(assetName, true).Forget();
+                UnloadRawFile(assetName, true);
                 return filePath;
             }
 
@@ -438,18 +438,18 @@ namespace OxGFrame.AssetLoader
             return CacheBundle.GetInstance().LoadRawFile<T>(packageName, assetName, progression, maxRetryCount);
         }
 
-        public async static UniTask UnloadRawFile(string assetName, bool forceUnload = false)
+        public static void UnloadRawFile(string assetName, bool forceUnload = false)
         {
             if (RefineResourcesPath(ref assetName))
                 Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
             else if (!AssetPatcher.IsReleased())
-                await CacheBundle.GetInstance().UnloadRawFileAsync(assetName, forceUnload);
+                CacheBundle.GetInstance().UnloadRawFile(assetName, forceUnload);
         }
 
-        public async static UniTask ReleaseBundleRawFiles()
+        public static void ReleaseBundleRawFiles()
         {
             if (!AssetPatcher.IsReleased())
-                await CacheBundle.GetInstance().ReleaseRawFilesAsync();
+                CacheBundle.GetInstance().ReleaseRawFiles();
         }
         #endregion
 
@@ -962,12 +962,12 @@ namespace OxGFrame.AssetLoader
             }
         }
 
-        public async static UniTask UnloadAsset(string assetName, bool forceUnload = false)
+        public static void UnloadAsset(string assetName, bool forceUnload = false)
         {
             if (RefineResourcesPath(ref assetName))
                 CacheResource.GetInstance().UnloadAsset(assetName, forceUnload);
             else if (!AssetPatcher.IsReleased())
-                await CacheBundle.GetInstance().UnloadAsset(assetName, forceUnload);
+                CacheBundle.GetInstance().UnloadAsset(assetName, forceUnload);
         }
 
         public static void ReleaseResourceAssets()
@@ -975,10 +975,10 @@ namespace OxGFrame.AssetLoader
             CacheResource.GetInstance().ReleaseAssets();
         }
 
-        public async static UniTask ReleaseBundleAssets()
+        public static void ReleaseBundleAssets()
         {
             if (!AssetPatcher.IsReleased())
-                await CacheBundle.GetInstance().ReleaseAssets();
+                CacheBundle.GetInstance().ReleaseAssets();
         }
         #endregion
         #endregion
@@ -1699,9 +1699,16 @@ namespace OxGFrame.AssetLoader
         #endregion
         #endregion
 
+        /// <summary>
+        /// 解析區分 Resources 或 Bundle 加載名稱規則
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
         internal static bool RefineResourcesPath(ref string assetName)
         {
-            if (string.IsNullOrEmpty(assetName)) return false;
+            if (string.IsNullOrEmpty(assetName))
+                return false;
+
             string prefix = "res#";
             if (assetName.Length > prefix.Length)
             {

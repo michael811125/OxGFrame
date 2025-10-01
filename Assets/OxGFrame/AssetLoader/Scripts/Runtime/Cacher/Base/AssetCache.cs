@@ -2,8 +2,11 @@
 
 namespace OxGFrame.AssetLoader.Cacher
 {
-    public abstract class AssetCache<T>
+    internal abstract class AssetCache<T>
     {
+        /// <summary>
+        /// 嘗試計數器
+        /// </summary>
         public class RetryCounter
         {
             public byte retryCount;
@@ -32,15 +35,30 @@ namespace OxGFrame.AssetLoader.Cacher
             }
         }
 
+        /// <summary>
+        /// 資源 Pack 緩存
+        /// </summary>
         protected Dictionary<string, T> _cacher;
 
+        /// <summary>
+        /// Blocker 加載標記
+        /// </summary>
         protected Dictionary<string, RetryCounter> _loadingFlags;
 
+        /// <summary>
+        /// 當前進度數量 (Progress)
+        /// </summary>
         public float currentCount { get; protected set; }
 
+        /// <summary>
+        /// 總共進度數量 (Progress)
+        /// </summary>
         public float totalCount { get; protected set; }
 
-        public int Count { get { return this._cacher.Count; } }
+        /// <summary>
+        /// 緩存數量
+        /// </summary>
+        public int count => this._cacher.Count;
 
         public abstract bool HasInCache(string assetName);
 
@@ -54,18 +72,21 @@ namespace OxGFrame.AssetLoader.Cacher
 
         protected bool HasInLoadingFlags(string assetName)
         {
-            if (string.IsNullOrEmpty(assetName)) return false;
+            if (string.IsNullOrEmpty(assetName))
+                return false;
             return this._loadingFlags.ContainsKey(assetName);
         }
 
         protected void AddLoadingFlags(string assetName, byte maxRetryCount)
         {
-            if (!this.HasInLoadingFlags(assetName)) this._loadingFlags.Add(assetName, new RetryCounter(maxRetryCount));
+            if (!this.HasInLoadingFlags(assetName))
+                this._loadingFlags.Add(assetName, new RetryCounter(maxRetryCount));
         }
 
         protected void RemoveLoadingFlags(string assetName)
         {
-            if (this.HasInLoadingFlags(assetName)) this._loadingFlags.Remove(assetName);
+            if (this.HasInLoadingFlags(assetName))
+                this._loadingFlags.Remove(assetName);
         }
 
         protected RetryCounter GetRetryCounter(string assetName)

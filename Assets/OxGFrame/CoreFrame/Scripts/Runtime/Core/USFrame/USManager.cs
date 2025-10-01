@@ -327,13 +327,13 @@ namespace OxGFrame.CoreFrame.USFrame
             return null;
         }
 
-        public async UniTask UnloadFromBundle(bool recursively, params string[] sceneNames)
+        public void UnloadFromBundle(bool recursively, params string[] sceneNames)
         {
             if (sceneNames != null && sceneNames.Length > 0)
             {
                 foreach (string sceneName in sceneNames)
                 {
-                    await AssetLoaders.UnloadScene(sceneName, recursively);
+                    AssetLoaders.UnloadScene(sceneName, recursively);
                 }
             }
         }

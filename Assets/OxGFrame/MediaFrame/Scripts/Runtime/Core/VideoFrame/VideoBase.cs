@@ -419,7 +419,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             {
                 this.OnRelease();
                 if (this.onDestroyAndUnload)
-                    AssetLoaders.UnloadAsset(this.assetName).Forget();
+                    AssetLoaders.UnloadAsset(this.assetName);
                 this.assetName = null;
                 this.mediaName = null;
             }

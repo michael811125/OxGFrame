@@ -1,5 +1,4 @@
 ﻿using Cysharp.Threading.Tasks;
-using MyBox;
 using Newtonsoft.Json;
 using OxGFrame.AssetLoader.Utility.SecureMemory;
 using OxGKit.LoggingSystem;
@@ -16,27 +15,6 @@ namespace OxGFrame.AssetLoader.Bundle
     public static class BundleConfig
     {
         /// <summary>
-        /// 版號控管
-        /// </summary>
-        [Serializable]
-        public class SemanticRule
-        {
-            [ReadOnly]
-            [SerializeField]
-            private bool _major = true;
-            public bool major => this._major;
-
-            [ReadOnly]
-            [SerializeField]
-            private bool _minor = true;
-            public bool minor => this._minor;
-
-            [SerializeField]
-            private bool _patch = false;
-            public bool patch => this._patch;
-        }
-
-        /// <summary>
         /// 資源運行模式
         /// </summary>
         public enum PlayMode
@@ -46,7 +24,8 @@ namespace OxGFrame.AssetLoader.Bundle
             HostMode,
             WeakHostMode,
             WebGLMode,
-            WebGLRemoteMode
+            WebGLRemoteMode,
+            CustomMode
         }
 
         /// <summary>
@@ -117,35 +96,26 @@ namespace OxGFrame.AssetLoader.Bundle
         internal const byte CIPHER = 0x4D;
 
         /// <summary>
-        /// Patch 執行模式
+        /// 運行模式
         /// </summary>
         public static PlayMode playMode = PlayMode.EditorSimulateMode;
 
         /// <summary>
-        /// Semantic 規則設定
+        /// 運行模式參數配置
         /// </summary>
-        public static SemanticRule semanticRule = new SemanticRule();
+        public static PlayModeParameters playModeParameters = null;
 
         /// <summary>
-        /// 跳過 Patch 創建主要下載器階段 (強制邊玩邊下載) 
-        /// </summary>
-        public static bool skipMainDownload = false;
-
-        /// <summary>
-        /// 是否檢查磁碟空間
-        /// </summary>
-        public static bool checkDiskSpace = false;
-
-        /// <summary>
-        /// App Preset Package 清單
+        /// App Preset Package 清單 (預設包裹)
         /// </summary>
         public static List<AppPackageInfoWithBuild> listAppPackages;
 
         /// <summary>
-        /// DLC Preset Package 清單
+        /// DLC Preset Package 清單 (預設包裹)
         /// </summary>
         public static List<DlcPackageInfoWithBuild> listDlcPackages;
 
+        #region Download Options
         /// <summary>
         /// 預設同時併發下載數量
         /// </summary>
@@ -172,6 +142,18 @@ namespace OxGFrame.AssetLoader.Bundle
         public static uint breakpointFileSizeThreshold = 20 * 1 << 20;
 
         /// <summary>
+        /// 預設下載器看門狗監控超時時間
+        /// </summary>
+        public static int DEFAULT_DOWNLOAD_WATCHDOG_TIMEOUT = 30;
+
+        /// <summary>
+        /// 下載器看門狗監控超時時間 (監控時間範圍內, 沒接受到任何下載數據, 直接終止任務)
+        /// </summary>
+        public static int downloadWatchdogTimeout = DEFAULT_DOWNLOAD_WATCHDOG_TIMEOUT;
+        #endregion
+
+        #region Load Options
+        /// <summary>
         /// 資源讀取緩衝大小 (AssetBundle.LoadFromStream)
         /// </summary>
         public static uint bundleLoadReadBufferSize = 32 * 1 << 10;
@@ -180,11 +162,14 @@ namespace OxGFrame.AssetLoader.Bundle
         /// 資源解密讀取緩衝大小
         /// </summary>
         public static uint bundleDecryptReadBufferSize = 32 * 1 << 10;
+        #endregion
 
+        #region Process Options
         /// <summary>
         /// 每帧執行消耗的最大時間切片 (毫秒)
         /// </summary>
         public static long operationSystemMaxTimeSlice = 30;
+        #endregion
 
         /// <summary>
         /// 解密 Key
@@ -390,7 +375,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 else
                 {
                     // 弱聯網處理
-                    if (playMode == PlayMode.WeakHostMode)
+                    if (playModeParameters.enableLastLocalVersionsCheckInWeakNetwork)
                     {
                         cfgJson = saver.GetString(LAST_APP_VERSION_KEY, string.Empty);
                         if (!string.IsNullOrEmpty(cfgJson))
@@ -616,7 +601,7 @@ namespace OxGFrame.AssetLoader.Bundle
             saver.Dispose();
             saver = null;
 
-            semanticRule = null;
+            playModeParameters = null;
 
             listAppPackages = null;
             listDlcPackages = null;
@@ -628,6 +613,5 @@ namespace OxGFrame.AssetLoader.Bundle
             _ReleaseSecuredString(ref _bundleDecryptArgs);
             _ReleaseSecuredString(ref _manifestDecryptArgs);
         }
-
     }
 }

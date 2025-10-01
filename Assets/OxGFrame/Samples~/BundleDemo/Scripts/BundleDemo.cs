@@ -480,7 +480,8 @@ public class BundleDemo : MonoBehaviour
     #endregion
 
     #region Bundle Load
-    [Header("BundleInfo")]
+    [Header("Bundle Infos")]
+    [Tooltip("Asset address name (location)")]
     public string assetName = "";
     public GameObject container = null;
 
@@ -555,7 +556,7 @@ public class BundleDemo : MonoBehaviour
             // Destroy
             Destroy(t.gameObject);
             // Unload
-            AssetLoaders.UnloadAsset(this.assetName).Forget();
+            AssetLoaders.UnloadAsset(this.assetName);
         }
 
         // Unload for preload
@@ -563,7 +564,7 @@ public class BundleDemo : MonoBehaviour
         {
             if (AssetLoaders.HasInCache(this.assetName))
             {
-                AssetLoaders.UnloadAsset(this.assetName).Forget();
+                AssetLoaders.UnloadAsset(this.assetName);
             }
         }
     }
@@ -574,7 +575,7 @@ public class BundleDemo : MonoBehaviour
         foreach (Transform t in this.container.transform)
             Destroy(t.gameObject);
         // Release all
-        AssetLoaders.ReleaseBundleAssets().Forget();
+        AssetLoaders.ReleaseBundleAssets();
     }
     #endregion
 }

@@ -5,24 +5,41 @@ using YooAsset;
 namespace OxGFrame.AssetLoader.Cacher
 {
     #region Base
-    public class AssetObject
+    public abstract class AssetObject
     {
+        /// <summary>
+        /// 資源定位名稱
+        /// </summary>
         public string assetName { get; protected set; }
+
+        /// <summary>
+        /// 資源引用次數
+        /// </summary>
         public int refCount { get; protected set; }
 
+        /// <summary>
+        /// 計數加 1
+        /// </summary>
         public void AddRef()
         {
             this.refCount++;
         }
 
+        /// <summary>
+        /// 計數減 1
+        /// </summary>
         public void DelRef()
         {
             this.refCount--;
         }
 
-        public bool IsPack<T>() where T : AssetObject
+        /// <summary>
+        /// 是否可釋放 (計數為 0 返回 true)
+        /// </summary>
+        /// <returns></returns>
+        public bool IsReleasable()
         {
-            return typeof(T).IsInstanceOfType(this);
+            return this.refCount <= 0;
         }
     }
     #endregion
@@ -45,7 +62,8 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public T GetAsset<T>() where T : Object
         {
-            if (this.asset == null) return default;
+            if (this.asset == null)
+                return default;
             return this.asset as T;
         }
 
@@ -60,7 +78,14 @@ namespace OxGFrame.AssetLoader.Cacher
     #region Bundle
     public class BundlePack : AssetObject
     {
+        /// <summary>
+        /// 包裹名稱
+        /// </summary>
         public string packageName { get; protected set; }
+
+        /// <summary>
+        /// 資源句柄
+        /// </summary>
         public HandleBase operationHandle { get; protected set; } = null;
 
         /// <summary>
@@ -82,7 +107,8 @@ namespace OxGFrame.AssetLoader.Cacher
         /// <returns></returns>
         public bool IsValid()
         {
-            if (this.operationHandle == null) return false;
+            if (this.operationHandle == null)
+                return false;
             return this.operationHandle.IsValid;
         }
 
@@ -127,51 +153,59 @@ namespace OxGFrame.AssetLoader.Cacher
         #region RawFile
         public string GetRawFileText()
         {
-            if (!this.IsRawFileOperationHandleValid()) return null;
+            if (!this.IsRawFileOperationHandleValid())
+                return null;
             return this.GetOperationHandle<RawFileHandle>().GetRawFileText();
         }
 
         public byte[] GetRawFileData()
         {
-            if (!this.IsRawFileOperationHandleValid()) return null;
+            if (!this.IsRawFileOperationHandleValid())
+                return null;
             return this.GetOperationHandle<RawFileHandle>().GetRawFileData();
         }
 
         public void UnloadRawFile()
         {
-            if (this.IsRawFileOperationHandleValid()) this.GetOperationHandle<RawFileHandle>().Release();
+            if (this.IsRawFileOperationHandleValid())
+                this.GetOperationHandle<RawFileHandle>().Release();
         }
         #endregion
 
         #region Scene
         public Scene GetScene()
         {
-            if (!this.IsSceneOperationHandleValid()) return new Scene();
+            if (!this.IsSceneOperationHandleValid())
+                return new Scene();
             return this.GetOperationHandle<SceneHandle>().SceneObject;
         }
 
         public bool UnsuspendScene()
         {
-            if (this.IsSceneOperationHandleValid()) return this.GetOperationHandle<SceneHandle>().UnSuspend();
+            if (this.IsSceneOperationHandleValid())
+                return this.GetOperationHandle<SceneHandle>().UnSuspend();
             return false;
         }
 
         public void UnloadScene()
         {
-            if (this.IsSceneOperationHandleValid()) this.GetOperationHandle<SceneHandle>().UnloadAsync();
+            if (this.IsSceneOperationHandleValid())
+                this.GetOperationHandle<SceneHandle>().UnloadAsync();
         }
         #endregion
 
         #region Asset
         public T GetAsset<T>() where T : Object
         {
-            if (!this.IsAssetOperationHandleValid()) return null;
+            if (!this.IsAssetOperationHandleValid())
+                return null;
             return this.GetOperationHandle<AssetHandle>().AssetObject as T;
         }
 
         public void UnloadAsset()
         {
-            if (this.IsAssetOperationHandleValid()) this.GetOperationHandle<AssetHandle>().Release();
+            if (this.IsAssetOperationHandleValid())
+                this.GetOperationHandle<AssetHandle>().Release();
         }
         #endregion
 

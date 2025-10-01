@@ -1596,7 +1596,7 @@ namespace OxGFrame.CoreFrame
             /// </summary>
             /// <param name="recursively"></param>
             /// <param name="sceneNames"></param>
-            public async static UniTask Unload(bool recursively, params string[] sceneNames)
+            public static void Unload(bool recursively, params string[] sceneNames)
             {
                 foreach (var sceneName in sceneNames)
                 {
@@ -1604,7 +1604,7 @@ namespace OxGFrame.CoreFrame
                     if (RefineBuildScenePath(ref refineSceneName))
                         USManager.GetInstance().UnloadFromBuild(recursively, refineSceneName);
                     else
-                        await USManager.GetInstance().UnloadFromBundle(recursively, refineSceneName);
+                        USManager.GetInstance().UnloadFromBundle(recursively, refineSceneName);
                 }
             }
 
@@ -1618,9 +1618,16 @@ namespace OxGFrame.CoreFrame
                 USManager.GetInstance().UnloadFromBuild(recursively, buildIndexes);
             }
 
+            /// <summary>
+            /// 解析區分 Build Scene 或 Bundle Scene 加載名稱規則
+            /// </summary>
+            /// <param name="sceneName"></param>
+            /// <returns></returns>
             internal static bool RefineBuildScenePath(ref string sceneName)
             {
-                if (string.IsNullOrEmpty(sceneName)) return false;
+                if (string.IsNullOrEmpty(sceneName))
+                    return false;
+
                 string prefix = "build#";
                 if (sceneName.Length > prefix.Length)
                 {

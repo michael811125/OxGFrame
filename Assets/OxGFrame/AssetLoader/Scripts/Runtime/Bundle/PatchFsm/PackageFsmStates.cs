@@ -173,10 +173,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             hostServer = packageDetail.hostServer;
                             fallbackHostServer = packageDetail.fallbackHostServer;
 
-                            // Host Mode or WebGL Mode
-                            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
-                                BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode ||
-                                BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
+                            if (BundleConfig.playModeParameters.autoConfigureServerEndpoints)
                             {
                                 hostServer = string.IsNullOrEmpty(hostServer) ? await BundleConfig.GetDlcHostServerUrl(packageDetail.packageName, packageDetail.dlcVersion, packageDetail.withoutPlatform) : hostServer;
                                 fallbackHostServer = string.IsNullOrEmpty(fallbackHostServer) ? await BundleConfig.GetDlcFallbackHostServerUrl(packageDetail.packageName, packageDetail.dlcVersion, packageDetail.withoutPlatform) : fallbackHostServer;
@@ -188,10 +185,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             hostServer = null;
                             fallbackHostServer = null;
 
-                            // Host Mode or WebGL Mode
-                            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
-                                BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode ||
-                                BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
+                            if (BundleConfig.playModeParameters.autoConfigureServerEndpoints)
                             {
                                 hostServer = await BundleConfig.GetHostServerUrl(packageDetail.packageName);
                                 fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageDetail.packageName);
@@ -296,7 +290,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 else
                 {
                     #region Weak Host Mode
-                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    if (BundleConfig.playModeParameters.enableLastLocalVersionsCheckInWeakNetwork)
                     {
                         patchVersions.Clear();
                         foreach (var package in packages)
@@ -376,14 +370,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                     if (operation.Status == EOperationStatus.Succeed)
                     {
-                        #region Weak Host Mode
-                        if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
-                        {
-                            // 儲存本地資源版本
-                            BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, currentPackageName, version);
-                        }
-                        #endregion
-
+                        // 儲存本地資源版本
+                        BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, currentPackageName, version);
                         succeed = true;
                         Logging.PrintInfo<Logger>($"Package: {packages[i].PackageName} Update completed successfully.");
                     }
@@ -401,7 +389,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 else
                 {
                     #region Weak Host Mode
-                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                    if (BundleConfig.playModeParameters.enableLastLocalVersionsCheckInWeakNetwork)
                     {
                         PackageEvents.PatchManifestUpdateFailed.SendEventMessage(this._hashId);
                         Logging.PrintError<Logger>($"Package: {currentPackageName}. Failed to load the local resource manifest file. Resource update is required (Please connect to the network)!");
@@ -450,10 +438,8 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
             private void _CreateDownloader()
             {
-                // EditorSimulateMode or OfflineMode skip directly
-                if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
-                    BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode ||
-                    BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
+                // EditorSimulateMode skip directly
+                if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
                 {
                     this._machine.ChangeState<FsmPatchDone>();
                     return;
@@ -461,6 +447,13 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 // 判斷目前是否獲取的是本地版號 (如果是的話, 表示目前處於弱聯網)
                 bool isLastPackageVersions = Convert.ToBoolean(this._machine.GetBlackboardValue(PackageOperation.KEY_IS_LAST_PACKAGE_VERSIONS));
+
+                bool skipDownload = (this._machine.Owner as PackageOperation).skipDownload;
+                if (skipDownload && !isLastPackageVersions)
+                {
+                    this._machine.ChangeState<FsmDownloadOver>();
+                    return;
+                }
 
                 #region Create Downloader by Tags
                 // Get packages
@@ -517,10 +510,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     #endregion
                     else
                     {
-                        bool skipDownload = (this._machine.Owner as PackageOperation).skipDownload;
-                        if (skipDownload && !isLastPackageVersions)
-                            this._machine.ChangeState<FsmDownloadOver>();
-                        else if ((this._machine.Owner as PackageOperation).IsBegin())
+                        if ((this._machine.Owner as PackageOperation).IsBegin())
                             this._machine.ChangeState<FsmBeginDownload>();
 
                         /**
@@ -659,7 +649,12 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     downloader.BeginDownload();
                     await downloader;
 
-                    if (downloader.Status != EOperationStatus.Succeed) return;
+                    if (downloader.Status != EOperationStatus.Succeed)
+                    {
+                        string errorMsg = $"Downloader did not succeed in completing the operation.";
+                        Logging.PrintError<Logger>($"{errorMsg}.");
+                        return;
+                    }
                 }
 
                 this._machine.ChangeState<FsmDownloadOver>();

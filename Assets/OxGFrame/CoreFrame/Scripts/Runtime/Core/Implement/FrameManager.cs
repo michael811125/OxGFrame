@@ -667,7 +667,7 @@ namespace OxGFrame.CoreFrame
                 stack.Count() == 0)
             {
                 // 額外卸載
-                AssetLoaders.UnloadAsset(assetName).Forget();
+                AssetLoaders.UnloadAsset(assetName);
 
                 Logging.Print<Logger>($"[FrameManager] Extra Unload Asset: {assetName}");
             }
@@ -677,7 +677,7 @@ namespace OxGFrame.CoreFrame
                 this._dictAllCache.Remove(assetName);
 
             // 卸載
-            AssetLoaders.UnloadAsset(assetName).Forget();
+            AssetLoaders.UnloadAsset(assetName);
 
             Logging.PrintInfo<Logger>($"[FrameManager] Destroy + Unload Asset: {assetName}");
         }
