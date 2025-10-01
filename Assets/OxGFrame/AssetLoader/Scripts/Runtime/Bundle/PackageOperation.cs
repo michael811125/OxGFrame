@@ -169,7 +169,7 @@ namespace OxGFrame.AssetLoader.Bundle
             return this._packageInfos;
         }
 
-        internal string[] GetPackageNames()
+        public string[] GetPackageNames()
         {
             List<string> packageNames = new List<string>();
             foreach (var packageInfo in this._packageInfos)
@@ -179,7 +179,7 @@ namespace OxGFrame.AssetLoader.Bundle
             return packageNames.ToArray();
         }
 
-        internal ResourcePackage[] GetPackages()
+        public ResourcePackage[] GetPackages()
         {
             if (this._packageInfos != null && this._packageInfos.Length > 0)
             {

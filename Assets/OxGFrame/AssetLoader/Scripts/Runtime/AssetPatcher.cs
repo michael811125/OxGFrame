@@ -98,6 +98,24 @@ namespace OxGFrame.AssetLoader
         {
             return BundleConfig.GetRequestStreamingAssetsPath();
         }
+
+        /// <summary>
+        /// Get defualt bundle decryption services
+        /// </summary>
+        /// <returns></returns>
+        public static DecryptionServices GetBundleDecryptionServices()
+        {
+            return PackageManager.bundleDecryptionServices;
+        }
+
+        /// <summary>
+        /// Get default manifest decryption services
+        /// </summary>
+        /// <returns></returns>
+        public static DecryptionServices GetManifestDecryptionServices()
+        {
+            return PackageManager.manifestDecryptionServices;
+        }
         #endregion
 
         #region Patch Status
@@ -148,6 +166,25 @@ namespace OxGFrame.AssetLoader
         #endregion
 
         #region Patch Operation
+        /// <summary>
+        /// Custom app packages and dlc packages to bundle config at runtime
+        /// </summary>
+        /// <param name="appPackages"></param>
+        /// <param name="dlcPackages"></param>
+        public static void SetPresetPackages(List<AppPackageInfoWithBuild> appPackages, List<DlcPackageInfoWithBuild> dlcPackages)
+        {
+            PatchLauncher.SetPresetPackages(appPackages, dlcPackages);
+        }
+
+        /// <summary>
+        /// Init and setup preset packages
+        /// </summary>
+        /// <returns></returns>
+        public static async UniTask InitSetupPresetPackages()
+        {
+            await PatchLauncher.InitializePresetPackages();
+        }
+
         /// <summary>
         /// Start patch update
         /// </summary>
@@ -215,17 +252,29 @@ namespace OxGFrame.AssetLoader
         /// <summary>
         /// Get newest patch version (Recommend use encode to display)
         /// <para> Min and Max length = 11 to 32 </para>
+        /// <para> Note: The newest patch version from preset packages </para>
         /// </summary>
         /// <returns></returns>
         public static string GetPatchVersion(bool encode = false, int length = 16, string separator = "-")
         {
             string[] versions = PatchManager.patchVersions.Values.ToArray();
+            return GetPatchVersion(versions, encode, length, separator);
+        }
+
+        /// <summary>
+        /// Get newest patch version by custom (Recommend use encode to display)
+        /// <para> Min and Max length = 11 to 32 </para>
+        /// </summary>
+        /// <returns></returns>
+        public static string GetPatchVersion(string[] customPatchVersions, bool encode = false, int length = 16, string separator = "-")
+        {
+            string[] versions = customPatchVersions;
             string newestVersion = BundleUtility.NewestPackageVersion(versions);
             string patchVersion = string.IsNullOrEmpty(newestVersion) ? string.Empty : newestVersion;
 
             // For simulate mode
             if (string.IsNullOrEmpty(patchVersion))
-                patchVersion = BundleUtility.GetDefaultPackageVersion();
+                patchVersion = BundleUtility.GetPackageVersionForNow();
 
             if (encode)
             {
@@ -259,7 +308,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Unload package and clear package files from local sandbox
+        /// Unload (Destroy) package and clear package files from local sandbox
         /// </summary>
         /// <param name="packageName"></param>
         /// <param name="destroyPackage">Remove package from cache memory</param>
@@ -284,17 +333,17 @@ namespace OxGFrame.AssetLoader
         /// Init package by type
         /// </summary>
         /// <param name="packageInfo"></param>
-        /// <param name="autoUpdate"></param>
+        /// <param name="updatePackage"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitPackage(PackageInfoWithBuild packageInfo, bool autoUpdate = false)
+        public static async UniTask<bool> InitPackage(PackageInfoWithBuild packageInfo, bool updatePackage = false)
         {
             if (packageInfo is AppPackageInfoWithBuild)
             {
-                return await InitAppPackage(packageInfo as AppPackageInfoWithBuild, autoUpdate);
+                return await InitAppPackage(packageInfo as AppPackageInfoWithBuild, updatePackage);
             }
             else if (packageInfo is DlcPackageInfoWithBuild)
             {
-                return await InitDlcPackage(packageInfo as DlcPackageInfoWithBuild, autoUpdate);
+                return await InitDlcPackage(packageInfo as DlcPackageInfoWithBuild, updatePackage);
             }
 
             return false;
@@ -305,23 +354,20 @@ namespace OxGFrame.AssetLoader
         /// Init app package (If PlayMode is HostMode will request from default host path)
         /// </summary>
         /// <param name="packageInfo"></param>
-        /// <param name="autoUpdate"></param>
+        /// <param name="updatePackage"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitAppPackage(AppPackageInfoWithBuild packageInfo, bool autoUpdate = false)
+        public static async UniTask<bool> InitAppPackage(AppPackageInfoWithBuild packageInfo, bool updatePackage = false)
         {
             string hostServer = null;
             string fallbackHostServer = null;
 
-            // Host Mode or WebGL Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
-                BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode ||
-                BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
+            if (BundleConfig.playModeParameters.autoConfigureServerEndpoints)
             {
                 hostServer = await BundleConfig.GetHostServerUrl(packageInfo.packageName);
                 fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageInfo.packageName);
             }
 
-            return await PackageManager.InitPackage(packageInfo, autoUpdate, hostServer, fallbackHostServer);
+            return await PackageManager.InitPackage(packageInfo, updatePackage, hostServer, fallbackHostServer);
         }
         #endregion
 
@@ -330,30 +376,27 @@ namespace OxGFrame.AssetLoader
         /// Init dlc package (If PlayMode is HostMode will request from default host dlc path)
         /// </summary>
         /// <param name="packageInfo"></param>
-        /// <param name="autoUpdate"></param>
+        /// <param name="updatePackage"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitDlcPackage(DlcPackageInfoWithBuild packageInfo, bool autoUpdate = false)
+        public static async UniTask<bool> InitDlcPackage(DlcPackageInfoWithBuild packageInfo, bool updatePackage = false)
         {
             string hostServer = packageInfo.hostServer;
             string fallbackHostServer = packageInfo.fallbackHostServer;
 
-            // Host Mode or WebGL Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
-                BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode ||
-                BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
+            if (BundleConfig.playModeParameters.autoConfigureServerEndpoints)
             {
                 hostServer = string.IsNullOrEmpty(hostServer) ? await BundleConfig.GetDlcHostServerUrl(packageInfo.packageName, packageInfo.dlcVersion, packageInfo.withoutPlatform) : hostServer;
                 fallbackHostServer = string.IsNullOrEmpty(fallbackHostServer) ? await BundleConfig.GetDlcFallbackHostServerUrl(packageInfo.packageName, packageInfo.dlcVersion, packageInfo.withoutPlatform) : fallbackHostServer;
             }
 
-            return await PackageManager.InitPackage(packageInfo, autoUpdate, hostServer, fallbackHostServer);
+            return await PackageManager.InitPackage(packageInfo, updatePackage, hostServer, fallbackHostServer);
         }
         #endregion
         #endregion
 
         #region Update Package
         /// <summary>
-        /// Update package manifest by package name
+        /// Update package version and manifest by package name
         /// </summary>
         /// <param name="packageName"></param>
         /// <returns></returns>
@@ -421,6 +464,15 @@ namespace OxGFrame.AssetLoader
         {
             return PackageManager.GetPackages(packageNames);
         }
+
+        /// <summary>
+        /// Get all packages
+        /// </summary>
+        /// <returns></returns>
+        public static ResourcePackage[] GetAllPackages()
+        {
+            return PackageManager.GetAllPackages();
+        }
         #endregion
 
         #region Get Preset Package
@@ -478,30 +530,6 @@ namespace OxGFrame.AssetLoader
         public static DlcPackageInfoWithBuild[] GetPresetDlcPackageInfos()
         {
             return PackageManager.GetPresetDlcPackageInfos();
-        }
-        #endregion
-
-        #region AssetInfo
-        /// <summary>
-        /// Get specific package assetInfos (Tags)
-        /// </summary>
-        /// <param name="package"></param>
-        /// <param name="tags"></param>
-        /// <returns></returns>
-        public static AssetInfo[] GetPackageAssetInfosByTags(ResourcePackage package, params string[] tags)
-        {
-            return PackageManager.GetPackageAssetInfosByTags(package, tags);
-        }
-
-        /// <summary>
-        /// Get specific package assetInfos (AssetNames)
-        /// </summary>
-        /// <param name="package"></param>
-        /// <param name="assetNames"></param>
-        /// <returns></returns>
-        public static AssetInfo[] GetPackageAssetInfosByAssetNames(ResourcePackage package, params string[] assetNames)
-        {
-            return PackageManager.GetPackageAssetInfosByAssetNames(package, assetNames);
         }
         #endregion
 

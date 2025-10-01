@@ -100,7 +100,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             {
                 this.OnRelease();
                 this.Dispose();
-                AssetLoaders.UnloadAsset(this.assetName).Forget();
+                AssetLoaders.UnloadAsset(this.assetName);
             }
         }
 

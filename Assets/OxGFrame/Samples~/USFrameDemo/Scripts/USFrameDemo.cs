@@ -199,22 +199,22 @@ public class USFrameDemo : MonoBehaviour
 
         if (Keyboard.current.numpad7Key.wasReleasedThisFrame)
         {
-            CoreFrames.USFrame.Unload(true, UnityScene.Bundle.LevelDemo01).Forget();
+            CoreFrames.USFrame.Unload(true, UnityScene.Bundle.LevelDemo01);
         }
 
         if (Keyboard.current.numpad8Key.wasReleasedThisFrame)
         {
-            CoreFrames.USFrame.Unload(true, UnityScene.Bundle.LevelDemo02).Forget();
+            CoreFrames.USFrame.Unload(true, UnityScene.Bundle.LevelDemo02);
         }
 
         if (Keyboard.current.numpad9Key.wasReleasedThisFrame)
         {
-            CoreFrames.USFrame.Unload(false, UnityScene.Build.LevelDemo03).Forget();
+            CoreFrames.USFrame.Unload(false, UnityScene.Build.LevelDemo03);
         }
 
         if (Keyboard.current.numpad0Key.wasReleasedThisFrame)
         {
-            CoreFrames.USFrame.Unload(false, UnityScene.Bundle.LevelDemo03).Forget();
+            CoreFrames.USFrame.Unload(false, UnityScene.Bundle.LevelDemo03);
         }
     }
 }

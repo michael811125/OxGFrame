@@ -2,6 +2,188 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.16] - 2025-09-17
+
+### Improvements
+
+- (#638) 优化了Provider加载机制，引用计数为零时自动挂起！
+
+### Fixed
+
+- (#644) [**严重**] 修复了2.3.15版本，资产量巨大的情况下，编辑器下模拟模式初始化耗时很久的问题。
+
+### Added
+
+- (#639) 新增了文件系统参数：VIRTUAL_DOWNLOAD_MODE 和 VIRTUAL_DOWNLOAD_SPEED 
+
+  编辑器下不需要构建AB，也可以模拟远端资源下载，等同真机运行环境。
+
+  ```csharp
+  class DefaultEditorFIleSystem
+  {
+      /// <summary>
+      /// 模拟虚拟下载模式
+      /// </summary>
+      public bool VirtualDownloadMode { private set; get; } = false;
+  
+      /// <summary>
+      /// 模拟虚拟下载的网速（单位：字节）
+      /// </summary>
+      public int VirtualDownloadSpeed { private set; get; } = 1024;
+  }
+  ```
+
+- (#640) 新增了文件系统参数：VIRTUAL_WEBGL_MODE 
+
+  编辑器下不需要构建AB，也可以模拟小游戏开发环境，等同真机运行环境。
+
+  ```csharp
+  class DefaultEditorFIleSystem
+  {
+      /// <summary>
+      /// 模拟WebGL平台模式
+      /// </summary>
+      public bool VirtualWebGLMode { private set; get; } = false;
+  }
+  ```
+
+- (#642) 新增了文件系统参数：DOWNLOAD_WATCH_DOG_TIME
+
+  监控时间范围内，如果没有接收到任何下载数据，那么直接终止任务！
+
+  ```csharp
+  class DefaultCacheFIleSystem
+  {
+      /// <summary>
+      /// 自定义参数：下载任务的看门狗机制监控时间
+      /// </summary>
+      public int DownloadWatchDogTime { private set; get; } = int.MaxValue;
+  }
+  ```
+
+### Changed
+
+- 下载器参数timeout移除。
+
+  可以使用文件系统的看门狗机制代替。
+
+- (#632) IFilterRule接口变动。
+
+  收集器可以指定搜寻的资源类型，在收集目录资产量巨大的情况下，可以极大加快打包速度！
+
+  ```csharp
+  public interface IFilterRule
+  {
+      /// <summary>
+      /// 搜寻的资源类型
+      /// 说明：使用引擎方法搜索获取所有资源列表
+      /// </summary>
+      string FindAssetType { get; } 
+  }
+  ```
+
+  
+
+## [2.3.15] - 2025-09-09
+
+**重要**：升级了资源清单版本，不兼容老版本。建议重新提审安装包。
+
+### Improvements
+
+- 重构了UniTask扩展库的目录结构和说明文档。
+- 重构了内置文件系统类的加载和拷贝逻辑，解决在一些特殊机型上遇到的偶发性拷贝失败问题。
+- 增加了生成内置清单文件的窗口工具，详情见扩展工程里CreateBuildinCatalog目录。
+- 优化了异步操作系统的繁忙检测机制。
+- (#621) 资源配置页面可以展示DependCollector和StaticCollector包含的文件列表内容。
+- (#627) 优化了资源清单部分字段类型，CRC字段从字符串类型调整为整形，可以降低清单尺寸。
+
+### Fixed
+
+- 修复了构建页面扩展类缺少指定属性报错的问题。
+- (#611)  修复了资源扫描器配置页面，修改备注信息后会丢失焦点的问题。
+- (#622)  修复了纯鸿蒙系统读取内置加密文件失败的问题。
+- (#620)  修复了LINUX系统URL地址转换失败的问题。
+- (#631)  修复了NET 4.x程序集库Math.Clamp导致的编译错误。
+
+### Added
+
+- 新增了支持支付宝小游戏的文件系统扩展类。
+
+- 新增了支持Taptap小游戏的文件系统扩展类。
+
+- 新增了资源系统初始化参数：UseWeakReferenceHandle 
+
+  目前处于预览版，可以在引擎设置页面开启宏：YOOASSET_EXPERIMENTAL
+
+  ```csharp
+  /// <summary>
+  /// 启用弱引用资源句柄
+  /// </summary>
+  public bool UseWeakReferenceHandle = false;
+  ```
+
+- 内置文件系统和缓存文件系统新增初始化参数：FILE_VERIFY_MAX_CONCURRENCY 
+
+  ```csharp
+  /// <summary>
+  /// 自定义参数：初始化的时候缓存文件校验最大并发数
+  /// </summary>
+  public int FileVerifyMaxConcurrency { private set; get; }
+  ```
+
+- (#623)  内置构建管线新增构建参数：StripUnityVersion 
+
+  ```csharp
+  /// <summary>
+  /// 从文件头里剥离Unity版本信息
+  /// </summary>
+  public bool StripUnityVersion = false;
+  ```
+
+- 可编程构建管线新增构建参数：TrackSpriteAtlasDependencies
+
+  ```csharp
+  /// <summary>
+  /// 自动建立资源对象对图集的依赖关系
+  /// </summary>
+  public bool TrackSpriteAtlasDependencies = false;
+  ```
+
+- (#617) 新增资源收集配置参数：SupportExtensionless
+
+  在不需要模糊加载模式的前提下，关闭此选项，可以降低运行时内存大小。
+
+  该选项默认开启！
+
+  ```csharp
+  public class CollectCommand
+  {
+      /// <summary>
+      /// 支持无后缀名的资源定位地址
+      /// </summary>
+      public bool SupportExtensionless { set; get; }  
+  }
+  ```
+
+- (#625) 异步操作系统类新增监听方法。
+
+  ```csharp
+  class OperationSystem
+  {
+      /// <summary>
+      /// 监听任务开始
+      /// </summary>
+      public static void RegisterStartCallback(Action<string, AsyncOperationBase> callback);
+          
+      /// <summary>
+      /// 监听任务结束
+      /// </summary>
+      public static void RegisterFinishCallback(Action<string, AsyncOperationBase> callback);
+  }
+  ```
+
+  
+
 ## [2.3.14] - 2025-07-23
 
 **重要**：**所有下载相关的超时参数（timeout）已更新判定逻辑**

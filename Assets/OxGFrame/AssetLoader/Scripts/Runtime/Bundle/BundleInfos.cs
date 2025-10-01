@@ -3,9 +3,13 @@ using OxGFrame.AssetLoader.Utility.SecureMemory;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
+    /// <summary>
+    /// 解密參數
+    /// </summary>
     [Serializable]
     public class DecryptInfo : IDisposable
     {
@@ -41,6 +45,9 @@ namespace OxGFrame.AssetLoader.Bundle
         }
     }
 
+    /// <summary>
+    /// 運行包分組
+    /// </summary>
     [Serializable]
     public class GroupInfo
     {
@@ -53,11 +60,21 @@ namespace OxGFrame.AssetLoader.Bundle
         public string[] tags;
     }
 
+    /// <summary>
+    /// 包裹訊息
+    /// </summary>
     [Serializable]
     public abstract class PackageInfoWithBuild
     {
+        /// <summary>
+        /// Build pipeline only for EditorSimulateMode
+        /// </summary>
         [Tooltip("Only for EditorSimulateMode")]
         public BundleConfig.BuildMode buildMode;
+
+        /// <summary>
+        /// Package name
+        /// </summary>
         public string packageName;
 
         /// <summary>
@@ -65,18 +82,30 @@ namespace OxGFrame.AssetLoader.Bundle
         /// </summary>
         [HideInInspector]
         public string hostServer = null;
+
         /// <summary>
         /// Custom fallback host server
         /// </summary>
         [HideInInspector]
         public string fallbackHostServer = null;
+
+        /// <summary>
+        /// [YooAsset] Initialize parameters for custom
+        /// </summary>
+        public InitializeParameters initializeParameters;
     }
 
+    /// <summary>
+    /// APP 包裹 (AppPackage 跟著 APP 版號路徑)
+    /// </summary>
     [Serializable]
     public class AppPackageInfoWithBuild : PackageInfoWithBuild
     {
     }
 
+    /// <summary>
+    /// DLC 包裹 (DLCPakcage 自己有獨立版號路徑)
+    /// </summary>
     [Serializable]
     public class DlcPackageInfoWithBuild : PackageInfoWithBuild
     {
@@ -85,6 +114,9 @@ namespace OxGFrame.AssetLoader.Bundle
         public string dlcVersion;
     }
 
+    /// <summary>
+    /// DLC 配置訊息
+    /// </summary>
     [Serializable]
     public class DlcInfo
     {
@@ -94,6 +126,9 @@ namespace OxGFrame.AssetLoader.Bundle
         public string dlcVersion;
     }
 
+    /// <summary>
+    /// 包裹訊息
+    /// </summary>
     public class PackageInfo
     {
         public string packageName;
@@ -102,6 +137,9 @@ namespace OxGFrame.AssetLoader.Bundle
         public long packageSize;
     }
 
+    /// <summary>
+    /// APP 版本號配置
+    /// </summary>
     public class AppConfig
     {
         [Serializable]
@@ -118,6 +156,9 @@ namespace OxGFrame.AssetLoader.Bundle
         public SemanticRule SEMANTIC_RULE; // 主程式版號規則
     }
 
+    /// <summary>
+    /// 資源更新包訊息
+    /// </summary>
     public class PatchConfig
     {
         public List<PackageInfo> PACKAGES;

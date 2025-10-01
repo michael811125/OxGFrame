@@ -36,14 +36,24 @@ namespace OxGFrame.AssetLoader.Bundle
         private static DecryptionServices _bundleDecryptionServices;
 
         /// <summary>
+        /// 獲取資源解密服務
+        /// </summary>
+        public static DecryptionServices bundleDecryptionServices => _bundleDecryptionServices;
+
+        /// <summary>
         /// 清單解密服務
         /// </summary>
         private static DecryptionServices _manifestDecryptionServices;
 
         /// <summary>
+        /// 獲取清單解密服務
+        /// </summary>
+        public static DecryptionServices manifestDecryptionServices => _manifestDecryptionServices;
+
+        /// <summary>
         /// Init settings
         /// </summary>
-        public async static UniTask InitSetup()
+        public static void Initialize()
         {
             #region Init YooAssets
             YooAssets.Initialize();
@@ -117,6 +127,15 @@ namespace OxGFrame.AssetLoader.Bundle
             Logging.Print<Logger>($"Init Manifest Decryption: {decryptType}");
             #endregion
 
+            Logging.PrintInfo<Logger>($"Initialized Play Mode: {BundleConfig.playMode}");
+        }
+
+        /// <summary>
+        /// Init and setup preset packages
+        /// </summary>
+        /// <returns></returns>
+        public async static UniTask InitializePresetPackages()
+        {
             #region Init Preset Packages
             bool appInitialized = await InitPresetAppPackages();
             bool dlcInitialized = await InitPresetDlcPackages();
@@ -129,7 +148,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
             isInitialized = appInitialized && dlcInitialized;
 
-            Logging.PrintInfo<Logger>($"InitSetup -> Initialized: {isInitialized}");
+            Logging.PrintInfo<Logger>($"Initialize Peset Packages -> Initialized: {isInitialized}");
         }
 
         /// <summary>
@@ -145,7 +164,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     foreach (var packageInfo in presetAppPackageInfos)
                     {
-                        // autoUpdate = true, 因為新版 Yoo 必須獲取版號與 manifest 才能進行資源加載
+                        // updatePackage = true, 因為新版 Yoo 必須獲取版號與 manifest 才能進行資源加載
                         bool isInitialized = await AssetPatcher.InitAppPackage(packageInfo, true);
                         if (isInitialized)
                         {
@@ -180,7 +199,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     foreach (var packageInfo in presetDlcPackageInfos)
                     {
-                        // autoUpdate = true, 因為新版 Yoo 必須獲取版號與 manifest 才能進行資源加載
+                        // updatePackage = true, 因為新版 Yoo 必須獲取版號與 manifest 才能進行資源加載
                         bool isInitialized = await AssetPatcher.InitDlcPackage(packageInfo, true);
                         if (isInitialized)
                         {
@@ -203,14 +222,14 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// Init package by package name
+        /// Init package
         /// </summary>
         /// <param name="packageInfo"></param>
-        /// <param name="autoUpdate"></param>
+        /// <param name="updatePackage"></param>
         /// <param name="hostServer"></param>
         /// <param name="fallbackHostServer"></param>
         /// <returns></returns>
-        public static async UniTask<bool> InitPackage(PackageInfoWithBuild packageInfo, bool autoUpdate, string hostServer, string fallbackHostServer)
+        public static async UniTask<bool> InitPackage(PackageInfoWithBuild packageInfo, bool updatePackage, string hostServer, string fallbackHostServer)
         {
             var packageName = packageInfo.packageName;
             var buildMode = packageInfo.buildMode.ToString();
@@ -220,159 +239,181 @@ namespace OxGFrame.AssetLoader.Bundle
             {
                 // The default initialized state is true
                 bool isInitialized = true;
-                if (autoUpdate) isInitialized = await UpdatePackage(packageName);
+                if (updatePackage) isInitialized = await UpdatePackage(packageName);
                 Logging.PrintInfo<Logger>($"Package: {packageName} is initialized. Status: {package.InitializeStatus}.");
                 return isInitialized;
             }
 
-            #region Simulate Mode
             InitializationOperation initializationOperation = null;
-            if (BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode)
+
+            switch (BundleConfig.playMode)
             {
-                var buildResult = EditorSimulateModeHelper.SimulateBuild(packageName);
-                var packageRoot = buildResult.PackageRootDirectory;
-                var createParameters = new EditorSimulateModeParameters();
-                createParameters.EditorFileSystemParameters = FileSystemParameters.CreateDefaultEditorFileSystemParameters(packageRoot);
-                initializationOperation = package.InitializeAsync(createParameters);
+                case BundleConfig.PlayMode.EditorSimulateMode:
+                    {
+                        #region Simulate Mode
+                        var buildResult = EditorSimulateModeHelper.SimulateBuild(packageName);
+                        var packageRoot = buildResult.PackageRootDirectory;
+                        var createParameters = new YooAsset.EditorSimulateModeParameters();
+                        createParameters.EditorFileSystemParameters = FileSystemParameters.CreateDefaultEditorFileSystemParameters(packageRoot);
+                        initializationOperation = package.InitializeAsync(createParameters);
+                        #endregion
+                    }
+                    break;
+
+                case BundleConfig.PlayMode.OfflineMode:
+                    {
+                        #region Offline Mode
+                        var createParameters = new OfflinePlayModeParameters();
+                        var bundleDecryptionServices = _bundleDecryptionServices;
+                        var manifestDecryptionServices = _manifestDecryptionServices;
+                        bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
+                        if (builtinExists)
+                        {
+                            createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(bundleDecryptionServices);
+                            createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+
+                            // Only raw file build pipeline need to append extension
+                            if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                                createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+                        }
+                        else
+                        {
+                            createParameters.BuildinFileSystemParameters = null;
+                        }
+
+                        initializationOperation = package.InitializeAsync(createParameters);
+                        #endregion
+                    }
+                    break;
+
+                case BundleConfig.PlayMode.HostMode:
+                case BundleConfig.PlayMode.WeakHostMode:
+                    {
+                        #region Host Mode, Weak Host Mode
+                        var createParameters = new HostPlayModeParameters();
+                        var remoteServices = new HostServers(hostServer, fallbackHostServer);
+                        var bundleDecryptionServices = _bundleDecryptionServices;
+                        var manifestDecryptionServices = _manifestDecryptionServices;
+                        bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
+                        if (builtinExists)
+                        {
+                            createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(bundleDecryptionServices);
+                            createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+
+                            if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                                createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.COPY_BUILDIN_PACKAGE_MANIFEST, true);
+
+                            // Only raw file build pipeline need to append extension
+                            if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                                createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+                        }
+                        else
+                        {
+                            createParameters.BuildinFileSystemParameters = null;
+                        }
+
+                        #region Cache File System
+                        createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices, bundleDecryptionServices);
+                        createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.RESUME_DOWNLOAD_MINMUM_SIZE, BundleConfig.breakpointFileSizeThreshold);
+                        createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+                        createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.DOWNLOAD_WATCH_DOG_TIME, BundleConfig.downloadWatchdogTimeout);
+
+                        if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                            createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.INSTALL_CLEAR_MODE, EOverwriteInstallClearMode.None);
+
+                        // Only raw file build pipeline need to append extension
+                        if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                            createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+                        #endregion
+
+                        initializationOperation = package.InitializeAsync(createParameters);
+                        #endregion
+                    }
+                    break;
+
+                case BundleConfig.PlayMode.WebGLMode:
+                    {
+                        #region WebGL Mode
+                        var createParameters = new WebPlayModeParameters();
+                        var bundleDecryptionServices = _bundleDecryptionServices;
+                        var manifestDecryptionServices = _manifestDecryptionServices;
+                        bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
+                        if (builtinExists)
+                        {
+                            createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(bundleDecryptionServices);
+                            createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+
+                            // Only raw file build pipeline need to append extension
+                            if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                                createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+                        }
+                        else
+                        {
+                            createParameters.WebServerFileSystemParameters = null;
+                        }
+
+                        initializationOperation = package.InitializeAsync(createParameters);
+                        #endregion
+                    }
+                    break;
+
+                case BundleConfig.PlayMode.WebGLRemoteMode:
+                    {
+                        #region WebGL Remote Mode
+                        var createParameters = new WebPlayModeParameters();
+                        var remoteServices = new HostServers(hostServer, fallbackHostServer);
+                        var bundleDecryptionServices = _bundleDecryptionServices;
+                        var manifestDecryptionServices = _manifestDecryptionServices;
+                        bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
+                        if (builtinExists)
+                        {
+                            createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(bundleDecryptionServices);
+                            createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+
+                            // Only raw file build pipeline need to append extension
+                            if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                                createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+                        }
+                        else
+                        {
+                            createParameters.WebServerFileSystemParameters = null;
+                        }
+
+                        #region Web Remote File System
+                        createParameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices, bundleDecryptionServices);
+                        createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.RESUME_DOWNLOAD_MINMUM_SIZE, BundleConfig.breakpointFileSizeThreshold);
+                        createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+                        createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.DOWNLOAD_WATCH_DOG_TIME, BundleConfig.downloadWatchdogTimeout);
+
+                        // Only raw file build pipeline need to append extension
+                        if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                            createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+                        #endregion
+
+                        initializationOperation = package.InitializeAsync(createParameters);
+                        #endregion
+                    }
+                    break;
+
+                case BundleConfig.PlayMode.CustomMode:
+                    {
+                        #region Custom Mode
+                        var createParameters = packageInfo.initializeParameters;
+                        initializationOperation = package.InitializeAsync(createParameters);
+                        #endregion
+                    }
+                    break;
             }
-            #endregion
 
-            #region Offline Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.OfflineMode)
-            {
-                var createParameters = new OfflinePlayModeParameters();
-                var bundleDecryptionServices = _bundleDecryptionServices;
-                var manifestDecryptionServices = _manifestDecryptionServices;
-                bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
-                if (builtinExists)
-                {
-                    createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(bundleDecryptionServices);
-                    createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
+            if (initializationOperation != null)
+                await initializationOperation;
 
-                    // Only raw file build pipeline need to append extension
-                    if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                        createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
-                }
-                else
-                {
-                    createParameters.BuildinFileSystemParameters = null;
-                }
-
-                initializationOperation = package.InitializeAsync(createParameters);
-            }
-            #endregion
-
-            #region Host Mode, Weak Host Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.HostMode ||
-                BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
-            {
-                var createParameters = new HostPlayModeParameters();
-                var remoteServices = new HostServers(hostServer, fallbackHostServer);
-                var bundleDecryptionServices = _bundleDecryptionServices;
-                var manifestDecryptionServices = _manifestDecryptionServices;
-                bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
-                if (builtinExists)
-                {
-                    createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(bundleDecryptionServices);
-                    createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
-
-                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
-                        createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.COPY_BUILDIN_PACKAGE_MANIFEST, true);
-
-                    // Only raw file build pipeline need to append extension
-                    if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                        createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
-                }
-                else
-                {
-                    createParameters.BuildinFileSystemParameters = null;
-                }
-
-                #region Cache File System
-                createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices, bundleDecryptionServices);
-                createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.RESUME_DOWNLOAD_MINMUM_SIZE, BundleConfig.breakpointFileSizeThreshold);
-                createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
-
-                if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
-                    createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.INSTALL_CLEAR_MODE, EOverwriteInstallClearMode.None);
-
-                // Only raw file build pipeline need to append extension
-                if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                    createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
-                #endregion
-
-                initializationOperation = package.InitializeAsync(createParameters);
-            }
-            #endregion
-
-            #region WebGL Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.WebGLMode)
-            {
-                var createParameters = new WebPlayModeParameters();
-                var bundleDecryptionServices = _bundleDecryptionServices;
-                var manifestDecryptionServices = _manifestDecryptionServices;
-                bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
-                if (builtinExists)
-                {
-                    createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(bundleDecryptionServices);
-                    createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
-
-                    // Only raw file build pipeline need to append extension
-                    if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                        createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
-                }
-                else
-                {
-                    createParameters.WebServerFileSystemParameters = null;
-                }
-
-                initializationOperation = package.InitializeAsync(createParameters);
-            }
-            #endregion
-
-            #region WebGL Remote Mode
-            if (BundleConfig.playMode == BundleConfig.PlayMode.WebGLRemoteMode)
-            {
-                var createParameters = new WebPlayModeParameters();
-                var remoteServices = new HostServers(hostServer, fallbackHostServer);
-                var bundleDecryptionServices = _bundleDecryptionServices;
-                var manifestDecryptionServices = _manifestDecryptionServices;
-                bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
-                if (builtinExists)
-                {
-                    createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(bundleDecryptionServices);
-                    createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
-
-                    // Only raw file build pipeline need to append extension
-                    if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                        createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
-                }
-                else
-                {
-                    createParameters.WebServerFileSystemParameters = null;
-                }
-
-                #region Web Remote File System
-                createParameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices, bundleDecryptionServices);
-                createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.RESUME_DOWNLOAD_MINMUM_SIZE, BundleConfig.breakpointFileSizeThreshold);
-                createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestDecryptionServices);
-
-                // Only raw file build pipeline need to append extension
-                if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
-                    createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
-                #endregion
-
-                initializationOperation = package.InitializeAsync(createParameters);
-            }
-            #endregion
-
-            await initializationOperation;
-
-            if (initializationOperation.Status == EOperationStatus.Succeed)
+            if (initializationOperation != null &&
+                initializationOperation.Status == EOperationStatus.Succeed)
             {
                 // The default initialized state is true
                 bool isInitialized = true;
-                if (autoUpdate) isInitialized = await UpdatePackage(packageName);
+                if (updatePackage) isInitialized = await UpdatePackage(packageName);
                 Logging.PrintInfo<Logger>($"Package: {packageName} Init completed successfully.");
                 return isInitialized;
             }
@@ -384,7 +425,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// Update package manifest by package name
+        /// Update package version and manifest by package name
         /// </summary>
         /// <param name="packageName"></param>
         /// <returns></returns>
@@ -401,14 +442,8 @@ namespace OxGFrame.AssetLoader.Bundle
                 await manifestOperation;
                 if (manifestOperation.Status == EOperationStatus.Succeed)
                 {
-                    #region Weak Host Mode
-                    if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
-                    {
-                        // 儲存本地資源版本
-                        BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, packageName, version);
-                    }
-                    #endregion
-
+                    // 儲存本地資源版本
+                    BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, packageName, version);
                     Logging.PrintInfo<Logger>($"Package: {packageName} Update completed successfully.");
                     return true;
                 }
@@ -421,7 +456,7 @@ namespace OxGFrame.AssetLoader.Bundle
             else
             {
                 #region Weak Host Mode
-                if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                if (BundleConfig.playModeParameters.enableLastLocalVersionsCheckInWeakNetwork)
                 {
                     // 獲取本地資源版本
                     string lastVersion = BundleConfig.saver.GetData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, packageName, string.Empty);
@@ -752,6 +787,15 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
+        /// Get all packages
+        /// </summary>
+        /// <returns></returns>
+        public static ResourcePackage[] GetAllPackages()
+        {
+            return YooAssets.GetAllPackages().ToArray();
+        }
+
+        /// <summary>
         /// Get preset app packages
         /// </summary>
         /// <returns></returns>
@@ -882,39 +926,6 @@ namespace OxGFrame.AssetLoader.Bundle
         public static DlcPackageInfoWithBuild[] GetPresetDlcPackageInfos()
         {
             return BundleConfig.listDlcPackages.ToArray();
-        }
-
-        /// <summary>
-        /// Get specific package assetInfos (Tags)
-        /// </summary>
-        /// <param name="package"></param>
-        /// <param name="tags"></param>
-        /// <returns></returns>
-        public static AssetInfo[] GetPackageAssetInfosByTags(ResourcePackage package, params string[] tags)
-        {
-            if (tags == null || tags.Length == 0) return default;
-
-            return package.GetAssetInfos(tags);
-        }
-
-        /// <summary>
-        /// Get specific package assetInfos (AssetNames)
-        /// </summary>
-        /// <param name="package"></param>
-        /// <param name="assetNames"></param>
-        /// <returns></returns>
-        public static AssetInfo[] GetPackageAssetInfosByAssetNames(ResourcePackage package, params string[] assetNames)
-        {
-            if (assetNames == null || assetNames.Length == 0) return default;
-
-            var assetInfos = new List<AssetInfo>();
-            foreach (string assetName in assetNames)
-            {
-                var assetInfo = package.GetAssetInfo(assetName);
-                if (assetInfo != null) assetInfos.Add(assetInfo);
-            }
-
-            return assetInfos.ToArray();
         }
 
         /// <summary>

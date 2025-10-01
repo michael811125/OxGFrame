@@ -49,7 +49,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             {
                 this.OnRelease();
                 this.Dispose();
-                AssetLoaders.UnloadAsset(this.assetName).Forget();
+                AssetLoaders.UnloadAsset(this.assetName);
             }
         }
 

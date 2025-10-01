@@ -364,7 +364,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                                 await UniTask.SwitchToMainThread();
 #endif
                                 // Unload after load
-                                await AssetLoaders.UnloadAsset(dllName);
+                                AssetLoaders.UnloadAsset(dllName);
                                 Logging.Print<Logger>($"Loaded AOT Assembly: {dllName}, mode: {mode}, ret: {err}");
                             }
                             else
@@ -458,7 +458,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                                     await UniTask.SwitchToMainThread();
 #endif
                                     // Unload after load
-                                    await AssetLoaders.UnloadAsset(dllName);
+                                    AssetLoaders.UnloadAsset(dllName);
                                 }
                             }
 

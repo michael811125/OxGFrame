@@ -54,14 +54,19 @@ namespace YooAsset
 
         #region 自定义参数
         /// <summary>
+        /// 自定义参数：覆盖安装缓存清理模式
+        /// </summary>
+        public EOverwriteInstallClearMode InstallClearMode { private set; get; } = EOverwriteInstallClearMode.ClearAllManifestFiles;
+
+        /// <summary>
         /// 自定义参数：初始化的时候缓存文件校验级别
         /// </summary>
         public EFileVerifyLevel FileVerifyLevel { private set; get; } = EFileVerifyLevel.Middle;
 
         /// <summary>
-        /// 自定义参数：覆盖安装缓存清理模式
+        /// 自定义参数：初始化的时候缓存文件校验最大并发数
         /// </summary>
-        public EOverwriteInstallClearMode InstallClearMode { private set; get; } = EOverwriteInstallClearMode.ClearAllManifestFiles;
+        public int FileVerifyMaxConcurrency { private set; get; } = int.MaxValue;
 
         /// <summary>
         /// 自定义参数：数据文件追加文件格式
@@ -85,7 +90,7 @@ namespace YooAsset
         public string CopyBuildinPackageManifestDestRoot { private set; get; }
 
         /// <summary>
-        ///  自定义参数：解密方法类
+        ///  自定义参数：解密服务接口的实例类
         /// </summary>
         public IDecryptionServices DecryptionServices { private set; get; }
 
@@ -95,7 +100,7 @@ namespace YooAsset
         public IManifestRestoreServices ManifestServices { private set; get; }
 
         /// <summary>
-        /// 自定义参数：拷贝内置文件服务类
+        /// 自定义参数：拷贝内置文件接口的实例类
         /// </summary>
         public ICopyLocalFileServices CopyLocalFileServices { private set; get; }
         #endregion
@@ -156,13 +161,18 @@ namespace YooAsset
 
         public virtual void SetParameter(string name, object value)
         {
-            if (name == FileSystemParametersDefine.FILE_VERIFY_LEVEL)
+            if (name == FileSystemParametersDefine.INSTALL_CLEAR_MODE)
+            {
+                InstallClearMode = (EOverwriteInstallClearMode)value;
+            }
+            else if (name == FileSystemParametersDefine.FILE_VERIFY_LEVEL)
             {
                 FileVerifyLevel = (EFileVerifyLevel)value;
             }
-            else if (name == FileSystemParametersDefine.INSTALL_CLEAR_MODE)
+            else if (name == FileSystemParametersDefine.FILE_VERIFY_MAX_CONCURRENCY)
             {
-                InstallClearMode = (EOverwriteInstallClearMode)value;
+                int convertValue = Convert.ToInt32(value);
+                FileVerifyMaxConcurrency = Mathf.Clamp(convertValue, 1, int.MaxValue);
             }
             else if (name == FileSystemParametersDefine.APPEND_FILE_EXTENSION)
             {
@@ -210,8 +220,9 @@ namespace YooAsset
             var remoteServices = new DefaultUnpackRemoteServices(_packageRoot);
             _unpackFileSystem = new DefaultUnpackFileSystem();
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.REMOTE_SERVICES, remoteServices);
-            _unpackFileSystem.SetParameter(FileSystemParametersDefine.FILE_VERIFY_LEVEL, FileVerifyLevel);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.INSTALL_CLEAR_MODE, InstallClearMode);
+            _unpackFileSystem.SetParameter(FileSystemParametersDefine.FILE_VERIFY_LEVEL, FileVerifyLevel);
+            _unpackFileSystem.SetParameter(FileSystemParametersDefine.FILE_VERIFY_MAX_CONCURRENCY, FileVerifyMaxConcurrency);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, AppendFileExtension);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.DECRYPTION_SERVICES, DecryptionServices);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.COPY_LOCAL_FILE_SERVICES, CopyLocalFileServices);
@@ -335,6 +346,27 @@ namespace YooAsset
 #endif
         }
 
+        /// <summary>
+        /// 是否属于解压资源包文件
+        /// </summary>
+        protected virtual bool IsUnpackBundleFile(PackageBundle bundle)
+        {
+            if (Belong(bundle) == false)
+                return false;
+
+#if UNITY_ANDROID || UNITY_OPENHARMONY
+            if (bundle.Encrypted)
+                return true;
+
+            if (bundle.BundleType == (int)EBuildBundleType.RawBundle)
+                return true;
+
+            return false;
+#else
+            return false;
+#endif
+        }
+
         #region 内部方法
         protected string GetDefaultBuildinPackageRoot(string packageName)
         {
@@ -368,27 +400,6 @@ namespace YooAsset
         public string GetCatalogBinaryFileLoadPath()
         {
             return PathUtility.Combine(_packageRoot, DefaultBuildinFileSystemDefine.BuildinCatalogBinaryFileName);
-        }
-
-        /// <summary>
-        /// 是否属于解压资源包文件
-        /// </summary>
-        protected bool IsUnpackBundleFile(PackageBundle bundle)
-        {
-            if (Belong(bundle) == false)
-                return false;
-
-#if UNITY_ANDROID
-            if (bundle.Encrypted)
-                return true;
-
-            if (bundle.BundleType == (int)EBuildBundleType.RawBundle)
-                return true;
-
-            return false;
-#else
-            return false;
-#endif
         }
 
         /// <summary>

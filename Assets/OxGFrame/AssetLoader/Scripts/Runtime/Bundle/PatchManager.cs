@@ -52,7 +52,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// 是否為上次資源版號 (弱聯網模式)
         /// </summary>
-        internal static bool isLastPackageVersions = false;
+        internal static bool isLastPackageVersionInWeakHostMode = false;
 
         /// <summary>
         /// 主下載器

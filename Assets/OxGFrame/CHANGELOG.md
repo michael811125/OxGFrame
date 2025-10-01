@@ -1,5 +1,368 @@
 # CHANGELOG
 
+## [3.5.0] - 2025-10-01
+
+# 中文
+
+- AssetLoader
+  - ### 新增
+    - 新增 PatchLauncher 參數 [DownloadWatchdogTimeout](https://github.com/tuyoogame/YooAsset/issues/642) 設定。
+    - 新增 AssetPatcher.GetAllPackages() 方法。
+    - 新增 AssetPacher.SetPresetPackages(List<AppPackageInfoWithBuild> appPackages, List<DlcPackageInfoWithBuild> dlcPackages) 方法。
+      - 用於設置預設 APP 跟 DLC 包裹 (便於 CustomMode)。
+    - 新增 AssetPacher.InitializePresetPackages() 方法。
+      - 用於手動初始預設 APP 跟 DLC 包裹 (便於 CustomMode)。
+    - 新增 AssetPatcher.GetBundleDecryptionServices() 方法。
+      - 獲取資源解密服務 (便於 CustomMode)。 
+    - 新增 AssetPatcher.GetManifestDecryptionServices() 方法。
+      - 獲取資源清單解密服務 (便於 CustomMode)。 
+    - 新增 CustomMode，支持自定義 YooAsset 包裹運行模式 **(流程繁瑣，須注意初始步驟)**。
+      - 用於：[微信小遊戲](https://www.yooasset.com/docs/MiniGame#%E5%BE%AE%E4%BF%A1%E5%B0%8F%E6%B8%B8%E6%88%8F)、[抖音小遊戲](https://www.yooasset.com/docs/MiniGame#%E6%8A%96%E9%9F%B3%E5%B0%8F%E6%B8%B8%E6%88%8F)、[支付寶小遊戲](https://www.yooasset.com/docs/MiniGame#%E6%94%AF%E4%BB%98%E5%AE%9D%E5%B0%8F%E6%B8%B8%E6%88%8F)、[TapTap 小遊戲](https://www.yooasset.com/docs/MiniGame#taptap%E5%B0%8F%E6%B8%B8%E6%88%8F)、[CustomPlayModeParameters (自定義運行模式)](https://www.yooasset.com/docs/guide-runtime/CodeTutorial1#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F--customplaymode)、等等...。
+      - **注意：當使用 CustomMode，所有 YooAsset 包裹初始皆需要自行實現**。
+      - CustomMode 初始化流程概述：
+        1. 是否有 Preset Packages 需求。 
+	      1. 有的話，可自定義與設置 AssetPacher.SetPresetPackages(List<AppPackageInfoWithBuild> appPackages, List<DlcPackageInfoWithBuild> dlcPackages)。
+	      2. 不管有沒有 Preset Packages 需求，都**必須手動調用 async AssetPacher.InitializePresetPackages()**。
+	         - 輪詢 AssetPacher.isInitialized() 判斷標記是否返回 true。 
+    - 新增 PlayModeParameters，提高配置擴展性。
+      參數說明：
+      ```csharp
+      public static class PlayModeParametersDefine
+      {
+          /// <summary>
+          /// [Boolean] 初始預設包裹
+          /// </summary>
+          public const string INITIALIZE_PRESET_PACKAGES = "INITIALIZE_PRESET_PACKAGES";
+
+          /// <summary>
+          /// [Boolean] 獲取遠端 App 版號文件
+          /// </summary>
+          public const string FETCH_APP_CONFIG_FROM_SERVER = "FETCH_APP_CONFIG_FROM_SERVER";
+
+          /// <summary>
+          /// [Boolean] 版號 PATCH 檢查規則
+          /// </summary>
+          public const string SEMANTIC_RULE_PATCH = "SEMANTIC_RULE_PATCH";
+
+          /// <summary>
+          /// [Boolean] 是否自動檢查與設置請求端點 (Host Server, Fallback Host Server)
+          /// </summary>
+          public const string AUTO_CONFIGURE_SERVER_ENDPOINTS = "AUTO_CONFIGURE_SERVER_ENDPOINTS";
+
+          /// <summary>
+          /// [Boolean] 是否創建 PresetPackages 下載器
+          /// </summary>
+          public const string CREATE_PRESET_PACKAGES_DOWNLOADER = "CREATE_PRESET_PACKAGES_DOWNLOADER";
+
+          /// <summary>
+          /// [Boolean] 是否檢查硬盤空間 (當創建 PresetPackages 下載器時, 會進行檢查)
+          /// </summary>
+          public const string ENABLE_DISK_SPACE_CHECK_FOR_PRESET_PACKAGES_DOWNLOADER = "ENABLE_DISK_SPACE_CHECK_FOR_PRESET_PACKAGES_DOWNLOADER";
+
+          /// <summary>
+          /// [Boolean] 是否檢查本地最後版本 (用於弱聯網環境)
+          /// </summary>
+          public const string ENABLE_LAST_LOCAL_VERSIONS_CHECK_IN_WEAK_NETWORK = "ENABLE_LAST_LOCAL_VERSIONS_CHECK_IN_WEAK_NETWORK";
+      }
+      ```
+  - ### 修改
+    - 修改 AssetLoaders.Unload & Release 系列接口，移除異步改為同步。
+  - ### 修正 
+    - 修正尚未配置 PatchLauncher 的 Preset Pacakges (空數組)，當進行 AssetPacher.Check() 檢查時，無法正確處理 PatchFsmStates.VersionUpdate 跟 PatchFsmStates.ManifestUpdate 的流程。
+  - ### 移除
+    - 移除 AssetPatcher.GetPackageAssetInfosByTags 方法 (直接從 Package 獲取 AssetInfo 即可)。
+    - 移除 AssetPatcher.GetPackageAssetInfosByAssetNames 方法 (直接從 Package 獲取 AssetInfo 即可)。
+  - ### 優化
+    - 優化 AssetLoaders.Release 相關接口的釋放流程。
+    - 優化 AssetLoaders.Unload 相關接口為卸載指定資源，提高卸載效率。
+    - 優化 PatchFsmStates.FsmCreateDownloader 群包處理判斷流程。
+    - 優化 PlayMode 運行環境配置，使用 PlayModeParameters 取代，提高擴展性。
+    - 優化 PackageOperation 流程。
+  - ### 更新
+    - 更新 YooAsset [v2.3.14](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.14) 至 [v2.3.16](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.16) ([f3ebda0](https://github.com/tuyoogame/YooAsset/commits/dev/))。
+      - 重要：[v2.3.15](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.15) 以上升級了資源清單版本，不相容於舊版本，**建議重新提審安裝包**。
+      - 備註：資源相互依賴卸載問題，目前先暫時解決 [YooAsset issue (\#650)](https://github.com/tuyoogame/YooAsset/issues/650)，後續會再以 YooAsset 更新為主。
+### CustomMode - Hotfix 初始化流程
+```csharp
+        var hotfixPackageName = "HotfixPackage";
+        var hotfixPackage = new AppPackageInfoWithBuild();
+        hotfixPackage.buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline;
+        hotfixPackage.packageName = hotfixPackageName;
+        hotfixPackage.hostServer = await BundleConfig.GetHostServerUrl(hotfixPackageName);
+        hotfixPackage.fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(hotfixPackageName);
+        var remoteServices = new HostServers(hotfixPackage.hostServer, hotfixPackage.fallbackHostServer);
+        var bundleDecryptionServices = AssetPatcher.GetBundleDecryptionServices();
+        var manifestDecryptionServices = AssetPatcher.GetManifestDecryptionServices();
+        hotfixPackage.initializeParameters = new WebPlayModeParameters();
+        var createParameters = hotfixPackage.initializeParameters as WebPlayModeParameters;
+
+        /**
+         * 省略...建議參考其他模式初始參數
+         */
+
+        Hotfixers.CheckHotfix
+        (
+            // Download and load hotfix files from HotfixPackage
+            hotfixPackage,
+            // Metadata for AOT assemblies
+            new string[]
+            {
+                "mscorlib.dll"
+            },
+            // Hotfix assemblies
+            new string[]
+            {
+                "HotfixerDemo.Hotfix.Runtime.dll"
+            }
+        );
+```
+
+### CustomMode - Preset Packages 初始化流程
+
+WebPlayModeParameters
+```csharp
+        var packageNameA = "MyCustomPackageA";
+        var packageA = new AppPackageInfoWithBuild();
+        packageA.buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline;
+        packageA.packageName = packageNameA;
+        packageA.hostServer = await BundleConfig.GetHostServerUrl(packageNameA);
+        packageA.fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageNameA);
+        var remoteServicesA = new HostServers(packageA.hostServer, packageA.fallbackHostServer);
+        var bundleDecryptionServicesA = AssetPatcher.GetBundleDecryptionServices();
+        var manifestDecryptionServicesA = AssetPatcher.GetManifestDecryptionServices();
+        packageA.initializeParameters = new WebPlayModeParameters();
+        var createParametersA = packageA.initializeParameters as WebPlayModeParameters;
+
+        /**
+         * 省略...建議參考其他模式初始參數
+         */
+
+        var packageNameB = "MyCustomPackageB";
+        var packageB = new AppPackageInfoWithBuild();
+        packageB.buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline;
+        packageB.packageName = packageNameB;
+        packageB.hostServer = await BundleConfig.GetHostServerUrl(packageNameB);
+        packageB.fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageNameB);
+        var remoteServicesB = new HostServers(packageB.hostServer, packageB.fallbackHostServer);
+        var bundleDecryptionServicesB = AssetPatcher.GetBundleDecryptionServices();
+        var manifestDecryptionServicesB = AssetPatcher.GetManifestDecryptionServices();
+        packageB.initializeParameters = new WebPlayModeParameters();
+        var createParametersB = packageB.initializeParameters as WebPlayModeParameters;
+
+        /**
+         * 省略...建議參考其他模式初始參數
+         */
+
+        var packageNameC = "MyCustomPackageC";
+        var packageC = new DlcPackageInfoWithBuild();
+        packageC.buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline;
+        packageC.packageName = packageNameC;
+        packageC.withoutPlatform = false;
+        packageC.dlcVersion = "latest";
+        packageC.hostServer = await BundleConfig.GetDlcHostServerUrl(packageNameC, packageC.dlcVersion, packageC.withoutPlatform);
+        packageC.fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageNameC, packageC.dlcVersion, packageC.withoutPlatform);
+        var remoteServicesC = new HostServers(packageC.hostServer, packageC.fallbackHostServer);
+        var bundleDecryptionServicesC = AssetPatcher.GetBundleDecryptionServices();
+        var manifestDecryptionServicesC = AssetPatcher.GetManifestDecryptionServices();
+        packageC.initializeParameters = new WebPlayModeParameters();
+        var createParametersC = packageC.initializeParameters as WebPlayModeParameters;
+
+        /**
+         * 省略...建議參考其他模式初始參數
+         */
+
+        // 設置預設包裹
+        AssetPatcher.SetPresetPackages
+        (
+            new List<AppPackageInfoWithBuild>()
+            {
+                packageA,
+                packageB,
+            },
+            new List<DlcPackageInfoWithBuild>()
+            {
+                packageC
+            }
+        );
+
+        // 初始預設包裹
+        await AssetPatcher.InitializePresetPackages();
+```
+
+CustomPlayModeParameters
+```csharp
+        var packageNameA = "MyCustomPackageA";
+        var packageA = new AppPackageInfoWithBuild();
+        packageA.buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline;
+        packageA.packageName = packageNameA;
+        packageA.hostServer = await BundleConfig.GetHostServerUrl(packageNameA);
+        packageA.fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageNameA);
+        var remoteServicesA = new HostServers(packageA.hostServer, packageA.fallbackHostServer);
+        var bundleDecryptionServicesA = AssetPatcher.GetBundleDecryptionServices();
+        var manifestDecryptionServicesA = AssetPatcher.GetManifestDecryptionServices();
+        packageA.initializeParameters = new CustomPlayModeParameters();
+        var createParametersA = packageA.initializeParameters as CustomPlayModeParameters;
+
+        /**
+         * 省略...建議參考其他模式初始參數
+         */
+
+        createParametersA.FileSystemParameterList.Add(new FileSystemParameters("A", ""));
+        createParametersA.FileSystemParameterList.Add(new FileSystemParameters("B", ""));
+        createParametersA.FileSystemParameterList.Add(new FileSystemParameters("C", ""));
+
+        var packageNameB = "MyCustomPackageB";
+        var packageB = new AppPackageInfoWithBuild();
+        packageB.buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline;
+        packageB.packageName = packageNameB;
+        packageB.hostServer = await BundleConfig.GetHostServerUrl(packageNameB);
+        packageB.fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageNameB);
+        var remoteServicesB = new HostServers(packageB.hostServer, packageB.fallbackHostServer);
+        var bundleDecryptionServicesB = AssetPatcher.GetBundleDecryptionServices();
+        var manifestDecryptionServicesB = AssetPatcher.GetManifestDecryptionServices();
+        packageB.initializeParameters = new CustomPlayModeParameters();
+        var createParametersB = packageB.initializeParameters as CustomPlayModeParameters;
+
+        /**
+         * 省略...建議參考其他模式初始參數
+         */
+
+        createParametersB.FileSystemParameterList.Add(new FileSystemParameters("A", ""));
+        createParametersB.FileSystemParameterList.Add(new FileSystemParameters("B", ""));
+        createParametersB.FileSystemParameterList.Add(new FileSystemParameters("C", ""));
+
+        var packageNameC = "MyCustomPackageC";
+        var packageC = new DlcPackageInfoWithBuild();
+        packageC.buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline;
+        packageC.packageName = packageNameC;
+        packageC.withoutPlatform = false;
+        packageC.dlcVersion = "latest";
+        packageC.hostServer = await BundleConfig.GetDlcHostServerUrl(packageNameC, packageC.dlcVersion, packageC.withoutPlatform);
+        packageC.fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageNameC, packageC.dlcVersion, packageC.withoutPlatform);
+        var remoteServicesC = new HostServers(packageC.hostServer, packageC.fallbackHostServer);
+        var bundleDecryptionServicesC = AssetPatcher.GetBundleDecryptionServices();
+        var manifestDecryptionServicesC = AssetPatcher.GetManifestDecryptionServices();
+        packageC.initializeParameters = new CustomPlayModeParameters();
+        var createParametersC = packageC.initializeParameters as CustomPlayModeParameters;
+
+        /**
+         * 省略...建議參考其他模式初始參數
+         */
+
+        createParametersC.FileSystemParameterList.Add(new FileSystemParameters("A", ""));
+        createParametersC.FileSystemParameterList.Add(new FileSystemParameters("B", ""));
+        createParametersC.FileSystemParameterList.Add(new FileSystemParameters("C", ""));
+
+        AssetPatcher.SetPresetPackages
+        (
+            new List<AppPackageInfoWithBuild>()
+            {
+                packageA,
+                packageB,
+            },
+            new List<DlcPackageInfoWithBuild>()
+            {
+                packageC
+            }
+        );
+
+        await AssetPatcher.InitializePresetPackages();
+```
+
+### CustomMode - Per Package 初始化流程
+
+WebPlayModeParameters
+```csharp
+        // Per-Package to init (APP)
+        var packageNameD = "MyCustomPackageD";
+        var packageD = new AppPackageInfoWithBuild();
+        packageD.buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline;
+        packageD.packageName = packageNameD;
+        packageD.hostServer = await BundleConfig.GetHostServerUrl(packageNameD);
+        packageD.fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageNameD);
+        var remoteServicesD = new HostServers(packageD.hostServer, packageD.fallbackHostServer);
+        var bundleDecryptionServicesD = AssetPatcher.GetBundleDecryptionServices();
+        var manifestDecryptionServicesD = AssetPatcher.GetManifestDecryptionServices();
+        packageD.initializeParameters = new WebPlayModeParameters();
+        var createParametersD = packageD.initializeParameters as WebPlayModeParameters;
+
+        /**
+         * 省略...建議參考其他模式初始參數
+         */
+
+        await AssetPatcher.InitPackage(packageD, true);
+
+        // Per-Package to init (DLC)
+        var packageNameE = "MyCustomPackageE";
+        var packageE = new DlcPackageInfoWithBuild();
+        packageE.buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline;
+        packageE.packageName = packageNameE;
+        packageE.withoutPlatform = false;
+        packageE.dlcVersion = "latest";
+        packageE.hostServer = await BundleConfig.GetDlcHostServerUrl(packageNameE, packageE.dlcVersion, packageE.withoutPlatform);
+        packageE.fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageNameE, packageE.dlcVersion, packageE.withoutPlatform);
+        var remoteServicesE = new HostServers(packageE.hostServer, packageE.fallbackHostServer);
+        var bundleDecryptionServicesE = AssetPatcher.GetBundleDecryptionServices();
+        var manifestDecryptionServicesE = AssetPatcher.GetManifestDecryptionServices();
+        packageE.initializeParameters = new WebPlayModeParameters();
+        var createParametersE = packageE.initializeParameters as WebPlayModeParameters;
+
+        /**
+         * 省略...建議參考其他模式初始參數
+         */
+
+        await AssetPatcher.InitPackage(packageE, true);
+```
+
+CustomPlayModeParameters
+```csharp
+        // Per-Package to init (APP)
+        var packageNameD = "MyCustomPackageD";
+        var packageD = new AppPackageInfoWithBuild();
+        packageD.buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline;
+        packageD.packageName = packageNameD;
+        packageD.hostServer = await BundleConfig.GetHostServerUrl(packageNameD);
+        packageD.fallbackHostServer = await BundleConfig.GetFallbackHostServerUrl(packageNameD);
+        var remoteServicesD = new HostServers(packageD.hostServer, packageD.fallbackHostServer);
+        var bundleDecryptionServicesD = AssetPatcher.GetBundleDecryptionServices();
+        var manifestDecryptionServicesD = AssetPatcher.GetManifestDecryptionServices();
+        packageD.initializeParameters = new CustomPlayModeParameters();
+        var createParametersD = packageD.initializeParameters as CustomPlayModeParameters;
+
+        /**
+         * 省略...建議參考其他模式初始參數
+         */
+
+        createParametersD.FileSystemParameterList.Add(new FileSystemParameters("A", ""));
+        createParametersD.FileSystemParameterList.Add(new FileSystemParameters("B", ""));
+        createParametersD.FileSystemParameterList.Add(new FileSystemParameters("C", ""));
+        await AssetPatcher.InitPackage(packageD, true);
+
+        // Per-Package to init (DLC)
+        var packageNameE = "MyCustomPackageE";
+        var packageE = new DlcPackageInfoWithBuild();
+        packageE.buildMode = BundleConfig.BuildMode.ScriptableBuildPipeline;
+        packageE.packageName = packageNameE;
+        packageE.withoutPlatform = false;
+        packageE.dlcVersion = "latest";
+        packageE.hostServer = await BundleConfig.GetDlcHostServerUrl(packageNameE, packageE.dlcVersion, packageE.withoutPlatform);
+        packageE.fallbackHostServer = await BundleConfig.GetDlcFallbackHostServerUrl(packageNameE, packageE.dlcVersion, packageE.withoutPlatform);
+        var remoteServicesE = new HostServers(packageE.hostServer, packageE.fallbackHostServer);
+        var bundleDecryptionServicesE = AssetPatcher.GetBundleDecryptionServices();
+        var manifestDecryptionServicesE = AssetPatcher.GetManifestDecryptionServices();
+        packageE.initializeParameters = new CustomPlayModeParameters();
+        var createParametersE = packageE.initializeParameters as CustomPlayModeParameters;
+
+        /**
+         * 省略...建議參考其他模式初始參數
+         */
+
+        createParametersE.FileSystemParameterList.Add(new FileSystemParameters("A", ""));
+        createParametersE.FileSystemParameterList.Add(new FileSystemParameters("B", ""));
+        createParametersE.FileSystemParameterList.Add(new FileSystemParameters("C", ""));
+        await AssetPatcher.InitPackage(packageE, true);
+```
+
 ## [3.4.7] - 2025-09-07
 
 # English

@@ -408,7 +408,7 @@ namespace OxGFrame.AssetLoader.Utility
         /// Get package version by current date
         /// </summary>
         /// <returns></returns>
-        internal static string GetDefaultPackageVersion()
+        internal static string GetPackageVersionForNow()
         {
             int totalMinutes = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
             return DateTime.Now.ToString("yyyy-MM-dd") + "-" + totalMinutes;
