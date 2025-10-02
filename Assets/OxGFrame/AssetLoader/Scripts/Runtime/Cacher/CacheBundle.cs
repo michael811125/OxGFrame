@@ -101,25 +101,8 @@ namespace OxGFrame.AssetLoader.Cacher
                         progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         this.RemoveLoadingFlag(assetName);
                         Logging.PrintWarning<Logger>($"【Preload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: [{assetName}] already preloaded!!!");
-                        continue;
                     }
-                    else
-                    {
-                        if (this.GetRetryCounter(assetName) == null)
-                        {
-                            this.StartRetryCounter(assetName, maxRetryCount);
-                            Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
-                        }
-                        else
-                        {
-                            Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Remaining retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                        }
-
-                        this.RemoveLoadingFlag(assetName);
-                        this.GetRetryCounter(assetName).DelRetryCount();
-                        await this.PreloadRawFileAsync(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
-                        continue;
-                    }
+                    continue;
                 }
 
                 {
@@ -231,25 +214,8 @@ namespace OxGFrame.AssetLoader.Cacher
                         progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         this.RemoveLoadingFlag(assetName);
                         Logging.PrintWarning<Logger>($"【Preload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: [{assetName}] already preloaded!!!");
-                        continue;
                     }
-                    else
-                    {
-                        if (this.GetRetryCounter(assetName) == null)
-                        {
-                            this.StartRetryCounter(assetName, maxRetryCount);
-                            Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
-                        }
-                        else
-                        {
-                            Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Remaining retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                        }
-
-                        this.RemoveLoadingFlag(assetName);
-                        this.GetRetryCounter(assetName).DelRetryCount();
-                        this.PreloadRawFile(packageName, new string[] { assetName }, progression, maxRetryCount);
-                        continue;
-                    }
+                    continue;
                 }
 
                 {
@@ -1070,26 +1036,8 @@ namespace OxGFrame.AssetLoader.Cacher
                         progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         this.RemoveLoadingFlag(assetName);
                         Logging.PrintWarning<Logger>($"【Preload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: [{assetName}] already preloaded!!!");
-                        continue;
                     }
-                    else
-                    {
-                        if (this.GetRetryCounter(assetName) == null)
-                        {
-                            this.StartRetryCounter(assetName, maxRetryCount);
-                            Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
-
-                        }
-                        else
-                        {
-                            Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Remaining retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                        }
-
-                        this.RemoveLoadingFlag(assetName);
-                        this.GetRetryCounter(assetName).DelRetryCount();
-                        await this.PreloadAssetAsync<T>(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
-                        continue;
-                    }
+                    continue;
                 }
 
                 {
@@ -1201,26 +1149,8 @@ namespace OxGFrame.AssetLoader.Cacher
                         progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                         this.RemoveLoadingFlag(assetName);
                         Logging.PrintWarning<Logger>($"【Preload】 => Current << {nameof(CacheBundle)} >> Cache Count: {this.count}, asset: [{assetName}] already preloaded!!!");
-                        continue;
                     }
-                    else
-                    {
-                        if (this.GetRetryCounter(assetName) == null)
-                        {
-                            this.StartRetryCounter(assetName, maxRetryCount);
-                            Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
-
-                        }
-                        else
-                        {
-                            Logging.Print<Logger>($"【Preload】 => << {nameof(CacheBundle)} >> Asset: {assetName} doing retry. Remaining retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                        }
-
-                        this.RemoveLoadingFlag(assetName);
-                        this.GetRetryCounter(assetName).DelRetryCount();
-                        this.PreloadAsset<T>(packageName, new string[] { assetName }, progression, maxRetryCount);
-                        continue;
-                    }
+                    continue;
                 }
 
                 {
