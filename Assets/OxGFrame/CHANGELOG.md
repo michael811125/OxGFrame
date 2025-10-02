@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## [3.5.1] - 2025-10-02
+
+# English
+- AssetLoader
+  - ### Modified
+    - Modified the calculation and check logic for `AssetCache.RetryCounter`.
+  - ### Fixed
+    - Fixed a very rare same-frame reentrancy issue during `AssetCache` (CacheBundle, CacheResources) loading that could lead to an incorrect `RefCount`.
+
+# 中文
+- AssetLoader
+  - ### 修改
+    - 修改 AssetCache.RetryCounter 計算與判斷方式。
+  - ### 修正
+    - 修正 AssetCache (CacheBundle, CacheResources) 加載時，極小機率出現同幀重入 (same-frame reentrancy) 問題，導致 RefCount 不正確。
+
 ## [3.5.0] - 2025-10-01
 
 # English

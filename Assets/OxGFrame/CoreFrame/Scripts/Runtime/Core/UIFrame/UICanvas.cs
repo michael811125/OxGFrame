@@ -12,15 +12,26 @@ namespace OxGFrame.CoreFrame.UIFrame
         [HideInInspector] public Canvas canvas;
         [HideInInspector] public CanvasScaler canvasScaler;
         [HideInInspector] public GraphicRaycaster graphicRaycaster;
-        [HideInInspector] public GameObject uiRoot;                    // UI 根節點物件
-        public Dictionary<string, GameObject> uiNodes;                 // UI 節點物件
-        public UIMaskManager uiMaskManager { get; protected set; }     // UIMaskMgr, 由 UIManager 進行單例管控
-        public UIFreezeManager uiFreezeManager { get; protected set; } // UIFreezeMgr, 由 UIManager 進行單例管控
 
-        public UICanvas()
-        {
-            this.uiNodes = new Dictionary<string, GameObject>();
-        }
+        /// <summary>
+        /// UI 根節點物件
+        /// </summary>
+        [HideInInspector] public GameObject uiRoot;
+
+        /// <summary>
+        /// UI 節點物件
+        /// </summary>
+        public Dictionary<string, GameObject> uiNodes = new Dictionary<string, GameObject>();
+
+        /// <summary>
+        /// UIMaskMgr, 由 UIManager 進行單例管控
+        /// </summary>
+        public UIMaskManager uiMaskManager { get; protected set; }
+
+        /// <summary>
+        /// UIFreezeMgr, 由 UIManager 進行單例管控
+        /// </summary>
+        public UIFreezeManager uiFreezeManager { get; protected set; }
 
         private void Awake()
         {
@@ -47,7 +58,8 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         private void OnDestroy()
         {
-            if (Time.frameCount == 0 || !Application.isPlaying) return;
+            if (Time.frameCount == 0 || !Application.isPlaying)
+                return;
 
             try
             {
@@ -65,14 +77,6 @@ namespace OxGFrame.CoreFrame.UIFrame
             {
                 /* Nothing to do */
             }
-        }
-
-        ~UICanvas()
-        {
-            this.uiRoot = null;
-            this.uiNodes = null;
-            this.uiMaskManager = null;
-            this.uiFreezeManager = null;
         }
     }
 }

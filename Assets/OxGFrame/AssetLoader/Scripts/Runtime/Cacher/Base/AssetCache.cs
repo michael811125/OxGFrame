@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using OxGKit.LoggingSystem;
+using System.Collections.Generic;
 
 namespace OxGFrame.AssetLoader.Cacher
 {
@@ -9,29 +10,22 @@ namespace OxGFrame.AssetLoader.Cacher
         /// </summary>
         public class RetryCounter
         {
-            public byte retryCount;
-            public byte maxRetryCount;
+            public int retryCount;
+            public int maxRetryCount;
 
-            public RetryCounter(byte maxRetryCount)
+            public RetryCounter(int maxRetryCount)
             {
-                this.retryCount = 0;
-                this.maxRetryCount = maxRetryCount;
+                this.retryCount = this.maxRetryCount = maxRetryCount;
             }
 
-            public bool IsRetryActive()
+            public bool IsOutOfRetries()
             {
-                return this.retryCount > 0;
+                return this.retryCount < 0;
             }
 
-            public bool IsRetryValid()
+            public void DelRetryCount()
             {
-                // 嘗試次數先++, 後判斷, 所以需使用 <= 進行判斷
-                return this.retryCount <= maxRetryCount;
-            }
-
-            public void AddRetryCount()
-            {
-                this.retryCount++;
+                this.retryCount--;
             }
         }
 
@@ -41,9 +35,14 @@ namespace OxGFrame.AssetLoader.Cacher
         protected Dictionary<string, T> _cacher;
 
         /// <summary>
-        /// Blocker 加載標記
+        /// Blocker 加載標記緩存
         /// </summary>
-        protected Dictionary<string, RetryCounter> _loadingFlags;
+        protected HashSet<string> _loadingFlags;
+
+        /// <summary>
+        /// 嘗試計數器緩存
+        /// </summary>
+        protected Dictionary<string, RetryCounter> _retryCounters;
 
         /// <summary>
         /// 當前進度數量 (Progress)
@@ -67,40 +66,55 @@ namespace OxGFrame.AssetLoader.Cacher
         public AssetCache()
         {
             this._cacher = new Dictionary<string, T>();
-            this._loadingFlags = new Dictionary<string, RetryCounter>();
+            this._loadingFlags = new HashSet<string>();
+            this._retryCounters = new Dictionary<string, RetryCounter>();
         }
 
-        protected bool HasInLoadingFlags(string assetName)
+        #region Loading Flag
+        protected bool HasInLoadingFlag(string assetName)
         {
             if (string.IsNullOrEmpty(assetName))
                 return false;
-            return this._loadingFlags.ContainsKey(assetName);
+            return this._loadingFlags.Contains(assetName);
         }
 
-        protected void AddLoadingFlags(string assetName, byte maxRetryCount)
+        protected void AddLoadingFlag(string assetName)
         {
-            if (!this.HasInLoadingFlags(assetName))
-                this._loadingFlags.Add(assetName, new RetryCounter(maxRetryCount));
+            if (!this.HasInLoadingFlag(assetName))
+            {
+                this._loadingFlags.Add(assetName);
+                Logging.Print<Logger>($"Marked asset as loading: {assetName}.");
+            }
         }
 
-        protected void RemoveLoadingFlags(string assetName)
+        protected void RemoveLoadingFlag(string assetName)
         {
-            if (this.HasInLoadingFlags(assetName))
+            if (this.HasInLoadingFlag(assetName))
+            {
                 this._loadingFlags.Remove(assetName);
+                Logging.Print<Logger>($"Cleared loading flag: {assetName}.");
+            }
+        }
+        #endregion
+
+        #region Retry Counter
+        protected void StartRetryCounter(string assetName, byte maxRetryCount)
+        {
+            if (!this._retryCounters.ContainsKey(assetName))
+                this._retryCounters.Add(assetName, new RetryCounter(maxRetryCount));
         }
 
         protected RetryCounter GetRetryCounter(string assetName)
         {
-            this._loadingFlags.TryGetValue(assetName, out RetryCounter retryCounter);
+            this._retryCounters.TryGetValue(assetName, out RetryCounter retryCounter);
             return retryCounter;
         }
 
-        ~AssetCache()
+        protected void StopRetryCounter(string assetName)
         {
-            this._cacher.Clear();
-            this._cacher = null;
-            this._loadingFlags.Clear();
-            this._loadingFlags = null;
+            if (this._retryCounters.ContainsKey(assetName))
+                this._retryCounters.Remove(assetName);
         }
+        #endregion
     }
 }

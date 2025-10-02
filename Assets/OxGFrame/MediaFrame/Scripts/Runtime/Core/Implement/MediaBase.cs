@@ -22,12 +22,6 @@ namespace OxGFrame.MediaFrame
             public UrlCfg urlCfg = new UrlCfg();
             [Tooltip("If doesn't use [getUrlPathFromCfg] need to type Entire URL, ex: http://localhost/Audio/example.extension")]
             public string url = "";
-
-            ~UrlSet()
-            {
-                this.urlCfg = null;
-                this.url = null;
-            }
         }
 
         [Serializable]
@@ -64,12 +58,6 @@ namespace OxGFrame.MediaFrame
                 return null;
             }
             #endregion
-
-            ~UrlCfg()
-            {
-                this.file = null;
-                this.fullPathName = null;
-            }
         }
 
         /// <summary>

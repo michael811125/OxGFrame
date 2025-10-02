@@ -6,7 +6,8 @@ namespace OxGFrame.CoreFrame.SRFrame
     {
         private void OnDestroy()
         {
-            if (Time.frameCount == 0 || !Application.isPlaying) return;
+            if (Time.frameCount == 0 || !Application.isPlaying)
+                return;
 
             try
             {

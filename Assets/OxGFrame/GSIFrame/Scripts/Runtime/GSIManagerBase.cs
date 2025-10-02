@@ -134,13 +134,6 @@ namespace OxGFrame.GSIFrame
             this._currentGameStage = null;
         }
 
-        ~GSIManagerBase()
-        {
-            this._dictGameStage.Clear();
-            this._dictGameStage = null;
-            this._currentGameStage = null;
-        }
-
         /// <summary>
         /// 取得當前 GameStage Id
         /// </summary>
