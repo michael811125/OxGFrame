@@ -145,13 +145,6 @@ namespace OxGFrame.AssetLoader.Bundle
             this._patchFsm.AddNode<PatchFsmStates.FsmPatchDone>();
         }
 
-        ~PatchManager()
-        {
-            this.Cancel();
-            this._userEvents.RemoveAllListener();
-            this._patchFsm = null;
-        }
-
         #region Patch Operation
         /// <summary>
         /// 開啟檢查流程

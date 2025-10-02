@@ -66,12 +66,6 @@ namespace OxGFrame.AssetLoader.Cacher
                 return default;
             return this.asset as T;
         }
-
-        ~ResourcePack()
-        {
-            this.assetName = null;
-            this.asset = null;
-        }
     }
     #endregion
 
@@ -208,12 +202,6 @@ namespace OxGFrame.AssetLoader.Cacher
                 this.GetOperationHandle<AssetHandle>().Release();
         }
         #endregion
-
-        ~BundlePack()
-        {
-            this.assetName = null;
-            this.operationHandle = null;
-        }
     }
     #endregion
 }

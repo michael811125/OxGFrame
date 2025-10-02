@@ -118,12 +118,6 @@ namespace OxGFrame.CoreFrame
                 this.cache.RemoveAt(lastIndex);
                 return result;
             }
-
-            ~FrameStack()
-            {
-                this.cache = null;
-                this.assetName = null;
-            }
         }
 
         public bool ignoreTimeScale = false;
