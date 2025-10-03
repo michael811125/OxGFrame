@@ -288,7 +288,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         Debug.LogWarning($"[In Custom Mode] {nameof(BundleConfig.playModeParameters.initializePresetPackages)} is not supported.");
                     }
                     if (this.listAppPackages.Count > 0 || this.listDlcPackages.Count > 0)
-                        Debug.LogWarning($"[In Custom Mode] {nameof(listAppPackages)} and {nameof(listDlcPackages)} are not supported.");
+                        Debug.LogWarning($"[In Custom Mode] Preset App Packages and Preset DLC Packages are not supported. Please call {nameof(AssetPatcher)}.{nameof(SetPresetPackages)} method to configure packages manually.");
                     break;
             }
         }
