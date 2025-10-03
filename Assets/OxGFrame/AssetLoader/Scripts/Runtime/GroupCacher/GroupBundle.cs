@@ -19,30 +19,36 @@ namespace OxGFrame.AssetLoader.GroupCacher
         #region RawFile
         public async UniTask PreloadRawFileAsync(int id, string packageName, string[] assetNames, uint priority, Progression progression, byte maxRetryCount)
         {
-            if (assetNames == null || assetNames.Length == 0) return;
+            if (assetNames == null || assetNames.Length == 0)
+                return;
 
             await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, priority, progression, maxRetryCount);
             foreach (string assetName in assetNames)
             {
-                if (string.IsNullOrEmpty(assetName)) continue;
-                if (CacheBundle.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
+                if (string.IsNullOrEmpty(assetName))
+                    continue;
+                if (CacheBundle.GetInstance().HasInCache(assetName))
+                    this.AddIntoCache(id, assetName);
             }
 
-            Logging.Print<Logger>($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         public void PreloadRawFile(int id, string packageName, string[] assetNames, Progression progression, byte maxRetryCount)
         {
-            if (assetNames == null || assetNames.Length == 0) return;
+            if (assetNames == null || assetNames.Length == 0)
+                return;
 
             CacheBundle.GetInstance().PreloadRawFile(packageName, assetNames, progression, maxRetryCount);
             foreach (string assetName in assetNames)
             {
-                if (string.IsNullOrEmpty(assetName)) continue;
-                if (CacheBundle.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
+                if (string.IsNullOrEmpty(assetName))
+                    continue;
+                if (CacheBundle.GetInstance().HasInCache(assetName))
+                    this.AddIntoCache(id, assetName);
             }
 
-            Logging.Print<Logger>($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         /// <summary>
@@ -69,7 +75,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                 if (keyGroup != null)
                 {
                     keyGroup.AddRef();
-                    Logging.Print<Logger>($"【Load】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Load】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
 
@@ -89,7 +95,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                 if (keyGroup != null)
                 {
                     keyGroup.AddRef();
-                    Logging.Print<Logger>($"【Load】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Load】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
 
@@ -102,19 +108,19 @@ namespace OxGFrame.AssetLoader.GroupCacher
             if (keyGroup != null)
             {
                 keyGroup.DelRef();
-                Logging.Print<Logger>($"【Unload】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                Logging.Print<Logger>($"【Unload】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
 
                 // 強制釋放
                 if (forceUnload)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
                 }
                 // 使用引用計數釋放
                 else if (keyGroup.refCount <= 0)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-                    Logging.Print<Logger>($"【Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Unload Completes】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
                 }
 
                 CacheBundle.GetInstance().UnloadRawFile(keyGroup.assetName, forceUnload);
@@ -127,7 +133,8 @@ namespace OxGFrame.AssetLoader.GroupCacher
             {
                 foreach (var keyGroup in this._keyCacher.ToArray())
                 {
-                    if (keyGroup.id != id) continue;
+                    if (keyGroup.id != id)
+                        continue;
 
                     // 依照計數次數釋放
                     for (int i = keyGroup.refCount; i > 0; i--)
@@ -140,37 +147,43 @@ namespace OxGFrame.AssetLoader.GroupCacher
                 }
             }
 
-            Logging.Print<Logger>($"【Release Group RawFiles】 => Current << GroupBundle >> Cache Count: {this.Count}");
+            Logging.Print<Logger>($"【Release Group RawFiles】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}");
         }
         #endregion
 
         #region Asset
         public async UniTask PreloadAssetAsync<T>(int id, string packageName, string[] assetNames, uint priority, Progression progression, byte maxRetryCount) where T : Object
         {
-            if (assetNames == null || assetNames.Length == 0) return;
+            if (assetNames == null || assetNames.Length == 0)
+                return;
 
             await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, assetNames, priority, progression, maxRetryCount);
             foreach (string assetName in assetNames)
             {
-                if (string.IsNullOrEmpty(assetName)) continue;
-                if (CacheBundle.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
+                if (string.IsNullOrEmpty(assetName))
+                    continue;
+                if (CacheBundle.GetInstance().HasInCache(assetName))
+                    this.AddIntoCache(id, assetName);
             }
 
-            Logging.Print<Logger>($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         public void PreloadAsset<T>(int id, string packageName, string[] assetNames, Progression progression, byte maxRetryCount) where T : Object
         {
-            if (assetNames == null || assetNames.Length == 0) return;
+            if (assetNames == null || assetNames.Length == 0)
+                return;
 
             CacheBundle.GetInstance().PreloadAsset<T>(packageName, assetNames, progression, maxRetryCount);
             foreach (string assetName in assetNames)
             {
-                if (string.IsNullOrEmpty(assetName)) continue;
-                if (CacheBundle.GetInstance().HasInCache(assetName)) this.AddIntoCache(id, assetName);
+                if (string.IsNullOrEmpty(assetName))
+                    continue;
+                if (CacheBundle.GetInstance().HasInCache(assetName))
+                    this.AddIntoCache(id, assetName);
             }
 
-            Logging.Print<Logger>($"【Preload】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         /// <summary>
@@ -197,7 +210,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                 if (keyGroup != null)
                 {
                     keyGroup.AddRef();
-                    Logging.Print<Logger>($"【Load】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Load】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
 
@@ -217,7 +230,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                 if (keyGroup != null)
                 {
                     keyGroup.AddRef();
-                    Logging.Print<Logger>($"【Load】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Load】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
 
@@ -230,19 +243,19 @@ namespace OxGFrame.AssetLoader.GroupCacher
             if (keyGroup != null)
             {
                 keyGroup.DelRef();
-                Logging.Print<Logger>($"【Unload】 => Current << GroupBundle >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                Logging.Print<Logger>($"【Unload】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
 
                 // 強制釋放
                 if (forceUnload)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
                 }
                 // 使用引用計數釋放
                 else if (keyGroup.refCount <= 0)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-                    Logging.Print<Logger>($"【Unload Completes】 => Current << GroupBundle >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Unload Completes】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
                 }
 
                 CacheBundle.GetInstance().UnloadAsset(keyGroup.assetName, forceUnload);
@@ -255,7 +268,8 @@ namespace OxGFrame.AssetLoader.GroupCacher
             {
                 foreach (var keyGroup in this._keyCacher.ToArray())
                 {
-                    if (keyGroup.id != id) continue;
+                    if (keyGroup.id != id)
+                        continue;
 
                     // 依照計數次數釋放
                     for (int i = keyGroup.refCount; i > 0; i--)
@@ -268,7 +282,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                 }
             }
 
-            Logging.Print<Logger>($"【Release Group Assets】 => Current << GroupBundle >> Cache Count: {this.Count}");
+            Logging.Print<Logger>($"【Release Group Assets】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}");
         }
         #endregion
     }
