@@ -6,31 +6,84 @@ namespace OxGFrame.AssetLoader
 {
     public class PatchSetting : ScriptableObject
     {
-        // Common
+        #region Common
         public const string META_FILE_EXTENSION = ".meta";
+        #endregion
 
-        // AppConfig 配置文件
-        public const string APP_CFG_BAK_EXTENSION = ".bak";            // APP 配置文件擴展名 (Backup)
-        public const string APP_CFG_EXTENSION = ".json";               // APP 配置文件擴展名
-        public string appCfgName = "appconfig";                        // APP 配置文件的名稱 
+        #region AppConfig 配置文件
+        /// <summary>
+        /// APP 配置文件擴展名 (Backup)
+        /// </summary>
+        public const string APP_CFG_BAK_EXTENSION = ".bak";
 
-        // PatchConfig 配置文件                                         
-        public const string PATCH_CFG_BAK_EXTENSION = ".bak";          // 補丁配置文件擴展名 (Backup)
-        public const string PATCH_CFG_EXTENSION = ".json";             // 補丁配置文件擴展名
-        public string patchCfgName = "patchconfig";                    // 補丁配置文件的名稱 
+        /// <summary>
+        /// APP 配置文件擴展名
+        /// </summary>
+        public const string APP_CFG_EXTENSION = ".json";
 
-        // 佈署配置檔中的 KEY
-        public const string BUNDLE_IP = "bundle_ip";                   // 資源鏈接請求鍵值
-        public const string BUNDLE_FALLBACK_IP = "bundle_fallback_ip"; // 資源備援鏈接請求鍵值
-        public const string STORE_LINK = "store_link";                 // 商店鏈接
+        /// <summary>
+        ///  APP 配置文件的名稱
+        /// </summary>
+        public string appCfgName = "appconfig";
+        #endregion
 
-        // 佈署配置檔
-        public const string BUNDLE_URL_CFG_EXTENSION = ".conf";         // 主程式配置文件擴展名 (Backup)
+        #region PatchConfig 配置文件
+        /// <summary>
+        /// 補丁配置文件擴展名 (Backup)
+        /// </summary>
+        public const string PATCH_CFG_BAK_EXTENSION = ".bak";
+
+        /// <summary>
+        /// 補丁配置文件擴展名
+        /// </summary>
+        public const string PATCH_CFG_EXTENSION = ".json";
+
+        /// <summary>
+        /// 補丁配置文件的名稱 
+        /// </summary>
+        public string patchCfgName = "patchconfig";
+        #endregion
+
+        #region 佈署配置檔中的 KEY
+        /// <summary>
+        /// 資源鏈接請求鍵值
+        /// </summary>
+        public const string BUNDLE_IP = "bundle_ip";
+
+        /// <summary>
+        /// 資源備援鏈接請求鍵值
+        /// </summary>
+        public const string BUNDLE_FALLBACK_IP = "bundle_fallback_ip";
+
+        /// <summary>
+        /// 商店鏈接
+        /// </summary>
+        public const string STORE_LINK = "store_link";
+        #endregion
+
+        #region 佈署配置檔
+        /// <summary>
+        /// 主程式配置文件擴展名 (Backup)
+        /// </summary>
+        public const string BUNDLE_URL_CFG_EXTENSION = ".conf";
+
+        /// <summary>
+        /// 資源請求端點的配置文件名稱
+        /// </summary>
         public string bundleUrlCfgName = "burlconfig";
+        #endregion
 
-        // Bundle 輸出歸類名稱
-        public string rootFolderName = "CDN";                           // Root 文件夾名稱
-        public string dlcFolderName = "DLC";                            // DLC 文件夾名稱
+        #region Bundle 輸出歸類名稱
+        /// <summary>
+        /// Root 文件夾名稱
+        /// </summary>
+        public string rootFolderName = "CDN";
+
+        /// <summary>
+        /// DLC 文件夾名稱
+        /// </summary>
+        public string dlcFolderName = "DLC";
+        #endregion
 
         private static PatchSetting _setting = null;
         public static PatchSetting setting
