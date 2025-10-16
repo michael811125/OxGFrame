@@ -1,4 +1,5 @@
 ﻿using OxGFrame.AssetLoader.Bundle;
+using OxGFrame.AssetLoader.Utility;
 using UnityEngine;
 using YooAsset;
 
@@ -18,7 +19,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IEncryptionServices
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             string filePath = fileInfo.FileLoadPath;
 
@@ -47,7 +48,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IManifestProcessServices
         public byte[] ProcessManifest(byte[] fileData)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             int dummySize = this._dummySize == null ? cryptogramSettings.dummySize : (int)this._dummySize;
 
@@ -77,7 +78,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IEncryptionServices
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             string filePath = fileInfo.FileLoadPath;
 
@@ -106,7 +107,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IManifestProcessServices
         public byte[] ProcessManifest(byte[] fileData)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             byte xorKey = this._xorKey == null ? cryptogramSettings.xorKey : (byte)this._xorKey;
 
@@ -140,7 +141,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IEncryptionServices
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             string filePath = fileInfo.FileLoadPath;
 
@@ -171,7 +172,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IManifestProcessServices
         public byte[] ProcessManifest(byte[] fileData)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             byte hXorKey = this._hXorKey == null ? cryptogramSettings.hXorKey : (byte)this._hXorKey;
             byte tXorKey = this._tXorKey == null ? cryptogramSettings.tXorKey : (byte)this._tXorKey;
@@ -209,7 +210,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IEncryptionServices
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             string filePath = fileInfo.FileLoadPath;
 
@@ -241,7 +242,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IManifestProcessServices
         public byte[] ProcessManifest(byte[] fileData)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             byte hXorKey = this._hXorKey == null ? cryptogramSettings.hXorPlusKey : (byte)this._hXorKey;
             byte tXorKey = this._tXorKey == null ? cryptogramSettings.tXorPlusKey : (byte)this._tXorKey;
@@ -276,7 +277,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IEncryptionServices
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             string filePath = fileInfo.FileLoadPath;
 
@@ -306,7 +307,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IManifestProcessServices
         public byte[] ProcessManifest(byte[] fileData)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             string key = string.IsNullOrEmpty(this._aesKey) ? cryptogramSettings.aesKey : this._aesKey;
             string iv = string.IsNullOrEmpty(this._aesIv) ? cryptogramSettings.aesIv : this._aesIv;
@@ -341,7 +342,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IEncryptionServices
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             string filePath = fileInfo.FileLoadPath;
 
@@ -372,7 +373,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IManifestProcessServices
         public byte[] ProcessManifest(byte[] fileData)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             string key = string.IsNullOrEmpty(this._chacha20Key) ? cryptogramSettings.chacha20Key : this._chacha20Key;
             string nonce = string.IsNullOrEmpty(this._chacha20Nonce) ? cryptogramSettings.chacha20Nonce : this._chacha20Nonce;
@@ -403,7 +404,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IEncryptionServices
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             string filePath = fileInfo.FileLoadPath;
 
@@ -432,7 +433,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IManifestProcessServices
         public byte[] ProcessManifest(byte[] fileData)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             string key = string.IsNullOrEmpty(this._xxteaKey) ? cryptogramSettings.xxteaKey : this._xxteaKey;
 
@@ -464,7 +465,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IEncryptionServices
         public EncryptResult Encrypt(EncryptFileInfo fileInfo)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             string filePath = fileInfo.FileLoadPath;
 
@@ -494,7 +495,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region IManifestProcessServices
         public byte[] ProcessManifest(byte[] fileData)
         {
-            var cryptogramSettings = CryptogramSettingSetup.GetCryptogramSetting();
+            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
 
             byte key = this._offsetXorKey == null ? (byte)cryptogramSettings.offsetXorKey : (byte)this._offsetXorKey;
             int dummySize = this._offsetXorDummySize == null ? (int)cryptogramSettings.offsetXorDummySize : (int)this._offsetXorDummySize;

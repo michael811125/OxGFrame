@@ -1,5 +1,58 @@
 # CHANGELOG
 
+## [3.5.2] - 2025-10-16
+
+# English
+- Hotfixer
+  - ### Added
+    - Added `HotfixSettings`, allowing for custom configuration file names (defaults to `hotfixdllconfig.conf`).
+- AssetLoader
+  - ### Modified
+    - Renamed configuration file from `PatchSetting` to `PatchSettings` (data is automatically migrated).
+      - Note: After the automatic update, your data will be preserved, but it is recommended to manually rename the existing configuration file.
+      - Caution: If you encounter errors due to references to the old name, please update them manually.
+      - Additional Note: The BuildTool Extension must be updated (update via Package Manager Samples).
+    - Renamed configuration file from `CryptogramSetting` to `CryptogramSettings` (data is automatically migrated).
+      - Note: After the automatic update, your data will be preserved, but it is recommended to manually rename the existing configuration file.
+  - ### Updated
+    - Updated YooAsset to the latest commit ([v2.3.16 - ea34be1](https://github.com/tuyoogame/YooAsset/commits/dev/)).
+- CoreFrame
+  - ### Modified
+    - Renamed configuration file from `BindCodeSetting` to `CodeBindingSettings` (data is automatically migrated).
+      - Note: After the automatic update, your data will be preserved, but it is recommended to manually rename the existing configuration file.
+    - Renamed parameter and class from `SRSetting` to `SRSettings` (data is automatically migrated).
+      - Caution: If you encounter errors due to references to the old name, please update them manually.
+    - Renamed parameter and class from `UISetting` to `UISettings` (data is automatically migrated).
+      - Caution: If you encounter errors due to references to the old name, please update them manually.
+    - Renamed parameter and class from `MaskSetting` to `MaskSettings` (data is automatically migrated).
+      - Caution: If you encounter errors due to references to the old name, please update them manually.
+
+# 中文
+
+- Hotfixer
+  - ### 新增
+    - 新增 HotfixSettings，可以自定義配置文件名稱 (預設為 hotfixdllconfig.conf)。
+- AssetLoader
+  - ### 修改
+    - 修改配置文件名稱 PatchSetting -> PatchSettings (自動更新，數據會保留)。
+	  - 備註：自動更新後，數據會保留，但是已存在的文件名稱建議手動重新命名。
+	    - 注意：如有引用舊的名稱報錯，再自行更新。
+	  - 額外注意：BuildTool Extension 必須更新 (透過 Package Manager Samples 進行更新)。
+	- 修改配置文件名稱 CryptogramSetting -> CryptogramSettings (自動更新，數據會保留)。
+	  - 備註：自動更新後，數據會保留，但是已存在的文件名稱建議手動重新命名。
+  - ### 更新
+    - 更新 YooAsset 到最新的 commit ([v2.3.16 - ea34be1](https://github.com/tuyoogame/YooAsset/commits/dev/))
+- CoreFrame
+  - ### 修改
+    - 修改配置文件名稱 BindCodeSetting -> CodeBindingSettings (自動更新，數據會保留)。
+	  - 備註：自動更新後，數據會保留，但是已存在的文件名稱建議手動重新命名。
+    - 修改參數與類別名稱 SRSetting -> SRSettings (自動更新，數據會保留)。
+	  - 注意：如有引用舊的名稱報錯，再自行更新。
+	- 修改參數與類別名稱 UISetting -> UISettings (自動更新，數據會保留)。
+	  - 注意：如有引用舊的名稱報錯，再自行更新。
+	- 修改參數與類別名稱 MaskSetting -> MaskSettings (自動更新，數據會保留)。
+	  - 注意：如有引用舊的名稱報錯，再自行更新。
+
 ## [3.5.1] - 2025-10-02
 
 # English

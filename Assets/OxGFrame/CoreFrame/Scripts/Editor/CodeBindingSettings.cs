@@ -3,11 +3,13 @@ using System;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace OxGFrame.CoreFrame.Editor
 {
-    [CreateAssetMenu(fileName = nameof(BindCodeSetting), menuName = "OxGFrame/Create Settings/Create Bind Code Setting")]
-    public class BindCodeSetting : ScriptableObject
+    [MovedFrom("BindCodeSetting")]
+    [CreateAssetMenu(fileName = nameof(CodeBindingSettings), menuName = "OxGFrame/Create Settings/Create Code Binding Settings")]
+    public class CodeBindingSettings : ScriptableObject
     {
         public enum MethodType
         {
@@ -53,18 +55,18 @@ namespace OxGFrame.CoreFrame.Editor
             This
         }
 
-        [Separator("Binding Method Setting")]
+        [Separator("Binding Method Settings")]
         [Tooltip("*[Auto] Automatically save binding content to script.\n\n*[Manual] Manually copy the binding content from the clipboard to the script.")]
         public MethodType methodType = MethodType.Auto;
 
-        [Separator("Attribute Setting")]
+        [Separator("Attribute Settings")]
         public AttrGenericDictionary<string, string> attrReferenceRules = new AttrGenericDictionary<string, string>()
         {
             { "[hi]", "[HideInInspector]" },
             { "[sf]", "[SerializeField]"}
         };
 
-        [Separator("Variable Setting")]
+        [Separator("Variable Settings")]
         public CaseType variableCaseType = CaseType.CamelCase;
         [Tooltip("The first element will be default")]
         public VariableGenericDictionary<string, string> variableAccessRules = new VariableGenericDictionary<string, string>()
@@ -74,10 +76,10 @@ namespace OxGFrame.CoreFrame.Editor
             { "public" , "" }
         };
 
-        [Separator("Indicate Modifier Setting")]
+        [Separator("Indicate Modifier Settings")]
         public IndicateModifier indicateModifier = IndicateModifier.This;
 
-        [Separator("Tail Bind Setting")]
+        [Separator("Tail Binding Settings")]
         public GenericDictionary<string, ComponentInfo> tailRules = new GenericDictionary<string, ComponentInfo>()
         {
             // Other

@@ -1,10 +1,12 @@
 ﻿using MyBox;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
-    [CreateAssetMenu(fileName = nameof(CryptogramSetting), menuName = "OxGFrame/Create Settings/Create Cryptogram Setting")]
-    public class CryptogramSetting : ScriptableObject
+    [MovedFrom("CryptogramSetting")]
+    [CreateAssetMenu(fileName = nameof(CryptogramSettings), menuName = "OxGFrame/Create Settings/Create Cryptogram Settings")]
+    public class CryptogramSettings : ScriptableObject
     {
         [Separator("OFFSET")]
         public int dummySize = 1;

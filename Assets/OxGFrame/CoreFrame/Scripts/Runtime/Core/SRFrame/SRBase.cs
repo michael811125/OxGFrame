@@ -1,13 +1,15 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace OxGFrame.CoreFrame.SRFrame
 {
     public class SRBase : FrameBase
     {
+        [FormerlySerializedAs("srSetting")]
         [Tooltip("SceneResource Settings")]
-        public SRSetting srSetting = new SRSetting();
+        public SRSettings srSettings = new SRSettings();
 
         private void Awake()
         {

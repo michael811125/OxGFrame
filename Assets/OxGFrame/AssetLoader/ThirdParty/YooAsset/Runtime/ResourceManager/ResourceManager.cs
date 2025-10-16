@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using static YooAsset.LoadBundleFileOperation;
 
 namespace YooAsset
 {
@@ -14,6 +17,7 @@ namespace YooAsset
         private int _bundleLoadingMaxConcurrency;
 
         // 开发者配置选项
+        public bool AutoUnloadBundleWhenUnused { private set; get; }
         public bool WebGLForceSyncLoadAsset { private set; get; }
         public bool UseWeakReferenceHandle { private set; get; }
 
@@ -44,6 +48,7 @@ namespace YooAsset
         public void Initialize(InitializeParameters parameters, IBundleQuery bundleServices)
         {
             _bundleLoadingMaxConcurrency = parameters.BundleLoadingMaxConcurrency;
+            AutoUnloadBundleWhenUnused = parameters.AutoUnloadBundleWhenUnused;
             WebGLForceSyncLoadAsset = parameters.WebGLForceSyncLoadAsset;
             UseWeakReferenceHandle = parameters.UseWeakReferenceHandle;
             _bundleQuery = bundleServices;
@@ -328,8 +333,9 @@ namespace YooAsset
         {
             string bundleName = _bundleQuery.GetMainBundleName(bundleID);
             var bundleFileLoader = TryGetBundleFileLoader(bundleName);
-            if (bundleFileLoader == null) return true;
-            return bundleFileLoader.RefCount <= 0 && bundleFileLoader.steps != ESteps.LoadBundleFile;
+            if (bundleFileLoader == null)
+                return true;
+            return bundleFileLoader.CanReleasableLoader();
         }
         internal bool HasAnyLoader()
         {

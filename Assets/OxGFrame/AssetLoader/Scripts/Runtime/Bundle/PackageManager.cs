@@ -92,7 +92,9 @@ namespace OxGFrame.AssetLoader.Bundle
                     _bundleDecryptionServices = new OffsetXorDecryption(FileOperationType.Bundle);
                     break;
             }
+#if UNITY_EDITOR
             Logging.Print<Logger>($"Init Bundle Decryption: {decryptType}");
+#endif
 
             decryptType = BundleConfig.manifestDecryptArgs[0].Decrypt().ToUpper();
             switch (decryptType)
@@ -124,7 +126,9 @@ namespace OxGFrame.AssetLoader.Bundle
                     _manifestDecryptionServices = new OffsetXorDecryption(FileOperationType.Manifest);
                     break;
             }
+#if UNITY_EDITOR
             Logging.Print<Logger>($"Init Manifest Decryption: {decryptType}");
+#endif
             #endregion
 
             Logging.PrintInfo<Logger>($"Initialized Play Mode: {BundleConfig.playMode}");

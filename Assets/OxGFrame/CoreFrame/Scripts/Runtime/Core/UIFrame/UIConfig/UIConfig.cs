@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using MyBox;
 using System.Collections.Generic;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace OxGFrame.CoreFrame.UIFrame
 {
@@ -24,8 +25,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         AwaitingPopup
     }
 
+    [MovedFrom("UISetting")]
     [Serializable]
-    public class UISetting
+    public class UISettings
     {
         [Tooltip("Canvas name (will find same name of canvas on the scene)")]
         public string canvasName = "Canvas";
@@ -45,8 +47,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         public bool whenHideAllToSkip = false;
     }
 
+    [MovedFrom("MaskSetting")]
     [Serializable]
-    public class MaskSetting
+    public class MaskSettings
     {
         [Tooltip("Mask color")]
         public Color color = new Color32(0, 0, 0, 192);

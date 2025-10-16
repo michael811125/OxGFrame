@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using YooAsset.Editor;
-using static OxGFrame.AssetLoader.Editor.CryptogramSettingWindow;
+using static OxGFrame.AssetLoader.Editor.CryptogramSettingsWindow;
 
 namespace OxGFrame.AssetLoader.Editor
 {
@@ -26,7 +26,7 @@ namespace OxGFrame.AssetLoader.Editor
         [SerializeField]
         public string sourceFolder;
 
-        private CryptogramSetting _setting;
+        private CryptogramSettings _settings;
 
         internal static string projectPath;
         internal static string keySaver;
@@ -47,7 +47,7 @@ namespace OxGFrame.AssetLoader.Editor
 
         private void OnEnable()
         {
-            this._setting = EditorTool.LoadSettingData<CryptogramSetting>();
+            this._settings = AssetUtility.LoadSettingsData<CryptogramSettings>();
             this._LoadSettingsData();
             this.sourceFolder = EditorStorage.GetData(keySaver, $"sourceFolder", Path.Combine($"{Application.dataPath}/", AssetBundleBuilderHelper.GetDefaultBuildOutputRoot()));
             this.cryptogramType = (CryptogramType)Convert.ToInt32(EditorStorage.GetData(keySaver, "cryptogramType", "0"));
@@ -56,37 +56,37 @@ namespace OxGFrame.AssetLoader.Editor
         private void _LoadSettingsData()
         {
             // Offset
-            this.dummySize = this._setting.dummySize;
+            this.dummySize = this._settings.dummySize;
 
             // XOR
-            this.xorKey = this._setting.xorKey;
+            this.xorKey = this._settings.xorKey;
 
             // HT2XOR
-            this.hXorKey = this._setting.hXorKey;
-            this.tXorKey = this._setting.tXorKey;
-            this.jXorKey = this._setting.jXorKey;
+            this.hXorKey = this._settings.hXorKey;
+            this.tXorKey = this._settings.tXorKey;
+            this.jXorKey = this._settings.jXorKey;
 
             // HT2XORPlus
-            this.hXorPlusKey = this._setting.hXorPlusKey;
-            this.tXorPlusKey = this._setting.tXorPlusKey;
-            this.j1XorPlusKey = this._setting.j1XorPlusKey;
-            this.j2XorPlusKey = this._setting.j2XorPlusKey;
+            this.hXorPlusKey = this._settings.hXorPlusKey;
+            this.tXorPlusKey = this._settings.tXorPlusKey;
+            this.j1XorPlusKey = this._settings.j1XorPlusKey;
+            this.j2XorPlusKey = this._settings.j2XorPlusKey;
 
             // AES
-            this.aesKey = this._setting.aesKey;
-            this.aesIv = this._setting.aesIv;
+            this.aesKey = this._settings.aesKey;
+            this.aesIv = this._settings.aesIv;
 
             // ChaCha20
-            this.chacha20Key = this._setting.chacha20Key;
-            this.chacha20Nonce = this._setting.chacha20Nonce;
-            this.chacha20Counter = this._setting.chacha20Counter;
+            this.chacha20Key = this._settings.chacha20Key;
+            this.chacha20Nonce = this._settings.chacha20Nonce;
+            this.chacha20Counter = this._settings.chacha20Counter;
 
             // XXTEA
-            this.xxteaKey = this._setting.xxteaKey;
+            this.xxteaKey = this._settings.xxteaKey;
 
             // OffsetXOR
-            this.offsetXorKey = this._setting.offsetXorKey;
-            this.offsetXorDummySize = this._setting.offsetXorDummySize;
+            this.offsetXorKey = this._settings.offsetXorKey;
+            this.offsetXorDummySize = this._settings.offsetXorDummySize;
         }
 
         private void OnDisable()

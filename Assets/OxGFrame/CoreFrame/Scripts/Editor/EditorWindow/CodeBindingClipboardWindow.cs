@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace OxGFrame.CoreFrame.Editor
 {
-    public class BindCodeClipboardWindow : EditorWindow
+    public class CodeBindingClipboardWindow : EditorWindow
     {
-        private static BindCodeClipboardWindow _instance = null;
-        internal static BindCodeClipboardWindow GetInstance()
+        private static CodeBindingClipboardWindow _instance = null;
+        internal static CodeBindingClipboardWindow GetInstance()
         {
             if (_instance == null)
-                _instance = GetWindow<BindCodeClipboardWindow>();
+                _instance = GetWindow<CodeBindingClipboardWindow>();
             return _instance;
         }
 
@@ -20,7 +20,7 @@ namespace OxGFrame.CoreFrame.Editor
         public static void ShowWindow(string codes)
         {
             _instance = null;
-            GetInstance().titleContent = new GUIContent("Bind Code Clipboard");
+            GetInstance().titleContent = new GUIContent("Code Binding Clipboard");
             GetInstance().Show();
             GetInstance().minSize = _windowSize;
             GetInstance()._codes = codes;

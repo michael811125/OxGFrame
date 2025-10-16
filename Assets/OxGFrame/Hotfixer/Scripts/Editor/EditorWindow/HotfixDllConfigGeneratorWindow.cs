@@ -42,7 +42,7 @@ namespace OxGFrame.Hotfixer.Editor
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
-        [MenuItem(HotfixHelper.MENU_ROOT + "Hotfix Dll Config Generator (" + HotfixConfig.HOTFIX_DLL_CFG_NAME + ")", false, 99)]
+        [MenuItem(HotfixHelper.MENU_ROOT + "Hotfix Dll Config Generator (hotfixdllconfig.conf)", false, 99)]
         public static void ShowWindow()
         {
             projectPath = Application.dataPath;
@@ -172,6 +172,13 @@ namespace OxGFrame.Hotfixer.Editor
 
             EditorGUILayout.BeginHorizontal();
 
+            // file name label
+            {
+                var style = new GUIStyle(EditorStyles.label) { richText = true };
+                string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION}";
+                GUILayout.Label($"Config Name: <b><color=#ffed29>{fileName}</color></b>", style);
+            }
+
             GUILayout.FlexibleSpace();
 
             // auto reveal toggle
@@ -183,22 +190,22 @@ namespace OxGFrame.Hotfixer.Editor
             GUI.backgroundColor = new Color32(255, 185, 83, 255);
             if (GUILayout.Button("Cipher Process", GUILayout.MaxWidth(110f)))
             {
+                string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION}";
                 string outputPath = Application.streamingAssetsPath;
                 HotfixHelper.ExportHotfixDllConfig(this.aotDlls, this.hotfixDlls, true);
-                EditorUtility.DisplayDialog("Process Message", "Export [Cipher] HotfixDllConfig To StreamingAssets.", "OK");
+                EditorUtility.DisplayDialog("Process Message", $"Export [Cipher] {fileName} To StreamingAssets.", "OK");
                 AssetDatabase.Refresh();
-                string fileName = $"{HotfixConfig.HOTFIX_DLL_CFG_NAME}";
                 if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{fileName}");
             }
             GUI.backgroundColor = bc;
             GUI.backgroundColor = new Color32(255, 185, 83, 255);
             if (GUILayout.Button("Plaintext Process", GUILayout.MaxWidth(125f)))
             {
+                string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION}";
                 string outputPath = Application.streamingAssetsPath;
                 HotfixHelper.ExportHotfixDllConfig(this.aotDlls, this.hotfixDlls, false);
-                EditorUtility.DisplayDialog("Process Message", "Export [Plaintext] HotfixDllConfig To StreamingAssets.", "OK");
+                EditorUtility.DisplayDialog("Process Message", $"Export [Plaintext] {fileName} To StreamingAssets.", "OK");
                 AssetDatabase.Refresh();
-                string fileName = $"{HotfixConfig.HOTFIX_DLL_CFG_NAME}";
                 if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{fileName}");
             }
             GUI.backgroundColor = bc;
