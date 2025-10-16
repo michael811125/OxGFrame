@@ -215,14 +215,14 @@ namespace OxGFrame.AssetLoader.Editor
                 // Encrypt
                 for (int i = 0; i < data.Length; i++)
                 {
-                    data[i] ^= BundleConfig.CIPHER << 1;
+                    data[i] ^= (byte)(PatchSettings.settings.bundleUrlCfgCipher << 1);
                 }
 
                 // Write data with header
                 int pos = 0;
                 byte[] dataWithHeader = new byte[data.Length + 2];
                 // Write header (non-encrypted)
-                BundleConfig.WriteInt16(BundleConfig.CIPHER_HEADER, dataWithHeader, ref pos);
+                BundleConfig.WriteInt16(PatchSettings.CIPHER_HEADER, dataWithHeader, ref pos);
                 Buffer.BlockCopy(data, 0, dataWithHeader, pos, data.Length);
                 writeBuffer = dataWithHeader;
             }

@@ -8,6 +8,14 @@ namespace OxGFrame.AssetLoader
     public class PatchSettings : ScriptableObject
     {
         #region Common
+        /// <summary>
+        /// 配置文件頭標
+        /// </summary>
+        public const short CIPHER_HEADER = 0x584F;
+
+        /// <summary>
+        /// META 文件擴展名
+        /// </summary>
         public const string META_FILE_EXTENSION = ".meta";
         #endregion
 
@@ -22,6 +30,7 @@ namespace OxGFrame.AssetLoader
         /// </summary>
         public const string APP_CFG_EXTENSION = ".json";
 
+        [Header("App Config Settings")]
         /// <summary>
         ///  APP 配置文件的名稱
         /// </summary>
@@ -39,6 +48,7 @@ namespace OxGFrame.AssetLoader
         /// </summary>
         public const string PATCH_CFG_EXTENSION = ".json";
 
+        [Header("Patch Config Settings")]
         /// <summary>
         /// 補丁配置文件的名稱 
         /// </summary>
@@ -63,6 +73,12 @@ namespace OxGFrame.AssetLoader
         #endregion
 
         #region 佈署配置文件
+        [Header("Bundle URL Config Settings")]
+        /// <summary>
+        /// 資源請求端點的配置文件金鑰
+        /// </summary>
+        public byte bundleUrlCfgCipher = 0x4D;
+
         /// <summary>
         /// 資源請求端點的配置文件擴展名
         /// </summary>
@@ -75,6 +91,7 @@ namespace OxGFrame.AssetLoader
         #endregion
 
         #region Bundle 輸出歸類名稱
+        [Header("Folder Settings")]
         /// <summary>
         /// Root 文件夾名稱
         /// </summary>

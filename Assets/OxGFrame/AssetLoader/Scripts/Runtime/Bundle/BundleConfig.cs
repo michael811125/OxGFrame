@@ -86,16 +86,6 @@ namespace OxGFrame.AssetLoader.Bundle
         internal const string LAST_PACKAGE_VERSIONS_KEY = "LAST_PACKAGE_VERSIONS_KEY";
 
         /// <summary>
-        /// 配置文件頭標
-        /// </summary>
-        internal const short CIPHER_HEADER = 0x584F;
-
-        /// <summary>
-        /// 配置文件金鑰
-        /// </summary>
-        internal const byte CIPHER = 0x4D;
-
-        /// <summary>
         /// 運行模式
         /// </summary>
         public static PlayMode playMode = PlayMode.EditorSimulateMode;
@@ -316,7 +306,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
                 // Read header (non-encrypted)
                 var header = ReadInt16(data, ref pos);
-                if (header == CIPHER_HEADER)
+                if (header == PatchSettings.CIPHER_HEADER)
                 {
                     // Read data without header
                     byte[] dataWithoutHeader = new byte[data.Length - 2];
@@ -324,7 +314,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     // Decrypt
                     for (int i = 0; i < dataWithoutHeader.Length; i++)
                     {
-                        dataWithoutHeader[i] ^= CIPHER << 1;
+                        dataWithoutHeader[i] ^= (byte)(PatchSettings.settings.bundleUrlCfgCipher << 1);
                     }
                     // To string
                     content = Encoding.UTF8.GetString(dataWithoutHeader);
