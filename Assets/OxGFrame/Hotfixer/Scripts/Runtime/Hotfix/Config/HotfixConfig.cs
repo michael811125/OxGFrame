@@ -5,17 +5,17 @@ namespace OxGFrame.Hotfixer
     public static class HotfixConfig
     {
         /// <summary>
-        /// 配置檔標檔頭
+        /// 配置文件頭標
         /// </summary>
         internal const short CIPHER_HEADER = 0x584F;
 
         /// <summary>
-        /// 配置檔金鑰
+        /// 配置文件金鑰
         /// </summary>
         internal const byte CIPHER = 0x6D;
 
         /// <summary>
-        /// 佈署配置檔
+        /// 佈署配置文件
         /// </summary>
         public const string HOTFIX_DLL_CFG_NAME = "hotfixdllconfig.conf";
 

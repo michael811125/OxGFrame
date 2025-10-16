@@ -20,7 +20,7 @@ namespace OxGFrame.AssetLoader.Editor
         #region Public Methods
         #region Exporter
         /// <summary>
-        /// 輸出 App 配置檔至輸出路徑 (Export AppConfig to StreamingAssets [for Built-in])
+        /// 輸出 App 配置文件至輸出路徑 (Export AppConfig to StreamingAssets [for Built-in])
         /// </summary>
         /// <param name="productName"></param>
         /// <param name="appVersion"></param>
@@ -31,10 +31,10 @@ namespace OxGFrame.AssetLoader.Editor
         {
             if (!Directory.Exists(outputPath)) Directory.CreateDirectory(outputPath);
 
-            // 生成配置檔數據
+            // 生成配置文件數據
             var cfg = GenerateAppConfig(productName, null, appVersion, activeBuildTarget, buildTarget);
 
-            // 配置檔序列化, 將進行寫入
+            // 配置文件序列化, 將進行寫入
             string jsonCfg = JsonConvert.SerializeObject(cfg, Formatting.Indented);
 
             // 寫入配置文件
@@ -61,7 +61,7 @@ namespace OxGFrame.AssetLoader.Editor
         /// <param name="isClearOutputPath"></param>
         public static void ExportConfigsAndAppBundles(string inputPath, string outputPath, string productName, SemanticRule semanticRule, string appVersion, string[] exportPackages, List<GroupInfo> groupInfos, string[] packageInfos, bool activeBuildTarget, BuildTarget buildTarget, bool isClearOutputPath = true)
         {
-            // 生成配置檔數據 (AppConfig)
+            // 生成配置文件數據 (AppConfig)
             var appCfg = GenerateAppConfig(productName, semanticRule, appVersion, activeBuildTarget, buildTarget);
             var patchCfg = GeneratePatchConfig(groupInfos, packageInfos, inputPath);
 
@@ -74,7 +74,7 @@ namespace OxGFrame.AssetLoader.Editor
             #endregion
 
             #region AppConfig Write
-            // 配置檔序列化, 將進行寫入
+            // 配置文件序列化, 將進行寫入
             string jsonCfg = JsonConvert.SerializeObject(appCfg, Formatting.Indented);
 
             // 寫入配置文件
@@ -89,7 +89,7 @@ namespace OxGFrame.AssetLoader.Editor
             #endregion
 
             #region PatchConfig Write
-            // 配置檔序列化, 將進行寫入
+            // 配置文件序列化, 將進行寫入
             jsonCfg = JsonConvert.SerializeObject(patchCfg, Formatting.Indented);
 
             // 寫入配置文件
@@ -120,7 +120,7 @@ namespace OxGFrame.AssetLoader.Editor
         /// <param name="isClearOutputPath"></param>
         public static void ExportAppBundles(string inputPath, string outputPath, string productName, SemanticRule semanticRule, string appVersion, string[] exportPackages, bool activeBuildTarget, BuildTarget buildTarget, bool isClearOutputPath = true)
         {
-            // 生成配置檔數據 (AppConfig)
+            // 生成配置文件數據 (AppConfig)
             var appCfg = GenerateAppConfig(productName, semanticRule, appVersion, activeBuildTarget, buildTarget);
 
             // 清空輸出路徑
@@ -161,7 +161,7 @@ namespace OxGFrame.AssetLoader.Editor
         }
 
         /// <summary>
-        /// 產生 Bundle URL 配置檔至輸出路徑 (Export BundleUrlConfig to StreamingAssets [for Built-in])
+        /// 產生 Bundle URL 配置文件至輸出路徑 (Export BundleUrlConfig to StreamingAssets [for Built-in])
         /// </summary>
         /// <param name="bundleIp"></param>
         /// <param name="bundleFallbackIp"></param>
@@ -473,7 +473,7 @@ namespace OxGFrame.AssetLoader.Editor
         }
 
         /// <summary>
-        /// 返回來源路徑的配置檔數據
+        /// 返回來源路徑的配置文件數據
         /// </summary>
         /// <param name="productName"></param>
         /// <param name="inputPath"></param>
@@ -481,7 +481,7 @@ namespace OxGFrame.AssetLoader.Editor
         /// <returns></returns>
         internal static AppConfig GenerateAppConfig(string productName, SemanticRule semanticRule, string appVersion, bool activeBuildTarget, BuildTarget buildTarget)
         {
-            // 生成配置檔
+            // 生成配置文件
             var cfg = new AppConfig();
 
             // 平台
@@ -503,7 +503,7 @@ namespace OxGFrame.AssetLoader.Editor
 
         internal static PatchConfig GeneratePatchConfig(List<GroupInfo> groupInfos, string[] exportPackages, string inputPath = null)
         {
-            // 生成配置檔
+            // 生成配置文件
             var cfg = new PatchConfig();
 
             // 取得 Bundle 路徑
@@ -624,7 +624,7 @@ namespace OxGFrame.AssetLoader.Editor
         }
 
         /// <summary>
-        /// 寫入文字文件檔
+        /// 寫入文字文件
         /// </summary>
         /// <param name="txt"></param>
         /// <param name="outputPath"></param>

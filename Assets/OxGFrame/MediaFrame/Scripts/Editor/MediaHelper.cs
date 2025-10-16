@@ -11,7 +11,7 @@ namespace OxGFrame.MediaFrame.Editor
         #region Public Methods
         #region Exporter
         /// <summary>
-        /// 產生 Media URL 配置檔至輸出路徑 (Export MediaUrlConfig to StreamingAssets [for Built-in])
+        /// 產生 Media URL 配置文件至輸出路徑 (Export MediaUrlConfig to StreamingAssets [for Built-in])
         /// </summary>
         /// <param name="productName"></param>
         /// <param name="appVersion"></param>
@@ -41,7 +41,7 @@ namespace OxGFrame.MediaFrame.Editor
         #endregion
 
         /// <summary>
-        /// 寫入文字文件檔
+        /// 寫入文字文件
         /// </summary>
         /// <param name="txt"></param>
         /// <param name="outputPath"></param>

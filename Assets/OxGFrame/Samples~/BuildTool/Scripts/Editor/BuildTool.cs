@@ -135,7 +135,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                 fullOutPath = Path.Combine(EditorTools.GetProjectPath(), "Build");
             else
                 fullOutPath = Path.Combine(Application.dataPath, destination);
-            // 去除副檔名以獲取文件夾路徑
+            // 去除擴展名以獲取文件夾路徑
             string directoryPath = Path.GetDirectoryName(fullOutPath);
             // 創建目錄 (如果不存在)
             if (!Directory.Exists(directoryPath))

@@ -162,7 +162,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// 刪除所有緩存數據跟配置檔 (即清空下載目錄)
+        /// 刪除所有緩存數據跟配置文件 (即清空下載目錄)
         /// </summary>
         public void Repair()
         {

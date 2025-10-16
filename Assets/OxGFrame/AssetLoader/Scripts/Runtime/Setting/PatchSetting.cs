@@ -44,7 +44,7 @@ namespace OxGFrame.AssetLoader
         public string patchCfgName = "patchconfig";
         #endregion
 
-        #region 佈署配置檔中的 KEY
+        #region 佈署配置文件中的 KEY
         /// <summary>
         /// 資源鏈接請求鍵值
         /// </summary>
@@ -61,9 +61,9 @@ namespace OxGFrame.AssetLoader
         public const string STORE_LINK = "store_link";
         #endregion
 
-        #region 佈署配置檔
+        #region 佈署配置文件
         /// <summary>
-        /// 主程式配置文件擴展名 (Backup)
+        /// 資源請求端點的配置文件擴展名
         /// </summary>
         public const string BUNDLE_URL_CFG_EXTENSION = ".conf";
 
