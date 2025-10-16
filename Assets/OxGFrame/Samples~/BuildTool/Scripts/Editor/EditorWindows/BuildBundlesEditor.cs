@@ -1050,7 +1050,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
         }
 
         /// <summary>
-        /// 寫入文字文件檔
+        /// 寫入文字文件
         /// </summary>
         /// <param name="txt"></param>
         /// <param name="outputPath"></param>

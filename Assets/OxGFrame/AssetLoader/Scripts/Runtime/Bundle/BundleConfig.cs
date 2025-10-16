@@ -86,12 +86,12 @@ namespace OxGFrame.AssetLoader.Bundle
         internal const string LAST_PACKAGE_VERSIONS_KEY = "LAST_PACKAGE_VERSIONS_KEY";
 
         /// <summary>
-        /// 配置檔標檔頭
+        /// 配置文件頭標
         /// </summary>
         internal const short CIPHER_HEADER = 0x584F;
 
         /// <summary>
-        /// 配置檔金鑰
+        /// 配置文件金鑰
         /// </summary>
         internal const byte CIPHER = 0x4D;
 
@@ -296,7 +296,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         #region Endpoint & Path Operations
         /// <summary>
-        /// 取得 burlconfig 佈署配置檔的數據
+        /// 取得 burlconfig 佈署配置文件的數據
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>

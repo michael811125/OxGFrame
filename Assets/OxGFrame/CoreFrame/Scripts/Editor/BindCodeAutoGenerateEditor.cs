@@ -69,7 +69,7 @@ namespace OxGFrame.CoreFrame.Editor
             if (Selection.gameObjects.Length == 0)
                 return;
 
-            // 載入配置檔
+            // 載入配置文件
             _settings = EditorTool.LoadSettingData<BindCodeSetting>();
 
             // 檢查選擇物件是否包含子節點

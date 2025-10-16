@@ -128,7 +128,7 @@ namespace OxGFrame.Hotfixer.Editor
         }
 
         /// <summary>
-        /// 產生 Hotfix Dll 配置檔至輸出路徑 (Export HotfixDllConfig to StreamingAssets [for Built-in])
+        /// 產生 Hotfix Dll 配置文件至輸出路徑 (Export HotfixDllConfig to StreamingAssets [for Built-in])
         /// </summary>
         /// <param name="aotDlls"></param>
         /// <param name="hotfixDlls"></param>
@@ -272,7 +272,7 @@ namespace OxGFrame.Hotfixer.Editor
         }
 
         /// <summary>
-        /// 寫入文字文件檔
+        /// 寫入文字文件
         /// </summary>
         /// <param name="txt"></param>
         /// <param name="outputPath"></param>

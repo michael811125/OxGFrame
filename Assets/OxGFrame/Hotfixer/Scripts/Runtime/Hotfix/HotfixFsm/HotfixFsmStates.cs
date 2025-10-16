@@ -426,7 +426,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                                 BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
                                 HotfixManager.GetInstance().IsDisabled())
                             {
-                                // 移除 .dll 副檔名
+                                // 移除 .dll 擴展名
                                 var fileExtension = ".dll";
                                 var newLength = dllName.Length - fileExtension.Length;
                                 var newDllName = dllName.Substring(0, newLength);
