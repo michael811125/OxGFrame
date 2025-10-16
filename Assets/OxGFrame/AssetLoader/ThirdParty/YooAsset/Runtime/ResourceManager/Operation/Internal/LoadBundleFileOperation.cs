@@ -6,7 +6,7 @@ namespace YooAsset
 {
     internal class LoadBundleFileOperation : AsyncOperationBase
     {
-        internal enum ESteps
+        private enum ESteps
         {
             None,
             CheckConcurrency,
@@ -50,7 +50,6 @@ namespace YooAsset
         /// </summary>
         public BundleResult Result { set; get; }
 
-        internal ESteps steps => _steps;
 
         internal LoadBundleFileOperation(ResourceManager resourceManager, BundleInfo bundleInfo)
         {
@@ -181,11 +180,7 @@ namespace YooAsset
         /// </summary>
         public bool CanDestroyLoader()
         {
-            // 注意：正在加载中的任务不可以销毁
-            if (_steps == ESteps.LoadBundleFile)
-                return false;
-
-            if (RefCount > 0)
+            if (CanReleasableLoader() == false)
                 return false;
 
             // YOOASSET_LEGACY_DEPENDENCY
@@ -195,11 +190,25 @@ namespace YooAsset
             {
                 foreach (var bundleID in LoadBundleInfo.Bundle.ReferenceBundleIDs)
                 {
-                    //if (_resManager.CheckBundleDestroyed(bundleID) == false)
-                    if (!_resManager.CheckBundleReleasable(bundleID))
+                    if (_resManager.CheckBundleReleasable(bundleID) == false)
                         return false;
                 }
             }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 是否可以释放
+        /// </summary>
+        public bool CanReleasableLoader()
+        {
+            // 注意：正在加载中的任务不可以销毁
+            if (_steps == ESteps.LoadBundleFile)
+                return false;
+
+            if (RefCount > 0)
+                return false;
 
             return true;
         }

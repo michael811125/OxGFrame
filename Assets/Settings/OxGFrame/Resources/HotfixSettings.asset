@@ -9,11 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 822b9a7cf1430fc4d887f5b7738e2fa4, type: 3}
-  m_Name: PatchSetting
+  m_Script: {fileID: 11500000, guid: a63c3735c807ebb429fa22e71f915b2e, type: 3}
+  m_Name: HotfixSettings
   m_EditorClassIdentifier: 
-  appCfgName: appconfig
-  patchCfgName: patchconfig
-  bundleUrlCfgName: burlconfig
-  rootFolderName: CDN
-  dlcFolderName: DLC
+  cipher: 109
+  hotfixDllCfgName: hotfix_config

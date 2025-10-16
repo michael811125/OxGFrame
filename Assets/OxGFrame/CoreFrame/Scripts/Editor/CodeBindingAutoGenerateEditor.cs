@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OxGFrame.CoreFrame.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace OxGFrame.CoreFrame.Editor
 {
-    public static class BindCodeAutoGenerateEditor
+    public static class CodeBindingAutoGenerateEditor
     {
         private class BindInfo
         {
@@ -16,7 +17,7 @@ namespace OxGFrame.CoreFrame.Editor
             public string bindName;
             public string variableName;
             public string componentName;
-            public BindCodeSetting.Pluralize pluralize;
+            public CodeBindingSettings.Pluralize pluralize;
             public int count;
 
             public BindInfo(string[] attrNames, string variableAccessModifier, string bindName, string variableName, string componentName, int count)
@@ -57,7 +58,7 @@ namespace OxGFrame.CoreFrame.Editor
         /// </summary>
         private const string _REPLACEMENT_PATTERN_END = "#endregion";
 
-        private static BindCodeSetting _settings;
+        private static CodeBindingSettings _settings;
         private static FrameBase _script;
         private static Dictionary<string, BindInfo> _collectBindInfos = new Dictionary<string, BindInfo>();
         private static string _builder = string.Empty;
@@ -70,7 +71,7 @@ namespace OxGFrame.CoreFrame.Editor
                 return;
 
             // 載入配置文件
-            _settings = EditorTool.LoadSettingData<BindCodeSetting>();
+            _settings = AssetUtility.LoadSettingsData<CodeBindingSettings>();
 
             // 檢查選擇物件是否包含子節點
             if (_CheckHasChildren())
@@ -261,10 +262,10 @@ namespace OxGFrame.CoreFrame.Editor
                 // 修正 Case
                 switch (_settings.variableCaseType)
                 {
-                    case BindCodeSetting.CaseType.CamelCase:
+                    case CodeBindingSettings.CaseType.CamelCase:
                         finalVariableName = char.ToLower(finalBindName[0]) + finalBindName.Substring(1);
                         break;
-                    case BindCodeSetting.CaseType.PascalCase:
+                    case CodeBindingSettings.CaseType.PascalCase:
                         finalVariableName = char.ToUpper(finalBindName[0]) + finalBindName.Substring(1);
                         break;
                 }
@@ -302,7 +303,7 @@ namespace OxGFrame.CoreFrame.Editor
             #endregion
 
             // Head of content ↓↓↓
-            string space = _settings.methodType == BindCodeSetting.MethodType.Auto ? "    " : "";
+            string space = _settings.methodType == CodeBindingSettings.MethodType.Auto ? "    " : "";
             _builder += _REPLACEMENT_PATTERN_HEAD + "\n";
 
             #region 變數宣告生成
@@ -443,7 +444,7 @@ namespace OxGFrame.CoreFrame.Editor
 
             switch (_settings.methodType)
             {
-                case BindCodeSetting.MethodType.Auto:
+                case CodeBindingSettings.MethodType.Auto:
                     // Save to script
                     _InsertCodes(_builder);
                     break;
@@ -460,7 +461,7 @@ namespace OxGFrame.CoreFrame.Editor
         /// <param name="content"></param>
         private static void _ShowClipboard(string content)
         {
-            BindCodeClipboardWindow.ShowWindow(content);
+            CodeBindingClipboardWindow.ShowWindow(content);
             Debug.Log("<color=#02ff8e>[Manual] Copy binding content to script!!!</color>");
         }
 

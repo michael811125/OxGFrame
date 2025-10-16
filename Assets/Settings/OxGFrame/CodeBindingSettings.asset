@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ebd4b70705a7394dbef385916144fcc, type: 3}
-  m_Name: BindCodeSetting
+  m_Name: CodeBindingSettings
   m_EditorClassIdentifier: 
   methodType: 0
   attrReferenceRules:
@@ -33,66 +33,18 @@ MonoBehaviour:
   indicateModifier: 1
   tailRules:
     list:
-    - TailName: Trans
-      Reference:
-        componentName: Transform
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: es
-    - TailName: RectTrans
-      Reference:
-        componentName: RectTransform
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: es
-    - TailName: Img
-      Reference:
-        componentName: Image
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: RawImg
-      Reference:
-        componentName: RawImage
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: Txt
-      Reference:
-        componentName: Text
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
     - TailName: Btn
       Reference:
         componentName: Button
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
-    - TailName: Tgl
+    - TailName: BtnPlus
       Reference:
-        componentName: Toggle
+        componentName: ButtonPlus
         pluralize:
           endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: Sld
-      Reference:
-        componentName: Slider
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: ScrBar
-      Reference:
-        componentName: Scrollbar
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: ScrView
-      Reference:
-        componentName: ScrollRect
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
+          endPluralTxt: es
     - TailName: Drd
       Reference:
         componentName: Dropdown
@@ -105,9 +57,51 @@ MonoBehaviour:
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
-    - TailName: TmpTxt
+    - TailName: Img
       Reference:
-        componentName: TMP_Text
+        componentName: Image
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: NodePool
+      Reference:
+        componentName: NodePool
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: RawImg
+      Reference:
+        componentName: RawImage
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: RectTrans
+      Reference:
+        componentName: RectTransform
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: es
+    - TailName: ScrBar
+      Reference:
+        componentName: Scrollbar
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: ScrView
+      Reference:
+        componentName: ScrollRect
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: Sld
+      Reference:
+        componentName: Slider
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: Tgl
+      Reference:
+        componentName: Toggle
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
@@ -123,15 +117,45 @@ MonoBehaviour:
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
-    - TailName: BtnPlus
+    - TailName: TmpTxt
       Reference:
-        componentName: ButtonPlus
+        componentName: TMP_Text
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: Trans
+      Reference:
+        componentName: Transform
         pluralize:
           endRemoveCount: 0
           endPluralTxt: es
-    - TailName: NodePool
+    - TailName: Txt
       Reference:
-        componentName: NodePool
+        componentName: Text
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: CGroup
+      Reference:
+        componentName: CanvasGroup
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: BoxCol
+      Reference:
+        componentName: BoxCollider
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: MeshCol
+      Reference:
+        componentName: MeshCollider
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: Go
+      Reference:
+        componentName: GameObject
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s

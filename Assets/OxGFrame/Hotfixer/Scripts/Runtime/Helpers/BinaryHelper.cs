@@ -20,14 +20,14 @@ namespace OxGFrame.Hotfixer
             // Encrypt
             for (int i = 0; i < data.Length; i++)
             {
-                data[i] ^= HotfixConfig.CIPHER << 1;
+                data[i] ^= (byte)(HotfixSettings.settings.cipher << 1);
             }
 
             // Write data with header
             int pos = 0;
             byte[] dataWithHeader = new byte[data.Length + 2];
             // Write header (non-encrypted)
-            WriteInt16(HotfixConfig.CIPHER_HEADER, dataWithHeader, ref pos);
+            WriteInt16(HotfixSettings.CIPHER_HEADER, dataWithHeader, ref pos);
             Buffer.BlockCopy(data, 0, dataWithHeader, pos, data.Length);
             writeBuffer = dataWithHeader;
             return writeBuffer;
@@ -40,7 +40,7 @@ namespace OxGFrame.Hotfixer
 
             // Read header (non-encrypted)
             var header = ReadInt16(data, ref pos);
-            if (header == HotfixConfig.CIPHER_HEADER)
+            if (header == HotfixSettings.CIPHER_HEADER)
             {
                 info.type = ConfigFileType.Bytes;
 
@@ -50,12 +50,12 @@ namespace OxGFrame.Hotfixer
                 // Decrypt
                 for (int i = 0; i < dataWithoutHeader.Length; i++)
                 {
-                    dataWithoutHeader[i] ^= HotfixConfig.CIPHER << 1;
+                    dataWithoutHeader[i] ^= (byte)(HotfixSettings.settings.cipher << 1);
                 }
 
                 // To string
                 info.content = Encoding.UTF8.GetString(dataWithoutHeader);
-                Debug.Log($"[Source is Cipher] Check -> {HotfixConfig.HOTFIX_DLL_CFG_NAME}");
+                Debug.Log($"[Source is Cipher] Check -> {HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION}");
             }
             else
             {
@@ -63,7 +63,7 @@ namespace OxGFrame.Hotfixer
 
                 // To string
                 info.content = Encoding.UTF8.GetString(data);
-                Debug.Log($"[Source is Plaintext] Check -> {HotfixConfig.HOTFIX_DLL_CFG_NAME}");
+                Debug.Log($"[Source is Plaintext] Check -> {HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION}");
             }
 
             return info;

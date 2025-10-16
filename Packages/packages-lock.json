@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "73654e76d28386dbc7766f803e2cb7a243e331e6"
+      "hash": "01754c8fb47bd49697b3428993109e7a972a7968"
     },
     "com.cysharp.unitask": {
       "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
@@ -35,7 +35,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "0ebd6634bfdeac752616cd06db4dd1124ceb016e"
+      "hash": "943213bbfc6018b62e4bbac59041e1bdc39f26db"
     },
     "com.michaelo.oxgkit.loggingsystem": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts",
@@ -44,14 +44,14 @@
       "dependencies": {
         "com.domybest.lwmybox": "https://github.com/michael811125/LWMyBox.git"
       },
-      "hash": "1096a8ee633ef64ce884c5c2608e9d21fd3d5df3"
+      "hash": "943213bbfc6018b62e4bbac59041e1bdc39f26db"
     },
     "com.michaelo.oxgkit.saversystem": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "0ebd6634bfdeac752616cd06db4dd1124ceb016e"
+      "hash": "943213bbfc6018b62e4bbac59041e1bdc39f26db"
     },
     "com.michaelo.oxgkit.timesystem": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/TimeSystem/Scripts",
@@ -61,7 +61,7 @@
         "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
         "com.michaelo.oxgkit.loggingsystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts"
       },
-      "hash": "0ebd6634bfdeac752616cd06db4dd1124ceb016e"
+      "hash": "943213bbfc6018b62e4bbac59041e1bdc39f26db"
     },
     "com.michaelo.oxgkit.utilities": {
       "version": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts",
@@ -72,7 +72,7 @@
         "com.domybest.lwmybox": "https://github.com/michael811125/LWMyBox.git",
         "com.michaelo.oxgkit.loggingsystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts"
       },
-      "hash": "0ebd6634bfdeac752616cd06db4dd1124ceb016e"
+      "hash": "943213bbfc6018b62e4bbac59041e1bdc39f26db"
     },
     "com.unity.2d.animation": {
       "version": "9.2.0",

@@ -177,7 +177,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     case FileOperationType.None:
                         {
-                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
                             if (cryptogramSettings != null)
                             {
                                 this._dummySize = cryptogramSettings.dummySize;
@@ -284,7 +284,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     case FileOperationType.None:
                         {
-                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
                             if (cryptogramSettings != null)
                             {
                                 this._key = cryptogramSettings.xorKey;
@@ -395,7 +395,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     case FileOperationType.None:
                         {
-                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
                             if (cryptogramSettings != null)
                             {
                                 this._hkey = cryptogramSettings.hXorKey;
@@ -514,7 +514,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     case FileOperationType.None:
                         {
-                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
                             if (cryptogramSettings != null)
                             {
                                 this._hKey = cryptogramSettings.hXorPlusKey;
@@ -632,7 +632,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     case FileOperationType.None:
                         {
-                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
                             if (cryptogramSettings != null)
                             {
                                 this._key = cryptogramSettings.aesKey;
@@ -746,7 +746,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     case FileOperationType.None:
                         {
-                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
                             if (cryptogramSettings != null)
                             {
                                 this._key = cryptogramSettings.chacha20Key;
@@ -859,7 +859,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     case FileOperationType.None:
                         {
-                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
                             if (cryptogramSettings != null)
                             {
                                 this._key = cryptogramSettings.xxteaKey;
@@ -968,7 +968,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     case FileOperationType.None:
                         {
-                            var cryptogramSettings = CryptogramUtility.CryptogramSettingSetup.GetCryptogramSetting();
+                            var cryptogramSettings = CryptogramUtility.CryptogramSettingsSetup.GetSettings();
                             if (cryptogramSettings != null)
                             {
                                 this._key = cryptogramSettings.offsetXorKey;
