@@ -1,4 +1,5 @@
 ﻿using OxGFrame.AssetLoader.Bundle;
+using OxGFrame.AssetLoader.Utility;
 using System;
 using System.Linq;
 using UnityEditor;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace OxGFrame.AssetLoader.Editor
 {
-    public class CryptogramSettingWindow : EditorWindow
+    public class CryptogramSettingsWindow : EditorWindow
     {
         public enum CryptogramType
         {
@@ -20,18 +21,18 @@ namespace OxGFrame.AssetLoader.Editor
             OffsetXOR
         }
 
-        private static CryptogramSettingWindow _instance = null;
-        internal static CryptogramSettingWindow GetInstance()
+        private static CryptogramSettingsWindow _instance = null;
+        internal static CryptogramSettingsWindow GetInstance()
         {
             if (_instance == null)
-                _instance = GetWindow<CryptogramSettingWindow>();
+                _instance = GetWindow<CryptogramSettingsWindow>();
             return _instance;
         }
 
         [SerializeField]
         public CryptogramType cryptogramType;
 
-        private CryptogramSetting _setting;
+        private CryptogramSettings _settings;
         private bool _isDirty = false;
 
         internal static string projectPath;
@@ -39,14 +40,14 @@ namespace OxGFrame.AssetLoader.Editor
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
-        [MenuItem("YooAsset/" + "OxGFrame Cryptogram Setting With YooAsset", false, 999)]
+        [MenuItem("YooAsset/" + "OxGFrame Cryptogram Settings With YooAsset", false, 999)]
         public static void ShowWindow()
         {
             projectPath = Application.dataPath;
-            keySaver = $"{projectPath}_{nameof(CryptogramSettingWindow)}";
+            keySaver = $"{projectPath}_{nameof(CryptogramSettingsWindow)}";
 
             _instance = null;
-            GetInstance().titleContent = new GUIContent("Cryptogram Setting");
+            GetInstance().titleContent = new GUIContent("Cryptogram Settings");
             GetInstance().Show();
             GetInstance().minSize = _windowSize;
         }
@@ -54,7 +55,7 @@ namespace OxGFrame.AssetLoader.Editor
         private void OnEnable()
         {
             this._isDirty = false;
-            this._setting = EditorTool.LoadSettingData<CryptogramSetting>();
+            this._settings = AssetUtility.LoadSettingsData<CryptogramSettings>();
             this._LoadSettingsData();
             this.cryptogramType = (CryptogramType)Convert.ToInt32(EditorStorage.GetData(keySaver, "cryptogramType", "0"));
         }
@@ -81,37 +82,37 @@ namespace OxGFrame.AssetLoader.Editor
         private void _LoadSettingsData()
         {
             // Offset
-            this.dummySize = this._setting.dummySize;
+            this.dummySize = this._settings.dummySize;
 
             // XOR
-            this.xorKey = this._setting.xorKey;
+            this.xorKey = this._settings.xorKey;
 
             // HT2XOR
-            this.hXorKey = this._setting.hXorKey;
-            this.tXorKey = this._setting.tXorKey;
-            this.jXorKey = this._setting.jXorKey;
+            this.hXorKey = this._settings.hXorKey;
+            this.tXorKey = this._settings.tXorKey;
+            this.jXorKey = this._settings.jXorKey;
 
             // HT2XORPlus
-            this.hXorPlusKey = this._setting.hXorPlusKey;
-            this.tXorPlusKey = this._setting.tXorPlusKey;
-            this.j1XorPlusKey = this._setting.j1XorPlusKey;
-            this.j2XorPlusKey = this._setting.j2XorPlusKey;
+            this.hXorPlusKey = this._settings.hXorPlusKey;
+            this.tXorPlusKey = this._settings.tXorPlusKey;
+            this.j1XorPlusKey = this._settings.j1XorPlusKey;
+            this.j2XorPlusKey = this._settings.j2XorPlusKey;
 
             // AES
-            this.aesKey = this._setting.aesKey;
-            this.aesIv = this._setting.aesIv;
+            this.aesKey = this._settings.aesKey;
+            this.aesIv = this._settings.aesIv;
 
             // ChaCha20
-            this.chacha20Key = this._setting.chacha20Key;
-            this.chacha20Nonce = this._setting.chacha20Nonce;
-            this.chacha20Counter = this._setting.chacha20Counter;
+            this.chacha20Key = this._settings.chacha20Key;
+            this.chacha20Nonce = this._settings.chacha20Nonce;
+            this.chacha20Counter = this._settings.chacha20Counter;
 
             // XXTEA
-            this.xxteaKey = this._setting.xxteaKey;
+            this.xxteaKey = this._settings.xxteaKey;
 
             // OffsetXOR
-            this.offsetXorKey = this._setting.offsetXorKey;
-            this.offsetXorDummySize = this._setting.offsetXorDummySize;
+            this.offsetXorKey = this._settings.offsetXorKey;
+            this.offsetXorDummySize = this._settings.offsetXorDummySize;
         }
 
         private void _CryptogramType(CryptogramType cryptogramType)
@@ -456,45 +457,45 @@ namespace OxGFrame.AssetLoader.Editor
             switch (cryptogramType)
             {
                 case CryptogramType.Offset:
-                    this._setting.dummySize = this.dummySize;
+                    this._settings.dummySize = this.dummySize;
 
                     this._isDirty = false;
-                    EditorUtility.SetDirty(this._setting);
+                    EditorUtility.SetDirty(this._settings);
                     AssetDatabase.SaveAssets();
 
-                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [OFFSET] Setting.", "OK");
+                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [OFFSET] Settings.", "OK");
                     break;
                 case CryptogramType.XOR:
-                    this._setting.xorKey = (byte)this.xorKey;
+                    this._settings.xorKey = (byte)this.xorKey;
 
                     this._isDirty = false;
-                    EditorUtility.SetDirty(this._setting);
+                    EditorUtility.SetDirty(this._settings);
                     AssetDatabase.SaveAssets();
 
-                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [XOR] Setting.", "OK");
+                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [XOR] Settings.", "OK");
                     break;
                 case CryptogramType.HT2XOR:
-                    this._setting.hXorKey = (byte)this.hXorKey;
-                    this._setting.tXorKey = (byte)this.tXorKey;
-                    this._setting.jXorKey = (byte)this.jXorKey;
+                    this._settings.hXorKey = (byte)this.hXorKey;
+                    this._settings.tXorKey = (byte)this.tXorKey;
+                    this._settings.jXorKey = (byte)this.jXorKey;
 
                     this._isDirty = false;
-                    EditorUtility.SetDirty(this._setting);
+                    EditorUtility.SetDirty(this._settings);
                     AssetDatabase.SaveAssets();
 
-                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [Head-Tail 2 XOR] Setting.", "OK");
+                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [Head-Tail 2 XOR] Settings.", "OK");
                     break;
                 case CryptogramType.HT2XORPlus:
-                    this._setting.hXorPlusKey = (byte)this.hXorPlusKey;
-                    this._setting.tXorPlusKey = (byte)this.tXorPlusKey;
-                    this._setting.j1XorPlusKey = (byte)this.j1XorPlusKey;
-                    this._setting.j2XorPlusKey = (byte)this.j2XorPlusKey;
+                    this._settings.hXorPlusKey = (byte)this.hXorPlusKey;
+                    this._settings.tXorPlusKey = (byte)this.tXorPlusKey;
+                    this._settings.j1XorPlusKey = (byte)this.j1XorPlusKey;
+                    this._settings.j2XorPlusKey = (byte)this.j2XorPlusKey;
 
                     this._isDirty = false;
-                    EditorUtility.SetDirty(this._setting);
+                    EditorUtility.SetDirty(this._settings);
                     AssetDatabase.SaveAssets();
 
-                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [Head-Tail 2 XOR Plus] Setting.", "OK");
+                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [Head-Tail 2 XOR Plus] Settings.", "OK");
                     break;
                 case CryptogramType.AES:
                     if (string.IsNullOrEmpty(this.aesKey) || string.IsNullOrEmpty(this.aesIv))
@@ -503,14 +504,14 @@ namespace OxGFrame.AssetLoader.Editor
                         break;
                     }
 
-                    this._setting.aesKey = this.aesKey;
-                    this._setting.aesIv = this.aesIv;
+                    this._settings.aesKey = this.aesKey;
+                    this._settings.aesIv = this.aesIv;
 
                     this._isDirty = false;
-                    EditorUtility.SetDirty(this._setting);
+                    EditorUtility.SetDirty(this._settings);
                     AssetDatabase.SaveAssets();
 
-                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [AES] Setting.", "OK");
+                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [AES] Settings.", "OK");
                     break;
                 case CryptogramType.ChaCha20:
                     if (string.IsNullOrEmpty(this.chacha20Key) || string.IsNullOrEmpty(this.chacha20Nonce))
@@ -519,15 +520,15 @@ namespace OxGFrame.AssetLoader.Editor
                         break;
                     }
 
-                    this._setting.chacha20Key = this.chacha20Key;
-                    this._setting.chacha20Nonce = this.chacha20Nonce;
-                    this._setting.chacha20Counter = this.chacha20Counter;
+                    this._settings.chacha20Key = this.chacha20Key;
+                    this._settings.chacha20Nonce = this.chacha20Nonce;
+                    this._settings.chacha20Counter = this.chacha20Counter;
 
                     this._isDirty = false;
-                    EditorUtility.SetDirty(this._setting);
+                    EditorUtility.SetDirty(this._settings);
                     AssetDatabase.SaveAssets();
 
-                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [ChaCha20] Setting.", "OK");
+                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [ChaCha20] Settings.", "OK");
                     break;
                 case CryptogramType.XXTEA:
                     if (string.IsNullOrEmpty(this.xxteaKey))
@@ -536,23 +537,23 @@ namespace OxGFrame.AssetLoader.Editor
                         break;
                     }
 
-                    this._setting.xxteaKey = this.xxteaKey;
+                    this._settings.xxteaKey = this.xxteaKey;
 
                     this._isDirty = false;
-                    EditorUtility.SetDirty(this._setting);
+                    EditorUtility.SetDirty(this._settings);
                     AssetDatabase.SaveAssets();
 
-                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [XXTEA] Setting.", "OK");
+                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [XXTEA] Settings.", "OK");
                     break;
                 case CryptogramType.OffsetXOR:
-                    this._setting.offsetXorKey = (byte)this.offsetXorKey;
-                    this._setting.offsetXorDummySize = this.offsetXorDummySize;
+                    this._settings.offsetXorKey = (byte)this.offsetXorKey;
+                    this._settings.offsetXorDummySize = this.offsetXorDummySize;
 
                     this._isDirty = false;
-                    EditorUtility.SetDirty(this._setting);
+                    EditorUtility.SetDirty(this._settings);
                     AssetDatabase.SaveAssets();
 
-                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [OffsetXOR] Setting.", "OK");
+                    if (isShowDialog) EditorUtility.DisplayDialog("Crytogram Message", "Saved [OffsetXOR] Settings.", "OK");
                     break;
             }
         }

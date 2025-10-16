@@ -980,7 +980,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                     BuildTool.BuildBundles(string.IsNullOrEmpty(this._tempJsonInput) ? this.jsonInput : this._tempJsonInput, this.productName, this.appVersion, false, this.isClearOutputPath);
                     this._tempJsonInput = null;
                     EditorUtility.DisplayDialog("Build Message", "All bundles builded.", "OK");
-                    string exportFolder = Path.Combine(EditorTools.GetProjectPath(), "ExportBundles", PatchSetting.setting.rootFolderName);
+                    string exportFolder = Path.Combine(EditorTools.GetProjectPath(), "ExportBundles", PatchSettings.settings.rootFolderName);
                     if (this.autoReveal) EditorUtility.RevealInFinder(exportFolder);
                 }
                 catch (Exception ex)

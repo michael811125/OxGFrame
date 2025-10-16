@@ -38,7 +38,7 @@ namespace OxGFrame.AssetLoader.Editor
             string jsonCfg = JsonConvert.SerializeObject(cfg, Formatting.Indented);
 
             // 寫入配置文件
-            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION}";
+            string appCfgFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.APP_CFG_EXTENSION}";
             string writePath = Path.Combine(outputPath, appCfgFileName);
             WriteTxt(jsonCfg, writePath);
 
@@ -78,12 +78,12 @@ namespace OxGFrame.AssetLoader.Editor
             string jsonCfg = JsonConvert.SerializeObject(appCfg, Formatting.Indented);
 
             // 寫入配置文件
-            string appCfgFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION}";
+            string appCfgFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.APP_CFG_EXTENSION}";
             string writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}", appCfgFileName);
             WriteTxt(jsonCfg, writePath);
 
             // 寫入配置文件 (BAK)
-            string appCfgBakFileName = $"{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_BAK_EXTENSION}";
+            string appCfgBakFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.APP_CFG_BAK_EXTENSION}";
             writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}" + (semanticRule.PATCH ? $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}.{appVersion.Split('.')[2]}" : $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}"), appCfgBakFileName);
             WriteTxt(jsonCfg, writePath);
             #endregion
@@ -93,12 +93,12 @@ namespace OxGFrame.AssetLoader.Editor
             jsonCfg = JsonConvert.SerializeObject(patchCfg, Formatting.Indented);
 
             // 寫入配置文件
-            string patchCfgFileName = $"{PatchSetting.setting.patchCfgName}{PatchSetting.PATCH_CFG_EXTENSION}";
+            string patchCfgFileName = $"{PatchSettings.settings.patchCfgName}{PatchSettings.PATCH_CFG_EXTENSION}";
             writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}", patchCfgFileName);
             WriteTxt(jsonCfg, writePath);
 
             // 寫入配置文件 (BAK)
-            string patchCfgBakFileName = $"{PatchSetting.setting.patchCfgName}{PatchSetting.PATCH_CFG_BAK_EXTENSION}";
+            string patchCfgBakFileName = $"{PatchSettings.settings.patchCfgName}{PatchSettings.PATCH_CFG_BAK_EXTENSION}";
             writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}" + (semanticRule.PATCH ? $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}.{appVersion.Split('.')[2]}" : $@"/v{appVersion.Split('.')[0]}.{appVersion.Split('.')[1]}"), patchCfgBakFileName);
             WriteTxt(jsonCfg, writePath);
             #endregion
@@ -178,17 +178,17 @@ namespace OxGFrame.AssetLoader.Editor
 
             IEnumerable<string> texts = new string[]
             {
-                @$"# {PatchSetting.BUNDLE_IP} = First CDN Server IP or Domain (Plan A)",
-                @$"# {PatchSetting.BUNDLE_FALLBACK_IP} = Second CDN Server IP or Domain (Plan B)",
-                @$"# {PatchSetting.STORE_LINK} = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID)",
-                @$"# {PatchSetting.STORE_LINK} = Apple Store Link (https://apps.apple.com/app/idYOUR_ID)",
+                @$"# {PatchSettings.BUNDLE_IP} = First CDN Server IP or Domain (Plan A)",
+                @$"# {PatchSettings.BUNDLE_FALLBACK_IP} = Second CDN Server IP or Domain (Plan B)",
+                @$"# {PatchSettings.STORE_LINK} = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID)",
+                @$"# {PatchSettings.STORE_LINK} = Apple Store Link (https://apps.apple.com/app/idYOUR_ID)",
                 "",
-                $"{PatchSetting.BUNDLE_IP} {bundleIp}",
-                $"{PatchSetting.BUNDLE_FALLBACK_IP} {bundleFallbackIp}",
-                $"{PatchSetting.STORE_LINK} {storeLink}",
+                $"{PatchSettings.BUNDLE_IP} {bundleIp}",
+                $"{PatchSettings.BUNDLE_FALLBACK_IP} {bundleFallbackIp}",
+                $"{PatchSettings.STORE_LINK} {storeLink}",
             };
 
-            string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.BUNDLE_URL_CFG_EXTENSION}";
+            string bundleUrlFileName = $"{PatchSettings.settings.bundleUrlCfgName}{PatchSettings.BUNDLE_URL_CFG_EXTENSION}";
             string fullOutputPath = Path.Combine(outputPath, bundleUrlFileName);
 
             string content = string.Empty;
@@ -460,8 +460,8 @@ namespace OxGFrame.AssetLoader.Editor
                 if (string.IsNullOrEmpty(dlcVersion)) dlcVersion = $"{newestVersion}";
 
                 string destFullDir;
-                if (withoutPlatform) destFullDir = Path.GetFullPath(outputPath + $@"/{productName}" + $@"/{PatchSetting.setting.dlcFolderName}" + $@"/{packageName}" + $@"/{dlcVersion}");
-                else destFullDir = Path.GetFullPath(outputPath + $@"/{productName}" + $@"/{platform}" + $@"/{PatchSetting.setting.dlcFolderName}" + $@"/{packageName}" + $@"/{dlcVersion}");
+                if (withoutPlatform) destFullDir = Path.GetFullPath(outputPath + $@"/{productName}" + $@"/{PatchSettings.settings.dlcFolderName}" + $@"/{packageName}" + $@"/{dlcVersion}");
+                else destFullDir = Path.GetFullPath(outputPath + $@"/{productName}" + $@"/{platform}" + $@"/{PatchSettings.settings.dlcFolderName}" + $@"/{packageName}" + $@"/{dlcVersion}");
                 BundleUtility.CopyFolderRecursively(newestVersionPath, destFullDir);
 
                 {
@@ -496,7 +496,7 @@ namespace OxGFrame.AssetLoader.Editor
             // 版號規則
             cfg.SEMANTIC_RULE = semanticRule;
 
-            Debug.Log($"【Generate】{PatchSetting.setting.appCfgName}{PatchSetting.APP_CFG_EXTENSION} Completes.");
+            Debug.Log($"【Generate】{PatchSettings.settings.appCfgName}{PatchSettings.APP_CFG_EXTENSION} Completes.");
 
             return cfg;
         }

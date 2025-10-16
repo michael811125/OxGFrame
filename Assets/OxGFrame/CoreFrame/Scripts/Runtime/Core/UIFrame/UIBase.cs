@@ -3,6 +3,7 @@ using MyBox;
 using OxGFrame.AssetLoader;
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace OxGFrame.CoreFrame.UIFrame
@@ -23,8 +24,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         /// 定義 UI 類型, 用於取決於要新增至 UIRoot 中哪個對應的節點
         /// </summary>
+        [FormerlySerializedAs("uiSetting")]
         [Tooltip("UI Settings")]
-        public UISetting uiSetting = new UISetting();
+        public UISettings uiSettings = new UISettings();
 
         /// <summary>
         /// 是否自動生成 Mask
@@ -35,8 +37,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         ///  Mask 設定
         /// </summary>
+        [FormerlySerializedAs("maskSetting")]
         [ConditionalField(nameof(autoMask)), Tooltip("Mask Settings")]
-        public MaskSetting maskSetting = new MaskSetting();
+        public MaskSettings maskSettings = new MaskSettings();
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -48,11 +51,11 @@ namespace OxGFrame.CoreFrame.UIFrame
                 this.reverseChanges = false;
 
             if (this.reverseChanges ||
-                this.uiSetting.stack ||
-                this.uiSetting.allowCloseStackByStack)
+                this.uiSettings.stack ||
+                this.uiSettings.allowCloseStackByStack)
             {
-                this.uiSetting.whenCloseAllToSkip = false;
-                this.uiSetting.whenHideAllToSkip = false;
+                this.uiSettings.whenCloseAllToSkip = false;
+                this.uiSettings.whenHideAllToSkip = false;
             }
         }
 #endif
@@ -237,7 +240,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         private void _AddMask()
         {
-            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasName).uiMaskManager.AddMask(this.transform, this.maskSetting.color, this.maskSetting.sprite, this.maskSetting.material, this.MaskEvent);
+            UIManager.GetInstance().GetUICanvas(this.uiSettings.canvasName).uiMaskManager.AddMask(this.transform, this.maskSettings.color, this.maskSettings.sprite, this.maskSettings.material, this.MaskEvent);
         }
 
         /// <summary>
@@ -245,7 +248,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         private void _RemoveMask()
         {
-            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasName).uiMaskManager.RemoveMask(this.transform);
+            UIManager.GetInstance().GetUICanvas(this.uiSettings.canvasName).uiMaskManager.RemoveMask(this.transform);
         }
 
         /// <summary>
@@ -253,7 +256,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         public void Freeze()
         {
-            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasName).uiFreezeManager.AddFreeze(this.transform);
+            UIManager.GetInstance().GetUICanvas(this.uiSettings.canvasName).uiFreezeManager.AddFreeze(this.transform);
         }
 
         /// <summary>
@@ -261,7 +264,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// </summary>
         public void UnFreeze()
         {
-            UIManager.GetInstance().GetUICanvas(this.uiSetting.canvasName).uiFreezeManager.RemoveFreeze(this.transform);
+            UIManager.GetInstance().GetUICanvas(this.uiSettings.canvasName).uiFreezeManager.RemoveFreeze(this.transform);
         }
 
         /// <summary>
@@ -290,7 +293,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
         protected virtual void MaskEvent()
         {
-            if (this.maskSetting.isClickMaskToClose)
+            if (this.maskSettings.isClickMaskToClose)
                 UIManager.GetInstance().Close(this.assetName);
         }
 

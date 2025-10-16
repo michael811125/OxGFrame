@@ -9,7 +9,7 @@ namespace OxGFrame.AssetLoader
     {
         public static class YooAssetSettingsData
         {
-            #region Setting Fields
+            #region Settings Fields
             /// <summary>
             /// 获取 PackageManifestPrefix
             /// </summary>

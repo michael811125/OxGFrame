@@ -167,7 +167,7 @@ namespace OxGFrame.AssetLoader.Editor
                 BundleHelper.ExportBundleUrlConfig(this.bundleIp, this.bundleFallbackIp, this.storeLink, outputPath, true);
                 EditorUtility.DisplayDialog("Process Message", "Export [Cipher] BundleUrlConfig To StreamingAssets.", "OK");
                 AssetDatabase.Refresh();
-                string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.BUNDLE_URL_CFG_EXTENSION}";
+                string bundleUrlFileName = $"{PatchSettings.settings.bundleUrlCfgName}{PatchSettings.BUNDLE_URL_CFG_EXTENSION}";
                 if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{bundleUrlFileName}");
             }
             GUI.backgroundColor = bc;
@@ -178,7 +178,7 @@ namespace OxGFrame.AssetLoader.Editor
                 BundleHelper.ExportBundleUrlConfig(this.bundleIp, this.bundleFallbackIp, this.storeLink, outputPath, false);
                 EditorUtility.DisplayDialog("Process Message", "Export [Plaintext] BundleUrlConfig To StreamingAssets.", "OK");
                 AssetDatabase.Refresh();
-                string bundleUrlFileName = $"{PatchSetting.setting.bundleUrlCfgName}{PatchSetting.BUNDLE_URL_CFG_EXTENSION}";
+                string bundleUrlFileName = $"{PatchSettings.settings.bundleUrlCfgName}{PatchSettings.BUNDLE_URL_CFG_EXTENSION}";
                 if (this.autoReveal) EditorUtility.RevealInFinder($"{outputPath}/{bundleUrlFileName}");
             }
             GUI.backgroundColor = bc;

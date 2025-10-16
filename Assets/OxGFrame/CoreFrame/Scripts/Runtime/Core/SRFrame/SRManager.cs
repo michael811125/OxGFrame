@@ -262,7 +262,7 @@ namespace OxGFrame.CoreFrame.SRFrame
 
                 // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
                 if (!forceCloseExcluded &&
-                    srBase.srSetting.whenCloseAllToSkip)
+                    srBase.srSettings.whenCloseAllToSkip)
                     continue;
 
                 this._Close(assetName, disabledPreClose, forceDestroy, true);
@@ -401,7 +401,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                     continue;
 
                 // 如有啟用 HideAll 需跳過開關, 則不列入關閉執行
-                if (!forceHideExcluded && srBase.srSetting.whenHideAllToSkip)
+                if (!forceHideExcluded && srBase.srSettings.whenHideAllToSkip)
                     continue;
 
                 this._Hide(assetName);

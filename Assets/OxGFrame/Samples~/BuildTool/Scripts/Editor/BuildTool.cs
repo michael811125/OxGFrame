@@ -959,7 +959,7 @@ namespace OxGFrame.Extensions.BuildTool.Editor
 
                 // 輸出 CDN 文件夾
                 string sourceFolder = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
-                string exportFolder = Path.Combine(EditorTools.GetProjectPath(), "ExportBundles", PatchSetting.setting.rootFolderName);
+                string exportFolder = Path.Combine(EditorTools.GetProjectPath(), "ExportBundles", PatchSettings.settings.rootFolderName);
                 ExportBundles(sourceFolder, exportFolder, bundleMap, productName, buildVersion, isClearOutputPath);
             }
             #endregion

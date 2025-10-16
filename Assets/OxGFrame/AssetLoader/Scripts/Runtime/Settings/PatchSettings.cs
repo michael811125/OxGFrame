@@ -1,10 +1,11 @@
-﻿using OxGKit.LoggingSystem;
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace OxGFrame.AssetLoader
 {
-    public class PatchSetting : ScriptableObject
+    [MovedFrom("PatchSetting")]
+    public class PatchSettings : ScriptableObject
     {
         #region Common
         public const string META_FILE_EXTENSION = ".meta";
@@ -85,36 +86,37 @@ namespace OxGFrame.AssetLoader
         public string dlcFolderName = "DLC";
         #endregion
 
-        private static PatchSetting _setting = null;
-        public static PatchSetting setting
+        private static PatchSettings _settings = null;
+        public static PatchSettings settings
         {
             get
             {
-                if (_setting == null) _LoadSettingData();
-                return _setting;
+                if (_settings == null)
+                    _LoadSettingsData();
+                return _settings;
             }
         }
 
         /// <summary>
         /// 加載配置文件
         /// </summary>
-        private static void _LoadSettingData()
+        private static void _LoadSettingsData()
         {
-            _setting = Resources.Load<PatchSetting>(nameof(PatchSetting));
-            if (_setting == null)
+            _settings = Resources.Load<PatchSettings>(nameof(PatchSettings));
+            if (_settings == null)
             {
-                Logging.PrintInfo<Logger>("[OxGFrame.AssetLoader] use default setting.");
-                _setting = ScriptableObject.CreateInstance<PatchSetting>();
+                Debug.Log("[OxGFrame.AssetLoader] use default settings.");
+                _settings = ScriptableObject.CreateInstance<PatchSettings>();
             }
             else
             {
-                Logging.PrintInfo<Logger>("[OxGFrame.AssetLoader] use user setting.");
+                Debug.Log("[OxGFrame.AssetLoader] use user settings.");
             }
         }
 
 #if UNITY_EDITOR
-        [UnityEditor.MenuItem("Assets/Create/OxGFrame/Create Settings/Create Patch Setting in Resources", priority = 1000)]
-        private static void _CreatePatchSetting()
+        [UnityEditor.MenuItem("Assets/Create/OxGFrame/Create Settings/Create Patch Settings in Resources", priority = 1000)]
+        private static void _CreateSettingsData()
         {
             string selectedPath = _GetSelectedPathOrFallback();
 
@@ -125,19 +127,19 @@ namespace OxGFrame.AssetLoader
                 UnityEditor.AssetDatabase.Refresh();
             }
 
-            string assetPath = Path.Combine(folderPath, $"{nameof(PatchSetting)}.asset");
+            string assetPath = Path.Combine(folderPath, $"{nameof(PatchSettings)}.asset");
 
             // 檢查是否已經存在
-            PatchSetting existingAsset = UnityEditor.AssetDatabase.LoadAssetAtPath<PatchSetting>(assetPath);
+            PatchSettings existingAsset = UnityEditor.AssetDatabase.LoadAssetAtPath<PatchSettings>(assetPath);
             if (existingAsset != null)
             {
-                UnityEditor.EditorUtility.DisplayDialog("Already Exists", $"{nameof(PatchSetting)}.asset already exists.", "OK");
+                UnityEditor.EditorUtility.DisplayDialog("Already Exists", $"{nameof(PatchSettings)}.asset already exists.", "OK");
                 UnityEditor.Selection.activeObject = existingAsset;
                 return;
             }
 
-            // 建立新的 PatchSetting
-            var asset = ScriptableObject.CreateInstance<PatchSetting>();
+            // 建立新的 Settings
+            var asset = ScriptableObject.CreateInstance<PatchSettings>();
             UnityEditor.AssetDatabase.CreateAsset(asset, assetPath.Replace("\\", "/"));
             UnityEditor.AssetDatabase.SaveAssets();
             UnityEditor.AssetDatabase.Refresh();
