@@ -92,7 +92,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                 try
                 {
-                    await this._PreloadAssetCoreAsync<T>(assetName, maxRetryCount);
+                    await this._PreloadAssetCoreAsync<T>(assetName, progression, maxRetryCount);
                     completionSource.TrySetResult();
 
                     // 載入完成後更新進度
@@ -118,9 +118,10 @@ namespace OxGFrame.AssetLoader.Cacher
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="assetName"></param>
+        /// <param name="progression"></param>
         /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        private async UniTask _PreloadAssetCoreAsync<T>(string assetName, byte maxRetryCount) where T : Object
+        private async UniTask _PreloadAssetCoreAsync<T>(string assetName, Progression progression, byte maxRetryCount) where T : Object
         {
             bool loaded = false;
             ResourcePack pack = new ResourcePack();
@@ -133,6 +134,10 @@ namespace OxGFrame.AssetLoader.Cacher
                 {
                     if (req.isDone)
                     {
+                        // 確定資源是否存在
+                        if (req.asset == null)
+                            break;
+
                         loaded = true;
                         pack.SetPack(assetName, req.asset);
                         break;
@@ -164,9 +169,8 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 this.GetRetryCounter(assetName).DelRetryCount();
-
-                // 遞迴 retry
-                await this._PreloadAssetCoreAsync<T>(assetName, maxRetryCount);
+                this.TryRemoveLoadingTask(assetName);
+                await this.PreloadAssetAsync<T>(new string[] { assetName }, progression, maxRetryCount);
             }
         }
 
@@ -346,6 +350,10 @@ namespace OxGFrame.AssetLoader.Cacher
 
                     if (req.isDone)
                     {
+                        // 確定資源是否存在
+                        if (req.asset == null)
+                            break;
+
                         loaded = true;
                         pack.SetPack(assetName, req.asset);
                         break;
@@ -384,6 +392,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 this.GetRetryCounter(assetName).DelRetryCount();
+                this.TryRemoveLoadingTask(assetName);
                 return await this.LoadAssetAsync<T>(assetName, progression, maxRetryCount);
             }
         }

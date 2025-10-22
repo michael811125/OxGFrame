@@ -213,6 +213,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     }
 
                     this.GetRetryCounter(assetName).DelRetryCount();
+                    this.TryRemoveLoadingTask(assetName);
                     return await this.LoadSceneAsync(packageName, assetName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
                 }
             }
@@ -531,7 +532,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                 try
                 {
-                    await this._PreloadRawFileCoreAsync(packageName, assetName, priority, maxRetryCount);
+                    await this._PreloadRawFileCoreAsync(packageName, assetName, priority, progression, maxRetryCount);
                     completionSource.TrySetResult();
 
                     // 載入完成後更新進度
@@ -558,9 +559,10 @@ namespace OxGFrame.AssetLoader.Cacher
         /// <param name="packageName"></param>
         /// <param name="assetName"></param>
         /// <param name="priority"></param>
+        /// <param name="progression"></param>
         /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        private async UniTask _PreloadRawFileCoreAsync(string packageName, string assetName, uint priority, byte maxRetryCount)
+        private async UniTask _PreloadRawFileCoreAsync(string packageName, string assetName, uint priority, Progression progression, byte maxRetryCount)
         {
             bool loaded = false;
             BundlePack pack = new BundlePack();
@@ -612,9 +614,8 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 this.GetRetryCounter(assetName).DelRetryCount();
-
-                // 遞迴 retry
-                await this._PreloadRawFileCoreAsync(packageName, assetName, priority, maxRetryCount);
+                this.TryRemoveLoadingTask(assetName);
+                await this.PreloadRawFileAsync(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
             }
         }
 
@@ -859,6 +860,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 this.GetRetryCounter(assetName).DelRetryCount();
+                this.TryRemoveLoadingTask(assetName);
                 return await this.LoadRawFileAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
             }
         }
@@ -1053,7 +1055,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
                 try
                 {
-                    await this._PreloadAssetCoreAsync<T>(packageName, assetName, priority, maxRetryCount);
+                    await this._PreloadAssetCoreAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
                     completionSource.TrySetResult();
 
                     // 載入完成後更新進度
@@ -1081,9 +1083,10 @@ namespace OxGFrame.AssetLoader.Cacher
         /// <param name="packageName"></param>
         /// <param name="assetName"></param>
         /// <param name="priority"></param>
+        /// <param name="progression"></param>
         /// <param name="maxRetryCount"></param>
         /// <returns></returns>
-        private async UniTask _PreloadAssetCoreAsync<T>(string packageName, string assetName, uint priority, byte maxRetryCount) where T : Object
+        private async UniTask _PreloadAssetCoreAsync<T>(string packageName, string assetName, uint priority, Progression progression, byte maxRetryCount) where T : Object
         {
             bool loaded = false;
             BundlePack pack = new BundlePack();
@@ -1135,9 +1138,8 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 this.GetRetryCounter(assetName).DelRetryCount();
-
-                // 遞迴 retry
-                await this._PreloadAssetCoreAsync<T>(packageName, assetName, priority, maxRetryCount);
+                this.TryRemoveLoadingTask(assetName);
+                await this.PreloadAssetAsync<T>(packageName, new string[] { assetName }, priority, progression, maxRetryCount);
             }
         }
 
@@ -1382,6 +1384,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 }
 
                 this.GetRetryCounter(assetName).DelRetryCount();
+                this.TryRemoveLoadingTask(assetName);
                 return await this.LoadAssetAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
             }
         }
