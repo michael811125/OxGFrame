@@ -56,78 +56,117 @@ namespace OxGFrame.AssetLoader.Cacher
                     continue;
                 }
 
-                // 如果有進行 Loading 標記後, 直接 return
-                if (this.HasInLoadingFlag(assetName))
+                // 檢查是否有進行中的載入任務, 如果有就等待它完成
+                if (this.TryGetLoadingTask(assetName, out var existingTask))
                 {
-                    Logging.PrintWarning<Logger>($"Asset: {assetName} is loading...");
+                    Logging.Print<Logger>($"Asset: {assetName} is loading, waiting for existing task...");
+
+                    try
+                    {
+                        var source = (UniTaskCompletionSource)existingTask;
+                        await source.Task;
+
+                        // 等待完成後更新進度
+                        this.currentCount++;
+                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Logging.PrintError<Logger>($"【Preload】Asset: {assetName} failed: {ex.Message}");
+                    }
                     continue;
                 }
-
-                // Loading 標記
-                this.AddLoadingFlag(assetName);
 
                 // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
                     this.currentCount++;
                     progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                    this.RemoveLoadingFlag(assetName);
                     Logging.PrintWarning<Logger>($"【Preload】 => Current << {nameof(CacheResource)} >> Cache Count: {this.count}, asset: [{assetName}] already preloaded!!!");
                     continue;
                 }
 
-                bool loaded = false;
-                ResourcePack pack = new ResourcePack();
+                // 建立載入任務並加入緩存
+                var completionSource = new UniTaskCompletionSource();
+                this.TryAddLoadingTask(assetName, completionSource);
 
-                var req = Resources.LoadAsync<T>(assetName);
-                if (req != null)
+                try
                 {
-                    float lastCount = 0;
-                    do
-                    {
-                        this.currentCount += (req.progress - lastCount);
-                        lastCount = req.progress;
-                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+                    await this._PreloadAssetCoreAsync<T>(assetName, maxRetryCount);
+                    completionSource.TrySetResult();
 
-                        if (req.isDone)
-                        {
-                            loaded = true;
-                            pack.SetPack(assetName, req.asset);
-                            break;
-                        }
-                        await UniTask.Yield();
-                    } while (true);
+                    // 載入完成後更新進度
+                    this.currentCount++;
+                    progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
                 }
-
-                if (loaded)
+                catch (System.Exception ex)
                 {
-                    // skipping duplicate keys
-                    if (!this.HasInCache(assetName))
+                    completionSource.TrySetException(ex);
+                    Logging.PrintError<Logger>($"【Preload】Asset: {assetName} failed: {ex.Message}");
+                }
+                finally
+                {
+                    // 任務完成後移除
+                    this.TryRemoveLoadingTask(assetName);
+                    this.ProcessPendingUnloads(assetName, ProcessType.Asset, this._UnloadAssetCore);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 實際的預載入邏輯
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
+        private async UniTask _PreloadAssetCoreAsync<T>(string assetName, byte maxRetryCount) where T : Object
+        {
+            bool loaded = false;
+            ResourcePack pack = new ResourcePack();
+
+            var req = Resources.LoadAsync<T>(assetName);
+            if (req != null)
+            {
+                // 注意: 這裡不更新 currentCount, 因為進度由外層控制
+                do
+                {
+                    if (req.isDone)
                     {
-                        this._cacher.Add(assetName, pack);
-                        Logging.Print<Logger>($"【Preload】 => Current << {nameof(CacheResource)} >> Cache Count: {this.count}, asset: {assetName}");
+                        loaded = true;
+                        pack.SetPack(assetName, req.asset);
+                        break;
                     }
+                    await UniTask.Yield();
+                } while (true);
+            }
+
+            if (loaded)
+            {
+                // skipping duplicate keys
+                if (!this.HasInCache(assetName))
+                {
+                    this._cacher.Add(assetName, pack);
+                    Logging.Print<Logger>($"【Preload】 => Current << {nameof(CacheResource)} >> Cache Count: {this.count}, asset: {assetName}");
+                }
+            }
+            else
+            {
+                // Retry 邏輯
+                if (this.GetRetryCounter(assetName) == null)
+                {
+                    this.StartRetryCounter(assetName, maxRetryCount);
+                    Logging.Print<Logger>($"【Preload】 => << {nameof(CacheResource)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
                 }
                 else
                 {
-                    if (this.GetRetryCounter(assetName) == null)
-                    {
-                        this.StartRetryCounter(assetName, maxRetryCount);
-                        Logging.Print<Logger>($"【Preload】 => << {nameof(CacheResource)} >> Asset: {assetName} start doing retry. Max retry count: {maxRetryCount}");
-                    }
-                    else
-                    {
-                        Logging.Print<Logger>($"【Preload】 => << {nameof(CacheResource)} >> Asset: {assetName} doing retry. Remaining retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
-                    }
-
-                    this.RemoveLoadingFlag(assetName);
-                    this.GetRetryCounter(assetName).DelRetryCount();
-                    await this.PreloadAssetAsync<T>(new string[] { assetName }, progression, maxRetryCount);
-                    continue;
+                    Logging.Print<Logger>($"【Preload】 => << {nameof(CacheResource)} >> Asset: {assetName} doing retry. Remaining retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
                 }
 
-                // 移除標記
-                this.RemoveLoadingFlag(assetName);
+                this.GetRetryCounter(assetName).DelRetryCount();
+
+                // 遞迴 retry
+                await this._PreloadAssetCoreAsync<T>(assetName, maxRetryCount);
             }
         }
 
@@ -155,22 +194,11 @@ namespace OxGFrame.AssetLoader.Cacher
                     continue;
                 }
 
-                // 如果有進行 Loading 標記後, 直接 return
-                if (this.HasInLoadingFlag(assetName))
-                {
-                    Logging.PrintWarning<Logger>($"Asset: {assetName} is loading...");
-                    continue;
-                }
-
-                // Loading 標記
-                this.AddLoadingFlag(assetName);
-
                 // 如果有在緩存中就不進行預加載
                 if (this.HasInCache(assetName))
                 {
                     this.currentCount++;
                     progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-                    this.RemoveLoadingFlag(assetName);
                     Logging.PrintWarning<Logger>($"【Preload】 => Current << {nameof(CacheResource)} >> Cache Count: {this.count}, asset: [{assetName}] already preloaded!!!");
                     continue;
                 }
@@ -209,14 +237,10 @@ namespace OxGFrame.AssetLoader.Cacher
                         Logging.Print<Logger>($"【Preload】 => << {nameof(CacheResource)} >> Asset: {assetName} doing retry. Remaining retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
                     }
 
-                    this.RemoveLoadingFlag(assetName);
                     this.GetRetryCounter(assetName).DelRetryCount();
                     this.PreloadAsset<T>(new string[] { assetName }, progression, maxRetryCount);
                     continue;
                 }
-
-                // 移除標記
-                this.RemoveLoadingFlag(assetName);
             }
         }
 
@@ -233,70 +257,122 @@ namespace OxGFrame.AssetLoader.Cacher
                 return null;
             }
 
-            // 如果有進行 Loading 標記後, 直接 return
-            if (this.HasInLoadingFlag(assetName))
+            ResourcePack pack = null;
+
+            // 檢查是否有進行中的載入任務
+            if (this.TryGetLoadingTask(assetName, out var existingTask))
             {
-                Logging.PrintWarning<Logger>($"Asset: {assetName} is loading...");
-                return null;
+                Logging.Print<Logger>($"Asset: {assetName} is loading, waiting for existing task...");
+                var source = (UniTaskCompletionSource<T>)existingTask;
+                var asset = await source.Task;
+                if (asset != null)
+                {
+                    pack = this.GetFromCache(assetName);
+                    if (pack != null)
+                    {
+                        pack.AddRef();
+                        Logging.Print<Logger>($"【Load Shared】 => Current << {nameof(CacheResource)} >> Cache Count: {this.count}, asset: {assetName}, ref: {pack.refCount}");
+                    }
+                }
+                return asset;
             }
 
+            // 先從緩存拿
+            pack = this.GetFromCache(assetName);
+            if (pack != null)
+            {
+                // 快取命中,直接返回
+                this.currentCount = this.totalCount = 1;
+                progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+
+                var cachedAsset = pack.GetAsset<T>();
+                if (cachedAsset != null)
+                {
+                    pack.AddRef();
+                    Logging.Print<Logger>($"【Load】 => Current << {nameof(CacheResource)} >> Cache Count: {this.count}, asset: {assetName}, ref: {pack.refCount}");
+                }
+                return cachedAsset;
+            }
+
+            // 建立載入任務並加入緩存
+            var completionSource = new UniTaskCompletionSource<T>();
+            this.TryAddLoadingTask(assetName, completionSource);
+
+            try
+            {
+                var result = await this._LoadAssetCoreAsync<T>(assetName, progression, maxRetryCount);
+                completionSource.TrySetResult(result);
+                return result;
+            }
+            catch (System.Exception ex)
+            {
+                completionSource.TrySetException(ex);
+                throw;
+            }
+            finally
+            {
+                // 任務完成後移除
+                this.TryRemoveLoadingTask(assetName);
+                this.ProcessPendingUnloads(assetName, ProcessType.Asset, this._UnloadAssetCore);
+            }
+        }
+
+        /// <summary>
+        /// 實際的資產載入邏輯
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
+        private async UniTask<T> _LoadAssetCoreAsync<T>(string assetName, Progression progression, byte maxRetryCount) where T : Object
+        {
             // 初始加載進度
             this.currentCount = 0;
             this.totalCount = 1;
 
-            // Loading 標記
-            this.AddLoadingFlag(assetName);
+            bool loaded = false;
+            ResourcePack pack = new ResourcePack();
 
-            // 先從緩存拿
-            ResourcePack pack = this.GetFromCache(assetName);
-
-            if (pack == null)
+            var req = Resources.LoadAsync<T>(assetName);
+            if (req != null)
             {
-                bool loaded = false;
-                pack = new ResourcePack();
-
-                var req = Resources.LoadAsync<T>(assetName);
-                if (req != null)
+                float lastCount = 0;
+                do
                 {
-                    float lastCount = 0;
-                    do
+                    this.currentCount += (req.progress - lastCount);
+                    lastCount = req.progress;
+                    progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+
+                    if (req.isDone)
                     {
-                        this.currentCount += (req.progress - lastCount);
-                        lastCount = req.progress;
-                        progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
-
-                        if (req.isDone)
-                        {
-                            loaded = true;
-                            pack.SetPack(assetName, req.asset);
-                            break;
-                        }
-                        await UniTask.Yield();
-                    } while (true);
-                }
-
-                if (loaded)
-                {
-                    // skipping duplicate keys
-                    if (!this.HasInCache(assetName))
-                        this._cacher.Add(assetName, pack);
-                }
+                        loaded = true;
+                        pack.SetPack(assetName, req.asset);
+                        break;
+                    }
+                    await UniTask.Yield();
+                } while (true);
             }
-            else
+
+            if (loaded)
             {
-                this.currentCount = this.totalCount;
-                progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
+                // skipping duplicate keys
+                if (!this.HasInCache(assetName))
+                    this._cacher.Add(assetName, pack);
             }
 
             var asset = pack.GetAsset<T>();
+
             if (asset != null)
             {
                 // 引用計數++
                 pack.AddRef();
                 Logging.Print<Logger>($"【Load】 => Current << {nameof(CacheResource)} >> Cache Count: {this.count}, asset: {assetName}, ref: {pack.refCount}");
+                return asset;
             }
             else
             {
+                // Retry 邏輯
                 if (this.GetRetryCounter(assetName) == null)
                 {
                     this.StartRetryCounter(assetName, maxRetryCount);
@@ -307,14 +383,9 @@ namespace OxGFrame.AssetLoader.Cacher
                     Logging.Print<Logger>($"【Load】 => << {nameof(CacheResource)} >> Asset: {assetName} doing retry. Remaining retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
                 }
 
-                this.RemoveLoadingFlag(assetName);
                 this.GetRetryCounter(assetName).DelRetryCount();
                 return await this.LoadAssetAsync<T>(assetName, progression, maxRetryCount);
             }
-
-            this.RemoveLoadingFlag(assetName);
-
-            return asset;
         }
 
         public T LoadAsset<T>(string assetName, Progression progression, byte maxRetryCount) where T : Object
@@ -330,19 +401,9 @@ namespace OxGFrame.AssetLoader.Cacher
                 return null;
             }
 
-            // 如果有進行 Loading 標記後, 直接 return
-            if (this.HasInLoadingFlag(assetName))
-            {
-                Logging.PrintWarning<Logger>($"Asset: {assetName} is loading...");
-                return null;
-            }
-
             // 初始加載進度
             this.currentCount = 0;
             this.totalCount = 1;
-
-            // Loading 標記
-            this.AddLoadingFlag(assetName);
 
             // 先從緩存拿
             ResourcePack pack = this.GetFromCache(assetName);
@@ -395,45 +456,41 @@ namespace OxGFrame.AssetLoader.Cacher
                     Logging.Print<Logger>($"【Load】 => << {nameof(CacheResource)} >> Asset: {assetName} doing retry. Remaining retry count: {this.GetRetryCounter(assetName).retryCount}, Max retry count: {maxRetryCount}");
                 }
 
-                this.RemoveLoadingFlag(assetName);
                 this.GetRetryCounter(assetName).DelRetryCount();
                 return this.LoadAsset<T>(assetName, progression, maxRetryCount);
             }
-
-            this.RemoveLoadingFlag(assetName);
 
             return asset;
         }
 
         public void UnloadAsset(string assetName, bool forceUnload)
         {
-            if (string.IsNullOrEmpty(assetName))
-                return;
+            this.CheckUnload(assetName, forceUnload, ProcessType.Asset, this._UnloadAssetCore);
+        }
 
-            if (this.HasInLoadingFlag(assetName))
+        private void _UnloadAssetCore(string assetName, bool forceUnload, ProcessType processType)
+        {
+            if (!this.HasInCache(assetName))
             {
-                Logging.PrintWarning<Logger>($"【Try Unload】 Asset: {assetName} is loading...");
+                Logging.PrintWarning<Logger>($"【Unload】 Asset: {assetName} not in cache, skipping.");
                 return;
             }
 
-            if (this.HasInCache(assetName))
-            {
-                ResourcePack pack = this.GetFromCache(assetName);
+            ResourcePack pack = this.GetFromCache(assetName);
 
+            // 標記為正在卸載
+            this.AddUnloadingFlag(assetName);
+
+            try
+            {
                 // 引用計數--
                 pack.DelRef();
-
                 Logging.Print<Logger>($"【Unload】 => Current << {nameof(CacheResource)} >> Cache Count: {this.count}, asset: {assetName}, ref: {this._cacher.TryGetValue(assetName, out var v)} {v?.refCount}");
 
-                if (forceUnload)
-                {
-                    this._cacher[assetName] = null;
-                    this._cacher.Remove(assetName);
-                    Resources.UnloadUnusedAssets();
+                // 判斷是否需要實際卸載
+                bool shouldUnload = forceUnload || pack.IsReleasable();
 
-                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << {nameof(CacheResource)} >> Cache Count: {this.count}, asset: {assetName}");
-                }
-                else if (this._cacher[assetName].refCount <= 0)
+                if (shouldUnload)
                 {
                     this._cacher[assetName] = null;
                     this._cacher.Remove(assetName);
@@ -441,6 +498,11 @@ namespace OxGFrame.AssetLoader.Cacher
 
                     Logging.Print<Logger>($"【Unload Completes】 => Current << {nameof(CacheResource)} >> Cache Count: {this.count}, asset: {assetName}");
                 }
+            }
+            finally
+            {
+                // 移除卸載標記
+                this.RemoveUnloadingFlag(assetName);
             }
         }
 

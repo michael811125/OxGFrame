@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## [3.5.3] - 2025-10-23
+
+# English
+- AssetLoader
+  - ### Fixed
+    - Fixed issue where CacheBundle Unload Additive Scene could not be unloaded in a single operation.
+    - Fixed AssetLoaders.HasInCache to properly check if AdditiveScene exists in cache.
+  - ### Optimized
+    - Optimized CacheBundle & CacheResources async concurrent same-frame reentry cache hit insufficiency returning null (resolved using single-flight pattern), and ensured RefCount loading and unloading pairing consistency (#134).
+- CoreFrame
+  - ### Fixed
+    - Fixed scene unloading consistency when USFrame.UnloadFromBuild and USFrame.UnloadFromBundle are used interchangeably, avoiding Additive Scene count inconsistency.
+  - ### Optimized
+    - Optimized USFrame.LoadFromBuildAsync async concurrent same-frame reentry issue, avoiding Single Scene being loaded multiple times during async concurrency (#134).
+
+# 中文
+- AssetLoader
+  - ### 修正
+    - 修正 CacheBundle Unload Additive Scene 無法單次卸載問題。
+	- 修正 AssetLoaders.HasInCache 可以檢查到 AdditiveScene 是否存在於緩存中。
+  - ### 優化
+    - 優化 CacheBundle & CacheResources 異步併發同幀重入緩存命中不足，返回 null 的問題 (使用單飛模式解決)，並且保證 RefCount 加載與卸載成對的一致性 (#134)。
+- CoreFrame
+  - ### 修正
+    - 修正 USFrame.UnloadFromBuild 與 USFrame.UnloadFromBundle 交互使用時，場景卸載的一致性，避免 Additive Scene 計數不一致。
+  - ### 優化
+    - 優化 USFrame.LoadFromBuildAsync 異步併發同幀重入問題，避免異步併發時 Single Scene 被加載多次 (#134)。
+
 ## [3.5.2] - 2025-10-16
 
 # English
