@@ -36,6 +36,11 @@ namespace OxGFrame.CoreFrame.USFrame
         /// </summary>
         private float _totalCount;
 
+        /// <summary>
+        /// Single-Flight Dictionary to track ongoing loading tasks
+        /// </summary>
+        private LoadingTasker _loadingTasker = new LoadingTasker();
+
         private static readonly object _locker = new object();
         private static USManager _instance = null;
         public static USManager GetInstance()
@@ -288,12 +293,13 @@ namespace OxGFrame.CoreFrame.USFrame
         public async UniTask<BundlePack> LoadFromBundleAsync(string packageName, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             var scene = this.GetSceneByName(sceneName);
-            if (!string.IsNullOrEmpty(scene.name) &&
-                scene.isLoaded &&
-                loadSceneMode == LoadSceneMode.Single)
+            if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded)
             {
-                Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
-                return null;
+                if (loadSceneMode == LoadSceneMode.Single)
+                {
+                    Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already loaded!");
+                    return null;
+                }
             }
 
             var pack = await AssetLoaders.LoadSceneAsync(packageName, sceneName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
@@ -309,12 +315,13 @@ namespace OxGFrame.CoreFrame.USFrame
         public BundlePack LoadFromBundle(string packageName, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
         {
             var scene = this.GetSceneByName(sceneName);
-            if (!string.IsNullOrEmpty(scene.name) &&
-                scene.isLoaded &&
-                loadSceneMode == LoadSceneMode.Single)
+            if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded)
             {
-                Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
-                return null;
+                if (loadSceneMode == LoadSceneMode.Single)
+                {
+                    Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already loaded!");
+                    return null;
+                }
             }
 
             var pack = AssetLoaders.LoadScene(packageName, sceneName, loadSceneMode, localPhysicsMode, progression);
@@ -342,24 +349,77 @@ namespace OxGFrame.CoreFrame.USFrame
         #region Build
         public async UniTask<AsyncOperation> LoadFromBuildAsync(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
         {
-            this._currentCount = 0;
-            this._totalCount = 1; // 初始 1 = 必有一場景
-
-            var scene = this.GetSceneByName(sceneName);
-            if (!string.IsNullOrEmpty(scene.name) &&
-                scene.isLoaded &&
-                loadSceneMode == LoadSceneMode.Single)
-            {
-                Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
+            if (string.IsNullOrEmpty(sceneName))
                 return null;
+
+            // 檢查場景是否已載入
+            var scene = this.GetSceneByName(sceneName);
+            if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded)
+            {
+                if (loadSceneMode == LoadSceneMode.Single)
+                {
+                    Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already loaded!");
+                    return null;
+                }
             }
 
+            // Additive 場景不使用單飛, 每次都實際載入
+            if (loadSceneMode == LoadSceneMode.Additive)
+            {
+                return await this._LoadFromBuildCoreAsync(sceneName, loadSceneMode, localPhysicsMode, progression);
+            }
+
+            // Single 場景使用單飛, 檢查是否有進行中的載入任務
+            if (this._loadingTasker.TryGetLoadingTask(sceneName, out var existingTask))
+            {
+                Logging.Print<Logger>($"Scene: {sceneName} is loading, waiting for existing task...");
+                var source = (UniTaskCompletionSource<AsyncOperation>)existingTask;
+                return await source.Task;
+            }
+
+            // 建立載入任務並加入緩存
+            var completionSource = new UniTaskCompletionSource<AsyncOperation>();
+            this._loadingTasker.TryAddLoadingTask(sceneName, completionSource);
+
+            try
+            {
+                var result = await this._LoadFromBuildCoreAsync(sceneName, loadSceneMode, localPhysicsMode, progression);
+                completionSource.TrySetResult(result);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                completionSource.TrySetException(ex);
+                throw;
+            }
+            finally
+            {
+                // 任務完成後移除
+                this._loadingTasker.TryRemoveLoadingTask(sceneName);
+            }
+        }
+
+        /// <summary>
+        /// 實際的載入邏輯
+        /// </summary>
+        /// <param name="sceneName"></param>
+        /// <param name="loadSceneMode"></param>
+        /// <param name="localPhysicsMode"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
+        private async UniTask<AsyncOperation> _LoadFromBuildCoreAsync(string sceneName, LoadSceneMode loadSceneMode, LocalPhysicsMode localPhysicsMode, Progression progression)
+        {
+            // 初始加載進度
+            this._currentCount = 0;
+            this._totalCount = 1;
+
             var req = SceneManager.LoadSceneAsync(sceneName, new LoadSceneParameters(loadSceneMode, localPhysicsMode));
+
             if (req != null)
             {
                 req.allowSceneActivation = false;
-
                 float lastCount = 0;
+
                 while (!req.isDone)
                 {
                     if (progression != null)
@@ -369,7 +429,12 @@ namespace OxGFrame.CoreFrame.USFrame
                         if (this._currentCount >= 0.9f) this._currentCount = 1f;
                         progression.Invoke(this._currentCount / this._totalCount, this._currentCount, this._totalCount);
                     }
-                    if (req.progress >= 0.9f) req.allowSceneActivation = true;
+
+                    if (req.progress >= 0.9f)
+                    {
+                        req.allowSceneActivation = true;
+                    }
+
                     await UniTask.Yield();
                 }
 
@@ -385,12 +450,13 @@ namespace OxGFrame.CoreFrame.USFrame
             this._totalCount = 1; // 初始 1 = 必有一場景
 
             var scene = this.GetSceneByName(sceneName);
-            if (!string.IsNullOrEmpty(scene.name) &&
-                scene.isLoaded &&
-                loadSceneMode == LoadSceneMode.Single)
+            if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded)
             {
-                Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
-                return default;
+                if (loadSceneMode == LoadSceneMode.Single)
+                {
+                    Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already loaded!");
+                    return default;
+                }
             }
 
             scene = SceneManager.LoadScene(sceneName, new LoadSceneParameters(loadSceneMode, localPhysicsMode));
@@ -406,23 +472,74 @@ namespace OxGFrame.CoreFrame.USFrame
 
         public async UniTask<AsyncOperation> LoadFromBuildAsync(int buildIndex, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
         {
-            this._currentCount = 0;
-            this._totalCount = 1; // 初始 1 = 必有一場景
-
+            // 檢查場景是否已載入
             var scene = this.GetSceneByBuildIndex(buildIndex);
             string sceneName = scene.name;
-            if (!string.IsNullOrEmpty(sceneName) && scene.isLoaded && loadSceneMode == LoadSceneMode.Single)
+
+            if (!string.IsNullOrEmpty(sceneName) && scene.isLoaded)
             {
-                Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
-                return null;
+                if (loadSceneMode == LoadSceneMode.Single)
+                {
+                    Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} (idx: {buildIndex}) already loaded!");
+                    return null;
+                }
             }
 
+            // 使用 buildIndex 作為 key (轉成字串)
+            string taskKey = $"{buildIndex}";
+
+            // Additive 場景不使用單飛, 每次都實際載入
+            if (loadSceneMode == LoadSceneMode.Additive)
+            {
+                return await this._LoadFromBuildCoreAsync(buildIndex, loadSceneMode, localPhysicsMode, progression);
+            }
+
+            // Single 場景使用單飛, 檢查是否有進行中的載入任務
+            if (this._loadingTasker.TryGetLoadingTask(taskKey, out var existingTask))
+            {
+                Logging.Print<Logger>($"Scene: idx {buildIndex} is loading, waiting for existing task...");
+                var source = (UniTaskCompletionSource<AsyncOperation>)existingTask;
+                return await source.Task;
+            }
+
+            // 建立載入任務並加入緩存
+            var completionSource = new UniTaskCompletionSource<AsyncOperation>();
+            this._loadingTasker.TryAddLoadingTask(taskKey, completionSource);
+
+            try
+            {
+                var result = await this._LoadFromBuildCoreAsync(buildIndex, loadSceneMode, localPhysicsMode, progression);
+                completionSource.TrySetResult(result);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                completionSource.TrySetException(ex);
+                throw;
+            }
+            finally
+            {
+                // 任務完成後移除
+                this._loadingTasker.TryRemoveLoadingTask(taskKey);
+            }
+        }
+
+        /// <summary>
+        /// 實際的載入邏輯 (by buildIndex)
+        /// </summary>
+        private async UniTask<AsyncOperation> _LoadFromBuildCoreAsync(int buildIndex, LoadSceneMode loadSceneMode, LocalPhysicsMode localPhysicsMode, Progression progression)
+        {
+            // 初始加載進度
+            this._currentCount = 0;
+            this._totalCount = 1;
+
             var req = SceneManager.LoadSceneAsync(buildIndex, new LoadSceneParameters(loadSceneMode, localPhysicsMode));
+
             if (req != null)
             {
                 req.allowSceneActivation = false;
-
                 float lastCount = 0;
+
                 while (!req.isDone)
                 {
                     if (progression != null)
@@ -432,7 +549,12 @@ namespace OxGFrame.CoreFrame.USFrame
                         if (this._currentCount >= 0.9f) this._currentCount = 1f;
                         progression.Invoke(this._currentCount / this._totalCount, this._currentCount, this._totalCount);
                     }
-                    if (req.progress >= 0.9f) req.allowSceneActivation = true;
+
+                    if (req.progress >= 0.9f)
+                    {
+                        req.allowSceneActivation = true;
+                    }
+
                     await UniTask.Yield();
                 }
 
@@ -449,12 +571,13 @@ namespace OxGFrame.CoreFrame.USFrame
 
             var scene = this.GetSceneByBuildIndex(buildIndex);
             string sceneName = scene.name;
-            if (!string.IsNullOrEmpty(sceneName) &&
-                scene.isLoaded &&
-                loadSceneMode == LoadSceneMode.Single)
+            if (!string.IsNullOrEmpty(scene.name) && scene.isLoaded)
             {
-                Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already exists!!!");
-                return default;
+                if (loadSceneMode == LoadSceneMode.Single)
+                {
+                    Logging.PrintWarning<Logger>($"【US】Single Scene => {sceneName} already loaded!");
+                    return default;
+                }
             }
 
             scene = SceneManager.LoadScene(sceneName, new LoadSceneParameters(loadSceneMode, localPhysicsMode));
@@ -486,7 +609,11 @@ namespace OxGFrame.CoreFrame.USFrame
                         {
                             if (sceneName == this.GetSceneAt(i).name)
                             {
-                                SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
+                                // 確保 Bundle 卸載一致性
+                                if (AssetLoaders.HasInCache(sceneName))
+                                    this.UnloadFromBundle(false, sceneName);
+                                else
+                                    SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
                                 Logging.PrintInfo<Logger>($"Unload Scene (Build) => sceneName: {sceneName}");
                             }
                         }
@@ -497,7 +624,11 @@ namespace OxGFrame.CoreFrame.USFrame
                         {
                             if (sceneName == this.GetSceneAt(i).name)
                             {
-                                SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
+                                // 確保 Bundle 卸載一致性
+                                if (AssetLoaders.HasInCache(sceneName))
+                                    this.UnloadFromBundle(false, sceneName);
+                                else
+                                    SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
                                 Logging.PrintInfo<Logger>($"Unload Scene (Build) => sceneName: {sceneName}");
                                 break;
                             }
@@ -523,9 +654,14 @@ namespace OxGFrame.CoreFrame.USFrame
                     {
                         for (int i = 0; i < sceneCount; i++)
                         {
+                            string sceneName = this.GetSceneAt(i).name;
                             if (buildIndex == this.GetSceneAt(i).buildIndex)
                             {
-                                SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
+                                // 確保 Bundle 卸載一致性
+                                if (AssetLoaders.HasInCache(sceneName))
+                                    this.UnloadFromBundle(false, sceneName);
+                                else
+                                    SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
                                 Logging.PrintInfo<Logger>($"Unload Scene (Build) => sceneName: {this.GetSceneAt(i).name}, buildIdx: {this.GetSceneAt(i).buildIndex}");
                             }
                         }
@@ -537,9 +673,14 @@ namespace OxGFrame.CoreFrame.USFrame
                     {
                         for (int i = sceneCount - 1; i >= 0; --i)
                         {
+                            string sceneName = this.GetSceneAt(i).name;
                             if (buildIndex == this.GetSceneAt(i).buildIndex)
                             {
-                                SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
+                                // 確保 Bundle 卸載一致性
+                                if (AssetLoaders.HasInCache(sceneName))
+                                    this.UnloadFromBundle(false, sceneName);
+                                else
+                                    SceneManager.UnloadSceneAsync(this.GetSceneAt(i));
                                 Logging.PrintInfo<Logger>($"Unload Scene (Build) => sceneName: {this.GetSceneAt(i).name}, buildIdx: {this.GetSceneAt(i).buildIndex}");
                                 break;
                             }
