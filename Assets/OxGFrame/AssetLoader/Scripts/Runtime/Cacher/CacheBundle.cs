@@ -1500,7 +1500,8 @@ namespace OxGFrame.AssetLoader.Cacher
             BundlePack pack = this.GetFromCache(assetName);
             string packageName = pack.packageName;
 
-            if (pack.IsAssetOperationHandle())
+            if (pack.IsRawFileOperationHandle() ||
+                pack.IsAssetOperationHandle())
             {
                 // 標記為正在卸載
                 this.AddUnloadingFlag(assetName);
