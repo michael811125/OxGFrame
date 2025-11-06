@@ -5,6 +5,7 @@ namespace OxGFrame.Hotfixer.HotfixEvent
     // 0. UserTryInitHotfix
     // 1. UserTryUpdateHotfix
     // 2. UserTryCreateDownloader
+    // 3. UserBeginDownload
 
     public class HotfixUserEvents
     {
@@ -40,6 +41,18 @@ namespace OxGFrame.Hotfixer.HotfixEvent
             public static void SendEventMessage()
             {
                 var msg = new UserTryCreateDownloader();
+                UniEvent.SendMessage(msg);
+            }
+        }
+
+        /// <summary>
+        /// User begin download hotfix files
+        /// </summary>
+        public class UserBeginDownload : IEventMessage
+        {
+            public static void SendEventMessage()
+            {
+                var msg = new UserBeginDownload();
                 UniEvent.SendMessage(msg);
             }
         }

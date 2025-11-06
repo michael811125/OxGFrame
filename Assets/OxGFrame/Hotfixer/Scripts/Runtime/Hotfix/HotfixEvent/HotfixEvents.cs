@@ -6,7 +6,9 @@ namespace OxGFrame.Hotfixer.HotfixEvent
     // 0. HotfixFsmState
     // 1. HotfixInitFailed
     // 2. HotfixUpdateFailed
-    // 3. HotfixDownloadFailed
+    // 3. HotfixCreateDownloader
+    // 4. HotfixDownloadProgression
+    // 5. HotfixDownloadFailed
 
     public static class HotfixEvents
     {
@@ -45,6 +47,48 @@ namespace OxGFrame.Hotfixer.HotfixEvent
             public static void SendEventMessage()
             {
                 var msg = new HotfixUpdateFailed();
+                UniEvent.SendMessage(msg);
+            }
+        }
+
+        /// <summary>
+        /// Hotfix create downloaders
+        /// </summary>
+        public class HotfixCreateDownloader : IEventMessage
+        {
+            public int totalCount;
+            public long totalBytes;
+
+            public static void SendEventMessage(int totalDownloadCount, long totalDownloadSizeBytes)
+            {
+                var msg = new HotfixCreateDownloader();
+                msg.totalCount = totalDownloadCount;
+                msg.totalBytes = totalDownloadSizeBytes;
+                UniEvent.SendMessage(msg);
+            }
+        }
+
+        /// <summary>
+        /// Hotfix download progression
+        /// </summary>
+        public class HotfixDownloadProgression : IEventMessage
+        {
+            public float progress;
+            public int totalDownloadCount;
+            public int currentDownloadCount;
+            public long totalDownloadSizeBytes;
+            public long currentDownloadSizeBytes;
+            public long downloadSpeedBytes;
+
+            public static void SendEventMessage(int totalDownloadCount, int currentDownloadCount, long totalDownloadSizeBytes, long currentDownloadSizeBytes, long downloadSpeedBytes)
+            {
+                var msg = new HotfixDownloadProgression();
+                msg.totalDownloadCount = totalDownloadCount;
+                msg.currentDownloadCount = currentDownloadCount;
+                msg.totalDownloadSizeBytes = totalDownloadSizeBytes;
+                msg.currentDownloadSizeBytes = currentDownloadSizeBytes;
+                msg.downloadSpeedBytes = downloadSpeedBytes;
+                msg.progress = (msg.currentDownloadSizeBytes * 1f) / (msg.totalDownloadSizeBytes * 1f);
                 UniEvent.SendMessage(msg);
             }
         }

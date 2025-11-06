@@ -235,7 +235,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             {
                 // 記錄標記
                 sourceMonoDriveFlag = sourceComponent.monoDrive;
-                // 動態加載時, 必須取消 monoDrive
+                // 動態加載時, 必須取消 monoDrive (避免被 macro 的 update 影響)
                 sourceComponent.monoDrive = false;
             }
 

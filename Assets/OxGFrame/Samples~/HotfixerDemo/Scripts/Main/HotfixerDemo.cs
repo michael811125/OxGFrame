@@ -1,17 +1,29 @@
 ﻿using Cysharp.Threading.Tasks;
 using OxGFrame.AssetLoader;
+using OxGFrame.AssetLoader.Utility;
 using OxGFrame.CoreFrame;
 using OxGFrame.Hotfixer;
 using OxGFrame.Hotfixer.HotfixEvent;
 using OxGFrame.Hotfixer.HotfixFsm;
 using System.Collections;
+using System.Text;
 using UniFramework.Event;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HotfixerDemo : MonoBehaviour
 {
     [Tooltip("If checked, it will automatically request the config file (hotfixdllconfig.conf) from StreamingAssets.")]
     public bool loadFromConfig = false;
+
+    public GameObject startHotfixBtn;
+    public GameObject userBeginDownloadPanel;
+    public Button beginDownloadBtn;
+    public Text downloadInfoTxt;
+    public GameObject progressPanel;
+    public Slider progressBar;
+    public Text progressPctTxt;
+    public Text progressInfoTxt;
 
     private bool _isLoaded = false;
     private bool _isInitialized = false;
@@ -33,6 +45,9 @@ public class HotfixerDemo : MonoBehaviour
     {
         this._isInitialized = false;
 
+        this.userBeginDownloadPanel.SetActive(false);
+        this.progressPanel.SetActive(false);
+
         // Wait Until IsInitialized
         while (!AssetPatcher.IsInitialized())
             yield return null;
@@ -51,12 +66,16 @@ public class HotfixerDemo : MonoBehaviour
         // 0. HotfixFsmState
         // 1. HotfixInitFailed
         // 2. HotfixUpdateFailed
-        // 3. HotfixDownloadFailed
+        // 3. HotfixCreateDownloader
+        // 4. HotfixDownloadProgression
+        // 5. HotfixDownloadFailed
 
         #region Add HotfixEvents Handle
         this._hotfixEvents.AddListener<HotfixEvents.HotfixFsmState>(this._OnHandleEventMessage);
         this._hotfixEvents.AddListener<HotfixEvents.HotfixInitFailed>(this._OnHandleEventMessage);
         this._hotfixEvents.AddListener<HotfixEvents.HotfixUpdateFailed>(this._OnHandleEventMessage);
+        this._hotfixEvents.AddListener<HotfixEvents.HotfixCreateDownloader>(this._OnHandleEventMessage);
+        this._hotfixEvents.AddListener<HotfixEvents.HotfixDownloadProgression>(this._OnHandleEventMessage);
         this._hotfixEvents.AddListener<HotfixEvents.HotfixDownloadFailed>(this._OnHandleEventMessage);
         #endregion
     }
@@ -76,12 +95,14 @@ public class HotfixerDemo : MonoBehaviour
                 case HotfixFsmStates.FsmUpdateHotfixPackage:
                     break;
                 case HotfixFsmStates.FsmHotfixCreateDownloader:
+                    if (this.startHotfixBtn.gameObject.activeSelf) this.startHotfixBtn.SetActive(false);
                     break;
                 case HotfixFsmStates.FsmHotfixBeginDownload:
                     break;
                 case HotfixFsmStates.FsmHotfixDownloadOver:
                     break;
                 case HotfixFsmStates.FsmHotfixClearCache:
+                    if (this.progressPanel.activeSelf) this.progressPanel.SetActive(false);
                     break;
                 case HotfixFsmStates.FsmLoadAOTAssemblies:
                     break;
@@ -98,6 +119,48 @@ public class HotfixerDemo : MonoBehaviour
         else if (message is HotfixEvents.HotfixUpdateFailed)
         {
             HotfixUserEvents.UserTryUpdateHotfix.SendEventMessage();
+        }
+        else if (message is HotfixEvents.HotfixCreateDownloader)
+        {
+            var msgData = message as HotfixEvents.HotfixCreateDownloader;
+            Debug.Log($"Create Downloader: TotalCount: {msgData.totalCount}, TotalSize: {BundleUtility.GetBytesToString((ulong)msgData.totalBytes)}");
+
+            // You can show download panel UI here and set user event to button
+            if (!this.userBeginDownloadPanel.activeSelf)
+                this.userBeginDownloadPanel.SetActive(true);
+            this.downloadInfoTxt.text = $"Total Files: {msgData.totalCount}\nTotal Size: {BundleUtility.GetBytesToString((ulong)msgData.totalBytes)}";
+            this.beginDownloadBtn.onClick.RemoveAllListeners();
+            this.beginDownloadBtn.onClick.AddListener(() =>
+            {
+                this.userBeginDownloadPanel.SetActive(false);
+                HotfixUserEvents.UserBeginDownload.SendEventMessage();
+            });
+        }
+        else if (message is HotfixEvents.HotfixDownloadProgression)
+        {
+            #region Download Progression
+            // Receive Progression
+            var downloadInfo = message as HotfixEvents.HotfixDownloadProgression;
+            Debug.Log
+            (
+                $"Progress: {downloadInfo.progress}, " +
+                $"TotalCount: {downloadInfo.totalDownloadCount}, " +
+                $"TotalSize: {BundleUtility.GetBytesToString((ulong)downloadInfo.totalDownloadSizeBytes)}, " +
+                $"CurrentCount: {downloadInfo.currentDownloadCount}, " +
+                $"CurrentSize: {BundleUtility.GetBytesToString((ulong)downloadInfo.currentDownloadSizeBytes)}" +
+                $"DownloadSpeed: {BundleUtility.GetSpeedBytesToString((ulong)downloadInfo.downloadSpeedBytes)}"
+            );
+
+            this._UpdateDownloadInfo
+            (
+                downloadInfo.progress,
+                downloadInfo.currentDownloadCount,
+                downloadInfo.currentDownloadSizeBytes,
+                downloadInfo.totalDownloadCount,
+                downloadInfo.totalDownloadSizeBytes,
+                downloadInfo.downloadSpeedBytes
+            );
+            #endregion
         }
         else if (message is HotfixEvents.HotfixDownloadFailed)
         {
@@ -164,6 +227,23 @@ public class HotfixerDemo : MonoBehaviour
             case HotfixStep.DONE:
                 break;
         }
+    }
+
+    private void _UpdateDownloadInfo(float progress, int dlCount, long dlBytes, int totalCount, long totalBytes, long dlSpeedBytes)
+    {
+        if (!this.progressPanel.activeSelf) this.progressPanel.SetActive(true);
+
+        var strBuilder = new StringBuilder();
+        strBuilder.Append($"Patch Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}");
+        strBuilder.Append($", {dlCount} (DC) / {totalCount} (PC)");
+        strBuilder.Append($"\nCurrent Download Size: {BundleUtility.GetBytesToString((ulong)dlBytes)}, Download Speed: {BundleUtility.GetSpeedBytesToString((ulong)dlSpeedBytes)}");
+        this.progressInfoTxt.text = strBuilder.ToString();
+
+        this.progressBar.value = progress;
+        this.progressPctTxt.text = (progress * 100).ToString("f0") + "%";
+
+        // Patch Size: 00,  00(DC) / 00(PC)
+        // Download Size: 00 , Download Speed: 00 / s
     }
 
     public void StartHotfixCheck()

@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEngine;
 using YooAsset;
 
-namespace OxGFrame.AssetLoader
+namespace OxGFrame.AssetLoader.Bundle
 {
     public static class YooAssetBridge
     {

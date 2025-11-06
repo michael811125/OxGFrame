@@ -235,6 +235,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<bool> InitPackage(PackageInfoWithBuild packageInfo, bool updatePackage, string hostServer, string fallbackHostServer)
         {
+            var playModeParameters = BundleConfig.playModeParameters;
             var packageName = packageInfo.packageName;
             var buildMode = packageInfo.buildMode.ToString();
 
@@ -259,6 +260,8 @@ namespace OxGFrame.AssetLoader.Bundle
                         var packageRoot = buildResult.PackageRootDirectory;
                         var createParameters = new YooAsset.EditorSimulateModeParameters();
                         createParameters.EditorFileSystemParameters = FileSystemParameters.CreateDefaultEditorFileSystemParameters(packageRoot);
+                        // Extra settings
+                        createParameters.AutoUnloadBundleWhenUnused = BundleConfig.autoUnloadBundleWhenUnused;
                         initializationOperation = package.InitializeAsync(createParameters);
                         #endregion
                     }
@@ -279,12 +282,37 @@ namespace OxGFrame.AssetLoader.Bundle
                             // Only raw file build pipeline need to append extension
                             if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
                                 createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+
+                            // Extra parameters
+                            var parameterEntries = playModeParameters.parameterEntries;
+                            foreach (var paramEntry in parameterEntries)
+                            {
+                                if (string.IsNullOrEmpty(paramEntry.parameterKey) ||
+                                    string.IsNullOrEmpty(paramEntry.parameterValue) ||
+                                    string.IsNullOrEmpty(paramEntry.parameterType))
+                                {
+                                    Logging.PrintWarning<Logger>
+                                    (
+                                        $"[YooAsset Params] Skipped parameter due to empty field(s). " +
+                                        $"key='{paramEntry.parameterKey ?? "<null>"}', " +
+                                        $"value='{paramEntry.parameterValue ?? "<null>"}', " +
+                                        $"type='{paramEntry.parameterType ?? "<null>"}'."
+                                    );
+                                    continue;
+                                }
+
+                                // Add extra parameter with parsing
+                                if (paramEntry.isSetForBuiltinFileSystem)
+                                    createParameters.BuildinFileSystemParameters.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
+                            }
                         }
                         else
                         {
                             createParameters.BuildinFileSystemParameters = null;
                         }
 
+                        // Extra settings
+                        createParameters.AutoUnloadBundleWhenUnused = BundleConfig.autoUnloadBundleWhenUnused;
                         initializationOperation = package.InitializeAsync(createParameters);
                         #endregion
                     }
@@ -310,6 +338,29 @@ namespace OxGFrame.AssetLoader.Bundle
                             // Only raw file build pipeline need to append extension
                             if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
                                 createParameters.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+
+                            // Extra parameters
+                            var parameterEntries = playModeParameters.parameterEntries;
+                            foreach (var paramEntry in parameterEntries)
+                            {
+                                if (string.IsNullOrEmpty(paramEntry.parameterKey) ||
+                                    string.IsNullOrEmpty(paramEntry.parameterValue) ||
+                                    string.IsNullOrEmpty(paramEntry.parameterType))
+                                {
+                                    Logging.PrintWarning<Logger>
+                                    (
+                                        $"[YooAsset Params] Skipped parameter due to empty field(s). " +
+                                        $"key='{paramEntry.parameterKey ?? "<null>"}', " +
+                                        $"value='{paramEntry.parameterValue ?? "<null>"}', " +
+                                        $"type='{paramEntry.parameterType ?? "<null>"}'."
+                                    );
+                                    continue;
+                                }
+
+                                // Add extra parameter with parsing
+                                if (paramEntry.isSetForBuiltinFileSystem)
+                                    createParameters.BuildinFileSystemParameters.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
+                            }
                         }
                         else
                         {
@@ -328,8 +379,35 @@ namespace OxGFrame.AssetLoader.Bundle
                         // Only raw file build pipeline need to append extension
                         if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
                             createParameters.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+
+                        // Extra parameters
+                        {
+                            var parameterEntries = playModeParameters.parameterEntries;
+                            foreach (var paramEntry in parameterEntries)
+                            {
+                                if (string.IsNullOrEmpty(paramEntry.parameterKey) ||
+                                    string.IsNullOrEmpty(paramEntry.parameterValue) ||
+                                    string.IsNullOrEmpty(paramEntry.parameterType))
+                                {
+                                    Logging.PrintWarning<Logger>
+                                    (
+                                        $"[YooAsset Params] Skipped parameter due to empty field(s). " +
+                                        $"key='{paramEntry.parameterKey ?? "<null>"}', " +
+                                        $"value='{paramEntry.parameterValue ?? "<null>"}', " +
+                                        $"type='{paramEntry.parameterType ?? "<null>"}'."
+                                    );
+                                    continue;
+                                }
+
+                                // Add extra parameter with parsing
+                                if (!paramEntry.isSetForBuiltinFileSystem)
+                                    createParameters.CacheFileSystemParameters.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
+                            }
+                        }
                         #endregion
 
+                        // Extra settings
+                        createParameters.AutoUnloadBundleWhenUnused = BundleConfig.autoUnloadBundleWhenUnused;
                         initializationOperation = package.InitializeAsync(createParameters);
                         #endregion
                     }
@@ -350,12 +428,37 @@ namespace OxGFrame.AssetLoader.Bundle
                             // Only raw file build pipeline need to append extension
                             if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
                                 createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+
+                            // Extra parameters
+                            var parameterEntries = playModeParameters.parameterEntries;
+                            foreach (var paramEntry in parameterEntries)
+                            {
+                                if (string.IsNullOrEmpty(paramEntry.parameterKey) ||
+                                    string.IsNullOrEmpty(paramEntry.parameterValue) ||
+                                    string.IsNullOrEmpty(paramEntry.parameterType))
+                                {
+                                    Logging.PrintWarning<Logger>
+                                    (
+                                        $"[YooAsset Params] Skipped parameter due to empty field(s). " +
+                                        $"key='{paramEntry.parameterKey ?? "<null>"}', " +
+                                        $"value='{paramEntry.parameterValue ?? "<null>"}', " +
+                                        $"type='{paramEntry.parameterType ?? "<null>"}'."
+                                    );
+                                    continue;
+                                }
+
+                                // Add extra parameter with parsing
+                                if (paramEntry.isSetForBuiltinFileSystem)
+                                    createParameters.WebServerFileSystemParameters.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
+                            }
                         }
                         else
                         {
                             createParameters.WebServerFileSystemParameters = null;
                         }
 
+                        // Extra settings
+                        createParameters.AutoUnloadBundleWhenUnused = BundleConfig.autoUnloadBundleWhenUnused;
                         initializationOperation = package.InitializeAsync(createParameters);
                         #endregion
                     }
@@ -377,6 +480,29 @@ namespace OxGFrame.AssetLoader.Bundle
                             // Only raw file build pipeline need to append extension
                             if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
                                 createParameters.WebServerFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+
+                            // Extra parameters
+                            var parameterEntries = playModeParameters.parameterEntries;
+                            foreach (var paramEntry in parameterEntries)
+                            {
+                                if (string.IsNullOrEmpty(paramEntry.parameterKey) ||
+                                    string.IsNullOrEmpty(paramEntry.parameterValue) ||
+                                    string.IsNullOrEmpty(paramEntry.parameterType))
+                                {
+                                    Logging.PrintWarning<Logger>
+                                    (
+                                        $"[YooAsset Params] Skipped parameter due to empty field(s). " +
+                                        $"key='{paramEntry.parameterKey ?? "<null>"}', " +
+                                        $"value='{paramEntry.parameterValue ?? "<null>"}', " +
+                                        $"type='{paramEntry.parameterType ?? "<null>"}'."
+                                    );
+                                    continue;
+                                }
+
+                                // Add extra parameter with parsing
+                                if (paramEntry.isSetForBuiltinFileSystem)
+                                    createParameters.WebServerFileSystemParameters.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
+                            }
                         }
                         else
                         {
@@ -392,8 +518,35 @@ namespace OxGFrame.AssetLoader.Bundle
                         // Only raw file build pipeline need to append extension
                         if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
                             createParameters.WebRemoteFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+
+                        // Extra parameters
+                        {
+                            var parameterEntries = playModeParameters.parameterEntries;
+                            foreach (var paramEntry in parameterEntries)
+                            {
+                                if (string.IsNullOrEmpty(paramEntry.parameterKey) ||
+                                    string.IsNullOrEmpty(paramEntry.parameterValue) ||
+                                    string.IsNullOrEmpty(paramEntry.parameterType))
+                                {
+                                    Logging.PrintWarning<Logger>
+                                    (
+                                        $"[YooAsset Params] Skipped parameter due to empty field(s). " +
+                                        $"key='{paramEntry.parameterKey ?? "<null>"}', " +
+                                        $"value='{paramEntry.parameterValue ?? "<null>"}', " +
+                                        $"type='{paramEntry.parameterType ?? "<null>"}'."
+                                    );
+                                    continue;
+                                }
+
+                                // Add extra parameter with parsing
+                                if (!paramEntry.isSetForBuiltinFileSystem)
+                                    createParameters.WebRemoteFileSystemParameters.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
+                            }
+                        }
                         #endregion
 
+                        // Extra settings
+                        createParameters.AutoUnloadBundleWhenUnused = BundleConfig.autoUnloadBundleWhenUnused;
                         initializationOperation = package.InitializeAsync(createParameters);
                         #endregion
                     }

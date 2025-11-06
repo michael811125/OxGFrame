@@ -1,5 +1,119 @@
 # CHANGELOG
 
+## [3.5.4] - 2025-11-06
+
+# English
+- Hotfixer
+  - ### Added
+    - Added `HotfixEvents.HotfixCreateDownloader` (create downloader) (#138).
+      - **Very important:** You must register a listener for the `HotfixEvents.HotfixCreateDownloader` event and invoke `HotfixUserEvents.UserBeginDownload.SendEventMessage()`. Otherwise, the flow will keep waiting for user confirmation (#138).
+    - Added `HotfixEvents.HotfixDownloadProgression` (download progress) (#138).
+    - Added `HotfixUserEvents.UserBeginDownload` (user-initiated download) (#138).
+  - ### Updated
+    - Updated **HotfixerDemo**.
+- AssetLoader
+  - ### Added
+    - Added **ParameterEntry** list configuration on PatchLauncher. This allows adding extra YooAsset FileSystem parameters per mode, but you must specify the type (Ref: [FileSystemParametersDefine](https://www.yooasset.com/docs/api/YooAsset/FileSystemParametersDefine) + [FileSystem](https://www.yooasset.com/docs/guide-runtime/FileSystem#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8F%82%E6%95%B0)).
+	  ```csharp
+      /// <summary>
+      /// 支持的型別對應表
+      /// </summary>
+      private static readonly Dictionary<string, Type> _supportedTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase)
+      {
+          // Boolean
+          { "bool", typeof(bool) },
+          { "boolean", typeof(bool) },
+          
+          // Integer types
+          { "int", typeof(int) },
+          { "int32", typeof(int) },
+          { "uint", typeof(uint) },
+          { "uint32", typeof(uint) },
+          { "byte", typeof(byte) },
+          { "sbyte", typeof(sbyte) },
+          { "short", typeof(short) },
+          { "int16", typeof(short) },
+          { "ushort", typeof(ushort) },
+          { "uint16", typeof(ushort) },
+          { "long", typeof(long) },
+          { "int64", typeof(long) },
+          { "ulong", typeof(ulong) },
+          { "uint64", typeof(ulong) },
+          
+          // Floating point types
+          { "float", typeof(float) },
+          { "single", typeof(float) },
+          { "double", typeof(double) },
+          { "decimal", typeof(decimal) },
+          
+          // Other common types
+          { "string", typeof(string) },
+          { "char", typeof(char) }
+      };
+	  ```
+    - Added `PatchLauncher.AutoUnloadBundleWhenUnused` configuration parameter, applied at the YooAsset resource-management layer (Ref: [YooAsset v2.3.17](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.17)).
+  - ### Updated
+    - Updated YooAsset to [v2.3.17](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.17).
+- CoreFrame
+  - ### Adjusted
+    - Adjusted `UIManager` and `SRManager` defaults: `FixedUpdate = true` and `LateUpdate = true`.
+
+# 中文
+- Hotfixer
+  - ### 新增
+    - 新增 HotfixEvents.HotfixCreateDownloader (建立下載器) (#138)。
+	  - 非常重要：一定要註冊監聽 HotfixEvents.HotfixCreateDownloader 事件，並且觸發 HotfixUserEvents.UserBeginDownload.SendEventMessage()，不然會一直等待使用者確認步驟 (#138)。
+	- 新增 HotfixEvents.HotfixDownloadProgression (下載進度) (#138)。
+	- 新增 HotfixUserEvents.UserBeginDownload (使用者觸發下載) (#138)。
+  - ### 更新
+    - 更新 HotfixerDemo。
+- AssetLoader
+  - ### 新增
+    - 新增 ParameterEntry 列表配置於 PatchLauncher，可以針對不同模式額外新增 YooAsset FileSystem 的參數配置，但必須表明型別 (參考：[FileSystemParametersDefine](https://www.yooasset.com/docs/api/YooAsset/FileSystemParametersDefine) + [文件系統](https://www.yooasset.com/docs/guide-runtime/FileSystem#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8F%82%E6%95%B0))。
+	  ```csharp
+      /// <summary>
+      /// 支持的型別對應表
+      /// </summary>
+      private static readonly Dictionary<string, Type> _supportedTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase)
+      {
+          // Boolean
+          { "bool", typeof(bool) },
+          { "boolean", typeof(bool) },
+          
+          // Integer types
+          { "int", typeof(int) },
+          { "int32", typeof(int) },
+          { "uint", typeof(uint) },
+          { "uint32", typeof(uint) },
+          { "byte", typeof(byte) },
+          { "sbyte", typeof(sbyte) },
+          { "short", typeof(short) },
+          { "int16", typeof(short) },
+          { "ushort", typeof(ushort) },
+          { "uint16", typeof(ushort) },
+          { "long", typeof(long) },
+          { "int64", typeof(long) },
+          { "ulong", typeof(ulong) },
+          { "uint64", typeof(ulong) },
+          
+          // Floating point types
+          { "float", typeof(float) },
+          { "single", typeof(float) },
+          { "double", typeof(double) },
+          { "decimal", typeof(decimal) },
+          
+          // Other common types
+          { "string", typeof(string) },
+          { "char", typeof(char) }
+      };
+	  ```
+    - 新增 PatchLauncher.AutoUnloadBundleWhenUnused 配置參數，作用於 YooAsset 資產管理層 (參考：[YooAsset v2.3.17](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.17))。
+  - ### 更新
+    - 更新 YooAsset 至 [v2.3.17](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.17)。
+- CoreFrame
+  - ### 調整
+    - 調整 UIManager, SRManager 預設驅動 FixedUpdate = true 跟 LateUpdate = true。
+
 ## [3.5.3] - 2025-10-23
 
 # English

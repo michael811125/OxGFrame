@@ -122,8 +122,8 @@ namespace OxGFrame.CoreFrame
 
         public bool ignoreTimeScale = false;
         public bool enabledUpdate = true;
-        public bool enabledFixedUpdate = false;
-        public bool enabledLateUpdate = false;
+        public bool enabledFixedUpdate = true;
+        public bool enabledLateUpdate = true;
 
         /// <summary>
         /// [計算進度條用] 加載數量
