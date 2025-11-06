@@ -5,10 +5,17 @@ namespace OxGFrame.AssetLoader.Bundle
     [Serializable]
     public class ParameterEntry
     {
+        public enum ParameterTarget
+        {
+            All = 0,
+            BuiltinFileSystem = 1,
+            CacheFileSystem = 2
+        }
+
         /// <summary>
-        /// 參數是否設置給內置文件系統
+        /// 參數設置目標
         /// </summary>
-        public bool isSetForBuiltinFileSystem = false;
+        public ParameterTarget parameterTarget = ParameterTarget.All;
 
         /// <summary>
         /// 參數鍵值

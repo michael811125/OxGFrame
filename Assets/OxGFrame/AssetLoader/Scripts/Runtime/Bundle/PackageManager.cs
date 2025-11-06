@@ -302,7 +302,8 @@ namespace OxGFrame.AssetLoader.Bundle
                                 }
 
                                 // Add extra parameter with parsing
-                                if (paramEntry.isSetForBuiltinFileSystem)
+                                if (paramEntry.parameterTarget == ParameterEntry.ParameterTarget.All ||
+                                    paramEntry.parameterTarget == ParameterEntry.ParameterTarget.BuiltinFileSystem)
                                     createParameters.BuildinFileSystemParameters.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
                             }
                         }
@@ -358,7 +359,8 @@ namespace OxGFrame.AssetLoader.Bundle
                                 }
 
                                 // Add extra parameter with parsing
-                                if (paramEntry.isSetForBuiltinFileSystem)
+                                if (paramEntry.parameterTarget == ParameterEntry.ParameterTarget.All ||
+                                    paramEntry.parameterTarget == ParameterEntry.ParameterTarget.BuiltinFileSystem)
                                     createParameters.BuildinFileSystemParameters.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
                             }
                         }
@@ -400,7 +402,8 @@ namespace OxGFrame.AssetLoader.Bundle
                                 }
 
                                 // Add extra parameter with parsing
-                                if (!paramEntry.isSetForBuiltinFileSystem)
+                                if (paramEntry.parameterTarget == ParameterEntry.ParameterTarget.All ||
+                                    paramEntry.parameterTarget == ParameterEntry.ParameterTarget.CacheFileSystem)
                                     createParameters.CacheFileSystemParameters.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
                             }
                         }
@@ -448,7 +451,8 @@ namespace OxGFrame.AssetLoader.Bundle
                                 }
 
                                 // Add extra parameter with parsing
-                                if (paramEntry.isSetForBuiltinFileSystem)
+                                if (paramEntry.parameterTarget == ParameterEntry.ParameterTarget.All ||
+                                    paramEntry.parameterTarget == ParameterEntry.ParameterTarget.BuiltinFileSystem)
                                     createParameters.WebServerFileSystemParameters.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
                             }
                         }
@@ -500,7 +504,8 @@ namespace OxGFrame.AssetLoader.Bundle
                                 }
 
                                 // Add extra parameter with parsing
-                                if (paramEntry.isSetForBuiltinFileSystem)
+                                if (paramEntry.parameterTarget == ParameterEntry.ParameterTarget.All ||
+                                    paramEntry.parameterTarget == ParameterEntry.ParameterTarget.BuiltinFileSystem)
                                     createParameters.WebServerFileSystemParameters.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
                             }
                         }
@@ -539,7 +544,8 @@ namespace OxGFrame.AssetLoader.Bundle
                                 }
 
                                 // Add extra parameter with parsing
-                                if (!paramEntry.isSetForBuiltinFileSystem)
+                                if (paramEntry.parameterTarget == ParameterEntry.ParameterTarget.All ||
+                                    paramEntry.parameterTarget == ParameterEntry.ParameterTarget.CacheFileSystem)
                                     createParameters.WebRemoteFileSystemParameters.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
                             }
                         }
