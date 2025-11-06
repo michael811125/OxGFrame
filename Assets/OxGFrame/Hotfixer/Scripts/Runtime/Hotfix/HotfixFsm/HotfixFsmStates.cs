@@ -2,6 +2,7 @@
 using HybridCLR;
 using OxGFrame.AssetLoader;
 using OxGFrame.AssetLoader.Bundle;
+using OxGFrame.AssetLoader.Utility;
 using OxGFrame.Hotfixer.HotfixEvent;
 using OxGKit.LoggingSystem;
 using System;
@@ -84,8 +85,10 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                     };
                 }
                 bool isInitialized = await AssetPatcher.InitPackage(packageInfoWithBuild);
-                if (isInitialized) this._machine.ChangeState<FsmUpdateHotfixPackage>();
-                else HotfixEvents.HotfixInitFailed.SendEventMessage();
+                if (isInitialized)
+                    this._machine.ChangeState<FsmUpdateHotfixPackage>();
+                else
+                    HotfixEvents.HotfixInitFailed.SendEventMessage();
             }
         }
 
@@ -120,8 +123,10 @@ namespace OxGFrame.Hotfixer.HotfixFsm
             private async UniTask _UpdateHotfixPackage()
             {
                 bool isUpdated = await AssetPatcher.UpdatePackage(HotfixManager.GetInstance().packageName);
-                if (isUpdated) this._machine.ChangeState<FsmHotfixCreateDownloader>();
-                else HotfixEvents.HotfixUpdateFailed.SendEventMessage();
+                if (isUpdated)
+                    this._machine.ChangeState<FsmHotfixCreateDownloader>();
+                else
+                    HotfixEvents.HotfixUpdateFailed.SendEventMessage();
             }
         }
 
@@ -161,10 +166,19 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                 // Create a downloader
                 HotfixManager.GetInstance().mainDownloader = AssetPatcher.GetPackageDownloader(package);
                 int totalDownloadCount = HotfixManager.GetInstance().mainDownloader.TotalDownloadCount;
+                long totalDownloadSizeBytes = HotfixManager.GetInstance().mainDownloader.TotalDownloadBytes;
 
                 // Do begin download, if download count > 0
-                if (totalDownloadCount > 0) this._machine.ChangeState<FsmHotfixBeginDownload>();
-                else this._machine.ChangeState<FsmHotfixDownloadOver>();
+                if (totalDownloadCount > 0)
+                {
+                    HotfixEvents.HotfixCreateDownloader.SendEventMessage(totalDownloadCount, totalDownloadSizeBytes);
+
+                    /**
+                     * 開始等待使用者選擇是否開始下載
+                     */
+                }
+                else
+                    this._machine.ChangeState<FsmHotfixDownloadOver>();
             }
         }
 
@@ -203,15 +217,36 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
                 // Get main downloader
                 var downloader = HotfixManager.GetInstance().mainDownloader;
+
+                // Get total count and bytes
+                int totalCount = downloader.TotalDownloadCount;
+                long totalBytes = downloader.TotalDownloadBytes;
+
+                // Begin Download
+                int currentCount = 0;
+                long currentBytes = 0;
+                int lastCount = 0;
+                long lastBytes = 0;
+                var downloadSpeedCalculator = new DownloadSpeedCalculator();
+                downloadSpeedCalculator.onDownloadSpeedProgress = HotfixEvents.HotfixDownloadProgression.SendEventMessage;
                 downloader.DownloadErrorCallback = (DownloadErrorData data) =>
                 {
                     HotfixEvents.HotfixDownloadFailed.SendEventMessage(data.FileName, data.ErrorInfo);
+                };
+                downloader.DownloadUpdateCallback = (DownloadUpdateData data) =>
+                {
+                    currentCount += data.CurrentDownloadCount - lastCount;
+                    lastCount = data.CurrentDownloadCount;
+                    currentBytes += data.CurrentDownloadBytes - lastBytes;
+                    lastBytes = data.CurrentDownloadBytes;
+                    downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
                 };
                 downloader.BeginDownload();
 
                 await downloader;
 
-                if (downloader.Status != EOperationStatus.Succeed) return;
+                if (downloader.Status != EOperationStatus.Succeed)
+                    return;
 
                 this._machine.ChangeState<FsmHotfixDownloadOver>();
             }

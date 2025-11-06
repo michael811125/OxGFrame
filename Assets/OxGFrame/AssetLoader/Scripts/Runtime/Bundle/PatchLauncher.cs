@@ -58,6 +58,8 @@ namespace OxGFrame.AssetLoader.Bundle
         public uint bundleLoadReadBufferSize = BundleConfig.bundleLoadReadBufferSize;
         [Tooltip("Size of the managed read buffer (in bytes) used by FileCryptogram decryption operations.")]
         public uint bundleDecryptReadBufferSize = BundleConfig.bundleDecryptReadBufferSize;
+        [Tooltip("The YooAsset.ResourceManager module automatically unloads bundles whose reference count drops to zero.")]
+        public bool autoUnloadBundleWhenUnused = BundleConfig.autoUnloadBundleWhenUnused;
 
         [Separator("Cryptogram Options")]
         [SerializeField, OverrideLabel("Bundle Decrypt Info")]
@@ -154,6 +156,7 @@ namespace OxGFrame.AssetLoader.Bundle
             // Set managed read buffer size
             BundleConfig.bundleLoadReadBufferSize = this.bundleLoadReadBufferSize;
             BundleConfig.bundleDecryptReadBufferSize = this.bundleDecryptReadBufferSize;
+            BundleConfig.autoUnloadBundleWhenUnused = this.autoUnloadBundleWhenUnused;
             #endregion
 
             #region Cryptogram Options

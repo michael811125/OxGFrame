@@ -152,6 +152,11 @@ namespace OxGFrame.AssetLoader.Bundle
         /// 資源解密讀取緩衝大小
         /// </summary>
         public static uint bundleDecryptReadBufferSize = 32 * 1 << 10;
+
+        /// <summary>
+        /// 當資源引用計數為零的時候自動釋放資源包
+        /// </summary>
+        public static bool autoUnloadBundleWhenUnused = false;
         #endregion
 
         #region Process Options

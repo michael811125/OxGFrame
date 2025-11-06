@@ -87,6 +87,7 @@ namespace OxGFrame.Hotfixer
             this._userEvents.AddListener<HotfixUserEvents.UserTryInitHotfix>(this._OnHandleEventMessage);
             this._userEvents.AddListener<HotfixUserEvents.UserTryUpdateHotfix>(this._OnHandleEventMessage);
             this._userEvents.AddListener<HotfixUserEvents.UserTryCreateDownloader>(this._OnHandleEventMessage);
+            this._userEvents.AddListener<HotfixUserEvents.UserBeginDownload>(this._OnHandleEventMessage);
 
             // 註冊 HotfixFsm 處理流程
             this._hotfixFsm = new StateMachine(this);
@@ -242,6 +243,10 @@ namespace OxGFrame.Hotfixer
             else if (message is HotfixUserEvents.UserTryCreateDownloader)
             {
                 this._hotfixFsm.ChangeState<HotfixFsmStates.FsmHotfixCreateDownloader>();
+            }
+            else if (message is HotfixUserEvents.UserBeginDownload)
+            {
+                this._hotfixFsm.ChangeState<HotfixFsmStates.FsmHotfixBeginDownload>();
             }
             else
             {

@@ -1,5 +1,6 @@
 using MyBox;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace OxGFrame.AssetLoader.Bundle
@@ -90,6 +91,15 @@ namespace OxGFrame.AssetLoader.Bundle
 
         [Tooltip("If checked, will check the last locally stored versions. (Applies to WeakHostMode only)")]
         public bool enableLastLocalVersionsCheckInWeakNetwork;
+
+        #region YooAsset
+        [Header("YooAsset Settings")]
+        /// <summary>
+        /// YooAsset Parameter 參數列表
+        /// </summary>
+        [Tooltip("[YooAsset] Runtime parameters for YooAsset. (Custom Mode is not supported!)")]
+        public List<ParameterEntry> parameterEntries = new List<ParameterEntry>();
+        #endregion
 
         public PlayModeParameters()
         {
