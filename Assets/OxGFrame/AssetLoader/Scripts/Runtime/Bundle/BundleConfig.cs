@@ -299,7 +299,7 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             if (_urlCfgFileMap == null)
             {
-                string bundleUrlFileName = $"{PatchSettings.settings.bundleUrlCfgName}{PatchSettings.BUNDLE_URL_CFG_EXTENSION}";
+                string bundleUrlFileName = $"{PatchSettings.settings.bundleUrlCfgName}{PatchSettings.settings.bundleUrlCfgExtension}";
                 string pathName = Path.Combine(GetRequestStreamingAssetsPath(), bundleUrlFileName);
                 var data = await Requester.RequestBytes(pathName);
                 if (data.Length == 0)
@@ -526,7 +526,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetLocalSandboxAppConfigPath()
         {
-            string appCfgFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.APP_CFG_EXTENSION}";
+            string appCfgFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.settings.appCfgExtension}";
             return Path.Combine(GetLocalSandboxRootPath(), appCfgFileName);
         }
 
@@ -536,7 +536,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static string GetStreamingAssetsAppConfigPath()
         {
-            string appCfgFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.APP_CFG_EXTENSION}";
+            string appCfgFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.settings.appCfgExtension}";
             return Path.Combine(GetRequestStreamingAssetsPath(), appCfgFileName);
         }
 
@@ -552,7 +552,7 @@ namespace OxGFrame.AssetLoader.Bundle
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
             string rootFolderName = PatchSettings.settings.rootFolderName;
-            string appCfgFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.APP_CFG_EXTENSION}";
+            string appCfgFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.settings.appCfgExtension}";
 
             return Path.Combine($"{host}/{rootFolderName}/{productName}/{platform}", appCfgFileName);
         }
@@ -569,7 +569,7 @@ namespace OxGFrame.AssetLoader.Bundle
             string productName = appConfig.PRODUCT_NAME;
             string platform = appConfig.PLATFORM;
             string rootFolderName = PatchSettings.settings.rootFolderName;
-            string patchCfgFileName = $"{PatchSettings.settings.patchCfgName}{PatchSettings.PATCH_CFG_EXTENSION}";
+            string patchCfgFileName = $"{PatchSettings.settings.patchCfgName}{PatchSettings.settings.patchCfgExtension}";
 
             return Path.Combine($"{host}/{rootFolderName}/{productName}/{platform}", patchCfgFileName);
         }

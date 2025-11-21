@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [3.5.5] - 2025-11-21
+
+# English
+- Hotfixer
+  - Added **HotfixSettings**, allowing custom file extensions to avoid issues where some WebGL environments restrict certain extension names.
+- AssetLoader
+  - Added **PatchSettings**, allowing custom file extensions to avoid issues where some WebGL environments restrict certain extension names.
+
+# 中文
+- Hotfixer
+  - 新增 HotfixSettings 可以自定義擴展名稱，避免有些 WebGL 有限制擴展名稱的請求。
+- AssetLoader
+  - 新增 PatchSettings 可以自定義擴展名稱，避免有些 WebGL 有限制擴展名稱的請求。
+
 ## [3.5.4] - 2025-11-06
 
 # English

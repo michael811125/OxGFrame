@@ -38,7 +38,7 @@ namespace OxGFrame.AssetLoader.Editor
             string jsonCfg = JsonConvert.SerializeObject(cfg, Formatting.Indented);
 
             // 寫入配置文件
-            string appCfgFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.APP_CFG_EXTENSION}";
+            string appCfgFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.settings.appCfgExtension}";
             string writePath = Path.Combine(outputPath, appCfgFileName);
             WriteTxt(jsonCfg, writePath);
 
@@ -78,7 +78,7 @@ namespace OxGFrame.AssetLoader.Editor
             string jsonCfg = JsonConvert.SerializeObject(appCfg, Formatting.Indented);
 
             // 寫入配置文件
-            string appCfgFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.APP_CFG_EXTENSION}";
+            string appCfgFileName = $"{PatchSettings.settings.appCfgName}{PatchSettings.settings.appCfgExtension}";
             string writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}", appCfgFileName);
             WriteTxt(jsonCfg, writePath);
 
@@ -93,7 +93,7 @@ namespace OxGFrame.AssetLoader.Editor
             jsonCfg = JsonConvert.SerializeObject(patchCfg, Formatting.Indented);
 
             // 寫入配置文件
-            string patchCfgFileName = $"{PatchSettings.settings.patchCfgName}{PatchSettings.PATCH_CFG_EXTENSION}";
+            string patchCfgFileName = $"{PatchSettings.settings.patchCfgName}{PatchSettings.settings.patchCfgExtension}";
             writePath = Path.Combine(outputPath + $@"/{productName}" + $@"/{appCfg.PLATFORM}", patchCfgFileName);
             WriteTxt(jsonCfg, writePath);
 
@@ -188,7 +188,7 @@ namespace OxGFrame.AssetLoader.Editor
                 $"{PatchSettings.STORE_LINK} {storeLink}",
             };
 
-            string bundleUrlFileName = $"{PatchSettings.settings.bundleUrlCfgName}{PatchSettings.BUNDLE_URL_CFG_EXTENSION}";
+            string bundleUrlFileName = $"{PatchSettings.settings.bundleUrlCfgName}{PatchSettings.settings.bundleUrlCfgExtension}";
             string fullOutputPath = Path.Combine(outputPath, bundleUrlFileName);
 
             string content = string.Empty;
@@ -496,7 +496,7 @@ namespace OxGFrame.AssetLoader.Editor
             // 版號規則
             cfg.SEMANTIC_RULE = semanticRule;
 
-            Debug.Log($"【Generate】{PatchSettings.settings.appCfgName}{PatchSettings.APP_CFG_EXTENSION} Completes.");
+            Debug.Log($"【Generate】{PatchSettings.settings.appCfgName}{PatchSettings.settings.appCfgExtension} Completes.");
 
             return cfg;
         }

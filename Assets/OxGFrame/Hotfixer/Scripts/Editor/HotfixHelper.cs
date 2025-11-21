@@ -140,7 +140,7 @@ namespace OxGFrame.Hotfixer.Editor
             // 寫入配置文件
             WriteConfig(config, cipher ? ConfigFileType.Bytes : ConfigFileType.Json);
 
-            Debug.Log($"【Export {HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION} Completes】");
+            Debug.Log($"【Export {HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension} Completes】");
         }
 
         [MenuItem("Assets/OxGFrame/Hotfixer/Convert hotfixdllconfig.conf (BYTES [Cipher] <-> JSON [Plaintext])", false, -99)]
@@ -162,7 +162,7 @@ namespace OxGFrame.Hotfixer.Editor
                     // 確保文件存在
                     if (File.Exists(fullPath))
                     {
-                        string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION}";
+                        string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}";
                         if (fullPath.IndexOf(fileName) == -1)
                         {
                             Debug.LogWarning($"Incorrect file selected. Please select the {fileName} file.");
@@ -225,7 +225,7 @@ namespace OxGFrame.Hotfixer.Editor
         /// <param name="configFileType"></param>
         internal static void WriteConfig(HotfixDllConfig hotfixDllConfig, ConfigFileType configFileType = ConfigFileType.Bytes)
         {
-            string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION}";
+            string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}";
             string savePath = Path.Combine(Application.streamingAssetsPath, fileName);
 
             // 獲取文件夾路徑
