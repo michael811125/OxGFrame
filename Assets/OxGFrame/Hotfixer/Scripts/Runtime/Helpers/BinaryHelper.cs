@@ -55,7 +55,7 @@ namespace OxGFrame.Hotfixer
 
                 // To string
                 info.content = Encoding.UTF8.GetString(dataWithoutHeader);
-                Debug.Log($"[Source is Cipher] Check -> {HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION}");
+                Debug.Log($"[Source is Cipher] Check -> {HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}");
             }
             else
             {
@@ -63,7 +63,7 @@ namespace OxGFrame.Hotfixer
 
                 // To string
                 info.content = Encoding.UTF8.GetString(data);
-                Debug.Log($"[Source is Plaintext] Check -> {HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION}");
+                Debug.Log($"[Source is Plaintext] Check -> {HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}");
             }
 
             return info;

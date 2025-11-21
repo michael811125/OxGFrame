@@ -175,7 +175,7 @@ namespace OxGFrame.Hotfixer.Editor
             // file name label
             {
                 var style = new GUIStyle(EditorStyles.label) { richText = true };
-                string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION}";
+                string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}";
                 GUILayout.Label($"Config Name: <b><color=#ffed29>{fileName}</color></b>", style);
             }
 
@@ -190,7 +190,7 @@ namespace OxGFrame.Hotfixer.Editor
             GUI.backgroundColor = new Color32(255, 185, 83, 255);
             if (GUILayout.Button("Cipher Process", GUILayout.MaxWidth(110f)))
             {
-                string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION}";
+                string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}";
                 string outputPath = Application.streamingAssetsPath;
                 HotfixHelper.ExportHotfixDllConfig(this.aotDlls, this.hotfixDlls, true);
                 EditorUtility.DisplayDialog("Process Message", $"Export [Cipher] {fileName} To StreamingAssets.", "OK");
@@ -201,7 +201,7 @@ namespace OxGFrame.Hotfixer.Editor
             GUI.backgroundColor = new Color32(255, 185, 83, 255);
             if (GUILayout.Button("Plaintext Process", GUILayout.MaxWidth(125f)))
             {
-                string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.HOTFIX_DLL_CFG_EXTENSION}";
+                string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}";
                 string outputPath = Application.streamingAssetsPath;
                 HotfixHelper.ExportHotfixDllConfig(this.aotDlls, this.hotfixDlls, false);
                 EditorUtility.DisplayDialog("Process Message", $"Export [Plaintext] {fileName} To StreamingAssets.", "OK");

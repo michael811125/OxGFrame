@@ -25,16 +25,17 @@ namespace OxGFrame.AssetLoader
         /// </summary>
         public const string APP_CFG_BAK_EXTENSION = ".bak";
 
-        /// <summary>
-        /// APP 配置文件擴展名
-        /// </summary>
-        public const string APP_CFG_EXTENSION = ".json";
-
         [Header("App Config Settings")]
         /// <summary>
         ///  APP 配置文件的名稱
         /// </summary>
         public string appCfgName = "appconfig";
+
+        /// <summary>
+        /// APP 配置文件擴展名
+        /// </summary>
+        [Tooltip("The file extension must include the dot (e.g., .conf, .json). Please ensure you enter it with the dot.")]
+        public string appCfgExtension = ".json";
         #endregion
 
         #region PatchConfig 配置文件
@@ -43,16 +44,17 @@ namespace OxGFrame.AssetLoader
         /// </summary>
         public const string PATCH_CFG_BAK_EXTENSION = ".bak";
 
-        /// <summary>
-        /// 補丁配置文件擴展名
-        /// </summary>
-        public const string PATCH_CFG_EXTENSION = ".json";
-
         [Header("Patch Config Settings")]
         /// <summary>
         /// 補丁配置文件的名稱 
         /// </summary>
         public string patchCfgName = "patchconfig";
+
+        /// <summary>
+        /// 補丁配置文件擴展名
+        /// </summary>
+        [Tooltip("The file extension must include the dot (e.g., .conf, .json). Please ensure you enter it with the dot.")]
+        public string patchCfgExtension = ".json";
         #endregion
 
         #region 佈署配置文件中的 KEY
@@ -80,14 +82,15 @@ namespace OxGFrame.AssetLoader
         public byte bundleUrlCfgCipher = 0x4D;
 
         /// <summary>
-        /// 資源請求端點的配置文件擴展名
-        /// </summary>
-        public const string BUNDLE_URL_CFG_EXTENSION = ".conf";
-
-        /// <summary>
         /// 資源請求端點的配置文件名稱
         /// </summary>
         public string bundleUrlCfgName = "burlconfig";
+
+        /// <summary>
+        /// 資源請求端點的配置文件擴展名
+        /// </summary>
+        [Tooltip("The file extension must include the dot (e.g., .conf, .json). Please ensure you enter it with the dot.")]
+        public string bundleUrlCfgExtension = ".conf";
         #endregion
 
         #region Bundle 輸出歸類名稱

@@ -16,14 +16,14 @@ namespace OxGFrame.Hotfixer
         public byte cipher = 0x6D;
 
         /// <summary>
-        /// 配置文件擴展名
-        /// </summary>
-        public const string HOTFIX_DLL_CFG_EXTENSION = ".conf";
-
-        /// <summary>
         /// 配置文件名稱
         /// </summary>
         public string hotfixDllCfgName = "hotfixdllconfig";
+
+        /// <summary>
+        /// 配置文件擴展名
+        /// </summary>
+        public string hotfixDllCfgExtension = ".conf";
 
         private static HotfixSettings _settings = null;
         public static HotfixSettings settings
