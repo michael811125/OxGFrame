@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [3.5.6] - 2025-12-04
+
+# English
+- AssetLoader
+  - ### Updated
+    - Updated YooAsset to [v2.3.18](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.18) \[Affects MiniGame development\].
+
+# 中文
+- AssetLoader
+  - ### 更新
+    - 更新 YooAsset 至 [v2.3.18](https://github.com/tuyoogame/YooAsset/releases/tag/2.3.18) \[小遊戲開發有影響\]。
+
 ## [3.5.5] - 2025-11-21
 
 # English

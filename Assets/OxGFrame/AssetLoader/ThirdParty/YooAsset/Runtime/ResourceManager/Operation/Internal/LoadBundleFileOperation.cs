@@ -197,13 +197,8 @@ namespace YooAsset
             {
                 foreach (var bundleID in LoadBundleInfo.Bundle.ReferenceBundleIDs)
                 {
-#if YOOASSET_EXPERIMENTAL
                     if (_resManager.CheckBundleReleasable(bundleID) == false)
                         return false;
-#else
-                    if (_resManager.CheckBundleDestroyed(bundleID) == false)
-                        return false;
-#endif
                 }
             }
 
