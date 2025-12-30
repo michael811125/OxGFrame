@@ -436,10 +436,11 @@ video_urlset 127.0.0.1/video/
   - WebSocketNetOption 
 - INetTips (網路狀態提示接口)
 
-**目前有提供的 NetProvider (可自行擴展)**
-- TCP
-- KCP
-- WebSocket
+**目前有提供的 NetProvider 為以下** (可自行擴展其他 Provider)
+- TCP ([Telepathy TCP](https://github.com/MirrorNetworking/Telepathy))
+  - **注意**：Telepathy 框架已處理分黏包問題，會強制在 **Packet** 前面加入 **4 bytes** 來表示封包長度。
+- KCP ([kcp2k](https://github.com/MirrorNetworking/kcp2k))
+- WebSocket ([UnityWebSocket](https://github.com/psygames/UnityWebSocket))
 
 ---
 

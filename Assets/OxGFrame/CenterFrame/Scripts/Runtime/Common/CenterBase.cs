@@ -15,7 +15,8 @@ namespace OxGFrame.CenterFrame
             {
                 lock (_locker)
                 {
-                    _instance = new TCenter();
+                    if (_instance == null)
+                        _instance = new TCenter();
                 }
             }
             return _instance;

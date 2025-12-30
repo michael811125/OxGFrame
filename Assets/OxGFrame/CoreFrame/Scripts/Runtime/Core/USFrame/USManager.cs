@@ -49,7 +49,8 @@ namespace OxGFrame.CoreFrame.USFrame
             {
                 lock (_locker)
                 {
-                    _instance = new USManager();
+                    if (_instance == null)
+                        _instance = new USManager();
                 }
             }
             return _instance;

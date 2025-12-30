@@ -1,5 +1,44 @@
 # CHANGELOG
 
+## [3.5.7] - 2025-12-30
+
+# English
+
+- **AssetLoader**
+  - ### Updated
+    - Updated **YooAsset** to the latest commit ([1884fab](https://github.com/tuyoogame/YooAsset/commits/dev/)).
+
+- **NetFrame**
+  - ### Added
+    - Added `NetNode.SetConnectedHandler` to configure the callback method triggered upon a successful connection.
+  - ### Fixed
+    - Fixed a casting issue during buffer reception in `TcpNetProvider.OnBinary`.
+    ```csharp
+    // Fix
+    var length = arrSeg.Count;
+    var rcvData = new byte[length];
+    Array.Copy(arrSeg.Array, arrSeg.Offset, rcvData, 0, length);
+    this.OnBinary(this, rcvData);
+    ```
+
+# 中文
+
+- AssetLoader
+  - ### 更新
+    - 更新 YooAsset 至最新 commit ([1884fab](https://github.com/tuyoogame/YooAsset/commits/dev/))。
+- NetFrame
+  - ### 新增
+    - 新增 NetNode.SetConnectedHandler 設置已連線的回調方法。
+  - ### 修正
+    - 修正 TcpNetProvider OnBinary 接收 buffer 轉型問題。
+    ```csharp
+	// Fix
+    var length = arrSeg.Count;
+    var rcvData = new byte[length];
+    Array.Copy(arrSeg.Array, arrSeg.Offset, rcvData, 0, length);
+    this.OnBinary(this, rcvData);
+    ```
+
 ## [3.5.6] - 2025-12-04
 
 # English

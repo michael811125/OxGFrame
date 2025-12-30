@@ -6,7 +6,11 @@ namespace OxGFrame.NetFrame
 {
     public delegate void ResponseHandler<T>(T data);
     public delegate void ConnectingHandler();
+    public delegate void ConnectedHandler();
 
+    /// <summary>
+    /// Represents the current state of the network connection.
+    /// </summary>
     public enum NetStatus
     {
         CONNECTING,
@@ -18,29 +22,30 @@ namespace OxGFrame.NetFrame
 
     public class NetNode : IDisposable
     {
-        protected NetStatus _netStatus;                                   // Net 狀態
-        protected NetOption _netOption = null;                            // 網路設置選項
-        protected INetProvider _netProvider = null;                       // 網路供應者 (TCP, WebSocket, KCP...)
-        protected INetTips _netTips = null;                               // 網路狀態提示介面
+        protected NetStatus _netStatus;                                  // Current network status
+        protected NetOption _netOption = null;                           // Network configuration options
+        protected INetProvider _netProvider = null;                      // Underlying network provider (TCP, WebSocket, KCP, etc.)
+        protected INetTips _netTips = null;                              // UI/UX interface for displaying network status tips
 
-        private bool _isCloseForce = false;                               // 是否強制斷線
+        private bool _isCloseForce = false;                              // Flag to indicate if the connection was closed intentionally
 
-        protected RealTimer _hearBeatTicker = null;                       // 心跳檢測計循環計時器
-        private float _heartBeatTick = 10f;                               // 心跳檢測時間, 預設 = 10秒
-        protected Action _heartBeatAction = null;                         // 心跳檢測 Callback
+        protected RealTimer _hearBeatTicker = null;                      // Cyclic timer for sending heartbeats
+        private float _heartBeatTick = 10f;                              // Heartbeat interval in seconds (Default: 10s)
+        protected Action _heartBeatAction = null;                        // Callback triggered when heartbeat interval elapses
 
-        protected RealTimer _outReceiveTicker = null;                     // 超時檢測循環計時器
-        private float _outReceiveTick = 60f;                              // 超時檢測時間, 預設 = 60秒
-        protected Action _outReceiveAction = null;                        // 超時檢測 Callback
+        protected RealTimer _outReceiveTicker = null;                    // Cyclic timer for receive-timeout detection
+        private float _outReceiveTick = 60f;                             // Timeout threshold in seconds (Default: 60s)
+        protected Action _outReceiveAction = null;                       // Callback triggered when no data is received within the threshold
 
-        protected RealTimer _reconnectTicker = null;                      // 斷線重連循環計時器
-        private float _reconnectTick = 5f;                                // 斷線重連時間, 預設 = 5秒
-        private int _autoReconnectCount = 0;                              // 自動連線次數
-        protected Action _reconnectAction = null;                         // 斷線重連 Callback
+        protected RealTimer _reconnectTicker = null;                     // Cyclic timer for reconnection attempts
+        private float _reconnectTick = 5f;                               // Delay between reconnection attempts (Default: 5s)
+        private int _autoReconnectCount = 0;                             // Remaining number of automatic reconnection attempts
+        protected Action _reconnectAction = null;                        // Callback triggered upon a reconnection attempt
 
-        protected ResponseHandler<byte[]> _responseBinaryHandler = null;  // 接收的回調 (Binary)
-        protected ResponseHandler<string> _responseMessageHandler;        // 接收的回調 (Text)
-        protected ConnectingHandler _connectingHandler = null;            // 連線中的回調
+        protected ResponseHandler<byte[]> _responseBinaryHandler = null; // Delegate for handling incoming binary data
+        protected ResponseHandler<string> _responseMessageHandler;       // Delegate for handling incoming text data
+        protected ConnectingHandler _connectingHandler = null;           // Callback triggered when the connection starts
+        protected ConnectedHandler _connectedHandler = null;             // Callback triggered when the connection is established
 
         protected NetNode()
         {
@@ -59,6 +64,11 @@ namespace OxGFrame.NetFrame
             this.Dispose();
         }
 
+        /// <summary>
+        /// Retrieves the network provider cast to a specific implementation.
+        /// </summary>
+        /// <typeparam name="T">The type of INetProvider.</typeparam>
+        /// <returns>The network provider instance.</returns>
         public T GetNetProvider<T>() where T : INetProvider
         {
             T socket = (T)this._netProvider;
@@ -73,6 +83,9 @@ namespace OxGFrame.NetFrame
             this._netStatus = NetStatus.DISCONNECTED;
         }
 
+        /// <summary>
+        /// Hooks into the provider's network events.
+        /// </summary>
         private void _InitNetEvents()
         {
             this._netProvider.OnOpen += (sender, payload) =>
@@ -101,6 +114,10 @@ namespace OxGFrame.NetFrame
             };
         }
 
+        /// <summary>
+        /// Initiates a connection to the server using the specified options.
+        /// </summary>
+        /// <param name="netOption">Connection settings including address and port.</param>
         public void Connect(NetOption netOption)
         {
             if (this._netProvider == null)
@@ -119,11 +136,17 @@ namespace OxGFrame.NetFrame
             }
         }
 
+        /// <summary>
+        /// Sets the UI feedback interface for network state changes.
+        /// </summary>
         public void SetNetTips(INetTips netTips)
         {
             this._netTips = netTips;
         }
 
+        /// <summary>
+        /// Internal handler to transition the NetStatus and notify UI listeners.
+        /// </summary>
         private void _NetStatusHandler(NetStatus status, object payload)
         {
             this._netStatus = status;
@@ -147,6 +170,10 @@ namespace OxGFrame.NetFrame
             }
         }
 
+        /// <summary>
+        /// Main update loop to process timers and provider logic. 
+        /// Should be called by a driver (e.g., MonoBehavior Update).
+        /// </summary>
         internal void OnUpdate()
         {
             this._netProvider?.OnUpdate();
@@ -163,6 +190,7 @@ namespace OxGFrame.NetFrame
             this._ResetAutoReconnect();
             this._ResetOutReceiveTicker();
             this._ResetHeartBeatTicker();
+            this._connectedHandler?.Invoke();
         }
 
         private void _OnBinary(byte[] binary)
@@ -192,16 +220,25 @@ namespace OxGFrame.NetFrame
             this._StartAutoReconnect();
         }
 
+        /// <summary>
+        /// Sends raw binary data through the current provider.
+        /// </summary>
         public bool Send(byte[] buffer)
         {
             return this._netProvider.SendBinary(buffer);
         }
 
+        /// <summary>
+        /// Sends a string message through the current provider.
+        /// </summary>
         public bool Send(string text)
         {
             return this._netProvider.SendMessage(text);
         }
 
+        /// <summary>
+        /// Manually closes the connection and prevents automatic reconnection.
+        /// </summary>
         public void Close()
         {
             this._isCloseForce = true;
@@ -210,9 +247,8 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// 返回連線狀態
+        /// Checks if the network provider is currently connected.
         /// </summary>
-        /// <returns></returns>
         public bool IsConnected()
         {
             if (this._netProvider == null)
@@ -220,39 +256,52 @@ namespace OxGFrame.NetFrame
             return this._netProvider.IsConnected();
         }
 
+        #region Response Handlers
         /// <summary>
-        /// 設置接收的 Handler (Binary)
+        /// Assigns a handler for processing binary responses.
         /// </summary>
-        /// <param name="handler"></param>
         public void SetResponseBinaryHandler(ResponseHandler<byte[]> handler)
         {
             this._responseBinaryHandler = handler;
         }
 
         /// <summary>
-        /// 設置接收的 Handler (Text)
+        /// Assigns a handler for processing text responses.
         /// </summary>
-        /// <param name="handler"></param>
         public void SetResponseMessageHandler(ResponseHandler<string> handler)
         {
             this._responseMessageHandler = handler;
         }
 
         /// <summary>
-        /// 設置每次連線中的 Handler
+        /// Assigns a callback to be triggered during the connection phase.
         /// </summary>
-        /// <param name="handler"></param>
         public void SetConnectingHandler(ConnectingHandler handler)
         {
             this._connectingHandler = handler;
         }
 
-        #region 超時 Ticker 處理
+        /// <summary>
+        /// Assigns a callback to be triggered once the connection is successful.
+        /// </summary>
+        public void SetConnectedHandler(ConnectedHandler handler)
+        {
+            this._connectedHandler = handler;
+        }
+        #endregion
+
+        #region Timeout (Receive) Ticker Logic
+        /// <summary>
+        /// Sets the action to perform when a receive timeout occurs.
+        /// </summary>
         public void SetOutReceiveAction(Action outReceiveAction)
         {
             this._outReceiveAction = outReceiveAction;
         }
 
+        /// <summary>
+        /// Sets the maximum time allowed between receiving data before a timeout is triggered.
+        /// </summary>
         public void SetOutReceiveTickerTime(float time)
         {
             this._outReceiveTick = time;
@@ -275,17 +324,26 @@ namespace OxGFrame.NetFrame
             if (this._outReceiveTicker.IsTickTimeout())
             {
                 this._outReceiveAction?.Invoke();
-                Logging.Print<Logger>("NetNode timeout processing...");
+                Logging.Print<Logger>("NetNode receive timeout detected.");
             }
         }
         #endregion
 
-        #region 心跳檢測 Ticker 處理
+        #region Heartbeat Ticker Logic
+        /// <summary>
+        /// Sets the action to perform (e.g., sending a Ping) when the heartbeat ticker elapses.
+        /// </summary>
         public void SetHeartBeatAction(Action heartBeatAction)
         {
             this._heartBeatAction = heartBeatAction;
         }
 
+        /// <summary>
+        /// Sets the frequency of the heartbeat pulse.
+        /// </summary>
+        /// <remarks>
+        /// Recommendation: Set this value to less than half of the server's timeout (e.g., Server=8s, Client=4s).
+        /// </remarks>
         public void SetHeartBeatTickerTime(float time)
         {
             this._heartBeatTick = time;
@@ -308,17 +366,23 @@ namespace OxGFrame.NetFrame
             if (this._hearBeatTicker.IsTickTimeout())
             {
                 this._heartBeatAction?.Invoke();
-                Logging.Print<Logger>("NetNode check heartbeat...");
+                Logging.Print<Logger>("NetNode sending heartbeat...");
             }
         }
         #endregion
 
-        #region 斷線重連 Ticker 處理
+        #region Reconnection Ticker Logic
+        /// <summary>
+        /// Sets the action to perform when a reconnection attempt is made.
+        /// </summary>
         public void SetReconnectAction(Action reconnectAction)
         {
             this._reconnectAction = reconnectAction;
         }
 
+        /// <summary>
+        /// Sets the interval between reconnection attempts.
+        /// </summary>
         public void SetReconnectTickerTime(float time)
         {
             this._reconnectTick = time;
@@ -364,7 +428,7 @@ namespace OxGFrame.NetFrame
                         this._autoReconnectCount -= 1;
 
                     this._reconnectAction?.Invoke();
-                    Logging.Print<Logger>("NetNode try to reconnecting...");
+                    Logging.Print<Logger>("NetNode attempting to reconnect...");
                 }
             }
             else
@@ -376,22 +440,23 @@ namespace OxGFrame.NetFrame
         #endregion
 
         /// <summary>
-        /// 停止所有計時器
+        /// Stops all active timers (Heartbeat, Timeout, and Reconnect).
         /// </summary>
         private void _StopTicker()
         {
-            if (this._hearBeatTicker != null)
-                this._hearBeatTicker.Stop();
-            if (this._outReceiveTicker != null)
-                this._outReceiveTicker.Stop();
-            if (this._reconnectTicker != null)
-                this._reconnectTicker.Stop();
+            this._hearBeatTicker?.Stop();
+            this._outReceiveTicker?.Stop();
+            this._reconnectTicker?.Stop();
         }
 
+        /// <summary>
+        /// Releases all resources used by the NetNode and shuts down connections.
+        /// </summary>
         public void Dispose()
         {
             if (this._netProvider != null && !this._isCloseForce)
                 this._netProvider.Close();
+
             this._netProvider = null;
             this._netTips = null;
             this._netOption = null;
@@ -402,6 +467,9 @@ namespace OxGFrame.NetFrame
             this._reconnectTicker = null;
             this._reconnectAction = null;
             this._responseBinaryHandler = null;
+            this._responseMessageHandler = null;
+            this._connectingHandler = null;
+            this._connectedHandler = null;
         }
     }
 }
