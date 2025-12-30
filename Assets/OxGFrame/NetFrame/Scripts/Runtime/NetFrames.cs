@@ -37,6 +37,14 @@
         }
 
         /// <summary>
+        /// Resets the NetManager's Updater
+        /// </summary>
+        public static void ResetUpdater()
+        {
+            NetManager.GetInstance().ResetUpdater();
+        }
+
+        /// <summary>
         /// Number of network nodes
         /// </summary>
         /// <returns></returns>
