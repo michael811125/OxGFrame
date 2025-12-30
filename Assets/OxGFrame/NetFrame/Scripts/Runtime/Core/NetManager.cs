@@ -8,25 +8,30 @@ namespace OxGFrame.NetFrame
     internal class NetManager
     {
         /// <summary>
-        /// NetNode 緩存
+        /// Cache for managing active network nodes.
         /// </summary>
         private Dictionary<int, NetNode> _netNodes = null;
 
         /// <summary>
-        /// Updater 驅動器
+        /// The real-time updater driver that processes network logic.
         /// </summary>
         internal RTUpdater rtUpdater = null;
 
         private static readonly object _locker = new object();
         private static NetManager _instance = null;
 
+        /// <summary>
+        /// Retrieves the singleton instance of NetManager with thread-safety.
+        /// </summary>
+        /// <returns>The NetManager instance.</returns>
         public static NetManager GetInstance()
         {
             if (_instance == null)
             {
                 lock (_locker)
                 {
-                    _instance = new NetManager();
+                    if (_instance == null)
+                        _instance = new NetManager();
                 }
             }
             return _instance;
@@ -35,39 +40,67 @@ namespace OxGFrame.NetFrame
         public NetManager()
         {
             this._netNodes = new Dictionary<int, NetNode>();
+            this.ResetUpdater();
+        }
+
+        /// <summary>
+        /// Resets and restarts the Real-Time Updater. 
+        /// Ensures the previous updater is stopped and nullified to allow Garbage Collection.
+        /// </summary>
+        public void ResetUpdater()
+        {
+            // 1. Clean up existing updater
+            if (this.rtUpdater != null)
+            {
+                this.rtUpdater.Stop();
+                this.rtUpdater.onUpdate = null;
+                this.rtUpdater.onFixedUpdate = null;
+                this.rtUpdater.onLateUpdate = null;
+                this.rtUpdater = null;
+            }
+
+            // 2. Re-initialize
             this.rtUpdater = new RTUpdater();
             this.rtUpdater.onUpdate = this._OnUpdate;
             this.rtUpdater.Start();
+
+            Logging.Print<Logger>("NetManager: Updater has been explicitly nullified and reset.");
         }
 
+        /// <summary>
+        /// Internal update loop triggered by the RTUpdater driver.
+        /// </summary>
+        /// <param name="dt">Delta time since the previous frame.</param>
         private void _OnUpdate(float dt)
         {
             if (this._netNodes.Count > 0)
             {
+                // Create a snapshot to prevent "Collection Modified" exceptions during iteration
                 var nodes = this._netNodes.Values.ToArray();
                 foreach (var node in nodes)
                 {
+                    // If the collection size changed significantly, stop current iteration to stay synced
                     if (this._netNodes.Count != nodes.Length) break;
                     else if (node == null) continue;
+
                     node.OnUpdate();
                 }
             }
         }
 
         /// <summary>
-        /// Number of network nodes
+        /// Returns the total count of registered network nodes.
         /// </summary>
-        /// <returns></returns>
         public int Count()
         {
             return this._netNodes.Count;
         }
 
         /// <summary>
-        /// Adds a network node
+        /// Adds or replaces a network node. If the ID exists, the previous node is disposed.
         /// </summary>
-        /// <param name="netNode">The net node to add</param>
-        /// <param name="nnId">The ID of the net node</param>
+        /// <param name="netNode">The NetNode instance to manage.</param>
+        /// <param name="nnId">Unique identifier for the node.</param>
         public void AddNetNode(NetNode netNode, int nnId)
         {
             if (!this._netNodes.ContainsKey(nnId))
@@ -82,9 +115,9 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// Removes a network node
+        /// Disposes and removes a specific network node from management.
         /// </summary>
-        /// <param name="nnId">The ID of the net node to remove</param>
+        /// <param name="nnId">The ID of the node to remove.</param>
         public void RemoveNetNode(int nnId)
         {
             if (this._netNodes.ContainsKey(nnId))
@@ -95,107 +128,96 @@ namespace OxGFrame.NetFrame
         }
 
         /// <summary>
-        /// Retrieves a network node
+        /// Retrieves a managed network node by ID.
         /// </summary>
-        /// <param name="nnId">The ID of the net node to retrieve</param>
-        /// <returns>The net node with the specified ID, or null if it does not exist</returns>
+        /// <param name="nnId">Node identifier.</param>
+        /// <returns>The NetNode instance or null if not found.</returns>
         public NetNode GetNetNode(int nnId)
         {
-            if (this._netNodes.ContainsKey(nnId))
-                return this._netNodes[nnId];
+            if (this._netNodes.TryGetValue(nnId, out var node))
+                return node;
             return null;
         }
 
         /// <summary>
-        /// Opens a connection for a specified network node
+        /// Initiates a connection for a specific network node.
         /// </summary>
-        /// <param name="netOption">The options for the connection</param>
-        /// <param name="nnId">The ID of the network node to connect</param>
+        /// <param name="netOption">Configuration settings for the connection.</param>
+        /// <param name="nnId">Node identifier.</param>
         public void Connect(NetOption netOption, int nnId)
         {
-            if (this._netNodes.ContainsKey(nnId))
-                this._netNodes[nnId].Connect(netOption);
+            if (this._netNodes.TryGetValue(nnId, out var node))
+                node.Connect(netOption);
             else
-                Logging.PrintError<Logger>($"The NodeId: {nnId} can't be found! Connection failed.");
+                Logging.PrintError<Logger>($"NetManager: NodeId {nnId} not found. Connection failed.");
         }
 
         /// <summary>
-        /// Checks the connection state of a network node
+        /// Checks if a specific node is currently connected to its provider.
         /// </summary>
-        /// <param name="nnId">The ID of the network node to check</param>
-        /// <returns>True if the network node is connected, false otherwise</returns>
         public bool IsConnected(int nnId)
         {
-            if (this._netNodes.ContainsKey(nnId))
+            if (this._netNodes.TryGetValue(nnId, out var node))
             {
-                if (this._netNodes[nnId] == null)
-                    return false;
-                return this._netNodes[nnId].IsConnected();
+                return node != null && node.IsConnected();
             }
             return false;
         }
 
         /// <summary>
-        /// Sends binary data to a network node
+        /// Sends binary data through a specific network node.
         /// </summary>
-        /// <param name="buffer">The binary data to send</param>
-        /// <param name="nnId">The ID of the network node to send the data to</param>
-        /// <returns>True if the data was sent successfully, false otherwise</returns>
+        /// <returns>True if data was successfully handed to the provider.</returns>
         public bool Send(byte[] buffer, int nnId)
         {
-            if (this._netNodes.ContainsKey(nnId))
+            if (this._netNodes.TryGetValue(nnId, out var node))
             {
-                return this._netNodes[nnId].Send(buffer);
+                return node.Send(buffer);
             }
-            else
-            {
-                Logging.PrintError<Logger>($"The NodeId: {nnId} can't be found! Send failed.");
-                return false;
-            }
+            Logging.PrintError<Logger>($"NetManager: NodeId {nnId} not found. Binary send failed.");
+            return false;
         }
 
         /// <summary>
-        /// Sends text data to a network node
+        /// Sends string/text data through a specific network node.
         /// </summary>
-        /// <param name="text">The text data to send</param>
-        /// <param name="nnId">The ID of the network node to send the data to</param>
-        /// <returns>True if the data was sent successfully, false otherwise</returns>
+        /// <returns>True if the message was successfully handed to the provider.</returns>
         public bool Send(string text, int nnId)
         {
-            if (this._netNodes.ContainsKey(nnId))
+            if (this._netNodes.TryGetValue(nnId, out var node))
             {
-                return this._netNodes[nnId].Send(text);
+                return node.Send(text);
             }
-            else
-            {
-                Logging.PrintError<Logger>($"The NodeId: {nnId} can't be found! Send failed.");
-                return false;
-            }
+            Logging.PrintError<Logger>($"NetManager: NodeId {nnId} not found. Message send failed.");
+            return false;
         }
 
         /// <summary>
-        /// Close a network
+        /// Closes a network node's connection and optionally removes it from the manager.
         /// </summary>
-        /// <param name="nnId"></param>
-        /// <param name="removeNetNode"></param>
+        /// <param name="nnId">Node identifier.</param>
+        /// <param name="removeNetNode">If true, the node is removed from the cache after closing.</param>
         public void Close(int nnId, bool removeNetNode)
         {
-            if (this._netNodes.ContainsKey(nnId))
+            if (this._netNodes.TryGetValue(nnId, out var node))
             {
-                this._netNodes[nnId].Close();
+                node.Close();
                 if (removeNetNode)
                     this.RemoveNetNode(nnId);
             }
         }
 
         /// <summary>
-        /// Close all networks
+        /// Closes all active network connections managed by this class.
         /// </summary>
-        /// <param name="removeNetNode"></param>
+        /// <param name="removeNetNode">If true, clears the internal cache after closing.</param>
         public void CloseAll(bool removeNetNode)
         {
-            foreach (var nnId in this._netNodes.Keys.ToArray())
+            var keys = this._netNodes.Keys.ToArray();
+            foreach (var nnId in keys)
+            {
                 this.Close(nnId, removeNetNode);
+            }
         }
     }
 }

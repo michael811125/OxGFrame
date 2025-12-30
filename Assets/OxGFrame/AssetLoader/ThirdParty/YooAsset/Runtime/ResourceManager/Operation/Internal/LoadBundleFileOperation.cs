@@ -166,10 +166,10 @@ namespace YooAsset
 
             // 注意：正在加载中的任务不可以销毁
             if (_steps == ESteps.LoadBundleFile)
-                throw new Exception($"Bundle file loader is not done : {LoadBundleInfo.Bundle.BundleName}");
+                throw new YooInternalException($"Cannot destroy loader while loading bundle : {LoadBundleInfo.Bundle.BundleName}");
 
             if (RefCount > 0)
-                throw new Exception($"Bundle file loader ref is not zero : {LoadBundleInfo.Bundle.BundleName}");
+                throw new YooInternalException($"Cannot destroy loader with non-zero ref count {RefCount} : {LoadBundleInfo.Bundle.BundleName}");
 
             if (Result != null)
                 Result.UnloadBundleFile();
@@ -190,9 +190,6 @@ namespace YooAsset
             if (CanReleasableLoader() == false)
                 return false;
 
-            // YOOASSET_LEGACY_DEPENDENCY
-            // 检查引用链上的资源包是否已经全部销毁
-            // 注意：互相引用的资源包无法卸载！
             if (LoadBundleInfo.Bundle.ReferenceBundleIDs.Count > 0)
             {
                 foreach (var bundleID in LoadBundleInfo.Bundle.ReferenceBundleIDs)

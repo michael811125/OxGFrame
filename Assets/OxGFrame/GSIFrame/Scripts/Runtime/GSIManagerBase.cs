@@ -34,7 +34,8 @@ namespace OxGFrame.GSIFrame
             {
                 lock (_locker)
                 {
-                    _instance = new T();
+                    if (_instance == null)
+                        _instance = new T();
                 }
             }
             return _instance;

@@ -9,7 +9,7 @@ namespace OxGFrame.NetFrame
         private Client _client = null;
 
         /// <summary>
-        /// 一幀最大處理 N 個封包
+        /// Maximum number of packets to process per frame/tick
         /// </summary>
         public int processLimitPerTick;
 
@@ -64,7 +64,10 @@ namespace OxGFrame.NetFrame
 
         private void _OnMessageHandler(ArraySegment<byte> arrSeg)
         {
-            this.OnBinary(this, arrSeg.Array);
+            var length = arrSeg.Count;
+            var rcvData = new byte[length];
+            Array.Copy(arrSeg.Array, arrSeg.Offset, rcvData, 0, length);
+            this.OnBinary(this, rcvData);
         }
 
         private void _OnErrorHandler(string errorMsg)

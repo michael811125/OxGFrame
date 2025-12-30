@@ -25,7 +25,8 @@ namespace OxGFrame.CoreFrame.CPFrame
             {
                 lock (_locker)
                 {
-                    _instance = new CPManager();
+                    if (_instance == null)
+                        _instance = new CPManager();
                 }
             }
             return _instance;
