@@ -447,6 +447,7 @@ video_urlset 127.0.0.1/video/
 | ioGame Server | NetFrame - TcpNetProvider Client |
 |:-:|:-:|
 | ![](Docs/gif_7.gif) | ![](Docs/gif_8.gif) |
+| ![](Docs/img_21.png) | ![](Docs/img_20.png) |
 
 ---
 
