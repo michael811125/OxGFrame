@@ -411,9 +411,9 @@ video_urlset 127.0.0.1/video/
     
     public static void ChangeStage(int id, bool force = false)
     
-    public static void Start()
+    public static void DriveStart()
     
-    public static void Update(float dt = 0.0f)
+    public static void DriveUpdate(float dt = 0.0f)
 ```
 
 ※備註 : Right-Click Create/OxGFrame/GSI Frame... (Template cs)
@@ -442,12 +442,16 @@ video_urlset 127.0.0.1/video/
 - KCP ([kcp2k](https://github.com/MirrorNetworking/kcp2k))
 - WebSocket ([UnityWebSocket](https://github.com/psygames/UnityWebSocket))
 
-示例使用 [ioGame](https://github.com/iohao/ioGame) 作為服務端，客戶端使用 NetFrame - TcpNetProvider 作為連線：
+示例使用 [ioGame](https://github.com/iohao/ioGame) 作為服務端 (高效、方便切換連接方式)，客戶端使用 NetFrame - TcpNetProvider, WebSocketNetProvider 作為連線：
 
-| ioGame Server | NetFrame - TcpNetProvider Client |
+| ioGame Server (TCP) | NetFrame - TcpNetProvider Client |
 |:-:|:-:|
 | ![](Docs/gif_7.gif) | ![](Docs/gif_8.gif) |
 | ![](Docs/img_21.png) | ![](Docs/img_20.png) |
+
+| ioGame Server (WebSocket) | NetFrame - WebSocketNetProvider Client |
+|:-:|:-:|
+| ![](Docs/img_23.png) | ![](Docs/img_22.png) |
 
 ---
 
