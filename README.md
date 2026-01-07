@@ -14,6 +14,12 @@
 
 ---
 
+## 常用與依賴的工具庫
+
+- ### [OxGKit](https://github.com/michael811125/OxGKit)
+
+---
+
 ## 使用 OxGFrame 實現的 Demo 小遊戲
 
 [Github - FlappyBird_OxGFrame](https://github.com/michael811125/FlappyBird_OxGFrame)
@@ -204,8 +210,8 @@ if (isInitialized)
 # store_link = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID)
 # store_link = Apple Store Link (https://apps.apple.com/app/idYOUR_ID)
 
-bundle_ip 127.0.0.1
-bundle_fallback_ip 127.0.0.1
+bundle_ip http://127.0.0.1
+bundle_fallback_ip http://127.0.0.1
 store_link http://
 ```
 
@@ -254,7 +260,7 @@ store_link http://
 
 Init Order : OnCreate (Once) > OnAutoBind (Once) > OnBind (Once) > OnPreShow (EveryOpen) > OnShow (EveryOpen)
 
-#### 物件綁定說明 (OnBind)
+#### 物件綁定獲取說明 (OnBind)
 
 - 透過 collector.GetNode("BindName") 返回取得綁定 GameObject (單一名綁定)
   - UIBase & SRBase 使用 _Node@XXX
@@ -284,9 +290,11 @@ Init Order : OnCreate (Once) > OnAutoBind (Once) > OnBind (Once) > OnPreShow (Ev
 
 命名規範使用 * 指向 TailName
 - UIBase & SRBase
-  - _Node@XXX*Btn (以此類推)
+  - _Node@XXX\*Btn (以此類推)
+  - _Node@XXX\*Btn\*Img\*Trans (以此類推，支持多個 \* 指向多 TailName)
 - CPBase
-  - ~Node@XXX*Btn (以此類推)
+  - ~Node@XXX\*Btn (以此類推)
+  - ~Node@XXX\*Btn\*Img\*Trans (以此類推，支持多個 \* 指向多 TailName)
 
 綁定說明
 
@@ -442,7 +450,7 @@ video_urlset 127.0.0.1/video/
 - KCP ([kcp2k](https://github.com/MirrorNetworking/kcp2k))
 - WebSocket ([UnityWebSocket](https://github.com/psygames/UnityWebSocket))
 
-示例使用 [ioGame](https://github.com/iohao/ioGame) 作為服務端 (高效、方便切換連接方式)，客戶端使用 NetFrame - TcpNetProvider, WebSocketNetProvider 作為連線：
+示例使用 [ioGame](https://github.com/iohao/ioGame) 作為服務端 (高效、方便快速切換連接方式)，客戶端使用 NetFrame - TcpNetProvider, WebSocketNetProvider 作為連線：
 
 | ioGame Server (TCP) | NetFrame - TcpNetProvider Client |
 |:-:|:-:|
@@ -492,7 +500,15 @@ video_urlset 127.0.0.1/video/
 - TClass: APIBase，單個 API 基類，需建立實作 => 右鍵創建
 - TCenter: APICenter，用於繼承管理層，主要用於註冊階段，需建立實作 => 右鍵創建
   - 使用 Default API 進行調用 (Add, Find)
-  
+
+Acax 種類支持：
+- Http.Acax (UnityWebRequest - using UnityEngine.Networking)，僅支持主線程。
+  - 平台建議：WebGL、WIN、OSX、Android、iOS。
+- HttpNativeClient.Acax (HttpClient - using System.Net.Http 新)，支持其他線程。
+  - 平台建議：WIN、OSX、Android、iOS。
+- HttpNativeWebRequest.Acax (HttpWebRequest - using System.Net 舊)，支持其他線程。
+  - 平台建議：WIN、OSX、Android、iOS。
+
 ※備註 : Right-Click Create/OxGFrame/Center Frame... (Template cs)
 
 ---
@@ -510,6 +526,10 @@ video_urlset 127.0.0.1/video/
 [UWA 開源庫](https://lab.uwa4d.com/lab/62d51e6fa8103dabd0cce57f)
 
 [YooAsset 友情鏈結](https://www.yooasset.com/docs/community/Blogroll)
+
+[OxGFrame 开源项目使用教程](https://blog.csdn.net/gitblog_00798/article/details/142840300)
+
+[开启游戏开发新纪元 —— OxGFrame 框架深度解析](https://blog.csdn.net/gitblog_00035/article/details/139977201)
 
 ---
 
