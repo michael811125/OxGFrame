@@ -7,7 +7,7 @@ public class NetFrameDemo : MonoBehaviour
     public void ConnectWebSocket()
     {
         // Open WebSocket connection and 5 times reconnect attempts
-        NetworkExample.OpenConnection(new WebSocketNetOption("ws://127.0.0.1:10100", 5), (int)NetworkExample.NNID.WebSocket);
+        NetworkExample.OpenConnection(new WebSocketNetOption("ws://127.0.0.1:10100/websocket", 5), (int)NetworkExample.NNID.WebSocket);
     }
 
     public void SendWebSocketData()
