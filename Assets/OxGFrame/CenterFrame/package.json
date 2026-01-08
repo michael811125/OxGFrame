@@ -1,0 +1,16 @@
+{
+	"name": "com.michaelo.oxgframe.centerframe",
+	"displayName": "OxGFrame.CenterFrame",
+	"description": "The OxGFrame is a framework based on Unity for accelerating game development. Supports multi-platform Win, OSX, Android, iOS, WebGL.",
+	"version": "3.5.8",
+	"unity": "2021.3",
+	"license": "MIT",
+	"dependencies": {
+		"com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+		"com.michaelo.oxgkit.loggingsystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts"
+	},
+	"author": {
+		"name": "MichaelO",
+		"url": "https://github.com/michael811125"
+	}
+}

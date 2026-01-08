@@ -16,21 +16,16 @@ namespace OxGFrame.Hotfixer.Editor
         internal const string AOT_DLLS_DIR = "AOTDlls";
         internal const string HOTFIX_DLLS_DIR = "HotfixDlls";
 
+        #region Public Methods
+        /// <summary>
+        /// To Relative Asset Path
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public static string ToRelativeAssetPath(string s)
         {
             return s.Substring(s.IndexOf("Assets/"));
         }
-
-        #region MenuItems
-        [MenuItem("HybridCLR/OxGFrame With HybridCLR/Compile And Copy To HotfixCollector")]
-        public static void CompileAndCopyToHotfixCollector()
-        {
-            BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
-            CompileDllCommand.CompileDll(target);
-            CopyAOTDllsAndHotfixDlls();
-            AssetDatabase.Refresh();
-        }
-        #endregion
 
         /// <summary>
         /// Copy AOT Assembly and Hotfix Assembly files to HotfixCollector
@@ -107,6 +102,24 @@ namespace OxGFrame.Hotfixer.Editor
         }
 
         /// <summary>
+        /// 產生 Hotfix Dll 配置文件至輸出路徑 (Export HotfixDllConfig to StreamingAssets [for Built-in])
+        /// </summary>
+        /// <param name="aotDlls"></param>
+        /// <param name="hotfixDlls"></param>
+        /// <param name="outputPath"></param>
+        public static void ExportHotfixDllConfig(List<string> aotDlls, List<string> hotfixDlls, bool cipher)
+        {
+            HotfixDllConfig config = new HotfixDllConfig(aotDlls, hotfixDlls);
+
+            // 寫入配置文件
+            WriteConfig(config, cipher ? ConfigFileType.Bytes : ConfigFileType.Json);
+
+            Debug.Log($"【Export {HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension} Completes】");
+        }
+        #endregion
+
+        #region Internal Methods
+        /// <summary>
         /// Bytes ToString (KB, MB, GB)
         /// </summary>
         /// <param name="bytes"></param>
@@ -128,19 +141,80 @@ namespace OxGFrame.Hotfixer.Editor
         }
 
         /// <summary>
-        /// 產生 Hotfix Dll 配置文件至輸出路徑 (Export HotfixDllConfig to StreamingAssets [for Built-in])
+        /// 寫入配置文件
         /// </summary>
-        /// <param name="aotDlls"></param>
-        /// <param name="hotfixDlls"></param>
-        /// <param name="outputPath"></param>
-        public static void ExportHotfixDllConfig(List<string> aotDlls, List<string> hotfixDlls, bool cipher)
+        /// <param name="hotfixDllConfig"></param>
+        /// <param name="configFileType"></param>
+        internal static void WriteConfig(HotfixDllConfig hotfixDllConfig, ConfigFileType configFileType = ConfigFileType.Bytes)
         {
-            HotfixDllConfig config = new HotfixDllConfig(aotDlls, hotfixDlls);
+            string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}";
+            string savePath = Path.Combine(Application.streamingAssetsPath, fileName);
 
+            // 獲取文件夾路徑
+            string directoryPath = Path.GetDirectoryName(savePath);
+
+            // 檢查文件夾是否存在, 如果不存在則創建
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+                Debug.Log($"Created directory: {directoryPath}");
+            }
+
+            switch (configFileType)
+            {
+                // Json 類型
+                case ConfigFileType.Json:
+                    {
+                        // 將配置轉換為 JSON 字符串
+                        string json = JsonUtility.ToJson(hotfixDllConfig, true);
+
+                        // 寫入文件
+                        File.WriteAllText(savePath, json);
+                        AssetDatabase.Refresh();
+                        Debug.Log($"Saved Hotfix Dll Config JSON to: {savePath}");
+                    }
+                    break;
+
+                // Bytes 類型
+                case ConfigFileType.Bytes:
+                    {
+                        // 將配置轉換為 JSON 字符串
+                        string json = JsonUtility.ToJson(hotfixDllConfig, false);
+
+                        // Binary
+                        var writeBuffer = BinaryHelper.EncryptToBytes(json);
+
+                        // 寫入配置文件
+                        File.WriteAllBytes(savePath, writeBuffer);
+                        AssetDatabase.Refresh();
+                        Debug.Log($"Saved Hotfix Dll Config BYTES to: {savePath}");
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 寫入文字文件
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <param name="outputPath"></param>
+        internal static void WriteTxt(string txt, string outputPath)
+        {
             // 寫入配置文件
-            WriteConfig(config, cipher ? ConfigFileType.Bytes : ConfigFileType.Json);
+            var file = File.CreateText(outputPath);
+            file.Write(txt);
+            file.Close();
+        }
+        #endregion
 
-            Debug.Log($"【Export {HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension} Completes】");
+        #region MenuItems
+        [MenuItem("HybridCLR/OxGFrame With HybridCLR/Compile And Copy To HotfixCollector")]
+        public static void CompileAndCopyToHotfixCollector()
+        {
+            BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
+            CompileDllCommand.CompileDll(target);
+            CopyAOTDllsAndHotfixDlls();
+            AssetDatabase.Refresh();
         }
 
         [MenuItem("Assets/OxGFrame/Hotfixer/Convert hotfixdllconfig.conf (BYTES [Cipher] <-> JSON [Plaintext])", false, -99)]
@@ -217,71 +291,6 @@ namespace OxGFrame.Hotfixer.Editor
                 Debug.LogWarning("No file selected.");
             }
         }
-
-        /// <summary>
-        /// 寫入配置文件
-        /// </summary>
-        /// <param name="hotfixDllConfig"></param>
-        /// <param name="configFileType"></param>
-        internal static void WriteConfig(HotfixDllConfig hotfixDllConfig, ConfigFileType configFileType = ConfigFileType.Bytes)
-        {
-            string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}";
-            string savePath = Path.Combine(Application.streamingAssetsPath, fileName);
-
-            // 獲取文件夾路徑
-            string directoryPath = Path.GetDirectoryName(savePath);
-
-            // 檢查文件夾是否存在, 如果不存在則創建
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-                Debug.Log($"Created directory: {directoryPath}");
-            }
-
-            switch (configFileType)
-            {
-                // Json 類型
-                case ConfigFileType.Json:
-                    {
-                        // 將配置轉換為 JSON 字符串
-                        string json = JsonUtility.ToJson(hotfixDllConfig, true);
-
-                        // 寫入文件
-                        File.WriteAllText(savePath, json);
-                        AssetDatabase.Refresh();
-                        Debug.Log($"Saved Hotfix Dll Config JSON to: {savePath}");
-                    }
-                    break;
-
-                // Bytes 類型
-                case ConfigFileType.Bytes:
-                    {
-                        // 將配置轉換為 JSON 字符串
-                        string json = JsonUtility.ToJson(hotfixDllConfig, false);
-
-                        // Binary
-                        var writeBuffer = BinaryHelper.EncryptToBytes(json);
-
-                        // 寫入配置文件
-                        File.WriteAllBytes(savePath, writeBuffer);
-                        AssetDatabase.Refresh();
-                        Debug.Log($"Saved Hotfix Dll Config BYTES to: {savePath}");
-                    }
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// 寫入文字文件
-        /// </summary>
-        /// <param name="txt"></param>
-        /// <param name="outputPath"></param>
-        internal static void WriteTxt(string txt, string outputPath)
-        {
-            // 寫入配置文件
-            var file = File.CreateText(outputPath);
-            file.Write(txt);
-            file.Close();
-        }
+        #endregion
     }
 }

@@ -26,6 +26,11 @@ namespace YooAsset
         protected string _packageRoot;
 
         /// <summary>
+        /// 下载后台接口
+        /// </summary>
+        public IDownloadBackend DownloadBackend { private set; get; }
+
+        /// <summary>
         /// 包裹名称
         /// </summary>
         public string PackageName { private set; get; }
@@ -54,6 +59,11 @@ namespace YooAsset
 
         #region 自定义参数
         /// <summary>
+        /// 自定义参数：UnityWebRequest 创建委托
+        /// </summary>
+        public UnityWebRequestCreator WebRequestCreator { private set; get; }
+
+        /// <summary>
         /// 自定义参数：覆盖安装缓存清理模式
         /// </summary>
         public EOverwriteInstallClearMode InstallClearMode { private set; get; } = EOverwriteInstallClearMode.ClearAllManifestFiles;
@@ -66,7 +76,7 @@ namespace YooAsset
         /// <summary>
         /// 自定义参数：初始化的时候缓存文件校验最大并发数
         /// </summary>
-        public int FileVerifyMaxConcurrency { private set; get; } = int.MaxValue;
+        public int FileVerifyMaxConcurrency { private set; get; } = 32;
 
         /// <summary>
         /// 自定义参数：数据文件追加文件格式
@@ -156,6 +166,13 @@ namespace YooAsset
                 var operation = new DBFSLoadRawBundleOperation(this, bundle);
                 return operation;
             }
+#if TUANJIE_1_7_OR_NEWER
+            else if (bundle.BundleType == (int)EBuildBundleType.InstantBundle)
+            {
+                var operation = new DBFSLoadInstantBundleOperation(this, bundle);
+                return operation;
+            }
+#endif
             else
             {
                 string error = $"{nameof(DefaultBuildinFileSystem)} not support load bundle type : {bundle.BundleType}";
@@ -166,7 +183,15 @@ namespace YooAsset
 
         public virtual void SetParameter(string name, object value)
         {
-            if (name == FileSystemParametersDefine.INSTALL_CLEAR_MODE)
+            if (name == FileSystemParametersDefine.DOWNLOAD_BACKEND)
+            {
+                DownloadBackend = (IDownloadBackend)value;
+            }
+            else if (name == FileSystemParametersDefine.UNITY_WEB_REQUEST_CREATOR)
+            {
+                WebRequestCreator = (UnityWebRequestCreator)value;
+            }
+            else if (name == FileSystemParametersDefine.INSTALL_CLEAR_MODE)
             {
                 InstallClearMode = (EOverwriteInstallClearMode)value;
             }
@@ -225,10 +250,16 @@ namespace YooAsset
             else
                 _packageRoot = packageRoot;
 
+            // 创建默认的下载后台接口
+            if (DownloadBackend == null)
+                DownloadBackend = new UnityWebRequestBackend(WebRequestCreator);
+
             // 创建解压文件系统
             var remoteServices = new DefaultUnpackRemoteServices(_packageRoot);
             _unpackFileSystem = new DefaultUnpackFileSystem();
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.REMOTE_SERVICES, remoteServices);
+            _unpackFileSystem.SetParameter(FileSystemParametersDefine.DOWNLOAD_BACKEND, DownloadBackend);
+            _unpackFileSystem.SetParameter(FileSystemParametersDefine.UNITY_WEB_REQUEST_CREATOR, WebRequestCreator);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.INSTALL_CLEAR_MODE, InstallClearMode);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.FILE_VERIFY_LEVEL, FileVerifyLevel);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.FILE_VERIFY_MAX_CONCURRENCY, FileVerifyMaxConcurrency);
@@ -239,6 +270,17 @@ namespace YooAsset
         }
         public virtual void OnDestroy()
         {
+            if (_unpackFileSystem != null)
+            {
+                _unpackFileSystem.OnDestroy();
+                _unpackFileSystem = null;
+            }
+
+            if (DownloadBackend != null)
+            {
+                DownloadBackend.Dispose();
+                DownloadBackend = null;
+            }
         }
 
         public virtual bool Belong(PackageBundle bundle)

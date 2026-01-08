@@ -31,7 +31,7 @@ namespace OxGFrame.GSIFrame
         /// <summary>
         /// 開始進行初始流程
         /// </summary>
-        public async UniTaskVoid BeginInit()
+        internal async UniTaskVoid BeginInit()
         {
             if (!this._isInitialized)
             {

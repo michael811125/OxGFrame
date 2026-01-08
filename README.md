@@ -304,7 +304,7 @@ Init Order : OnCreate (Once) > OnAutoBind (Once) > OnBind (Once) > OnPreShow (Ev
 
 ![](Docs/img_18.png)
 
-預設組件綁定表 (可從 BindCodeSetting 中自行新增或修改 TailName 對應綁定組件類型)
+預設組件綁定表 (可從 CodeBindingSettings 中自行新增或修改 TailName 對應綁定組件類型)
 
 | **Tail Name** | **Component Name** | **End Remove Count** | **End Plural Txt** |
 |:-|:-|:-|:-|

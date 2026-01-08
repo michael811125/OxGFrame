@@ -11,6 +11,11 @@ namespace YooAsset
     internal class DefaultWebRemoteFileSystem : IFileSystem
     {
         /// <summary>
+        /// 下载后台接口
+        /// </summary>
+        public IDownloadBackend DownloadBackend { private set; get; }
+
+        /// <summary>
         /// 包裹名称
         /// </summary>
         public string PackageName { private set; get; }
@@ -38,6 +43,11 @@ namespace YooAsset
         }
 
         #region 自定义参数
+        /// <summary>
+        /// 自定义参数：UnityWebRequest 创建委托
+        /// </summary>
+        public UnityWebRequestCreator WebRequestCreator { private set; get; }
+
         /// <summary>
         /// 禁用Unity的网络缓存
         /// </summary>
@@ -104,7 +114,15 @@ namespace YooAsset
 
         public virtual void SetParameter(string name, object value)
         {
-            if (name == FileSystemParametersDefine.DISABLE_UNITY_WEB_CACHE)
+            if (name == FileSystemParametersDefine.DOWNLOAD_BACKEND)
+            {
+                DownloadBackend = (IDownloadBackend)value;
+            }
+            else if (name == FileSystemParametersDefine.UNITY_WEB_REQUEST_CREATOR)
+            {
+                WebRequestCreator = (UnityWebRequestCreator)value;
+            }
+            else if (name == FileSystemParametersDefine.DISABLE_UNITY_WEB_CACHE)
             {
                 DisableUnityWebCache = Convert.ToBoolean(value);
             }
@@ -128,9 +146,18 @@ namespace YooAsset
         public virtual void OnCreate(string packageName, string packageRoot)
         {
             PackageName = packageName;
+
+            // 创建默认的下载后台接口
+            if (DownloadBackend == null)
+                DownloadBackend = new UnityWebRequestBackend(WebRequestCreator);
         }
         public virtual void OnDestroy()
         {
+            if (DownloadBackend != null)
+            {
+                DownloadBackend.Dispose();
+                DownloadBackend = null;
+            }
         }
 
         public virtual bool Belong(PackageBundle bundle)
