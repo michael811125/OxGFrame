@@ -6,34 +6,34 @@
 
 - ### Added
   - Added `package.json` to each module, allowing independent installation of modules via Git URL (please ensure correct dependency installation order).
-    - **AssetLoader**
-      ```
-      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/AssetLoader](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/AssetLoader)
-      ```
-    - **CoreFrame** (Depends on AssetLoader)
-      ```
-      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/CoreFrame](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/CoreFrame)
-      ```
-    - **MediaFrame** (Depends on AssetLoader)
-      ```
-      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/MediaFrame](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/MediaFrame)
-      ```
-    - **Hotfixer** (Depends on AssetLoader)
-      ```
-      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/Hotfixer](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/Hotfixer)
-      ```
-    - **GSIFrame**
-      ```
-      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/GSIFrame](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/GSIFrame)
-      ```
-    - **CenterFrame**
-      ```
-      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/CenterFrame](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/CenterFrame)
-      ```
-    - **NetFrame**
-      ```
-      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/NetFrame](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/NetFrame)
-      ```
+    - AssetLoader
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/AssetLoader
+	```
+	- CoreFrame (依賴 AssetLoader)
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/CoreFrame
+	```
+	- MediaFrame (依賴 AssetLoader)
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/MediaFrame
+	```
+	- Hotfixer (依賴 AssetLoader)
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/Hotfixer
+	```
+	- GSIFrame
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/GSIFrame
+	```
+	- CenterFrame
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/CenterFrame
+	```
+	- NetFrame
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/NetFrame
+	```
 
 - ### Organized
   - Organized shared `ThirdParty` libraries to be managed by the primary dependency modules.
