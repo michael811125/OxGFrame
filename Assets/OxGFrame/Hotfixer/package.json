@@ -1,0 +1,19 @@
+{
+	"name": "com.michaelo.oxgframe.hotfixer",
+	"displayName": "OxGFrame.Hotfixer",
+	"description": "The OxGFrame is a framework based on Unity for accelerating game development. Supports multi-platform Win, OSX, Android, iOS, WebGL.",
+	"version": "3.5.8",
+	"unity": "2021.3",
+	"license": "MIT",
+	"dependencies": {
+        "com.michaelo.oxgframe.assetloader": "https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/AssetLoader",
+		"com.code-philosophy.hybridclr": "https://github.com/focus-creative-games/hybridclr_unity.git",
+		"com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+		"com.michaelo.oxgkit.loggingsystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts",
+		"com.michaelo.oxgkit.saversystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts"
+	},
+	"author": {
+		"name": "MichaelO",
+		"url": "https://github.com/michael811125"
+	}
+}

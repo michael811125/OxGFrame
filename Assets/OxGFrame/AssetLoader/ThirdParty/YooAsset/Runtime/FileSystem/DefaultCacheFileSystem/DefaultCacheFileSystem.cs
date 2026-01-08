@@ -23,10 +23,14 @@ namespace YooAsset
         protected string _cacheManifestFilesRoot;
 
         /// <summary>
-        /// 下载中心
-        /// 说明：当异步操作任务终止的时候，所有下载子任务都会一同被终止！
+        /// 下载调度器
         /// </summary>
-        public DownloadCenterOperation DownloadCenter { set; get; }
+        public DownloadSchedulerOperation DownloadScheduler { set; get; }
+
+        /// <summary>
+        /// 下载后台接口
+        /// </summary>
+        public IDownloadBackend DownloadBackend { private set; get; }
 
         /// <summary>
         /// 包裹名称
@@ -56,6 +60,11 @@ namespace YooAsset
         }
 
         #region 自定义参数
+        /// <summary>
+        /// 自定义参数：UnityWebRequest 创建委托
+        /// </summary>
+        public UnityWebRequestCreator WebRequestCreator { private set; get; }
+
         /// <summary>
         /// 自定义参数：远程服务接口的实例类
         /// </summary>
@@ -105,7 +114,7 @@ namespace YooAsset
         /// <summary>
         /// 自定义参数：下载任务的看门狗机制监控时间
         /// </summary>
-        public int DownloadWatchDogTime { private set; get; } = int.MaxValue;
+        public int DownloadWatchDogTime { private set; get; } = 0;
 
         /// <summary>
         /// 自定义参数：启用断点续传的最小尺寸
@@ -233,7 +242,15 @@ namespace YooAsset
 
         public virtual void SetParameter(string name, object value)
         {
-            if (name == FileSystemParametersDefine.REMOTE_SERVICES)
+            if (name == FileSystemParametersDefine.DOWNLOAD_BACKEND)
+            {
+                DownloadBackend = (IDownloadBackend)value;
+            }
+            else if (name == FileSystemParametersDefine.UNITY_WEB_REQUEST_CREATOR)
+            {
+                WebRequestCreator = (UnityWebRequestCreator)value;
+            }
+            else if (name == FileSystemParametersDefine.REMOTE_SERVICES)
             {
                 RemoteServices = (IRemoteServices)value;
             }
@@ -288,7 +305,7 @@ namespace YooAsset
             else if (name == FileSystemParametersDefine.DOWNLOAD_WATCH_DOG_TIME)
             {
                 int convertValue = Convert.ToInt32(value);
-                DownloadWatchDogTime = Mathf.Clamp(convertValue, 1, int.MaxValue);
+                DownloadWatchDogTime = Mathf.Clamp(convertValue, 0, int.MaxValue);
             }
             else if (name == FileSystemParametersDefine.RESUME_DOWNLOAD_MINMUM_SIZE)
             {
@@ -327,13 +344,23 @@ namespace YooAsset
             _cacheBundleFilesRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.BundleFilesFolderName);
             _cacheManifestFilesRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.ManifestFilesFolderName);
             _tempFilesRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.TempFilesFolderName);
+
+            // 创建默认的下载后台接口
+            if (DownloadBackend == null)
+                DownloadBackend = new UnityWebRequestBackend(WebRequestCreator);
         }
         public virtual void OnDestroy()
         {
-            if (DownloadCenter != null)
+            if (DownloadScheduler != null)
             {
-                DownloadCenter.AbortOperation();
-                DownloadCenter = null;
+                DownloadScheduler.Dispose();
+                DownloadScheduler = null;
+            }
+
+            if (DownloadBackend != null)
+            {
+                DownloadBackend.Dispose();
+                DownloadBackend = null;
             }
         }
 

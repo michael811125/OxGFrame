@@ -1,5 +1,97 @@
 # CHANGELOG
 
+## [3.5.8] - 2026-01-08
+
+# English
+
+- ### Added
+  - Added `package.json` to each module, allowing independent installation of modules via Git URL (please ensure correct dependency installation order).
+    - **AssetLoader**
+      ```
+      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/AssetLoader](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/AssetLoader)
+      ```
+    - **CoreFrame** (Depends on AssetLoader)
+      ```
+      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/CoreFrame](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/CoreFrame)
+      ```
+    - **MediaFrame** (Depends on AssetLoader)
+      ```
+      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/MediaFrame](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/MediaFrame)
+      ```
+    - **Hotfixer** (Depends on AssetLoader)
+      ```
+      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/Hotfixer](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/Hotfixer)
+      ```
+    - **GSIFrame**
+      ```
+      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/GSIFrame](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/GSIFrame)
+      ```
+    - **CenterFrame**
+      ```
+      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/CenterFrame](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/CenterFrame)
+      ```
+    - **NetFrame**
+      ```
+      [https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/NetFrame](https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/NetFrame)
+      ```
+
+- ### Organized
+  - Organized shared `ThirdParty` libraries to be managed by the primary dependency modules.
+    - For example, both `Hotfixer` and `AssetLoader` depend on `UniFramework`. Since `Hotfixer` also depends on `AssetLoader`, `UniFramework` (ThirdParty) is now managed by `AssetLoader`.
+
+- **AssetLoader**
+  - ### Updated
+    - Updated **YooAsset** to the latest commit ([f0563cc](https://github.com/tuyoogame/YooAsset/commits/dev/)).
+
+- **MediaFrame**
+  - ### Added
+    - Added conversion features to the **Audio & Video Editor MenuItem**, allowing `Audio Clip` or `Video Clip` to be converted into operational `AudioBase` and `VideoBase` Prefabs.
+
+# 中文
+
+- ### 新增
+  - 新增 package.json 至各模塊，可以獨立透過 git url 安裝各模塊 (需要確保依賴安裝順序)。
+    - AssetLoader
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/AssetLoader
+	```
+	- CoreFrame (依賴 AssetLoader)
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/CoreFrame
+	```
+	- MediaFrame (依賴 AssetLoader)
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/MediaFrame
+	```
+	- Hotfixer (依賴 AssetLoader)
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/Hotfixer
+	```
+	- GSIFrame
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/GSIFrame
+	```
+	- CenterFrame
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/CenterFrame
+	```
+	- NetFrame
+    ```
+	https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/NetFrame
+	```
+
+- ### 整理
+  - 整理共用 ThirdParty 由主依賴模塊管理。
+    - 如 Hotfixer 與 AssetLoader 都依賴 UniFramework，但是 Hotfixer 又依賴 AssetLoader，所以 UniFramework (ThirdParty) 由 AssetLoader 管理。
+  
+- AssetLoader
+  - ### 更新
+    - 更新 YooAsset 至最新 commit ([f0563cc](https://github.com/tuyoogame/YooAsset/commits/dev/))。
+  
+- MediaFrame
+  - ### 新增
+    - 新增 Audio & Video Editor MenuItem 轉換功能，可以將 Audio Clip 或者 Video Clip 轉換成實際操作的 AudioBase 與 VideoBase 的預置體 (Prefab)。
+
 ## [3.5.7] - 2025-12-30
 
 # English
@@ -287,9 +379,9 @@ Please get help from ChatGPT or Google Translate.
   - ### 新增
     - 新增 PatchLauncher 參數 [DownloadWatchdogTimeout](https://github.com/tuyoogame/YooAsset/issues/642) 設定。
     - 新增 AssetPatcher.GetAllPackages() 方法。
-    - 新增 AssetPacher.SetPresetPackages(List<AppPackageInfoWithBuild> appPackages, List<DlcPackageInfoWithBuild> dlcPackages) 方法。
+    - 新增 AssetPatcher.SetPresetPackages(List<AppPackageInfoWithBuild> appPackages, List<DlcPackageInfoWithBuild> dlcPackages) 方法。
       - 用於設置預設 APP 跟 DLC 包裹 (便於 CustomMode)。
-    - 新增 AssetPacher.InitializePresetPackages() 方法。
+    - 新增 AssetPatcher.InitializePresetPackages() 方法。
       - 用於手動初始預設 APP 跟 DLC 包裹 (便於 CustomMode)。
     - 新增 AssetPatcher.GetBundleDecryptionServices() 方法。
       - 獲取資源解密服務 (便於 CustomMode)。 
@@ -301,9 +393,9 @@ Please get help from ChatGPT or Google Translate.
       - **注意：當使用 CustomMode，所有 YooAsset 包裹初始皆需要自行實現**。
       - CustomMode 初始化流程概述：
         1. 是否有 Preset Packages 需求。 
-	      1. 有的話，可自定義與設置 AssetPacher.SetPresetPackages(List<AppPackageInfoWithBuild> appPackages, List<DlcPackageInfoWithBuild> dlcPackages)。
-	      2. 不管有沒有 Preset Packages 需求，都**必須手動調用 async AssetPacher.InitializePresetPackages()**。
-	         - 輪詢 AssetPacher.isInitialized() 判斷標記是否返回 true。 
+	      1. 有的話，可自定義與設置 AssetPatcher.SetPresetPackages(List<AppPackageInfoWithBuild> appPackages, List<DlcPackageInfoWithBuild> dlcPackages)。
+	      2. 不管有沒有 Preset Packages 需求，都**必須手動調用 async AssetPatcher.InitializePresetPackages()**。
+	         - 輪詢 AssetPatcher.isInitialized() 判斷標記是否返回 true。 
     - 新增 PlayModeParameters，提高配置擴展性。
       參數說明：
       ```csharp
@@ -348,7 +440,7 @@ Please get help from ChatGPT or Google Translate.
   - ### 修改
     - 修改 AssetLoaders.Unload & Release 系列接口，移除異步改為同步。
   - ### 修正 
-    - 修正尚未配置 PatchLauncher 的 Preset Pacakges (空數組)，當進行 AssetPacher.Check() 檢查時，無法正確處理 PatchFsmStates.VersionUpdate 跟 PatchFsmStates.ManifestUpdate 的流程。
+    - 修正尚未配置 PatchLauncher 的 Preset Pacakges (空數組)，當進行 AssetPatcher.Check() 檢查時，無法正確處理 PatchFsmStates.VersionUpdate 跟 PatchFsmStates.ManifestUpdate 的流程。
   - ### 移除
     - 移除 AssetPatcher.GetPackageAssetInfosByTags 方法 (直接從 Package 獲取 AssetInfo 即可)。
     - 移除 AssetPatcher.GetPackageAssetInfosByAssetNames 方法 (直接從 Package 獲取 AssetInfo 即可)。

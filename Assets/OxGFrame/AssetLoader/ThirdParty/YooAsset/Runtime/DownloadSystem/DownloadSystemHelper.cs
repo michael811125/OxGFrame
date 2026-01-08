@@ -3,32 +3,8 @@ using UnityEngine;
 
 namespace YooAsset
 {
-    /// <summary>
-    /// 自定义下载器的请求委托
-    /// </summary>
-    public delegate UnityWebRequest UnityWebRequestDelegate(string url);
-
     internal class DownloadSystemHelper
     {
-#if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void OnRuntimeInitialize()
-        {
-            UnityWebRequestCreater = null;
-        }
-#endif
-
-        public static UnityWebRequestDelegate UnityWebRequestCreater = null;
-        public static UnityWebRequest NewUnityWebRequestGet(string requestURL)
-        {
-            UnityWebRequest webRequest;
-            if (UnityWebRequestCreater != null)
-                webRequest = UnityWebRequestCreater.Invoke(requestURL);
-            else
-                webRequest = new UnityWebRequest(requestURL, UnityWebRequest.kHttpVerbGET);
-            return webRequest;
-        }
-
         /// <summary>
         /// 获取WWW加载本地资源的路径
         /// </summary>
@@ -81,7 +57,7 @@ namespace YooAsset
 #elif UNITY_STANDALONE_LINUX
             url = StringUtility.Format("file:///root/{0}", path);
 #else
-            throw new System.NotImplementedException();
+            throw new System.NotSupportedException($"[{nameof(DownloadSystemHelper.ConvertToWWWPath)}] not implemented platform: {UnityEngine.Application.platform}");
 #endif
 
             // For some special cases when users have special characters in their devices, url paths can not be identified correctly.
@@ -94,8 +70,12 @@ namespace YooAsset
         public static bool IsRequestLocalFile(string url)
         {
             //TODO UNITY_STANDALONE_OSX平台目前无法确定
+
+            // 本地文件传输协议
             if (url.StartsWith("file:"))
                 return true;
+
+            // JAR文件协议
             if (url.StartsWith("jar:file:"))
                 return true;
 
