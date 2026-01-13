@@ -40,14 +40,15 @@ namespace OxGFrame.NetFrame
         public NetManager()
         {
             this._netNodes = new Dictionary<int, NetNode>();
-            this.ResetUpdater();
+            this.ResetUpdater(false);
         }
 
         /// <summary>
         /// Resets and restarts the Real-Time Updater. 
         /// Ensures the previous updater is stopped and nullified to allow Garbage Collection.
         /// </summary>
-        public void ResetUpdater()
+        /// <param name="useThreadedUpdater">If true, starts on separate thread. Default is false.</param>
+        public void ResetUpdater(bool useThreadedUpdater)
         {
             // 1. Clean up existing updater
             if (this.rtUpdater != null)
@@ -59,12 +60,20 @@ namespace OxGFrame.NetFrame
                 this.rtUpdater = null;
             }
 
-            // 2. Re-initialize
+            // 2. Re-initialize with specified threading mode
             this.rtUpdater = new RTUpdater();
             this.rtUpdater.onUpdate = this._OnUpdate;
-            this.rtUpdater.Start();
 
-            Logging.Print<Logger>("NetManager: Updater has been explicitly nullified and reset.");
+            if (useThreadedUpdater)
+            {
+                this.rtUpdater.StartOnThread();
+                Logging.Print<Logger>("NetManager: Updater started on separate thread.");
+            }
+            else
+            {
+                this.rtUpdater.Start();
+                Logging.Print<Logger>("NetManager: Updater started on main thread.");
+            }
         }
 
         /// <summary>

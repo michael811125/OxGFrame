@@ -29,6 +29,14 @@
         }
 
         /// <summary>
+        /// Starts the NetManager's Updater on a separate thread
+        /// </summary>
+        public static void StartUpdaterOnThread()
+        {
+            NetManager.GetInstance().rtUpdater.StartOnThread();
+        }
+
+        /// <summary>
         /// Stops the NetManager's Updater
         /// </summary>
         public static void StopUpdater()
@@ -41,7 +49,24 @@
         /// </summary>
         public static void ResetUpdater()
         {
-            NetManager.GetInstance().ResetUpdater();
+            NetManager.GetInstance().ResetUpdater(false);
+        }
+
+        /// <summary>
+        /// Resets the NetManager's Updater with specified threading mode
+        /// </summary>
+        /// <param name="useThreadedUpdater">If true, starts on a separate thread; otherwise starts on main thread</param>
+        public static void ResetUpdater(bool useThreadedUpdater)
+        {
+            NetManager.GetInstance().ResetUpdater(useThreadedUpdater);
+        }
+
+        /// <summary>
+        /// Resets the NetManager's Updater and starts it on a separate thread
+        /// </summary>
+        public static void ResetUpdaterOnThread()
+        {
+            NetManager.GetInstance().ResetUpdater(true);
         }
 
         /// <summary>
