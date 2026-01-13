@@ -3,6 +3,14 @@
     public static class NetFrames
     {
         /// <summary>
+        /// Initializes the NetManager instance
+        /// </summary>
+        public static void InitInstance()
+        {
+            NetManager.GetInstance();
+        }
+
+        /// <summary>
         /// Controls the update rate of NetManager's Updater
         /// </summary>
         /// <param name="timeScale"></param>
