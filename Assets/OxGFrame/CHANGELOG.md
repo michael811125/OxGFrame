@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [3.5.9] - 2026-01-22
+
+# English
+
+- ### Adjusted
+  - Adjusted default names of all configuration files (does not affect development), ref #155.
+
+# 中文
+
+- ### 調整
+  - 調整所有配置文件預設名稱 (不影響開發)，參考 #155。
+
 ## [3.5.8] - 2026-01-08
 
 # English

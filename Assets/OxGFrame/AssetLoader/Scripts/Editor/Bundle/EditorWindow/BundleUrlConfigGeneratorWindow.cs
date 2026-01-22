@@ -43,7 +43,7 @@ namespace OxGFrame.AssetLoader.Editor
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
-        [MenuItem(BundleHelper.MENU_ROOT + "Bundle Url Config Generator (burlconfig.conf)", false, 899)]
+        [MenuItem(BundleHelper.MENU_ROOT + "Bundle Url Config Generator (CdnConfig.dat)", false, 899)]
         public static void ShowWindow()
         {
             projectPath = Application.dataPath;

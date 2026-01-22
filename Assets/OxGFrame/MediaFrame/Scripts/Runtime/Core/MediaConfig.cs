@@ -8,6 +8,6 @@ namespace OxGFrame.MediaFrame
         public const string VIDEO_URLSET = "video_urlset";
 
         // 佈署配置文件
-        public const string MEDIA_URL_CFG_NAME = "murlconfig.txt";
+        public const string MEDIA_URL_CFG_NAME = "MediaConfig.txt";
     }
 }

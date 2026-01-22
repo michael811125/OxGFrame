@@ -73,7 +73,7 @@ namespace OxGFrame.Hotfixer
                 if (data != null && data.Length > 0)
                 {
                     var configInfo = BinaryHelper.DecryptToString(data);
-                    var config = JsonUtility.FromJson<HotfixDllConfig>(configInfo.content);
+                    var config = JsonUtility.FromJson<HotfixManifest>(configInfo.content);
                     HotfixManager.GetInstance().CheckHotfix(packageName, config.aotDlls.ToArray(), config.hotfixDlls.ToArray());
                 }
             }, errorAction).ToUniTask().Forget();
@@ -94,7 +94,7 @@ namespace OxGFrame.Hotfixer
                 if (data != null && data.Length > 0)
                 {
                     var configInfo = BinaryHelper.DecryptToString(data);
-                    var config = JsonUtility.FromJson<HotfixDllConfig>(configInfo.content);
+                    var config = JsonUtility.FromJson<HotfixManifest>(configInfo.content);
                     HotfixManager.GetInstance().CheckHotfix(packageInfoWithBuild, config.aotDlls.ToArray(), config.hotfixDlls.ToArray());
                 }
             }, errorAction).ToUniTask().Forget();

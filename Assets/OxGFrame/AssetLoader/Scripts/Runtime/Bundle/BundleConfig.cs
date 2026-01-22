@@ -291,7 +291,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         #region Endpoint & Path Operations
         /// <summary>
-        /// 取得 burlconfig 佈署配置文件的數據
+        /// 取得 Bundle Url Config 佈署配置文件的數據
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -323,12 +323,12 @@ namespace OxGFrame.AssetLoader.Bundle
                     }
                     // To string
                     content = Encoding.UTF8.GetString(dataWithoutHeader);
-                    Logging.Print<Logger>($"[Source is Cipher] Check -> burlconfig.conf");
+                    Logging.Print<Logger>($"[Source is Cipher] Check -> {PatchSettings.settings.bundleUrlCfgName}{PatchSettings.settings.bundleUrlCfgExtension}");
                 }
                 else
                 {
                     content = Encoding.UTF8.GetString(data);
-                    Logging.Print<Logger>($"[Source is Plaintext] Check -> burlconfig.conf");
+                    Logging.Print<Logger>($"[Source is Plaintext] Check -> {PatchSettings.settings.bundleUrlCfgName}{PatchSettings.settings.bundleUrlCfgExtension}");
                 }
                 #endregion
 

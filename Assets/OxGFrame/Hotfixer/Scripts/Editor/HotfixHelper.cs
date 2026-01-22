@@ -109,12 +109,12 @@ namespace OxGFrame.Hotfixer.Editor
         /// <param name="outputPath"></param>
         public static void ExportHotfixDllConfig(List<string> aotDlls, List<string> hotfixDlls, bool cipher)
         {
-            HotfixDllConfig config = new HotfixDllConfig(aotDlls, hotfixDlls);
+            HotfixManifest config = new HotfixManifest(aotDlls, hotfixDlls);
 
             // 寫入配置文件
             WriteConfig(config, cipher ? ConfigFileType.Bytes : ConfigFileType.Json);
 
-            Debug.Log($"【Export {HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension} Completes】");
+            Debug.Log($"【Export {HotfixSettings.settings.hotfixCfgName}{HotfixSettings.settings.hotfixCfgExtension} Completes】");
         }
         #endregion
 
@@ -145,9 +145,9 @@ namespace OxGFrame.Hotfixer.Editor
         /// </summary>
         /// <param name="hotfixDllConfig"></param>
         /// <param name="configFileType"></param>
-        internal static void WriteConfig(HotfixDllConfig hotfixDllConfig, ConfigFileType configFileType = ConfigFileType.Bytes)
+        internal static void WriteConfig(HotfixManifest hotfixDllConfig, ConfigFileType configFileType = ConfigFileType.Bytes)
         {
-            string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}";
+            string fileName = $"{HotfixSettings.settings.hotfixCfgName}{HotfixSettings.settings.hotfixCfgExtension}";
             string savePath = Path.Combine(Application.streamingAssetsPath, fileName);
 
             // 獲取文件夾路徑
@@ -236,7 +236,7 @@ namespace OxGFrame.Hotfixer.Editor
                     // 確保文件存在
                     if (File.Exists(fullPath))
                     {
-                        string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}";
+                        string fileName = $"{HotfixSettings.settings.hotfixCfgName}{HotfixSettings.settings.hotfixCfgExtension}";
                         if (fullPath.IndexOf(fileName) == -1)
                         {
                             Debug.LogWarning($"Incorrect file selected. Please select the {fileName} file.");
@@ -246,12 +246,12 @@ namespace OxGFrame.Hotfixer.Editor
                         // 讀取文件內容
                         byte[] data = File.ReadAllBytes(fullPath);
                         var info = BinaryHelper.DecryptToString(data);
-                        HotfixDllConfig config = null;
+                        HotfixManifest config = null;
                         bool isJsonConvertible;
 
                         try
                         {
-                            config = JsonUtility.FromJson<HotfixDllConfig>(info.content);
+                            config = JsonUtility.FromJson<HotfixManifest>(info.content);
                             isJsonConvertible = true;
                         }
                         catch (Exception ex)

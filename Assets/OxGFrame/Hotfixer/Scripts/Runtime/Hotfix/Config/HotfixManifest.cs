@@ -4,14 +4,14 @@ using System.Collections.Generic;
 namespace OxGFrame.Hotfixer
 {
     [Serializable]
-    public class HotfixDllConfig
+    public class HotfixManifest
     {
         public List<string> aotDlls = new List<string>();
         public List<string> hotfixDlls = new List<string>();
 
-        public HotfixDllConfig() { }
+        public HotfixManifest() { }
 
-        public HotfixDllConfig(List<string> aotDlls, List<string> hotfixDlls)
+        public HotfixManifest(List<string> aotDlls, List<string> hotfixDlls)
         {
             this.aotDlls = aotDlls;
             this.hotfixDlls = hotfixDlls;

@@ -42,7 +42,7 @@ namespace OxGFrame.Hotfixer.Editor
 
         private static Vector2 _windowSize = new Vector2(800f, 150f);
 
-        [MenuItem(HotfixHelper.MENU_ROOT + "Hotfix Dll Config Generator (hotfixdllconfig.conf)", false, 99)]
+        [MenuItem(HotfixHelper.MENU_ROOT + "Hotfix Config Generator (HotfixManifest.dat)", false, 99)]
         public static void ShowWindow()
         {
             projectPath = Application.dataPath;
@@ -175,7 +175,7 @@ namespace OxGFrame.Hotfixer.Editor
             // file name label
             {
                 var style = new GUIStyle(EditorStyles.label) { richText = true };
-                string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}";
+                string fileName = $"{HotfixSettings.settings.hotfixCfgName}{HotfixSettings.settings.hotfixCfgExtension}";
                 GUILayout.Label($"Config Name: <b><color=#ffed29>{fileName}</color></b>", style);
             }
 
@@ -190,7 +190,7 @@ namespace OxGFrame.Hotfixer.Editor
             GUI.backgroundColor = new Color32(255, 185, 83, 255);
             if (GUILayout.Button("Cipher Process", GUILayout.MaxWidth(110f)))
             {
-                string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}";
+                string fileName = $"{HotfixSettings.settings.hotfixCfgName}{HotfixSettings.settings.hotfixCfgExtension}";
                 string outputPath = Application.streamingAssetsPath;
                 HotfixHelper.ExportHotfixDllConfig(this.aotDlls, this.hotfixDlls, true);
                 EditorUtility.DisplayDialog("Process Message", $"Export [Cipher] {fileName} To StreamingAssets.", "OK");
@@ -201,7 +201,7 @@ namespace OxGFrame.Hotfixer.Editor
             GUI.backgroundColor = new Color32(255, 185, 83, 255);
             if (GUILayout.Button("Plaintext Process", GUILayout.MaxWidth(125f)))
             {
-                string fileName = $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}";
+                string fileName = $"{HotfixSettings.settings.hotfixCfgName}{HotfixSettings.settings.hotfixCfgExtension}";
                 string outputPath = Application.streamingAssetsPath;
                 HotfixHelper.ExportHotfixDllConfig(this.aotDlls, this.hotfixDlls, false);
                 EditorUtility.DisplayDialog("Process Message", $"Export [Plaintext] {fileName} To StreamingAssets.", "OK");

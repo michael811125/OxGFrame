@@ -10,7 +10,7 @@ namespace OxGFrame.Hotfixer
         /// <returns></returns>
         internal static string GetStreamingAssetsConfigRequestPath()
         {
-            return Path.Combine(WebRequester.GetRequestStreamingAssetsPath(), $"{HotfixSettings.settings.hotfixDllCfgName}{HotfixSettings.settings.hotfixDllCfgExtension}");
+            return Path.Combine(WebRequester.GetRequestStreamingAssetsPath(), $"{HotfixSettings.settings.hotfixCfgName}{HotfixSettings.settings.hotfixCfgExtension}");
         }
     }
 }
