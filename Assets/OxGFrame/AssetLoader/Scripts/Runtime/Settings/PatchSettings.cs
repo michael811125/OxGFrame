@@ -29,12 +29,12 @@ namespace OxGFrame.AssetLoader
         /// <summary>
         ///  APP 配置文件的名稱
         /// </summary>
-        public string appCfgName = "appconfig";
+        public string appCfgName = "AppInfo";
 
         /// <summary>
         /// APP 配置文件擴展名
         /// </summary>
-        [Tooltip("The file extension must include the dot (e.g., .conf, .json). Please ensure you enter it with the dot.")]
+        [Tooltip("The file extension must include the dot (e.g., .dat, .cfg, .json). Please ensure you enter it with the dot.")]
         public string appCfgExtension = ".json";
         #endregion
 
@@ -48,12 +48,12 @@ namespace OxGFrame.AssetLoader
         /// <summary>
         /// 補丁配置文件的名稱 
         /// </summary>
-        public string patchCfgName = "patchconfig";
+        public string patchCfgName = "PatchInfo";
 
         /// <summary>
         /// 補丁配置文件擴展名
         /// </summary>
-        [Tooltip("The file extension must include the dot (e.g., .conf, .json). Please ensure you enter it with the dot.")]
+        [Tooltip("The file extension must include the dot (e.g., .dat, .cfg, .json). Please ensure you enter it with the dot.")]
         public string patchCfgExtension = ".json";
         #endregion
 
@@ -84,13 +84,13 @@ namespace OxGFrame.AssetLoader
         /// <summary>
         /// 資源請求端點的配置文件名稱
         /// </summary>
-        public string bundleUrlCfgName = "burlconfig";
+        public string bundleUrlCfgName = "CdnConfig";
 
         /// <summary>
         /// 資源請求端點的配置文件擴展名
         /// </summary>
-        [Tooltip("The file extension must include the dot (e.g., .conf, .json). Please ensure you enter it with the dot.")]
-        public string bundleUrlCfgExtension = ".conf";
+        [Tooltip("The file extension must include the dot (e.g., .dat, .cfg, .json). Please ensure you enter it with the dot.")]
+        public string bundleUrlCfgExtension = ".dat";
         #endregion
 
         #region Bundle 輸出歸類名稱

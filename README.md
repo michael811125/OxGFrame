@@ -198,7 +198,7 @@ if (isInitialized)
 }
 ```
 
-#### Bundle [burlconfig] (Bundle URL Config) 格式
+#### Bundle [CdnConfig] (Bundle URL Config) 格式
 
 格式如下，以下為明文類型 **(store_link 針對非 Android, iOS 平台的，可以設置主程式下載的 link)**
 - 支持 Cipher Type (密文類型)
@@ -364,9 +364,9 @@ https://github.com/michael811125/OxGFrame/assets/30960759/8e4f63e9-b955-4f91-8ac
   - RenderTexture : 將 Video 映射至 RenderTexture 再透過 UGUI 的 RawImage 進行渲染 (VideoBase 使用 RenderTexture.GetTemporary 跟 RenderTexture.ReleaseTemporary 創建與釋放，確保內存正確釋放 RenderTexture)。
   - Camera : 直接透過 Camera 進行渲染。
 
-#### Media [murlconfig] (Media URL Config) 格式
+#### Media [MediaConfig] (Media URL Config) 格式
 
-如果音訊跟影片來源存放於 Server，可以使用 URL 的方式進行文件請求，格式如下 **(如果不透過 murlconfig.txt 指定 URL 的話，也可以輸入完整資源 URL 至 Prefab 中，不過缺點就是對於未來更動 URL，要進行更改維護就會非常麻煩)**
+如果音訊跟影片來源存放於 Server，可以使用 URL 的方式進行文件請求，格式如下 **(如果不透過 MediaConfig.txt 指定 URL 的話，也可以輸入完整資源 URL 至 Prefab 中，不過缺點就是對於未來更動 URL，要進行更改維護就會非常麻煩)**
 
 ```
 # audio_urlset = Audio Source Url Path
@@ -376,12 +376,12 @@ audio_urlset 127.0.0.1/audio/
 video_urlset 127.0.0.1/video/
 ```
 
-**\>\> 建立 murlconfig.txt 方式 \<\<**
-- 使用 OxGFrame/MediaFrame/Media Url Config Generator 創建 murlconfig.txt (StreamingAssets/murlconfig.txt)。
+**\>\> 建立 MediaConfig.txt 方式 \<\<**
+- 使用 OxGFrame/MediaFrame/Media Url Config Generator 創建 MediaConfig.txt (StreamingAssets/MediaConfig.txt)。
 
-**\>\> 加載 murlconfig.txt 方式 \<\<**
-1. 如果選擇 Url Cfg Request Type = Assign 的方式指定 murlconfig.txt 至 prefab 中。
-2. 如果選擇 Url Cfg Request Type = Streaming Assets 的方式請求 murlconfig.txt，將 murlconfig.txt 放至 StreamingAssets 根目錄中 (StreamingAssets/murlconfig.txt)。
+**\>\> 加載 MediaConfig.txt 方式 \<\<**
+1. 如果選擇 Url Cfg Request Type = Assign 的方式指定 MediaConfig.txt 至 prefab 中。
+2. 如果選擇 Url Cfg Request Type = Streaming Assets 的方式請求 MediaConfig.txt，將 MediaConfig.txt 放至 StreamingAssets 根目錄中 (StreamingAssets/MediaConfig.txt)。
 
 **額外說明**：如果透過 URL 方式請求音訊或影片資源，建議於 WebGL 平台上使用，因為 WebGL 不支援 AssetBundle 事先指定 AudioClip 或 VideoClip (Assign 方式) 至 Prefab 中，所以提供 URL 的方式進行影音檔請求。
 
@@ -391,7 +391,21 @@ video_urlset 127.0.0.1/video/
 
 ### GSIFrame
 
-遊戲階段整合模塊 (FSM 概念)，而 GSI 為 **Game Stage Integration** 的縮寫，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散，基本上遊戲階段區分為 StartupStage (啟動階段), LogoStage (商標階段), HotfixStage (熱修復階段), PatchStage (資源熱更階段), LoginStage (登入階段), ReloginStage (重登階段), EnterStage (進入階段), LobbyStage (大廳階段), FightStage (戰鬥階段) 等，以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
+遊戲階段整合模塊 (FSM 概念)，而 GSI 為 **Game Stage Integration** 的縮寫，對於遊戲製作的時候缺乏整合系統，導致遊戲系統運作之間過於零散。
+
+基本上遊戲階段可區分為：
+- StartupStage (啟動階段)
+- LogoStage (商標階段)
+- HotfixStage (熱修復階段)
+- PatchStage (資源熱更階段)
+- LoginStage (登入階段)
+- ReloginStage (重登階段)
+- EnterStage (進入階段)
+- LobbyStage (大廳階段)
+- FightStage (戰鬥階段)
+- 等等..
+
+以上只是舉例大致上遊戲階段之間的劃分，基本上還是依照自己規劃創建為主，這些遊戲階段規劃好後，都可以使用 GSIFrame 進行整合與切換 (階段劃分後就可以自行實現每階段的運作)。
 
 - GSIBase，遊戲階段基類，在透過 Update 切換當前階段自定義的狀態流程 (Enum) 時，可透過 StopUpdate & RunUpdate 方法進行開關設置，即可停止或繼續 Update 的每幀調用，需建立實作 => 右鍵創建
 - GSIManagerBase，用於繼承實現管理層與註冊階段，需建立實作 => 右鍵創建

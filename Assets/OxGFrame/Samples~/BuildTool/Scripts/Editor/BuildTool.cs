@@ -405,13 +405,13 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             if (!string.IsNullOrEmpty(displayProductName))
                 PlayerSettings.productName = displayProductName;
 
-            // 輸出 appconfig.json 至 StreamingAssets
+            // 輸出 App Config 至 StreamingAssets
             string productName = CommandParser.GetArgument(CommandParser.ArgName.productName);
             if (string.IsNullOrEmpty(productName))
                 productName = "anonymous";
             AppConfigGenerator(productName, buildVersion, true, target);
 
-            // 輸出 burlconfig.conf 至 StreamingAssets
+            // 輸出 Bundle URL Config 至 StreamingAssets
             string urlParams = CommandParser.GetArgument(CommandParser.ArgName.bundleUrlParams);
             if (string.IsNullOrEmpty(urlParams))
                 urlParams = "http://127.0.0.1, http://127.0.0.1, https://";

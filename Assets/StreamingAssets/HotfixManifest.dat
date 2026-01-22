@@ -1,0 +1,9 @@
+{
+    "aotDlls": [
+        "mscorlib.dll",
+        "UniTask.dll"
+    ],
+    "hotfixDlls": [
+        "HotfixerDemo.Hotfix.Runtime.dll"
+    ]
+}

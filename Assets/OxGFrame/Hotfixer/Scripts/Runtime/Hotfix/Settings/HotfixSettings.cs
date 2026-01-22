@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace OxGFrame.Hotfixer
 {
@@ -18,12 +19,15 @@ namespace OxGFrame.Hotfixer
         /// <summary>
         /// 配置文件名稱
         /// </summary>
-        public string hotfixDllCfgName = "hotfixdllconfig";
+        [FormerlySerializedAs("hotfixDllCfgName")]
+        public string hotfixCfgName = "HotfixManifest";
 
         /// <summary>
         /// 配置文件擴展名
         /// </summary>
-        public string hotfixDllCfgExtension = ".conf";
+        [FormerlySerializedAs("hotfixDllCfgExtension")]
+        [Tooltip("The file extension must include the dot (e.g., .dat, .cfg, .json). Please ensure you enter it with the dot.")]
+        public string hotfixCfgExtension = ".dat";
 
         private static HotfixSettings _settings = null;
         public static HotfixSettings settings
