@@ -9,6 +9,7 @@
     "com.michaelo.oxgkit.saversystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/SaverSystem/Scripts",
     "com.michaelo.oxgkit.timesystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/TimeSystem/Scripts",
     "com.michaelo.oxgkit.utilities": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/Utilities/Scripts",
+    "com.tuyoogame.yooasset": "https://github.com/tuyoogame/YooAsset.git?path=Assets/YooAsset",
     "com.unity.2d.animation": "9.2.0",
     "com.unity.2d.pixel-perfect": "5.1.0",
     "com.unity.2d.sprite": "1.0.0",
