@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [3.6.1] - 2026-02-12
+
+# English
+
+- AssetLoader
+  - ### Critical Fixes
+    - Fixed an issue where the `Preload` series methods in `AssetLoaders` (using assetNames\[\] arrays) failed to correctly refine. Also added support for preloading mixed arrays containing both `Resources` and `Bundle` asset names.
+  - ### Adjustments
+    - Adjusted the log messaging for `GroupCache`.
+
+# 中文
+
+- AssetLoader
+  - ### 緊急修正
+    - 修正 AssetLoaders Preload 使用 assetNames\[\] 預加載的系列方法，未正確 refine 問題，並且修正支持可以混和 Resources 跟 Bundle 資源名稱數組進行預加載。
+  - ### 調整
+    - 調整 GroupCache 打印訊息。
+
 ## [3.6.0] - 2026-02-12
 
 # English
