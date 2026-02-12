@@ -2,7 +2,7 @@
 	"name": "com.michaelo.oxgframe.hotfixer",
 	"displayName": "OxGFrame.Hotfixer",
 	"description": "The OxGFrame is a framework based on Unity for accelerating game development. Supports multi-platform Win, OSX, Android, iOS, WebGL.",
-	"version": "3.5.9",
+	"version": "3.6.0",
 	"unity": "2021.3",
 	"license": "MIT",
 	"dependencies": {

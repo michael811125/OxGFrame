@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: LoggingSettings
   m_EditorClassIdentifier: 
   cipher: 66
-  loggersCfgName: loggersconfig
+  loggerCfgName: LoggerConfig
+  loggerCfgExtension: .dat

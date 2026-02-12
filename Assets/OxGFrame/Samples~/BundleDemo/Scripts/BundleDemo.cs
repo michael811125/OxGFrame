@@ -575,7 +575,7 @@ public class BundleDemo : MonoBehaviour
         foreach (Transform t in this.container.transform)
             Destroy(t.gameObject);
         // Release all
-        AssetLoaders.ReleaseBundleAssets();
+        AssetLoaders.ReleaseAssets();
     }
     #endregion
 }

@@ -33,6 +33,12 @@ MonoBehaviour:
   indicateModifier: 1
   tailRules:
     list:
+    - TailName: BoxCol
+      Reference:
+        componentName: BoxCollider
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: Btn
       Reference:
         componentName: Button
@@ -45,6 +51,12 @@ MonoBehaviour:
         pluralize:
           endRemoveCount: 0
           endPluralTxt: es
+    - TailName: CGroup
+      Reference:
+        componentName: CanvasGroup
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: Drd
       Reference:
         componentName: Dropdown
@@ -57,9 +69,21 @@ MonoBehaviour:
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
+    - TailName: Go
+      Reference:
+        componentName: GameObject
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
     - TailName: Img
       Reference:
         componentName: Image
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: MeshCol
+      Reference:
+        componentName: MeshCollider
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
@@ -132,30 +156,6 @@ MonoBehaviour:
     - TailName: Txt
       Reference:
         componentName: Text
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: CGroup
-      Reference:
-        componentName: CanvasGroup
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: BoxCol
-      Reference:
-        componentName: BoxCollider
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: MeshCol
-      Reference:
-        componentName: MeshCollider
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: Go
-      Reference:
-        componentName: GameObject
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s

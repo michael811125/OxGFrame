@@ -5,6 +5,7 @@ using OxGFrame.CoreFrame.SRFrame;
 using OxGFrame.CoreFrame.UIFrame;
 using OxGFrame.CoreFrame.USFrame;
 using OxGKit.LoggingSystem;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -915,11 +916,14 @@ namespace OxGFrame.CoreFrame
             /// <returns></returns>
             public static async UniTask LoadSingleSceneAsync(string packageName, string sceneName, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
             {
-                if (RefineBuildScenePath(ref sceneName))
+                if (TryRefineBuildScenePath(sceneName, out int index))
                 {
-                    await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Single, localPhysicsMode, progression);
+                    await USManager.GetInstance().LoadFromBuildAsync(sceneName.Substring(index), LoadSceneMode.Single, localPhysicsMode, progression);
                 }
-                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, localPhysicsMode, true, 100, progression);
+                else
+                {
+                    await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, localPhysicsMode, true, 100, progression);
+                }
             }
 
             /// <summary>
@@ -935,11 +939,14 @@ namespace OxGFrame.CoreFrame
             /// </returns>
             public static async UniTask<T> LoadSingleSceneAsync<T>(string packageName, string sceneName, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null) where T : class
             {
-                if (RefineBuildScenePath(ref sceneName))
+                if (TryRefineBuildScenePath(sceneName, out int index))
                 {
-                    return await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Single, localPhysicsMode, progression) as T;
+                    return await USManager.GetInstance().LoadFromBuildAsync(sceneName.Substring(index), LoadSceneMode.Single, localPhysicsMode, progression) as T;
                 }
-                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, localPhysicsMode, true, 100, progression) as T;
+                else
+                {
+                    return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Single, localPhysicsMode, true, 100, progression) as T;
+                }
             }
 
             /// <summary>
@@ -962,11 +969,14 @@ namespace OxGFrame.CoreFrame
             /// <param name="progression"></param>
             public static void LoadSingleScene(string packageName, string sceneName, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
             {
-                if (RefineBuildScenePath(ref sceneName))
+                if (TryRefineBuildScenePath(sceneName, out int index))
                 {
-                    USManager.GetInstance().LoadFromBuild(sceneName, LoadSceneMode.Single, localPhysicsMode, progression);
+                    USManager.GetInstance().LoadFromBuild(sceneName.Substring(index), LoadSceneMode.Single, localPhysicsMode, progression);
                 }
-                else USManager.GetInstance().LoadFromBundle(packageName, sceneName, LoadSceneMode.Single, localPhysicsMode, progression);
+                else
+                {
+                    USManager.GetInstance().LoadFromBundle(packageName, sceneName, LoadSceneMode.Single, localPhysicsMode, progression);
+                }
             }
 
             /// <summary>
@@ -1029,12 +1039,16 @@ namespace OxGFrame.CoreFrame
 
             public static async UniTask LoadAdditiveSceneAsync(string packageName, string sceneName, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
             {
-                if (RefineBuildScenePath(ref sceneName))
+                if (TryRefineBuildScenePath(sceneName, out int index))
                 {
-                    await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Additive, localPhysicsMode, progression);
+                    await USManager.GetInstance().LoadFromBuildAsync(sceneName.Substring(index), LoadSceneMode.Additive, localPhysicsMode, progression);
+                    if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName.Substring(index), false);
                 }
-                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, localPhysicsMode, activateOnLoad, priority, progression);
-                if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
+                else
+                {
+                    await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, LoadSceneMode.Additive, localPhysicsMode, activateOnLoad, priority, progression);
+                    if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
+                }
             }
 
             /// <summary>
@@ -1057,10 +1071,11 @@ namespace OxGFrame.CoreFrame
 
             public static async UniTask<T> LoadAdditiveSceneAsync<T>(string packageName, string sceneName, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, bool activeRootGameObjects = true, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
             {
-                if (RefineBuildScenePath(ref sceneName))
+                if (TryRefineBuildScenePath(sceneName, out int index))
                 {
-                    var handler = await USManager.GetInstance().LoadFromBuildAsync(sceneName, LoadSceneMode.Additive, localPhysicsMode, progression) as T;
-                    if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
+                    var actualSceneName = sceneName.Substring(index);
+                    var handler = await USManager.GetInstance().LoadFromBuildAsync(actualSceneName, LoadSceneMode.Additive, localPhysicsMode, progression) as T;
+                    if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(actualSceneName, false);
                     return handler;
                 }
                 else
@@ -1100,12 +1115,17 @@ namespace OxGFrame.CoreFrame
 
             public static void LoadAdditiveScene(string packageName, string sceneName, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, bool activeRootGameObjects = true, Progression progression = null)
             {
-                if (RefineBuildScenePath(ref sceneName))
+                if (TryRefineBuildScenePath(sceneName, out int index))
                 {
-                    USManager.GetInstance().LoadFromBuild(sceneName, LoadSceneMode.Additive, localPhysicsMode, progression);
+                    var actualSceneName = sceneName.Substring(index);
+                    USManager.GetInstance().LoadFromBuild(actualSceneName, LoadSceneMode.Additive, localPhysicsMode, progression);
+                    if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(actualSceneName, false);
                 }
-                else USManager.GetInstance().LoadFromBundle(packageName, sceneName, LoadSceneMode.Additive, localPhysicsMode, progression);
-                if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
+                else
+                {
+                    USManager.GetInstance().LoadFromBundle(packageName, sceneName, LoadSceneMode.Additive, localPhysicsMode, progression);
+                    if (!activeRootGameObjects) USManager.GetInstance().SetActiveSceneRootGameObjects(sceneName, false);
+                }
             }
 
             /// <summary>
@@ -1457,20 +1477,26 @@ namespace OxGFrame.CoreFrame
             /// <returns></returns>
             public static async UniTask LoadSceneAsync(string packageName, string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
             {
-                if (RefineBuildScenePath(ref sceneName))
+                if (TryRefineBuildScenePath(sceneName, out int index))
                 {
-                    await USManager.GetInstance().LoadFromBuildAsync(sceneName, loadSceneMode, LocalPhysicsMode.None, progression);
+                    await USManager.GetInstance().LoadFromBuildAsync(sceneName.Substring(index), loadSceneMode, LocalPhysicsMode.None, progression);
                 }
-                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, LocalPhysicsMode.None, activateOnLoad, priority, progression);
+                else
+                {
+                    await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, LocalPhysicsMode.None, activateOnLoad, priority, progression);
+                }
             }
 
             public static async UniTask LoadSceneAsync(string packageName, string sceneName, LoadSceneMode loadSceneMode, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
             {
-                if (RefineBuildScenePath(ref sceneName))
+                if (TryRefineBuildScenePath(sceneName, out int index))
                 {
-                    await USManager.GetInstance().LoadFromBuildAsync(sceneName, loadSceneMode, localPhysicsMode, progression);
+                    await USManager.GetInstance().LoadFromBuildAsync(sceneName.Substring(index), loadSceneMode, localPhysicsMode, progression);
                 }
-                else await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
+                else
+                {
+                    await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
+                }
             }
 
             /// <summary>
@@ -1489,11 +1515,14 @@ namespace OxGFrame.CoreFrame
             /// </returns>
             public static async UniTask<T> LoadSceneAsync<T>(string packageName, string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
             {
-                if (RefineBuildScenePath(ref sceneName))
+                if (TryRefineBuildScenePath(sceneName, out int index))
                 {
-                    return await USManager.GetInstance().LoadFromBuildAsync(sceneName, loadSceneMode, LocalPhysicsMode.None, progression) as T;
+                    return await USManager.GetInstance().LoadFromBuildAsync(sceneName.Substring(index), loadSceneMode, LocalPhysicsMode.None, progression) as T;
                 }
-                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, LocalPhysicsMode.None, activateOnLoad, priority, progression) as T;
+                else
+                {
+                    return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, LocalPhysicsMode.None, activateOnLoad, priority, progression) as T;
+                }
             }
 
             /// <summary>
@@ -1513,11 +1542,14 @@ namespace OxGFrame.CoreFrame
             /// </returns>
             public static async UniTask<T> LoadSceneAsync<T>(string packageName, string sceneName, LoadSceneMode loadSceneMode, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, bool activateOnLoad = true, uint priority = 100, Progression progression = null) where T : class
             {
-                if (RefineBuildScenePath(ref sceneName))
+                if (TryRefineBuildScenePath(sceneName, out int index))
                 {
-                    return await USManager.GetInstance().LoadFromBuildAsync(sceneName, loadSceneMode, localPhysicsMode, progression) as T;
+                    return await USManager.GetInstance().LoadFromBuildAsync(sceneName.Substring(index), loadSceneMode, localPhysicsMode, progression) as T;
                 }
-                else return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression) as T;
+                else
+                {
+                    return await USManager.GetInstance().LoadFromBundleAsync(packageName, sceneName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression) as T;
+                }
             }
 
             /// <summary>
@@ -1558,20 +1590,26 @@ namespace OxGFrame.CoreFrame
             /// <param name="progression"></param>
             public static void LoadScene(string packageName, string sceneName, LoadSceneMode loadSceneMode, Progression progression = null)
             {
-                if (RefineBuildScenePath(ref sceneName))
+                if (TryRefineBuildScenePath(sceneName, out int index))
                 {
-                    USManager.GetInstance().LoadFromBuild(sceneName, loadSceneMode, LocalPhysicsMode.None, progression);
+                    USManager.GetInstance().LoadFromBuild(sceneName.Substring(index), loadSceneMode, LocalPhysicsMode.None, progression);
                 }
-                else USManager.GetInstance().LoadFromBundle(packageName, sceneName, loadSceneMode, LocalPhysicsMode.None, progression);
+                else
+                {
+                    USManager.GetInstance().LoadFromBundle(packageName, sceneName, loadSceneMode, LocalPhysicsMode.None, progression);
+                }
             }
 
             public static void LoadScene(string packageName, string sceneName, LoadSceneMode loadSceneMode, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
             {
-                if (RefineBuildScenePath(ref sceneName))
+                if (TryRefineBuildScenePath(sceneName, out int index))
                 {
-                    USManager.GetInstance().LoadFromBuild(sceneName, loadSceneMode, localPhysicsMode, progression);
+                    USManager.GetInstance().LoadFromBuild(sceneName.Substring(index), loadSceneMode, localPhysicsMode, progression);
                 }
-                else USManager.GetInstance().LoadFromBundle(packageName, sceneName, loadSceneMode, localPhysicsMode, progression);
+                else
+                {
+                    USManager.GetInstance().LoadFromBundle(packageName, sceneName, loadSceneMode, localPhysicsMode, progression);
+                }
             }
 
             /// <summary>
@@ -1600,11 +1638,14 @@ namespace OxGFrame.CoreFrame
             {
                 foreach (var sceneName in sceneNames)
                 {
-                    var refineSceneName = sceneName;
-                    if (RefineBuildScenePath(ref refineSceneName))
-                        USManager.GetInstance().UnloadFromBuild(recursively, refineSceneName);
+                    if (TryRefineBuildScenePath(sceneName, out int index))
+                    {
+                        USManager.GetInstance().UnloadFromBuild(recursively, sceneName.Substring(index));
+                    }
                     else
-                        USManager.GetInstance().UnloadFromBundle(recursively, refineSceneName);
+                    {
+                        USManager.GetInstance().UnloadFromBundle(recursively, sceneName);
+                    }
                 }
             }
 
@@ -1623,21 +1664,22 @@ namespace OxGFrame.CoreFrame
             /// </summary>
             /// <param name="sceneName"></param>
             /// <returns></returns>
-            internal static bool RefineBuildScenePath(ref string sceneName)
+            internal static bool TryRefineBuildScenePath(string sceneName, out int actualNameIndex)
             {
                 if (string.IsNullOrEmpty(sceneName))
-                    return false;
-
-                string prefix = "build#";
-                if (sceneName.Length > prefix.Length)
                 {
-                    if (sceneName.Substring(0, prefix.Length).Equals(prefix))
-                    {
-                        var count = sceneName.Length - prefix.Length;
-                        sceneName = sceneName.Substring(prefix.Length, count);
-                        return true;
-                    }
+                    actualNameIndex = 0;
+                    return false;
                 }
+
+                const string prefix = "build#";
+                if (sceneName.AsSpan().StartsWith(prefix.AsSpan()))
+                {
+                    actualNameIndex = prefix.Length;
+                    return true;
+                }
+
+                actualNameIndex = 0;
                 return false;
             }
         }
@@ -1681,24 +1723,24 @@ namespace OxGFrame.CoreFrame
                 await CPManager.GetInstance().PreloadAsync(packageName, assetNames, priority, progression);
             }
 
-            public static async UniTask PreloadAsync<T>(string assetName, uint priority = 0, Progression progression = null) where T : Object
+            public static async UniTask PreloadAsync<T>(string assetName, uint priority = 0, Progression progression = null) where T : UnityEngine.Object
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 await CPManager.GetInstance().PreloadAsync<T>(packageName, new string[] { assetName }, priority, progression);
             }
 
-            public static async UniTask PreloadAsync<T>(string packageName, string assetName, uint priority = 0, Progression progression = null) where T : Object
+            public static async UniTask PreloadAsync<T>(string packageName, string assetName, uint priority = 0, Progression progression = null) where T : UnityEngine.Object
             {
                 await CPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, priority, progression);
             }
 
-            public static async UniTask PreloadAsync<T>(string[] assetNames, uint priority = 0, Progression progression = null) where T : Object
+            public static async UniTask PreloadAsync<T>(string[] assetNames, uint priority = 0, Progression progression = null) where T : UnityEngine.Object
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 await CPManager.GetInstance().PreloadAsync<T>(packageName, assetNames, priority, progression);
             }
 
-            public static async UniTask PreloadAsync<T>(string packageName, string[] assetNames, uint priority = 0, Progression progression = null) where T : Object
+            public static async UniTask PreloadAsync<T>(string packageName, string[] assetNames, uint priority = 0, Progression progression = null) where T : UnityEngine.Object
             {
                 await CPManager.GetInstance().PreloadAsync<T>(packageName, assetNames, priority, progression);
             }
@@ -1730,24 +1772,24 @@ namespace OxGFrame.CoreFrame
                 CPManager.GetInstance().Preload(packageName, assetNames, progression);
             }
 
-            public static void Preload<T>(string assetName, Progression progression = null) where T : Object
+            public static void Preload<T>(string assetName, Progression progression = null) where T : UnityEngine.Object
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 CPManager.GetInstance().Preload<T>(packageName, new string[] { assetName }, progression);
             }
 
-            public static void Preload<T>(string packageName, string assetName, Progression progression = null) where T : Object
+            public static void Preload<T>(string packageName, string assetName, Progression progression = null) where T : UnityEngine.Object
             {
                 CPManager.GetInstance().Preload<T>(packageName, new string[] { assetName }, progression);
             }
 
-            public static void Preload<T>(string[] assetNames, Progression progression = null) where T : Object
+            public static void Preload<T>(string[] assetNames, Progression progression = null) where T : UnityEngine.Object
             {
                 var packageName = AssetPatcher.GetDefaultPackageName();
                 CPManager.GetInstance().Preload<T>(packageName, assetNames, progression);
             }
 
-            public static void Preload<T>(string packageName, string[] assetNames, Progression progression = null) where T : Object
+            public static void Preload<T>(string packageName, string[] assetNames, Progression progression = null) where T : UnityEngine.Object
             {
                 CPManager.GetInstance().Preload<T>(packageName, assetNames, progression);
             }

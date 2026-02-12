@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: HotfixSettings
   m_EditorClassIdentifier: 
   cipher: 109
-  hotfixDllCfgName: hotfixdllconfig
-  hotfixDllCfgExtension: .conf
+  hotfixCfgName: HotfixManifest
+  hotfixCfgExtension: .dat
