@@ -13,10 +13,10 @@
     - Significantly optimized loading by refining the logic for checking the `assetName` prefix ("res#"). Utilized `AsSpan` to improve efficiency and reduce GC (achieving almost 0 GC).
   - ### Fixes
     - Fixed `GroupCache` (GroupBundle & GroupResources) methods by removing the `forceUnload` parameter. Since `GroupCache` uses weak references, this prevents accidental triggering of `forceUnload`, which could lead to reference errors, making the system safer.
-      - ~~ReleaseBundleRawFiles(int groupId)~~ -> UnloadRawFiles(int groupId)
-      - ~~ReleaseResourceAssets(int groupId)~~ & ~~ReleaseBundleAssets(int groupId)~~ -> UnloadAssets(int groupId)
   - ### Adjustments
     - Adjusted `AssetLoaders` Unload-related interfaces. Since `GroupCache` uses weak references, the naming convention now prioritizes the "Unload" prefix.
+	  - ~~ReleaseBundleRawFiles(int groupId)~~ -> UnloadRawFiles(int groupId)
+      - ~~ReleaseResourceAssets(int groupId)~~ & ~~ReleaseBundleAssets(int groupId)~~ -> UnloadAssets(int groupId)
     - Adjusted `AssetLoaders` Release-related interfaces. Unified the Release interface; it no longer distinguishes between `ReleaseBundle` and `ReleaseResources` (now determined by `LoadType`) without affecting efficiency.
       - ~~ReleaseBundleScenes~~ -> ReleaseScenes
       - ~~ReleaseBundleRawFiles~~ -> ReleaseRawFiles
@@ -39,10 +39,10 @@
     - 大幅度優化加載時，需要 Refine 判斷 assetName 前墜的方式 ("res#")，使用 AsSpan 提高效率與降低 GC (幾乎 0 GC)。
   - ### 修正
     - 修正 GroupCache (GroupBundle & GroupResources) 方法，移除方法中的 forceUnload 參數，主要是 GroupCache 為軟引用，避免誤觸 forceUnload 導致引用錯亂，更安全。
-	  - ~~ReleaseBundleRawFiles(int groupId)~~ -> UnloadRawFiles(int groupId)
-	  - ~~ReleaseResourceAssets(int groupId)~~ & ~~ReleaseBundleAssets(int groupId)~~ -> UnloadAssets(int groupId)
   - ### 調整
     - 調整 AssetLoaders Unload 相關接口，GroupCache 為軟引用，所以以 Unload 開頭為主。
+	  - ~~ReleaseBundleRawFiles(int groupId)~~ -> UnloadRawFiles(int groupId)
+	  - ~~ReleaseResourceAssets(int groupId)~~ & ~~ReleaseBundleAssets(int groupId)~~ -> UnloadAssets(int groupId)
     - 調整 AssetLoaders Release 相關接口，統一 Release 接口，不在區分 ReleaseBundle 跟 ReleaseResources 了 (由 LoadType 決定)，不影響效率。
       - ~~ReleaseBundleScenes~~ -> ReleaseScenes
 	  - ~~ReleaseBundleRawFiles~~ -> ReleaseRawFiles
