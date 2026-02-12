@@ -3,7 +3,6 @@ using OxGFrame.AssetLoader.Cacher;
 using OxGFrame.AssetLoader.GroupCacher;
 using OxGKit.LoggingSystem;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using YooAsset;
@@ -332,31 +331,18 @@ namespace OxGFrame.AssetLoader
         public static async UniTask PreloadRawFileAsync(string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-
-            List<string> refineAssetNames = new List<string>();
-
-            for (int i = 0; i < assetNames.Length; i++)
-            {
-                if (string.IsNullOrEmpty(assetNames[i]))
-                {
-                    continue;
-                }
-
-                if (TryRefineResourcesPath(assetNames[i], out _))
-                {
-                    refineAssetNames.Add(assetNames[i]);
-                }
-            }
-
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
-            else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, priority, progression, maxRetryCount);
+            await PreloadRawFileAsync(packageName, assetNames, priority, progression, maxRetryCount);
         }
 
         public static async UniTask PreloadRawFileAsync(string packageName, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
-            List<string> refineAssetNames = new List<string>();
+            int length = assetNames.Length;
+            string[] rAssetNames = new string[length];
+            string[] bAssetNames = new string[length];
+            int rCount = 0;
+            int bCount = 0;
 
-            for (int i = 0; i < assetNames.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 if (string.IsNullOrEmpty(assetNames[i]))
                 {
@@ -365,12 +351,24 @@ namespace OxGFrame.AssetLoader
 
                 if (TryRefineResourcesPath(assetNames[i], out _))
                 {
-                    refineAssetNames.Add(assetNames[i]);
+                    rAssetNames[rCount++] = assetNames[i];
+                }
+                else
+                {
+                    bAssetNames[bCount++] = assetNames[i];
                 }
             }
 
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
-            else await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, assetNames, priority, progression, maxRetryCount);
+            // RawFile 只支持 Bundle
+            if (rCount > 0)
+            {
+                Logging.PrintError<Logger>("【Error】PreloadRawFile only supports the bundle type.");
+            }
+
+            if (bCount > 0)
+            {
+                await CacheBundle.GetInstance().PreloadRawFileAsync(packageName, bAssetNames, priority, progression, maxRetryCount);
+            }
         }
 
         public static void PreloadRawFile(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
@@ -401,31 +399,18 @@ namespace OxGFrame.AssetLoader
         public static void PreloadRawFile(string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-
-            List<string> refineAssetNames = new List<string>();
-
-            for (int i = 0; i < assetNames.Length; i++)
-            {
-                if (string.IsNullOrEmpty(assetNames[i]))
-                {
-                    continue;
-                }
-
-                if (TryRefineResourcesPath(assetNames[i], out _))
-                {
-                    refineAssetNames.Add(assetNames[i]);
-                }
-            }
-
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
-            else CacheBundle.GetInstance().PreloadRawFile(packageName, assetNames, progression, maxRetryCount);
+            PreloadRawFile(packageName, assetNames, progression, maxRetryCount);
         }
 
         public static void PreloadRawFile(string packageName, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
-            List<string> refineAssetNames = new List<string>();
+            int length = assetNames.Length;
+            string[] rAssetNames = new string[length];
+            string[] bAssetNames = new string[length];
+            int rCount = 0;
+            int bCount = 0;
 
-            for (int i = 0; i < assetNames.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 if (string.IsNullOrEmpty(assetNames[i]))
                 {
@@ -434,12 +419,23 @@ namespace OxGFrame.AssetLoader
 
                 if (TryRefineResourcesPath(assetNames[i], out _))
                 {
-                    refineAssetNames.Add(assetNames[i]);
+                    rAssetNames[rCount++] = assetNames[i];
+                }
+                else
+                {
+                    bAssetNames[bCount++] = assetNames[i];
                 }
             }
 
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
-            else CacheBundle.GetInstance().PreloadRawFile(packageName, assetNames, progression, maxRetryCount);
+            if (rCount > 0)
+            {
+                Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
+            }
+
+            if (bCount > 0)
+            {
+                CacheBundle.GetInstance().PreloadRawFile(packageName, bAssetNames, progression, maxRetryCount);
+            }
         }
 
         /// <summary>
@@ -565,31 +561,18 @@ namespace OxGFrame.AssetLoader
         public static async UniTask PreloadAssetAsync<T>(string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-
-            List<string> refineAssetNames = new List<string>();
-
-            for (int i = 0; i < assetNames.Length; i++)
-            {
-                if (string.IsNullOrEmpty(assetNames[i]))
-                {
-                    continue;
-                }
-
-                if (TryRefineResourcesPath(assetNames[i], out int index))
-                {
-                    refineAssetNames.Add(assetNames[i].Substring(index));
-                }
-            }
-
-            if (refineAssetNames.Count > 0) await CacheResource.GetInstance().PreloadAssetAsync<T>(assetNames, progression, maxRetryCount);
-            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, assetNames, priority, progression, maxRetryCount);
+            await PreloadAssetAsync<T>(packageName, assetNames, priority, progression, maxRetryCount);
         }
 
         public static async UniTask PreloadAssetAsync<T>(string packageName, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
-            List<string> refineAssetNames = new List<string>();
+            int length = assetNames.Length;
+            string[] rAssetNames = new string[length];
+            string[] bAssetNames = new string[length];
+            int rCount = 0;
+            int bCount = 0;
 
-            for (int i = 0; i < assetNames.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 if (string.IsNullOrEmpty(assetNames[i]))
                 {
@@ -598,12 +581,30 @@ namespace OxGFrame.AssetLoader
 
                 if (TryRefineResourcesPath(assetNames[i], out int index))
                 {
-                    refineAssetNames.Add(assetNames[i].Substring(index));
+                    rAssetNames[rCount++] = assetNames[i].Substring(index);
+                }
+                else
+                {
+                    bAssetNames[bCount++] = assetNames[i];
                 }
             }
 
-            if (refineAssetNames.Count > 0) await CacheResource.GetInstance().PreloadAssetAsync<T>(assetNames, progression, maxRetryCount);
-            else await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, assetNames, priority, progression, maxRetryCount);
+            if (rCount > 0 && bCount > 0)
+            {
+                await UniTask.WhenAll
+                (
+                    CacheResource.GetInstance().PreloadAssetAsync<T>(rAssetNames, progression, maxRetryCount),
+                    CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, bAssetNames, priority, progression, maxRetryCount)
+                );
+            }
+            else if (rCount > 0)
+            {
+                await CacheResource.GetInstance().PreloadAssetAsync<T>(rAssetNames, progression, maxRetryCount);
+            }
+            else if (bCount > 0)
+            {
+                await CacheBundle.GetInstance().PreloadAssetAsync<T>(packageName, bAssetNames, priority, progression, maxRetryCount);
+            }
         }
 
         /// <summary>
@@ -641,31 +642,18 @@ namespace OxGFrame.AssetLoader
         public static void PreloadAsset<T>(string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-
-            List<string> refineAssetNames = new List<string>();
-
-            for (int i = 0; i < assetNames.Length; i++)
-            {
-                if (string.IsNullOrEmpty(assetNames[i]))
-                {
-                    continue;
-                }
-
-                if (TryRefineResourcesPath(assetNames[i], out int index))
-                {
-                    refineAssetNames.Add(assetNames[i].Substring(index));
-                }
-            }
-
-            if (refineAssetNames.Count > 0) CacheResource.GetInstance().PreloadAsset<T>(assetNames, progression, maxRetryCount);
-            else CacheBundle.GetInstance().PreloadAsset<T>(packageName, assetNames, progression, maxRetryCount);
+            PreloadAsset<T>(packageName, assetNames, progression, maxRetryCount);
         }
 
         public static void PreloadAsset<T>(string packageName, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
-            List<string> refineAssetNames = new List<string>();
+            int length = assetNames.Length;
+            string[] rAssetNames = new string[length];
+            string[] bAssetNames = new string[length];
+            int rCount = 0;
+            int bCount = 0;
 
-            for (int i = 0; i < assetNames.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 if (string.IsNullOrEmpty(assetNames[i]))
                 {
@@ -674,12 +662,23 @@ namespace OxGFrame.AssetLoader
 
                 if (TryRefineResourcesPath(assetNames[i], out int index))
                 {
-                    refineAssetNames.Add(assetNames[i].Substring(index));
+                    rAssetNames[rCount++] = assetNames[i].Substring(index);
+                }
+                else
+                {
+                    bAssetNames[bCount++] = assetNames[i];
                 }
             }
 
-            if (refineAssetNames.Count > 0) CacheResource.GetInstance().PreloadAsset<T>(assetNames, progression, maxRetryCount);
-            else CacheBundle.GetInstance().PreloadAsset<T>(packageName, assetNames, progression, maxRetryCount);
+            if (rCount > 0)
+            {
+                CacheResource.GetInstance().PreloadAsset<T>(rAssetNames, progression, maxRetryCount);
+            }
+
+            if (bCount > 0)
+            {
+                CacheBundle.GetInstance().PreloadAsset<T>(packageName, bAssetNames, progression, maxRetryCount);
+            }
         }
 
         /// <summary>
@@ -1177,31 +1176,18 @@ namespace OxGFrame.AssetLoader
         public static async UniTask PreloadRawFileAsync(int groupId, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-
-            List<string> refineAssetNames = new List<string>();
-
-            for (int i = 0; i < assetNames.Length; i++)
-            {
-                if (string.IsNullOrEmpty(assetNames[i]))
-                {
-                    continue;
-                }
-
-                if (TryRefineResourcesPath(assetNames[i], out _))
-                {
-                    refineAssetNames.Add(assetNames[i]);
-                }
-            }
-
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
-            else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, assetNames, priority, progression, maxRetryCount);
+            await PreloadRawFileAsync(groupId, packageName, assetNames, priority, progression, maxRetryCount);
         }
 
         public static async UniTask PreloadRawFileAsync(int groupId, string packageName, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
-            List<string> refineAssetNames = new List<string>();
+            int length = assetNames.Length;
+            string[] rAssetNames = new string[length];
+            string[] bAssetNames = new string[length];
+            int rCount = 0;
+            int bCount = 0;
 
-            for (int i = 0; i < assetNames.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 if (string.IsNullOrEmpty(assetNames[i]))
                 {
@@ -1210,12 +1196,23 @@ namespace OxGFrame.AssetLoader
 
                 if (TryRefineResourcesPath(assetNames[i], out _))
                 {
-                    refineAssetNames.Add(assetNames[i]);
+                    rAssetNames[rCount++] = assetNames[i];
+                }
+                else
+                {
+                    bAssetNames[bCount++] = assetNames[i];
                 }
             }
 
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
-            else await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, assetNames, priority, progression, maxRetryCount);
+            if (rCount > 0)
+            {
+                Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
+            }
+
+            if (bCount > 0)
+            {
+                await GroupBundle.GetInstance().PreloadRawFileAsync(groupId, packageName, bAssetNames, priority, progression, maxRetryCount);
+            }
         }
 
         public static void PreloadRawFile(int groupId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
@@ -1246,45 +1243,43 @@ namespace OxGFrame.AssetLoader
         public static void PreloadRawFile(int groupId, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-
-            List<string> refineAssetNames = new List<string>();
-
-            for (int i = 0; i < assetNames.Length; i++)
-            {
-                if (string.IsNullOrEmpty(assetNames[i]))
-                {
-                    continue;
-                }
-
-                if (TryRefineResourcesPath(assetNames[i], out _))
-                {
-                    refineAssetNames.Add(assetNames[i]);
-                }
-            }
-
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
-            else GroupBundle.GetInstance().PreloadRawFile(groupId, packageName, assetNames, progression, maxRetryCount);
+            PreloadRawFile(groupId, packageName, assetNames, progression, maxRetryCount);
         }
 
         public static void PreloadRawFile(int groupId, string packageName, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
-            List<string> refineAssetNames = new List<string>();
+            int length = assetNames.Length;
+            string[] rAssetNames = new string[length];
+            string[] bAssetNames = new string[length];
+            int rCount = 0;
+            int bCount = 0;
 
-            for (int i = 0; i < assetNames.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 if (string.IsNullOrEmpty(assetNames[i]))
                 {
                     continue;
                 }
 
-                if (TryRefineResourcesPath(assetNames[i], out _))
+                if (TryRefineResourcesPath(assetNames[i], out int index))
                 {
-                    refineAssetNames.Add(assetNames[i]);
+                    rAssetNames[rCount++] = assetNames[i].Substring(index);
+                }
+                else
+                {
+                    bAssetNames[bCount++] = assetNames[i];
                 }
             }
 
-            if (refineAssetNames.Count > 0) Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
-            else GroupBundle.GetInstance().PreloadRawFile(groupId, packageName, assetNames, progression, maxRetryCount);
+            if (rCount > 0)
+            {
+                Logging.PrintError<Logger>("【Error】Only supports the bundle type.");
+            }
+
+            if (bCount > 0)
+            {
+                GroupBundle.GetInstance().PreloadRawFile(groupId, packageName, bAssetNames, progression, maxRetryCount);
+            }
         }
 
         /// <summary>
@@ -1439,31 +1434,18 @@ namespace OxGFrame.AssetLoader
         public static async UniTask PreloadAssetAsync<T>(int groupId, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-
-            List<string> refineAssetNames = new List<string>();
-
-            for (int i = 0; i < assetNames.Length; i++)
-            {
-                if (string.IsNullOrEmpty(assetNames[i]))
-                {
-                    continue;
-                }
-
-                if (TryRefineResourcesPath(assetNames[i], out int index))
-                {
-                    refineAssetNames.Add(assetNames[i].Substring(index));
-                }
-            }
-
-            if (refineAssetNames.Count > 0) await GroupResource.GetInstance().PreloadAssetAsync<T>(groupId, assetNames, progression, maxRetryCount);
-            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, assetNames, priority, progression, maxRetryCount);
+            await PreloadAssetAsync<T>(groupId, packageName, assetNames, priority, progression, maxRetryCount);
         }
 
         public static async UniTask PreloadAssetAsync<T>(int groupId, string packageName, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
-            List<string> refineAssetNames = new List<string>();
+            int length = assetNames.Length;
+            string[] rAssetNames = new string[length];
+            string[] bAssetNames = new string[length];
+            int rCount = 0;
+            int bCount = 0;
 
-            for (int i = 0; i < assetNames.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 if (string.IsNullOrEmpty(assetNames[i]))
                 {
@@ -1472,12 +1454,30 @@ namespace OxGFrame.AssetLoader
 
                 if (TryRefineResourcesPath(assetNames[i], out int index))
                 {
-                    refineAssetNames.Add(assetNames[i].Substring(index));
+                    rAssetNames[rCount++] = assetNames[i].Substring(index);
+                }
+                else
+                {
+                    bAssetNames[bCount++] = assetNames[i];
                 }
             }
 
-            if (refineAssetNames.Count > 0) await GroupResource.GetInstance().PreloadAssetAsync<T>(groupId, assetNames, progression, maxRetryCount);
-            else await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, assetNames, priority, progression, maxRetryCount);
+            if (rCount > 0 && bCount > 0)
+            {
+                await UniTask.WhenAll
+                (
+                    GroupResource.GetInstance().PreloadAssetAsync<T>(groupId, rAssetNames, progression, maxRetryCount),
+                    GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, bAssetNames, priority, progression, maxRetryCount)
+                );
+            }
+            else if (rCount > 0)
+            {
+                await GroupResource.GetInstance().PreloadAssetAsync<T>(groupId, rAssetNames, progression, maxRetryCount);
+            }
+            else if (bCount > 0)
+            {
+                await GroupBundle.GetInstance().PreloadAssetAsync<T>(groupId, packageName, bAssetNames, priority, progression, maxRetryCount);
+            }
         }
 
         /// <summary>
@@ -1516,31 +1516,18 @@ namespace OxGFrame.AssetLoader
         public static void PreloadAsset<T>(int groupId, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
-
-            List<string> refineAssetNames = new List<string>();
-
-            for (int i = 0; i < assetNames.Length; i++)
-            {
-                if (string.IsNullOrEmpty(assetNames[i]))
-                {
-                    continue;
-                }
-
-                if (TryRefineResourcesPath(assetNames[i], out int index))
-                {
-                    refineAssetNames.Add(assetNames[i].Substring(index));
-                }
-            }
-
-            if (refineAssetNames.Count > 0) GroupResource.GetInstance().PreloadAsset<T>(groupId, assetNames, progression, maxRetryCount);
-            else GroupBundle.GetInstance().PreloadAsset<T>(groupId, packageName, assetNames, progression, maxRetryCount);
+            PreloadAsset<T>(groupId, packageName, assetNames, progression, maxRetryCount);
         }
 
         public static void PreloadAsset<T>(int groupId, string packageName, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
-            List<string> refineAssetNames = new List<string>();
+            int length = assetNames.Length;
+            string[] rAssetNames = new string[length];
+            string[] bAssetNames = new string[length];
+            int rCount = 0;
+            int bCount = 0;
 
-            for (int i = 0; i < assetNames.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 if (string.IsNullOrEmpty(assetNames[i]))
                 {
@@ -1549,12 +1536,23 @@ namespace OxGFrame.AssetLoader
 
                 if (TryRefineResourcesPath(assetNames[i], out int index))
                 {
-                    refineAssetNames.Add(assetNames[i].Substring(index));
+                    rAssetNames[rCount++] = assetNames[i].Substring(index);
+                }
+                else
+                {
+                    bAssetNames[bCount++] = assetNames[i];
                 }
             }
 
-            if (refineAssetNames.Count > 0) GroupResource.GetInstance().PreloadAsset<T>(groupId, assetNames, progression, maxRetryCount);
-            else GroupBundle.GetInstance().PreloadAsset<T>(groupId, packageName, assetNames, progression, maxRetryCount);
+            if (rCount > 0)
+            {
+                GroupResource.GetInstance().PreloadAsset<T>(groupId, rAssetNames, progression, maxRetryCount);
+            }
+
+            if (bCount > 0)
+            {
+                GroupBundle.GetInstance().PreloadAsset<T>(groupId, packageName, bAssetNames, progression, maxRetryCount);
+            }
         }
 
         /// <summary>

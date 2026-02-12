@@ -33,7 +33,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                     this.AddIntoCache(id, assetName);
             }
 
-            Logging.Print<Logger>($"【Preload】 => Current << {nameof(GroupResource)} >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload Asset with Group】 => Current << {nameof(GroupResource)} >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         public void PreloadAsset<T>(int id, string[] assetNames, Progression progression, byte maxRetryCount) where T : Object
@@ -50,7 +50,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                     this.AddIntoCache(id, assetName);
             }
 
-            Logging.Print<Logger>($"【Preload】 => Current << {nameof(GroupResource)} >> Cache Count: {this.Count}, GroupId: {id}");
+            Logging.Print<Logger>($"【Preload Asset with Group】 => Current << {nameof(GroupResource)} >> Cache Count: {this.Count}, GroupId: {id}");
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                 if (keyGroup != null)
                 {
                     keyGroup.AddRef();
-                    Logging.Print<Logger>($"【Load】 => Current << {nameof(GroupResource)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Load Asset with Group】 => Current << {nameof(GroupResource)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
 
@@ -92,7 +92,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                 if (keyGroup != null)
                 {
                     keyGroup.AddRef();
-                    Logging.Print<Logger>($"【Load】 => Current << {nameof(GroupResource)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Load Asset with Group】 => Current << {nameof(GroupResource)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
                 }
             }
 
@@ -105,13 +105,13 @@ namespace OxGFrame.AssetLoader.GroupCacher
             if (keyGroup != null)
             {
                 keyGroup.DelRef();
-                Logging.Print<Logger>($"【Unload with RefCount】 => Current << {nameof(GroupResource)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                Logging.Print<Logger>($"【Unload Asset from Group】 => Decremented RefCount: {keyGroup.refCount}, Cache Count: {this.Count}, GroupId: {id}");
 
                 // 使用引用計數釋放
                 if (keyGroup.refCount <= 0)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-                    Logging.Print<Logger>($"【Unload Completes with RefCount】 => Current << {nameof(GroupResource)} >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Unload Asset from Group Completed】 => RefCount reached 0, removed from cache. Cache Count: {this.Count}, GroupId: {id}");
                 }
 
                 // 總是使用引用計數模式
@@ -138,7 +138,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                     this.DelFromCache(keyGroup.id, keyGroup.assetName);
                 }
 
-                Logging.Print<Logger>($"【Unload Group Assets with RefCount】 => Current << {nameof(GroupResource)} >> Cache Count: {this.Count}, GroupId: {id}");
+                Logging.Print<Logger>($"【Unload All Assets from Group】 => Released all references, Cache Count: {this.Count}, GroupId: {id}");
             }
         }
     }
