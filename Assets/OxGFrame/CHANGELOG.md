@@ -24,9 +24,9 @@
   - ### Third-Party Library Changes
     - Removed the built-in `YooAsset` library; switched to `PackageManager` for installation and management (if modification of YooAsset source code is required, local installation via PackageManager is still supported).
       - Currently compatible with v2.3.18
-    ```
-    [https://github.com/tuyoogame/YooAsset.git?path=Assets/YooAsset](https://github.com/tuyoogame/YooAsset.git?path=Assets/YooAsset)
-    ```
+	    ```
+	    https://github.com/tuyoogame/YooAsset.git?path=Assets/YooAsset
+	    ```
 
 # 中文
 
