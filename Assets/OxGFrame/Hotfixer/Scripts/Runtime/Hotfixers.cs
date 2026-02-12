@@ -60,7 +60,7 @@ namespace OxGFrame.Hotfixer
 
         /// <summary>
         /// Start hotfix files download and load all (default is AppPackageInfoWithBuild)
-        /// <para> Auto request config from StreamingAssets (hotfixdllconfig.conf) </para>
+        /// <para> Auto request config from StreamingAssets (HotfixManifest.dat) </para>
         /// </summary>
         /// <param name="packageName"></param>
         /// <param name="errorAction"></param>
@@ -81,7 +81,7 @@ namespace OxGFrame.Hotfixer
 
         /// <summary>
         /// Start hotfix files download and load all
-        /// <para> Auto request config from StreamingAssets (hotfixdllconfig.conf) </para>
+        /// <para> Auto request config from StreamingAssets (HotfixManifest.dat) </para>
         /// </summary>
         /// <param name="packageInfoWithBuild"></param>
         /// <param name="errorAction"></param>
