@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 822b9a7cf1430fc4d887f5b7738e2fa4, type: 3}
   m_Name: PatchSettings
   m_EditorClassIdentifier: 
-  appCfgName: appconfig
-  patchCfgName: patchconfig
-  bundleUrlCfgName: burlconfig
+  appCfgName: AppInfo
+  appCfgExtension: .json
+  patchCfgName: PatchInfo
+  patchCfgExtension: .json
+  bundleUrlCfgCipher: 77
+  bundleUrlCfgName: CdnConfig
+  bundleUrlCfgExtension: .dat
   rootFolderName: CDN
   dlcFolderName: DLC

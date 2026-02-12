@@ -1,1 +1,8 @@
-OXøïôşöÿÅóêºòîîê µµ«¨­´ª´ª´«øïôşöÿÅüûööøûùñÅóêºòîîê µµ«¨­´ª´ª´«éîõèÿÅöóôñºòîîê µµ
+# bundle_ip = First CDN Server IP or Domain (Plan A)
+# bundle_fallback_ip = Second CDN Server IP or Domain (Plan B)
+# store_link = GooglePlay Store Link (https://play.google.com/store/apps/details?id=YOUR_ID)
+# store_link = Apple Store Link (https://apps.apple.com/app/idYOUR_ID)
+
+bundle_ip http://127.0.0.1
+bundle_fallback_ip http://127.0.0.1
+store_link http://

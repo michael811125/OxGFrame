@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace OxGFrame.AssetLoader.GroupCacher
 {
+    /// <summary>
+    /// 軟引用
+    /// </summary>
     internal class GroupBundle : GroupCache<BundlePack>
     {
         private static GroupBundle _instance = null;
@@ -102,32 +105,27 @@ namespace OxGFrame.AssetLoader.GroupCacher
             return asset;
         }
 
-        public void UnloadRawFile(int id, string assetName, bool forceUnload)
+        public void UnloadRawFile(int id, string assetName)
         {
             var keyGroup = this.GetFromCache(id, assetName);
             if (keyGroup != null)
             {
                 keyGroup.DelRef();
-                Logging.Print<Logger>($"【Unload】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                Logging.Print<Logger>($"【Unload with RefCount】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
 
-                // 強制釋放
-                if (forceUnload)
-                {
-                    this.DelFromCache(id, keyGroup.assetName);
-                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
-                }
                 // 使用引用計數釋放
-                else if (keyGroup.refCount <= 0)
+                if (keyGroup.refCount <= 0)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-                    Logging.Print<Logger>($"【Unload Completes】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Unload Completes with RefCount】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
                 }
 
-                CacheBundle.GetInstance().UnloadRawFile(keyGroup.assetName, forceUnload);
+                // 總是使用引用計數模式
+                CacheBundle.GetInstance().UnloadRawFile(keyGroup.assetName, false);
             }
         }
 
-        public void ReleaseRawFiles(int id)
+        public void UnloadRawFiles(int id)
         {
             if (this._keyCacher.Count > 0)
             {
@@ -145,9 +143,9 @@ namespace OxGFrame.AssetLoader.GroupCacher
                     // 完成後, 直接刪除緩存
                     this.DelFromCache(keyGroup.id, keyGroup.assetName);
                 }
-            }
 
-            Logging.Print<Logger>($"【Release Group RawFiles】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}");
+                Logging.Print<Logger>($"【Unload Group RawFiles with RefCount】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
+            }
         }
         #endregion
 
@@ -237,32 +235,27 @@ namespace OxGFrame.AssetLoader.GroupCacher
             return asset;
         }
 
-        public void UnloadAsset(int id, string assetName, bool forceUnload)
+        public void UnloadAsset(int id, string assetName)
         {
             var keyGroup = this.GetFromCache(id, assetName);
             if (keyGroup != null)
             {
                 keyGroup.DelRef();
-                Logging.Print<Logger>($"【Unload】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
+                Logging.Print<Logger>($"【Unload with RefCount】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, KeyRef: {keyGroup.refCount}, GroupId: {id}");
 
-                // 強制釋放
-                if (forceUnload)
-                {
-                    this.DelFromCache(id, keyGroup.assetName);
-                    Logging.Print<Logger>($"【Force Unload Completes】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
-                }
                 // 使用引用計數釋放
-                else if (keyGroup.refCount <= 0)
+                if (keyGroup.refCount <= 0)
                 {
                     this.DelFromCache(id, keyGroup.assetName);
-                    Logging.Print<Logger>($"【Unload Completes】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
+                    Logging.Print<Logger>($"【Unload Completes with RefCount】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
                 }
 
-                CacheBundle.GetInstance().UnloadAsset(keyGroup.assetName, forceUnload);
+                // 總是使用引用計數模式
+                CacheBundle.GetInstance().UnloadAsset(keyGroup.assetName, false);
             }
         }
 
-        public void ReleaseAssets(int id)
+        public void UnloadAssets(int id, bool forceUnload = false)
         {
             if (this._keyCacher.Count > 0)
             {
@@ -280,9 +273,9 @@ namespace OxGFrame.AssetLoader.GroupCacher
                     // 完成後, 直接刪除緩存
                     this.DelFromCache(keyGroup.id, keyGroup.assetName);
                 }
-            }
 
-            Logging.Print<Logger>($"【Release Group Assets】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}");
+                Logging.Print<Logger>($"【Unload Group Assets with RefCount】 => Current << {nameof(GroupBundle)} >> Cache Count: {this.Count}, GroupId: {id}");
+            }
         }
         #endregion
     }
