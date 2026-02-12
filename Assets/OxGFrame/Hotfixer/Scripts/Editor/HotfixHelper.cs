@@ -217,7 +217,7 @@ namespace OxGFrame.Hotfixer.Editor
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Assets/OxGFrame/Hotfixer/Convert hotfixdllconfig.conf (BYTES [Cipher] <-> JSON [Plaintext])", false, -99)]
+        [MenuItem("Assets/OxGFrame/Hotfixer/Convert HotfixManifest.dat (BYTES [Cipher] <-> JSON [Plaintext])", false, -99)]
         private static void _ConvertConfigFile()
         {
             UnityEngine.Object selectedObject = Selection.activeObject;
