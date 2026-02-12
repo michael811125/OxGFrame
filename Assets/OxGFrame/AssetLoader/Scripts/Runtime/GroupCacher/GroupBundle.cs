@@ -255,7 +255,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
             }
         }
 
-        public void UnloadAssets(int id, bool forceUnload = false)
+        public void UnloadAssets(int id)
         {
             if (this._keyCacher.Count > 0)
             {
