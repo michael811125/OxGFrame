@@ -1261,9 +1261,9 @@ namespace OxGFrame.AssetLoader
                     continue;
                 }
 
-                if (TryRefineResourcesPath(assetNames[i], out int index))
+                if (TryRefineResourcesPath(assetNames[i], out _))
                 {
-                    rAssetNames[rCount++] = assetNames[i].Substring(index);
+                    rAssetNames[rCount++] = assetNames[i];
                 }
                 else
                 {
