@@ -28,15 +28,15 @@ namespace OxGFrame.CoreFrame
         {
             string name = go.name;
 
-            // 檢查是否要結束綁定, 有檢查到【BIND_STOP_END】時, 則停止繼續搜尋綁定物件
+            // 檢查是否要結束綁定，有檢查到【BIND_STOP_END】時，則停止繼續搜尋綁定物件
             if (CheckNodeHasStopEnd(name))
             {
-                // 在 Runtime 時, 還原字串 (主要是在 Transform.Find 時, 可以無視 BIND_STOP_END 標籤)
+                // 在 Runtime 時，還原字串 (主要是在 Transform.Find 時，可以無視 BIND_STOP_END 標籤)
                 go.name = go.name.Replace(FrameConfig.BIND_STOP_END, string.Empty);
                 return false;
             }
 
-            // 這邊檢查有【BIND_PREFIXES】時, 則進入判斷
+            // 這邊檢查有【BIND_PREFIXES】時，則進入判斷
             if (CheckNodeHasPrefix(name, fBase))
             {
                 _BindIntoCollector(name, go, fBase);
@@ -106,10 +106,10 @@ namespace OxGFrame.CoreFrame
                 return;
             }
 
-            // 找到對應的綁定類型後, 進行綁定
+            // 找到對應的綁定類型後，進行綁定
             if (FrameConfig.BIND_COMPONENTS[bindType] == "GameObject")
             {
-                // 綁定至收集器, 此時進行完成綁定
+                // 綁定至收集器，此時進行完成綁定
                 foreach (var bindName in bindNames)
                     fBase.collector.AddNode(bindName, go);
             }
@@ -161,8 +161,8 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 透過【BIND_HEAD_SEPARATOR】執行 Split 字串, 返回取得字串陣列
-        /// <para> ※備註: (Example) _Node@MyObj*Txt => ["_Node", "MyObj*Txt"] </para>
+        /// 透過【BIND_HEAD_SEPARATOR】執行 Split 字串，返回取得字串陣列
+        /// <para> ※備註：(Example) _Node@MyObj*Txt => ["_Node", "MyObj*Txt"] </para>
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -175,8 +175,8 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 透過【BIND_TAIL_SEPARATOR】執行 Split 字串, 返回取得字串陣列
-        /// <para> ※備註: (Example) MyObj*Txt => ["MyObj", "Txt"] </para>
+        /// 透過【BIND_TAIL_SEPARATOR】執行 Split 字串，返回取得字串陣列
+        /// <para> ※備註：(Example) MyObj*Txt => ["MyObj", "Txt"] </para>
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -189,8 +189,8 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 透過【BIND_ACCESS_MODIFIER_SEPARATOR】執行 Split 字串, 返回取得字串陣列
-        /// <para> ※備註: (Example) MyObj*Txt$public => ["MyObj*Txt", "public"] </para>
+        /// 透過【BIND_ACCESS_MODIFIER_SEPARATOR】執行 Split 字串，返回取得字串陣列
+        /// <para> ※備註：(Example) MyObj*Txt$public => ["MyObj*Txt", "public"] </para>
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>

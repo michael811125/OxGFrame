@@ -85,6 +85,11 @@
 			"displayName": "EventCenter Demo",
 			"description": "Sample to use EventCenter",
 			"path": "Samples~/EventCenterDemo"
+		},
+		{
+			"displayName": "AI Agent Skills",
+			"description": "Agent Skills (SKILL.md + references) that teach AI coding agents (Claude Code, Codex CLI, Cursor, etc.) how to develop with OxGFrame and OxGKit",
+			"path": "Samples~/AgentSkills"
 		}
 	],
 	"dependencies": {

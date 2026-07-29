@@ -364,13 +364,13 @@ namespace OxGFrame.CoreFrame.USFrame
                 }
             }
 
-            // Additive 場景不使用單飛, 每次都實際載入
+            // Additive 場景不使用單飛，每次都實際載入
             if (loadSceneMode == LoadSceneMode.Additive)
             {
                 return await this._LoadFromBuildCoreAsync(sceneName, loadSceneMode, localPhysicsMode, progression);
             }
 
-            // Single 場景使用單飛, 檢查是否有進行中的載入任務
+            // Single 場景使用單飛，檢查是否有進行中的載入任務
             if (this._loadingTasker.TryGetLoadingTask(sceneName, out var existingTask))
             {
                 Logging.Print<Logger>($"Scene: {sceneName} is loading, waiting for existing task...");
@@ -489,13 +489,13 @@ namespace OxGFrame.CoreFrame.USFrame
             // 使用 buildIndex 作為 key (轉成字串)
             string taskKey = $"{buildIndex}";
 
-            // Additive 場景不使用單飛, 每次都實際載入
+            // Additive 場景不使用單飛，每次都實際載入
             if (loadSceneMode == LoadSceneMode.Additive)
             {
                 return await this._LoadFromBuildCoreAsync(buildIndex, loadSceneMode, localPhysicsMode, progression);
             }
 
-            // Single 場景使用單飛, 檢查是否有進行中的載入任務
+            // Single 場景使用單飛，檢查是否有進行中的載入任務
             if (this._loadingTasker.TryGetLoadingTask(taskKey, out var existingTask))
             {
                 Logging.Print<Logger>($"Scene: idx {buildIndex} is loading, waiting for existing task...");

@@ -31,7 +31,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
                         // 取得原始文件的長度
                         long fileLength = new FileInfo(sourceFile).Length;
-                        // 計算總長度: 原始文件長度 + dummySize
+                        // 計算總長度：原始文件長度 + dummySize
                         long totalLength = fileLength + dummySize;
 
                         // 建立緩衝區
@@ -165,7 +165,7 @@ namespace OxGFrame.AssetLoader.Bundle
                             encryptedBytes[i] = (byte)(UnityEngine.Random.Range(0, 256));
                         }
 
-                        // 逐步讀取原始文件數據, 並存入加密後的 byte[]
+                        // 逐步讀取原始文件數據，並存入加密後的 byte[]
                         byte[] buffer = new byte[readBufferSize];
                         int bytesRead;
                         int offset = dummySize;
@@ -520,7 +520,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         byte[] buffer = new byte[readBufferSize];
                         int bytesRead;
 
-                        // 逐步讀取文件內容, 並對每個字節進行 XOR 解密
+                        // 逐步讀取文件內容，並對每個字節進行 XOR 解密
                         while ((bytesRead = fsDecrypt.Read(buffer, 0, buffer.Length)) > 0)
                         {
                             for (int i = 0; i < bytesRead; i++)
@@ -876,7 +876,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         // 創建 MemoryStream 用於存放解密後的數據
                         MemoryStream msDecrypt = new MemoryStream((int)fileLength);
 
-                        // 逐步讀取文件內容, 並進行解密
+                        // 逐步讀取文件內容，並進行解密
                         while ((bytesRead = fsDecrypt.Read(buffer, 0, buffer.Length)) > 0)
                         {
                             // 每隔 2 字節解密
@@ -1174,7 +1174,7 @@ namespace OxGFrame.AssetLoader.Bundle
                                     buffer[0] ^= hKey;
                                 }
 
-                                // 處理最後一個字節 (文件尾), 當累計讀取後等於文件長度時處理
+                                // 處理最後一個字節 (文件尾)，當累計讀取後等於文件長度時處理
                                 if (totalBytesRead + bytesRead == fileLength)
                                 {
                                     buffer[bytesRead - 1] ^= tKey;
@@ -1298,7 +1298,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         // 創建 MemoryStream 用於存放解密後的數據
                         MemoryStream msDecrypt = new MemoryStream((int)fileLength);
 
-                        // 逐步讀取文件內容, 並進行解密
+                        // 逐步讀取文件內容，並進行解密
                         while ((bytesRead = fsDecrypt.Read(buffer, 0, buffer.Length)) > 0)
                         {
                             // 每隔 2 字節解密
@@ -2149,7 +2149,7 @@ namespace OxGFrame.AssetLoader.Bundle
                         byte[] buffer = new byte[readBufferSize];
                         int bytesRead;
 
-                        // 逐步讀取文件內容, 並對每個字節進行 XOR 解密
+                        // 逐步讀取文件內容，並對每個字節進行 XOR 解密
                         while ((bytesRead = fsDecrypt.Read(buffer, 0, buffer.Length)) > 0)
                         {
                             for (int i = 0; i < bytesRead; i++)

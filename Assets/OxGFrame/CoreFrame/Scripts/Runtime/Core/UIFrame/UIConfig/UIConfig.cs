@@ -74,7 +74,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         public const string UI_MASK_NAME = "UIMaskPool";
         public const string UI_FREEZE_NAME = "UIFreezePool";
 
-        /* 節點常量, 可自行定義 NodeType 後, 並且在此新增 【NodeType + Order, 排序小 (後層) -> 大 (前層)】 */
+        /* 節點常量，可自行定義 NodeType 後，並且在此新增 【NodeType + Order，排序小 (後層) -> 大 (前層)】 */
         public static readonly Dictionary<NodeType, int> uiNodes = new Dictionary<NodeType, int>()
             {
                 { NodeType.Fixed, 0},

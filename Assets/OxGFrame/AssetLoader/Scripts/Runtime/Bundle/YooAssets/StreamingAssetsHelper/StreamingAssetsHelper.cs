@@ -82,7 +82,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         #region Try Request Builtin-Package
         /// <summary>
-        /// 嘗試請求內置資源清單是否存在 (true = 存在, false = 不存在)
+        /// 嘗試請求內置資源清單是否存在 (true = 存在，false = 不存在)
         /// </summary>
         /// <param name="packageName"></param>
         /// <param name="fileName"></param>

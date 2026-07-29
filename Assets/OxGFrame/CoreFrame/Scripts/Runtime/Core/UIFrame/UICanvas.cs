@@ -24,12 +24,12 @@ namespace OxGFrame.CoreFrame.UIFrame
         public Dictionary<string, GameObject> uiNodes = new Dictionary<string, GameObject>();
 
         /// <summary>
-        /// UIMaskMgr, 由 UIManager 進行單例管控
+        /// UIMaskMgr，由 UIManager 進行單例管控
         /// </summary>
         public UIMaskManager uiMaskManager { get; protected set; }
 
         /// <summary>
-        /// UIFreezeMgr, 由 UIManager 進行單例管控
+        /// UIFreezeMgr，由 UIManager 進行單例管控
         /// </summary>
         public UIFreezeManager uiFreezeManager { get; protected set; }
 
@@ -63,7 +63,7 @@ namespace OxGFrame.CoreFrame.UIFrame
 
             try
             {
-                // 如果 UICavas Destroy 時, 需要進行連動釋放, 確保 UIManager 緩存操作正常
+                // 如果 UICavas Destroy 時，需要進行連動釋放，確保 UIManager 緩存操作正常
                 UIBase[] uiBases = this.gameObject.GetComponentsInChildren<UIBase>(true);
                 foreach (var uiBase in uiBases)
                 {

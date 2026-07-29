@@ -1,0 +1,4 @@
+interface:
+  display_name: "OxGFrame Unity Skill"
+  short_description: "OxGFrame framework development"
+  default_prompt: "Use $oxgframe-unity-skill to implement OxGFrame features: AssetLoaders/AssetPatcher loading and patching, CoreFrames UI/SR/US/CP, MediaFrames audio/video, GSIFrame stages, NetFrame, CenterFrame, and Hotfixer/HybridCLR flows."

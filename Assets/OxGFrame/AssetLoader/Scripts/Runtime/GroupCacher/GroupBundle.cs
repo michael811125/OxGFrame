@@ -129,7 +129,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                         CacheBundle.GetInstance().UnloadRawFile(keyGroup.assetName, false);
                     }
 
-                    // 完成後, 直接刪除緩存
+                    // 完成後，直接刪除緩存
                     this.DelFromCache(keyGroup.id, keyGroup.assetName);
                 }
 
@@ -248,7 +248,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                         CacheBundle.GetInstance().UnloadAsset(keyGroup.assetName, false);
                     }
 
-                    // 完成後, 直接刪除緩存
+                    // 完成後，直接刪除緩存
                     this.DelFromCache(keyGroup.id, keyGroup.assetName);
                 }
 
