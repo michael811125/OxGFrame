@@ -1,6 +1,17 @@
 # OxGFrame Coding Style
 
-Follow the official coding-style wiki (`https://github.com/michael811125/OxGFrame/wiki/Coding-Style`) for all generated code.
+> **Ask before applying — coding style is a per-team decision.**
+>
+> This guide is the standard for code inside the OxGFrame package itself (framework contributions, extensions, and samples). It is NOT automatically the standard for a project's application/business-logic code — every team defines its own conventions.
+>
+> Before writing the first code for a project, ask the developer:
+> "Should project code follow the OxGFrame coding style, or your team's own conventions?"
+> Then apply the answer consistently for the rest of the session (persist it to project memory/context when available).
+>
+> - Developer chooses **team conventions** (the default assumption): use this document only when touching OxGFrame framework code; everywhere else follow the project's existing style — when in doubt, match the surrounding code.
+> - Developer chooses **OxGFrame style**: apply the rules below to project code as well.
+
+The rules below reproduce the official coding-style wiki (`https://github.com/michael811125/OxGFrame/wiki/Coding-Style`).
 
 ## Naming
 

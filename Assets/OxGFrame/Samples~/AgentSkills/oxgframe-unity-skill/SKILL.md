@@ -24,7 +24,7 @@ The bundled references are grounded in the framework source and the 16 official 
 
 1. Reply in the user's language; keep code and identifiers in English.
 2. Start with the conclusion, then implementation details.
-3. Follow the OxGFrame coding style (`references/coding-style.md`) and the target project's existing conventions.
+3. Coding style is a per-team decision — ASK before applying. Before writing the first code for a project, ask the developer whether project code should follow the OxGFrame coding style (`references/coding-style.md`) or the team's own conventions, then apply that choice consistently (persist it to project memory/context when available). The OxGFrame style is only mandatory for code inside the OxGFrame package itself (framework contributions and extensions); application/business-logic code belongs to the team's own conventions, and the project's existing style wins by default.
 4. Before changing code, inspect the target project's real definitions (address constants, package names, existing UI/SR/CP classes). Do not invent package names or asset addresses.
 5. If an API is not listed in these references or the target project uses a different OxGFrame version, verify against the installed package source first and say so.
 6. For WebGL/IL2CPP targets, call out async, stripping/link.xml, autoplay/media, and download constraints when relevant.
@@ -41,7 +41,7 @@ Load only what the task needs:
 - `references/gsi-net-center-usage.md` — GSIFrame stages, NetFrame clients, CenterFrame API/Event centers.
 - `references/hotfix-flow.md` — Hotfixers + HybridCLR flow, main/hotfix assembly split.
 - `references/production-architecture.md` — optional production patterns: boot stage chain, package split strategy, release checklists.
-- `references/coding-style.md` — naming, class layout, async and lifecycle rules.
+- `references/coding-style.md` — naming, class layout, async and lifecycle rules (OxGFrame framework standard; confirm with the developer before applying it to project code — see First response rules).
 
 ## Core conventions (always apply)
 
