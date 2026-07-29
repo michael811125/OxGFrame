@@ -64,7 +64,12 @@ namespace OxGFrame.AssetLoader.Bundle
         #region At Editor
         private static bool _PackageExistsAtEditor(string packageName)
         {
+#if YOOASSET_2
             var yooDefaultFolderName = YooAssetSettingsData.GetDefaultYooFolderName();
+#else
+            // [YooAsset v3] YooAssetSettingsData 更名為 YooAssetConfiguration
+            var yooDefaultFolderName = YooAssetConfiguration.GetYooFolderName();
+#endif
             string dirPath = Path.Combine(Application.streamingAssetsPath, yooDefaultFolderName, packageName);
 
             // 直接檢查文件夾是否存在

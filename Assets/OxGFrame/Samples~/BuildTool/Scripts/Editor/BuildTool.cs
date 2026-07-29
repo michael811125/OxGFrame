@@ -1,4 +1,4 @@
-using HybridCLR.Editor.Commands;
+﻿using HybridCLR.Editor.Commands;
 using HybridCLR.Editor.Installer;
 using Newtonsoft.Json.Linq;
 using OxGFrame.AssetLoader;
@@ -13,6 +13,19 @@ using UnityEditor;
 using UnityEngine;
 using YooAsset;
 using YooAsset.Editor;
+#if YOOASSET_3
+// [YooAsset v3] 類名更名轉接
+using AssetBundleBuilderHelper = YooAsset.Editor.BundleBuilderHelper;
+using AssetBundleCollectorSettingData = YooAsset.Editor.BundleCollectorSettingData;
+using BuiltinBuildParameters = YooAsset.Editor.LegacyBuildParameters;
+using BuiltinBuildPipeline = YooAsset.Editor.LegacyBuildPipeline;
+using EditorTools = YooAsset.Editor.EditorAssemblyUtility;
+using EBuildBundleType = YooAsset.EBundleType;
+using EBuildinFileCopyOption = YooAsset.Editor.EBundledCopyOption;
+using IEncryptionServices = YooAsset.IBundleEncryptor;
+using IManifestProcessServices = YooAsset.IManifestEncryptor;
+using IManifestRestoreServices = YooAsset.IManifestDecryptor;
+#endif
 
 namespace OxGFrame.Extensions.BuildTool.Editor
 {
@@ -821,7 +834,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 // 構建參數
                                 BuiltinBuildParameters buildParameters = new BuiltinBuildParameters();
                                 buildParameters.BuildOutputRoot = buildoutputRoot;
-                                buildParameters.BuildinFileRoot = streamingAssetsRoot;
+            #if YOOASSET_2
+                    buildParameters.BuildinFileRoot = streamingAssetsRoot;
+#else
+                    // [YooAsset v3] BuildinFileRoot 更名為 BundledFileRoot
+                    buildParameters.BundledFileRoot = streamingAssetsRoot;
+#endif
                                 buildParameters.BuildPipeline = EBuildPipeline.ScriptableBuildPipeline.ToString();
                                 buildParameters.BuildBundleType = (int)EBuildBundleType.AssetBundle;
                                 buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
@@ -829,13 +847,30 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 buildParameters.PackageVersion = GetDefaultPackageVersion();
                                 buildParameters.VerifyBuildingResult = true;
                                 buildParameters.EnableSharePackRule = true;
-                                buildParameters.EncryptionServices = bundleEncryptionServices;
+            #if YOOASSET_2
+                    buildParameters.EncryptionServices = bundleEncryptionServices;
+#else
+                    // [YooAsset v3] EncryptionServices 更名為 BundleEncryptor
+                    buildParameters.BundleEncryptor = bundleEncryptionServices;
+#endif
+#if YOOASSET_2
                                 buildParameters.ManifestProcessServices = manifestEncryptionServices;
                                 buildParameters.ManifestRestoreServices = manifestDecryptionServices;
+#else
+                                // [YooAsset v3] ManifestProcessServices / ManifestRestoreServices 更名為 ManifestEncryptor / ManifestDecryptor
+                                buildParameters.ManifestEncryptor = manifestEncryptionServices;
+                                buildParameters.ManifestDecryptor = manifestDecryptionServices;
+#endif
                                 buildParameters.CompressOption = bundleCompression;
                                 buildParameters.FileNameStyle = bundleNameStyle;
+#if YOOASSET_2
                                 buildParameters.BuildinFileCopyOption = bundleCopyOption;
                                 buildParameters.BuildinFileCopyParams = string.Empty;
+#else
+                                // [YooAsset v3] BuildinFileCopyOption / BuildinFileCopyParams 更名為 BundledCopyOption / BundledCopyParams
+                                buildParameters.BundledCopyOption = bundleCopyOption;
+                                buildParameters.BundledCopyParams = string.Empty;
+#endif
                                 buildParameters.ClearBuildCacheFiles = clearBuildCacheFiles ?? false;
                                 buildParameters.UseAssetDependencyDB = useAssetDependencyDB ?? true;
 
@@ -860,7 +895,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 // 構建參數
                                 ScriptableBuildParameters buildParameters = new ScriptableBuildParameters();
                                 buildParameters.BuildOutputRoot = buildoutputRoot;
-                                buildParameters.BuildinFileRoot = streamingAssetsRoot;
+            #if YOOASSET_2
+                    buildParameters.BuildinFileRoot = streamingAssetsRoot;
+#else
+                    // [YooAsset v3] BuildinFileRoot 更名為 BundledFileRoot
+                    buildParameters.BundledFileRoot = streamingAssetsRoot;
+#endif
                                 buildParameters.BuildPipeline = EBuildPipeline.ScriptableBuildPipeline.ToString();
                                 buildParameters.BuildBundleType = (int)EBuildBundleType.AssetBundle;
                                 buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
@@ -868,13 +908,30 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 buildParameters.PackageVersion = GetDefaultPackageVersion();
                                 buildParameters.VerifyBuildingResult = true;
                                 buildParameters.EnableSharePackRule = true;
-                                buildParameters.EncryptionServices = bundleEncryptionServices;
+            #if YOOASSET_2
+                    buildParameters.EncryptionServices = bundleEncryptionServices;
+#else
+                    // [YooAsset v3] EncryptionServices 更名為 BundleEncryptor
+                    buildParameters.BundleEncryptor = bundleEncryptionServices;
+#endif
+#if YOOASSET_2
                                 buildParameters.ManifestProcessServices = manifestEncryptionServices;
                                 buildParameters.ManifestRestoreServices = manifestDecryptionServices;
+#else
+                                // [YooAsset v3] ManifestProcessServices / ManifestRestoreServices 更名為 ManifestEncryptor / ManifestDecryptor
+                                buildParameters.ManifestEncryptor = manifestEncryptionServices;
+                                buildParameters.ManifestDecryptor = manifestDecryptionServices;
+#endif
                                 buildParameters.CompressOption = bundleCompression;
                                 buildParameters.FileNameStyle = bundleNameStyle;
+#if YOOASSET_2
                                 buildParameters.BuildinFileCopyOption = bundleCopyOption;
                                 buildParameters.BuildinFileCopyParams = string.Empty;
+#else
+                                // [YooAsset v3] BuildinFileCopyOption / BuildinFileCopyParams 更名為 BundledCopyOption / BundledCopyParams
+                                buildParameters.BundledCopyOption = bundleCopyOption;
+                                buildParameters.BundledCopyParams = string.Empty;
+#endif
                                 buildParameters.ClearBuildCacheFiles = clearBuildCacheFiles ?? false;
                                 buildParameters.UseAssetDependencyDB = useAssetDependencyDB ?? true;
                                 buildParameters.BuiltinShadersBundleName = _GetBuiltinShaderBundleName(packageName);
@@ -899,7 +956,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 // 構建參數
                                 RawFileBuildParameters buildParameters = new RawFileBuildParameters();
                                 buildParameters.BuildOutputRoot = buildoutputRoot;
-                                buildParameters.BuildinFileRoot = streamingAssetsRoot;
+            #if YOOASSET_2
+                    buildParameters.BuildinFileRoot = streamingAssetsRoot;
+#else
+                    // [YooAsset v3] BuildinFileRoot 更名為 BundledFileRoot
+                    buildParameters.BundledFileRoot = streamingAssetsRoot;
+#endif
                                 buildParameters.BuildPipeline = EBuildPipeline.ScriptableBuildPipeline.ToString();
                                 buildParameters.BuildBundleType = (int)EBuildBundleType.RawBundle;
                                 buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
@@ -907,12 +969,29 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 buildParameters.PackageVersion = GetDefaultPackageVersion();
                                 buildParameters.VerifyBuildingResult = true;
                                 buildParameters.EnableSharePackRule = true;
-                                buildParameters.EncryptionServices = bundleEncryptionServices;
+            #if YOOASSET_2
+                    buildParameters.EncryptionServices = bundleEncryptionServices;
+#else
+                    // [YooAsset v3] EncryptionServices 更名為 BundleEncryptor
+                    buildParameters.BundleEncryptor = bundleEncryptionServices;
+#endif
+#if YOOASSET_2
                                 buildParameters.ManifestProcessServices = manifestEncryptionServices;
                                 buildParameters.ManifestRestoreServices = manifestDecryptionServices;
+#else
+                                // [YooAsset v3] ManifestProcessServices / ManifestRestoreServices 更名為 ManifestEncryptor / ManifestDecryptor
+                                buildParameters.ManifestEncryptor = manifestEncryptionServices;
+                                buildParameters.ManifestDecryptor = manifestDecryptionServices;
+#endif
                                 buildParameters.FileNameStyle = bundleNameStyle;
+#if YOOASSET_2
                                 buildParameters.BuildinFileCopyOption = bundleCopyOption;
                                 buildParameters.BuildinFileCopyParams = string.Empty;
+#else
+                                // [YooAsset v3] BuildinFileCopyOption / BuildinFileCopyParams 更名為 BundledCopyOption / BundledCopyParams
+                                buildParameters.BundledCopyOption = bundleCopyOption;
+                                buildParameters.BundledCopyParams = string.Empty;
+#endif
                                 buildParameters.ClearBuildCacheFiles = clearBuildCacheFiles ?? false;
                                 buildParameters.UseAssetDependencyDB = useAssetDependencyDB ?? true;
 

@@ -229,6 +229,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                 long lastBytes = 0;
                 var downloadSpeedCalculator = new DownloadSpeedCalculator();
                 downloadSpeedCalculator.onDownloadSpeedProgress = HotfixEvents.HotfixDownloadProgression.SendEventMessage;
+#if YOOASSET_2
                 downloader.DownloadErrorCallback = (DownloadErrorData data) =>
                 {
                     HotfixEvents.HotfixDownloadFailed.SendEventMessage(data.FileName, data.ErrorInfo);
@@ -247,6 +248,27 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
                 if (downloader.Status != EOperationStatus.Succeed)
                     return;
+#else
+                // [YooAsset v3] 回調屬性改為事件 (+=), 資料型別更名為 EventArgs
+                downloader.DownloadError += (DownloadErrorEventArgs data) =>
+                {
+                    HotfixEvents.HotfixDownloadFailed.SendEventMessage(data.FileName, data.ErrorInfo);
+                };
+                downloader.DownloadProgressChanged += (DownloadProgressChangedEventArgs data) =>
+                {
+                    currentCount += data.CurrentDownloadCount - lastCount;
+                    lastCount = data.CurrentDownloadCount;
+                    currentBytes += data.CurrentDownloadBytes - lastBytes;
+                    lastBytes = data.CurrentDownloadBytes;
+                    downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
+                };
+                downloader.StartDownload();
+
+                await downloader;
+
+                if (downloader.Status != EOperationStatus.Succeeded)
+                    return;
+#endif
 
                 this._machine.ChangeState<FsmHotfixDownloadOver>();
             }
@@ -314,8 +336,14 @@ namespace OxGFrame.Hotfixer.HotfixFsm
             {
                 // Get hotfix package
                 var package = AssetPatcher.GetPackage(HotfixManager.GetInstance().packageName);
+#if YOOASSET_2
                 var clearUnusedBundleFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
                 var clearUnusedManifestFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
+#else
+                // [YooAsset v3] ClearCacheFilesAsync 改為 ClearCacheAsync (以字串方法名指定清理模式)
+                var clearUnusedBundleFilesOperation = package.ClearCacheAsync(new ClearCacheOptions(ClearCacheMethods.ClearUnusedBundleFiles));
+                var clearUnusedManifestFilesOperation = package.ClearCacheAsync(new ClearCacheOptions(ClearCacheMethods.ClearUnusedManifestFiles));
+#endif
                 await clearUnusedBundleFilesOperation;
                 await clearUnusedManifestFilesOperation;
 

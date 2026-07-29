@@ -90,10 +90,17 @@ namespace OxGFrame.AssetLoader.Bundle
         [HideInInspector]
         public string fallbackHostServer = null;
 
+#if YOOASSET_2
         /// <summary>
         /// [YooAsset] Initialize parameters for custom
         /// </summary>
         public InitializeParameters initializeParameters;
+#else
+        /// <summary>
+        /// [YooAsset v3] Initialize options for custom
+        /// </summary>
+        public InitializePackageOptions initializeParameters;
+#endif
     }
 
     /// <summary>

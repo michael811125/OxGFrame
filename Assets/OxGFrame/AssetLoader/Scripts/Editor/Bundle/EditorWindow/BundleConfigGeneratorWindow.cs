@@ -9,6 +9,11 @@ using UnityEditor;
 using UnityEngine;
 using YooAsset.Editor;
 using static OxGFrame.AssetLoader.Bundle.AppConfig;
+#if YOOASSET_3
+// [YooAsset v3] 類名更名轉接
+using AssetBundleBuilderHelper = YooAsset.Editor.BundleBuilderHelper;
+using EditorTools = YooAsset.Editor.EditorPathUtility;
+#endif
 
 namespace OxGFrame.AssetLoader.Editor
 {

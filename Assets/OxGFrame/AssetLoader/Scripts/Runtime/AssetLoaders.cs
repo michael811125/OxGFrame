@@ -1,4 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
+#if YOOASSET_3
+using OxGFrame.AssetLoader.Bundle;
+#endif
 using OxGFrame.AssetLoader.Cacher;
 using OxGFrame.AssetLoader.GroupCacher;
 using OxGKit.LoggingSystem;
@@ -225,9 +228,17 @@ namespace OxGFrame.AssetLoader
             var pack = GetFromCache<BundlePack>(assetName);
             if (pack != null)
             {
+#if YOOASSET_2
                 // Get path from operation handle
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 string filePath = operation.GetRawFilePath();
+#else
+                // [YooAsset v3] 以 EnsureBundleFileAsync 取得檔案路徑
+                var package = PackageManager.GetPackage(pack.packageName);
+                var operation = package.EnsureBundleFileAsync(new EnsureBundleFileOptions(assetName));
+                await operation;
+                string filePath = operation.Detail.BundleFilePath;
+#endif
                 // 使用一般卸載遞減引用計數即可，避免強制卸載將其他持有者的引用一併釋放
                 UnloadRawFile(assetName);
                 return filePath;
@@ -249,9 +260,17 @@ namespace OxGFrame.AssetLoader
             var pack = GetFromCache<BundlePack>(assetName);
             if (pack != null)
             {
+#if YOOASSET_2
                 // Get path from operation handle
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 string filePath = operation.GetRawFilePath();
+#else
+                // [YooAsset v3] 以 EnsureBundleFileAsync 取得檔案路徑
+                var package = PackageManager.GetPackage(pack.packageName);
+                var operation = package.EnsureBundleFileAsync(new EnsureBundleFileOptions(assetName));
+                await operation;
+                string filePath = operation.Detail.BundleFilePath;
+#endif
                 // 使用一般卸載遞減引用計數即可，避免強制卸載將其他持有者的引用一併釋放
                 UnloadRawFile(assetName);
                 return filePath;
@@ -272,9 +291,17 @@ namespace OxGFrame.AssetLoader
             var pack = GetFromCache<BundlePack>(assetName);
             if (pack != null)
             {
+#if YOOASSET_2
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 // Get path from operation handle
                 string filePath = operation.GetRawFilePath();
+#else
+                // [YooAsset v3] 以 EnsureBundleFileAsync 取得檔案路徑 (同步等待完成)
+                var package = PackageManager.GetPackage(pack.packageName);
+                var operation = package.EnsureBundleFileAsync(new EnsureBundleFileOptions(assetName));
+                operation.WaitForAsyncComplete();
+                string filePath = operation.Detail.BundleFilePath;
+#endif
                 // 使用一般卸載遞減引用計數即可，避免強制卸載將其他持有者的引用一併釋放
                 UnloadRawFile(assetName);
                 return filePath;
@@ -296,9 +323,17 @@ namespace OxGFrame.AssetLoader
             var pack = GetFromCache<BundlePack>(assetName);
             if (pack != null)
             {
+#if YOOASSET_2
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 // Get path from operation handle
                 string filePath = operation.GetRawFilePath();
+#else
+                // [YooAsset v3] 以 EnsureBundleFileAsync 取得檔案路徑 (同步等待完成)
+                var package = PackageManager.GetPackage(pack.packageName);
+                var operation = package.EnsureBundleFileAsync(new EnsureBundleFileOptions(assetName));
+                operation.WaitForAsyncComplete();
+                string filePath = operation.Detail.BundleFilePath;
+#endif
                 // 使用一般卸載遞減引用計數即可，避免強制卸載將其他持有者的引用一併釋放
                 UnloadRawFile(assetName);
                 return filePath;

@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using OxGFrame.AssetLoader;
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.Editor;
@@ -11,6 +11,13 @@ using UnityEngine;
 using YooAsset;
 using YooAsset.Editor;
 using static OxGFrame.AssetLoader.Bundle.AppConfig;
+#if YOOASSET_3
+// [YooAsset v3] 類名更名轉接
+using AssetBundleCollectorSettingData = YooAsset.Editor.BundleCollectorSettingData;
+using EditorTools = YooAsset.Editor.EditorAssemblyUtility;
+using IEncryptionServices = YooAsset.IBundleEncryptor;
+using IManifestProcessServices = YooAsset.IManifestEncryptor;
+#endif
 
 namespace OxGFrame.Extensions.BuildTool.Editor
 {
@@ -272,7 +279,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
 
                 // 構建管線
                 string buildPipeline = string.Empty;
+#if YOOASSET_2
                 if (pkgInfo.buildPipeline == EBuildPipeline.BuiltinBuildPipeline)
+#else
+                // [YooAsset v3] BuiltinBuildPipeline 更名為 LegacyBuildPipeline
+                if (pkgInfo.buildPipeline == EBuildPipeline.LegacyBuildPipeline)
+#endif
                     buildPipeline = "BBP";
                 else if (pkgInfo.buildPipeline == EBuildPipeline.ScriptableBuildPipeline)
                     buildPipeline = "SBP";
@@ -830,7 +842,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                         // 構建管線
                         EBuildPipeline buildPipeline;
                         if (pkg.buildPipeline == "BBP")
+#if YOOASSET_2
                             buildPipeline = EBuildPipeline.BuiltinBuildPipeline;
+#else
+                            // [YooAsset v3] BuiltinBuildPipeline 更名為 LegacyBuildPipeline
+                            buildPipeline = EBuildPipeline.LegacyBuildPipeline;
+#endif
                         else if (pkg.buildPipeline == "SBP")
                             buildPipeline = EBuildPipeline.ScriptableBuildPipeline;
                         else if (pkg.buildPipeline == "RFBP")

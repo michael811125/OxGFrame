@@ -6,7 +6,12 @@ using System.Linq;
 using UnityEngine;
 using YooAsset;
 using static OxGFrame.AssetLoader.Utility.DownloadSpeedCalculator;
+#if YOOASSET_2
 using static YooAsset.DownloaderOperation;
+#else
+// [YooAsset v3] 巢狀委派已移除, 以事件簽名型別取代 (讓公開 API 簽名維持一致)
+using DownloadError = System.Action<YooAsset.DownloadErrorEventArgs>;
+#endif
 
 namespace OxGFrame.AssetLoader
 {
@@ -887,6 +892,7 @@ namespace OxGFrame.AssetLoader
 
                     int lastCount = 0;
                     long lastBytes = 0;
+#if YOOASSET_2
                     downloader.DownloadErrorCallback = onDownloadError;
                     downloader.DownloadUpdateCallback =
                     (DownloadUpdateData data) =>
@@ -897,11 +903,24 @@ namespace OxGFrame.AssetLoader
                         lastBytes = data.CurrentDownloadBytes;
                         downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
                     };
+#else
+                    // [YooAsset v3] 回調屬性改為事件 (+=)
+                    downloader.DownloadError += onDownloadError;
+                    downloader.DownloadProgressChanged +=
+                    (DownloadProgressChangedEventArgs data) =>
+                    {
+                        currentCount += data.CurrentDownloadCount - lastCount;
+                        lastCount = data.CurrentDownloadCount;
+                        currentBytes += data.CurrentDownloadBytes - lastBytes;
+                        lastBytes = data.CurrentDownloadBytes;
+                        downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
+                    };
+#endif
                     downloader.BeginDownload();
 
                     await downloader;
 
-                    if (downloader.Status != EOperationStatus.Succeed) return false;
+                    if (!downloader.Status.IsSucceed()) return false;
                 }
             }
 

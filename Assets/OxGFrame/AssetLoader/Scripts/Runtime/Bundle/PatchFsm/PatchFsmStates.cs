@@ -488,7 +488,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     var operation = package.RequestPackageVersionAsync();
                     await operation;
 
-                    if (operation.Status == EOperationStatus.Succeed)
+                    if (operation.Status.IsSucceed())
                     {
                         succeed = true;
                         patchVersions.TryAdd(package.PackageName, operation.PackageVersion);
@@ -594,7 +594,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     var operation = packages[i].UpdatePackageManifestAsync(version);
                     await operation;
 
-                    if (operation.Status == EOperationStatus.Succeed)
+                    if (operation.Status.IsSucceed())
                     {
                         // 儲存本地資源版本
                         BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, currentPackageName, version);
@@ -1001,6 +1001,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     int lastCount = 0;
                     long lastBytes = 0;
+#if YOOASSET_2
                     downloader.DownloadErrorCallback = (DownloadErrorData data) =>
                     {
                         PatchEvents.PatchDownloadFailed.SendEventMessage(data.FileName, data.ErrorInfo);
@@ -1013,11 +1014,26 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         lastBytes = data.CurrentDownloadBytes;
                         downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
                     };
+#else
+                    // [YooAsset v3] 回調屬性改為事件 (+=), 資料型別更名為 EventArgs
+                    downloader.DownloadError += (DownloadErrorEventArgs data) =>
+                    {
+                        PatchEvents.PatchDownloadFailed.SendEventMessage(data.FileName, data.ErrorInfo);
+                    };
+                    downloader.DownloadProgressChanged += (DownloadProgressChangedEventArgs data) =>
+                    {
+                        currentCount += data.CurrentDownloadCount - lastCount;
+                        lastCount = data.CurrentDownloadCount;
+                        currentBytes += data.CurrentDownloadBytes - lastBytes;
+                        lastBytes = data.CurrentDownloadBytes;
+                        downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
+                    };
+#endif
 
                     downloader.BeginDownload();
                     await downloader;
 
-                    if (downloader.Status != EOperationStatus.Succeed)
+                    if (!downloader.Status.IsSucceed())
                     {
                         string errorMsg = $"Downloader did not succeed in completing the operation.";
                         Logging.PrintError<Logger>($"{errorMsg}.");
@@ -1106,8 +1122,14 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 foreach (var package in packages)
                 {
+#if YOOASSET_2
                     var clearUnusedBundleFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
                     var clearUnusedManifestFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
+#else
+                    // [YooAsset v3] ClearCacheFilesAsync 改為 ClearCacheAsync (以字串方法名指定清理模式)
+                    var clearUnusedBundleFilesOperation = package.ClearCacheAsync(new ClearCacheOptions(ClearCacheMethods.ClearUnusedBundleFiles));
+                    var clearUnusedManifestFilesOperation = package.ClearCacheAsync(new ClearCacheOptions(ClearCacheMethods.ClearUnusedManifestFiles));
+#endif
                     await clearUnusedBundleFilesOperation;
                     await clearUnusedManifestFilesOperation;
                 }

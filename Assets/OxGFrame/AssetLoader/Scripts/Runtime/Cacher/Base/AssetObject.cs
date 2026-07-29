@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿#if YOOASSET_3
+using OxGFrame.AssetLoader.Bundle;
+#endif
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using YooAsset;
 
@@ -108,7 +111,17 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public bool IsRawFileOperationHandle()
         {
+#if YOOASSET_2
             return this.operationHandle is RawFileHandle;
+#else
+            // [YooAsset v3] RawFileHandle 已移除, Raw File 統一由 AssetHandle 載入 RawFileObject
+            if (this.operationHandle is AssetHandle handle)
+            {
+                if (handle.IsValid)
+                    return handle.AssetObject is RawFileObject;
+            }
+            return false;
+#endif
         }
 
         public bool IsRawFileOperationHandleValid()
@@ -149,20 +162,35 @@ namespace OxGFrame.AssetLoader.Cacher
         {
             if (!this.IsRawFileOperationHandleValid())
                 return null;
+#if YOOASSET_2
             return this.GetOperationHandle<RawFileHandle>().GetRawFileText();
+#else
+            // [YooAsset v3] 由 RawFileObject 取得文字內容
+            return this.GetOperationHandle<AssetHandle>().GetAssetObject<RawFileObject>()?.GetText();
+#endif
         }
 
         public byte[] GetRawFileData()
         {
             if (!this.IsRawFileOperationHandleValid())
                 return null;
+#if YOOASSET_2
             return this.GetOperationHandle<RawFileHandle>().GetRawFileData();
+#else
+            // [YooAsset v3] 由 RawFileObject 取得位元組內容
+            return this.GetOperationHandle<AssetHandle>().GetAssetObject<RawFileObject>()?.GetBytes();
+#endif
         }
 
         public void UnloadRawFile()
         {
             if (this.IsRawFileOperationHandleValid())
+#if YOOASSET_2
                 this.GetOperationHandle<RawFileHandle>().Release();
+#else
+                // [YooAsset v3] Raw File 由 AssetHandle 釋放
+                this.GetOperationHandle<AssetHandle>().Release();
+#endif
         }
         #endregion
 

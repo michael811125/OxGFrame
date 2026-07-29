@@ -135,7 +135,12 @@ namespace OxGFrame.AssetLoader.Cacher
             var package = PackageManager.GetPackage(packageName);
             if (package != null && package.CheckLocationValid(assetName))
             {
+#if YOOASSET_2
                 var req = package.LoadSceneAsync(assetName, loadSceneMode, localPhysicsMode, suspendLoad, priority);
+#else
+                // [YooAsset v3] suspendLoad 參數改為 allowSceneActivation (語意相反)
+                var req = package.LoadSceneAsync(assetName, loadSceneMode, localPhysicsMode, !suspendLoad, priority);
+#endif
                 if (req != null)
                 {
                     float lastCount = 0;

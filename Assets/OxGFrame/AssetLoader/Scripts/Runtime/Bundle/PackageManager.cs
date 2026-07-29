@@ -57,7 +57,12 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             #region Init YooAssets
             YooAssets.Initialize();
+#if YOOASSET_2
             YooAssets.SetOperationSystemMaxTimeSlice(BundleConfig.operationSystemMaxTimeSlice);
+#else
+            // [YooAsset v3] SetOperationSystemMaxTimeSlice 更名為 SetAsyncOperationMaxTimeSlice
+            YooAssets.SetAsyncOperationMaxTimeSlice(BundleConfig.operationSystemMaxTimeSlice);
+#endif
             #endregion
 
             #region Init Decryption Type
@@ -240,7 +245,7 @@ namespace OxGFrame.AssetLoader.Bundle
             var buildMode = packageInfo.buildMode.ToString();
 
             var package = RegisterPackage(packageName);
-            if (package.InitializeStatus == EOperationStatus.Succeed)
+            if (package.InitializeStatus.IsSucceed())
             {
                 // The default initialized state is true
                 bool isInitialized = true;
@@ -249,6 +254,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 return isInitialized;
             }
 
+#if YOOASSET_2
             InitializationOperation initializationOperation = null;
 
             switch (BundleConfig.playMode)
@@ -567,12 +573,181 @@ namespace OxGFrame.AssetLoader.Bundle
                     }
                     break;
             }
+#elif YOOASSET_3
+            InitializePackageOperation initializationOperation = null;
+
+            switch (BundleConfig.playMode)
+            {
+                case BundleConfig.PlayMode.EditorSimulateMode:
+                    {
+                        #region Simulate Mode
+                        // 依建置管線決定模擬建置的 Bundle 類型
+                        int buildBundleType = buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()) ?
+                            (int)EBundleType.VirtualRawBundle :
+                            (int)EBundleType.VirtualAssetBundle;
+                        var buildResult = EditorSimulateBuildInvoker.Build(packageName, buildBundleType);
+                        var packageRoot = buildResult.PackageRootDirectory;
+                        var createParameters = new EditorSimulateModeOptions();
+                        createParameters.EditorFileSystemParameters = FileSystemParameters.CreateDefaultEditorFileSystemParameters(packageRoot);
+                        // Extra settings
+                        createParameters.AutoUnloadBundleWhenUnused = BundleConfig.autoUnloadBundleWhenUnused;
+                        initializationOperation = package.InitializePackageAsync(createParameters);
+                        #endregion
+                    }
+                    break;
+
+                case BundleConfig.PlayMode.OfflineMode:
+                    {
+                        #region Offline Mode
+                        var createParameters = new OfflinePlayModeOptions();
+                        var bundleDecryptionServices = _bundleDecryptionServices;
+                        var manifestDecryptionServices = _manifestDecryptionServices;
+                        bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
+                        if (builtinExists)
+                        {
+                            createParameters.BuiltinFileSystemParameters = FileSystemParameters.CreateDefaultBuiltinFileSystemParameters();
+                            _AddDecryptionParameters(createParameters.BuiltinFileSystemParameters, bundleDecryptionServices, manifestDecryptionServices, true);
+
+                            // Extra parameters
+                            _AddCustomParameters(createParameters.BuiltinFileSystemParameters, ParameterEntry.ParameterTarget.BuiltinFileSystem);
+                        }
+                        else
+                        {
+                            createParameters.BuiltinFileSystemParameters = null;
+                        }
+
+                        // Extra settings
+                        createParameters.AutoUnloadBundleWhenUnused = BundleConfig.autoUnloadBundleWhenUnused;
+                        initializationOperation = package.InitializePackageAsync(createParameters);
+                        #endregion
+                    }
+                    break;
+
+                case BundleConfig.PlayMode.HostMode:
+                case BundleConfig.PlayMode.WeakHostMode:
+                    {
+                        #region Host Mode, Weak Host Mode
+                        var createParameters = new HostPlayModeOptions();
+                        var remoteServices = new HostServers(hostServer, fallbackHostServer);
+                        var bundleDecryptionServices = _bundleDecryptionServices;
+                        var manifestDecryptionServices = _manifestDecryptionServices;
+                        bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
+                        if (builtinExists)
+                        {
+                            createParameters.BuiltinFileSystemParameters = FileSystemParameters.CreateDefaultBuiltinFileSystemParameters();
+                            _AddDecryptionParameters(createParameters.BuiltinFileSystemParameters, bundleDecryptionServices, manifestDecryptionServices, true);
+
+                            if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                                createParameters.BuiltinFileSystemParameters.AddParameter(EFileSystemParameter.CopyBuiltinPackageManifest, true);
+
+                            // Extra parameters
+                            _AddCustomParameters(createParameters.BuiltinFileSystemParameters, ParameterEntry.ParameterTarget.BuiltinFileSystem);
+                        }
+                        else
+                        {
+                            createParameters.BuiltinFileSystemParameters = null;
+                        }
+
+                        #region Cache File System
+                        createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultSandboxFileSystemParameters(remoteServices);
+                        createParameters.CacheFileSystemParameters.AddParameter(EFileSystemParameter.DownloadResumeMinimumSize, (long)BundleConfig.breakpointFileSizeThreshold);
+                        _AddDecryptionParameters(createParameters.CacheFileSystemParameters, bundleDecryptionServices, manifestDecryptionServices, true);
+                        createParameters.CacheFileSystemParameters.AddParameter(EFileSystemParameter.DownloadWatchdogTimeout, BundleConfig.downloadWatchdogTimeout);
+
+                        if (BundleConfig.playMode == BundleConfig.PlayMode.WeakHostMode)
+                            createParameters.CacheFileSystemParameters.AddParameter(EFileSystemParameter.InstallCleanupMode, EInstallCleanupMode.None);
+
+                        // Extra parameters
+                        _AddCustomParameters(createParameters.CacheFileSystemParameters, ParameterEntry.ParameterTarget.CacheFileSystem);
+                        #endregion
+
+                        // Extra settings
+                        createParameters.AutoUnloadBundleWhenUnused = BundleConfig.autoUnloadBundleWhenUnused;
+                        initializationOperation = package.InitializePackageAsync(createParameters);
+                        #endregion
+                    }
+                    break;
+
+                case BundleConfig.PlayMode.WebGLMode:
+                    {
+                        #region WebGL Mode
+                        var createParameters = new WebPlayModeOptions();
+                        var bundleDecryptionServices = _bundleDecryptionServices;
+                        var manifestDecryptionServices = _manifestDecryptionServices;
+                        bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
+                        if (builtinExists)
+                        {
+                            createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters();
+                            _AddDecryptionParameters(createParameters.WebServerFileSystemParameters, bundleDecryptionServices, manifestDecryptionServices, false);
+
+                            // Extra parameters
+                            _AddCustomParameters(createParameters.WebServerFileSystemParameters, ParameterEntry.ParameterTarget.BuiltinFileSystem);
+                        }
+                        else
+                        {
+                            createParameters.WebServerFileSystemParameters = null;
+                        }
+
+                        // Extra settings
+                        createParameters.AutoUnloadBundleWhenUnused = BundleConfig.autoUnloadBundleWhenUnused;
+                        initializationOperation = package.InitializePackageAsync(createParameters);
+                        #endregion
+                    }
+                    break;
+
+                case BundleConfig.PlayMode.WebGLRemoteMode:
+                    {
+                        #region WebGL Remote Mode
+                        var createParameters = new WebPlayModeOptions();
+                        var remoteServices = new HostServers(hostServer, fallbackHostServer);
+                        var bundleDecryptionServices = _bundleDecryptionServices;
+                        var manifestDecryptionServices = _manifestDecryptionServices;
+                        bool builtinExists = await StreamingAssetsHelper.PackageExists(packageName);
+                        if (builtinExists)
+                        {
+                            createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters();
+                            _AddDecryptionParameters(createParameters.WebServerFileSystemParameters, bundleDecryptionServices, manifestDecryptionServices, false);
+
+                            // Extra parameters
+                            _AddCustomParameters(createParameters.WebServerFileSystemParameters, ParameterEntry.ParameterTarget.BuiltinFileSystem);
+                        }
+                        else
+                        {
+                            createParameters.WebServerFileSystemParameters = null;
+                        }
+
+                        #region Web Remote File System
+                        // 注意: v3 的 WebNetworkFileSystem 不支援 DownloadResumeMinimumSize 與 DownloadWatchdogTimeout 參數
+                        createParameters.WebNetworkFileSystemParameters = FileSystemParameters.CreateDefaultWebNetworkFileSystemParameters(remoteServices);
+                        _AddDecryptionParameters(createParameters.WebNetworkFileSystemParameters, bundleDecryptionServices, manifestDecryptionServices, false);
+
+                        // Extra parameters
+                        _AddCustomParameters(createParameters.WebNetworkFileSystemParameters, ParameterEntry.ParameterTarget.CacheFileSystem);
+                        #endregion
+
+                        // Extra settings
+                        createParameters.AutoUnloadBundleWhenUnused = BundleConfig.autoUnloadBundleWhenUnused;
+                        initializationOperation = package.InitializePackageAsync(createParameters);
+                        #endregion
+                    }
+                    break;
+
+                case BundleConfig.PlayMode.CustomMode:
+                    {
+                        #region Custom Mode
+                        var createParameters = packageInfo.initializeParameters;
+                        initializationOperation = package.InitializePackageAsync(createParameters);
+                        #endregion
+                    }
+                    break;
+            }
+#endif
 
             if (initializationOperation != null)
                 await initializationOperation;
 
             if (initializationOperation != null &&
-                initializationOperation.Status == EOperationStatus.Succeed)
+                initializationOperation.Status.IsSucceed())
             {
                 // The default initialized state is true
                 bool isInitialized = true;
@@ -587,6 +762,62 @@ namespace OxGFrame.AssetLoader.Bundle
             }
         }
 
+#if YOOASSET_3
+        /// <summary>
+        /// [YooAsset v3] 掛載解密服務參數 (Bundle 解密 + Manifest 解密)
+        /// </summary>
+        /// <param name="fsParams"></param>
+        /// <param name="bundleDecryptionServices"></param>
+        /// <param name="manifestDecryptionServices"></param>
+        /// <param name="supportsFallbackDecryptor">Builtin 與 Sandbox 檔案系統才支援 Fallback 解密參數</param>
+        private static void _AddDecryptionParameters(FileSystemParameters fsParams, DecryptionServices bundleDecryptionServices, DecryptionServices manifestDecryptionServices, bool supportsFallbackDecryptor)
+        {
+            if (bundleDecryptionServices != null)
+            {
+                fsParams.AddParameter(EFileSystemParameter.AssetBundleDecryptor, bundleDecryptionServices);
+                fsParams.AddParameter(EFileSystemParameter.RawBundleDecryptor, bundleDecryptionServices);
+                fsParams.AddParameter(EFileSystemParameter.ArchiveBundleDecryptor, bundleDecryptionServices);
+                // Fallback 僅接受 IBundleMemoryDecryptor
+                if (supportsFallbackDecryptor && bundleDecryptionServices is IBundleMemoryDecryptor memoryDecryptor)
+                    fsParams.AddParameter(EFileSystemParameter.AssetBundleFallbackDecryptor, memoryDecryptor);
+            }
+
+            if (manifestDecryptionServices != null)
+                fsParams.AddParameter(EFileSystemParameter.ManifestDecryptor, manifestDecryptionServices);
+        }
+
+        /// <summary>
+        /// [YooAsset v3] 掛載使用者自定義參數 (注意: v3 遇到無法識別的參數名稱會拋出例外)
+        /// </summary>
+        /// <param name="fsParams"></param>
+        /// <param name="target"></param>
+        private static void _AddCustomParameters(FileSystemParameters fsParams, ParameterEntry.ParameterTarget target)
+        {
+            var parameterEntries = BundleConfig.playModeParameters.parameterEntries;
+            foreach (var paramEntry in parameterEntries)
+            {
+                if (string.IsNullOrEmpty(paramEntry.parameterKey) ||
+                    string.IsNullOrEmpty(paramEntry.parameterValue) ||
+                    string.IsNullOrEmpty(paramEntry.parameterType))
+                {
+                    Logging.PrintWarning<Logger>
+                    (
+                        $"[YooAsset Params] Skipped parameter due to empty field(s). " +
+                        $"key='{paramEntry.parameterKey ?? "<null>"}', " +
+                        $"value='{paramEntry.parameterValue ?? "<null>"}', " +
+                        $"type='{paramEntry.parameterType ?? "<null>"}'."
+                    );
+                    continue;
+                }
+
+                // Add extra parameter with parsing
+                if (paramEntry.parameterTarget == ParameterEntry.ParameterTarget.All ||
+                    paramEntry.parameterTarget == target)
+                    fsParams.AddParameter(paramEntry.parameterKey, ParameterParser.Parse(paramEntry.parameterValue, paramEntry.parameterType));
+            }
+        }
+#endif
+
         /// <summary>
         /// Update package version and manifest by package name
         /// </summary>
@@ -597,13 +828,13 @@ namespace OxGFrame.AssetLoader.Bundle
             var package = GetPackage(packageName);
             var versionOperation = package.RequestPackageVersionAsync();
             await versionOperation;
-            if (versionOperation.Status == EOperationStatus.Succeed)
+            if (versionOperation.Status.IsSucceed())
             {
                 var version = versionOperation.PackageVersion;
 
                 var manifestOperation = package.UpdatePackageManifestAsync(version);
                 await manifestOperation;
-                if (manifestOperation.Status == EOperationStatus.Succeed)
+                if (manifestOperation.Status.IsSucceed())
                 {
                     // 儲存本地資源版本
                     BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, packageName, version);
@@ -632,7 +863,7 @@ namespace OxGFrame.AssetLoader.Bundle
                     {
                         var manifestOperation = package.UpdatePackageManifestAsync(lastVersion);
                         await manifestOperation;
-                        if (manifestOperation.Status == EOperationStatus.Succeed)
+                        if (manifestOperation.Status.IsSucceed())
                         {
                             Logging.PrintInfo<Logger>($"Package: {packageName} Update completed successfully.");
 
@@ -742,6 +973,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
             try
             {
+#if YOOASSET_2
                 // Operation Tasks
                 List<ClearCacheFilesOperation> operations = new List<ClearCacheFilesOperation>();
 
@@ -755,11 +987,27 @@ namespace OxGFrame.AssetLoader.Bundle
                     var clearAllManifestFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearAllManifestFiles);
                     operations.Add(clearAllManifestFilesOperation);
                 }
+#else
+                // [YooAsset v3] ClearCacheFilesAsync 改為 ClearCacheAsync (以字串方法名指定清理模式)
+                // Operation Tasks
+                List<ClearCacheOperation> operations = new List<ClearCacheOperation>();
+
+                // Clear cache files from sandbox
+                var clearAllBundleFilesOperation = package.ClearCacheAsync(new ClearCacheOptions(ClearCacheMethods.ClearAllBundleFiles));
+                operations.Add(clearAllBundleFilesOperation);
+
+                // Clear manifest files from sandbox
+                if (destroyPackage)
+                {
+                    var clearAllManifestFilesOperation = package.ClearCacheAsync(new ClearCacheOptions(ClearCacheMethods.ClearAllManifestFiles));
+                    operations.Add(clearAllManifestFilesOperation);
+                }
+#endif
 
                 foreach (var operation in operations)
                 {
                     await operation;
-                    if (operation.Status == EOperationStatus.Succeed)
+                    if (operation.Status.IsSucceed())
                         processed = true;
                     else
                     {
@@ -805,7 +1053,13 @@ namespace OxGFrame.AssetLoader.Bundle
 
             // Destroy package from cache memory
             await package.DestroyAsync();
+#if YOOASSET_2
             return YooAssets.RemovePackage(package);
+#else
+            // [YooAsset v3] RemovePackage 改以名稱移除 (無回傳值)
+            YooAssets.RemovePackage(package.PackageName);
+            return true;
+#endif
         }
 
         /// <summary>
@@ -817,7 +1071,9 @@ namespace OxGFrame.AssetLoader.Bundle
             var package = RegisterPackage(packageName);
             if (package != null)
             {
+#if YOOASSET_2
                 YooAssets.SetDefaultPackage(package);
+#endif
                 _currentPackageName = package.PackageName;
                 _currentPackage = package;
             }
@@ -832,7 +1088,9 @@ namespace OxGFrame.AssetLoader.Bundle
             var package = RegisterPackage(idx);
             if (package != null)
             {
+#if YOOASSET_2
                 YooAssets.SetDefaultPackage(package);
+#endif
                 _currentPackageName = package.PackageName;
                 _currentPackage = package;
             }
@@ -847,7 +1105,9 @@ namespace OxGFrame.AssetLoader.Bundle
             var package = GetPackage(packageName);
             if (package != null)
             {
+#if YOOASSET_2
                 YooAssets.SetDefaultPackage(package);
+#endif
                 _currentPackageName = package.PackageName;
                 _currentPackage = package;
             }
@@ -859,10 +1119,18 @@ namespace OxGFrame.AssetLoader.Bundle
         /// Get decryption service
         /// </summary>
         /// <returns></returns>
+#if YOOASSET_2
         public static IDecryptionServices GetDecryptionService()
         {
             return _bundleDecryptionServices;
         }
+#else
+        // [YooAsset v3] IDecryptionServices 拆分為 IBundleDecryptor 系列介面
+        public static IBundleDecryptor GetDecryptionService()
+        {
+            return _bundleDecryptionServices;
+        }
+#endif
 
         /// <summary>
         /// Get default package name
@@ -924,7 +1192,13 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             if (string.IsNullOrEmpty(packageName))
                 return null;
+#if YOOASSET_2
             return YooAssets.TryGetPackage(packageName);
+#else
+            // [YooAsset v3] TryGetPackage 改為 out 參數形式
+            YooAssets.TryGetPackage(packageName, out var package);
+            return package;
+#endif
         }
 
         /// <summary>
@@ -955,7 +1229,12 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static ResourcePackage[] GetAllPackages()
         {
+#if YOOASSET_2
             return YooAssets.GetAllPackages().ToArray();
+#else
+            // [YooAsset v3] GetAllPackages 更名為 GetPackages
+            return YooAssets.GetPackages().ToArray();
+#endif
         }
 
         /// <summary>
@@ -1207,12 +1486,22 @@ namespace OxGFrame.AssetLoader.Bundle
                 isReleased = true;
 
                 // 遍歷卸載
+#if YOOASSET_2
                 var packages = YooAssets.GetAllPackages();
                 foreach (var package in packages)
                 {
                     await package.DestroyAsync();
                     YooAssets.RemovePackage(package);
                 }
+#else
+                // [YooAsset v3] GetAllPackages 更名為 GetPackages; RemovePackage 改以名稱移除
+                var packages = YooAssets.GetPackages().ToArray();
+                foreach (var package in packages)
+                {
+                    await package.DestroyAsync();
+                    YooAssets.RemovePackage(package.PackageName);
+                }
+#endif
 
                 // 強制銷毀
                 YooAssets.Destroy();
