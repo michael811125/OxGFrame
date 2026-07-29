@@ -32,7 +32,7 @@ namespace OxGFrame.CoreFrame.Editor
                 bool dirty = false;
                 string content = File.ReadAllText(scriptPath);
 
-                // 跳過自身腳本，防止相關字串被 replace
+                // 跳過自身腳本, 防止相關字串被 replace
                 if (Path.GetFileName(scriptPath) == $"{nameof(APIUpdater)}.cs")
                     continue;
 

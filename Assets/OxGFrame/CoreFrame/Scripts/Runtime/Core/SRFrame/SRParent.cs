@@ -11,7 +11,7 @@ namespace OxGFrame.CoreFrame.SRFrame
 
             try
             {
-                // 如果 Parent Destroy 時，需要進行連動釋放，確保 Manager 緩存操作正常
+                // 如果 Parent Destroy 時, 需要進行連動釋放, 確保 Manager 緩存操作正常
                 SRBase[] srBases = this.gameObject.GetComponentsInChildren<SRBase>(true);
                 foreach (var srBase in srBases)
                 {

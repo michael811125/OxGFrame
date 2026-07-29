@@ -26,7 +26,7 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
         private bool _disposed = false;
 
         /// <summary>
-        /// 重用 Random 實例，降低 GC
+        /// 重用 Random 實例, 降低 GC
         /// </summary>
         private static readonly Random _random = new Random();
 

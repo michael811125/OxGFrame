@@ -17,7 +17,7 @@ namespace OxGFrame.Hotfixer
                 yield break;
             }
 
-            // 編輯器有需求時，如果使用 UnityWebRequest 會死機，只能統一改用 WWW
+            // 編輯器有需求時, 如果使用 UnityWebRequest 會死機, 只能統一改用 WWW
             WWW www = new WWW(url);
 
             // 設置超時時間
@@ -64,7 +64,7 @@ namespace OxGFrame.Hotfixer
                 yield break;
             }
 
-            // 編輯器有需求時，如果使用 UnityWebRequest 會死機，只能統一改用 WWW
+            // 編輯器有需求時, 如果使用 UnityWebRequest 會死機, 只能統一改用 WWW
             WWW www = new WWW(url);
 
             // 設置超時時間

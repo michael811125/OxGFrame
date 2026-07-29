@@ -445,7 +445,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     return;
                 }
 
-                // 判斷目前是否獲取的是本地版號 (如果是的話，表示目前處於弱聯網)
+                // 判斷目前是否獲取的是本地版號 (如果是的話, 表示目前處於弱聯網)
                 bool isLastPackageVersions = Convert.ToBoolean(this._machine.GetBlackboardValue(PackageOperation.KEY_IS_LAST_PACKAGE_VERSIONS));
 
                 bool skipDownload = (this._machine.Owner as PackageOperation).skipDownload;
@@ -504,7 +504,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     {
                         string errorMsg = "Local resources are incomplete. Update required (Please connect to the network)!";
                         Logging.PrintError<Logger>($"GroupName: {groupInfo.groupName}. {errorMsg}");
-                        // 當突然失去聯網時，必須重新從獲取資源版本的流程開始運行，因為當網絡恢復時，則可以正確獲取遠端版本進行更新
+                        // 當突然失去聯網時, 必須重新從獲取資源版本的流程開始運行, 因為當網絡恢復時, 則可以正確獲取遠端版本進行更新
                         PackageEvents.PatchVersionUpdateFailed.SendEventMessage(this._hashId);
                     }
                     #endregion

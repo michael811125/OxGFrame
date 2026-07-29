@@ -24,7 +24,7 @@ namespace OxGFrame.MediaFrame
         protected HashSet<string> _loadingFlags = new HashSet<string>();
 
         /// <summary>
-        /// 【常駐】所有進入播放的影音柱列緩存 (只會在 Destroy 時，Remove 對應的緩存)
+        /// 【常駐】所有進入播放的影音柱列緩存 (只會在 Destroy 時, Remove 對應的緩存)
         /// </summary>
         protected List<T> _listAllCache = new List<T>();
 
@@ -78,7 +78,7 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 處理不常用的資源，僅針對沒有啟用 onDestroyAndUnload 的設置
+        /// 處理不常用的資源, 僅針對沒有啟用 onDestroyAndUnload 的設置
         /// </summary>
         /// <typeparam name="U"></typeparam>
         /// <param name="assetName"></param>
@@ -181,14 +181,14 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 加載資源至緩存，判斷是否已有加載過，如果有則返回該資源物件
+        /// 加載資源至緩存, 判斷是否已有加載過, 如果有則返回該資源物件
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
         protected async UniTask<GameObject> LoadAssetIntoCache(string packageName, string assetName)
         {
             GameObject go;
-            // 判斷不在 AllCache 中，也不在 LoadingFlags 中，才進行加載程序
+            // 判斷不在 AllCache 中, 也不在 LoadingFlags 中, 才進行加載程序
             if (!this.HasAssetInCache(assetName) && !this.HasInLoadingFlags(assetName))
             {
                 this._loadingFlags.Add(assetName);                    // 標記 LoadingFlag
@@ -196,7 +196,7 @@ namespace OxGFrame.MediaFrame
                 this._loadingFlags.Remove(assetName);                 // 移除 LoadingFlag
             }
             else
-                go = this.GetAssetFromCache(assetName); // 如果判斷沒有要執行加載程序，就直接從 AllCache 中取得
+                go = this.GetAssetFromCache(assetName); // 如果判斷沒有要執行加載程序, 就直接從 AllCache 中取得
 
             return go;
         }
@@ -220,7 +220,7 @@ namespace OxGFrame.MediaFrame
                 {
                     // 記錄標記
                     sourceMonoDriveFlag = sourceComponent.monoDrive;
-                    // 動態加載時，必須取消 monoDrive
+                    // 動態加載時, 必須取消 monoDrive
                     sourceComponent.monoDrive = false;
                 }
             }
@@ -231,7 +231,7 @@ namespace OxGFrame.MediaFrame
             if (mBase == null)
                 return default;
 
-            // 激活檢查，如果主體 Active 為 false 必須打開
+            // 激活檢查, 如果主體 Active 為 false 必須打開
             if (!instGo.activeSelf)
                 instGo.SetActive(true);
 
@@ -244,7 +244,7 @@ namespace OxGFrame.MediaFrame
             mediaName = (mediaName.IndexOf('/') != -1) ? mediaName.Substring(mediaName.LastIndexOf('/')).Replace("/", string.Empty) : mediaName;
             mBase.SetNames(assetName, mediaName);
 
-            // 如果判斷有 clip 來源，會重新 assign
+            // 如果判斷有 clip 來源, 會重新 assign
             if (sourceClip != null)
             {
                 if (typeof(U) == typeof(AudioBase))
@@ -266,7 +266,7 @@ namespace OxGFrame.MediaFrame
                 return default;
             }
 
-            // >>> 需在 Init 之後，以下設定開始生效 <<<
+            // >>> 需在 Init 之後, 以下設定開始生效 <<<
 
             if (mBase == null || mBase.gameObject.IsDestroyed())
                 return default;
@@ -346,7 +346,7 @@ namespace OxGFrame.MediaFrame
                 // 取得柱列緩存中的群組數量
                 int groupCount = this.GetMediaComponents<T>(assetName).Length;
 
-                // 確保影音在卸載前，是沒被引用的狀態
+                // 確保影音在卸載前, 是沒被引用的狀態
                 if (groupCount == 0)
                 {
                     // 刪除資源緩存 (皆使用 assetName 作為 key)
@@ -371,7 +371,7 @@ namespace OxGFrame.MediaFrame
             // 取得柱列緩存中的群組數量
             int groupCount = this.GetMediaComponents<T>(assetName).Length;
 
-            // 判斷群組柱列緩存 > 0，則全部強制關閉並且刪除
+            // 判斷群組柱列緩存 > 0, 則全部強制關閉並且刪除
             if (groupCount > 0)
             {
                 // 刪除全部柱列緩存

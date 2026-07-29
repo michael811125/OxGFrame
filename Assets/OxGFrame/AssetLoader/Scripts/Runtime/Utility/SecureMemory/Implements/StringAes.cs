@@ -24,7 +24,7 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
         private bool _disposed = false;
 
         /// <summary>
-        /// 重用 UTF8 編碼實例，降低 GC
+        /// 重用 UTF8 編碼實例, 降低 GC
         /// </summary>
         private static readonly UTF8Encoding _utf8Encoding = new UTF8Encoding(false);
 
@@ -53,14 +53,14 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
 
                 aesAlg.Mode = CipherMode.CBC;
 
-                // 預估加密後的大小 (粗略估計，可根據實際情況調整)
+                // 預估加密後的大小 (粗略估計, 可根據實際情況調整)
                 int estimatedSize = (input.Length * 2) + 32;
                 var msEncrypt = new MemoryStream(estimatedSize);
 
                 using (var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, IV))
                 using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                 {
-                    // 直接使用 UTF8 編碼寫入，避免 StreamWriter 的額外開銷
+                    // 直接使用 UTF8 編碼寫入, 避免 StreamWriter 的額外開銷
                     byte[] inputBytes = _utf8Encoding.GetBytes(input);
                     csEncrypt.Write(inputBytes, 0, inputBytes.Length);
                 }
@@ -103,7 +103,7 @@ namespace OxGFrame.AssetLoader.Utility.SecureMemory
                     using (var msDecrypt = new MemoryStream(cipherText))
                     using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
-                        // 直接將解密後的數據讀入 byte array，然後轉換為字符串
+                        // 直接將解密後的數據讀入 byte array, 然後轉換為字符串
                         using (var ms = new MemoryStream())
                         {
                             csDecrypt.CopyTo(ms);

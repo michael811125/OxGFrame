@@ -153,7 +153,7 @@ namespace OxGFrame.Hotfixer.Editor
             // 獲取文件夾路徑
             string directoryPath = Path.GetDirectoryName(savePath);
 
-            // 檢查文件夾是否存在，如果不存在則創建
+            // 檢查文件夾是否存在, 如果不存在則創建
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);

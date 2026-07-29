@@ -95,10 +95,10 @@ namespace OxGFrame.Extensions.BuildTool.Editor
         {
             var instanller = new InstallerController();
 
-            // 檢測沒安裝時，則進行 HybridCLR 的安裝
+            // 檢測沒安裝時, 則進行 HybridCLR 的安裝
             if (!instanller.HasInstalledHybridCLR())
                 instanller.InstallDefaultHybridCLR();
-            // HybridCLR 版號不一致時，也需要重新安裝
+            // HybridCLR 版號不一致時, 也需要重新安裝
             else if (!instanller.PackageVersion.Equals(instanller.InstalledLibil2cppVersion))
                 instanller.InstallDefaultHybridCLR();
         }
@@ -255,12 +255,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                         {
                             bool enable = Convert.ToBoolean(Convert.ToInt32(enableAndroidAppBundle));
                             EditorUserBuildSettings.buildAppBundle = enable;
-                            PlayerSettings.Android.splitApplicationBinary = enable;
+                            PlayerSettings.Android.useAPKExpansionFiles = enable;
                         }
                         else
                         {
                             EditorUserBuildSettings.buildAppBundle = false;
-                            PlayerSettings.Android.splitApplicationBinary = false;
+                            PlayerSettings.Android.useAPKExpansionFiles = false;
                         }
                     }
                     break;

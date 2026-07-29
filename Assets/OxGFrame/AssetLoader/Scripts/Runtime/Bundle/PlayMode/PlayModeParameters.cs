@@ -33,7 +33,7 @@ namespace OxGFrame.AssetLoader.Bundle
         public const string CREATE_PRESET_PACKAGES_DOWNLOADER = "CREATE_PRESET_PACKAGES_DOWNLOADER";
 
         /// <summary>
-        /// [Boolean] 是否檢查硬盤空間 (當創建 PresetPackages 下載器時，會進行檢查)
+        /// [Boolean] 是否檢查硬盤空間 (當創建 PresetPackages 下載器時, 會進行檢查)
         /// </summary>
         public const string ENABLE_DISK_SPACE_CHECK_FOR_PRESET_PACKAGES_DOWNLOADER = "ENABLE_DISK_SPACE_CHECK_FOR_PRESET_PACKAGES_DOWNLOADER";
 

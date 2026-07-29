@@ -155,7 +155,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             Logging.PrintInfo<Logger>($"Stop Video: {vidBase?.mediaName}");
 
-            // 確保音訊都設置完畢後才進行 Destroy，避免異步處理尚未完成，就被 Destroy 掉導致操作到已銷毀物件
+            // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
             if (vidBase.isPrepared)
             {
                 if (forceDestroy)

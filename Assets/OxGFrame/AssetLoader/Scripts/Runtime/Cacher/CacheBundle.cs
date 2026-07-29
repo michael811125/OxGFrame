@@ -74,14 +74,14 @@ namespace OxGFrame.AssetLoader.Cacher
                 return null;
             }
 
-            // Additive 場景不使用單飛，因為可以載入多個實例
+            // Additive 場景不使用單飛, 因為可以載入多個實例
             if (loadSceneMode == LoadSceneMode.Additive)
             {
-                // Additive 場景直接載入，不檢查單飛
+                // Additive 場景直接載入, 不檢查單飛
                 return await this._LoadSceneCoreAsync(packageName, assetName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
             }
 
-            // Single 場景才使用單飛，檢查是否有進行中的載入任務
+            // Single 場景才使用單飛, 檢查是否有進行中的載入任務
             if (this.TryGetLoadingTask(assetName, out var existingTask))
             {
                 Logging.Print<Logger>($"Scene: {assetName} is loading, waiting for existing task...");
@@ -158,7 +158,7 @@ namespace OxGFrame.AssetLoader.Cacher
                                     {
                                         pack.SetPack(packageName, assetName, req);
 
-                                        // 清除 Additive 計數緩存 (主場景無需緩存，因為會自動釋放子場景)
+                                        // 清除 Additive 計數緩存 (主場景無需緩存, 因為會自動釋放子場景)
                                         this._additiveScenes.Clear();
                                         this._additiveSceneCounter.Clear();
                                     }
@@ -167,7 +167,7 @@ namespace OxGFrame.AssetLoader.Cacher
                                     {
                                         pack.SetPack(packageName, assetName, req);
 
-                                        // 【每次載入都增加計數】Additive 需要進行計數，要手動卸載子場景
+                                        // 【每次載入都增加計數】Additive 需要進行計數, 要手動卸載子場景
                                         if (!this._additiveSceneCounter.ContainsKey(assetName))
                                         {
                                             this._additiveSceneCounter.Add(assetName, 1);
@@ -269,7 +269,7 @@ namespace OxGFrame.AssetLoader.Cacher
                                     {
                                         pack.SetPack(packageName, assetName, req);
 
-                                        // 清除 Additive 計數緩存 (主場景無需緩存，因為會自動釋放子場景)
+                                        // 清除 Additive 計數緩存 (主場景無需緩存, 因為會自動釋放子場景)
                                         this._additiveScenes.Clear();
                                         this._additiveSceneCounter.Clear();
                                     }
@@ -278,7 +278,7 @@ namespace OxGFrame.AssetLoader.Cacher
                                     {
                                         pack.SetPack(packageName, assetName, req);
 
-                                        // 加載場景的計數緩存 (Additive 需要進行計數，要手動卸載子場景)
+                                        // 加載場景的計數緩存 (Additive 需要進行計數, 要手動卸載子場景)
                                         if (!this._additiveSceneCounter.ContainsKey(assetName))
                                         {
                                             this._additiveSceneCounter.Add(assetName, 1);
@@ -346,7 +346,7 @@ namespace OxGFrame.AssetLoader.Cacher
             if (string.IsNullOrEmpty(assetName))
                 return;
 
-            // 如果正在載入，將卸載請求加入待執行隊列
+            // 如果正在載入, 將卸載請求加入待執行隊列
             if (this.HasLoadingTask(assetName))
             {
                 this.AddPendingUnload(assetName, recursively);
@@ -354,7 +354,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 return;
             }
 
-            // 如果正在執行卸載，跳過
+            // 如果正在執行卸載, 跳過
             if (this.HasUnloadingFlag(assetName))
             {
                 Logging.PrintWarning<Logger>($"【Try Unload】 Asset: {assetName} is already unloading...");
@@ -389,7 +389,7 @@ namespace OxGFrame.AssetLoader.Cacher
                             }
                         }
 
-                        // 遞迴完，移除計數緩存
+                        // 遞迴完, 移除計數緩存
                         this._additiveSceneCounter.Remove(assetName);
                         package?.TryUnloadUnusedAsset(assetName, _DEFAULT_LOOP_COUNT);
 
@@ -492,7 +492,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     continue;
                 }
 
-                // 檢查是否有進行中的載入任務，如果有就等待它完成
+                // 檢查是否有進行中的載入任務, 如果有就等待它完成
                 if (this.TryGetLoadingTask(assetName, out var existingTask))
                 {
                     Logging.Print<Logger>($"RawFile: {assetName} is loading, waiting for existing task...");
@@ -573,7 +573,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 var req = package.LoadRawFileAsync(assetName, priority);
                 if (req != null)
                 {
-                    // 注意：這裡不更新 currentCount，因為進度由外層控制
+                    // 注意: 這裡不更新 currentCount, 因為進度由外層控制
                     do
                     {
                         if (req.IsDone)
@@ -747,7 +747,7 @@ namespace OxGFrame.AssetLoader.Cacher
             pack = this.GetFromCache(assetName);
             if (pack != null)
             {
-                // 緩存命中，直接返回
+                // 緩存命中, 直接返回
                 this.currentCount = this.totalCount = 1;
                 progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 
@@ -1015,7 +1015,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     continue;
                 }
 
-                // 檢查是否有進行中的載入任務，如果有就等待它完成
+                // 檢查是否有進行中的載入任務, 如果有就等待它完成
                 if (this.TryGetLoadingTask(assetName, out var existingTask))
                 {
                     Logging.Print<Logger>($"Asset: {assetName} is loading, waiting for existing task...");
@@ -1097,7 +1097,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 var req = package.LoadAssetAsync<T>(assetName, priority);
                 if (req != null)
                 {
-                    // 注意：這裡不更新 currentCount，因為進度由外層控制
+                    // 注意: 這裡不更新 currentCount, 因為進度由外層控制
                     do
                     {
                         if (req.IsDone)
@@ -1272,7 +1272,7 @@ namespace OxGFrame.AssetLoader.Cacher
             pack = this.GetFromCache(assetName);
             if (pack != null)
             {
-                // 緩存命中，直接返回
+                // 緩存命中, 直接返回
                 this.currentCount = this.totalCount;
                 progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 

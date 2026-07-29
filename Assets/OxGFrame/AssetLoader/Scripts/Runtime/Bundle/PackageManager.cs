@@ -168,7 +168,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     foreach (var packageInfo in presetAppPackageInfos)
                     {
-                        // updatePackage = true，因為新版 Yoo 必須獲取版號與 manifest 才能進行資源加載
+                        // updatePackage = true, 因為新版 Yoo 必須獲取版號與 manifest 才能進行資源加載
                         bool isInitialized = await AssetPatcher.InitAppPackage(packageInfo, true);
                         if (isInitialized)
                         {
@@ -203,7 +203,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 {
                     foreach (var packageInfo in presetDlcPackageInfos)
                     {
-                        // updatePackage = true，因為新版 Yoo 必須獲取版號與 manifest 才能進行資源加載
+                        // updatePackage = true, 因為新版 Yoo 必須獲取版號與 manifest 才能進行資源加載
                         bool isInitialized = await AssetPatcher.InitDlcPackage(packageInfo, true);
                         if (isInitialized)
                         {
