@@ -454,19 +454,23 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                 {
                     if (hotfixAssemblyFiles != null)
                     {
+                        // 判斷條件與 AppDomain 程序集清單為迴圈不變量，提升至迴圈外，避免逐 dll 重複列舉
+                        bool loadFromAppDomain = Application.isEditor ||
+                                                 BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
+                                                 HotfixManager.GetInstance().IsDisabled();
+                        Assembly[] domainAssemblies = loadFromAppDomain ? System.AppDomain.CurrentDomain.GetAssemblies() : null;
+
                         foreach (var dllName in hotfixAssemblyFiles)
                         {
                             Assembly hotfixAsm = null;
-                            if (Application.isEditor ||
-                                BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
-                                HotfixManager.GetInstance().IsDisabled())
+                            if (loadFromAppDomain)
                             {
-                                // 移除 .dll 擴展名
+                                // 移除 .dll 擴展名 (需檢查結尾，避免無擴展名的字串截斷出錯)
                                 var fileExtension = ".dll";
-                                var newLength = dllName.Length - fileExtension.Length;
-                                var newDllName = dllName.Substring(0, newLength);
+                                var newDllName = dllName.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase) ?
+                                    dllName.Substring(0, dllName.Length - fileExtension.Length) : dllName;
                                 // 直接查找獲取 Hotfix 程序集
-                                foreach (var asm in System.AppDomain.CurrentDomain.GetAssemblies())
+                                foreach (var asm in domainAssemblies)
                                 {
                                     if (asm.GetName().Name == newDllName)
                                     {

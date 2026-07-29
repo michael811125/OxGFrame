@@ -105,7 +105,7 @@ namespace OxGFrame.CoreFrame.Editor
         {
             if (selected.transform.childCount > 0)
             {
-                foreach (Transform child in selected.GetComponentInChildren<Transform>())
+                foreach (Transform child in selected.transform)
                 {
                     foreach (var select in selections)
                     {
@@ -161,7 +161,7 @@ namespace OxGFrame.CoreFrame.Editor
             }
 
             // 依序綁定下一個子物件 (遞迴找到符合綁定條件)
-            foreach (Transform child in go.GetComponentInChildren<Transform>())
+            foreach (Transform child in go.transform)
             {
                 if (!_CheckRuleAndCollect(child.gameObject))
                     return false;
@@ -179,16 +179,16 @@ namespace OxGFrame.CoreFrame.Editor
             // 綁定開頭檢測
             string[] heads = Binder.GetHeadSplitNameBySeparator(name);
 
-            string bindType = heads[0]; // 綁定類型(會去查找 dictComponentFinder 裡面有沒有符合的類型)
-            string bindInfo = heads[1]; // 要成為取得綁定物件後的 Key
-
-            // 再去判斷取得後的字串陣列是否綁定格式資格
+            // 必須先判斷字串陣列是否符合綁定格式資格，再進行取值，避免無效命名造成 IndexOutOfRangeException
             if (heads == null ||
                 heads.Length < 2 ||
-                !FrameConfig.BIND_COMPONENTS.ContainsKey(bindType))
+                !FrameConfig.BIND_COMPONENTS.ContainsKey(heads[0]))
             {
                 return;
             }
+
+            string bindType = heads[0]; // 綁定類型(會去查找 dictComponentFinder 裡面有沒有符合的類型)
+            string bindInfo = heads[1]; // 要成為取得綁定物件後的 Key
 
             #region Common with Binder
             // 變數存取權檢測

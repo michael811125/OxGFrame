@@ -43,7 +43,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
         private void FixedUpdate()
         {
             if (this.monoDrive)
-                this.HandleFixedUpdate(Time.fixedDeltaTime);
+                this.HandleFixedUpdate(this.ignoreTimeScale ? Time.fixedUnscaledDeltaTime : Time.fixedDeltaTime);
         }
 #endif
 

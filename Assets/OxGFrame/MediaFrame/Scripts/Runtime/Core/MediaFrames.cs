@@ -139,14 +139,14 @@ namespace OxGFrame.MediaFrame
                 AudioManager.GetInstance().ResumeAll();
             }
 
-            public static void Stop(string assetName, bool disabledEndEvent = false, bool forceDestroy = false)
+            public static void Stop(string assetName, bool disableEndEvent = false, bool forceDestroy = false)
             {
-                AudioManager.GetInstance().Stop(assetName, disabledEndEvent, forceDestroy);
+                AudioManager.GetInstance().Stop(assetName, disableEndEvent, forceDestroy);
             }
 
-            public static void StopAll(bool disabledEndEvent = false, bool forceDestroy = false)
+            public static void StopAll(bool disableEndEvent = false, bool forceDestroy = false)
             {
-                AudioManager.GetInstance().StopAll(disabledEndEvent, forceDestroy);
+                AudioManager.GetInstance().StopAll(disableEndEvent, forceDestroy);
             }
 
             public static void Pause(string assetName)
@@ -253,14 +253,14 @@ namespace OxGFrame.MediaFrame
                 VideoManager.GetInstance().ResumeAll();
             }
 
-            public static void Stop(string assetName, bool disabledEndEvent = false, bool forceDestroy = false)
+            public static void Stop(string assetName, bool disableEndEvent = false, bool forceDestroy = false)
             {
-                VideoManager.GetInstance().Stop(assetName, disabledEndEvent, forceDestroy);
+                VideoManager.GetInstance().Stop(assetName, disableEndEvent, forceDestroy);
             }
 
-            public static void StopAll(bool disabledEndEvent = false, bool forceDestroy = false)
+            public static void StopAll(bool disableEndEvent = false, bool forceDestroy = false)
             {
-                VideoManager.GetInstance().StopAll(disabledEndEvent, forceDestroy);
+                VideoManager.GetInstance().StopAll(disableEndEvent, forceDestroy);
             }
 
             public static void Pause(string assetName)

@@ -33,20 +33,39 @@ namespace OxGFrame.CoreFrame
                 get { return UIManager.GetInstance().ignoreTimeScale; }
                 set { UIManager.GetInstance().ignoreTimeScale = value; }
             }
+            public static bool enableUpdate
+            {
+                get { return UIManager.GetInstance().enableUpdate; }
+                set { UIManager.GetInstance().enableUpdate = value; }
+            }
+            public static bool enableFixedUpdate
+            {
+                get { return UIManager.GetInstance().enableFixedUpdate; }
+                set { UIManager.GetInstance().enableFixedUpdate = value; }
+            }
+            public static bool enableLateUpdate
+            {
+                get { return UIManager.GetInstance().enableLateUpdate; }
+                set { UIManager.GetInstance().enableLateUpdate = value; }
+            }
+
+            [System.Obsolete("Use enableUpdate instead")]
             public static bool enabledUpdate
             {
-                get { return UIManager.GetInstance().enabledUpdate; }
-                set { UIManager.GetInstance().enabledUpdate = value; }
+                get { return enableUpdate; }
+                set { enableUpdate = value; }
             }
+            [System.Obsolete("Use enableFixedUpdate instead")]
             public static bool enabledFixedUpdate
             {
-                get { return UIManager.GetInstance().enabledFixedUpdate; }
-                set { UIManager.GetInstance().enabledFixedUpdate = value; }
+                get { return enableFixedUpdate; }
+                set { enableFixedUpdate = value; }
             }
+            [System.Obsolete("Use enableLateUpdate instead")]
             public static bool enabledLateUpdate
             {
-                get { return UIManager.GetInstance().enabledLateUpdate; }
-                set { UIManager.GetInstance().enabledLateUpdate = value; }
+                get { return enableLateUpdate; }
+                set { enableLateUpdate = value; }
             }
 
             public static void InitInstance()
@@ -431,20 +450,39 @@ namespace OxGFrame.CoreFrame
                 get { return SRManager.GetInstance().ignoreTimeScale; }
                 set { SRManager.GetInstance().ignoreTimeScale = value; }
             }
+            public static bool enableUpdate
+            {
+                get { return SRManager.GetInstance().enableUpdate; }
+                set { SRManager.GetInstance().enableUpdate = value; }
+            }
+            public static bool enableFixedUpdate
+            {
+                get { return SRManager.GetInstance().enableFixedUpdate; }
+                set { SRManager.GetInstance().enableFixedUpdate = value; }
+            }
+            public static bool enableLateUpdate
+            {
+                get { return SRManager.GetInstance().enableLateUpdate; }
+                set { SRManager.GetInstance().enableLateUpdate = value; }
+            }
+
+            [System.Obsolete("Use enableUpdate instead")]
             public static bool enabledUpdate
             {
-                get { return SRManager.GetInstance().enabledUpdate; }
-                set { SRManager.GetInstance().enabledUpdate = value; }
+                get { return enableUpdate; }
+                set { enableUpdate = value; }
             }
+            [System.Obsolete("Use enableFixedUpdate instead")]
             public static bool enabledFixedUpdate
             {
-                get { return SRManager.GetInstance().enabledFixedUpdate; }
-                set { SRManager.GetInstance().enabledFixedUpdate = value; }
+                get { return enableFixedUpdate; }
+                set { enableFixedUpdate = value; }
             }
+            [System.Obsolete("Use enableLateUpdate instead")]
             public static bool enabledLateUpdate
             {
-                get { return SRManager.GetInstance().enabledLateUpdate; }
-                set { SRManager.GetInstance().enabledLateUpdate = value; }
+                get { return enableLateUpdate; }
+                set { enableLateUpdate = value; }
             }
 
             public static void InitInstance()
@@ -1731,7 +1769,7 @@ namespace OxGFrame.CoreFrame
 
             public static async UniTask PreloadAsync<T>(string packageName, string assetName, uint priority = 0, Progression progression = null) where T : UnityEngine.Object
             {
-                await CPManager.GetInstance().PreloadAsync(packageName, new string[] { assetName }, priority, progression);
+                await CPManager.GetInstance().PreloadAsync<T>(packageName, new string[] { assetName }, priority, progression);
             }
 
             public static async UniTask PreloadAsync<T>(string[] assetNames, uint priority = 0, Progression progression = null) where T : UnityEngine.Object

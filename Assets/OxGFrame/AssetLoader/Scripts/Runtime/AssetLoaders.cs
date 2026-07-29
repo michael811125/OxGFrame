@@ -228,7 +228,8 @@ namespace OxGFrame.AssetLoader
                 // Get path from operation handle
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 string filePath = operation.GetRawFilePath();
-                UnloadRawFile(assetName, true);
+                // 使用一般卸載遞減引用計數即可，避免強制卸載將其他持有者的引用一併釋放
+                UnloadRawFile(assetName);
                 return filePath;
             }
 
@@ -251,7 +252,8 @@ namespace OxGFrame.AssetLoader
                 // Get path from operation handle
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 string filePath = operation.GetRawFilePath();
-                UnloadRawFile(assetName, true);
+                // 使用一般卸載遞減引用計數即可，避免強制卸載將其他持有者的引用一併釋放
+                UnloadRawFile(assetName);
                 return filePath;
             }
 
@@ -273,7 +275,8 @@ namespace OxGFrame.AssetLoader
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 // Get path from operation handle
                 string filePath = operation.GetRawFilePath();
-                UnloadRawFile(assetName, true);
+                // 使用一般卸載遞減引用計數即可，避免強制卸載將其他持有者的引用一併釋放
+                UnloadRawFile(assetName);
                 return filePath;
             }
 
@@ -296,7 +299,8 @@ namespace OxGFrame.AssetLoader
                 var operation = pack.GetOperationHandle<RawFileHandle>();
                 // Get path from operation handle
                 string filePath = operation.GetRawFilePath();
-                UnloadRawFile(assetName, true);
+                // 使用一般卸載遞減引用計數即可，避免強制卸載將其他持有者的引用一併釋放
+                UnloadRawFile(assetName);
                 return filePath;
             }
 

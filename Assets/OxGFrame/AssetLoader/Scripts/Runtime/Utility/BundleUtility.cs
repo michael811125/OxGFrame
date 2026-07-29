@@ -92,8 +92,12 @@ namespace OxGFrame.AssetLoader.Utility
             }
 
 
-            System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-            byte[] fileMd5 = md5.ComputeHash(fs);
+            // 使用 MD5.Create 並以 using 釋放，取代已過時的 MD5CryptoServiceProvider
+            byte[] fileMd5;
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                fileMd5 = md5.ComputeHash(fs);
+            }
             fs.Close();
             fs.Dispose();
 
@@ -112,10 +116,13 @@ namespace OxGFrame.AssetLoader.Utility
         /// <returns></returns>
         public static string MakeMd5ForFile(FileInfo file)
         {
-            FileStream fs = file.OpenRead();
-            System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-            byte[] fileMd5 = md5.ComputeHash(fs);
-            fs.Close();
+            // 使用 MD5.Create 並以 using 釋放，取代已過時的 MD5CryptoServiceProvider (FileStream 也一併釋放)
+            byte[] fileMd5;
+            using (FileStream fs = file.OpenRead())
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                fileMd5 = md5.ComputeHash(fs);
+            }
 
             StringBuilder sBuilder = new StringBuilder();
             for (int i = 0; i < fileMd5.Length; i++)
@@ -299,7 +306,7 @@ namespace OxGFrame.AssetLoader.Utility
             int minLength = 11;
             int maxLength = 32;
 
-            // YYYY-MM-DD-TotalMinues
+            // YYYY-MM-DD-TotalMinutes
             string[] dateArgs = dateString.Split(separator);
 
             // Years
@@ -311,10 +318,10 @@ namespace OxGFrame.AssetLoader.Utility
 
             // One day to minues
             int lastDashIndex = dateString.LastIndexOf(separator);
-            string totalMinues = lastDashIndex != -1 ? dateString.Substring(lastDashIndex + 1) : dateArgs[3];
-            totalMinues = totalMinues.PadLeft(4, '0');
+            string totalMinutes = lastDashIndex != -1 ? dateString.Substring(lastDashIndex + 1) : dateArgs[3];
+            totalMinutes = totalMinutes.PadLeft(4, '0');
 
-            string combinedVersion = year + dayOfYear + totalMinues;
+            string combinedVersion = year + dayOfYear + totalMinutes;
 
             if (length > minLength && length <= maxLength)
             {

@@ -109,12 +109,12 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// 預設同時併發下載數量
         /// </summary>
-        internal const int DEFAULT_MAX_CONCURRENCY_MAX_DOWNLOAD_COUNT = 10;
+        internal const int DEFAULT_MAX_CONCURRENCY_DOWNLOAD_COUNT = 10;
 
         /// <summary>
         /// 同時併發下載數量
         /// </summary>
-        public static int maxConcurrencyDownloadCount = DEFAULT_MAX_CONCURRENCY_MAX_DOWNLOAD_COUNT;
+        public static int maxConcurrencyDownloadCount = DEFAULT_MAX_CONCURRENCY_DOWNLOAD_COUNT;
 
         /// <summary>
         /// 預設下載失敗重新嘗試次數
@@ -227,8 +227,13 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             if (decryptArgs == null)
             {
+                // 空字串一律視為 NONE，避免後續解析出錯
+                if (string.IsNullOrEmpty(args))
+                    args = CryptogramType.NONE;
+
                 // Check args first, if is none don't need to secure memory
-                bool isNone = args.Substring(0, CryptogramType.NONE.Length).ToUpper().Equals(CryptogramType.NONE);
+                // 使用 StartsWith 判斷，避免參數字串長度不足時 Substring 拋出異常 (ex: "xor" 僅 3 字元)
+                bool isNone = args.TrimStart().StartsWith(CryptogramType.NONE, System.StringComparison.OrdinalIgnoreCase);
                 if (isNone)
                     securedType = SecuredStringType.None;
 

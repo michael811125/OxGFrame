@@ -3,6 +3,7 @@ using OxGFrame.AssetLoader.Utility.SecureMemory;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using YooAsset;
 
 namespace OxGFrame.AssetLoader.Bundle
@@ -15,11 +16,11 @@ namespace OxGFrame.AssetLoader.Bundle
     {
         [SerializeField, Tooltip("Decryption (case-insensitive).\n\n[NONE], \n[OFFSET, dummySize], \n[XOR, key], \n[HT2XOR, headKey, tailKey, jumpKey], \n[HT2XORPLUS, headKey, tailKey, jump1Key, jump2Key], \n[AES, key, iv]\n[CHACHA20, key, nonce, counter]\n[XXTEA, key]\n[OFFSETXOR, key, dummySize]\n\nex: \n\"none\" \n\"offset, 12\" \n\"xor, 23\" \n\"ht2xor, 34, 45, 56\" \n\"ht2xorplus, 34, 45, 56, 78\" \n\"aes, key, iv\" \n\"chacha20, key, nonce, 1\" \n\"xxtea, key\" \n\"offsetxor, 12, 23\"")]
         private string _decryptArgs = BundleConfig.CryptogramType.NONE;
-        [SerializeField, Tooltip("None: No encryption.\n\nXORWithDummy: simple encryption will be performed in memory (less GC).\n\nAES: complex encryption will be performed in memory (more GC).")]
-        public SecuredStringType scuredStringType = SecuredStringType.XORWithDummy;
-        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)"), ConditionalField(nameof(scuredStringType), false, SecuredStringType.AES)]
+        [SerializeField, FormerlySerializedAs("scuredStringType"), Tooltip("None: No encryption.\n\nXORWithDummy: simple encryption will be performed in memory (less GC).\n\nAES: complex encryption will be performed in memory (more GC).")]
+        public SecuredStringType securedStringType = SecuredStringType.XORWithDummy;
+        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)"), ConditionalField(nameof(securedStringType), false, SecuredStringType.AES)]
         private int _saltSize = 1 << 4;
-        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)"), ConditionalField(nameof(scuredStringType), false, SecuredStringType.XORWithDummy)]
+        [SerializeField, Tooltip("The longer the length, the safer it is. 16 bytes (128 bits), 32 bytes (256 bits)"), ConditionalField(nameof(securedStringType), false, SecuredStringType.XORWithDummy)]
         private int _dummySize = 1 << 5;
 
         public string GetDecryptArgs()

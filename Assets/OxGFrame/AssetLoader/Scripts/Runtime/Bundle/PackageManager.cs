@@ -152,7 +152,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
             isInitialized = appInitialized && dlcInitialized;
 
-            Logging.PrintInfo<Logger>($"Initialize Peset Packages -> Initialized: {isInitialized}");
+            Logging.PrintInfo<Logger>($"Initialize Preset Packages -> Initialized: {isInitialized}");
         }
 
         /// <summary>

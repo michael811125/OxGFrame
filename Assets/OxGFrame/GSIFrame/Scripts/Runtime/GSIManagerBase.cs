@@ -203,9 +203,16 @@ namespace OxGFrame.GSIFrame
         /// <param name="gameStage"></param>
         public void AddGameStage(int id, GSIBase gameStage)
         {
+            // 空實例防護
+            if (gameStage == null)
+            {
+                Logging.PrintError<Logger>($"Failed to add GameStage with Id '{id}': the GameStage instance is null.");
+                return;
+            }
+
             if (this._dictGameStage.ContainsKey(id))
             {
-                Logging.PrintWarning<Logger>($"Failed to add GameStage '{gameStage?.GetType().Name}': a GameStage with the same ID already exists in the cache.");
+                Logging.PrintWarning<Logger>($"Failed to add GameStage '{gameStage.GetType().Name}': a GameStage with the same ID already exists in the cache.");
                 return;
             }
 
@@ -231,6 +238,14 @@ namespace OxGFrame.GSIFrame
         /// <param name="id"></param>
         public void DeleteGameStage(int id)
         {
+            // 防止刪除運行中的 GameStage，避免 OnExit 未被調用且當前參考懸空
+            if (id == this._currentId &&
+                this._currentGameStage != null)
+            {
+                Logging.PrintWarning<Logger>($"Failed to delete GameStage with Id '{id}': cannot delete the current running GameStage.");
+                return;
+            }
+
             if (this._dictGameStage.ContainsKey(id))
                 this._dictGameStage.Remove(id);
         }
@@ -253,13 +268,20 @@ namespace OxGFrame.GSIFrame
         /// <param name="id"></param>
         public void ChangeGameStage(int id)
         {
+            // 先驗證 GameStage 是否存在，再設置 _incomingId，避免無效 Id 進入切換流程
+            var gameStage = this.GetGameStage<GSIBase>(id);
+            if (gameStage == null)
+            {
+                Logging.PrintError<Logger>($" 【>>>>>> Change GameStage Failed <<<<<<】Cannot find GameStage with Id: {id}");
+                return;
+            }
+
             this._incomingId = id;
 
-            var gameStage = this.GetGameStage<GSIBase>(id);
             if (this._incomingId == this._currentId)
-                Logging.PrintWarning<Logger>($" 【>>>>>> Same GameStage (Change Failed - Try Force) <<<<<<】Id: {this._incomingId}, Stage: {gameStage?.GetType().Name}");
+                Logging.PrintWarning<Logger>($" 【>>>>>> Same GameStage (Change Failed - Try Force) <<<<<<】Id: {this._incomingId}, Stage: {gameStage.GetType().Name}");
             else
-                Logging.PrintInfo<Logger>($" 【>>>>>> Change GameStage <<<<<<】Id: {this._incomingId}, Stage: {gameStage?.GetType().Name}");
+                Logging.PrintInfo<Logger>($" 【>>>>>> Change GameStage <<<<<<】Id: {this._incomingId}, Stage: {gameStage.GetType().Name}");
         }
 
         /// <summary>

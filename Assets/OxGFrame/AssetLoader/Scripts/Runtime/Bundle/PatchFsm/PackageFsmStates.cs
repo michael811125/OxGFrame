@@ -600,7 +600,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     Logging.PrintInfo<Logger>($"[Disk Space Check] Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}, Patch Total Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}");
                     if (patchTotalMegabytes > availableDiskSpaceMegabytes)
                     {
-                        PackageEvents.PatchCheckDiskNotEnoughSpace.SendEventMessage(availableDiskSpaceMegabytes, (ulong)totalBytes);
+                        PackageEvents.PatchCheckDiskNotEnoughSpace.SendEventMessage(this._hashId, availableDiskSpaceMegabytes, (ulong)totalBytes);
                         Logging.PrintError<Logger>($"Disk Not Enough Space!!! Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}, Patch Total Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}");
                         return;
                     }

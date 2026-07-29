@@ -118,7 +118,8 @@ namespace OxGFrame.CenterFrame.APICenter
                     request.downloadHandler = new DownloadHandlerBuffer();
 
                     timeoutSeconds ??= _MAX_REQUEST_TIME_SECONDS;
-                    var cts = new CancellationTokenSource();
+                    // 使用 using 釋放 CancellationTokenSource，避免每次請求洩漏計時器
+                    using var cts = new CancellationTokenSource();
                     cts.CancelAfterSlim(TimeSpan.FromSeconds((int)timeoutSeconds));
 
                     // Start send request

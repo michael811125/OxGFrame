@@ -9,7 +9,7 @@ namespace OxGFrame.AssetLoader.Cacher
     public class LoadingTasker
     {
         /// <summary>
-        /// 追蹤進行中的載入任務 (Single-Filght for Async)
+        /// 追蹤進行中的載入任務 (Single-Flight for Async)
         /// </summary>
         private readonly Dictionary<string, object> _loadingTasks;
 

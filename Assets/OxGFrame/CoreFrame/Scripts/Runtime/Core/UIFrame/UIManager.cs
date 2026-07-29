@@ -491,7 +491,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <param name="doRemoveSafety"></param>
         /// <param name="uiBase"></param>
         /// <returns></returns>
-        private ReverseCache _PreprocessRemoveReserveSafety(bool doRemoveSafety, UIBase uiBase)
+        private ReverseCache _PreprocessRemoveReverseSafety(bool doRemoveSafety, UIBase uiBase)
         {
             ReverseCache reverseCache = new ReverseCache();
 
@@ -508,7 +508,8 @@ namespace OxGFrame.CoreFrame.UIFrame
                     int topIdx = this._dictReverse[key].Count - 1;
                     var top = this._dictReverse[key][topIdx];
                     UIBase equalsTop = null;
-                    for (int i = topIdx; i > 0; i--)
+                    // 必須包含 index 0，避免最底層的 Reverse 緩存殘留已銷毀的參考
+                    for (int i = topIdx; i >= 0; i--)
                     {
                         // 僅取出 Top == 該 UI 的 Reverse 緩存
                         if (i == topIdx &&
@@ -596,7 +597,8 @@ namespace OxGFrame.CoreFrame.UIFrame
                     this._dictStackByStack[key].Count > 0)
                 {
                     int topIdx = this._dictStackByStack[key].Count - 1;
-                    for (int i = topIdx; i > 0; i--)
+                    // 必須包含 index 0，避免最底層的 StackByStack 緩存殘留已銷毀的名稱
+                    for (int i = topIdx; i >= 0; i--)
                     {
                         // 移除所有 Top 以下有關於被銷毀該 UI 的 StackByStack 緩存
                         if (uiBase.assetName == this._dictStackByStack[key][i])
@@ -665,7 +667,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 #endregion
 
                 // 如果強制關閉 UI，需要處理原本柱列在 Reverse 中的 UI 緩存
-                ReverseCache equalsTop = this._PreprocessRemoveReserveSafety(forceDestroy, uiBase);
+                ReverseCache equalsTop = this._PreprocessRemoveReverseSafety(forceDestroy, uiBase);
                 // 標記 Hidden = false
                 uiBase.SetHidden(false);
                 // equalsTop.extraStack 用於校正堆疊層數
@@ -805,7 +807,7 @@ namespace OxGFrame.CoreFrame.UIFrame
             if (this._dictAllCache.Count == 0)
                 return;
 
-            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values)
+            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
                 // prevent preload mode
                 if (stack.Count() == 0)
@@ -864,7 +866,7 @@ namespace OxGFrame.CoreFrame.UIFrame
                 return;
 
             // 需要注意緩存需要 temp 出來，因為如果迴圈裡有功能直接對緩存進行操作會出錯
-            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values)
+            foreach (FrameStack<UIBase> stack in this._dictAllCache.Values.ToArray())
             {
                 // prevent preload mode
                 if (stack.Count() == 0)

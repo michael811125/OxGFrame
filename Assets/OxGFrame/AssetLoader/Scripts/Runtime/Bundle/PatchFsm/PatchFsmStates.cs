@@ -221,7 +221,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     // Local save path (Sandbox)
                     string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
 
-                    // Request appconfig from StreamginAssets and Save to local Sandbox
+                    // Request appconfig from StreamingAssets and Save to local Sandbox
                     string saCfgJson = await Requester.RequestText(saCfgPath, null, null, null, false);
                     if (!string.IsNullOrEmpty(saCfgJson))
                     {
@@ -1133,7 +1133,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 PatchEvents.PatchFsmState.SendEventMessage(this);
                 // Patch 標記完成
                 PatchManager.GetInstance().MarkPatchAsDone();
-                Logging.PrintInfo<Logger>("(Power by YooAsset) All preset patches are done.");
+                Logging.PrintInfo<Logger>("(Powered by YooAsset) All preset patches are done.");
             }
 
             void IStateNode.OnUpdate()

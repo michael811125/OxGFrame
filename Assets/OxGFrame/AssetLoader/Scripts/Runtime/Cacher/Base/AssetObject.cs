@@ -108,7 +108,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public bool IsRawFileOperationHandle()
         {
-            return typeof(RawFileHandle).IsInstanceOfType(this.operationHandle);
+            return this.operationHandle is RawFileHandle;
         }
 
         public bool IsRawFileOperationHandleValid()
@@ -128,7 +128,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public bool IsAssetOperationHandle()
         {
-            return typeof(AssetHandle).IsInstanceOfType(this.operationHandle);
+            return this.operationHandle is AssetHandle;
         }
 
         public bool IsAssetOperationHandleValid()

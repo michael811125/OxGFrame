@@ -55,14 +55,14 @@ namespace OxGFrame.NetFrame
             }
             catch (Exception ex)
             {
-                this.OnError(this, $"{ex}");
+                this.OnError?.Invoke(this, $"{ex}");
             }
         }
 
         #region Handlers
         private void _OnOpenHandler()
         {
-            this.OnOpen(this, 0);
+            this.OnOpen?.Invoke(this, 0);
         }
 
         private void _OnMessageHandler(ArraySegment<byte> arrSeg, KcpChannel channel)
@@ -70,17 +70,17 @@ namespace OxGFrame.NetFrame
             var length = arrSeg.Count;
             var rcvData = new byte[length];
             Array.Copy(arrSeg.Array, arrSeg.Offset, rcvData, 0, length);
-            this.OnBinary(this, rcvData);
+            this.OnBinary?.Invoke(this, rcvData);
         }
 
         private void _OnErrorHandler(ErrorCode errorCode, string errorMsg)
         {
-            this.OnError(this, $"{errorCode}: {errorMsg}");
+            this.OnError?.Invoke(this, $"{errorCode}: {errorMsg}");
         }
 
         private void _OnCloseHandler()
         {
-            this.OnClose(this, -1);
+            this.OnClose?.Invoke(this, -1);
         }
         #endregion
 

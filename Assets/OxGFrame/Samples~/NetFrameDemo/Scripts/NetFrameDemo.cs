@@ -68,7 +68,7 @@ public class NetFrameDemo : MonoBehaviour
 
     public void CloseKCP()
     {
-        NetworkExample.CloseConnection((int)NetworkExample.NNID.TCP);
+        NetworkExample.CloseConnection((int)NetworkExample.NNID.KCP);
     }
     #endregion
 }

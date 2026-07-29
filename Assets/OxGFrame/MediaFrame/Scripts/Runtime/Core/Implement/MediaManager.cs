@@ -47,8 +47,9 @@ namespace OxGFrame.MediaFrame
                     // 僅刷新激活的物件
                     if (this._listAllCache[i].gameObject.activeSelf)
                     {
-                        if (this._listAllCache[i].ignoreTimeScale) _fdt = Time.fixedDeltaTime;
-                        else _fdt = Time.fixedUnscaledDeltaTime;
+                        // 不受 TimeScale 影響時，必須使用 fixedUnscaledDeltaTime
+                        if (this._listAllCache[i].ignoreTimeScale) _fdt = Time.fixedUnscaledDeltaTime;
+                        else _fdt = Time.fixedDeltaTime;
                         this._listAllCache[i].HandleFixedUpdate(_fdt);
                     }
                 }
@@ -112,13 +113,15 @@ namespace OxGFrame.MediaFrame
         {
             if (string.IsNullOrEmpty(assetName) || this._listAllCache.Count == 0) return new U[] { };
 
-            List<T> filter = new List<T>();
+            // 使用 is 過濾轉型，避免 T[] 轉 U[] 的 InvalidCastException
+            List<U> filter = new List<U>();
             for (int i = 0; i < this._listAllCache.Count; i++)
             {
-                if (this._listAllCache[i].assetName == assetName) filter.Add(this._listAllCache[i]);
+                if (this._listAllCache[i].assetName == assetName &&
+                    this._listAllCache[i] is U media) filter.Add(media);
             }
 
-            return (U[])filter.ToArray();
+            return filter.ToArray();
         }
 
         /// <summary>
@@ -207,7 +210,7 @@ namespace OxGFrame.MediaFrame
         /// <param name="assetName"></param>
         /// <param name="go"></param>
         /// <returns></returns>
-        protected async virtual UniTask<U> CloneAsset<U>(string assetName, GameObject go, UnityEngine.Object sourceClip, Transform parent, Transform spwanParent) where U : T
+        protected async virtual UniTask<U> CloneAsset<U>(string assetName, GameObject go, UnityEngine.Object sourceClip, Transform parent, Transform spawnParent) where U : T
         {
             if (go == null)
                 return default;
@@ -225,7 +228,7 @@ namespace OxGFrame.MediaFrame
                 }
             }
 
-            GameObject instGo = Instantiate(sourceComponent.gameObject, (parent != null) ? parent : spwanParent);
+            GameObject instGo = Instantiate(sourceComponent.gameObject, (parent != null) ? parent : spawnParent);
             instGo.name = instGo.name.Replace("(Clone)", "");
             U mBase = instGo.GetComponent<U>();
             if (mBase == null)
@@ -306,8 +309,8 @@ namespace OxGFrame.MediaFrame
         #endregion
 
         #region Stop & Pause
-        public abstract void Stop(string assetName, bool disabledEndEvent = false, bool forceDestroy = false);
-        public abstract void StopAll(bool disabledEndEvent = false, bool forceDestroy = false);
+        public abstract void Stop(string assetName, bool disableEndEvent = false, bool forceDestroy = false);
+        public abstract void StopAll(bool disableEndEvent = false, bool forceDestroy = false);
         public abstract void Pause(string assetName);
         public abstract void PauseAll();
         #endregion
@@ -315,7 +318,7 @@ namespace OxGFrame.MediaFrame
         #region Load Play & Exit Stop
         protected virtual void LoadAndPlay(T mBase, int loops, float volume) { }
 
-        protected virtual void ExitAndStop(T mBase, bool pause, bool disabledEndEvent) { }
+        protected virtual void ExitAndStop(T mBase, bool pause, bool disableEndEvent) { }
         #endregion
 
         /// <summary>

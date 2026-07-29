@@ -18,7 +18,7 @@ var audioBase = await MediaFrames.AudioFrame.Play(AudioPrefs.a101);
 var withClip  = await MediaFrames.AudioFrame.Play(AudioPrefs.a201, this.clips[0]);   // supply a source clip at runtime
 
 MediaFrames.AudioFrame.Stop(assetName);
-MediaFrames.AudioFrame.Stop(assetName, disabledEndEvent: false, forceDestroy: true);
+MediaFrames.AudioFrame.Stop(assetName, disableEndEvent: false, forceDestroy: true);
 MediaFrames.AudioFrame.Pause(assetName);
 MediaFrames.AudioFrame.PauseAll();
 MediaFrames.AudioFrame.ResumeAll();          // no single-asset Resume; re-Play a paused instance instead

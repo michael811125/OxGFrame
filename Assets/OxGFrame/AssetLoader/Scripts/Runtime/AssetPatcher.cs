@@ -63,7 +63,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get local save persistent path by pakcage (...yoo/PackageName)
+        /// Get local save persistent path by package (...yoo/PackageName)
         /// </summary>
         /// <returns></returns>
         public static string GetLocalSandboxPackagePath(string packageName)
@@ -100,7 +100,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get defualt bundle decryption services
+        /// Get default bundle decryption services
         /// </summary>
         /// <returns></returns>
         public static DecryptionServices GetBundleDecryptionServices()
@@ -257,7 +257,10 @@ namespace OxGFrame.AssetLoader
         /// <returns></returns>
         public static string GetPatchVersion(bool encode = false, int length = 16, string separator = "-")
         {
-            string[] versions = PatchManager.patchVersions.Values.ToArray();
+            // 尚未執行過 Check 流程前，版號緩存可能為空，必須進行防護
+            string[] versions = (PatchManager.patchVersions != null) ? PatchManager.patchVersions.Values.ToArray() : new string[] { };
+            if (versions.Length == 0)
+                return string.Empty;
             return GetPatchVersion(versions, encode, length, separator);
         }
 
@@ -628,7 +631,7 @@ namespace OxGFrame.AssetLoader
             return PackageManager.GetPackageDownloaderByAssetInfos(package, maxConcurrencyDownloadCount, failedRetryCount, assetInfos);
         }
 
-        #region Combine Donwloaders
+        #region Combine Downloaders
         public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackages(ResourcePackage[] packages)
         {
             List<ResourceDownloaderOperation> downloaders = new List<ResourceDownloaderOperation>();

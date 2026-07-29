@@ -239,9 +239,9 @@ namespace OxGFrame.CoreFrame.USFrame
                         else go.SetActive(active);
                     }
                 }
-                else Logging.PrintWarning<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...");
+                else Logging.PrintWarning<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loading...");
             }
-            else Logging.PrintError<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene not is valid!!!");
+            else Logging.PrintError<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is not valid!!!");
         }
 
         public async UniTask SetActiveSceneRootGameObjectsAsync(Scene scene, bool active, int framesInterval, int activeObjectsPerInterval, string[] withoutRootGameObjectNames = null)
@@ -285,9 +285,9 @@ namespace OxGFrame.CoreFrame.USFrame
                         }
                     }
                 }
-                else Logging.PrintWarning<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...");
+                else Logging.PrintWarning<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loading...");
             }
-            else Logging.PrintError<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene not is valid!!!");
+            else Logging.PrintError<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is not valid!!!");
         }
 
         #region Bundle
@@ -581,7 +581,8 @@ namespace OxGFrame.CoreFrame.USFrame
                 }
             }
 
-            scene = SceneManager.LoadScene(sceneName, new LoadSceneParameters(loadSceneMode, localPhysicsMode));
+            // 必須以 buildIndex 進行載入 (未載入的場景無法透過 GetSceneByBuildIndex 取得名稱)
+            scene = SceneManager.LoadScene(buildIndex, new LoadSceneParameters(loadSceneMode, localPhysicsMode));
             if (progression != null)
             {
                 this._currentCount++;

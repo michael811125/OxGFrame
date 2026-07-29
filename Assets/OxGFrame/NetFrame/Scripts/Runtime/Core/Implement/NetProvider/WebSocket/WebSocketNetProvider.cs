@@ -43,25 +43,25 @@ namespace OxGFrame.NetFrame
         #region Handlers
         private void _OnOpenHandler(object sender, OpenEventArgs e)
         {
-            this.OnOpen(sender, e);
+            this.OnOpen?.Invoke(sender, e);
         }
 
         private void _OnMessageHandler(object sender, MessageEventArgs e)
         {
             if (e.IsBinary)
-                this.OnBinary(sender, e.RawData);
+                this.OnBinary?.Invoke(sender, e.RawData);
             else
-                this.OnMessage(sender, e.Data);
+                this.OnMessage?.Invoke(sender, e.Data);
         }
 
         private void _OnErrorHandler(object sender, ErrorEventArgs e)
         {
-            this.OnError(sender, e.Message);
+            this.OnError?.Invoke(sender, e.Message);
         }
 
         private void _OnCloseHandler(object sender, CloseEventArgs e)
         {
-            this.OnClose(sender, e.Code);
+            this.OnClose?.Invoke(sender, e.Code);
         }
         #endregion
 

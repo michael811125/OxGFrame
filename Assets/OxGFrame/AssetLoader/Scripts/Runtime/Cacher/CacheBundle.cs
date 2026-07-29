@@ -439,17 +439,21 @@ namespace OxGFrame.AssetLoader.Cacher
 
             HashSet<ResourcePackage> packages = new HashSet<ResourcePackage>();
 
+            // 先從 Additive 緩存收集所屬 Package (Additive 場景緩存於 _additiveScenes 而非 _cacher)
+            foreach (var pack in this._additiveScenes.Values)
+            {
+                if (pack == null)
+                    continue;
+                var package = PackageManager.GetPackage(pack.packageName);
+                if (package != null &&
+                    !packages.Contains(package))
+                    packages.Add(package);
+            }
+
             // 強制釋放緩存與資源
             foreach (var assetName in this._additiveSceneCounter.Keys.ToArray())
             {
-                if (this.HasInCache(assetName))
-                {
-                    BundlePack pack = this.GetFromCache(assetName);
-                    var package = PackageManager.GetPackage(pack.packageName);
-                    if (!packages.Contains(package))
-                        packages.Add(package);
-                    this.UnloadScene(assetName, true);
-                }
+                this.UnloadScene(assetName, true);
             }
 
             // 清除 Additive 計數緩存
@@ -463,7 +467,7 @@ namespace OxGFrame.AssetLoader.Cacher
             // 調用底層接口釋放資源
             Resources.UnloadUnusedAssets();
 
-            Logging.Print<Logger>($"【Release All Scenes (Addtive)】 => Current << {nameof(CacheBundle)} >> Additive Scene Cache Count: {this._additiveSceneCounter.Count}");
+            Logging.Print<Logger>($"【Release All Scenes (Additive)】 => Current << {nameof(CacheBundle)} >> Additive Scene Cache Count: {this._additiveSceneCounter.Count}");
         }
         #endregion
 

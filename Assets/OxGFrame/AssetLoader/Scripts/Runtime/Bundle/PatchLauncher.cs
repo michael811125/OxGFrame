@@ -145,7 +145,7 @@ namespace OxGFrame.AssetLoader.Bundle
             #endregion
 
             #region Download Options
-            BundleConfig.maxConcurrencyDownloadCount = this.maxConcurrencyDownloadCount <= 0 ? BundleConfig.DEFAULT_MAX_CONCURRENCY_MAX_DOWNLOAD_COUNT : this.maxConcurrencyDownloadCount;
+            BundleConfig.maxConcurrencyDownloadCount = this.maxConcurrencyDownloadCount <= 0 ? BundleConfig.DEFAULT_MAX_CONCURRENCY_DOWNLOAD_COUNT : this.maxConcurrencyDownloadCount;
             BundleConfig.failedRetryCount = this.failedRetryCount < 0 ? BundleConfig.DEFAULT_FAILED_RETRY_COUNT : this.failedRetryCount;
             // Set download breakpoint size threshold
             BundleConfig.breakpointFileSizeThreshold = this.breakpointFileSizeThreshold;
@@ -160,8 +160,8 @@ namespace OxGFrame.AssetLoader.Bundle
             #endregion
 
             #region Cryptogram Options
-            BundleConfig.InitBundleDecryptInfo(this._decryptInfo.GetDecryptArgs(), this._decryptInfo.scuredStringType, this._decryptInfo.GetSaltSize(), this._decryptInfo.GetDummySize());
-            BundleConfig.InitManifestDecryptInfo(this._manifestDecryptInfo.GetDecryptArgs(), this._manifestDecryptInfo.scuredStringType, this._manifestDecryptInfo.GetSaltSize(), this._manifestDecryptInfo.GetDummySize());
+            BundleConfig.InitBundleDecryptInfo(this._decryptInfo.GetDecryptArgs(), this._decryptInfo.securedStringType, this._decryptInfo.GetSaltSize(), this._decryptInfo.GetDummySize());
+            BundleConfig.InitManifestDecryptInfo(this._manifestDecryptInfo.GetDecryptArgs(), this._manifestDecryptInfo.securedStringType, this._manifestDecryptInfo.GetSaltSize(), this._manifestDecryptInfo.GetDummySize());
             this._decryptInfo.Dispose();
             this._manifestDecryptInfo.Dispose();
             #endregion
@@ -204,6 +204,15 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <param name="dlcPackages"></param>
         internal static void SetPresetPackages(List<AppPackageInfoWithBuild> appPackages, List<DlcPackageInfoWithBuild> dlcPackages)
         {
+            // PatchLauncher 尚未 Awake 時，僅設置 BundleConfig，避免 NRE
+            if (_instance == null)
+            {
+                Logging.PrintWarning<Logger>("[PatchLauncher] Instance is not initialized yet. Only BundleConfig preset packages will be set.");
+                BundleConfig.listAppPackages = appPackages;
+                BundleConfig.listDlcPackages = dlcPackages;
+                return;
+            }
+
             BundleConfig.listAppPackages = _instance.listAppPackages = appPackages;
             BundleConfig.listDlcPackages = _instance.listDlcPackages = dlcPackages;
         }

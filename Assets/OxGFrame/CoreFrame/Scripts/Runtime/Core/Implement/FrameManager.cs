@@ -121,9 +121,9 @@ namespace OxGFrame.CoreFrame
         }
 
         public bool ignoreTimeScale = false;
-        public bool enabledUpdate = true;
-        public bool enabledFixedUpdate = true;
-        public bool enabledLateUpdate = true;
+        public bool enableUpdate = true;
+        public bool enableFixedUpdate = true;
+        public bool enableLateUpdate = true;
 
         /// <summary>
         /// [計算進度條用] 加載數量
@@ -150,7 +150,7 @@ namespace OxGFrame.CoreFrame
 
         private void Update()
         {
-            if (!this.enabledUpdate)
+            if (!this.enableUpdate)
                 return;
             _dt = this.ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
             this.DriveUpdates(UpdateType.Update);
@@ -158,7 +158,7 @@ namespace OxGFrame.CoreFrame
 
         private void FixedUpdate()
         {
-            if (!this.enabledFixedUpdate)
+            if (!this.enableFixedUpdate)
                 return;
             _fdt = this.ignoreTimeScale ? Time.fixedUnscaledDeltaTime : Time.fixedDeltaTime;
             this.DriveUpdates(UpdateType.FixedUpdate);
@@ -166,7 +166,7 @@ namespace OxGFrame.CoreFrame
 
         private void LateUpdate()
         {
-            if (!this.enabledLateUpdate)
+            if (!this.enableLateUpdate)
                 return;
             _dt = this.ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
             this.DriveUpdates(UpdateType.LateUpdate);
@@ -277,7 +277,8 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public U GetFrameComponent<U>(string assetName) where U : T
         {
-            return (U)this.PeekStackFromAllCache(assetName);
+            // 使用 as 轉型，型別不符時返回 null，避免 InvalidCastException
+            return this.PeekStackFromAllCache(assetName) as U;
         }
 
         /// <summary>
@@ -288,9 +289,10 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public U[] GetFrameComponents<U>(string assetName) where U : T
         {
+            // 使用 OfType 過濾轉型，避免 T[] 轉 U[] 的 InvalidCastException
             var stack = this.GetStackFromAllCache(assetName);
             if (stack != null)
-                return (U[])this.GetStackFromAllCache(assetName).cache.ToArray();
+                return stack.cache.OfType<U>().ToArray();
             return new U[] { };
         }
 
@@ -350,11 +352,17 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         public bool CheckHasAnyHiding(int groupId)
         {
-            foreach (var fBase in this._dictAllCache.Values)
+            foreach (var stack in this._dictAllCache.Values)
             {
-                if (groupId == -1 && fBase.Peek().isHidden)
+                // 預加載模式的堆疊可能為空，必須進行防護
+                if (stack.Count() == 0)
+                    continue;
+                T fBase = stack.Peek();
+                if (fBase == null)
+                    continue;
+                if (groupId == -1 && fBase.isHidden)
                     return true;
-                else if (fBase.Peek().groupId == groupId && fBase.Peek().isHidden)
+                else if (fBase.groupId == groupId && fBase.isHidden)
                     return true;
             }
 
@@ -420,7 +428,7 @@ namespace OxGFrame.CoreFrame
                         Logging.Print<Logger>($"{stack.assetName} => 【Allow Instantiate + Preload Mode】skip cache process.");
                         return null;
                     }
-                    // 允所多實例時，需要重覆加載 (確保 ref 正確，不過會多 1 次，需要額外減去)
+                    // 允許多實例時，需要重覆加載 (確保 ref 正確，不過會多 1 次，需要額外減去)
                     else if (stack.allowInstantiate)
                     {
                         // 標記加載中
@@ -651,24 +659,29 @@ namespace OxGFrame.CoreFrame
             if (!fBase.gameObject.IsDestroyed())
                 Destroy(fBase.gameObject);
 
-            // 取出柱列緩存
+            // 取出柱列緩存 (需防護查無緩存的情況)
             FrameStack<T> stack = this.GetStackFromAllCache(assetName);
-            stack.Pop();
-
-            // 允許多實例 & 預加載模式，需要再額外 Unload 1 次 (因為預加載額外進行多 1 次的 Cacher 加載，所以需要校正 Cacher Ref Count)
-            if (stack.allowInstantiate &&
-                stack.isPreloadMode &&
-                stack.Count() == 0)
+            if (stack != null)
             {
-                // 額外卸載
-                AssetLoaders.UnloadAsset(assetName);
+                // 從柱列緩存中移除該實例，避免多實例批次銷毀時移錯對象
+                if (!stack.cache.Remove(fBase))
+                    stack.Pop();
 
-                Logging.Print<Logger>($"[FrameManager] Extra Unload Asset: {assetName}");
+                // 允許多實例 & 預加載模式，需要再額外 Unload 1 次 (因為預加載額外進行多 1 次的 Cacher 加載，所以需要校正 Cacher Ref Count)
+                if (stack.allowInstantiate &&
+                    stack.isPreloadMode &&
+                    stack.Count() == 0)
+                {
+                    // 額外卸載
+                    AssetLoaders.UnloadAsset(assetName);
+
+                    Logging.Print<Logger>($"[FrameManager] Extra Unload Asset: {assetName}");
+                }
+
+                // 柱列為空，則刪除資源緩存
+                if (stack.Count() == 0)
+                    this._dictAllCache.Remove(assetName);
             }
-
-            // 柱列為空，則刪除資源緩存
-            if (stack.Count() == 0)
-                this._dictAllCache.Remove(assetName);
 
             // 卸載
             AssetLoaders.UnloadAsset(assetName);

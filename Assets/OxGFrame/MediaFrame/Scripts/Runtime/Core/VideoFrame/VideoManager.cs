@@ -146,12 +146,12 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// </summary>
         /// <param name="vidBase"></param>
         /// <param name="forceDestroy"></param>
-        private void _Stop(VideoBase vidBase, bool disabledEndEvent = false, bool forceDestroy = false)
+        private void _Stop(VideoBase vidBase, bool disableEndEvent = false, bool forceDestroy = false)
         {
             if (vidBase == null)
                 return;
 
-            this.ExitAndStop(vidBase, false, disabledEndEvent);
+            this.ExitAndStop(vidBase, false, disableEndEvent);
 
             Logging.PrintInfo<Logger>($"Stop Video: {vidBase?.mediaName}");
 
@@ -170,9 +170,9 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// </summary>
         /// <param name="vidBase"></param>
         /// <param name="forceDestroy"></param>
-        public void Stop(VideoBase vidBase, bool disabledEndEvent = false, bool forceDestroy = false)
+        public void Stop(VideoBase vidBase, bool disableEndEvent = false, bool forceDestroy = false)
         {
-            this._Stop(vidBase, disabledEndEvent, forceDestroy);
+            this._Stop(vidBase, disableEndEvent, forceDestroy);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="forceDestroy"></param>
-        public override void Stop(string assetName, bool disabledEndEvent = false, bool forceDestroy = false)
+        public override void Stop(string assetName, bool disableEndEvent = false, bool forceDestroy = false)
         {
             VideoBase[] vidBases = this.GetMediaComponents<VideoBase>(assetName);
             if (vidBases.Length == 0)
@@ -188,7 +188,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
             foreach (var vidBase in vidBases)
             {
-                this._Stop(vidBase, disabledEndEvent, forceDestroy);
+                this._Stop(vidBase, disableEndEvent, forceDestroy);
             }
         }
 
@@ -197,14 +197,14 @@ namespace OxGFrame.MediaFrame.VideoFrame
         /// </summary>
         /// <param name="forceDestroy"></param>
         /// <returns></returns>
-        public override void StopAll(bool disabledEndEvent = false, bool forceDestroy = false)
+        public override void StopAll(bool disableEndEvent = false, bool forceDestroy = false)
         {
             if (this._listAllCache.Count == 0)
                 return;
 
             foreach (var vidBase in this._listAllCache.ToArray())
             {
-                this._Stop(vidBase, disabledEndEvent, forceDestroy);
+                this._Stop(vidBase, disableEndEvent, forceDestroy);
             }
         }
         #endregion
@@ -263,11 +263,11 @@ namespace OxGFrame.MediaFrame.VideoFrame
             vidBase.Play(loops, volume);
         }
 
-        protected override void ExitAndStop(VideoBase vidBase, bool pause, bool disabledEndEvent)
+        protected override void ExitAndStop(VideoBase vidBase, bool pause, bool disableEndEvent)
         {
             if (!pause)
             {
-                if (disabledEndEvent)
+                if (disableEndEvent)
                     vidBase.SetEndEvent(null);
                 vidBase.Stop();
             }

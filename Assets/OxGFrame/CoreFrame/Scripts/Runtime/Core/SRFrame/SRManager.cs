@@ -309,7 +309,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             if (this._dictAllCache.Count == 0)
                 return;
 
-            foreach (FrameStack<SRBase> stack in this._dictAllCache.Values)
+            foreach (FrameStack<SRBase> stack in this._dictAllCache.Values.ToArray())
             {
                 // prevent preload mode
                 if (stack.Count() == 0)
@@ -367,7 +367,7 @@ namespace OxGFrame.CoreFrame.SRFrame
             if (this._dictAllCache.Count == 0)
                 return;
 
-            foreach (FrameStack<SRBase> stack in this._dictAllCache.Values)
+            foreach (FrameStack<SRBase> stack in this._dictAllCache.Values.ToArray())
             {
                 // prevent preload mode
                 if (stack.Count() == 0)

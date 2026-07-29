@@ -98,46 +98,44 @@ namespace OxGFrame.AssetLoader.Bundle
 
         private async static UniTask<bool> _WebRequestPartialBytes(string url)
         {
-            var cts = new CancellationTokenSource();
-            cts.CancelAfterSlim(TimeSpan.FromSeconds(10));
-
-            UnityWebRequest request = UnityWebRequest.Get(url);
-            request.downloadHandler = new DownloadHandlerBuffer();
-
-            try
+            // 使用 using 統一釋放 CancellationTokenSource 與 UnityWebRequest，避免任何路徑發生洩漏
+            using (var cts = new CancellationTokenSource())
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
-                await request.SendWebRequest().WithCancellation(cts.Token);
+                cts.CancelAfterSlim(TimeSpan.FromSeconds(10));
+                request.downloadHandler = new DownloadHandlerBuffer();
 
-                if (request.result == UnityWebRequest.Result.DataProcessingError ||
-                    request.result == UnityWebRequest.Result.ProtocolError ||
-                    request.result == UnityWebRequest.Result.ConnectionError)
+                try
                 {
-                    Logging.PrintWarning<Logger>($"【Try Query Builtin-Package】Package doesn't exist (Built-in package not found). URL: {url}");
-                    request.Dispose();
+                    await request.SendWebRequest().WithCancellation(cts.Token);
+
+                    if (request.result == UnityWebRequest.Result.DataProcessingError ||
+                        request.result == UnityWebRequest.Result.ProtocolError ||
+                        request.result == UnityWebRequest.Result.ConnectionError)
+                    {
+                        Logging.PrintWarning<Logger>($"【Try Query Builtin-Package】Package doesn't exist (Built-in package not found). URL: {url}");
+                        return false;
+                    }
+
+                    if (request.downloadedBytes > 0 && request.responseCode < 400)
+                    {
+                        Logging.PrintInfo<Logger>($"【Try Query Builtin-Package】Package exists (Built-in package found). Code: {request.responseCode}, PartialBytes: {request.downloadedBytes}, URL: {url}");
+                        return true;
+                    }
+                }
+                catch (OperationCanceledException ex) when (ex.CancellationToken == cts.Token)
+                {
+                    Logging.PrintError<Logger>($"【Try Query Builtin-Package】Request timed out. URL: {url}");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    Logging.PrintError<Logger>($"【Try Query Builtin-Package】Request failed (Package doesn't exist) The package may not exist. URL: {url}, Exception: {ex}");
                     return false;
                 }
 
-                if (request.downloadedBytes > 0 && request.responseCode < 400)
-                {
-                    Logging.PrintInfo<Logger>($"【Try Query Builtin-Package】Package exists (Built-in package found). Code: {request.responseCode}, PartialBytes: {request.downloadedBytes}, URL: {url}");
-                    request.Dispose();
-                    return true;
-                }
-            }
-            catch (OperationCanceledException ex) when (ex.CancellationToken == cts.Token)
-            {
-                Logging.PrintError<Logger>($"【Try Query Builtin-Package】Request timed out. URL: {url}");
-                request.Dispose();
                 return false;
             }
-            catch (Exception ex)
-            {
-                Logging.PrintError<Logger>($"【Try Query Builtin-Package】Request failed (Package doesn't exist) The package may not exist. URL: {url}, Exception: {ex}");
-                request.Dispose();
-                return false;
-            }
-
-            return false;
         }
         #endregion
     }

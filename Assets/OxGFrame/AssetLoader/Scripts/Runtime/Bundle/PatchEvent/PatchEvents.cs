@@ -158,7 +158,8 @@ namespace OxGFrame.AssetLoader.PatchEvent
                 msg.totalDownloadSizeBytes = totalDownloadSizeBytes;
                 msg.currentDownloadSizeBytes = currentDownloadSizeBytes;
                 msg.downloadSpeedBytes = downloadSpeedBytes;
-                msg.progress = (msg.currentDownloadSizeBytes * 1f) / (msg.totalDownloadSizeBytes * 1f);
+                // 防止除以零產生 NaN (總大小為 0 時視為完成)
+                msg.progress = (msg.totalDownloadSizeBytes > 0) ? (msg.currentDownloadSizeBytes * 1f) / (msg.totalDownloadSizeBytes * 1f) : 1f;
                 UniEvent.SendMessage(msg);
             }
         }
