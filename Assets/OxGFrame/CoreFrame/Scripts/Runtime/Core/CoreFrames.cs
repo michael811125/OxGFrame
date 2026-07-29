@@ -279,62 +279,62 @@ namespace OxGFrame.CoreFrame
             #endregion
 
             #region Close
-            public static void Close(string assetName, bool disabledPreClose = false, bool forceDestroy = false)
+            public static void Close(string assetName, bool disableOnPreClose = false, bool forceDestroy = false)
             {
-                UIManager.GetInstance().Close(assetName, disabledPreClose, forceDestroy);
+                UIManager.GetInstance().Close(assetName, disableOnPreClose, forceDestroy);
             }
 
             /// <summary>
             /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
             /// </summary>
-            /// <param name="disabledPreClose"></param>
+            /// <param name="disableOnPreClose"></param>
             /// <param name="forceDestroy"></param>
             /// <param name="withoutAssetNames"></param>
-            public static void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAll(bool disableOnPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(DEFAULT_GROUP_ID, disabledPreClose, forceDestroy, false, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(DEFAULT_GROUP_ID, disableOnPreClose, forceDestroy, false, withoutAssetNames);
             }
 
-            public static void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAll(int groupId, bool disableOnPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, false, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(groupId, disableOnPreClose, forceDestroy, false, withoutAssetNames);
             }
 
-            public static void CloseAllForAllGroups(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAllForAllGroups(bool disableOnPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(DO_ALL_GROUPS, disabledPreClose, forceDestroy, false, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(DO_ALL_GROUPS, disableOnPreClose, forceDestroy, false, withoutAssetNames);
             }
 
             /// <summary>
             /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
             /// </summary>
-            /// <param name="disabledPreClose"></param>
+            /// <param name="disableOnPreClose"></param>
             /// <param name="forceDestroy"></param>
             /// <param name="withoutAssetNames"></param>
-            public static void CloseAllAndExcluded(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAllAndExcluded(bool disableOnPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(DEFAULT_GROUP_ID, disabledPreClose, forceDestroy, true, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(DEFAULT_GROUP_ID, disableOnPreClose, forceDestroy, true, withoutAssetNames);
             }
 
-            public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAllAndExcluded(int groupId, bool disableOnPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(groupId, disableOnPreClose, forceDestroy, true, withoutAssetNames);
             }
 
-            public static void CloseAllAndExcludedForAllGroups(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAllAndExcludedForAllGroups(bool disableOnPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                UIManager.GetInstance().CloseAll(DO_ALL_GROUPS, disabledPreClose, forceDestroy, true, withoutAssetNames);
+                UIManager.GetInstance().CloseAll(DO_ALL_GROUPS, disableOnPreClose, forceDestroy, true, withoutAssetNames);
             }
 
             /// <summary>
             /// Only allow close stack by stack
             /// </summary>
             /// <param name="canvasName"></param>
-            /// <param name="disabledPreClose"></param>
+            /// <param name="disableOnPreClose"></param>
             /// <param name="forceDestroy"></param>
-            public static void CloseStackByStack(string canvasName, bool disabledPreClose = false, bool forceDestroy = false)
+            public static void CloseStackByStack(string canvasName, bool disableOnPreClose = false, bool forceDestroy = false)
             {
-                UIManager.GetInstance().CloseStackByStack(DEFAULT_GROUP_ID, canvasName, disabledPreClose, forceDestroy);
+                UIManager.GetInstance().CloseStackByStack(DEFAULT_GROUP_ID, canvasName, disableOnPreClose, forceDestroy);
             }
 
             /// <summary>
@@ -342,11 +342,11 @@ namespace OxGFrame.CoreFrame
             /// </summary>
             /// <param name="groupId"></param>
             /// <param name="canvasName"></param>
-            /// <param name="disabledPreClose"></param>
+            /// <param name="disableOnPreClose"></param>
             /// <param name="forceDestroy"></param>
-            public static void CloseStackByStack(int groupId, string canvasName, bool disabledPreClose = false, bool forceDestroy = false)
+            public static void CloseStackByStack(int groupId, string canvasName, bool disableOnPreClose = false, bool forceDestroy = false)
             {
-                UIManager.GetInstance().CloseStackByStack(groupId, canvasName, disabledPreClose, forceDestroy);
+                UIManager.GetInstance().CloseStackByStack(groupId, canvasName, disableOnPreClose, forceDestroy);
             }
             #endregion
 
@@ -646,51 +646,51 @@ namespace OxGFrame.CoreFrame
             #endregion
 
             #region Close
-            public static void Close(string assetName, bool disabledPreClose = false, bool forceDestroy = false)
+            public static void Close(string assetName, bool disableOnPreClose = false, bool forceDestroy = false)
             {
-                SRManager.GetInstance().Close(assetName, disabledPreClose, forceDestroy);
+                SRManager.GetInstance().Close(assetName, disableOnPreClose, forceDestroy);
             }
 
             /// <summary>
             /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
             /// </summary>
-            /// <param name="disabledPreClose"></param>
+            /// <param name="disableOnPreClose"></param>
             /// <param name="forceDestroy"></param>
             /// <param name="withoutAssetNames"></param>
-            public static void CloseAll(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAll(bool disableOnPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(DEFAULT_GROUP_ID, disabledPreClose, forceDestroy, false, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(DEFAULT_GROUP_ID, disableOnPreClose, forceDestroy, false, withoutAssetNames);
             }
 
-            public static void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAll(int groupId, bool disableOnPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, false, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(groupId, disableOnPreClose, forceDestroy, false, withoutAssetNames);
             }
 
-            public static void CloseAllForAllGroups(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAllForAllGroups(bool disableOnPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(DO_ALL_GROUPS, disabledPreClose, forceDestroy, false, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(DO_ALL_GROUPS, disableOnPreClose, forceDestroy, false, withoutAssetNames);
             }
 
             /// <summary>
             /// Default group id is 0, but if you don't want to execute based on the group id and want to do all, can set the group id to -1
             /// </summary>
-            /// <param name="disabledPreClose"></param>
+            /// <param name="disableOnPreClose"></param>
             /// <param name="forceDestroy"></param>
             /// <param name="withoutAssetNames"></param>
-            public static void CloseAllAndExcluded(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAllAndExcluded(bool disableOnPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(DEFAULT_GROUP_ID, disabledPreClose, forceDestroy, true, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(DEFAULT_GROUP_ID, disableOnPreClose, forceDestroy, true, withoutAssetNames);
             }
 
-            public static void CloseAllAndExcluded(int groupId, bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAllAndExcluded(int groupId, bool disableOnPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(groupId, disabledPreClose, forceDestroy, true, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(groupId, disableOnPreClose, forceDestroy, true, withoutAssetNames);
             }
 
-            public static void CloseAllAndExcludedForAllGroups(bool disabledPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
+            public static void CloseAllAndExcludedForAllGroups(bool disableOnPreClose = false, bool forceDestroy = false, params string[] withoutAssetNames)
             {
-                SRManager.GetInstance().CloseAll(DO_ALL_GROUPS, disabledPreClose, forceDestroy, true, withoutAssetNames);
+                SRManager.GetInstance().CloseAll(DO_ALL_GROUPS, disableOnPreClose, forceDestroy, true, withoutAssetNames);
             }
             #endregion
 

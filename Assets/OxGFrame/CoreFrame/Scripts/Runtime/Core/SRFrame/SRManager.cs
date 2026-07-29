@@ -50,13 +50,13 @@ namespace OxGFrame.CoreFrame.SRFrame
             {
                 // 記錄標記
                 sourceMonoDriveFlag = sourceComponent.monoDrive;
-                // 動態加載時, 必須取消 monoDrive (避免被 macro 的 update 影響)
+                // 動態加載時，必須取消 monoDrive (避免被 macro 的 update 影響)
                 sourceComponent.monoDrive = false;
             }
 
             GameObject instGo = Instantiate(sourceComponent.gameObject, (parent != null) ? parent : this.transform);
 
-            // 激活檢查, 如果主體 Active 為 false 必須打開
+            // 激活檢查，如果主體 Active 為 false 必須打開
             if (!instGo.activeSelf)
                 instGo.SetActive(true);
 
@@ -72,17 +72,17 @@ namespace OxGFrame.CoreFrame.SRFrame
 
             // 設置 assetName 作為 key
             srBase.SetNames(assetName);
-            // Clone 取得 SRBase 組件後, 也初始 SRBase 相關設定
+            // Clone 取得 SRBase 組件後，也初始 SRBase 相關設定
             srBase.OnCreate();
-            // Clone 取得 SRBase 組件後, 也初始 SRBase 相關綁定組件設定
+            // Clone 取得 SRBase 組件後，也初始 SRBase 相關綁定組件設定
             srBase.InitFirst();
 
-            // >>> 需在 InitThis 之後, 以下設定開始生效 <<<
+            // >>> 需在 InitThis 之後，以下設定開始生效 <<<
 
             // 透過 NodeName 設置 Parent
             this.SetParent(srBase, parent);
 
-            // 最後設置完畢後, 關閉 GameObject 的 Active 為 false
+            // 最後設置完畢後，關閉 GameObject 的 Active 為 false
             srBase.gameObject.SetActive(false);
 
             // 還原來源設置
@@ -151,7 +151,7 @@ namespace OxGFrame.CoreFrame.SRFrame
 
             Logging.PrintInfo<Logger>($"Show SR: {assetName}");
 
-            // 執行完畢後, 關閉預顯加載 UI
+            // 執行完畢後，關閉預顯加載 UI
             this.CloseAwaiting(awaitingUIAssetName);
 
             return srBase;
@@ -163,10 +163,10 @@ namespace OxGFrame.CoreFrame.SRFrame
         /// 將 Close 方法封裝 (由接口 Close 與 CloseAll 統一調用)
         /// </summary>
         /// <param name="assetName"></param>
-        /// <param name="disabledPreClose"></param>
+        /// <param name="disableOnPreClose"></param>
         /// <param name="forceDestroy"></param>
         /// <param name="doAll"></param>
-        private void _Close(string assetName, bool disabledPreClose, bool forceDestroy, bool doAll)
+        private void _Close(string assetName, bool disableOnPreClose, bool forceDestroy, bool doAll)
         {
             if (string.IsNullOrEmpty(assetName) ||
                 !this.HasStackInAllCache(assetName))
@@ -178,7 +178,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 foreach (var srBase in stack.cache.ToArray())
                 {
                     srBase.SetHidden(false);
-                    this.ExitAndHide(srBase, disabledPreClose);
+                    this.ExitAndHide(srBase, disableOnPreClose);
 
                     if (forceDestroy)
                         this.Destroy(srBase, assetName);
@@ -195,7 +195,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                     return;
 
                 srBase.SetHidden(false);
-                this.ExitAndHide(srBase, disabledPreClose);
+                this.ExitAndHide(srBase, disableOnPreClose);
 
                 if (forceDestroy)
                     this.Destroy(srBase, assetName);
@@ -208,16 +208,16 @@ namespace OxGFrame.CoreFrame.SRFrame
             Logging.PrintInfo<Logger>($"Close SR: {assetName}");
         }
 
-        public override void Close(string assetName, bool disabledPreClose = false, bool forceDestroy = false)
+        public override void Close(string assetName, bool disableOnPreClose = false, bool forceDestroy = false)
         {
             // 如果沒有強制 Destroy + 不是顯示狀態則直接 return
             if (!forceDestroy &&
                 !this.CheckIsShowing(assetName))
                 return;
-            this._Close(assetName, disabledPreClose, forceDestroy, false);
+            this._Close(assetName, disableOnPreClose, forceDestroy, false);
         }
 
-        public override void CloseAll(int groupId, bool disabledPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames)
+        public override void CloseAll(int groupId, bool disableOnPreClose = false, bool forceDestroy = false, bool forceCloseExcluded = false, params string[] withoutAssetNames)
         {
             if (this._dictAllCache.Count == 0)
                 return;
@@ -260,12 +260,12 @@ namespace OxGFrame.CoreFrame.SRFrame
                     !this.CheckIsShowing(srBase))
                     continue;
 
-                // 如有啟用 CloseAll 需跳過開關, 則不列入關閉執行
+                // 如有啟用 CloseAll 需跳過開關，則不列入關閉執行
                 if (!forceCloseExcluded &&
                     srBase.srSettings.whenCloseAllToSkip)
                     continue;
 
-                this._Close(assetName, disabledPreClose, forceDestroy, true);
+                this._Close(assetName, disableOnPreClose, forceDestroy, true);
             }
         }
         #endregion
@@ -400,7 +400,7 @@ namespace OxGFrame.CoreFrame.SRFrame
                 if (checkWithout)
                     continue;
 
-                // 如有啟用 HideAll 需跳過開關, 則不列入關閉執行
+                // 如有啟用 HideAll 需跳過開關，則不列入關閉執行
                 if (!forceHideExcluded && srBase.srSettings.whenHideAllToSkip)
                     continue;
 
@@ -417,9 +417,9 @@ namespace OxGFrame.CoreFrame.SRFrame
             srBase.Display(obj);
         }
 
-        protected void ExitAndHide(SRBase srBase, bool disabledPreClose = false)
+        protected void ExitAndHide(SRBase srBase, bool disableOnPreClose = false)
         {
-            srBase.Hide(disabledPreClose);
+            srBase.Hide(disableOnPreClose);
         }
         #endregion
     }

@@ -251,7 +251,7 @@ store_link http://
 - OnCreate : 初始 Member Params (建構式概念)，另外如果採用拖曳式指定組件，也可以直接在此初始 (不過不建議，建議還是在 OnBind 執行)。
 - OnBind : 初始綁定組件與事件 (After Bind)。
 - OnPreShow : 當有異步處理或者附屬物件控制時，可以在此處理。例如 : TopUI 附屬連動開啟 LeftUI & RightUI，那麼就可以在 TopUI 中的 OnPreShow 方法實現 Show LeftUI & RightUI。
-  - **不建議在 OnPreClose 時進行相關 Show 的處理，如果有進行的話也沒關係，因為針對 CloseAll 的 API 有提供 disabledPreClose 的開關。**
+  - **不建議在 OnPreClose 時進行相關 Show 的處理，如果有進行的話也沒關係，因為針對 CloseAll 的 API 有提供 disableOnPreClose 的開關。**
 - OnShow : 調用 Show 時，此方法會被激活，並且可以透過帶入的 object 進行數據傳送。
 - OnClose : 調用 Close 時，此方法會被激活。
 - OnRelease : 當物件被 Destroy 時，此方法會被激活。

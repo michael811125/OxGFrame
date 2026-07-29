@@ -273,7 +273,7 @@ namespace OxGFrame.CoreFrame
         /// <returns></returns>
         internal async UniTask PreInit()
         {
-            // 等待異步加載, 進行異步加載動作
+            // 等待異步加載，進行異步加載動作
             await this.OnPreShow();
         }
 
@@ -307,7 +307,7 @@ namespace OxGFrame.CoreFrame
         /// <summary>
         /// 隱藏相關流程
         /// </summary>
-        internal abstract void Hide(bool disabledPreClose);
+        internal abstract void Hide(bool disableOnPreClose);
 
         /// <summary>
         /// 開啟時每次都會被呼叫
@@ -376,7 +376,7 @@ namespace OxGFrame.CoreFrame
         /// <summary>
         /// 調用關閉自己
         /// </summary>
-        protected abstract void CloseSelf(bool disabledPreClose, bool forceDestroy);
+        protected abstract void CloseSelf(bool disableOnPreClose, bool forceDestroy);
 
         /// <summary>
         /// 調用隱藏自己

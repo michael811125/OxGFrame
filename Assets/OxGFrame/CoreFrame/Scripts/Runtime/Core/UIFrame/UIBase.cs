@@ -22,7 +22,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         public bool reverseChanges = false;
 
         /// <summary>
-        /// 定義 UI 類型, 用於取決於要新增至 UIRoot 中哪個對應的節點
+        /// 定義 UI 類型，用於取決於要新增至 UIRoot 中哪個對應的節點
         /// </summary>
         [FormerlySerializedAs("uiSetting")]
         [Tooltip("UI Settings")]
@@ -132,12 +132,12 @@ namespace OxGFrame.CoreFrame.UIFrame
 #endif
 
         /// <summary>
-        /// 僅執行一次, 只交由 UIManager 加載資源時呼叫初始參數
+        /// 僅執行一次，只交由 UIManager 加載資源時呼叫初始參數
         /// </summary>
         public override void OnCreate() { }
 
         /// <summary>
-        /// 僅執行一次, 只交由 UIManager 加載資源時呼叫初始相關綁定組件
+        /// 僅執行一次，只交由 UIManager 加載資源時呼叫初始相關綁定組件
         /// </summary>
         internal sealed override void InitFirst()
         {
@@ -154,13 +154,13 @@ namespace OxGFrame.CoreFrame.UIFrame
         protected override void OnBind() { }
 
         /// <summary>
-        /// 每次開啟 UI 時都會被執行, 子類 override
+        /// 每次開啟 UI 時都會被執行，子類 override
         /// </summary>
         /// <param name="obj"></param>
         protected override void OnShow(object obj) { }
 
         /// <summary>
-        /// 接收封包後調用控制, 收到封包後的一個刷新點
+        /// 接收封包後調用控制，收到封包後的一個刷新點
         /// </summary>
         /// <param name="obj"></param>
         public override void OnReceiveAndRefresh(object obj = null) { }
@@ -205,7 +205,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         ///  UIManager 控制調用 Hide
         /// </summary>
-        internal sealed override void Hide(bool disabledPreClose = false)
+        internal sealed override void Hide(bool disableOnPreClose = false)
         {
             if (!this.gameObject.activeSelf)
                 return;
@@ -219,10 +219,10 @@ namespace OxGFrame.CoreFrame.UIFrame
                 // 非隱藏才正規處理
                 if (!this.isHidden)
                 {
-                    // 如果有啟用 Mask, 則需要回收 Mask
+                    // 如果有啟用 Mask，則需要回收 Mask
                     if (this.autoMask)
                         this._RemoveMask();
-                    if (!disabledPreClose)
+                    if (!disableOnPreClose)
                         this.OnPreClose();
                     this.OnClose();
                 }
@@ -278,9 +278,9 @@ namespace OxGFrame.CoreFrame.UIFrame
         /// <summary>
         /// 子類調用關閉自己
         /// </summary>
-        protected sealed override void CloseSelf(bool disabledPreClose, bool forceDestroy)
+        protected sealed override void CloseSelf(bool disableOnPreClose, bool forceDestroy)
         {
-            UIManager.GetInstance().Close(this.assetName, disabledPreClose, forceDestroy);
+            UIManager.GetInstance().Close(this.assetName, disableOnPreClose, forceDestroy);
         }
 
         /// <summary>
