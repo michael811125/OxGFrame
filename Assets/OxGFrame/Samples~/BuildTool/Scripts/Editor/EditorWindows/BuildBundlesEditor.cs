@@ -14,6 +14,7 @@ using static OxGFrame.AssetLoader.Bundle.AppConfig;
 #if YOOASSET_3
 // [YooAsset v3] 類名更名轉接
 using AssetBundleCollectorSettingData = YooAsset.Editor.BundleCollectorSettingData;
+using EBuildinFileCopyOption = YooAsset.Editor.EBundledCopyOption;
 using EditorTools = YooAsset.Editor.EditorAssemblyUtility;
 using IEncryptionServices = YooAsset.IBundleEncryptor;
 using IManifestProcessServices = YooAsset.IManifestEncryptor;
@@ -997,7 +998,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                     BuildTool.BuildBundles(string.IsNullOrEmpty(this._tempJsonInput) ? this.jsonInput : this._tempJsonInput, this.productName, this.appVersion, false, this.isClearOutputPath);
                     this._tempJsonInput = null;
                     EditorUtility.DisplayDialog("Build Message", "All bundles builded.", "OK");
+#if YOOASSET_2
                     string exportFolder = Path.Combine(EditorTools.GetProjectPath(), "ExportBundles", PatchSettings.settings.rootFolderName);
+#else
+                    // [YooAsset v3] GetProjectPath 移至 EditorPathUtility
+                    string exportFolder = Path.Combine(EditorPathUtility.GetProjectPath(), "ExportBundles", PatchSettings.settings.rootFolderName);
+#endif
                     if (this.autoReveal) EditorUtility.RevealInFinder(exportFolder);
                 }
                 catch (Exception ex)

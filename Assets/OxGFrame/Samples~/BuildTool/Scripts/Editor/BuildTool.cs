@@ -19,6 +19,7 @@ using AssetBundleBuilderHelper = YooAsset.Editor.BundleBuilderHelper;
 using AssetBundleCollectorSettingData = YooAsset.Editor.BundleCollectorSettingData;
 using BuiltinBuildParameters = YooAsset.Editor.LegacyBuildParameters;
 using BuiltinBuildPipeline = YooAsset.Editor.LegacyBuildPipeline;
+using DefaultPackRule = YooAsset.Editor.DefaultBundlePackRule;
 using EditorTools = YooAsset.Editor.EditorAssemblyUtility;
 using EBuildBundleType = YooAsset.EBundleType;
 using EBuildinFileCopyOption = YooAsset.Editor.EBundledCopyOption;
@@ -145,7 +146,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             // 輸出路徑
             string fullOutPath, destination = CommandParser.GetArgument(CommandParser.ArgName.destination);
             if (string.IsNullOrEmpty(destination))
+#if YOOASSET_2
                 fullOutPath = Path.Combine(EditorTools.GetProjectPath(), "Build");
+#else
+                // [YooAsset v3] GetProjectPath 移至 EditorPathUtility
+                fullOutPath = Path.Combine(EditorPathUtility.GetProjectPath(), "Build");
+#endif
             else
                 fullOutPath = Path.Combine(Application.dataPath, destination);
             // 去除擴展名以獲取文件夾路徑
@@ -268,12 +274,22 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                         {
                             bool enable = Convert.ToBoolean(Convert.ToInt32(enableAndroidAppBundle));
                             EditorUserBuildSettings.buildAppBundle = enable;
+#if UNITY_2023_1_OR_NEWER
                             PlayerSettings.Android.splitApplicationBinary = enable;
+#else
+                            // Unity 2023.1 起 useAPKExpansionFiles 移除並更名為 splitApplicationBinary
+                            PlayerSettings.Android.useAPKExpansionFiles = enable;
+#endif
                         }
                         else
                         {
                             EditorUserBuildSettings.buildAppBundle = false;
+#if UNITY_2023_1_OR_NEWER
                             PlayerSettings.Android.splitApplicationBinary = false;
+#else
+                            // Unity 2023.1 起 useAPKExpansionFiles 移除並更名為 splitApplicationBinary
+                            PlayerSettings.Android.useAPKExpansionFiles = false;
+#endif
                         }
                     }
                     break;
@@ -1038,7 +1054,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
 
                 // 輸出 CDN 文件夾
                 string sourceFolder = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
+#if YOOASSET_2
                 string exportFolder = Path.Combine(EditorTools.GetProjectPath(), "ExportBundles", PatchSettings.settings.rootFolderName);
+#else
+                // [YooAsset v3] GetProjectPath 移至 EditorPathUtility
+                string exportFolder = Path.Combine(EditorPathUtility.GetProjectPath(), "ExportBundles", PatchSettings.settings.rootFolderName);
+#endif
                 ExportBundles(sourceFolder, exportFolder, bundleMap, productName, buildVersion, isClearOutputPath);
             }
             #endregion
