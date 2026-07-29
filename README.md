@@ -37,8 +37,9 @@ https://github.com/michael811125/OxGFrame/assets/30960759/fd04f6e5-6338-400c-9f5
 
 ### YooAsset 版本
 
-- 同時相容 YooAsset 2.x (以 2.3.18 驗證) 與 YooAsset 3.0.5+，依安裝版本自動定義 `YOOASSET_2` / `YOOASSET_3` 切換代碼 (Assembly Version Defines)。
-- ※注意 : YooAsset 3.0.0 ~ 3.0.4 不支援；v2 與 v3 建置的 Bundle 互不相容，切換版本後需重新建置資源。
+- 同時相容 YooAsset 2.x 與 YooAsset 3.x，依安裝版本自動定義 `YOOASSET_2` / `YOOASSET_3` 切換代碼 (Assembly Version Defines)。
+- 已驗證版本：2.3.18、2.3.19、3.0.3-beta、3.0.4、3.0.5 (**建議使用 3.0.5+**)。
+- ※注意 : v2 與 v3 建置的 Bundle 互不相容，切換版本後需重新建置資源。
 
 ### 依賴的工具庫
 

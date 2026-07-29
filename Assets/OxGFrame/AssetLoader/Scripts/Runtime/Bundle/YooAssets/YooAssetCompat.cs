@@ -1,7 +1,7 @@
 ﻿using YooAsset;
 
 #if !YOOASSET_2 && !YOOASSET_3
-#error OxGFrame requires YooAsset 2.x (verified with 2.3.18) or YooAsset 3.0.5+ (3.0.0 ~ 3.0.4 are not supported). Please install a supported YooAsset version via UPM.
+#error OxGFrame requires YooAsset 2.x (verified with 2.3.18 ~ 2.3.19) or YooAsset 3.x (verified with 3.0.3-beta ~ 3.0.5, 3.0.5+ recommended). Please install a supported YooAsset version via UPM.
 #endif
 
 namespace OxGFrame.AssetLoader.Bundle

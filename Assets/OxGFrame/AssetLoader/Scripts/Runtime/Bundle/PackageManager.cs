@@ -582,9 +582,13 @@ namespace OxGFrame.AssetLoader.Bundle
                     {
                         #region Simulate Mode
                         // 依建置管線決定模擬建置的 Bundle 類型
-                        int buildBundleType = buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()) ?
-                            (int)EBundleType.VirtualRawBundle :
-                            (int)EBundleType.VirtualAssetBundle;
+                        int buildBundleType;
+                        if (buildMode.Equals(BundleConfig.BuildMode.RawFileBuildPipeline.ToString()))
+                            buildBundleType = (int)EBundleType.VirtualRawBundle;
+                        else if (buildMode.Equals(BundleConfig.BuildMode.ArchiveFileBuildPipeline.ToString()))
+                            buildBundleType = (int)EBundleType.VirtualArchiveBundle;
+                        else
+                            buildBundleType = (int)EBundleType.VirtualAssetBundle;
                         var buildResult = EditorSimulateBuildInvoker.Build(packageName, buildBundleType);
                         var packageRoot = buildResult.PackageRootDirectory;
                         var createParameters = new EditorSimulateModeOptions();

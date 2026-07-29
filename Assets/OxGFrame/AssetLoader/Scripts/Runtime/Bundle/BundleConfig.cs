@@ -35,7 +35,11 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             BuiltinBuildPipeline = 1,
             ScriptableBuildPipeline = 0,
-            RawFileBuildPipeline = 2
+            RawFileBuildPipeline = 2,
+#if YOOASSET_3
+            // [YooAsset v3] 歸檔文件建置管線 (v3 專用)
+            ArchiveFileBuildPipeline = 3
+#endif
         }
 
         /// <summary>
