@@ -40,7 +40,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <summary>
         /// 請求實例
         /// </summary>
-        internal Requester reuqester = new Requester();
+        internal Requester requester = new Requester();
 
         /// <summary>
         /// 最大請求 Timeout Seconds
@@ -91,10 +91,10 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 case CacheType.None:
                     break;
                 case CacheType.LRU:
-                    this.reuqester.SelfInitLRUCacheCapacityForAudio(this._cacheCapacity);
+                    this.requester.SelfInitLRUCacheCapacityForAudio(this._cacheCapacity);
                     break;
                 case CacheType.ARC:
-                    this.reuqester.SelfInitARCCacheCapacityForAudio(this._cacheCapacity);
+                    this.requester.SelfInitARCCacheCapacityForAudio(this._cacheCapacity);
                     break;
             }
         }
@@ -109,7 +109,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         #region 中控 Mixer
         /// <summary>
-        /// 依照 Mixer 的名稱與其中的 ExposedParam 合併成雙 key, 執行自動記錄
+        /// 依照 Mixer 的名稱與其中的 ExposedParam 合併成雙 key，執行自動記錄
         /// </summary>
         /// <param name="mixerName"></param>
         /// <param name="expParam"></param>
@@ -359,7 +359,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             Logging.PrintInfo<Logger>($"Stop Audio: {audBase?.mediaName}");
 
-            // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
+            // 確保音訊都設置完畢後才進行 Destroy，避免異步處理尚未完成，就被 Destroy 掉導致操作到已銷毀物件
             if (audBase.isPrepared)
             {
                 if (forceDestroy)

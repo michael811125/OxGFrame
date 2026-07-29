@@ -93,7 +93,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 case SourceType.StreamingAssets:
                     {
                         this._videoPlayer.source = VideoSource.Url;
-                        string url = System.IO.Path.Combine(Application.streamingAssetsPath, this.fullPathName);
+                        string url = this.GetVideoUrlFromStreamingAssets();
                         if (!this.TrySetUrl(url))
                         {
                             Logging.PrintError<Logger>($"Cannot find VideoClip: {this.mediaName}");
@@ -104,9 +104,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
                 case SourceType.Url:
                     {
                         this._videoPlayer.source = VideoSource.Url;
-                        string urlCfg = await this.urlSet.urlCfg.GetFileText();
-                        string urlSet = this.urlSet.getUrlPathFromCfg ? GetValueFromUrlCfg(urlCfg, VIDEO_URLSET) : string.Empty;
-                        string url = (!string.IsNullOrEmpty(urlSet)) ? $"{urlSet.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
+                        string url = await this.GetVideoUrlFromURL();
                         if (!this.TrySetUrl(url))
                         {
                             Logging.PrintError<Logger>($"Cannot find VideoClip: {this.mediaName}");
@@ -167,6 +165,31 @@ namespace OxGFrame.MediaFrame.VideoFrame
             Logging.Print<Logger>($"【Init Once】 Asset Name: {this.mediaName}, Video length: {this._mediaLength} (s).");
 
             return this.isPrepared;
+        }
+
+        /// <summary>
+        /// 取得 StreamingAssets 的影片播放 URL
+        /// </summary>
+        /// <returns></returns>
+        public string GetVideoUrlFromStreamingAssets()
+        {
+            return System.IO.Path.Combine(Application.streamingAssetsPath, this.fullPathName);
+        }
+
+        /// <summary>
+        /// 取得 UrlSet 的影片播放 URL
+        /// </summary>
+        /// <returns></returns>
+        public async UniTask<string> GetVideoUrlFromURL()
+        {
+            // 未使用 UrlCfg 時，直接使用完整 URL (無需請求 UrlCfg 文件)
+            if (!this.urlSet.getUrlPathFromCfg)
+                return this.urlSet.url.Trim();
+
+            string urlCfg = await this.urlSet.urlCfg.GetFileText();
+            string urlSet = GetValueFromUrlCfg(urlCfg, VIDEO_URLSET);
+            string url = (!string.IsNullOrEmpty(urlSet)) ? $"{urlSet.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
+            return url;
         }
 
         /// <summary>
@@ -271,7 +294,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
             this.ResetLength();
             this.ResetLoops();
 
-            // RenderTexture 需要額外釋放, 避免內存膨脹
+            // RenderTexture 需要額外釋放，避免內存膨脹
             if (this._targetRt != null)
                 this._ReleaseTargetRenderTexture();
 
@@ -341,7 +364,7 @@ namespace OxGFrame.MediaFrame.VideoFrame
 
         public sealed override void OnRelease()
         {
-            // RenderTexture 需要額外釋放, 避免內存膨脹
+            // RenderTexture 需要額外釋放，避免內存膨脹
             if (this._targetRt != null)
                 this._ReleaseTargetRenderTexture();
 
