@@ -126,7 +126,7 @@ namespace OxGFrame.CoreFrame.CPFrame
             if (cpBase == null)
                 return null;
 
-            // 激活檢查, 如果主體 Active 為 false 必須打開
+            // 激活檢查，如果主體 Active 為 false 必須打開
             bool active = instGo.activeSelf;
             if (!active)
             {
@@ -140,7 +140,7 @@ namespace OxGFrame.CoreFrame.CPFrame
                 cpBase.OnCreate();
                 cpBase.InitFirst();
 
-                // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+                // 預製體如果製作時，本身主體 Active 為 true 才調用 Display => OnShow
                 if (active)
                     cpBase.Display(null);
             }
@@ -196,7 +196,7 @@ namespace OxGFrame.CoreFrame.CPFrame
             if (cpBase == null)
                 return null;
 
-            // 激活檢查, 如果主體 Active 為 false 必須打開
+            // 激活檢查，如果主體 Active 為 false 必須打開
             bool active = instGo.activeSelf;
             if (!active)
             {
@@ -210,7 +210,7 @@ namespace OxGFrame.CoreFrame.CPFrame
                 cpBase.OnCreate();
                 cpBase.InitFirst();
 
-                // 預製體如果製作時, 本身主體 Active 為 true 才調用 Display => OnShow
+                // 預製體如果製作時，本身主體 Active 為 true 才調用 Display => OnShow
                 if (active)
                     cpBase.Display(null);
             }

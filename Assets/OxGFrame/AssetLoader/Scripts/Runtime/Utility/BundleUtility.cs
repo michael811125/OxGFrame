@@ -319,7 +319,7 @@ namespace OxGFrame.AssetLoader.Utility
             if (length > minLength && length <= maxLength)
             {
                 int count = length - combinedVersion.Length;
-                // 控制交替, true = 先從前面開始
+                // 控制交替，true = 先從前面開始
                 bool addToFront = true;
                 // 用於記錄前面補了幾次
                 int frontAdded = 0;

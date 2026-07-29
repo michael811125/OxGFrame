@@ -236,7 +236,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 切換 GameStage (下一幀數才切換, 不允許切換至同階段)
+        /// 切換 GameStage (下一幀數才切換，不允許切換至同階段)
         /// </summary>
         /// <typeparam name="U"></typeparam>
         public void ChangeGameStage<U>() where U : GSIBase
@@ -248,7 +248,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 切換 GameStage (下一幀數才切換, 不允許切換至同階段)
+        /// 切換 GameStage (下一幀數才切換，不允許切換至同階段)
         /// </summary>
         /// <param name="id"></param>
         public void ChangeGameStage(int id)
@@ -294,7 +294,7 @@ namespace OxGFrame.GSIFrame
         /// <param name="dt"></param>
         protected void UpdateGameStage(float dt = 0.0f)
         {
-            // 非立即的切換 GameStage 的情況下會去判斷, 如果 currentId 與 incomingId 不同的話, 就會進入切換
+            // 非立即的切換 GameStage 的情況下會去判斷，如果 currentId 與 incomingId 不同的話，就會進入切換
             if (this._currentId != this._incomingId)
             {
                 this.ReleaseGameStage();            // 釋放原本的 GameStage
@@ -314,7 +314,7 @@ namespace OxGFrame.GSIFrame
         /// </summary>
         protected void InitGameStage()
         {
-            // 透過當前的 GameStageId 取出 GameStage, 並且指定至當前 GameStage 中
+            // 透過當前的 GameStageId 取出 GameStage，並且指定至當前 GameStage 中
             this._currentGameStage = this.GetGameStage<GSIBase>(this._currentId);
             // 開始進行 GameStage 初始流程
             if (this._currentGameStage != null)

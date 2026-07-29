@@ -378,8 +378,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                 {
                     if (aotMetaAssemblyFiles != null)
                     {
-                        // 注意, 補充元數據是給 AOT dll 補充元數據, 而不是給熱更新 dll 補充元數據
-                        // 熱更新 dll 不缺元數據, 不需要補充, 如果調用 LoadMetadataForAOTAssembly 會返回錯誤
+                        // 注意，補充元數據是給 AOT dll 補充元數據，而不是給熱更新 dll 補充元數據
+                        // 熱更新 dll 不缺元數據，不需要補充，如果調用 LoadMetadataForAOTAssembly 會返回錯誤
                         HomologousImageMode mode = HomologousImageMode.SuperSet;
                         foreach (var dllName in aotMetaAssemblyFiles)
                         {
@@ -392,7 +392,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                                 // 切換至其他線程
                                 await UniTask.SwitchToThreadPool();
 #endif
-                                // 加載 assembly 對應的 dll, 會自動為它 hook, 一旦 aot 泛型函數的 native 函數不存在, 用解釋器版本代碼
+                                // 加載 assembly 對應的 dll，會自動為它 hook，一旦 aot 泛型函數的 native 函數不存在，用解釋器版本代碼
                                 LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(binary, mode);
 #if !UNITY_WEBGL
                                 // 切回至主線程

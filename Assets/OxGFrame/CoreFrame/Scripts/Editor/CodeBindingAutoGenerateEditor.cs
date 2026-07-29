@@ -150,11 +150,11 @@ namespace OxGFrame.CoreFrame.Editor
 
             string name = go.name;
 
-            // 檢查是否要結束綁定, 有檢查到【BIND_END】時, 則停止繼續搜尋綁定物件
+            // 檢查是否要結束綁定，有檢查到【BIND_END】時，則停止繼續搜尋綁定物件
             if (Binder.CheckNodeHasStopEnd(name))
                 return false;
 
-            // 這邊檢查有【BIND_PREFIX】時, 則進入判斷
+            // 這邊檢查有【BIND_PREFIX】時，則進入判斷
             if (Binder.CheckNodeHasPrefix(name))
             {
                 _CollectBindInfo(name);
@@ -430,7 +430,7 @@ namespace OxGFrame.CoreFrame.Editor
                 // 取得目標腳本的綁定區塊
                 string targetCode = _GetBindingSectionText(scriptPaths[i]);
 
-                // 沒找到綁定區塊, 直接略過
+                // 沒找到綁定區塊，直接略過
                 if (string.IsNullOrEmpty(targetCode))
                     continue;
 
@@ -438,7 +438,7 @@ namespace OxGFrame.CoreFrame.Editor
                 _builder = _RemoveDuplicateLines(_builder, targetCode);
             }
 
-            // > 1 表示有進行父類比對, 才需要調整格式
+            // > 1 表示有進行父類比對，才需要調整格式
             if (scriptPaths.Length > 1)
                 _builder = _AdjustMembersFormat(_builder);
 
@@ -622,7 +622,7 @@ namespace OxGFrame.CoreFrame.Editor
         }
 
         /// <summary>
-        /// 比對兩段程式碼, 移除來源中與目標重複的行
+        /// 比對兩段程式碼，移除來源中與目標重複的行
         /// </summary>
         /// <param name="sourceSection"></param>
         /// <param name="targetSection"></param>
@@ -669,7 +669,7 @@ namespace OxGFrame.CoreFrame.Editor
         }
 
         /// <summary>
-        /// 移除目標時, 並且移除不必要斷行
+        /// 移除目標時，並且移除不必要斷行
         /// </summary>
         /// <param name="input"></param>
         /// <param name="target"></param>
@@ -707,7 +707,7 @@ namespace OxGFrame.CoreFrame.Editor
             {
                 if (count == sourceMembers.Count - 1)
                 {
-                    // 檢查最後一個元素後是否有兩個換行, 如果沒有需要再 + 一個
+                    // 檢查最後一個元素後是否有兩個換行，如果沒有需要再 + 一個
                     if (sourceSection.IndexOf(v + "\n\n") == -1)
                     {
                         sourceSection = sourceSection.Replace(v, v + "\n");

@@ -137,7 +137,7 @@ namespace OxGFrame.AssetLoader.Bundle
         public static int DEFAULT_DOWNLOAD_WATCHDOG_TIMEOUT = 30;
 
         /// <summary>
-        /// 下載器看門狗監控超時時間 (監控時間範圍內, 沒接受到任何下載數據, 直接終止任務)
+        /// 下載器看門狗監控超時時間 (監控時間範圍內，沒接受到任何下載數據，直接終止任務)
         /// </summary>
         public static int downloadWatchdogTimeout = DEFAULT_DOWNLOAD_WATCHDOG_TIMEOUT;
         #endregion
@@ -387,7 +387,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetHostServerUrl(string packageName)
         {
-            // 獲取 Host Server 最新的 AppConfig 版本, 主要是為了獲取最新 AppVersion 路徑
+            // 獲取 Host Server 最新的 AppConfig 版本，主要是為了獲取最新 AppVersion 路徑
             var appConfig = await GetAppConfigFromHostServer();
             string host = await GetValueFromUrlCfg(PatchSettings.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
@@ -407,7 +407,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetFallbackHostServerUrl(string packageName)
         {
-            // 獲取 Host Server 最新的 AppConfig 版本, 主要是為了獲取最新 AppVersion 路徑
+            // 獲取 Host Server 最新的 AppConfig 版本，主要是為了獲取最新 AppVersion 路徑
             var appConfig = await GetAppConfigFromHostServer();
             string host = await GetValueFromUrlCfg(PatchSettings.BUNDLE_FALLBACK_IP);
             string productName = appConfig.PRODUCT_NAME;
@@ -546,7 +546,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetHostServerAppConfigPath()
         {
-            // 從 StreamingAssets 中先獲取 AppConfig, 是為了獲取對應的平台與產品名稱路徑
+            // 從 StreamingAssets 中先獲取 AppConfig，是為了獲取對應的平台與產品名稱路徑
             var appConfig = await GetAppConfigFromStreamingAssets();
             string host = await GetValueFromUrlCfg(PatchSettings.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
@@ -563,7 +563,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetHostServerPatchConfigPath()
         {
-            // 從 StreamingAssets 中先獲取 appConfig, 是為了獲取對應的平台與產品名稱路徑
+            // 從 StreamingAssets 中先獲取 appConfig，是為了獲取對應的平台與產品名稱路徑
             var appConfig = await GetAppConfigFromStreamingAssets();
             string host = await GetValueFromUrlCfg(PatchSettings.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
