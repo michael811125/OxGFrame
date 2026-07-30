@@ -17,6 +17,7 @@ namespace OxGFrame.CoreFrame.Editor
             public string bindName;
             public string variableName;
             public string componentName;
+            public string usingNamespace;
             public CodeBindingSettings.Pluralize pluralize;
             public int count;
 
@@ -62,6 +63,7 @@ namespace OxGFrame.CoreFrame.Editor
         private static FrameBase _script;
         private static Dictionary<string, BindInfo> _collectBindInfos = new Dictionary<string, BindInfo>();
         private static string _builder = string.Empty;
+        private static readonly HashSet<string> _requiredNamespaces = new HashSet<string>();
 
         #region MenuItem
         [MenuItem("GameObject/OxGFrame/Auto Generate Bind Codes (Shift+B) #b", false, 0)]
@@ -288,6 +290,7 @@ namespace OxGFrame.CoreFrame.Editor
         private static void _GenerateCodes()
         {
             #region 組件規則檢查
+            _requiredNamespaces.Clear();
             foreach (var bindInfo in _collectBindInfos)
             {
                 foreach (var tail in _settings.tailRules)
@@ -295,15 +298,23 @@ namespace OxGFrame.CoreFrame.Editor
                     if (bindInfo.Value.componentName == tail.Key)
                     {
                         bindInfo.Value.componentName = tail.Value.componentName;
+                        bindInfo.Value.usingNamespace = tail.Value.usingNamespace;
                         bindInfo.Value.pluralize = tail.Value.pluralize;
                         break;
                     }
                 }
+
+                // 收集本次綁定實際用到的 using namespace (規則未填寫 usingNamespace 表示由使用者自行引用)
+                if (bindInfo.Value.componentName == _DEF_COMPONENT_NAME)
+                    _requiredNamespaces.Add("UnityEngine");
+                else if (!string.IsNullOrEmpty(bindInfo.Value.usingNamespace))
+                    _requiredNamespaces.Add(bindInfo.Value.usingNamespace);
             }
             #endregion
 
             // Head of content ↓↓↓
-            string space = _settings.methodType == CodeBindingSettings.MethodType.Auto ? "    " : "";
+            // 生成內容一律使用相對縮排 (region 與成員為第 0 級), 待寫入腳本時再依插入點縮排自適應對齊
+            string space = string.Empty;
             _builder += _REPLACEMENT_PATTERN_HEAD + "\n";
 
             #region 變數宣告生成
@@ -461,6 +472,15 @@ namespace OxGFrame.CoreFrame.Editor
         /// <param name="content"></param>
         private static void _ShowClipboard(string content)
         {
+            // 附上所需的 using namespaces 提示 (由使用者自行貼至腳本頂部)
+            if (_requiredNamespaces.Count > 0)
+            {
+                string usingText = "// Please paste the following usings at the top of the script file.\n";
+                foreach (string ns in _requiredNamespaces.OrderBy(ns => ns, StringComparer.Ordinal))
+                    usingText += $"using {ns};\n";
+                content = usingText + "\n" + content;
+            }
+
             CodeBindingClipboardWindow.ShowWindow(content);
             Debug.Log("<color=#02ff8e>[Manual] Copy binding content to script!!!</color>");
         }
@@ -477,6 +497,22 @@ namespace OxGFrame.CoreFrame.Editor
             if (string.IsNullOrEmpty(scriptPath))
                 return;
 
+            // 偵測原始編碼是否含 BOM (寫回時保持一致)
+            bool hasBom = false;
+            try
+            {
+                using (var fs = System.IO.File.OpenRead(scriptPath))
+                {
+                    byte[] preamble = new byte[3];
+                    if (fs.Read(preamble, 0, 3) == 3)
+                        hasBom = preamble[0] == 0xEF && preamble[1] == 0xBB && preamble[2] == 0xBF;
+                }
+            }
+            catch
+            {
+                /* Nothing to do */
+            }
+
             // Read all script content
             string scriptContent = System.IO.File.ReadAllText(scriptPath);
 
@@ -487,15 +523,24 @@ namespace OxGFrame.CoreFrame.Editor
 
             if (match.Success)
             {
+                // 量測插入點所在行的縮排, 讓生成內容自適應 namespace 與巢狀層級
+                string baseIndent = _MeasureBaseIndent(scriptContent, match.Groups[0].Index);
+
+                // 將相對縮排的生成內容依插入點縮排逐行對齊
+                string indentedContent = _ApplyBaseIndent(content, baseIndent);
+
                 // Replace binding content into the script
                 scriptContent = scriptContent.Remove(match.Groups[0].Index, match.Groups[0].Length);
-                scriptContent = scriptContent.Insert(match.Groups[0].Index, content);
+                scriptContent = scriptContent.Insert(match.Groups[0].Index, indentedContent);
+
+                // 插入缺少的 using namespaces
+                scriptContent = _InsertUsingNamespaces(scriptContent, _requiredNamespaces);
 
                 // To Unix style "\n"
                 scriptContent = scriptContent.Replace("\r\n", "\n").Replace("\r", "\n");
 
                 // Write file
-                System.IO.File.WriteAllText(scriptPath, scriptContent);
+                System.IO.File.WriteAllText(scriptPath, scriptContent, new System.Text.UTF8Encoding(hasBom));
 
                 AssetDatabase.Refresh();
                 EditorUtility.SetDirty(_script);
@@ -508,6 +553,87 @@ namespace OxGFrame.CoreFrame.Editor
                 Debug.LogWarning($"The pattern is ↓↓↓ (Copy the following into the script) ↓↓↓", _script);
                 Debug.LogWarning($"{_REPLACEMENT_PATTERN_HEAD}\n{_REPLACEMENT_PATTERN_END}");
             }
+        }
+
+        /// <summary>
+        /// 量測插入點所在行的縮排字串 (取行首至插入點之間的空白)
+        /// </summary>
+        /// <param name="scriptContent"></param>
+        /// <param name="insertIndex"></param>
+        /// <returns></returns>
+        private static string _MeasureBaseIndent(string scriptContent, int insertIndex)
+        {
+            int lineStart = scriptContent.LastIndexOf('\n', Math.Max(0, insertIndex - 1)) + 1;
+            string leading = scriptContent.Substring(lineStart, insertIndex - lineStart);
+
+            // 僅接受純空白的前綴, 避免同行前方有其他代碼造成錯誤縮排
+            foreach (char c in leading)
+            {
+                if (c != ' ' && c != '\t')
+                    return string.Empty;
+            }
+
+            return leading;
+        }
+
+        /// <summary>
+        /// 將相對縮排的生成內容逐行加上基準縮排 (首行由原插入點自帶縮排, 空行不做處理)
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="baseIndent"></param>
+        /// <returns></returns>
+        private static string _ApplyBaseIndent(string content, string baseIndent)
+        {
+            if (string.IsNullOrEmpty(baseIndent))
+                return content;
+
+            string[] lines = content.Split('\n');
+            for (int i = 1; i < lines.Length; i++)
+            {
+                if (lines[i].Length > 0)
+                    lines[i] = baseIndent + lines[i];
+            }
+
+            return string.Join("\n", lines);
+        }
+
+        /// <summary>
+        /// 將缺少的 using namespaces 插入至腳本頂部的 using 區塊 (已存在的不重複插入)
+        /// </summary>
+        /// <param name="scriptContent"></param>
+        /// <param name="requiredNamespaces"></param>
+        /// <returns></returns>
+        private static string _InsertUsingNamespaces(string scriptContent, HashSet<string> requiredNamespaces)
+        {
+            if (requiredNamespaces == null ||
+                requiredNamespaces.Count == 0)
+                return scriptContent;
+
+            // 收集腳本中已存在的 using (寬鬆掃描全檔, 排除 alias 與 static 形式)
+            HashSet<string> existings = new HashSet<string>();
+            foreach (Match m in Regex.Matches(scriptContent, @"^[ \t]*using\s+(?!static\s)([\w.]+)\s*;", RegexOptions.Multiline))
+                existings.Add(m.Groups[1].Value);
+
+            // 過濾出缺少的 using 並依字母排序 (讓插入結果穩定)
+            List<string> missings = requiredNamespaces.Where(ns => !existings.Contains(ns)).OrderBy(ns => ns, StringComparer.Ordinal).ToList();
+            if (missings.Count == 0)
+                return scriptContent;
+
+            // 尋找檔案頂部最後一個 using 行的結尾作為插入點 (略過 namespace 或型別宣告之後的 using)
+            int insertIndex = 0;
+            foreach (Match m in Regex.Matches(scriptContent, @"^[ \t]*using\s+[^;\r\n]+;[ \t]*\r?\n", RegexOptions.Multiline))
+            {
+                string head = scriptContent.Substring(0, m.Index);
+                if (Regex.IsMatch(head, @"^\s*(namespace|class|struct|interface|enum)\s", RegexOptions.Multiline))
+                    break;
+                insertIndex = m.Index + m.Length;
+            }
+
+            string insertText = string.Empty;
+            foreach (string ns in missings)
+                insertText += $"using {ns};\n";
+
+            return scriptContent.Insert(insertIndex, insertText);
         }
 
         /// <summary>

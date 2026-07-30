@@ -34,11 +34,21 @@ namespace OxGFrame.CoreFrame.Editor
         public struct ComponentInfo
         {
             public string componentName;
+            [Tooltip("Using namespace of the component. If empty, no using will be inserted (add usings manually by yourself).\n\nex: UnityEngine.UI")]
+            public string usingNamespace;
             public Pluralize pluralize;
 
             public ComponentInfo(string componentName, Pluralize pluralize)
             {
                 this.componentName = componentName;
+                this.usingNamespace = string.Empty;
+                this.pluralize = pluralize;
+            }
+
+            public ComponentInfo(string componentName, string usingNamespace, Pluralize pluralize)
+            {
+                this.componentName = componentName;
+                this.usingNamespace = usingNamespace;
                 this.pluralize = pluralize;
             }
         }
@@ -80,33 +90,42 @@ namespace OxGFrame.CoreFrame.Editor
         public IndicateModifier indicateModifier = IndicateModifier.This;
 
         [Separator("Tail Binding Settings")]
-        public GenericDictionary<string, ComponentInfo> tailRules = new GenericDictionary<string, ComponentInfo>()
+        public GenericDictionary<string, ComponentInfo> tailRules = _GetDefaultTailRules();
+
+        /// <summary>
+        /// 取得預設的 Tail Rules
+        /// </summary>
+        /// <returns></returns>
+        private static GenericDictionary<string, ComponentInfo> _GetDefaultTailRules()
         {
-            // Other
-            { "Trans", new ComponentInfo("Transform", new Pluralize(0, "es")) },
-            { "RectTrans", new ComponentInfo("RectTransform", new Pluralize(0, "es")) },
+            return new GenericDictionary<string, ComponentInfo>()
+            {
+                // Other
+                { "Trans", new ComponentInfo("Transform", "UnityEngine", new Pluralize(0, "es")) },
+                { "RectTrans", new ComponentInfo("RectTransform", "UnityEngine", new Pluralize(0, "es")) },
 
-            // Legacy
-            { "Img", new ComponentInfo("Image", new Pluralize(0, "s")) },
-            { "RawImg", new ComponentInfo("RawImage", new Pluralize(0, "s")) },
-            { "Txt", new ComponentInfo("Text", new Pluralize(0, "s")) },
-            { "Btn", new ComponentInfo("Button", new Pluralize(0, "s")) },
-            { "Tgl", new ComponentInfo("Toggle", new Pluralize(0, "s")) },
-            { "Sld", new ComponentInfo("Slider", new Pluralize(0, "s")) },
-            { "ScrBar", new ComponentInfo("Scrollbar", new Pluralize(0, "s")) },
-            { "ScrView", new ComponentInfo("ScrollRect", new Pluralize(0, "s")) },
-            { "Drd", new ComponentInfo("Dropdown", new Pluralize(0, "s")) },
-            { "Field", new ComponentInfo("InputField", new Pluralize(0, "s")) },
+                // Legacy
+                { "Img", new ComponentInfo("Image", "UnityEngine.UI", new Pluralize(0, "s")) },
+                { "RawImg", new ComponentInfo("RawImage", "UnityEngine.UI", new Pluralize(0, "s")) },
+                { "Txt", new ComponentInfo("Text", "UnityEngine.UI", new Pluralize(0, "s")) },
+                { "Btn", new ComponentInfo("Button", "UnityEngine.UI", new Pluralize(0, "s")) },
+                { "Tgl", new ComponentInfo("Toggle", "UnityEngine.UI", new Pluralize(0, "s")) },
+                { "Sld", new ComponentInfo("Slider", "UnityEngine.UI", new Pluralize(0, "s")) },
+                { "ScrBar", new ComponentInfo("Scrollbar", "UnityEngine.UI", new Pluralize(0, "s")) },
+                { "ScrView", new ComponentInfo("ScrollRect", "UnityEngine.UI", new Pluralize(0, "s")) },
+                { "Drd", new ComponentInfo("Dropdown", "UnityEngine.UI", new Pluralize(0, "s")) },
+                { "Field", new ComponentInfo("InputField", "UnityEngine.UI", new Pluralize(0, "s")) },
 
-            // TMP
-            { "TmpTxt", new ComponentInfo("TMP_Text", new Pluralize(0, "s")) },
-            { "TmpDrd", new ComponentInfo("TMP_Dropdown", new Pluralize(0, "s")) },
-            { "TmpField", new ComponentInfo("TMP_InputField", new Pluralize(0, "s")) },
+                // TMP
+                { "TmpTxt", new ComponentInfo("TMP_Text", "TMPro", new Pluralize(0, "s")) },
+                { "TmpDrd", new ComponentInfo("TMP_Dropdown", "TMPro", new Pluralize(0, "s")) },
+                { "TmpField", new ComponentInfo("TMP_InputField", "TMPro", new Pluralize(0, "s")) },
 
-            // Custom
-            { "BtnPlus", new ComponentInfo("ButtonPlus", new Pluralize(0, "es"))},
-            { "NodePool", new ComponentInfo("NodePool", new Pluralize(0, "s"))}
-        };
+                // Custom
+                { "BtnPlus", new ComponentInfo("ButtonPlus", "OxGKit.ButtonSystem", new Pluralize(0, "es"))},
+                { "NodePool", new ComponentInfo("NodePool", "OxGKit.PoolSystem", new Pluralize(0, "s"))}
+            };
+        }
 
         public string GetIndicateModifier()
         {
@@ -180,6 +199,57 @@ namespace OxGFrame.CoreFrame.Editor
             this.tailRules.Sort();
             EditorUtility.SetDirty(this);
             AssetDatabase.SaveAssets();
+        }
+
+        [Space(2.5f)]
+        [ButtonClicker(nameof(TryFindAllUsingNamespaces), "Try Find All Using Namespaces", "#ffb824")]
+        public bool tryFindAllUsingNamespaces;
+
+        [ContextMenu("Try Find All Using Namespaces", false, 1)]
+        public void TryFindAllUsingNamespaces()
+        {
+            int autoFilled = 0;
+            int pendings = 0;
+            int notFounds = 0;
+
+            // 先快照 keys, 避免迭代中修改集合
+            var keys = this.tailRules.Keys.ToList();
+            foreach (string key in keys)
+            {
+                var rule = this.tailRules[key];
+
+                // 已填寫的不做任何變更
+                if (!string.IsNullOrEmpty(rule.usingNamespace))
+                    continue;
+
+                var candidates = UsingNamespaceFinder.FindCandidates(rule.componentName);
+                if (candidates.Count == 1)
+                {
+                    rule.usingNamespace = candidates[0].ns;
+                    this.tailRules[key] = rule;
+                    autoFilled++;
+                    Debug.Log($"<color=#00ffd1>[{nameof(CodeBindingSettings)}] Auto filled using namespace => {key} ({rule.componentName}): {UsingNamespaceFinder.GetDisplayName(candidates[0].ns)} ({candidates[0].assemblyName})</color>");
+                }
+                else if (candidates.Count > 1)
+                {
+                    pendings++;
+                    string list = string.Join(", ", candidates.Select(candidate => UsingNamespaceFinder.GetDisplayName(candidate.ns)));
+                    Debug.LogWarning($"[{nameof(CodeBindingSettings)}] Multiple candidates found for {key} ({rule.componentName}): {list}. Please use the [Find] button on the rule to choose one.");
+                }
+                else
+                {
+                    notFounds++;
+                    Debug.LogWarning($"[{nameof(CodeBindingSettings)}] Cannot find any type named: {rule.componentName} ({key}). Please check the component name or install the related package.");
+                }
+            }
+
+            if (autoFilled > 0)
+            {
+                EditorUtility.SetDirty(this);
+                AssetDatabase.SaveAssets();
+            }
+
+            Debug.Log($"<color=#00ffd1>[{nameof(CodeBindingSettings)}] Try find completed. Auto filled: {autoFilled}, Pending manual selection: {pendings}, Not found: {notFounds}.</color>");
         }
         #endregion
     }
