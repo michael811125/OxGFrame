@@ -1024,6 +1024,45 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 }
                             }
                             break;
+
+#if YOOASSET_3
+                        // [YooAsset v3] ArchiveFileBuildPipeline
+                        case "AFBP":
+                            {
+                                // 構建參數
+                                ArchiveFileBuildParameters buildParameters = new ArchiveFileBuildParameters();
+                                buildParameters.BuildOutputRoot = buildoutputRoot;
+                                buildParameters.BundledFileRoot = streamingAssetsRoot;
+                                buildParameters.BuildPipeline = EBuildPipeline.ArchiveFileBuildPipeline.ToString();
+                                buildParameters.BuildBundleType = (int)EBundleType.ArchiveBundle;
+                                buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
+                                buildParameters.PackageName = packageName;
+                                buildParameters.PackageVersion = GetDefaultPackageVersion();
+                                buildParameters.VerifyBuildingResult = true;
+                                buildParameters.EnableSharePackRule = true;
+                                buildParameters.BundleEncryptor = bundleEncryptionServices;
+                                buildParameters.ManifestEncryptor = manifestEncryptionServices;
+                                buildParameters.ManifestDecryptor = manifestDecryptionServices;
+                                buildParameters.FileNameStyle = bundleNameStyle;
+                                buildParameters.BundledCopyOption = bundleCopyOption;
+                                buildParameters.BundledCopyParams = string.Empty;
+                                buildParameters.ClearBuildCacheFiles = clearBuildCacheFiles ?? false;
+                                buildParameters.UseAssetDependencyDB = useAssetDependencyDB ?? true;
+
+                                // 執行構建
+                                ArchiveFileBuildPipeline pipeline = new ArchiveFileBuildPipeline();
+                                var buildResult = pipeline.Run(buildParameters, true);
+                                if (buildResult.Success)
+                                {
+                                    successfulResultsBuilder.Append($"Build successful: {buildResult.OutputPackageDirectory}\n");
+                                }
+                                else
+                                {
+                                    failedResultsBuilder.Append($"Build failed: {buildResult.ErrorInfo}\n");
+                                }
+                            }
+                            break;
+#endif
                     }
                 }
             }
