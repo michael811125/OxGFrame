@@ -6,6 +6,7 @@
 	"unity": "2021.3",
 	"license": "MIT",
 	"dependencies": {
+		"com.michaelo.oxgframe.common": "https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/Common",
 		"com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
 		"com.michaelo.oxgkit.loggingsystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/LoggingSystem/Scripts",
 		"com.michaelo.oxgkit.timesystem": "https://github.com/michael811125/OxGKit.git?path=Assets/OxGKit/TimeSystem/Scripts"
