@@ -1,0 +1,31 @@
+# Line endings: stored normalized (LF) in the repository, checked out as CRLF
+.gitattributes text eol=crlf
+*.cs          text eol=crlf
+*.meta        text eol=crlf
+*.md          text eol=crlf
+*.asmdef      text eol=crlf
+*.json        text eol=crlf
+*.txt         text eol=crlf
+*.xml         text eol=crlf
+*.shader      text eol=crlf
+
+# Binary (never touch line endings)
+*.bytes       binary
+*.dll         binary
+*.so          binary
+*.a           binary
+*.png         binary
+*.jpg         binary
+*.jpeg        binary
+*.gif         binary
+*.psd         binary
+*.tga         binary
+*.mp3         binary
+*.mp4         binary
+*.wav         binary
+*.ogg         binary
+*.ttf         binary
+*.otf         binary
+*.fbx         binary
+*.unitypackage binary
+*.zip         binary
