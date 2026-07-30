@@ -29,5 +29,5 @@ OxGFrame uses several OxGKit utility APIs internally (LoggingSystem, SaverSystem
 ## Notes
 
 - The skill is written in English so it works well as agent context in any locale; the agent should reply in the user's language.
-- API signatures were verified against OxGFrame v3.6.1+. When in doubt, the skill instructs the agent to re-verify against the installed package source — newer OxGFrame versions may differ.
+- API signatures were verified against OxGFrame v3.7.0+. When in doubt, the skill instructs the agent to re-verify against the installed package source — newer OxGFrame versions may differ.
 - `references/source-map.md` lists the exact source files and search commands used for verification.

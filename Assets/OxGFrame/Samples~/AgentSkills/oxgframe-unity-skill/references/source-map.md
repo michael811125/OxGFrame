@@ -1,6 +1,6 @@
 # OxGFrame Source Map
 
-Use this map to locate and re-verify APIs before applying this skill to a project. Written against OxGFrame v3.6.1+ (Unity 2021.3 – 6.x).
+Use this map to locate and re-verify APIs before applying this skill to a project. Written against OxGFrame v3.7.0+ (Unity 2021.3 – 6.x).
 
 ## Official sources
 
@@ -46,6 +46,7 @@ rg -l "static class AssetLoaders" --type cs
 - `Assets/Create/OxGFrame/Create Settings/...` — `CodeBindingSettings`, `PatchSettings`, `HotfixSettings` assets.
 - `OxGFrame/Hotfixer/Hotfix Dll Config Generator` — generates `hotfixdllconfig.conf` into StreamingAssets.
 - `OxGFrame/AssetLoader/...` — patch/bundle tooling windows.
+- `OxGFrame/Others/API Updater (Scan and update deprecated APIs)` — scans the project for deprecated OxGFrame APIs and applies reviewed renames; ships in the `Common` module (`Common/Scripts/Editor/APIUpdater`, editor-only, auto-included as a dependency of every module).
 
 ## Verification commands
 

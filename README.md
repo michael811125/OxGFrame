@@ -168,6 +168,12 @@ https://github.com/michael811125/OxGFrame/assets/30960759/8e4f63e9-b955-4f91-8ac
 - EventCenter : 集中式 Event 整合模塊，自定義每個 Event 格式進行派送。
 - APICenter : 集中式 Http API 整合模塊，使用 Acax 請求 (Http.Acax、HttpNativeClient.Acax、HttpNativeWebRequest.Acax)。
 
+### Common
+
+框架共用模塊，承載框架層級的編輯器工具，所有模組皆依賴此模塊 (單獨安裝任一模組也會自動帶入)。
+
+- API Updater : 框架 API 對齊校驗工具 (選單 OxGFrame/Others/API Updater)，升級框架版本後掃描專案中的過時 API，型別感知比對且多載歧義自動決議，逐項預覽確認後才套用更新。
+
 ---
 
 ## 使用 OxGFrame 實現的 Demo 小遊戲
