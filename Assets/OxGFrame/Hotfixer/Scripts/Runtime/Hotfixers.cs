@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace OxGFrame.Hotfixer
 {
+    /// <summary>
+    /// Static facade for the hotfix flow managed by the HotfixManager
+    /// </summary>
     public static class Hotfixers
     {
         /// <summary>
@@ -64,7 +67,6 @@ namespace OxGFrame.Hotfixer
         /// </summary>
         /// <param name="packageName"></param>
         /// <param name="errorAction"></param>
-        /// <returns></returns>
         public static void CheckHotfix(string packageName, Action errorAction = null)
         {
             _CheckHotfixFromConfig(errorAction, (aotDlls, hotfixDlls) => HotfixManager.GetInstance().CheckHotfix(packageName, aotDlls, hotfixDlls));
@@ -76,14 +78,13 @@ namespace OxGFrame.Hotfixer
         /// </summary>
         /// <param name="packageInfoWithBuild"></param>
         /// <param name="errorAction"></param>
-        /// <returns></returns>
         public static void CheckHotfix(PackageInfoWithBuild packageInfoWithBuild, Action errorAction = null)
         {
             _CheckHotfixFromConfig(errorAction, (aotDlls, hotfixDlls) => HotfixManager.GetInstance().CheckHotfix(packageInfoWithBuild, aotDlls, hotfixDlls));
         }
 
         /// <summary>
-        /// 從 StreamingAssets 讀取 HotfixManifest 配置後執行 CheckHotfix
+        /// Read the HotfixManifest config from StreamingAssets and then execute CheckHotfix
         /// </summary>
         /// <param name="errorAction"></param>
         /// <param name="checkAction"></param>

@@ -4,30 +4,38 @@ using System.Collections.Generic;
 
 namespace OxGFrame.GSIFrame
 {
+    /// <summary>
+    /// Generic singleton manager that registers, switches, and drives game stages
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public abstract class GSIManagerBase<T> where T : GSIManagerBase<T>, new()
     {
         /// <summary>
-        /// GameStage 緩存
+        /// Cache of registered game stages, keyed by game stage id
         /// </summary>
         protected Dictionary<int, GSIBase> _dictGameStage = null;
 
         /// <summary>
-        /// 用於記錄 Incoming GameStageId (新的 GameStageId)
+        /// Record the incoming game stage id (the next game stage id to switch to)
         /// </summary>
         protected int _incomingId = 0;
 
         /// <summary>
-        /// 記錄當前的 GameStageId
+        /// Record the current game stage id
         /// </summary>
         protected int _currentId { get; private set; }
 
         /// <summary>
-        /// 當前 GameStage
+        /// Current game stage instance
         /// </summary>
         protected GSIBase _currentGameStage { get; private set; }
 
         private static readonly object _locker = new object();
         private static T _instance = null;
+        /// <summary>
+        /// Get the singleton instance (created lazily with thread-safe double-checked locking)
+        /// </summary>
+        /// <returns></returns>
         protected static T GetInstance()
         {
             if (_instance == null)
@@ -42,46 +50,89 @@ namespace OxGFrame.GSIFrame
         }
 
         #region Default API
+        /// <summary>
+        /// Get the current game stage id
+        /// </summary>
+        /// <returns></returns>
         public static int GetCurrentId()
         {
             return GetInstance()._currentId;
         }
 
+        /// <summary>
+        /// Get a registered game stage by its type (uses the type hash code as id)
+        /// </summary>
+        /// <typeparam name="U"></typeparam>
+        /// <returns></returns>
         public static U GetStage<U>() where U : GSIBase
         {
             return GetInstance().GetGameStage<U>();
         }
 
+        /// <summary>
+        /// Get a registered game stage by its id
+        /// </summary>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static U GetStage<U>(int id) where U : GSIBase
         {
             return GetInstance().GetGameStage<U>(id);
         }
 
+        /// <summary>
+        /// Register a new game stage of type U (uses the type hash code as id)
+        /// </summary>
+        /// <typeparam name="U"></typeparam>
         public static void AddStage<U>() where U : GSIBase, new()
         {
             GetInstance().AddGameStage<U>();
         }
 
+        /// <summary>
+        /// Register a new game stage of type U with a specified id
+        /// </summary>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="id"></param>
         public static void AddStage<U>(int id) where U : GSIBase, new()
         {
             GetInstance().AddGameStage<U>(id);
         }
 
+        /// <summary>
+        /// Register a game stage instance with a specified id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="gameStage"></param>
         public static void AddStage(int id, GSIBase gameStage)
         {
             GetInstance().AddGameStage(id, gameStage);
         }
 
+        /// <summary>
+        /// Remove a registered game stage by its type (uses the type hash code as id)
+        /// </summary>
+        /// <typeparam name="U"></typeparam>
         public static void DeleteStage<U>() where U : GSIBase
         {
             GetInstance().DeleteGameStage<U>();
         }
 
+        /// <summary>
+        /// Remove a registered game stage by its id
+        /// </summary>
+        /// <param name="id"></param>
         public static void DeleteStage(int id)
         {
             GetInstance().DeleteGameStage(id);
         }
 
+        /// <summary>
+        /// Switch to the game stage of type U on the next update
+        /// When force is true, switches immediately (allows re-entering the same stage)
+        /// </summary>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="force"></param>
         public static void ChangeStage<U>(bool force = false) where U : GSIBase
         {
             if (force)
@@ -90,6 +141,12 @@ namespace OxGFrame.GSIFrame
                 GetInstance().ChangeGameStage<U>();
         }
 
+        /// <summary>
+        /// Switch to the game stage with the specified id on the next update
+        /// When force is true, switches immediately (allows re-entering the same stage)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="force"></param>
         public static void ChangeStage(int id, bool force = false)
         {
             if (force)
@@ -99,7 +156,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// Call by main MonoBehaviour (Start)
+        /// Drive the manager start flow (call from the main MonoBehaviour Start)
         /// </summary>
         public static void DriveStart()
         {
@@ -107,7 +164,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// Call by main MonoBehaviour (Update)
+        /// Drive the manager update flow (call from the main MonoBehaviour Update)
         /// </summary>
         /// <param name="dt"></param>
         public static void DriveUpdate(float dt = 0.0f)
@@ -115,12 +172,19 @@ namespace OxGFrame.GSIFrame
             GetInstance().OnUpdate(dt);
         }
 
+        /// <summary>
+        /// Obsolete. Use DriveStart instead.
+        /// </summary>
         [Obsolete("Use DriveStart instead.")]
         public static void Start()
         {
             GetInstance().OnStart();
         }
 
+        /// <summary>
+        /// Obsolete. Use DriveUpdate instead.
+        /// </summary>
+        /// <param name="dt"></param>
         [Obsolete("Use DriveUpdate instead.")]
         public static void Update(float dt = 0.0f)
         {
@@ -128,6 +192,9 @@ namespace OxGFrame.GSIFrame
         }
         #endregion
 
+        /// <summary>
+        /// Initialize the game stage cache and reset the current stage state
+        /// </summary>
         public GSIManagerBase()
         {
             this._dictGameStage = new Dictionary<int, GSIBase>();
@@ -136,7 +203,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 取得當前 GameStage Id
+        /// Get the current game stage id
         /// </summary>
         /// <returns></returns>
         public int GetCurrentGameStageId()
@@ -145,7 +212,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 取得 GameStage
+        /// Get a registered game stage by its type (uses the type hash code as id)
         /// </summary>
         /// <typeparam name="U"></typeparam>
         /// <returns></returns>
@@ -158,7 +225,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 取得 GameStage
+        /// Get a registered game stage by its id (returns null if not found)
         /// </summary>
         /// <typeparam name="U"></typeparam>
         /// <param name="id"></param>
@@ -171,7 +238,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 註冊 GameStage
+        /// Register a new game stage of type U (uses the type hash code as id)
         /// </summary>
         /// <typeparam name="U"></typeparam>
         public void AddGameStage<U>() where U : GSIBase, new()
@@ -185,7 +252,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 註冊 GameStage
+        /// Register a new game stage of type U with a specified id
         /// </summary>
         /// <typeparam name="U"></typeparam>
         /// <param name="id"></param>
@@ -197,7 +264,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 註冊 GameStage
+        /// Register a game stage instance with a specified id (null instances and duplicate ids are rejected)
         /// </summary>
         /// <param name="id"></param>
         /// <param name="gameStage"></param>
@@ -221,7 +288,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 刪除 GameStage
+        /// Remove a registered game stage by its type (uses the type hash code as id)
         /// </summary>
         /// <typeparam name="U"></typeparam>
         public void DeleteGameStage<U>() where U : GSIBase
@@ -233,7 +300,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 刪除 GameStage
+        /// Remove a registered game stage by its id (the current running game stage cannot be deleted)
         /// </summary>
         /// <param name="id"></param>
         public void DeleteGameStage(int id)
@@ -251,7 +318,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 切換 GameStage (下一幀數才切換，不允許切換至同階段)
+        /// Switch to the game stage of type U (takes effect on the next update; switching to the same stage is not allowed)
         /// </summary>
         /// <typeparam name="U"></typeparam>
         public void ChangeGameStage<U>() where U : GSIBase
@@ -263,7 +330,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 切換 GameStage (下一幀數才切換，不允許切換至同階段)
+        /// Switch to the game stage with the specified id (takes effect on the next update; switching to the same stage is not allowed)
         /// </summary>
         /// <param name="id"></param>
         public void ChangeGameStage(int id)
@@ -285,7 +352,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 立即強制切換 GameStage
+        /// Force an immediate switch to the game stage of type U (allows re-entering the same stage)
         /// </summary>
         /// <typeparam name="U"></typeparam>
         public void ChangeGameStageForce<U>() where U : GSIBase
@@ -297,7 +364,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 立即強制切換 GameStage
+        /// Force an immediate switch to the game stage with the specified id (allows re-entering the same stage)
         /// </summary>
         /// <param name="id"></param>
         public void ChangeGameStageForce(int id)
@@ -311,7 +378,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 【由 OnUpdate 調用】處理 GameStage 要 Update 的過程
+        /// Invoked by OnUpdate to perform any pending stage switch and update the current game stage
         /// </summary>
         /// <param name="dt"></param>
         protected void UpdateGameStage(float dt = 0.0f)
@@ -332,7 +399,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 初始 GameStage
+        /// Initialize the current game stage (takes the stage by the current id and begins its init flow)
         /// </summary>
         protected void InitGameStage()
         {
@@ -346,7 +413,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 釋放 GameStage
+        /// Release the current game stage by invoking its OnExit
         /// </summary>
         protected void ReleaseGameStage()
         {
@@ -356,12 +423,12 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// Call by Main MonoBehaviour (Start)
+        /// Invoked by DriveStart when the main MonoBehaviour starts
         /// </summary>
         public virtual void OnStart() { }
 
         /// <summary>
-        /// Call by Main MonoBehaviour (Update)
+        /// Invoked by DriveUpdate every frame to process the game stage update flow
         /// </summary>
         /// <param name="dt"></param>
         public virtual void OnUpdate(float dt)

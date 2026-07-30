@@ -12,20 +12,38 @@ using YooAsset;
 
 namespace OxGFrame.AssetLoader
 {
+    /// <summary>
+    /// Specifies which cache source an operation targets
+    /// </summary>
     public enum LoadType
     {
+        /// <summary>
+        /// Both Resources and Bundle
+        /// </summary>
         Any,
+        /// <summary>
+        /// Unity Resources only
+        /// </summary>
         Resources,
+        /// <summary>
+        /// Asset bundle only
+        /// </summary>
         Bundle
     }
 
+    /// <summary>
+    /// Provides a unified facade for loading, instantiating, unloading, and releasing assets, raw files, and scenes from Resources or Bundle with reference-count based caching
+    /// </summary>
     public static class AssetLoaders
     {
+        /// <summary>
+        /// Default maximum retry count for load operations
+        /// </summary>
         internal const byte MAX_RETRY_COUNT = 3;
 
         #region Scene
         /// <summary>
-        /// Only load scene from bundle
+        /// Only load scene from bundle with the default package name
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="loadSceneMode"></param>
@@ -39,24 +57,55 @@ namespace OxGFrame.AssetLoader
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, loadSceneMode, LocalPhysicsMode.None, activateOnLoad, priority, progression);
         }
 
+        /// <summary>
+        /// Only load scene from bundle with the default package name and a specific LocalPhysicsMode
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="loadSceneMode"></param>
+        /// <param name="localPhysicsMode"></param>
+        /// <param name="activateOnLoad"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<BundlePack> LoadSceneAsync(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
         }
 
+        /// <summary>
+        /// Only load scene from bundle with a specific package name
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="loadSceneMode"></param>
+        /// <param name="activateOnLoad"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<BundlePack> LoadSceneAsync(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, loadSceneMode, LocalPhysicsMode.None, activateOnLoad, priority, progression);
         }
 
+        /// <summary>
+        /// Only load scene from bundle with a specific package name and a specific LocalPhysicsMode
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="loadSceneMode"></param>
+        /// <param name="localPhysicsMode"></param>
+        /// <param name="activateOnLoad"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<BundlePack> LoadSceneAsync(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, loadSceneMode, localPhysicsMode, activateOnLoad, priority, progression);
         }
 
         /// <summary>
-        /// Only load scene from bundle
+        /// Only load scene from bundle with the default package name
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="loadSceneMode"></param>
@@ -68,24 +117,49 @@ namespace OxGFrame.AssetLoader
             return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode, LocalPhysicsMode.None, progression);
         }
 
+        /// <summary>
+        /// Only load scene from bundle with the default package name and a specific LocalPhysicsMode
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="loadSceneMode"></param>
+        /// <param name="localPhysicsMode"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static BundlePack LoadScene(string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
         {
             string packageName = AssetPatcher.GetDefaultPackageName();
             return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode, localPhysicsMode, progression);
         }
 
+        /// <summary>
+        /// Only load scene from bundle with a specific package name
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="loadSceneMode"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static BundlePack LoadScene(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, Progression progression = null)
         {
             return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode, LocalPhysicsMode.None, progression);
         }
 
+        /// <summary>
+        /// Only load scene from bundle with a specific package name and a specific LocalPhysicsMode
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="loadSceneMode"></param>
+        /// <param name="localPhysicsMode"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static BundlePack LoadScene(string packageName, string assetName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, LocalPhysicsMode localPhysicsMode = LocalPhysicsMode.None, Progression progression = null)
         {
             return CacheBundle.GetInstance().LoadScene(packageName, assetName, loadSceneMode, localPhysicsMode, progression);
         }
 
         /// <summary>
-        /// Only load scene from bundle
+        /// Only load scene from bundle in Single mode with the default package name
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="activateOnLoad"></param>
@@ -98,13 +172,22 @@ namespace OxGFrame.AssetLoader
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Single, LocalPhysicsMode.None, activateOnLoad, priority, progression);
         }
 
+        /// <summary>
+        /// Only load scene from bundle in Single mode with a specific package name
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="activateOnLoad"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<BundlePack> LoadSingleSceneAsync(string packageName, string assetName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Single, LocalPhysicsMode.None, activateOnLoad, priority, progression);
         }
 
         /// <summary>
-        /// Only load scene from bundle
+        /// Only load scene from bundle in Single mode with the default package name
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
@@ -115,13 +198,20 @@ namespace OxGFrame.AssetLoader
             return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Single, LocalPhysicsMode.None, progression);
         }
 
+        /// <summary>
+        /// Only load scene from bundle in Single mode with a specific package name
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static BundlePack LoadSingleScene(string packageName, string assetName, Progression progression = null)
         {
             return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Single, LocalPhysicsMode.None, progression);
         }
 
         /// <summary>
-        /// Only load scene from bundle
+        /// Only load scene from bundle in Additive mode with the default package name
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="activateOnLoad"></param>
@@ -134,13 +224,22 @@ namespace OxGFrame.AssetLoader
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Additive, LocalPhysicsMode.None, activateOnLoad, priority, progression);
         }
 
+        /// <summary>
+        /// Only load scene from bundle in Additive mode with a specific package name
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="activateOnLoad"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static async UniTask<BundlePack> LoadAdditiveSceneAsync(string packageName, string assetName, bool activateOnLoad = true, uint priority = 100, Progression progression = null)
         {
             return await CacheBundle.GetInstance().LoadSceneAsync(packageName, assetName, LoadSceneMode.Additive, LocalPhysicsMode.None, activateOnLoad, priority, progression);
         }
 
         /// <summary>
-        /// Only load scene from bundle
+        /// Only load scene from bundle in Additive mode with the default package name
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
@@ -151,6 +250,13 @@ namespace OxGFrame.AssetLoader
             return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Additive, LocalPhysicsMode.None, progression);
         }
 
+        /// <summary>
+        /// Only load scene from bundle in Additive mode with a specific package name
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <returns></returns>
         public static BundlePack LoadAdditiveScene(string packageName, string assetName, Progression progression = null)
         {
             return CacheBundle.GetInstance().LoadScene(packageName, assetName, LoadSceneMode.Additive, LocalPhysicsMode.None, progression);
@@ -167,12 +273,18 @@ namespace OxGFrame.AssetLoader
                 CacheBundle.GetInstance().UnloadScene(assetName, recursively);
         }
 
+        /// <summary>
+        /// Release all scenes from the bundle cache (force unloads regardless of reference count)
+        /// </summary>
         public static void ReleaseScenes()
         {
             if (!AssetPatcher.IsReleased())
                 CacheBundle.GetInstance().ReleaseScenes();
         }
 
+        /// <summary>
+        /// Obsolete. Use ReleaseScenes instead.
+        /// </summary>
         [System.Obsolete("Use ReleaseScenes instead")]
         public static void ReleaseBundleScenes()
         {
@@ -182,6 +294,12 @@ namespace OxGFrame.AssetLoader
         #endregion
 
         #region Cacher
+        /// <summary>
+        /// Check if an asset exists in the cache
+        /// If use prefix "res#" will check the resources cache else will check the bundle cache
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
         public static bool HasInCache(string assetName)
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -217,7 +335,8 @@ namespace OxGFrame.AssetLoader
 
         #region RawFile
         /// <summary>
-        /// Get RawFile save path
+        /// Get RawFile save path with the default package name
+        /// Preloads the raw file first, so the local file path is only available after the raw file has been downloaded into the cache (returns null on failure)
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
@@ -249,6 +368,7 @@ namespace OxGFrame.AssetLoader
 
         /// <summary>
         /// Get RawFile save path from specific package
+        /// Preloads the raw file first, so the local file path is only available after the raw file has been downloaded into the cache (returns null on failure)
         /// </summary>
         /// <param name="packageName"></param>
         /// <param name="assetName"></param>
@@ -280,7 +400,8 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get RawFile save path
+        /// Get RawFile save path with the default package name
+        /// Preloads the raw file first, so the local file path is only available after the raw file has been downloaded into the cache (returns null on failure)
         /// </summary>
         /// <param name="assetName"></param>
         /// <returns></returns>
@@ -312,6 +433,7 @@ namespace OxGFrame.AssetLoader
 
         /// <summary>
         /// Get RawFile save path from specific package
+        /// Preloads the raw file first, so the local file path is only available after the raw file has been downloaded into the cache (returns null on failure)
         /// </summary>
         /// <param name="packageName"></param>
         /// <param name="assetName"></param>
@@ -342,6 +464,15 @@ namespace OxGFrame.AssetLoader
             return null;
         }
 
+        /// <summary>
+        /// Preload raw file into the cache with the default package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadRawFileAsync(string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -355,6 +486,16 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload raw file into the cache with a specific package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadRawFileAsync(string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             if (TryRefineResourcesPath(assetName, out _))
@@ -367,12 +508,31 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload raw files into the cache with the default package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="assetNames"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadRawFileAsync(string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             await PreloadRawFileAsync(packageName, assetNames, priority, progression, maxRetryCount);
         }
 
+        /// <summary>
+        /// Preload raw files into the cache with a specific package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadRawFileAsync(string packageName, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             int length = assetNames.Length;
@@ -410,6 +570,13 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload raw file into the cache with the default package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadRawFile(string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -423,6 +590,14 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload raw file into the cache with a specific package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadRawFile(string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             if (TryRefineResourcesPath(assetName, out _))
@@ -435,12 +610,27 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload raw files into the cache with the default package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="assetNames"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadRawFile(string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             PreloadRawFile(packageName, assetNames, progression, maxRetryCount);
         }
 
+        /// <summary>
+        /// Preload raw files into the cache with a specific package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadRawFile(string packageName, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             int length = assetNames.Length;
@@ -478,6 +668,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Load raw file with the default package name
         /// Only load string type and byte[] type
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -497,6 +688,17 @@ namespace OxGFrame.AssetLoader
             return await CacheBundle.GetInstance().LoadRawFileAsync<T>(packageName, assetName, priority, progression, maxRetryCount);
         }
 
+        /// <summary>
+        /// Load raw file with a specific package name
+        /// Only load string type and byte[] type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> LoadRawFileAsync<T>(string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             if (TryRefineResourcesPath(assetName, out _))
@@ -508,6 +710,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Load raw file with the default package name
         /// Only load string type and byte[] type
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -526,6 +729,16 @@ namespace OxGFrame.AssetLoader
             return CacheBundle.GetInstance().LoadRawFile<T>(packageName, assetName, progression, maxRetryCount);
         }
 
+        /// <summary>
+        /// Load raw file with a specific package name
+        /// Only load string type and byte[] type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T LoadRawFile<T>(string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             if (TryRefineResourcesPath(assetName, out _))
@@ -536,6 +749,12 @@ namespace OxGFrame.AssetLoader
             return CacheBundle.GetInstance().LoadRawFile<T>(packageName, assetName, progression, maxRetryCount);
         }
 
+        /// <summary>
+        /// Unload raw file by decrementing its reference count (with forceUnload releases it regardless of the reference count)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="forceUnload"></param>
         public static void UnloadRawFile(string assetName, bool forceUnload = false)
         {
             if (TryRefineResourcesPath(assetName, out _))
@@ -548,12 +767,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Release all raw files from the bundle cache (force unloads regardless of reference count)
+        /// </summary>
         public static void ReleaseRawFiles()
         {
             if (!AssetPatcher.IsReleased())
                 CacheBundle.GetInstance().ReleaseRawFiles();
         }
 
+        /// <summary>
+        /// Obsolete. Use ReleaseRawFiles instead.
+        /// </summary>
         [System.Obsolete("Use ReleaseRawFiles instead")]
         public static void ReleaseBundleRawFiles()
         {
@@ -564,6 +789,7 @@ namespace OxGFrame.AssetLoader
 
         #region Asset
         /// <summary>
+        /// Preload asset into the cache with the default package name (cache only, without instantiating)
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -585,6 +811,17 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload asset into the cache with a specific package name (cache only, without instantiating)
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadAssetAsync<T>(string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -597,12 +834,33 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload assets into the cache with the default package name (cache only, without instantiating)
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetNames"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadAssetAsync<T>(string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             await PreloadAssetAsync<T>(packageName, assetNames, priority, progression, maxRetryCount);
         }
 
+        /// <summary>
+        /// Preload assets into the cache with a specific package name (cache only, without instantiating)
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadAssetAsync<T>(string packageName, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             int length = assetNames.Length;
@@ -647,6 +905,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Preload asset into the cache with the default package name (cache only, without instantiating)
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -666,6 +925,15 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload asset into the cache with a specific package name (cache only, without instantiating)
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadAsset<T>(string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -678,12 +946,29 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload assets into the cache with the default package name (cache only, without instantiating)
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetNames"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadAsset<T>(string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             PreloadAsset<T>(packageName, assetNames, progression, maxRetryCount);
         }
 
+        /// <summary>
+        /// Preload assets into the cache with a specific package name (cache only, without instantiating)
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadAsset<T>(string packageName, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             int length = assetNames.Length;
@@ -721,6 +1006,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Load asset with the default package name
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -742,6 +1028,17 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load asset with a specific package name
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> LoadAssetAsync<T>(string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -755,6 +1052,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Load asset with the default package name
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -775,6 +1073,16 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load asset with a specific package name
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T LoadAsset<T>(string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -788,6 +1096,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Load and instantiate asset with the default package name
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -813,6 +1122,17 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific package name
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -829,6 +1149,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with the default package name at the given position and rotation
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Vector3 position, Quaternion rotation, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -846,6 +1178,19 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific package name at the given position and rotation
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -862,6 +1207,19 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with the default package name at the given position and rotation under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="parent"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Vector3 position, Quaternion rotation, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -879,6 +1237,20 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific package name at the given position and rotation under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="parent"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -895,6 +1267,17 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with the default package name under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -912,6 +1295,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific package name under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -928,6 +1323,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with the default package name under a parent with the worldPositionStays option
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="worldPositionStays"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -945,6 +1352,19 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific package name under a parent with the worldPositionStays option
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="worldPositionStays"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -962,6 +1382,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Load and instantiate asset with the default package name
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -986,6 +1407,16 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific package name
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1002,6 +1433,17 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with the default package name at the given position and rotation
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(string assetName, Vector3 position, Quaternion rotation, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1019,6 +1461,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific package name at the given position and rotation
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1035,6 +1489,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with the default package name at the given position and rotation under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="parent"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(string assetName, Vector3 position, Quaternion rotation, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1052,6 +1518,19 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific package name at the given position and rotation under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="parent"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1068,6 +1547,16 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with the default package name under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(string assetName, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1085,6 +1574,17 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific package name under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(string packageName, string assetName, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1101,6 +1601,17 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with the default package name under a parent with the worldPositionStays option
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="worldPositionStays"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(string assetName, Transform parent, bool worldPositionStays, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1118,6 +1629,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific package name under a parent with the worldPositionStays option
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="worldPositionStays"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1134,6 +1657,12 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Unload asset by decrementing its reference count (with forceUnload releases it regardless of the reference count)
+        /// If use prefix "res#" will unload from resources else will unload from bundle
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="forceUnload"></param>
         public static void UnloadAsset(string assetName, bool forceUnload = false)
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1146,6 +1675,10 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Release all assets from the caches selected by loadType (force unloads regardless of reference count)
+        /// </summary>
+        /// <param name="loadType"></param>
         public static void ReleaseAssets(LoadType loadType = LoadType.Any)
         {
             if (loadType == LoadType.Any)
@@ -1158,12 +1691,18 @@ namespace OxGFrame.AssetLoader
             else if (loadType == LoadType.Bundle && !AssetPatcher.IsReleased()) CacheBundle.GetInstance().ReleaseAssets();
         }
 
+        /// <summary>
+        /// Obsolete. Use ReleaseAssets instead.
+        /// </summary>
         [System.Obsolete("Use ReleaseAssets instead")]
         public static void ReleaseResourceAssets()
         {
             CacheResource.GetInstance().ReleaseAssets();
         }
 
+        /// <summary>
+        /// Obsolete. Use ReleaseAssets instead.
+        /// </summary>
         [System.Obsolete("Use ReleaseAssets instead")]
         public static void ReleaseBundleAssets()
         {
@@ -1174,6 +1713,13 @@ namespace OxGFrame.AssetLoader
         #endregion
 
         #region Group Cacher
+        /// <summary>
+        /// Check if an asset exists in the cache with a specific group id
+        /// If use prefix "res#" will check the resources cache else will check the bundle cache
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
         public static bool HasInCache(int groupId, string assetName)
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1187,6 +1733,16 @@ namespace OxGFrame.AssetLoader
         }
 
         #region RawFile
+        /// <summary>
+        /// Preload raw file into the cache with a specific group id and the default package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadRawFileAsync(int groupId, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1200,6 +1756,17 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload raw file into the cache with a specific group id and a specific package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadRawFileAsync(int groupId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             if (TryRefineResourcesPath(assetName, out _))
@@ -1212,12 +1779,33 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload raw files into the cache with a specific group id and the default package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadRawFileAsync(int groupId, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             await PreloadRawFileAsync(groupId, packageName, assetNames, priority, progression, maxRetryCount);
         }
 
+        /// <summary>
+        /// Preload raw files into the cache with a specific group id and a specific package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadRawFileAsync(int groupId, string packageName, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             int length = assetNames.Length;
@@ -1254,6 +1842,14 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload raw file into the cache with a specific group id and the default package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadRawFile(int groupId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1267,6 +1863,15 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload raw file into the cache with a specific group id and a specific package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadRawFile(int groupId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             if (TryRefineResourcesPath(assetName, out _))
@@ -1279,12 +1884,29 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload raw files into the cache with a specific group id and the default package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadRawFile(int groupId, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             PreloadRawFile(groupId, packageName, assetNames, progression, maxRetryCount);
         }
 
+        /// <summary>
+        /// Preload raw files into the cache with a specific group id and a specific package name (cache only, without loading the content)
+        /// Only supports the bundle type
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadRawFile(int groupId, string packageName, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             int length = assetNames.Length;
@@ -1322,6 +1944,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Load raw file with a specific group id and the default package name
         /// Only load string type and byte[] type
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -1345,6 +1968,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load raw file with a specific group id and a specific package name
+        /// Only load string type and byte[] type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> LoadRawFileAsync<T>(int groupId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             if (TryRefineResourcesPath(assetName, out _))
@@ -1359,6 +1994,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Load raw file with a specific group id and the default package name
         /// Only load string type and byte[] type
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -1381,6 +2017,17 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load raw file with a specific group id and a specific package name
+        /// Only load string type and byte[] type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T LoadRawFile<T>(int groupId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT)
         {
             if (TryRefineResourcesPath(assetName, out _))
@@ -1426,6 +2073,9 @@ namespace OxGFrame.AssetLoader
                 GroupBundle.GetInstance().UnloadRawFiles(groupId);
         }
 
+        /// <summary>
+        /// Obsolete. Use UnloadRawFiles instead.
+        /// </summary>
         [System.Obsolete("Use UnloadRawFiles instead")]
         public static void ReleaseBundleRawFiles(int groupId)
         {
@@ -1436,6 +2086,7 @@ namespace OxGFrame.AssetLoader
 
         #region Asset
         /// <summary>
+        /// Preload asset into the cache with a specific group id and the default package name (cache only, without instantiating)
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -1458,6 +2109,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload asset into the cache with a specific group id and a specific package name (cache only, without instantiating)
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadAssetAsync<T>(int groupId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1470,12 +2133,35 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload assets into the cache with a specific group id and the default package name (cache only, without instantiating)
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadAssetAsync<T>(int groupId, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             await PreloadAssetAsync<T>(groupId, packageName, assetNames, priority, progression, maxRetryCount);
         }
 
+        /// <summary>
+        /// Preload assets into the cache with a specific group id and a specific package name (cache only, without instantiating)
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask PreloadAssetAsync<T>(int groupId, string packageName, string[] assetNames, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             int length = assetNames.Length;
@@ -1520,6 +2206,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Preload asset into the cache with a specific group id and the default package name (cache only, without instantiating)
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -1540,6 +2227,16 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload asset into the cache with a specific group id and a specific package name (cache only, without instantiating)
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadAsset<T>(int groupId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1552,12 +2249,31 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Preload assets into the cache with a specific group id and the default package name (cache only, without instantiating)
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadAsset<T>(int groupId, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
             PreloadAsset<T>(groupId, packageName, assetNames, progression, maxRetryCount);
         }
 
+        /// <summary>
+        /// Preload assets into the cache with a specific group id and a specific package name (cache only, without instantiating)
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         public static void PreloadAsset<T>(int groupId, string packageName, string[] assetNames, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             int length = assetNames.Length;
@@ -1595,6 +2311,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Load asset with a specific group id and the default package name
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -1617,6 +2334,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load asset with a specific group id and a specific package name
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> LoadAssetAsync<T>(int groupId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1630,12 +2359,14 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Load asset with a specific group id and the default package name
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="groupId"></param>
         /// <param name="assetName"></param>
         /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
         /// <returns></returns>
         public static T LoadAsset<T>(int groupId, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
@@ -1650,6 +2381,17 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load asset with a specific group id and a specific package name
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T LoadAsset<T>(int groupId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1663,6 +2405,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Load and instantiate asset with a specific group id and the default package name
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -1689,6 +2432,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and a specific package name
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string packageName, string assetName, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1705,6 +2460,19 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and the default package name at the given position and rotation
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string assetName, Vector3 position, Quaternion rotation, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1722,6 +2490,20 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and a specific package name at the given position and rotation
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string packageName, string assetName, Vector3 position, Quaternion rotation, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1738,6 +2520,20 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and the default package name at the given position and rotation under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="parent"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string assetName, Vector3 position, Quaternion rotation, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1755,6 +2551,21 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and a specific package name at the given position and rotation under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="parent"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1771,6 +2582,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and the default package name under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string assetName, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1788,6 +2611,19 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and a specific package name under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string packageName, string assetName, Transform parent, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1804,6 +2640,19 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and the default package name under a parent with the worldPositionStays option
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="worldPositionStays"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1821,6 +2670,20 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and a specific package name under a parent with the worldPositionStays option
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="worldPositionStays"></param>
+        /// <param name="priority"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static async UniTask<T> InstantiateAssetAsync<T>(int groupId, string packageName, string assetName, Transform parent, bool worldPositionStays, uint priority = 0, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1838,6 +2701,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
+        /// Load and instantiate asset with a specific group id and the default package name
         /// If use prefix "res#" will load from resources else will load from bundle
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -1863,6 +2727,17 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and a specific package name
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(int groupId, string packageName, string assetName, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1879,6 +2754,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and the default package name at the given position and rotation
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(int groupId, string assetName, Vector3 position, Quaternion rotation, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1896,6 +2783,19 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and a specific package name at the given position and rotation
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(int groupId, string packageName, string assetName, Vector3 position, Quaternion rotation, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1912,6 +2812,19 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and the default package name at the given position and rotation under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="parent"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(int groupId, string assetName, Vector3 position, Quaternion rotation, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1929,6 +2842,20 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and a specific package name at the given position and rotation under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="parent"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(int groupId, string packageName, string assetName, Vector3 position, Quaternion rotation, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1945,6 +2872,17 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and the default package name under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(int groupId, string assetName, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1962,6 +2900,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and a specific package name under a parent
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(int groupId, string packageName, string assetName, Transform parent, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -1978,6 +2928,18 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and the default package name under a parent with the worldPositionStays option
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="worldPositionStays"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(int groupId, string assetName, Transform parent, bool worldPositionStays, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             var packageName = AssetPatcher.GetDefaultPackageName();
@@ -1995,6 +2957,19 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Load and instantiate asset with a specific group id and a specific package name under a parent with the worldPositionStays option
+        /// If use prefix "res#" will load from resources else will load from bundle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="groupId"></param>
+        /// <param name="packageName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="parent"></param>
+        /// <param name="worldPositionStays"></param>
+        /// <param name="progression"></param>
+        /// <param name="maxRetryCount"></param>
+        /// <returns></returns>
         public static T InstantiateAsset<T>(int groupId, string packageName, string assetName, Transform parent, bool worldPositionStays, Progression progression = null, byte maxRetryCount = MAX_RETRY_COUNT) where T : UnityEngine.Object
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -2011,6 +2986,12 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Unload a single asset from the specified group by decrementing its reference count
+        /// If use prefix "res#" will unload from resources else will unload from bundle
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="assetName"></param>
         public static void UnloadAsset(int groupId, string assetName)
         {
             if (TryRefineResourcesPath(assetName, out int index))
@@ -2023,6 +3004,12 @@ namespace OxGFrame.AssetLoader
             }
         }
 
+        /// <summary>
+        /// Unload all assets from the specified group by decrementing their reference counts (caches selected by loadType)
+        /// Assets shared with other groups remain loaded until all group references are released
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="loadType"></param>
         public static void UnloadAssets(int groupId, LoadType loadType = LoadType.Any)
         {
             if (loadType == LoadType.Any)
@@ -2035,12 +3022,18 @@ namespace OxGFrame.AssetLoader
             else if (loadType == LoadType.Bundle && !AssetPatcher.IsReleased()) GroupBundle.GetInstance().UnloadAssets(groupId);
         }
 
+        /// <summary>
+        /// Obsolete. Use UnloadAssets instead.
+        /// </summary>
         [System.Obsolete("Use UnloadAssets instead")]
         public static void ReleaseResourceAssets(int groupId)
         {
             GroupResource.GetInstance().UnloadAssets(groupId);
         }
 
+        /// <summary>
+        /// Obsolete. Use UnloadAssets instead.
+        /// </summary>
         [System.Obsolete("Use UnloadAssets instead")]
         public static void ReleaseBundleAssets(int groupId)
         {
@@ -2051,9 +3044,10 @@ namespace OxGFrame.AssetLoader
         #endregion
 
         /// <summary>
-        /// 解析區分 Resources 或 Bundle 加載名稱規則
+        /// Parse the asset name to determine whether it follows the Resources ("res#" prefix) or Bundle loading rule
         /// </summary>
         /// <param name="assetName"></param>
+        /// <param name="actualNameIndex"></param>
         /// <returns></returns>
         internal static bool TryRefineResourcesPath(string assetName, out int actualNameIndex)
         {

@@ -11,7 +11,7 @@ using System.Threading;
 namespace OxGFrame.CenterFrame.APICenter
 {
     /// <summary>
-    /// Use Native HttpClient
+    /// HTTP requester implemented with native HttpClient
     /// </summary>
     public static class HttpNativeClient
     {
@@ -27,6 +27,7 @@ namespace OxGFrame.CenterFrame.APICenter
 
         /// <summary>
         /// Callback C# and Xml = Acax
+        /// <para> This overload builds the JSON body from a key-value pair array </para>
         /// </summary>
         /// <param name="url"></param>
         /// <param name="method"></param>
@@ -41,6 +42,17 @@ namespace OxGFrame.CenterFrame.APICenter
             RequestAPI(url, method, headers, body, success, error, timeoutSeconds).Forget();
         }
 
+        /// <summary>
+        /// Callback C# and Xml = Acax
+        /// <para> This overload serializes the given body object directly to JSON </para>
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="method"></param>
+        /// <param name="headers"></param>
+        /// <param name="body"></param>
+        /// <param name="success"></param>
+        /// <param name="error"></param>
+        /// <param name="timeoutSeconds"></param>
         public static void Acax(string url, string method, string[,] headers, object body, ResponseHandle success = null, ResponseErrorHandle error = null, int? timeoutSeconds = null)
         {
             method = method.ToUpper();
@@ -49,6 +61,7 @@ namespace OxGFrame.CenterFrame.APICenter
 
         /// <summary>
         /// Asynchronous with Callback C# and Xml = Acax
+        /// <para> This overload builds the JSON body from a key-value pair array </para>
         /// </summary>
         /// <param name="url"></param>
         /// <param name="method"></param>
@@ -64,6 +77,18 @@ namespace OxGFrame.CenterFrame.APICenter
             return await RequestAPI(url, method, headers, body, success, error, timeoutSeconds);
         }
 
+        /// <summary>
+        /// Asynchronous with Callback C# and Xml = Acax
+        /// <para> This overload serializes the given body object directly to JSON </para>
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="method"></param>
+        /// <param name="headers"></param>
+        /// <param name="body"></param>
+        /// <param name="success"></param>
+        /// <param name="error"></param>
+        /// <param name="timeoutSeconds"></param>
+        /// <returns></returns>
         public static async UniTask<string> AcaxAsync(string url, string method, string[,] headers, object body, ResponseHandle success = null, ResponseErrorHandle error = null, int? timeoutSeconds = null)
         {
             method = method.ToUpper();
