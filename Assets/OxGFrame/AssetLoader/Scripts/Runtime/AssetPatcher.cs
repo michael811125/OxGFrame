@@ -6,15 +6,32 @@ using System.Linq;
 using UnityEngine;
 using YooAsset;
 using static OxGFrame.AssetLoader.Utility.DownloadSpeedCalculator;
+#if YOOASSET_2
 using static YooAsset.DownloaderOperation;
+#else
+// [YooAsset v3] 巢狀委派已移除，以事件簽名型別取代 (讓公開 API 簽名維持一致)
+using DownloadError = System.Action<YooAsset.DownloadErrorEventArgs>;
+#endif
 
 namespace OxGFrame.AssetLoader
 {
+    /// <summary>
+    /// Provides static APIs for patch updates, package management, and download operations
+    /// </summary>
     public static class AssetPatcher
     {
+        /// <summary>
+        /// Download info of downloaders (total download count and total download bytes)
+        /// </summary>
         public struct DownloadInfo
         {
+            /// <summary>
+            /// Total number of files to download
+            /// </summary>
             public int totalCount;
+            /// <summary>
+            /// Total number of bytes to download
+            /// </summary>
             public ulong totalBytes;
         }
 
@@ -63,8 +80,9 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get local save persistent path by pakcage (...yoo/PackageName)
+        /// Get local save persistent path by package (...yoo/PackageName)
         /// </summary>
+        /// <param name="packageName"></param>
         /// <returns></returns>
         public static string GetLocalSandboxPackagePath(string packageName)
         {
@@ -100,7 +118,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get defualt bundle decryption services
+        /// Get default bundle decryption services
         /// </summary>
         /// <returns></returns>
         public static DecryptionServices GetBundleDecryptionServices()
@@ -120,7 +138,7 @@ namespace OxGFrame.AssetLoader
 
         #region Patch Status
         /// <summary>
-        /// Return patch mode initialized
+        /// Return whether the patch mode has been initialized
         /// </summary>
         /// <returns></returns>
         public static bool IsInitialized()
@@ -129,7 +147,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Return yooasset is released
+        /// Return whether YooAsset has been released
         /// </summary>
         /// <returns></returns>
         public static bool IsReleased()
@@ -138,7 +156,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Return patch check state
+        /// Return whether the patch check has been started
         /// </summary>
         /// <returns></returns>
         public static bool IsCheck()
@@ -147,7 +165,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Return patch repair state
+        /// Return whether the patch repair has been started
         /// </summary>
         /// <returns></returns>
         public static bool IsRepair()
@@ -156,7 +174,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Return patch done state
+        /// Return whether the patch update has been completed
         /// </summary>
         /// <returns></returns>
         public static bool IsDone()
@@ -167,7 +185,7 @@ namespace OxGFrame.AssetLoader
 
         #region Patch Operation
         /// <summary>
-        /// Custom app packages and dlc packages to bundle config at runtime
+        /// Set custom preset app packages and dlc packages to the bundle config at runtime
         /// </summary>
         /// <param name="appPackages"></param>
         /// <param name="dlcPackages"></param>
@@ -187,6 +205,7 @@ namespace OxGFrame.AssetLoader
 
         /// <summary>
         /// Start patch update
+        /// <para> Only starts when no check or repair is already in progress </para>
         /// </summary>
         public static void Check()
         {
@@ -253,11 +272,18 @@ namespace OxGFrame.AssetLoader
         /// Get newest patch version (Recommend use encode to display)
         /// <para> Min and Max length = 11 to 32 </para>
         /// <para> Note: The newest patch version from preset packages </para>
+        /// <para> Note: Returns an empty string if the patch check has not been performed yet </para>
         /// </summary>
+        /// <param name="encode"></param>
+        /// <param name="length"></param>
+        /// <param name="separator"></param>
         /// <returns></returns>
         public static string GetPatchVersion(bool encode = false, int length = 16, string separator = "-")
         {
-            string[] versions = PatchManager.patchVersions.Values.ToArray();
+            // 尚未執行過 Check 流程前，版號緩存可能為空，必須進行防護
+            string[] versions = (PatchManager.patchVersions != null) ? PatchManager.patchVersions.Values.ToArray() : new string[] { };
+            if (versions.Length == 0)
+                return string.Empty;
             return GetPatchVersion(versions, encode, length, separator);
         }
 
@@ -265,6 +291,10 @@ namespace OxGFrame.AssetLoader
         /// Get newest patch version by custom (Recommend use encode to display)
         /// <para> Min and Max length = 11 to 32 </para>
         /// </summary>
+        /// <param name="customPatchVersions"></param>
+        /// <param name="encode"></param>
+        /// <param name="length"></param>
+        /// <param name="separator"></param>
         /// <returns></returns>
         public static string GetPatchVersion(string[] customPatchVersions, bool encode = false, int length = 16, string separator = "-")
         {
@@ -408,7 +438,7 @@ namespace OxGFrame.AssetLoader
 
         #region Default Package
         /// <summary>
-        /// Set default package. If is not exist will auto register and set it be default
+        /// Set default package. If the package does not exist, it will be auto registered and set as the default
         /// </summary>
         /// <param name="packageName"></param>
         public static void SetDefaultPackage(string packageName)
@@ -417,7 +447,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Switch already register package
+        /// Switch the default package to an already registered package
         /// </summary>
         /// <param name="packageName"></param>
         public static void SwitchDefaultPackage(string packageName)
@@ -456,7 +486,7 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get package by names
+        /// Get packages by names
         /// </summary>
         /// <param name="packageNames"></param>
         /// <returns></returns>
@@ -535,7 +565,7 @@ namespace OxGFrame.AssetLoader
 
         #region Downloader
         /// <summary>
-        /// Get specific package downloader
+        /// Get specific package downloader with default download settings
         /// </summary>
         /// <param name="package"></param>
         /// <returns></returns>
@@ -545,7 +575,8 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get specific package downloader
+        /// Get specific package downloader with custom download settings
+        /// <para> Values less than 0 will use the default settings </para>
         /// </summary>
         /// <param name="package"></param>
         /// <param name="maxConcurrencyDownloadCount"></param>
@@ -557,7 +588,8 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get specific package downloader (Tags)
+        /// Get specific package downloader (Tags) with default download settings
+        /// <para> If tags are null or empty, the downloader will include all files </para>
         /// </summary>
         /// <param name="package"></param>
         /// <param name="tags"></param>
@@ -568,7 +600,9 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get specific package downloader (Tags)
+        /// Get specific package downloader (Tags) with custom download settings
+        /// <para> Values less than 0 will use the default settings </para>
+        /// <para> If tags are null or empty, the downloader will include all files </para>
         /// </summary>
         /// <param name="package"></param>
         /// <param name="maxConcurrencyDownloadCount"></param>
@@ -581,7 +615,8 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get specific package downloader (AssetNames)
+        /// Get specific package downloader (AssetNames) with default download settings
+        /// <para> If assetNames are null or empty, the downloader will include all files </para>
         /// </summary>
         /// <param name="package"></param>
         /// <param name="assetNames"></param>
@@ -592,7 +627,9 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get specific package downloader (AssetNames)
+        /// Get specific package downloader (AssetNames) with custom download settings
+        /// <para> Values less than 0 will use the default settings </para>
+        /// <para> If assetNames are null or empty, the downloader will include all files </para>
         /// </summary>
         /// <param name="package"></param>
         /// <param name="maxConcurrencyDownloadCount"></param>
@@ -605,7 +642,8 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get specific package downloader (AssetInfos)
+        /// Get specific package downloader (AssetInfos) with default download settings
+        /// <para> If assetInfos are null or empty, the downloader will include all files </para>
         /// </summary>
         /// <param name="package"></param>
         /// <param name="assetInfos"></param>
@@ -616,7 +654,9 @@ namespace OxGFrame.AssetLoader
         }
 
         /// <summary>
-        /// Get specific package downloader (AssetInfos)
+        /// Get specific package downloader (AssetInfos) with custom download settings
+        /// <para> Values less than 0 will use the default settings </para>
+        /// <para> If assetInfos are null or empty, the downloader will include all files </para>
         /// </summary>
         /// <param name="package"></param>
         /// <param name="maxConcurrencyDownloadCount"></param>
@@ -628,7 +668,12 @@ namespace OxGFrame.AssetLoader
             return PackageManager.GetPackageDownloaderByAssetInfos(package, maxConcurrencyDownloadCount, failedRetryCount, assetInfos);
         }
 
-        #region Combine Donwloaders
+        #region Combine Downloaders
+        /// <summary>
+        /// Get downloaders of the combined packages with default download settings
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <returns></returns>
         public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackages(ResourcePackage[] packages)
         {
             List<ResourceDownloaderOperation> downloaders = new List<ResourceDownloaderOperation>();
@@ -640,6 +685,14 @@ namespace OxGFrame.AssetLoader
             return downloaders.ToArray();
         }
 
+        /// <summary>
+        /// Get downloaders of the combined packages with custom download settings
+        /// <para> Values less than 0 will use the default settings </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <returns></returns>
         public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackages(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount)
         {
             List<ResourceDownloaderOperation> downloaders = new List<ResourceDownloaderOperation>();
@@ -651,6 +704,13 @@ namespace OxGFrame.AssetLoader
             return downloaders.ToArray();
         }
 
+        /// <summary>
+        /// Get downloaders (Tags) of the combined packages with default download settings
+        /// <para> If tags are null or empty, the downloaders will include all files </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="tags"></param>
+        /// <returns></returns>
         public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackagesByTags(ResourcePackage[] packages, params string[] tags)
         {
             List<ResourceDownloaderOperation> downloaders = new List<ResourceDownloaderOperation>();
@@ -662,6 +722,16 @@ namespace OxGFrame.AssetLoader
             return downloaders.ToArray();
         }
 
+        /// <summary>
+        /// Get downloaders (Tags) of the combined packages with custom download settings
+        /// <para> Values less than 0 will use the default settings </para>
+        /// <para> If tags are null or empty, the downloaders will include all files </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="tags"></param>
+        /// <returns></returns>
         public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackagesByTags(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, params string[] tags)
         {
             List<ResourceDownloaderOperation> downloaders = new List<ResourceDownloaderOperation>();
@@ -673,6 +743,13 @@ namespace OxGFrame.AssetLoader
             return downloaders.ToArray();
         }
 
+        /// <summary>
+        /// Get downloaders (AssetNames) of the combined packages with default download settings
+        /// <para> If assetNames are null or empty, the downloaders will include all files </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="assetNames"></param>
+        /// <returns></returns>
         public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackagesByAssetNames(ResourcePackage[] packages, params string[] assetNames)
         {
             List<ResourceDownloaderOperation> downloaders = new List<ResourceDownloaderOperation>();
@@ -684,6 +761,16 @@ namespace OxGFrame.AssetLoader
             return downloaders.ToArray();
         }
 
+        /// <summary>
+        /// Get downloaders (AssetNames) of the combined packages with custom download settings
+        /// <para> Values less than 0 will use the default settings </para>
+        /// <para> If assetNames are null or empty, the downloaders will include all files </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="assetNames"></param>
+        /// <returns></returns>
         public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackagesByAssetNames(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, params string[] assetNames)
         {
             List<ResourceDownloaderOperation> downloaders = new List<ResourceDownloaderOperation>();
@@ -695,6 +782,13 @@ namespace OxGFrame.AssetLoader
             return downloaders.ToArray();
         }
 
+        /// <summary>
+        /// Get downloaders (AssetInfos) of the combined packages with default download settings
+        /// <para> If assetInfos are null or empty, the downloaders will include all files </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="assetInfos"></param>
+        /// <returns></returns>
         public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackagesByAssetInfos(ResourcePackage[] packages, params AssetInfo[] assetInfos)
         {
             List<ResourceDownloaderOperation> downloaders = new List<ResourceDownloaderOperation>();
@@ -706,6 +800,16 @@ namespace OxGFrame.AssetLoader
             return downloaders.ToArray();
         }
 
+        /// <summary>
+        /// Get downloaders (AssetInfos) of the combined packages with custom download settings
+        /// <para> Values less than 0 will use the default settings </para>
+        /// <para> If assetInfos are null or empty, the downloaders will include all files </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="assetInfos"></param>
+        /// <returns></returns>
         public static ResourceDownloaderOperation[] GetDownloadersWithCombinePackagesByAssetInfos(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, params AssetInfo[] assetInfos)
         {
             List<ResourceDownloaderOperation> downloaders = new List<ResourceDownloaderOperation>();
@@ -717,54 +821,147 @@ namespace OxGFrame.AssetLoader
             return downloaders.ToArray();
         }
 
+        /// <summary>
+        /// Begin download with the combined packages using default download settings
+        /// <para> Returns true when all downloads succeed, false if any downloader fails </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="onDownloadSpeedProgress"></param>
+        /// <param name="onDownloadError"></param>
+        /// <returns></returns>
         public static async UniTask<bool> BeginDownloadWithCombinePackages(ResourcePackage[] packages, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackages(packages);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
+        /// <summary>
+        /// Begin download with the combined packages using custom download settings
+        /// <para> Values less than 0 will use the default settings </para>
+        /// <para> Returns true when all downloads succeed, false if any downloader fails </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="onDownloadSpeedProgress"></param>
+        /// <param name="onDownloadError"></param>
+        /// <returns></returns>
         public static async UniTask<bool> BeginDownloadWithCombinePackages(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackages(packages, maxConcurrencyDownloadCount, failedRetryCount);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
+        /// <summary>
+        /// Begin download (Tags) with the combined packages using default download settings
+        /// <para> If tags are null or empty, all files will be included </para>
+        /// <para> Returns true when all downloads succeed, false if any downloader fails </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="tags"></param>
+        /// <param name="onDownloadSpeedProgress"></param>
+        /// <param name="onDownloadError"></param>
+        /// <returns></returns>
         public static async UniTask<bool> BeginDownloadWithCombinePackagesByTags(ResourcePackage[] packages, string[] tags = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackagesByTags(packages, tags);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
+        /// <summary>
+        /// Begin download (Tags) with the combined packages using custom download settings
+        /// <para> Values less than 0 will use the default settings </para>
+        /// <para> If tags are null or empty, all files will be included </para>
+        /// <para> Returns true when all downloads succeed, false if any downloader fails </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="tags"></param>
+        /// <param name="onDownloadSpeedProgress"></param>
+        /// <param name="onDownloadError"></param>
+        /// <returns></returns>
         public static async UniTask<bool> BeginDownloadWithCombinePackagesByTags(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, string[] tags = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackagesByTags(packages, maxConcurrencyDownloadCount, failedRetryCount, tags);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
+        /// <summary>
+        /// Begin download (AssetNames) with the combined packages using default download settings
+        /// <para> If assetNames are null or empty, all files will be included </para>
+        /// <para> Returns true when all downloads succeed, false if any downloader fails </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="onDownloadSpeedProgress"></param>
+        /// <param name="onDownloadError"></param>
+        /// <returns></returns>
         public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetNames(ResourcePackage[] packages, string[] assetNames = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackagesByAssetNames(packages, assetNames);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
+        /// <summary>
+        /// Begin download (AssetNames) with the combined packages using custom download settings
+        /// <para> Values less than 0 will use the default settings </para>
+        /// <para> If assetNames are null or empty, all files will be included </para>
+        /// <para> Returns true when all downloads succeed, false if any downloader fails </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="assetNames"></param>
+        /// <param name="onDownloadSpeedProgress"></param>
+        /// <param name="onDownloadError"></param>
+        /// <returns></returns>
         public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetNames(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, string[] assetNames = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackagesByAssetNames(packages, maxConcurrencyDownloadCount, failedRetryCount, assetNames);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
+        /// <summary>
+        /// Begin download (AssetInfos) with the combined packages using default download settings
+        /// <para> If assetInfos are null or empty, all files will be included </para>
+        /// <para> Returns true when all downloads succeed, false if any downloader fails </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="assetInfos"></param>
+        /// <param name="onDownloadSpeedProgress"></param>
+        /// <param name="onDownloadError"></param>
+        /// <returns></returns>
         public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetInfos(ResourcePackage[] packages, AssetInfo[] assetInfos = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackagesByAssetInfos(packages, assetInfos);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
+        /// <summary>
+        /// Begin download (AssetInfos) with the combined packages using custom download settings
+        /// <para> Values less than 0 will use the default settings </para>
+        /// <para> If assetInfos are null or empty, all files will be included </para>
+        /// <para> Returns true when all downloads succeed, false if any downloader fails </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="maxConcurrencyDownloadCount"></param>
+        /// <param name="failedRetryCount"></param>
+        /// <param name="assetInfos"></param>
+        /// <param name="onDownloadSpeedProgress"></param>
+        /// <param name="onDownloadError"></param>
+        /// <returns></returns>
         public static async UniTask<bool> BeginDownloadWithCombinePackagesByAssetInfos(ResourcePackage[] packages, int maxConcurrencyDownloadCount, int failedRetryCount, AssetInfo[] assetInfos = null, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             ResourceDownloaderOperation[] downloaders = GetDownloadersWithCombinePackagesByAssetInfos(packages, maxConcurrencyDownloadCount, failedRetryCount, assetInfos);
             return await BeginDownloadWithCombineDownloaders(downloaders, onDownloadSpeedProgress, onDownloadError);
         }
 
+        /// <summary>
+        /// Get the total download count and total download bytes of the combined packages
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <returns></returns>
         public static DownloadInfo GetDownloadInfoWithCombinePackages(ResourcePackage[] packages)
         {
             // Get downloaders
@@ -788,6 +985,13 @@ namespace OxGFrame.AssetLoader
             return downloadInfo;
         }
 
+        /// <summary>
+        /// Get the total download count and total download bytes of the combined packages (Tags)
+        /// <para> If tags are null or empty, all files will be included </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="tags"></param>
+        /// <returns></returns>
         public static DownloadInfo GetDownloadInfoWithCombinePackagesByTags(ResourcePackage[] packages, params string[] tags)
         {
             // Get downloaders
@@ -811,6 +1015,13 @@ namespace OxGFrame.AssetLoader
             return downloadInfo;
         }
 
+        /// <summary>
+        /// Get the total download count and total download bytes of the combined packages (AssetNames)
+        /// <para> If assetNames are null or empty, all files will be included </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="assetNames"></param>
+        /// <returns></returns>
         public static DownloadInfo GetDownloadInfoWithCombinePackagesByAssetNames(ResourcePackage[] packages, params string[] assetNames)
         {
             // Get downloaders
@@ -834,6 +1045,13 @@ namespace OxGFrame.AssetLoader
             return downloadInfo;
         }
 
+        /// <summary>
+        /// Get the total download count and total download bytes of the combined packages (AssetInfos)
+        /// <para> If assetInfos are null or empty, all files will be included </para>
+        /// </summary>
+        /// <param name="packages"></param>
+        /// <param name="assetInfos"></param>
+        /// <returns></returns>
         public static DownloadInfo GetDownloadInfoWithCombinePackagesByAssetInfos(ResourcePackage[] packages, params AssetInfo[] assetInfos)
         {
             // Get downloaders
@@ -857,6 +1075,14 @@ namespace OxGFrame.AssetLoader
             return downloadInfo;
         }
 
+        /// <summary>
+        /// Begin download with the combined downloaders sequentially and report combined download progress
+        /// <para> Returns true when all downloads succeed, false if any downloader fails </para>
+        /// </summary>
+        /// <param name="downloaders"></param>
+        /// <param name="onDownloadSpeedProgress"></param>
+        /// <param name="onDownloadError"></param>
+        /// <returns></returns>
         public static async UniTask<bool> BeginDownloadWithCombineDownloaders(ResourceDownloaderOperation[] downloaders, OnDownloadSpeedProgress onDownloadSpeedProgress = null, DownloadError onDownloadError = null)
         {
             // Combine all downloaders count and bytes
@@ -884,6 +1110,7 @@ namespace OxGFrame.AssetLoader
 
                     int lastCount = 0;
                     long lastBytes = 0;
+#if YOOASSET_2
                     downloader.DownloadErrorCallback = onDownloadError;
                     downloader.DownloadUpdateCallback =
                     (DownloadUpdateData data) =>
@@ -894,11 +1121,24 @@ namespace OxGFrame.AssetLoader
                         lastBytes = data.CurrentDownloadBytes;
                         downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
                     };
+#else
+                    // [YooAsset v3] 回調屬性改為事件 (+=)
+                    downloader.DownloadError += onDownloadError;
+                    downloader.DownloadProgressChanged +=
+                    (DownloadProgressChangedEventArgs data) =>
+                    {
+                        currentCount += data.CurrentDownloadCount - lastCount;
+                        lastCount = data.CurrentDownloadCount;
+                        currentBytes += data.CurrentDownloadBytes - lastBytes;
+                        lastBytes = data.CurrentDownloadBytes;
+                        downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
+                    };
+#endif
                     downloader.BeginDownload();
 
                     await downloader;
 
-                    if (downloader.Status != EOperationStatus.Succeed) return false;
+                    if (!downloader.Status.IsSucceed()) return false;
                 }
             }
 

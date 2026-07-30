@@ -40,7 +40,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// <summary>
         /// 請求實例
         /// </summary>
-        internal Requester reuqester = new Requester();
+        internal Requester requester = new Requester();
 
         /// <summary>
         /// 最大請求 Timeout Seconds
@@ -91,10 +91,10 @@ namespace OxGFrame.MediaFrame.AudioFrame
                 case CacheType.None:
                     break;
                 case CacheType.LRU:
-                    this.reuqester.SelfInitLRUCacheCapacityForAudio(this._cacheCapacity);
+                    this.requester.SelfInitLRUCacheCapacityForAudio(this._cacheCapacity);
                     break;
                 case CacheType.ARC:
-                    this.reuqester.SelfInitARCCacheCapacityForAudio(this._cacheCapacity);
+                    this.requester.SelfInitARCCacheCapacityForAudio(this._cacheCapacity);
                     break;
             }
         }
@@ -109,7 +109,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         #region 中控 Mixer
         /// <summary>
-        /// 依照 Mixer 的名稱與其中的 ExposedParam 合併成雙 key, 執行自動記錄
+        /// 依照 Mixer 的名稱與其中的 ExposedParam 合併成雙 key，執行自動記錄
         /// </summary>
         /// <param name="mixerName"></param>
         /// <param name="expParam"></param>
@@ -156,9 +156,13 @@ namespace OxGFrame.MediaFrame.AudioFrame
             if (this._dictMixerExpParams.Count == 0)
                 return;
 
+            string prefix = $"{mixer.name},";
             foreach (var key in this._dictMixerExpParams.Keys)
             {
-                string reKey = key.Replace($"{mixer.name},", string.Empty);
+                // 僅處理屬於該 Mixer 的記錄，避免其他 Mixer 的參數名被誤用
+                if (!key.StartsWith(prefix))
+                    continue;
+                string reKey = key.Substring(prefix.Length);
                 mixer.ClearFloat(reKey);
             }
         }
@@ -172,9 +176,13 @@ namespace OxGFrame.MediaFrame.AudioFrame
             if (this._dictMixerExpParams.Count == 0)
                 return;
 
+            string prefix = $"{mixer.name},";
             foreach (var expParam in this._dictMixerExpParams)
             {
-                string reKey = expParam.Key.Replace($"{mixer.name},", string.Empty);
+                // 僅處理屬於該 Mixer 的記錄，避免其他 Mixer 的參數名被誤用
+                if (!expParam.Key.StartsWith(prefix))
+                    continue;
+                string reKey = expParam.Key.Substring(prefix.Length);
                 mixer.SetFloat(reKey, expParam.Value);
             }
         }
@@ -350,16 +358,16 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// </summary>
         /// <param name="audBase"></param>
         /// <param name="forceDestroy"></param>
-        private void _Stop(AudioBase audBase, bool disabledEndEvent = false, bool forceDestroy = false)
+        private void _Stop(AudioBase audBase, bool disableEndEvent = false, bool forceDestroy = false)
         {
             if (audBase == null)
                 return;
 
-            this.ExitAndStop(audBase, false, disabledEndEvent);
+            this.ExitAndStop(audBase, false, disableEndEvent);
 
             Logging.PrintInfo<Logger>($"Stop Audio: {audBase?.mediaName}");
 
-            // 確保音訊都設置完畢後才進行 Destroy, 避免異步處理尚未完成, 就被 Destroy 掉導致操作到已銷毀物件
+            // 確保音訊都設置完畢後才進行 Destroy，避免異步處理尚未完成，就被 Destroy 掉導致操作到已銷毀物件
             if (audBase.isPrepared)
             {
                 if (forceDestroy)
@@ -374,9 +382,9 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// </summary>
         /// <param name="audBase"></param>
         /// <param name="forceDestroy"></param>
-        public void Stop(AudioBase audBase, bool disabledEndEvent = false, bool forceDestroy = false)
+        public void Stop(AudioBase audBase, bool disableEndEvent = false, bool forceDestroy = false)
         {
-            this._Stop(audBase, disabledEndEvent, forceDestroy);
+            this._Stop(audBase, disableEndEvent, forceDestroy);
         }
 
         /// <summary>
@@ -384,7 +392,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// </summary>
         /// <param name="assetName"></param>
         /// <param name="forceDestroy"></param>
-        public override void Stop(string assetName, bool disabledEndEvent = false, bool forceDestroy = false)
+        public override void Stop(string assetName, bool disableEndEvent = false, bool forceDestroy = false)
         {
             AudioBase[] audBases = this.GetMediaComponents<AudioBase>(assetName);
             if (audBases.Length == 0)
@@ -392,7 +400,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
             foreach (var audBase in audBases)
             {
-                this._Stop(audBase, disabledEndEvent, forceDestroy);
+                this._Stop(audBase, disableEndEvent, forceDestroy);
             }
         }
 
@@ -401,14 +409,14 @@ namespace OxGFrame.MediaFrame.AudioFrame
         /// </summary>
         /// <param name="forceDestroy"></param>
         /// <returns></returns>
-        public override void StopAll(bool disabledEndEvent = false, bool forceDestroy = false)
+        public override void StopAll(bool disableEndEvent = false, bool forceDestroy = false)
         {
             if (this._listAllCache.Count == 0)
                 return;
 
             foreach (var audBase in this._listAllCache.ToArray())
             {
-                this._Stop(audBase, disabledEndEvent, forceDestroy);
+                this._Stop(audBase, disableEndEvent, forceDestroy);
             }
         }
         #endregion
@@ -467,11 +475,11 @@ namespace OxGFrame.MediaFrame.AudioFrame
             audBase.Play(loops, volume);
         }
 
-        protected override void ExitAndStop(AudioBase audBase, bool pause, bool disabledEndEvent)
+        protected override void ExitAndStop(AudioBase audBase, bool pause, bool disableEndEvent)
         {
             if (!pause)
             {
-                if (disabledEndEvent)
+                if (disableEndEvent)
                     audBase.SetEndEvent(null);
                 audBase.Stop();
             }

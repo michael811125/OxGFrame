@@ -46,7 +46,8 @@ namespace OxGFrame.MediaFrame
                 switch (this.requestType)
                 {
                     case RequestType.Assign:
-                        return this.file.text;
+                        // 避免未指定或已被銷毀的 TextAsset 造成異常
+                        return (this.file != null) ? this.file.text : null;
 
                     case RequestType.StreamingAssets:
                         string pathName = System.IO.Path.Combine(GetRequestStreamingAssetsPath(), this.fullPathName);
@@ -335,19 +336,19 @@ namespace OxGFrame.MediaFrame
         }
 
         /// <summary>
-        /// 取得影音長度 (單位: 秒)
+        /// 取得影音長度 (單位：秒)
         /// </summary>
         /// <returns></returns>
         public abstract float Length();
 
         /// <summary>
-        /// 取得當前影音長度 (單位: 秒)
+        /// 取得當前影音長度 (單位：秒)
         /// </summary>
         /// <returns></returns>
         public abstract float CurrentLength();
 
         /// <summary>
-        /// 取得當前影音剩餘長度 -> Remaining time (單位: 秒)
+        /// 取得當前影音剩餘長度 -> Remaining time (單位：秒)
         /// </summary>
         /// <returns></returns>
         public abstract float CurrentRemainingLength();

@@ -1,4 +1,4 @@
-using HybridCLR.Editor.Commands;
+﻿using HybridCLR.Editor.Commands;
 using HybridCLR.Editor.Installer;
 using Newtonsoft.Json.Linq;
 using OxGFrame.AssetLoader;
@@ -13,6 +13,20 @@ using UnityEditor;
 using UnityEngine;
 using YooAsset;
 using YooAsset.Editor;
+#if YOOASSET_3
+// [YooAsset v3] 類名更名轉接
+using AssetBundleBuilderHelper = YooAsset.Editor.BundleBuilderHelper;
+using AssetBundleCollectorSettingData = YooAsset.Editor.BundleCollectorSettingData;
+using BuiltinBuildParameters = YooAsset.Editor.LegacyBuildParameters;
+using BuiltinBuildPipeline = YooAsset.Editor.LegacyBuildPipeline;
+using DefaultPackRule = YooAsset.Editor.DefaultBundlePackRule;
+using EditorTools = YooAsset.Editor.EditorAssemblyUtility;
+using EBuildBundleType = YooAsset.EBundleType;
+using EBuildinFileCopyOption = YooAsset.Editor.EBundledCopyOption;
+using IEncryptionServices = YooAsset.IBundleEncryptor;
+using IManifestProcessServices = YooAsset.IManifestEncryptor;
+using IManifestRestoreServices = YooAsset.IManifestDecryptor;
+#endif
 
 namespace OxGFrame.Extensions.BuildTool.Editor
 {
@@ -95,10 +109,10 @@ namespace OxGFrame.Extensions.BuildTool.Editor
         {
             var instanller = new InstallerController();
 
-            // 檢測沒安裝時, 則進行 HybridCLR 的安裝
+            // 檢測沒安裝時，則進行 HybridCLR 的安裝
             if (!instanller.HasInstalledHybridCLR())
                 instanller.InstallDefaultHybridCLR();
-            // HybridCLR 版號不一致時, 也需要重新安裝
+            // HybridCLR 版號不一致時，也需要重新安裝
             else if (!instanller.PackageVersion.Equals(instanller.InstalledLibil2cppVersion))
                 instanller.InstallDefaultHybridCLR();
         }
@@ -132,7 +146,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
             // 輸出路徑
             string fullOutPath, destination = CommandParser.GetArgument(CommandParser.ArgName.destination);
             if (string.IsNullOrEmpty(destination))
+#if YOOASSET_2
                 fullOutPath = Path.Combine(EditorTools.GetProjectPath(), "Build");
+#else
+                // [YooAsset v3] GetProjectPath 移至 EditorPathUtility
+                fullOutPath = Path.Combine(EditorPathUtility.GetProjectPath(), "Build");
+#endif
             else
                 fullOutPath = Path.Combine(Application.dataPath, destination);
             // 去除擴展名以獲取文件夾路徑
@@ -255,12 +274,22 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                         {
                             bool enable = Convert.ToBoolean(Convert.ToInt32(enableAndroidAppBundle));
                             EditorUserBuildSettings.buildAppBundle = enable;
+#if UNITY_2023_1_OR_NEWER
+                            PlayerSettings.Android.splitApplicationBinary = enable;
+#else
+                            // Unity 2023.1 起 useAPKExpansionFiles 移除並更名為 splitApplicationBinary
                             PlayerSettings.Android.useAPKExpansionFiles = enable;
+#endif
                         }
                         else
                         {
                             EditorUserBuildSettings.buildAppBundle = false;
+#if UNITY_2023_1_OR_NEWER
+                            PlayerSettings.Android.splitApplicationBinary = false;
+#else
+                            // Unity 2023.1 起 useAPKExpansionFiles 移除並更名為 splitApplicationBinary
                             PlayerSettings.Android.useAPKExpansionFiles = false;
+#endif
                         }
                     }
                     break;
@@ -821,7 +850,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 // 構建參數
                                 BuiltinBuildParameters buildParameters = new BuiltinBuildParameters();
                                 buildParameters.BuildOutputRoot = buildoutputRoot;
-                                buildParameters.BuildinFileRoot = streamingAssetsRoot;
+            #if YOOASSET_2
+                    buildParameters.BuildinFileRoot = streamingAssetsRoot;
+#else
+                    // [YooAsset v3] BuildinFileRoot 更名為 BundledFileRoot
+                    buildParameters.BundledFileRoot = streamingAssetsRoot;
+#endif
                                 buildParameters.BuildPipeline = EBuildPipeline.ScriptableBuildPipeline.ToString();
                                 buildParameters.BuildBundleType = (int)EBuildBundleType.AssetBundle;
                                 buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
@@ -829,13 +863,30 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 buildParameters.PackageVersion = GetDefaultPackageVersion();
                                 buildParameters.VerifyBuildingResult = true;
                                 buildParameters.EnableSharePackRule = true;
-                                buildParameters.EncryptionServices = bundleEncryptionServices;
+            #if YOOASSET_2
+                    buildParameters.EncryptionServices = bundleEncryptionServices;
+#else
+                    // [YooAsset v3] EncryptionServices 更名為 BundleEncryptor
+                    buildParameters.BundleEncryptor = bundleEncryptionServices;
+#endif
+#if YOOASSET_2
                                 buildParameters.ManifestProcessServices = manifestEncryptionServices;
                                 buildParameters.ManifestRestoreServices = manifestDecryptionServices;
+#else
+                                // [YooAsset v3] ManifestProcessServices / ManifestRestoreServices 更名為 ManifestEncryptor / ManifestDecryptor
+                                buildParameters.ManifestEncryptor = manifestEncryptionServices;
+                                buildParameters.ManifestDecryptor = manifestDecryptionServices;
+#endif
                                 buildParameters.CompressOption = bundleCompression;
                                 buildParameters.FileNameStyle = bundleNameStyle;
+#if YOOASSET_2
                                 buildParameters.BuildinFileCopyOption = bundleCopyOption;
                                 buildParameters.BuildinFileCopyParams = string.Empty;
+#else
+                                // [YooAsset v3] BuildinFileCopyOption / BuildinFileCopyParams 更名為 BundledCopyOption / BundledCopyParams
+                                buildParameters.BundledCopyOption = bundleCopyOption;
+                                buildParameters.BundledCopyParams = string.Empty;
+#endif
                                 buildParameters.ClearBuildCacheFiles = clearBuildCacheFiles ?? false;
                                 buildParameters.UseAssetDependencyDB = useAssetDependencyDB ?? true;
 
@@ -860,7 +911,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 // 構建參數
                                 ScriptableBuildParameters buildParameters = new ScriptableBuildParameters();
                                 buildParameters.BuildOutputRoot = buildoutputRoot;
-                                buildParameters.BuildinFileRoot = streamingAssetsRoot;
+            #if YOOASSET_2
+                    buildParameters.BuildinFileRoot = streamingAssetsRoot;
+#else
+                    // [YooAsset v3] BuildinFileRoot 更名為 BundledFileRoot
+                    buildParameters.BundledFileRoot = streamingAssetsRoot;
+#endif
                                 buildParameters.BuildPipeline = EBuildPipeline.ScriptableBuildPipeline.ToString();
                                 buildParameters.BuildBundleType = (int)EBuildBundleType.AssetBundle;
                                 buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
@@ -868,13 +924,30 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 buildParameters.PackageVersion = GetDefaultPackageVersion();
                                 buildParameters.VerifyBuildingResult = true;
                                 buildParameters.EnableSharePackRule = true;
-                                buildParameters.EncryptionServices = bundleEncryptionServices;
+            #if YOOASSET_2
+                    buildParameters.EncryptionServices = bundleEncryptionServices;
+#else
+                    // [YooAsset v3] EncryptionServices 更名為 BundleEncryptor
+                    buildParameters.BundleEncryptor = bundleEncryptionServices;
+#endif
+#if YOOASSET_2
                                 buildParameters.ManifestProcessServices = manifestEncryptionServices;
                                 buildParameters.ManifestRestoreServices = manifestDecryptionServices;
+#else
+                                // [YooAsset v3] ManifestProcessServices / ManifestRestoreServices 更名為 ManifestEncryptor / ManifestDecryptor
+                                buildParameters.ManifestEncryptor = manifestEncryptionServices;
+                                buildParameters.ManifestDecryptor = manifestDecryptionServices;
+#endif
                                 buildParameters.CompressOption = bundleCompression;
                                 buildParameters.FileNameStyle = bundleNameStyle;
+#if YOOASSET_2
                                 buildParameters.BuildinFileCopyOption = bundleCopyOption;
                                 buildParameters.BuildinFileCopyParams = string.Empty;
+#else
+                                // [YooAsset v3] BuildinFileCopyOption / BuildinFileCopyParams 更名為 BundledCopyOption / BundledCopyParams
+                                buildParameters.BundledCopyOption = bundleCopyOption;
+                                buildParameters.BundledCopyParams = string.Empty;
+#endif
                                 buildParameters.ClearBuildCacheFiles = clearBuildCacheFiles ?? false;
                                 buildParameters.UseAssetDependencyDB = useAssetDependencyDB ?? true;
                                 buildParameters.BuiltinShadersBundleName = _GetBuiltinShaderBundleName(packageName);
@@ -899,7 +972,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 // 構建參數
                                 RawFileBuildParameters buildParameters = new RawFileBuildParameters();
                                 buildParameters.BuildOutputRoot = buildoutputRoot;
-                                buildParameters.BuildinFileRoot = streamingAssetsRoot;
+            #if YOOASSET_2
+                    buildParameters.BuildinFileRoot = streamingAssetsRoot;
+#else
+                    // [YooAsset v3] BuildinFileRoot 更名為 BundledFileRoot
+                    buildParameters.BundledFileRoot = streamingAssetsRoot;
+#endif
                                 buildParameters.BuildPipeline = EBuildPipeline.ScriptableBuildPipeline.ToString();
                                 buildParameters.BuildBundleType = (int)EBuildBundleType.RawBundle;
                                 buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
@@ -907,12 +985,29 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 buildParameters.PackageVersion = GetDefaultPackageVersion();
                                 buildParameters.VerifyBuildingResult = true;
                                 buildParameters.EnableSharePackRule = true;
-                                buildParameters.EncryptionServices = bundleEncryptionServices;
+            #if YOOASSET_2
+                    buildParameters.EncryptionServices = bundleEncryptionServices;
+#else
+                    // [YooAsset v3] EncryptionServices 更名為 BundleEncryptor
+                    buildParameters.BundleEncryptor = bundleEncryptionServices;
+#endif
+#if YOOASSET_2
                                 buildParameters.ManifestProcessServices = manifestEncryptionServices;
                                 buildParameters.ManifestRestoreServices = manifestDecryptionServices;
+#else
+                                // [YooAsset v3] ManifestProcessServices / ManifestRestoreServices 更名為 ManifestEncryptor / ManifestDecryptor
+                                buildParameters.ManifestEncryptor = manifestEncryptionServices;
+                                buildParameters.ManifestDecryptor = manifestDecryptionServices;
+#endif
                                 buildParameters.FileNameStyle = bundleNameStyle;
+#if YOOASSET_2
                                 buildParameters.BuildinFileCopyOption = bundleCopyOption;
                                 buildParameters.BuildinFileCopyParams = string.Empty;
+#else
+                                // [YooAsset v3] BuildinFileCopyOption / BuildinFileCopyParams 更名為 BundledCopyOption / BundledCopyParams
+                                buildParameters.BundledCopyOption = bundleCopyOption;
+                                buildParameters.BundledCopyParams = string.Empty;
+#endif
                                 buildParameters.ClearBuildCacheFiles = clearBuildCacheFiles ?? false;
                                 buildParameters.UseAssetDependencyDB = useAssetDependencyDB ?? true;
 
@@ -929,6 +1024,45 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                                 }
                             }
                             break;
+
+#if YOOASSET_3
+                        // [YooAsset v3] ArchiveFileBuildPipeline
+                        case "AFBP":
+                            {
+                                // 構建參數
+                                ArchiveFileBuildParameters buildParameters = new ArchiveFileBuildParameters();
+                                buildParameters.BuildOutputRoot = buildoutputRoot;
+                                buildParameters.BundledFileRoot = streamingAssetsRoot;
+                                buildParameters.BuildPipeline = EBuildPipeline.ArchiveFileBuildPipeline.ToString();
+                                buildParameters.BuildBundleType = (int)EBundleType.ArchiveBundle;
+                                buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
+                                buildParameters.PackageName = packageName;
+                                buildParameters.PackageVersion = GetDefaultPackageVersion();
+                                buildParameters.VerifyBuildingResult = true;
+                                buildParameters.EnableSharePackRule = true;
+                                buildParameters.BundleEncryptor = bundleEncryptionServices;
+                                buildParameters.ManifestEncryptor = manifestEncryptionServices;
+                                buildParameters.ManifestDecryptor = manifestDecryptionServices;
+                                buildParameters.FileNameStyle = bundleNameStyle;
+                                buildParameters.BundledCopyOption = bundleCopyOption;
+                                buildParameters.BundledCopyParams = string.Empty;
+                                buildParameters.ClearBuildCacheFiles = clearBuildCacheFiles ?? false;
+                                buildParameters.UseAssetDependencyDB = useAssetDependencyDB ?? true;
+
+                                // 執行構建
+                                ArchiveFileBuildPipeline pipeline = new ArchiveFileBuildPipeline();
+                                var buildResult = pipeline.Run(buildParameters, true);
+                                if (buildResult.Success)
+                                {
+                                    successfulResultsBuilder.Append($"Build successful: {buildResult.OutputPackageDirectory}\n");
+                                }
+                                else
+                                {
+                                    failedResultsBuilder.Append($"Build failed: {buildResult.ErrorInfo}\n");
+                                }
+                            }
+                            break;
+#endif
                     }
                 }
             }
@@ -959,7 +1093,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
 
                 // 輸出 CDN 文件夾
                 string sourceFolder = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
+#if YOOASSET_2
                 string exportFolder = Path.Combine(EditorTools.GetProjectPath(), "ExportBundles", PatchSettings.settings.rootFolderName);
+#else
+                // [YooAsset v3] GetProjectPath 移至 EditorPathUtility
+                string exportFolder = Path.Combine(EditorPathUtility.GetProjectPath(), "ExportBundles", PatchSettings.settings.rootFolderName);
+#endif
                 ExportBundles(sourceFolder, exportFolder, bundleMap, productName, buildVersion, isClearOutputPath);
             }
             #endregion

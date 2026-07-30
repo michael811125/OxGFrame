@@ -29,7 +29,7 @@ namespace OxGFrame.NetFrame
 
         private bool _isCloseForce = false;                              // Flag to indicate if the connection was closed intentionally
 
-        protected RealTimer _hearBeatTicker = null;                      // Cyclic timer for sending heartbeats
+        protected RealTimer _heartBeatTicker = null;                      // Cyclic timer for sending heartbeats
         private float _heartBeatTick = 10f;                              // Heartbeat interval in seconds (Default: 10s)
         protected Action _heartBeatAction = null;                        // Callback triggered when heartbeat interval elapses
 
@@ -53,7 +53,7 @@ namespace OxGFrame.NetFrame
 
         public NetNode(INetProvider socket, INetTips netTips = null)
         {
-            this._hearBeatTicker = new RealTimer();
+            this._heartBeatTicker = new RealTimer();
             this._outReceiveTicker = new RealTimer();
             this._reconnectTicker = new RealTimer();
             this._Initialize(socket, netTips);
@@ -225,6 +225,9 @@ namespace OxGFrame.NetFrame
         /// </summary>
         public bool Send(byte[] buffer)
         {
+            // 防護 Dispose 後仍被持有調用的情況
+            if (this._netProvider == null)
+                return false;
             return this._netProvider.SendBinary(buffer);
         }
 
@@ -233,6 +236,9 @@ namespace OxGFrame.NetFrame
         /// </summary>
         public bool Send(string text)
         {
+            // 防護 Dispose 後仍被持有調用的情況
+            if (this._netProvider == null)
+                return false;
             return this._netProvider.SendMessage(text);
         }
 
@@ -351,19 +357,19 @@ namespace OxGFrame.NetFrame
 
         private void _ResetHeartBeatTicker()
         {
-            if (this._hearBeatTicker == null)
-                this._hearBeatTicker = new RealTimer();
+            if (this._heartBeatTicker == null)
+                this._heartBeatTicker = new RealTimer();
 
-            this._hearBeatTicker.Play();
-            this._hearBeatTicker.SetTick(this._heartBeatTick);
+            this._heartBeatTicker.Play();
+            this._heartBeatTicker.SetTick(this._heartBeatTick);
         }
 
         private void _ProcessHeartBeat()
         {
-            if (this._hearBeatTicker.IsPause())
+            if (this._heartBeatTicker.IsPause())
                 return;
 
-            if (this._hearBeatTicker.IsTickTimeout())
+            if (this._heartBeatTicker.IsTickTimeout())
             {
                 this._heartBeatAction?.Invoke();
                 Logging.Print<Logger>("NetNode sending heartbeat...");
@@ -421,7 +427,7 @@ namespace OxGFrame.NetFrame
             {
                 if (this._reconnectTicker.IsTickTimeout())
                 {
-                    this._netProvider.Close();
+                    this._netProvider?.Close();
 
                     this.Connect(this._netOption);
                     if (this._autoReconnectCount > 0)
@@ -444,7 +450,7 @@ namespace OxGFrame.NetFrame
         /// </summary>
         private void _StopTicker()
         {
-            this._hearBeatTicker?.Stop();
+            this._heartBeatTicker?.Stop();
             this._outReceiveTicker?.Stop();
             this._reconnectTicker?.Stop();
         }
@@ -460,7 +466,7 @@ namespace OxGFrame.NetFrame
             this._netProvider = null;
             this._netTips = null;
             this._netOption = null;
-            this._hearBeatTicker = null;
+            this._heartBeatTicker = null;
             this._heartBeatAction = null;
             this._outReceiveTicker = null;
             this._outReceiveAction = null;
@@ -470,6 +476,9 @@ namespace OxGFrame.NetFrame
             this._responseMessageHandler = null;
             this._connectingHandler = null;
             this._connectedHandler = null;
+
+            // 已明確釋放，無需再進入 Finalizer 佇列
+            GC.SuppressFinalize(this);
         }
     }
 }

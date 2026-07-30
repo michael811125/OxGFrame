@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace OxGFrame.Hotfixer
 {
+    /// <summary>
+    /// Static facade for the hotfix flow managed by the HotfixManager
+    /// </summary>
     public static class Hotfixers
     {
         /// <summary>
@@ -51,7 +54,7 @@ namespace OxGFrame.Hotfixer
         }
 
         /// <summary>
-        /// Reset hotfix flgas and cache
+        /// Reset hotfix flags and cache
         /// </summary>
         public static void Reset()
         {
@@ -64,19 +67,9 @@ namespace OxGFrame.Hotfixer
         /// </summary>
         /// <param name="packageName"></param>
         /// <param name="errorAction"></param>
-        /// <returns></returns>
         public static void CheckHotfix(string packageName, Action errorAction = null)
         {
-            string url = HotfixConfig.GetStreamingAssetsConfigRequestPath();
-            WebRequester.RequestBytes(url, (data) =>
-            {
-                if (data != null && data.Length > 0)
-                {
-                    var configInfo = BinaryHelper.DecryptToString(data);
-                    var config = JsonUtility.FromJson<HotfixManifest>(configInfo.content);
-                    HotfixManager.GetInstance().CheckHotfix(packageName, config.aotDlls.ToArray(), config.hotfixDlls.ToArray());
-                }
-            }, errorAction).ToUniTask().Forget();
+            _CheckHotfixFromConfig(errorAction, (aotDlls, hotfixDlls) => HotfixManager.GetInstance().CheckHotfix(packageName, aotDlls, hotfixDlls));
         }
 
         /// <summary>
@@ -85,18 +78,54 @@ namespace OxGFrame.Hotfixer
         /// </summary>
         /// <param name="packageInfoWithBuild"></param>
         /// <param name="errorAction"></param>
-        /// <returns></returns>
         public static void CheckHotfix(PackageInfoWithBuild packageInfoWithBuild, Action errorAction = null)
+        {
+            _CheckHotfixFromConfig(errorAction, (aotDlls, hotfixDlls) => HotfixManager.GetInstance().CheckHotfix(packageInfoWithBuild, aotDlls, hotfixDlls));
+        }
+
+        /// <summary>
+        /// Read the HotfixManifest config from StreamingAssets and then execute CheckHotfix
+        /// </summary>
+        /// <param name="errorAction"></param>
+        /// <param name="checkAction"></param>
+        private static void _CheckHotfixFromConfig(Action errorAction, Action<string[], string[]> checkAction)
         {
             string url = HotfixConfig.GetStreamingAssetsConfigRequestPath();
             WebRequester.RequestBytes(url, (data) =>
             {
-                if (data != null && data.Length > 0)
+                // 空數據視為請求失敗，必須回調 errorAction，避免熱更流程靜默卡住
+                if (data == null || data.Length == 0)
+                {
+                    Debug.LogError($"<color=#FF0000>Hotfix config request returned empty data. Cannot start hotfix. URL: {url}</color>");
+                    errorAction?.Invoke();
+                    return;
+                }
+
+                // 解密或解析拋出例外時同樣回調 errorAction，避免熱更流程靜默卡住
+                HotfixManifest config;
+                try
                 {
                     var configInfo = BinaryHelper.DecryptToString(data);
-                    var config = JsonUtility.FromJson<HotfixManifest>(configInfo.content);
-                    HotfixManager.GetInstance().CheckHotfix(packageInfoWithBuild, config.aotDlls.ToArray(), config.hotfixDlls.ToArray());
+                    config = JsonUtility.FromJson<HotfixManifest>(configInfo.content);
                 }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"<color=#FF0000>Hotfix config decrypt or parsing failed. Cannot start hotfix. URL: {url}, Error: {ex.Message}</color>");
+                    errorAction?.Invoke();
+                    return;
+                }
+
+                // 配置解析失敗防護
+                if (config == null ||
+                    config.aotDlls == null ||
+                    config.hotfixDlls == null)
+                {
+                    Debug.LogError($"<color=#FF0000>Hotfix config parsing failed. Cannot start hotfix. URL: {url}</color>");
+                    errorAction?.Invoke();
+                    return;
+                }
+
+                checkAction.Invoke(config.aotDlls.ToArray(), config.hotfixDlls.ToArray());
             }, errorAction).ToUniTask().Forget();
         }
 

@@ -10,6 +10,10 @@ using UnityEditor;
 using UnityEngine;
 using YooAsset.Editor;
 using static OxGFrame.AssetLoader.Bundle.AppConfig;
+#if YOOASSET_3
+// [YooAsset v3] 類名更名轉接
+using AssetBundleBuilderHelper = YooAsset.Editor.BundleBuilderHelper;
+#endif
 
 namespace OxGFrame.AssetLoader.Editor
 {
@@ -34,7 +38,7 @@ namespace OxGFrame.AssetLoader.Editor
             // 生成配置文件數據
             var cfg = GenerateAppConfig(productName, null, appVersion, activeBuildTarget, buildTarget);
 
-            // 配置文件序列化, 將進行寫入
+            // 配置文件序列化，將進行寫入
             string jsonCfg = JsonConvert.SerializeObject(cfg, Formatting.Indented);
 
             // 寫入配置文件
@@ -74,7 +78,7 @@ namespace OxGFrame.AssetLoader.Editor
             #endregion
 
             #region AppConfig Write
-            // 配置文件序列化, 將進行寫入
+            // 配置文件序列化，將進行寫入
             string jsonCfg = JsonConvert.SerializeObject(appCfg, Formatting.Indented);
 
             // 寫入配置文件
@@ -89,7 +93,7 @@ namespace OxGFrame.AssetLoader.Editor
             #endregion
 
             #region PatchConfig Write
-            // 配置文件序列化, 將進行寫入
+            // 配置文件序列化，將進行寫入
             jsonCfg = JsonConvert.SerializeObject(patchCfg, Formatting.Indented);
 
             // 寫入配置文件
@@ -595,21 +599,21 @@ namespace OxGFrame.AssetLoader.Editor
             {
                 string versionName = Path.GetFileNameWithoutExtension(versionPath);
 
-                // 確保符合預期格式, 跳過不符合格式的資料夾
+                // 確保符合預期格式，跳過不符合格式的資料夾
                 if (versionName.IndexOf('-') <= -1) continue;
 
                 // 提取日期部分並處理為 "yyyyMMdd" 格式
                 string major = versionName.Substring(0, versionName.LastIndexOf("-")).Replace("-", string.Empty);
 
-                // 提取分鐘部分, 並確保其為 4 位數格式
+                // 提取分鐘部分，並確保其為 4 位數格式
                 string minor = versionName.Substring(versionName.LastIndexOf("-") + 1).PadLeft(4, '0');
 
-                // 合併日期與分鐘部分, 並轉換為數字
+                // 合併日期與分鐘部分，並轉換為數字
                 string refinedVersionName = major + minor;
 
                 if (decimal.TryParse(refinedVersionName, out decimal value))
                 {
-                    // 直接比較, 更新最新版本的路徑和版本號
+                    // 直接比較，更新最新版本的路徑和版本號
                     if (value > newestVersion)
                     {
                         newestVersion = value;
@@ -630,7 +634,7 @@ namespace OxGFrame.AssetLoader.Editor
         /// <param name="outputPath"></param>
         internal static void WriteTxt(string txt, string outputPath)
         {
-            // 檢查目錄是否存在, 若不存在則創建它
+            // 檢查目錄是否存在，若不存在則創建它
             string directoryPath = Path.GetDirectoryName(outputPath);
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);

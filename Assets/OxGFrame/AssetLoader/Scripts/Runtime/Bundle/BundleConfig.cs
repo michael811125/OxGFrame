@@ -35,7 +35,11 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             BuiltinBuildPipeline = 1,
             ScriptableBuildPipeline = 0,
-            RawFileBuildPipeline = 2
+            RawFileBuildPipeline = 2,
+#if YOOASSET_3
+            // [YooAsset v3] 歸檔文件建置管線 (v3 專用)
+            ArchiveFileBuildPipeline = 3
+#endif
         }
 
         /// <summary>
@@ -109,12 +113,12 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <summary>
         /// 預設同時併發下載數量
         /// </summary>
-        internal const int DEFAULT_MAX_CONCURRENCY_MAX_DOWNLOAD_COUNT = 10;
+        internal const int DEFAULT_MAX_CONCURRENCY_DOWNLOAD_COUNT = 10;
 
         /// <summary>
         /// 同時併發下載數量
         /// </summary>
-        public static int maxConcurrencyDownloadCount = DEFAULT_MAX_CONCURRENCY_MAX_DOWNLOAD_COUNT;
+        public static int maxConcurrencyDownloadCount = DEFAULT_MAX_CONCURRENCY_DOWNLOAD_COUNT;
 
         /// <summary>
         /// 預設下載失敗重新嘗試次數
@@ -137,7 +141,7 @@ namespace OxGFrame.AssetLoader.Bundle
         public static int DEFAULT_DOWNLOAD_WATCHDOG_TIMEOUT = 30;
 
         /// <summary>
-        /// 下載器看門狗監控超時時間 (監控時間範圍內, 沒接受到任何下載數據, 直接終止任務)
+        /// 下載器看門狗監控超時時間 (監控時間範圍內，沒接受到任何下載數據，直接終止任務)
         /// </summary>
         public static int downloadWatchdogTimeout = DEFAULT_DOWNLOAD_WATCHDOG_TIMEOUT;
         #endregion
@@ -227,8 +231,13 @@ namespace OxGFrame.AssetLoader.Bundle
         {
             if (decryptArgs == null)
             {
+                // 空字串一律視為 NONE，避免後續解析出錯
+                if (string.IsNullOrEmpty(args))
+                    args = CryptogramType.NONE;
+
                 // Check args first, if is none don't need to secure memory
-                bool isNone = args.Substring(0, CryptogramType.NONE.Length).ToUpper().Equals(CryptogramType.NONE);
+                // 使用 StartsWith 判斷，避免參數字串長度不足時 Substring 拋出異常 (ex: "xor" 僅 3 字元)
+                bool isNone = args.TrimStart().StartsWith(CryptogramType.NONE, System.StringComparison.OrdinalIgnoreCase);
                 if (isNone)
                     securedType = SecuredStringType.None;
 
@@ -387,7 +396,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetHostServerUrl(string packageName)
         {
-            // 獲取 Host Server 最新的 AppConfig 版本, 主要是為了獲取最新 AppVersion 路徑
+            // 獲取 Host Server 最新的 AppConfig 版本，主要是為了獲取最新 AppVersion 路徑
             var appConfig = await GetAppConfigFromHostServer();
             string host = await GetValueFromUrlCfg(PatchSettings.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
@@ -407,7 +416,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetFallbackHostServerUrl(string packageName)
         {
-            // 獲取 Host Server 最新的 AppConfig 版本, 主要是為了獲取最新 AppVersion 路徑
+            // 獲取 Host Server 最新的 AppConfig 版本，主要是為了獲取最新 AppVersion 路徑
             var appConfig = await GetAppConfigFromHostServer();
             string host = await GetValueFromUrlCfg(PatchSettings.BUNDLE_FALLBACK_IP);
             string productName = appConfig.PRODUCT_NAME;
@@ -546,7 +555,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetHostServerAppConfigPath()
         {
-            // 從 StreamingAssets 中先獲取 AppConfig, 是為了獲取對應的平台與產品名稱路徑
+            // 從 StreamingAssets 中先獲取 AppConfig，是為了獲取對應的平台與產品名稱路徑
             var appConfig = await GetAppConfigFromStreamingAssets();
             string host = await GetValueFromUrlCfg(PatchSettings.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;
@@ -563,7 +572,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public static async UniTask<string> GetHostServerPatchConfigPath()
         {
-            // 從 StreamingAssets 中先獲取 appConfig, 是為了獲取對應的平台與產品名稱路徑
+            // 從 StreamingAssets 中先獲取 appConfig，是為了獲取對應的平台與產品名稱路徑
             var appConfig = await GetAppConfigFromStreamingAssets();
             string host = await GetValueFromUrlCfg(PatchSettings.BUNDLE_IP);
             string productName = appConfig.PRODUCT_NAME;

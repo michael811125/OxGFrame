@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace OxGFrame.AssetLoader.Bundle
 {
@@ -209,28 +210,29 @@ namespace OxGFrame.AssetLoader.Bundle
                 }
 
                 // Numeric types
+                // 一律使用 InvariantCulture 解析，避免逗號小數地區 (ex: de-DE) 解析錯誤
                 if (targetType == typeof(int))
-                    return int.Parse(value);
+                    return int.Parse(value, CultureInfo.InvariantCulture);
                 if (targetType == typeof(uint))
-                    return uint.Parse(value);
+                    return uint.Parse(value, CultureInfo.InvariantCulture);
                 if (targetType == typeof(byte))
-                    return byte.Parse(value);
+                    return byte.Parse(value, CultureInfo.InvariantCulture);
                 if (targetType == typeof(sbyte))
-                    return sbyte.Parse(value);
+                    return sbyte.Parse(value, CultureInfo.InvariantCulture);
                 if (targetType == typeof(short))
-                    return short.Parse(value);
+                    return short.Parse(value, CultureInfo.InvariantCulture);
                 if (targetType == typeof(ushort))
-                    return ushort.Parse(value);
+                    return ushort.Parse(value, CultureInfo.InvariantCulture);
                 if (targetType == typeof(long))
-                    return long.Parse(value);
+                    return long.Parse(value, CultureInfo.InvariantCulture);
                 if (targetType == typeof(ulong))
-                    return ulong.Parse(value);
+                    return ulong.Parse(value, CultureInfo.InvariantCulture);
                 if (targetType == typeof(float))
-                    return float.Parse(value);
+                    return float.Parse(value, CultureInfo.InvariantCulture);
                 if (targetType == typeof(double))
-                    return double.Parse(value);
+                    return double.Parse(value, CultureInfo.InvariantCulture);
                 if (targetType == typeof(decimal))
-                    return decimal.Parse(value);
+                    return decimal.Parse(value, CultureInfo.InvariantCulture);
 
                 throw new NotSupportedException($"Type '{targetType}' is not supported");
             }

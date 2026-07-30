@@ -28,22 +28,22 @@ namespace OxGFrame.CoreFrame
         {
             string name = go.name;
 
-            // 檢查是否要結束綁定, 有檢查到【BIND_STOP_END】時, 則停止繼續搜尋綁定物件
+            // 檢查是否要結束綁定，有檢查到【BIND_STOP_END】時，則停止繼續搜尋綁定物件
             if (CheckNodeHasStopEnd(name))
             {
-                // 在 Runtime 時, 還原字串 (主要是在 Transform.Find 時, 可以無視 BIND_STOP_END 標籤)
+                // 在 Runtime 時，還原字串 (主要是在 Transform.Find 時，可以無視 BIND_STOP_END 標籤)
                 go.name = go.name.Replace(FrameConfig.BIND_STOP_END, string.Empty);
                 return false;
             }
 
-            // 這邊檢查有【BIND_PREFIXES】時, 則進入判斷
+            // 這邊檢查有【BIND_PREFIXES】時，則進入判斷
             if (CheckNodeHasPrefix(name, fBase))
             {
                 _BindIntoCollector(name, go, fBase);
             }
 
             // 依序綁定下一個子物件 (遞迴找到符合綁定條件)
-            foreach (Transform child in go.GetComponentInChildren<Transform>())
+            foreach (Transform child in go.transform)
             {
                 if (!_BindNode(child.gameObject, fBase))
                     return false;
@@ -56,6 +56,15 @@ namespace OxGFrame.CoreFrame
         {
             // 綁定開頭檢測
             string[] heads = GetHeadSplitNameBySeparator(name);
+
+            // 必須先判斷字串陣列是否符合綁定格式資格，再進行取值，避免無效命名造成 IndexOutOfRangeException
+            if (heads == null ||
+                heads.Length < 2 ||
+                !FrameConfig.BIND_COMPONENTS.ContainsKey(heads[0]))
+            {
+                Logging.PrintError<Logger>($"Invalid naming format for '{name}'. Please check the bind name.");
+                return;
+            }
 
             string bindType = heads[0]; // 綁定類型(會去查找 dictComponentFinder 裡面有沒有符合的類型)
             string bindInfo = heads[1]; // 要成為取得綁定物件後的 Key
@@ -97,19 +106,10 @@ namespace OxGFrame.CoreFrame
                 bindNames.Add($"{tails[0]}");
             }
 
-            // 再去判斷取得後的字串陣列是否綁定格式資格
-            if (heads == null ||
-                heads.Length < 2 ||
-                !FrameConfig.BIND_COMPONENTS.ContainsKey(bindType))
-            {
-                Logging.PrintError<Logger>($"Invalid naming format for '{name}'. Please check the bind name.");
-                return;
-            }
-
-            // 找到對應的綁定類型後, 進行綁定
+            // 找到對應的綁定類型後，進行綁定
             if (FrameConfig.BIND_COMPONENTS[bindType] == "GameObject")
             {
-                // 綁定至收集器, 此時進行完成綁定
+                // 綁定至收集器，此時進行完成綁定
                 foreach (var bindName in bindNames)
                     fBase.collector.AddNode(bindName, go);
             }
@@ -161,8 +161,8 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 透過【BIND_HEAD_SEPARATOR】執行 Split 字串, 返回取得字串陣列
-        /// <para> ※備註: (Example) _Node@MyObj*Txt => ["_Node", "MyObj*Txt"] </para>
+        /// 透過【BIND_HEAD_SEPARATOR】執行 Split 字串，返回取得字串陣列
+        /// <para> ※備註：(Example) _Node@MyObj*Txt => ["_Node", "MyObj*Txt"] </para>
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -175,8 +175,8 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 透過【BIND_TAIL_SEPARATOR】執行 Split 字串, 返回取得字串陣列
-        /// <para> ※備註: (Example) MyObj*Txt => ["MyObj", "Txt"] </para>
+        /// 透過【BIND_TAIL_SEPARATOR】執行 Split 字串，返回取得字串陣列
+        /// <para> ※備註：(Example) MyObj*Txt => ["MyObj", "Txt"] </para>
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -189,8 +189,8 @@ namespace OxGFrame.CoreFrame
         }
 
         /// <summary>
-        /// 透過【BIND_ACCESS_MODIFIER_SEPARATOR】執行 Split 字串, 返回取得字串陣列
-        /// <para> ※備註: (Example) MyObj*Txt$public => ["MyObj*Txt", "public"] </para>
+        /// 透過【BIND_ACCESS_MODIFIER_SEPARATOR】執行 Split 字串，返回取得字串陣列
+        /// <para> ※備註：(Example) MyObj*Txt$public => ["MyObj*Txt", "public"] </para>
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>

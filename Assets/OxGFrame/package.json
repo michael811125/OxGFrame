@@ -2,88 +2,93 @@
 	"name": "com.michaelo.oxgframe",
 	"displayName": "OxGFrame",
 	"description": "The OxGFrame is a framework based on Unity for accelerating game development. Supports multi-platform Win, OSX, Android, iOS, WebGL.",
-	"version": "3.6.1",
+	"version": "3.7.0",
 	"unity": "2021.3",
 	"license": "MIT",
 	"samples": [
 		{
+			"displayName": "AI Agent Skills",
+			"description": "Agent Skill (SKILL.md + source-verified references) that teaches AI coding agents (Claude Code, Codex CLI, Cursor, etc.) how to develop with OxGFrame; briefly covers the OxGKit APIs used by the framework. Copy the skill folder into your agent's skills directory after import.",
+			"path": "Samples~/AgentSkills"
+		},
+		{
 			"displayName": "BuildTool Extension",
-			"description": "",
+			"description": "Editor-only build pipeline extension for CI/CLI. Chains HybridCLR install and generation, hotfix DLL compile-and-copy, YooAsset bundle builds driven by a bundle-map JSON, config export, and the player build (BuildTool.BuildApp / BuildBundles).",
 			"path": "Samples~/BuildTool"
 		},
 		{
 			"displayName": "AudioManager Prefab",
-			"description": "",
+			"description": "The in-scene audio manager prefab with the MasterMixer asset (BGM/General/Interact/Voice/Atmosphere groups, snapshots, and exposed volume parameters). Required by the MediaFrames.AudioFrame mixer APIs.",
 			"path": "Samples~/AudioManager"
 		},
 		{
 			"displayName": "PatchLauncher Prefab",
-			"description": "",
+			"description": "The required bootstrap prefab for all bundle-driven features. Configures play mode (EditorSimulate/Offline/Host/WeakHost/WebGL/Custom), preset app and DLC packages, download options, and decryption settings. Gate startup with AssetPatcher.IsInitialized().",
 			"path": "Samples~/PatchLauncher"
 		},
 		{
 			"displayName": "Hotfixer Demo",
-			"description": "Sample to use Hotfixer",
+			"description": "Demonstrates the HybridCLR hotfix flow with Hotfixers.CheckHotfix: main/hotfix assembly split (two asmdefs), AOT metadata and hotfix DLL loading, hotfix events with user retry, then entering the hotfix scene. Requires the PatchLauncher prefab.",
 			"path": "Samples~/HotfixerDemo"
 		},
 		{
 			"displayName": "Bundle Demo",
-			"description": "Sample to use Bundle",
+			"description": "Demonstrates the full patch flow with AssetPatcher.Check: patch FSM state events, group-selection download confirm, progress and speed display, repair, then asset load/unload via AssetLoaders. Requires the PatchLauncher prefab.",
 			"path": "Samples~/BundleDemo"
 		},
 		{
 			"displayName": "Bundle DLC Demo",
-			"description": "Sample to use Bundle DLC",
+			"description": "Demonstrates independent per-DLC-package patching with PackageOperation: create operations, listen to grouped events, then Ready/Begin/Repair/Cancel per DLC package. Requires the PatchLauncher prefab.",
 			"path": "Samples~/BundleDLCDemo"
 		},
 		{
 			"displayName": "UIFrame Demo",
-			"description": "Sample to use UIFrame",
+			"description": "Demonstrates CoreFrames.UIFrame: asset-name constants with group ids, Show/Close/Hide/Reveal/Preload, data passing, awaiting (loading) UI, stack-by-stack ESC-menu pattern, UICanvas setup, auto mask, and the full UIBase lifecycle with CodeBinding (_Node@).",
 			"path": "Samples~/UIFrameDemo"
 		},
 		{
 			"displayName": "SRFrame Demo",
-			"description": "Sample to use SRFrame",
+			"description": "Demonstrates CoreFrames.SRFrame for scene-resource prefabs (SRBase): Show with parent, generic Show and GetComponent access, Hide/Reveal, CloseAll variants, and collector node binding.",
 			"path": "Samples~/SRFrameDemo"
 		},
 		{
 			"displayName": "USFrame Demo",
-			"description": "Sample to use USFrame",
+			"description": "Demonstrates CoreFrames.USFrame scene management: Build Settings scenes (build# prefix) vs bundled scenes, single/additive loading with progression callbacks, activating scene root game objects, and Unload. Bundled scenes require the PatchLauncher prefab.",
 			"path": "Samples~/USFrameDemo"
 		},
 		{
 			"displayName": "CPFrame Demo",
-			"description": "Sample to use CPFrame",
+			"description": "Demonstrates CoreFrames.CPFrame clone prefabs (CPBase): LoadWithClone and LoadWithCloneAsync, the factory-method pattern, and tilde node binding (~Node@) for cells and repeated prefabs.",
 			"path": "Samples~/CPFrameDemo"
 		},
 		{
 			"displayName": "AudioFrame Demo",
-			"description": "Sample to use AudioFrame",
+			"description": "Demonstrates MediaFrames.AudioFrame: audio prefab constants by SoundType category, Play/Stop/Pause/ResumeAll, playing with a runtime AudioClip, and AudioMixer control (snapshots and exposed parameters). Requires the AudioManager prefab.",
 			"path": "Samples~/AudioFrameDemo"
 		},
 		{
 			"displayName": "VideoFrame Demo",
-			"description": "Sample to use VideoFrame",
+			"description": "Demonstrates MediaFrames.VideoFrame: RenderTexture vs Camera render modes, GetTargetRenderTexture with RawImage, SetEndEvent, playback speed control, and SkipToPercent.",
 			"path": "Samples~/VideoFrameDemo"
 		},
 		{
 			"displayName": "GSIFrame Demo",
-			"description": "Sample to use GSIFrame",
+			"description": "Demonstrates the GSIFrame game-stage flow: a GSIManagerBase singleton registering stages in its constructor, DriveStart/DriveUpdate from a driver MonoBehaviour, and deferred or forced stage switching.",
 			"path": "Samples~/GSIFrameDemo"
 		},
 		{
 			"displayName": "NetFrame Demo",
-			"description": "Sample to use NetFrame",
+			"description": "Demonstrates NetFrame network clients: NetNode setup with response handlers and heartbeat/out-receive/reconnect tickers, WebSocket/TCP/KCP providers and options, INetTips connection feedback, and NetFrames Connect/Send/Close.",
 			"path": "Samples~/NetFrameDemo"
 		},
 		{
 			"displayName": "APICenter Demo",
-			"description": "Sample to use APICenter",
+			"description": "Demonstrates the CenterFrame APICenter: a CenterBase registry of APIBase classes, Find access from anywhere, and HTTP requests via the built-in Http.Acax and AcaxAsync helpers.",
 			"path": "Samples~/APICenterDemo"
 		},
 		{
 			"displayName": "EventCenter Demo",
-			"description": "Sample to use EventCenter",
+			"description": "Demonstrates the CenterFrame EventCenter: a CenterBase registry of EventBase classes with the Emit/HandleEvent/Release pattern for decoupled cross-system events.",
 			"path": "Samples~/EventCenterDemo"
 		}
 	],

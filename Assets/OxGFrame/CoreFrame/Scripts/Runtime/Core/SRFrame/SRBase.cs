@@ -115,14 +115,14 @@ namespace OxGFrame.CoreFrame.SRFrame
             }
         }
 
-        internal sealed override void Hide(bool disabledPreClose = false)
+        internal sealed override void Hide(bool disableOnPreClose = false)
         {
             if (!this.gameObject.activeSelf)
                 return;
 
             if (!this.isHidden)
             {
-                if (!disabledPreClose)
+                if (!disableOnPreClose)
                     this.OnPreClose();
                 this.OnClose();
             }
@@ -137,9 +137,9 @@ namespace OxGFrame.CoreFrame.SRFrame
             this.CloseSelf(false, false);
         }
 
-        protected sealed override void CloseSelf(bool disabledPreClose, bool forceDestroy)
+        protected sealed override void CloseSelf(bool disableOnPreClose, bool forceDestroy)
         {
-            SRManager.GetInstance().Close(this.assetName, disabledPreClose, forceDestroy);
+            SRManager.GetInstance().Close(this.assetName, disableOnPreClose, forceDestroy);
         }
 
         protected sealed override void HideSelf()

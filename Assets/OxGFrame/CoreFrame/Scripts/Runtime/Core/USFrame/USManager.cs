@@ -239,9 +239,9 @@ namespace OxGFrame.CoreFrame.USFrame
                         else go.SetActive(active);
                     }
                 }
-                else Logging.PrintWarning<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...");
+                else Logging.PrintWarning<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loading...");
             }
-            else Logging.PrintError<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene not is valid!!!");
+            else Logging.PrintError<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is not valid!!!");
         }
 
         public async UniTask SetActiveSceneRootGameObjectsAsync(Scene scene, bool active, int framesInterval, int activeObjectsPerInterval, string[] withoutRootGameObjectNames = null)
@@ -285,9 +285,9 @@ namespace OxGFrame.CoreFrame.USFrame
                         }
                     }
                 }
-                else Logging.PrintWarning<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loding...");
+                else Logging.PrintWarning<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is loading...");
             }
-            else Logging.PrintError<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene not is valid!!!");
+            else Logging.PrintError<Logger>($"Set active objects of the scene failed!!! Scene Name: {scene.name}. The scene is not valid!!!");
         }
 
         #region Bundle
@@ -364,13 +364,13 @@ namespace OxGFrame.CoreFrame.USFrame
                 }
             }
 
-            // Additive 場景不使用單飛, 每次都實際載入
+            // Additive 場景不使用單飛，每次都實際載入
             if (loadSceneMode == LoadSceneMode.Additive)
             {
                 return await this._LoadFromBuildCoreAsync(sceneName, loadSceneMode, localPhysicsMode, progression);
             }
 
-            // Single 場景使用單飛, 檢查是否有進行中的載入任務
+            // Single 場景使用單飛，檢查是否有進行中的載入任務
             if (this._loadingTasker.TryGetLoadingTask(sceneName, out var existingTask))
             {
                 Logging.Print<Logger>($"Scene: {sceneName} is loading, waiting for existing task...");
@@ -489,13 +489,13 @@ namespace OxGFrame.CoreFrame.USFrame
             // 使用 buildIndex 作為 key (轉成字串)
             string taskKey = $"{buildIndex}";
 
-            // Additive 場景不使用單飛, 每次都實際載入
+            // Additive 場景不使用單飛，每次都實際載入
             if (loadSceneMode == LoadSceneMode.Additive)
             {
                 return await this._LoadFromBuildCoreAsync(buildIndex, loadSceneMode, localPhysicsMode, progression);
             }
 
-            // Single 場景使用單飛, 檢查是否有進行中的載入任務
+            // Single 場景使用單飛，檢查是否有進行中的載入任務
             if (this._loadingTasker.TryGetLoadingTask(taskKey, out var existingTask))
             {
                 Logging.Print<Logger>($"Scene: idx {buildIndex} is loading, waiting for existing task...");
@@ -581,7 +581,8 @@ namespace OxGFrame.CoreFrame.USFrame
                 }
             }
 
-            scene = SceneManager.LoadScene(sceneName, new LoadSceneParameters(loadSceneMode, localPhysicsMode));
+            // 必須以 buildIndex 進行載入 (未載入的場景無法透過 GetSceneByBuildIndex 取得名稱)
+            scene = SceneManager.LoadScene(buildIndex, new LoadSceneParameters(loadSceneMode, localPhysicsMode));
             if (progression != null)
             {
                 this._currentCount++;

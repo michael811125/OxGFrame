@@ -86,12 +86,13 @@ namespace OxGFrame.AssetLoader.PatchEvent
             public int availableMegabytes;
             public ulong patchTotalBytes;
 
-            public static void SendEventMessage(int availableMegabytes, ulong patchTotalBytes)
+            public static void SendEventMessage(int groupId, int availableMegabytes, ulong patchTotalBytes)
             {
                 var msg = new PatchCheckDiskNotEnoughSpace();
                 msg.availableMegabytes = availableMegabytes;
                 msg.patchTotalBytes = patchTotalBytes;
-                UniEvent.SendMessage(msg);
+                // 必須帶上 groupId 發送，PackageOperation 才能透過 EventGroup 收到
+                UniEvent.SendMessage(groupId, msg);
             }
         }
 
@@ -115,7 +116,8 @@ namespace OxGFrame.AssetLoader.PatchEvent
                 msg.totalDownloadSizeBytes = totalDownloadSizeBytes;
                 msg.currentDownloadSizeBytes = currentDownloadSizeBytes;
                 msg.downloadSpeedBytes = downloadSpeedBytes;
-                msg.progress = (msg.currentDownloadSizeBytes * 1f) / (msg.totalDownloadSizeBytes * 1f);
+                // 防止除以零產生 NaN (總大小為 0 時視為完成)
+                msg.progress = (msg.totalDownloadSizeBytes > 0) ? (msg.currentDownloadSizeBytes * 1f) / (msg.totalDownloadSizeBytes * 1f) : 1f;
                 UniEvent.SendMessage(groupId, msg);
             }
         }

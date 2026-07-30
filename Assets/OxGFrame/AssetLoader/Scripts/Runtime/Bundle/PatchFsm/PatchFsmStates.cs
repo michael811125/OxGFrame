@@ -166,10 +166,10 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 string url;
 
-                // 如果是離線模式或 WebGL 模式, 則以 StreamingAssets 的 appconfig 為主
+                // 如果是離線模式或 WebGL 模式，則以 StreamingAssets 的 appconfig 為主
                 if (!BundleConfig.playModeParameters.fetchAppConfigFromServer)
                     url = saCfgPath;
-                // 反之, 從 Server 請求 Cfg
+                // 反之，從 Server 請求 Cfg
                 else
                     url = await BundleConfig.GetHostServerAppConfigPath();
 
@@ -205,14 +205,14 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 AppConfig saCfg = new AppConfig();
                 AppConfig localCfg = new AppConfig();
 
-                // 確保本地端的儲存目錄是否存在, 無存在則建立
+                // 確保本地端的儲存目錄是否存在，無存在則建立
                 if (!Directory.Exists(BundleConfig.GetLocalSandboxRootPath()))
                 {
                     Directory.CreateDirectory(BundleConfig.GetLocalSandboxRootPath());
                 }
 
                 // 把資源配置文件拷貝到持久化目錄 Application.persistentDataPath
-                // ※備註: 因為更新文件後是需要改寫版本號, 而在行動平台上的 StreamingAssets 是不可寫入的
+                // ※備註：因為更新文件後是需要改寫版本號，而在行動平台上的 StreamingAssets 是不可寫入的
                 if (!File.Exists(BundleConfig.GetLocalSandboxAppConfigPath()))
                 {
                     // 從 StreamingAssets 中取得配置文件 (InApp)
@@ -221,7 +221,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     // Local save path (Sandbox)
                     string localCfgPath = BundleConfig.GetLocalSandboxAppConfigPath();
 
-                    // Request appconfig from StreamginAssets and Save to local Sandbox
+                    // Request appconfig from StreamingAssets and Save to local Sandbox
                     string saCfgJson = await Requester.RequestText(saCfgPath, null, null, null, false);
                     if (!string.IsNullOrEmpty(saCfgJson))
                     {
@@ -234,7 +234,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         return;
                     }
                 }
-                // 如果本地已經有配置文件, 則需要去比對主程式版本, 並且從新 App 中的配置文件寫入至本地配置文件中
+                // 如果本地已經有配置文件，則需要去比對主程式版本，並且從新 App 中的配置文件寫入至本地配置文件中
                 else
                 {
                     // 從 StreamingAssets 讀取配置文件 (StreamingAssets 使用 Request)
@@ -253,7 +253,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     string localCfgJson = File.ReadAllText(localCfgPath);
                     localCfg = JsonConvert.DeserializeObject<AppConfig>(localCfgJson);
 
-                    // 如果是離線模式或 WebGL 模式, 則以 StreamingAssets 的 appconfig 為主 (Local Config = StreamingAssets Config)
+                    // 如果是離線模式或 WebGL 模式，則以 StreamingAssets 的 appconfig 為主 (Local Config = StreamingAssets Config)
                     if (!BundleConfig.playModeParameters.fetchAppConfigFromServer)
                     {
                         // 寫入 StreamingAssets 的配置文件至 Local
@@ -279,7 +279,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                             string saVersion = $"{saAppVersionArgs[0]}.{saAppVersionArgs[1]}";
                             string localVersion = $"{localAppVersionArgs[0]}.{localAppVersionArgs[1]}";
 
-                            // 如果 StreamingAssets 中的 App X.Y 版號與 Local X.Y 版號不一致表示有更新 App, 則會重新寫入 AppConfig 至 Local
+                            // 如果 StreamingAssets 中的 App X.Y 版號與 Local X.Y 版號不一致表示有更新 App，則會重新寫入 AppConfig 至 Local
                             if (saVersion != localVersion)
                             {
                                 // 寫入 StreamingAssets 的配置文件至 Local
@@ -488,7 +488,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     var operation = package.RequestPackageVersionAsync();
                     await operation;
 
-                    if (operation.Status == EOperationStatus.Succeed)
+                    if (operation.Status.IsSucceed())
                     {
                         succeed = true;
                         patchVersions.TryAdd(package.PackageName, operation.PackageVersion);
@@ -500,7 +500,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     }
                 }
 
-                // 如果尚未配置 Preset packages, 直接標記成 true
+                // 如果尚未配置 Preset packages，直接標記成 true
                 if (packages.Length == 0)
                     succeed = true;
 
@@ -576,7 +576,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.1f), true);
 
-                // 判斷目前是否獲取的是本地版號 (如果是的話, 表示目前處於弱聯網)
+                // 判斷目前是否獲取的是本地版號 (如果是的話，表示目前處於弱聯網)
                 bool isLastPackageVersionInWeakHostMode = PatchManager.isLastPackageVersionInWeakHostMode;
 
                 // Combine packages
@@ -594,7 +594,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     var operation = packages[i].UpdatePackageManifestAsync(version);
                     await operation;
 
-                    if (operation.Status == EOperationStatus.Succeed)
+                    if (operation.Status.IsSucceed())
                     {
                         // 儲存本地資源版本
                         BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, currentPackageName, version);
@@ -608,7 +608,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     }
                 }
 
-                // 如果尚未配置 Preset packages, 直接標記成 true
+                // 如果尚未配置 Preset packages，直接標記成 true
                 if (packages.Length == 0)
                     succeed = true;
 
@@ -684,7 +684,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 var dlcPackages = PackageManager.GetPresetDlcPackages();
                 var packages = appPackages.Concat(dlcPackages).ToArray();
 
-                // 判斷目前是否獲取的是本地版號 (如果是的話, 表示目前處於弱聯網)
+                // 判斷目前是否獲取的是本地版號 (如果是的話，表示目前處於弱聯網)
                 bool isLastPackageVersionInWeakHostMode = PatchManager.isLastPackageVersionInWeakHostMode;
 
                 // 獲取預設群包標籤
@@ -699,7 +699,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 if (packages.Length > 0)
                 {
                     #region GroupInfo request
-                    // 獲取 host patch config, 需要處理群組包下載邏輯
+                    // 獲取 host patch config，需要處理群組包下載邏輯
                     string url = await BundleConfig.GetHostServerPatchConfigPath();
                     string hostCfgJson = await Requester.RequestText(url, null, null, null, false);
                     bool isLastHostCfgJson = false;
@@ -887,7 +887,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     {
                         string errorMsg = "Local resources are incomplete. Update required (Please connect to the network)!";
                         Logging.PrintError<Logger>($"{errorMsg}");
-                        // 當突然失去聯網時, 必須重新從獲取資源版本的流程開始運行, 因為當網絡恢復時, 則可以正確獲取遠端版本進行更新
+                        // 當突然失去聯網時，必須重新從獲取資源版本的流程開始運行，因為當網絡恢復時，則可以正確獲取遠端版本進行更新
                         PatchEvents.PatchVersionUpdateFailed.SendEventMessage();
                     }
                     #endregion
@@ -1001,6 +1001,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     int lastCount = 0;
                     long lastBytes = 0;
+#if YOOASSET_2
                     downloader.DownloadErrorCallback = (DownloadErrorData data) =>
                     {
                         PatchEvents.PatchDownloadFailed.SendEventMessage(data.FileName, data.ErrorInfo);
@@ -1013,11 +1014,26 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         lastBytes = data.CurrentDownloadBytes;
                         downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
                     };
+#else
+                    // [YooAsset v3] 回調屬性改為事件 (+=), 資料型別更名為 EventArgs
+                    downloader.DownloadError += (DownloadErrorEventArgs data) =>
+                    {
+                        PatchEvents.PatchDownloadFailed.SendEventMessage(data.FileName, data.ErrorInfo);
+                    };
+                    downloader.DownloadProgressChanged += (DownloadProgressChangedEventArgs data) =>
+                    {
+                        currentCount += data.CurrentDownloadCount - lastCount;
+                        lastCount = data.CurrentDownloadCount;
+                        currentBytes += data.CurrentDownloadBytes - lastBytes;
+                        lastBytes = data.CurrentDownloadBytes;
+                        downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
+                    };
+#endif
 
                     downloader.BeginDownload();
                     await downloader;
 
-                    if (downloader.Status != EOperationStatus.Succeed)
+                    if (!downloader.Status.IsSucceed())
                     {
                         string errorMsg = $"Downloader did not succeed in completing the operation.";
                         Logging.PrintError<Logger>($"{errorMsg}.");
@@ -1106,8 +1122,14 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 foreach (var package in packages)
                 {
+#if YOOASSET_2
                     var clearUnusedBundleFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
                     var clearUnusedManifestFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
+#else
+                    // [YooAsset v3] ClearCacheFilesAsync 改為 ClearCacheAsync (以字串方法名指定清理模式)
+                    var clearUnusedBundleFilesOperation = package.ClearCacheAsync(new ClearCacheOptions(ClearCacheMethods.ClearUnusedBundleFiles));
+                    var clearUnusedManifestFilesOperation = package.ClearCacheAsync(new ClearCacheOptions(ClearCacheMethods.ClearUnusedManifestFiles));
+#endif
                     await clearUnusedBundleFilesOperation;
                     await clearUnusedManifestFilesOperation;
                 }
@@ -1133,7 +1155,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 PatchEvents.PatchFsmState.SendEventMessage(this);
                 // Patch 標記完成
                 PatchManager.GetInstance().MarkPatchAsDone();
-                Logging.PrintInfo<Logger>("(Power by YooAsset) All preset patches are done.");
+                Logging.PrintInfo<Logger>("(Powered by YooAsset) All preset patches are done.");
             }
 
             void IStateNode.OnUpdate()

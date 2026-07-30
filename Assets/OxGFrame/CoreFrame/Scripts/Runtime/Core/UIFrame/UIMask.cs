@@ -23,7 +23,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 重新使用 Mask 時, 再指定一次 uiName
+        /// 重新使用 Mask 時，再指定一次 uiName
         /// </summary>
         /// <param name="uiName"></param>
         public void ReUse()
@@ -32,7 +32,7 @@ namespace OxGFrame.CoreFrame.UIFrame
         }
 
         /// <summary>
-        /// 回收至 MaskPool 時, 會需要釋放相關參數
+        /// 回收至 MaskPool 時，會需要釋放相關參數
         /// </summary>
         public void UnUse()
         {

@@ -219,7 +219,7 @@ namespace OxGFrame.AssetLoader.Cacher
             if (string.IsNullOrEmpty(assetName))
                 return;
 
-            // 如果正在載入, 將卸載請求加入待執行隊列
+            // 如果正在載入，將卸載請求加入待執行隊列
             if (this.HasLoadingTask(assetName))
             {
                 this.AddPendingUnload(assetName, forceUnload);
@@ -227,7 +227,7 @@ namespace OxGFrame.AssetLoader.Cacher
                 return;
             }
 
-            // 如果正在執行卸載, 跳過
+            // 如果正在執行卸載，跳過
             if (this.HasUnloadingFlag(assetName))
             {
                 Logging.PrintWarning<Logger>($"【Try Unload】 Asset: {assetName} is already unloading...");

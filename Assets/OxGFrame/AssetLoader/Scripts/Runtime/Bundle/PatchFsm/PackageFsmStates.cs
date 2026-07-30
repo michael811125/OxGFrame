@@ -269,7 +269,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     var operation = package.RequestPackageVersionAsync();
                     await operation;
 
-                    if (operation.Status == EOperationStatus.Succeed)
+                    if (operation.Status.IsSucceed())
                     {
                         succeed = true;
                         patchVersions.Add(operation.PackageVersion);
@@ -368,7 +368,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     var operation = packages[i].UpdatePackageManifestAsync(packageVersions[i]);
                     await operation;
 
-                    if (operation.Status == EOperationStatus.Succeed)
+                    if (operation.Status.IsSucceed())
                     {
                         // 儲存本地資源版本
                         BundleConfig.saver.SaveData(BundleConfig.LAST_PACKAGE_VERSIONS_KEY, currentPackageName, version);
@@ -445,7 +445,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     return;
                 }
 
-                // 判斷目前是否獲取的是本地版號 (如果是的話, 表示目前處於弱聯網)
+                // 判斷目前是否獲取的是本地版號 (如果是的話，表示目前處於弱聯網)
                 bool isLastPackageVersions = Convert.ToBoolean(this._machine.GetBlackboardValue(PackageOperation.KEY_IS_LAST_PACKAGE_VERSIONS));
 
                 bool skipDownload = (this._machine.Owner as PackageOperation).skipDownload;
@@ -504,7 +504,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     {
                         string errorMsg = "Local resources are incomplete. Update required (Please connect to the network)!";
                         Logging.PrintError<Logger>($"GroupName: {groupInfo.groupName}. {errorMsg}");
-                        // 當突然失去聯網時, 必須重新從獲取資源版本的流程開始運行, 因為當網絡恢復時, 則可以正確獲取遠端版本進行更新
+                        // 當突然失去聯網時，必須重新從獲取資源版本的流程開始運行，因為當網絡恢復時，則可以正確獲取遠端版本進行更新
                         PackageEvents.PatchVersionUpdateFailed.SendEventMessage(this._hashId);
                     }
                     #endregion
@@ -600,7 +600,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                     Logging.PrintInfo<Logger>($"[Disk Space Check] Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}, Patch Total Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}");
                     if (patchTotalMegabytes > availableDiskSpaceMegabytes)
                     {
-                        PackageEvents.PatchCheckDiskNotEnoughSpace.SendEventMessage(availableDiskSpaceMegabytes, (ulong)totalBytes);
+                        PackageEvents.PatchCheckDiskNotEnoughSpace.SendEventMessage(this._hashId, availableDiskSpaceMegabytes, (ulong)totalBytes);
                         Logging.PrintError<Logger>($"Disk Not Enough Space!!! Available Disk Space Size: {BundleUtility.GetMegabytesToString(availableDiskSpaceMegabytes)}, Patch Total Size: {BundleUtility.GetBytesToString((ulong)totalBytes)}");
                         return;
                     }
@@ -630,6 +630,7 @@ namespace OxGFrame.AssetLoader.PatchFsm
                 {
                     int lastCount = 0;
                     long lastBytes = 0;
+#if YOOASSET_2
                     downloader.DownloadErrorCallback = (DownloadErrorData data) =>
                     {
                         PackageEvents.PatchDownloadFailed.SendEventMessage(
@@ -645,11 +646,29 @@ namespace OxGFrame.AssetLoader.PatchFsm
                         lastBytes = data.CurrentDownloadBytes;
                         downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
                     };
+#else
+                    // [YooAsset v3] 回調屬性改為事件 (+=), 資料型別更名為 EventArgs
+                    downloader.DownloadError += (DownloadErrorEventArgs data) =>
+                    {
+                        PackageEvents.PatchDownloadFailed.SendEventMessage(
+                            this._hashId,
+                            data.FileName,
+                            data.ErrorInfo);
+                    };
+                    downloader.DownloadProgressChanged += (DownloadProgressChangedEventArgs data) =>
+                    {
+                        currentCount += data.CurrentDownloadCount - lastCount;
+                        lastCount = data.CurrentDownloadCount;
+                        currentBytes += data.CurrentDownloadBytes - lastBytes;
+                        lastBytes = data.CurrentDownloadBytes;
+                        downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
+                    };
+#endif
 
                     downloader.BeginDownload();
                     await downloader;
 
-                    if (downloader.Status != EOperationStatus.Succeed)
+                    if (!downloader.Status.IsSucceed())
                     {
                         string errorMsg = $"Downloader did not succeed in completing the operation.";
                         Logging.PrintError<Logger>($"{errorMsg}.");
@@ -757,8 +776,14 @@ namespace OxGFrame.AssetLoader.PatchFsm
 
                 foreach (var package in packages)
                 {
+#if YOOASSET_2
                     var clearUnusedBundleFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
                     var clearUnusedManifestFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
+#else
+                    // [YooAsset v3] ClearCacheFilesAsync 改為 ClearCacheAsync (以字串方法名指定清理模式)
+                    var clearUnusedBundleFilesOperation = package.ClearCacheAsync(new ClearCacheOptions(ClearCacheMethods.ClearUnusedBundleFiles));
+                    var clearUnusedManifestFilesOperation = package.ClearCacheAsync(new ClearCacheOptions(ClearCacheMethods.ClearUnusedManifestFiles));
+#endif
                     await clearUnusedBundleFilesOperation;
                     await clearUnusedManifestFilesOperation;
                 }

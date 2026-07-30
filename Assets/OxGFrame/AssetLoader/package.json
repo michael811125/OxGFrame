@@ -2,10 +2,11 @@
 	"name": "com.michaelo.oxgframe.assetloader",
 	"displayName": "OxGFrame.AssetLoader",
 	"description": "The OxGFrame is a framework based on Unity for accelerating game development. Supports multi-platform Win, OSX, Android, iOS, WebGL.",
-	"version": "3.6.1",
+	"version": "3.7.0",
 	"unity": "2021.3",
 	"license": "MIT",
 	"dependencies": {
+		"com.michaelo.oxgframe.common": "https://github.com/michael811125/OxGFrame.git?path=Assets/OxGFrame/Common",
 		"com.unity.scriptablebuildpipeline": "1.21.25",
 		"com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
 		"com.domybest.lwmybox": "https://github.com/michael811125/LWMyBox.git",

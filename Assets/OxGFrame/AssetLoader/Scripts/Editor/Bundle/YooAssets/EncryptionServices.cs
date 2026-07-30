@@ -5,7 +5,32 @@ using YooAsset;
 
 namespace OxGFrame.AssetLoader.Editor
 {
-    public class OffsetEncryption : IEncryptionServices, IManifestProcessServices
+#if YOOASSET_3
+    /// <summary>
+    /// [YooAsset v3] v2 相容的加密文件訊息 (由 BundleEncryptArgs 轉出，供既有加密實作沿用)
+    /// </summary>
+    public struct EncryptFileInfo
+    {
+        public string BundleName;
+        public string FileLoadPath;
+    }
+
+    /// <summary>
+    /// [YooAsset v3] v2 相容的加密結果 (轉為 BundleEncryptResult 供 v3 使用)
+    /// </summary>
+    public struct EncryptResult
+    {
+        public bool Encrypted;
+        public byte[] EncryptedData;
+    }
+#endif
+
+    public class OffsetEncryption :
+#if YOOASSET_2
+        IEncryptionServices, IManifestProcessServices
+#else
+        IBundleEncryptor, IManifestEncryptor
+#endif
     {
         private int? _dummySize = null;
 
@@ -62,9 +87,30 @@ namespace OxGFrame.AssetLoader.Editor
             return null;
         }
         #endregion
+
+#if YOOASSET_3
+        #region YooAsset v3 Adapters
+        BundleEncryptResult IBundleEncryptor.Encrypt(BundleEncryptArgs args)
+        {
+            var fileInfo = new EncryptFileInfo() { FileLoadPath = args.FilePath };
+            var result = this.Encrypt(fileInfo);
+            return new BundleEncryptResult(result.Encrypted, result.EncryptedData);
+        }
+
+        byte[] IManifestEncryptor.Encrypt(byte[] fileData)
+        {
+            return this.ProcessManifest(fileData);
+        }
+        #endregion
+#endif
     }
 
-    public class XorEncryption : IEncryptionServices, IManifestProcessServices
+    public class XorEncryption :
+#if YOOASSET_2
+        IEncryptionServices, IManifestProcessServices
+#else
+        IBundleEncryptor, IManifestEncryptor
+#endif
     {
         private byte? _xorKey = null;
 
@@ -121,9 +167,30 @@ namespace OxGFrame.AssetLoader.Editor
             return null;
         }
         #endregion
+
+#if YOOASSET_3
+        #region YooAsset v3 Adapters
+        BundleEncryptResult IBundleEncryptor.Encrypt(BundleEncryptArgs args)
+        {
+            var fileInfo = new EncryptFileInfo() { FileLoadPath = args.FilePath };
+            var result = this.Encrypt(fileInfo);
+            return new BundleEncryptResult(result.Encrypted, result.EncryptedData);
+        }
+
+        byte[] IManifestEncryptor.Encrypt(byte[] fileData)
+        {
+            return this.ProcessManifest(fileData);
+        }
+        #endregion
+#endif
     }
 
-    public class HT2XorEncryption : IEncryptionServices, IManifestProcessServices
+    public class HT2XorEncryption :
+#if YOOASSET_2
+        IEncryptionServices, IManifestProcessServices
+#else
+        IBundleEncryptor, IManifestEncryptor
+#endif
     {
         private byte? _hXorKey = null;
         private byte? _tXorKey = null;
@@ -188,9 +255,30 @@ namespace OxGFrame.AssetLoader.Editor
             return null;
         }
         #endregion
+
+#if YOOASSET_3
+        #region YooAsset v3 Adapters
+        BundleEncryptResult IBundleEncryptor.Encrypt(BundleEncryptArgs args)
+        {
+            var fileInfo = new EncryptFileInfo() { FileLoadPath = args.FilePath };
+            var result = this.Encrypt(fileInfo);
+            return new BundleEncryptResult(result.Encrypted, result.EncryptedData);
+        }
+
+        byte[] IManifestEncryptor.Encrypt(byte[] fileData)
+        {
+            return this.ProcessManifest(fileData);
+        }
+        #endregion
+#endif
     }
 
-    public class HT2XorPlusEncryption : IEncryptionServices, IManifestProcessServices
+    public class HT2XorPlusEncryption :
+#if YOOASSET_2
+        IEncryptionServices, IManifestProcessServices
+#else
+        IBundleEncryptor, IManifestEncryptor
+#endif
     {
         private byte? _hXorKey = null;
         private byte? _tXorKey = null;
@@ -259,9 +347,30 @@ namespace OxGFrame.AssetLoader.Editor
             return null;
         }
         #endregion
+
+#if YOOASSET_3
+        #region YooAsset v3 Adapters
+        BundleEncryptResult IBundleEncryptor.Encrypt(BundleEncryptArgs args)
+        {
+            var fileInfo = new EncryptFileInfo() { FileLoadPath = args.FilePath };
+            var result = this.Encrypt(fileInfo);
+            return new BundleEncryptResult(result.Encrypted, result.EncryptedData);
+        }
+
+        byte[] IManifestEncryptor.Encrypt(byte[] fileData)
+        {
+            return this.ProcessManifest(fileData);
+        }
+        #endregion
+#endif
     }
 
-    public class AesEncryption : IEncryptionServices, IManifestProcessServices
+    public class AesEncryption :
+#if YOOASSET_2
+        IEncryptionServices, IManifestProcessServices
+#else
+        IBundleEncryptor, IManifestEncryptor
+#endif
     {
         private string _aesKey = null;
         private string _aesIv = null;
@@ -322,9 +431,30 @@ namespace OxGFrame.AssetLoader.Editor
             return null;
         }
         #endregion
+
+#if YOOASSET_3
+        #region YooAsset v3 Adapters
+        BundleEncryptResult IBundleEncryptor.Encrypt(BundleEncryptArgs args)
+        {
+            var fileInfo = new EncryptFileInfo() { FileLoadPath = args.FilePath };
+            var result = this.Encrypt(fileInfo);
+            return new BundleEncryptResult(result.Encrypted, result.EncryptedData);
+        }
+
+        byte[] IManifestEncryptor.Encrypt(byte[] fileData)
+        {
+            return this.ProcessManifest(fileData);
+        }
+        #endregion
+#endif
     }
 
-    public class ChaCha20Encryption : IEncryptionServices, IManifestProcessServices
+    public class ChaCha20Encryption :
+#if YOOASSET_2
+        IEncryptionServices, IManifestProcessServices
+#else
+        IBundleEncryptor, IManifestEncryptor
+#endif
     {
         private string _chacha20Key = null;
         private string _chacha20Nonce = null;
@@ -388,9 +518,30 @@ namespace OxGFrame.AssetLoader.Editor
             return null;
         }
         #endregion
+
+#if YOOASSET_3
+        #region YooAsset v3 Adapters
+        BundleEncryptResult IBundleEncryptor.Encrypt(BundleEncryptArgs args)
+        {
+            var fileInfo = new EncryptFileInfo() { FileLoadPath = args.FilePath };
+            var result = this.Encrypt(fileInfo);
+            return new BundleEncryptResult(result.Encrypted, result.EncryptedData);
+        }
+
+        byte[] IManifestEncryptor.Encrypt(byte[] fileData)
+        {
+            return this.ProcessManifest(fileData);
+        }
+        #endregion
+#endif
     }
 
-    public class XXTEAEncryption : IEncryptionServices, IManifestProcessServices
+    public class XXTEAEncryption :
+#if YOOASSET_2
+        IEncryptionServices, IManifestProcessServices
+#else
+        IBundleEncryptor, IManifestEncryptor
+#endif
     {
         private string _xxteaKey = null;
 
@@ -447,9 +598,30 @@ namespace OxGFrame.AssetLoader.Editor
             return null;
         }
         #endregion
+
+#if YOOASSET_3
+        #region YooAsset v3 Adapters
+        BundleEncryptResult IBundleEncryptor.Encrypt(BundleEncryptArgs args)
+        {
+            var fileInfo = new EncryptFileInfo() { FileLoadPath = args.FilePath };
+            var result = this.Encrypt(fileInfo);
+            return new BundleEncryptResult(result.Encrypted, result.EncryptedData);
+        }
+
+        byte[] IManifestEncryptor.Encrypt(byte[] fileData)
+        {
+            return this.ProcessManifest(fileData);
+        }
+        #endregion
+#endif
     }
 
-    public class OffsetXorEncryption : IEncryptionServices, IManifestProcessServices
+    public class OffsetXorEncryption :
+#if YOOASSET_2
+        IEncryptionServices, IManifestProcessServices
+#else
+        IBundleEncryptor, IManifestEncryptor
+#endif
     {
         private byte? _offsetXorKey = null;
         private int? _offsetXorDummySize = null;
@@ -510,5 +682,21 @@ namespace OxGFrame.AssetLoader.Editor
             return null;
         }
         #endregion
+
+#if YOOASSET_3
+        #region YooAsset v3 Adapters
+        BundleEncryptResult IBundleEncryptor.Encrypt(BundleEncryptArgs args)
+        {
+            var fileInfo = new EncryptFileInfo() { FileLoadPath = args.FilePath };
+            var result = this.Encrypt(fileInfo);
+            return new BundleEncryptResult(result.Encrypted, result.EncryptedData);
+        }
+
+        byte[] IManifestEncryptor.Encrypt(byte[] fileData)
+        {
+            return this.ProcessManifest(fileData);
+        }
+        #endregion
+#endif
     }
 }

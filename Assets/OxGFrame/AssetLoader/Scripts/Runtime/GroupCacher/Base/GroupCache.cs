@@ -54,13 +54,13 @@ namespace OxGFrame.AssetLoader.GroupCacher
             return null;
         }
 
-        public virtual void AddIntoCache(int id, string asestName)
+        public virtual void AddIntoCache(int id, string assetName)
         {
-            if (!this.HasInCache(id, asestName))
+            if (!this.HasInCache(id, assetName))
             {
                 KeyGroup keyGroup = new KeyGroup();
                 keyGroup.id = id;
-                keyGroup.assetName = asestName;
+                keyGroup.assetName = assetName;
                 this._keyCacher.Add(keyGroup);
             }
         }

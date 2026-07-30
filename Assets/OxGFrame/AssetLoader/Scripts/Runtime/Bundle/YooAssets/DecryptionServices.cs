@@ -18,12 +18,34 @@ namespace OxGFrame.AssetLoader.Bundle
         Manifest
     }
 
+#if YOOASSET_3
+    /// <summary>
+    /// [YooAsset v3] v2 相容的解密文件訊息 (由 BundleDecryptArgs 轉出，供既有解密實作沿用)
+    /// </summary>
+    public struct DecryptFileInfo
+    {
+        public string BundleName;
+        public string FileLoadPath;
+        public uint FileLoadCRC;
+    }
+
+    /// <summary>
+    /// [YooAsset v3] v2 相容的 Web 解密文件訊息 (由 BundleDecryptArgs 轉出，供既有解密實作沿用)
+    /// </summary>
+    public struct WebDecryptFileInfo
+    {
+        public string BundleName;
+        public uint FileLoadCRC;
+        public byte[] FileData;
+    }
+#endif
+
     /// <summary>
     /// 解密初始接口
     /// </summary>
     public interface IDecryptInitialize
     {
-        bool CheckIsIntialized();
+        bool CheckIsInitialized();
 
         bool Initialize();
     }
@@ -50,9 +72,14 @@ namespace OxGFrame.AssetLoader.Bundle
     /// 解密服務統一接口
     /// </summary>
     public abstract class DecryptionServices :
+#if YOOASSET_2
         IManifestRestoreServices,
         IDecryptionServices,
         IWebDecryptionServices,
+#else
+        IManifestDecryptor,
+        IBundleMemoryDecryptor,
+#endif
         IDecryptStream,
         IDecryptData,
         IDecryptInitialize
@@ -68,7 +95,7 @@ namespace OxGFrame.AssetLoader.Bundle
         protected FileOperationType _fileOperationType = FileOperationType.None;
 
         #region OxGFrame Implements
-        public bool CheckIsIntialized()
+        public bool CheckIsInitialized()
         {
             if (this._isInitialized)
                 return true;
@@ -94,6 +121,7 @@ namespace OxGFrame.AssetLoader.Bundle
             return BundleConfig.bundleLoadReadBufferSize;
         }
 
+#if YOOASSET_2
         #region IDecryptionServices
         public DecryptResult LoadAssetBundle(DecryptFileInfo fileInfo)
         {
@@ -148,10 +176,71 @@ namespace OxGFrame.AssetLoader.Bundle
             return this.DecryptData(fileData);
         }
         #endregion
+#else
+        #region IBundleMemoryDecryptor
+        /// <summary>
+        /// [YooAsset v3] 記憶體解密 (Web 平台與 Fallback 載入使用此路徑)
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public virtual byte[] GetDecryptedData(BundleDecryptArgs args)
+        {
+            // 記憶體模式下 FileData 才有值，否則以檔案路徑讀取解密
+            if (args.FileData != null)
+            {
+                var fileInfo = new WebDecryptFileInfo() { FileData = args.FileData };
+                return this.DecryptData(fileInfo);
+            }
+            else
+            {
+                var fileInfo = new DecryptFileInfo() { FileLoadPath = args.FilePath };
+                return this.DecryptData(fileInfo);
+            }
+        }
+        #endregion
+
+        #region IBundleStreamDecryptor (由子類宣告介面後, 直接以基類實作滿足)
+        /// <summary>
+        /// [YooAsset v3] 取得串流讀取緩衝大小
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public virtual int GetBufferSize(BundleDecryptArgs args)
+        {
+            return (int)this.GetManagedReadBufferSize();
+        }
+
+        /// <summary>
+        /// [YooAsset v3] 建立解密串流
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public virtual Stream CreateDecryptionStream(BundleDecryptArgs args)
+        {
+            var fileInfo = new DecryptFileInfo() { FileLoadPath = args.FilePath };
+            return this.DecryptStream(fileInfo);
+        }
+        #endregion
+
+        #region IManifestDecryptor
+        /// <summary>
+        /// [YooAsset v3] 清單解密 (對應 v2 的 RestoreManifest)
+        /// </summary>
+        /// <param name="fileData"></param>
+        /// <returns></returns>
+        public byte[] Decrypt(byte[] fileData)
+        {
+            return this.DecryptData(fileData);
+        }
+        #endregion
+#endif
     }
 
     #region Offset
     public class OffsetDecryption : DecryptionServices
+#if YOOASSET_3
+        , IBundleOffsetDecryptor
+#endif
     {
         private int _dummySize;
 
@@ -214,7 +303,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 if (File.Exists(filePath) == false)
@@ -226,7 +315,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.Offset.DecryptBytes(ref fileInfo.FileData, this._dummySize))
                     return fileInfo.FileData;
@@ -236,7 +325,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 return FileCryptogram.Offset.DecryptStream(filePath, this._dummySize);
@@ -246,19 +335,36 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(byte[] fileData)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.Offset.DecryptBytes(ref fileData, this._dummySize))
                     return fileData;
             }
             return null;
         }
+
+#if YOOASSET_3
+        /// <summary>
+        /// [YooAsset v3] 取得檔案偏移量 (dummySize)
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public long GetFileOffset(BundleDecryptArgs args)
+        {
+            if (this.CheckIsInitialized())
+                return this._dummySize;
+            return 0;
+        }
+#endif
         #endregion
     }
     #endregion
 
     #region Xor
     public class XorDecryption : DecryptionServices
+#if YOOASSET_3
+        , IBundleStreamDecryptor
+#endif
     {
         private byte _key;
 
@@ -321,7 +427,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 if (File.Exists(filePath) == false)
@@ -333,7 +439,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.XOR.DecryptBytes(fileInfo.FileData, this._key))
                     return fileInfo.FileData;
@@ -343,7 +449,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 return FileCryptogram.XOR.DecryptStream(filePath, this._key);
@@ -353,7 +459,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(byte[] fileData)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.XOR.DecryptBytes(fileData, this._key))
                     return fileData;
@@ -366,6 +472,9 @@ namespace OxGFrame.AssetLoader.Bundle
 
     #region HT2Xor
     public class HT2XorDecryption : DecryptionServices
+#if YOOASSET_3
+        , IBundleStreamDecryptor
+#endif
     {
         private byte _hkey;
         private byte _tKey;
@@ -438,7 +547,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 if (File.Exists(filePath) == false)
@@ -450,7 +559,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.HT2XOR.DecryptBytes(fileInfo.FileData, this._hkey, this._tKey, this._jKey))
                     return fileInfo.FileData;
@@ -460,7 +569,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 return FileCryptogram.HT2XOR.DecryptStream(filePath, this._hkey, this._tKey, this._jKey);
@@ -470,7 +579,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(byte[] fileData)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.HT2XOR.DecryptBytes(fileData, this._hkey, this._tKey, this._jKey))
                     return fileData;
@@ -483,6 +592,9 @@ namespace OxGFrame.AssetLoader.Bundle
 
     #region HT2XorPlus
     public class HT2XorPlusDecryption : DecryptionServices
+#if YOOASSET_3
+        , IBundleStreamDecryptor
+#endif
     {
         private byte _hKey;
         private byte _tKey;
@@ -560,7 +672,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 if (File.Exists(filePath) == false)
@@ -572,7 +684,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.HT2XORPlus.DecryptBytes(fileInfo.FileData, this._hKey, this._tKey, this._j1Key, this._j2Key))
                     return fileInfo.FileData;
@@ -582,7 +694,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 return FileCryptogram.HT2XORPlus.DecryptStream(filePath, this._hKey, this._tKey, this._j1Key, this._j2Key);
@@ -592,7 +704,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(byte[] fileData)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.HT2XORPlus.DecryptBytes(fileData, this._hKey, this._tKey, this._j1Key, this._j2Key))
                     return fileData;
@@ -672,7 +784,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 if (File.Exists(filePath) == false)
@@ -684,7 +796,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.AES.DecryptBytes(ref fileInfo.FileData, this._key, this._iv))
                     return fileInfo.FileData;
@@ -694,7 +806,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 return FileCryptogram.AES.DecryptStream(filePath, this._key, this._iv);
@@ -704,7 +816,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(byte[] fileData)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.AES.DecryptBytes(ref fileData, this._key, this._iv))
                     return fileData;
@@ -789,7 +901,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 if (File.Exists(filePath) == false)
@@ -801,7 +913,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.ChaCha20.DecryptBytes(ref fileInfo.FileData, this._key, this._nonce, this._counter))
                     return fileInfo.FileData;
@@ -811,7 +923,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 return FileCryptogram.ChaCha20.DecryptStream(filePath, this._key, this._nonce, this._counter);
@@ -821,7 +933,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(byte[] fileData)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.ChaCha20.DecryptBytes(ref fileData, this._key, this._nonce, this._counter))
                     return fileData;
@@ -896,7 +1008,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 if (File.Exists(filePath) == false)
@@ -908,7 +1020,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.XXTEA.DecryptBytes(ref fileInfo.FileData, this._key))
                     return fileInfo.FileData;
@@ -918,7 +1030,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 return FileCryptogram.XXTEA.DecryptStream(filePath, this._key);
@@ -928,7 +1040,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(byte[] fileData)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.XXTEA.DecryptBytes(ref fileData, this._key))
                     return fileData;
@@ -941,6 +1053,9 @@ namespace OxGFrame.AssetLoader.Bundle
 
     #region OffsetXOR
     public class OffsetXorDecryption : DecryptionServices
+#if YOOASSET_3
+        , IBundleStreamDecryptor
+#endif
     {
         private byte _key;
         private int _dummySize;
@@ -1008,7 +1123,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 if (File.Exists(filePath) == false)
@@ -1020,7 +1135,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(WebDecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.OffsetXOR.DecryptBytes(fileInfo.FileData, this._key, this._dummySize))
                     return fileInfo.FileData;
@@ -1030,7 +1145,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override Stream DecryptStream(DecryptFileInfo fileInfo)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 string filePath = fileInfo.FileLoadPath;
                 return FileCryptogram.OffsetXOR.DecryptStream(filePath, this._key, this._dummySize);
@@ -1040,7 +1155,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
         public override byte[] DecryptData(byte[] fileData)
         {
-            if (this.CheckIsIntialized())
+            if (this.CheckIsInitialized())
             {
                 if (FileCryptogram.OffsetXOR.DecryptBytes(fileData, this._key, this._dummySize))
                     return fileData;

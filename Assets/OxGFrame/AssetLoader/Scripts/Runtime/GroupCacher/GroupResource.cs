@@ -134,7 +134,7 @@ namespace OxGFrame.AssetLoader.GroupCacher
                         CacheResource.GetInstance().UnloadAsset(keyGroup.assetName, false);
                     }
 
-                    // 完成後, 直接刪除緩存
+                    // 完成後，直接刪除緩存
                     this.DelFromCache(keyGroup.id, keyGroup.assetName);
                 }
 

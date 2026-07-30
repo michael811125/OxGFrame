@@ -229,6 +229,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                 long lastBytes = 0;
                 var downloadSpeedCalculator = new DownloadSpeedCalculator();
                 downloadSpeedCalculator.onDownloadSpeedProgress = HotfixEvents.HotfixDownloadProgression.SendEventMessage;
+#if YOOASSET_2
                 downloader.DownloadErrorCallback = (DownloadErrorData data) =>
                 {
                     HotfixEvents.HotfixDownloadFailed.SendEventMessage(data.FileName, data.ErrorInfo);
@@ -247,6 +248,27 @@ namespace OxGFrame.Hotfixer.HotfixFsm
 
                 if (downloader.Status != EOperationStatus.Succeed)
                     return;
+#else
+                // [YooAsset v3] 回調屬性改為事件 (+=), 資料型別更名為 EventArgs
+                downloader.DownloadError += (DownloadErrorEventArgs data) =>
+                {
+                    HotfixEvents.HotfixDownloadFailed.SendEventMessage(data.FileName, data.ErrorInfo);
+                };
+                downloader.DownloadProgressChanged += (DownloadProgressChangedEventArgs data) =>
+                {
+                    currentCount += data.CurrentDownloadCount - lastCount;
+                    lastCount = data.CurrentDownloadCount;
+                    currentBytes += data.CurrentDownloadBytes - lastBytes;
+                    lastBytes = data.CurrentDownloadBytes;
+                    downloadSpeedCalculator.OnDownloadProgress(totalCount, currentCount, totalBytes, currentBytes);
+                };
+                downloader.StartDownload();
+
+                await downloader;
+
+                if (downloader.Status != EOperationStatus.Succeeded)
+                    return;
+#endif
 
                 this._machine.ChangeState<FsmHotfixDownloadOver>();
             }
@@ -314,8 +336,14 @@ namespace OxGFrame.Hotfixer.HotfixFsm
             {
                 // Get hotfix package
                 var package = AssetPatcher.GetPackage(HotfixManager.GetInstance().packageName);
+#if YOOASSET_2
                 var clearUnusedBundleFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
                 var clearUnusedManifestFilesOperation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
+#else
+                // [YooAsset v3] ClearCacheFilesAsync 改為 ClearCacheAsync (以字串方法名指定清理模式)
+                var clearUnusedBundleFilesOperation = package.ClearCacheAsync(new ClearCacheOptions(ClearCacheMethods.ClearUnusedBundleFiles));
+                var clearUnusedManifestFilesOperation = package.ClearCacheAsync(new ClearCacheOptions(ClearCacheMethods.ClearUnusedManifestFiles));
+#endif
                 await clearUnusedBundleFilesOperation;
                 await clearUnusedManifestFilesOperation;
 
@@ -378,8 +406,8 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                 {
                     if (aotMetaAssemblyFiles != null)
                     {
-                        // 注意, 補充元數據是給 AOT dll 補充元數據, 而不是給熱更新 dll 補充元數據
-                        // 熱更新 dll 不缺元數據, 不需要補充, 如果調用 LoadMetadataForAOTAssembly 會返回錯誤
+                        // 注意，補充元數據是給 AOT dll 補充元數據，而不是給熱更新 dll 補充元數據
+                        // 熱更新 dll 不缺元數據，不需要補充，如果調用 LoadMetadataForAOTAssembly 會返回錯誤
                         HomologousImageMode mode = HomologousImageMode.SuperSet;
                         foreach (var dllName in aotMetaAssemblyFiles)
                         {
@@ -392,7 +420,7 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                                 // 切換至其他線程
                                 await UniTask.SwitchToThreadPool();
 #endif
-                                // 加載 assembly 對應的 dll, 會自動為它 hook, 一旦 aot 泛型函數的 native 函數不存在, 用解釋器版本代碼
+                                // 加載 assembly 對應的 dll，會自動為它 hook，一旦 aot 泛型函數的 native 函數不存在，用解釋器版本代碼
                                 LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(binary, mode);
 #if !UNITY_WEBGL
                                 // 切回至主線程
@@ -454,19 +482,23 @@ namespace OxGFrame.Hotfixer.HotfixFsm
                 {
                     if (hotfixAssemblyFiles != null)
                     {
+                        // 判斷條件與 AppDomain 程序集清單為迴圈不變量，提升至迴圈外，避免逐 dll 重複列舉
+                        bool loadFromAppDomain = Application.isEditor ||
+                                                 BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
+                                                 HotfixManager.GetInstance().IsDisabled();
+                        Assembly[] domainAssemblies = loadFromAppDomain ? System.AppDomain.CurrentDomain.GetAssemblies() : null;
+
                         foreach (var dllName in hotfixAssemblyFiles)
                         {
                             Assembly hotfixAsm = null;
-                            if (Application.isEditor ||
-                                BundleConfig.playMode == BundleConfig.PlayMode.EditorSimulateMode ||
-                                HotfixManager.GetInstance().IsDisabled())
+                            if (loadFromAppDomain)
                             {
-                                // 移除 .dll 擴展名
+                                // 移除 .dll 擴展名 (需檢查結尾，避免無擴展名的字串截斷出錯)
                                 var fileExtension = ".dll";
-                                var newLength = dllName.Length - fileExtension.Length;
-                                var newDllName = dllName.Substring(0, newLength);
+                                var newDllName = dllName.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase) ?
+                                    dllName.Substring(0, dllName.Length - fileExtension.Length) : dllName;
                                 // 直接查找獲取 Hotfix 程序集
-                                foreach (var asm in System.AppDomain.CurrentDomain.GetAssemblies())
+                                foreach (var asm in domainAssemblies)
                                 {
                                     if (asm.GetName().Name == newDllName)
                                     {

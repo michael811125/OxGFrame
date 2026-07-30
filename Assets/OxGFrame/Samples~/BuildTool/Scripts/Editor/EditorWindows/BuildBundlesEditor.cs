@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using OxGFrame.AssetLoader;
 using OxGFrame.AssetLoader.Bundle;
 using OxGFrame.AssetLoader.Editor;
@@ -11,6 +11,14 @@ using UnityEngine;
 using YooAsset;
 using YooAsset.Editor;
 using static OxGFrame.AssetLoader.Bundle.AppConfig;
+#if YOOASSET_3
+// [YooAsset v3] 類名更名轉接
+using AssetBundleCollectorSettingData = YooAsset.Editor.BundleCollectorSettingData;
+using EBuildinFileCopyOption = YooAsset.Editor.EBundledCopyOption;
+using EditorTools = YooAsset.Editor.EditorAssemblyUtility;
+using IEncryptionServices = YooAsset.IBundleEncryptor;
+using IManifestProcessServices = YooAsset.IManifestEncryptor;
+#endif
 
 namespace OxGFrame.Extensions.BuildTool.Editor
 {
@@ -108,6 +116,34 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                 }
             }
         }
+
+        /// <summary>
+        /// 可選的建置管線清單 (ESBP 為編輯器模擬專用不列入; InstantAssetBuildPipeline 僅於團結引擎顯示)
+        /// </summary>
+        private static readonly EBuildPipeline[] _allowedBuildPipelines = new EBuildPipeline[]
+        {
+#if YOOASSET_2
+            EBuildPipeline.BuiltinBuildPipeline,
+#else
+            // [YooAsset v3] BuiltinBuildPipeline 更名為 LegacyBuildPipeline
+            EBuildPipeline.LegacyBuildPipeline,
+#endif
+            EBuildPipeline.ScriptableBuildPipeline,
+            EBuildPipeline.RawFileBuildPipeline,
+#if YOOASSET_3
+#if TUANJIE_1_8_OR_NEWER
+            // [YooAsset v3] 團結引擎 InstantAsset 建置管線
+            EBuildPipeline.InstantAssetBuildPipeline,
+#endif
+            // [YooAsset v3] 歸檔文件建置管線
+            EBuildPipeline.ArchiveFileBuildPipeline
+#endif
+        };
+
+        /// <summary>
+        /// 可選的建置管線名稱清單
+        /// </summary>
+        private static readonly string[] _allowedBuildPipelineNames = System.Array.ConvertAll(_allowedBuildPipelines, pipeline => pipeline.ToString());
 
         private static BuildBundlesEditor _instance = null;
         internal static BuildBundlesEditor GetInstance()
@@ -272,12 +308,27 @@ namespace OxGFrame.Extensions.BuildTool.Editor
 
                 // 構建管線
                 string buildPipeline = string.Empty;
+#if YOOASSET_2
                 if (pkgInfo.buildPipeline == EBuildPipeline.BuiltinBuildPipeline)
+#else
+                // [YooAsset v3] BuiltinBuildPipeline 更名為 LegacyBuildPipeline
+                if (pkgInfo.buildPipeline == EBuildPipeline.LegacyBuildPipeline)
+#endif
                     buildPipeline = "BBP";
                 else if (pkgInfo.buildPipeline == EBuildPipeline.ScriptableBuildPipeline)
                     buildPipeline = "SBP";
                 else if (pkgInfo.buildPipeline == EBuildPipeline.RawFileBuildPipeline)
                     buildPipeline = "RFBP";
+#if YOOASSET_3
+                // [YooAsset v3] 歸檔文件建置管線
+                else if (pkgInfo.buildPipeline == EBuildPipeline.ArchiveFileBuildPipeline)
+                    buildPipeline = "AFBP";
+#if TUANJIE_1_8_OR_NEWER
+                // [YooAsset v3] 團結引擎 InstantAsset 建置管線
+                else if (pkgInfo.buildPipeline == EBuildPipeline.InstantAssetBuildPipeline)
+                    buildPipeline = "IABP";
+#endif
+#endif
                 else
                     buildPipeline = "SBP";
                 package.buildPipeline = buildPipeline;
@@ -640,7 +691,15 @@ namespace OxGFrame.Extensions.BuildTool.Editor
 
                     // 顯示一般欄位
                     EditorGUILayout.PropertyField(packageProp.FindPropertyRelative("packageName"));
-                    EditorGUILayout.PropertyField(packageProp.FindPropertyRelative("buildPipeline"));
+                    // 自訂下拉過濾管線選項 (ESBP 為編輯器模擬專用不列入; InstantAssetBuildPipeline 僅團結引擎顯示)
+                    {
+                        SerializedProperty buildPipelineProp = packageProp.FindPropertyRelative("buildPipeline");
+                        int selectedIdx = System.Array.IndexOf(_allowedBuildPipelines, (EBuildPipeline)buildPipelineProp.intValue);
+                        if (selectedIdx < 0)
+                            selectedIdx = System.Array.IndexOf(_allowedBuildPipelines, EBuildPipeline.ScriptableBuildPipeline);
+                        selectedIdx = EditorGUILayout.Popup("Build Pipeline", selectedIdx, _allowedBuildPipelineNames);
+                        buildPipelineProp.intValue = (int)_allowedBuildPipelines[selectedIdx];
+                    }
 
                     // 顯示 Bundle Encryption 下拉選單
                     SerializedProperty encryptionClassNamesProp = packageProp.FindPropertyRelative("bundleEncryptionClassNames");
@@ -830,11 +889,26 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                         // 構建管線
                         EBuildPipeline buildPipeline;
                         if (pkg.buildPipeline == "BBP")
+#if YOOASSET_2
                             buildPipeline = EBuildPipeline.BuiltinBuildPipeline;
+#else
+                            // [YooAsset v3] BuiltinBuildPipeline 更名為 LegacyBuildPipeline
+                            buildPipeline = EBuildPipeline.LegacyBuildPipeline;
+#endif
                         else if (pkg.buildPipeline == "SBP")
                             buildPipeline = EBuildPipeline.ScriptableBuildPipeline;
                         else if (pkg.buildPipeline == "RFBP")
                             buildPipeline = EBuildPipeline.RawFileBuildPipeline;
+#if YOOASSET_3
+                        // [YooAsset v3] 歸檔文件建置管線
+                        else if (pkg.buildPipeline == "AFBP")
+                            buildPipeline = EBuildPipeline.ArchiveFileBuildPipeline;
+#if TUANJIE_1_8_OR_NEWER
+                        // [YooAsset v3] 團結引擎 InstantAsset 建置管線
+                        else if (pkg.buildPipeline == "IABP")
+                            buildPipeline = EBuildPipeline.InstantAssetBuildPipeline;
+#endif
+#endif
                         else
                             buildPipeline = EBuildPipeline.EditorSimulateBuildPipeline;
                         packageInfo.buildPipeline = buildPipeline;
@@ -980,7 +1054,12 @@ namespace OxGFrame.Extensions.BuildTool.Editor
                     BuildTool.BuildBundles(string.IsNullOrEmpty(this._tempJsonInput) ? this.jsonInput : this._tempJsonInput, this.productName, this.appVersion, false, this.isClearOutputPath);
                     this._tempJsonInput = null;
                     EditorUtility.DisplayDialog("Build Message", "All bundles builded.", "OK");
+#if YOOASSET_2
                     string exportFolder = Path.Combine(EditorTools.GetProjectPath(), "ExportBundles", PatchSettings.settings.rootFolderName);
+#else
+                    // [YooAsset v3] GetProjectPath 移至 EditorPathUtility
+                    string exportFolder = Path.Combine(EditorPathUtility.GetProjectPath(), "ExportBundles", PatchSettings.settings.rootFolderName);
+#endif
                     if (this.autoReveal) EditorUtility.RevealInFinder(exportFolder);
                 }
                 catch (Exception ex)

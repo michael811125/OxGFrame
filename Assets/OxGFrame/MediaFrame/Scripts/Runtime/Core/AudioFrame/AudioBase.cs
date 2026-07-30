@@ -48,7 +48,7 @@ namespace OxGFrame.MediaFrame.AudioFrame
         private void FixedUpdate()
         {
             if (this.monoDrive)
-                this.HandleFixedUpdate(Time.fixedDeltaTime);
+                this.HandleFixedUpdate(this.ignoreTimeScale ? Time.fixedUnscaledDeltaTime : Time.fixedDeltaTime);
         }
 #endif
 
@@ -146,17 +146,37 @@ namespace OxGFrame.MediaFrame.AudioFrame
 
         public async UniTask<AudioClip> GetAudioFromStreamingAssets(bool cached, int requestTimeSeconds = AudioManager.MAX_REQUEST_TIME_SECONDS)
         {
+            var audioManager = AudioManager.GetInstance();
+            if (audioManager == null)
+                return null;
             string pathName = System.IO.Path.Combine(GetRequestStreamingAssetsPath(), this.fullPathName);
-            var audioClip = await AudioManager.GetInstance().reuqester.SelfRequestAudio(pathName, this.audioFileType, null, null, null, cached, requestTimeSeconds);
+            var audioClip = await audioManager.requester.SelfRequestAudio(pathName, this.audioFileType, null, null, null, cached, requestTimeSeconds);
             return audioClip;
+        }
+
+        /// <summary>
+        /// 取得 UrlSet 的音訊播放 URL
+        /// </summary>
+        /// <returns></returns>
+        public async UniTask<string> GetAudioUrlFromURL()
+        {
+            // 未使用 UrlCfg 時，直接使用完整 URL (無需請求 UrlCfg 文件)
+            if (!this.urlSet.getUrlPathFromCfg)
+                return this.urlSet.url.Trim();
+
+            string urlCfg = await this.urlSet.urlCfg.GetFileText();
+            string urlSet = GetValueFromUrlCfg(urlCfg, AUDIO_URLSET);
+            string url = (!string.IsNullOrEmpty(urlSet)) ? $"{urlSet.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
+            return url;
         }
 
         public async UniTask<AudioClip> GetAudioFromURL(bool cached, int requestTimeSeconds = AudioManager.MAX_REQUEST_TIME_SECONDS)
         {
-            string urlCfg = await this.urlSet.urlCfg.GetFileText();
-            string urlSet = this.urlSet.getUrlPathFromCfg ? GetValueFromUrlCfg(urlCfg, AUDIO_URLSET) : string.Empty;
-            string url = (!string.IsNullOrEmpty(urlSet)) ? $"{urlSet.Trim()}{this.urlSet.url.Trim()}" : this.urlSet.url.Trim();
-            var audioClip = await AudioManager.GetInstance().reuqester.SelfRequestAudio(url, this.audioFileType, null, null, null, cached, requestTimeSeconds);
+            var audioManager = AudioManager.GetInstance();
+            if (audioManager == null)
+                return null;
+            string url = await this.GetAudioUrlFromURL();
+            var audioClip = await audioManager.requester.SelfRequestAudio(url, this.audioFileType, null, null, null, cached, requestTimeSeconds);
             return audioClip;
         }
 

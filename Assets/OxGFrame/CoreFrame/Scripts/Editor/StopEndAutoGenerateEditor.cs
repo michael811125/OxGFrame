@@ -56,7 +56,7 @@ namespace OxGFrame.CoreFrame.Editor
             _listGos.Add(go);
 
             // 遞迴蒐集
-            foreach (Transform child in go.GetComponentInChildren<Transform>())
+            foreach (Transform child in go.transform)
             {
                 _SearchDown(child.gameObject);
             }

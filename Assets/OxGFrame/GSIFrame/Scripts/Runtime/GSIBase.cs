@@ -2,25 +2,29 @@
 
 namespace OxGFrame.GSIFrame
 {
+    /// <summary>
+    /// Abstract base class of a game stage
+    /// Derive it and implement the OnCreate, OnEnter, OnUpdate, OnExit lifecycle driven by the GSI manager
+    /// </summary>
     public abstract class GSIBase
     {
         /// <summary>
-        /// 辨識碼
+        /// Identifier of this game stage
         /// </summary>
         public int id { get; private set; }
 
         /// <summary>
-        /// 是否運行 Update 的開關
+        /// Switch that controls whether OnUpdate is executed
         /// </summary>
         public bool runUpdate { get; private set; }
 
         /// <summary>
-        /// 初始標記
+        /// Initialization flag
         /// </summary>
         private bool _isInitialized = false;
 
         /// <summary>
-        /// 設置 Id
+        /// Set the identifier of this game stage
         /// </summary>
         /// <param name="id"></param>
         public void SetId(int id)
@@ -29,7 +33,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 開始進行初始流程
+        /// Begin the init flow (runs OnCreate once on first init, stops update, awaits OnEnter, then resumes update)
         /// </summary>
         internal async UniTaskVoid BeginInit()
         {
@@ -45,7 +49,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 運行刷新 OnUpdate
+        /// Enable OnUpdate execution for this game stage
         /// </summary>
         public void RunUpdate()
         {
@@ -53,7 +57,7 @@ namespace OxGFrame.GSIFrame
         }
 
         /// <summary>
-        /// 停止刷新 OnUpdate
+        /// Disable OnUpdate execution for this game stage
         /// </summary>
         public void StopUpdate()
         {
@@ -62,24 +66,25 @@ namespace OxGFrame.GSIFrame
 
         #region Implementation Methods
         /// <summary>
-        /// 子類實作 OnCreate 方法
+        /// Implement stage creation logic; invoked once the first time this game stage is initialized (before OnEnter)
         /// </summary>
         /// <returns></returns>
         public abstract UniTask OnCreate();
 
         /// <summary>
-        /// 子類實作 OnEnter 方法
+        /// Implement stage entering logic; invoked each time this game stage becomes the current stage (OnUpdate resumes after it completes)
         /// </summary>
+        /// <returns></returns>
         public abstract UniTask OnEnter();
 
         /// <summary>
-        /// 子類實作 OnUpdate
+        /// Implement stage update logic; invoked every frame by the manager while this game stage is current and runUpdate is enabled
         /// </summary>
         /// <param name="dt"></param>
         public abstract void OnUpdate(float dt = 0.0f);
 
         /// <summary>
-        /// 子類實作 OnExit
+        /// Implement stage exiting logic; invoked when the manager switches away from this game stage
         /// </summary>
         public abstract void OnExit();
         #endregion

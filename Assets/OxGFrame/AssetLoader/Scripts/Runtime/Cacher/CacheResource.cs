@@ -56,7 +56,7 @@ namespace OxGFrame.AssetLoader.Cacher
                     continue;
                 }
 
-                // 檢查是否有進行中的載入任務, 如果有就等待它完成
+                // 檢查是否有進行中的載入任務，如果有就等待它完成
                 if (this.TryGetLoadingTask(assetName, out var existingTask))
                 {
                     Logging.Print<Logger>($"Asset: {assetName} is loading, waiting for existing task...");
@@ -129,7 +129,7 @@ namespace OxGFrame.AssetLoader.Cacher
             var req = Resources.LoadAsync<T>(assetName);
             if (req != null)
             {
-                // 注意: 這裡不更新 currentCount, 因為進度由外層控制
+                // 注意：這裡不更新 currentCount，因為進度由外層控制
                 do
                 {
                     if (req.isDone)
@@ -285,7 +285,7 @@ namespace OxGFrame.AssetLoader.Cacher
             pack = this.GetFromCache(assetName);
             if (pack != null)
             {
-                // 快取命中,直接返回
+                // 快取命中，直接返回
                 this.currentCount = this.totalCount = 1;
                 progression?.Invoke(this.currentCount / this.totalCount, this.currentCount, this.totalCount);
 

@@ -1,5 +1,8 @@
 ﻿namespace OxGFrame.NetFrame
 {
+    /// <summary>
+    /// Static facade for managing network nodes and their connections through the NetManager
+    /// </summary>
     public static class NetFrames
     {
         /// <summary>
@@ -78,7 +81,7 @@
         }
 
         /// <summary>
-        /// Number of network nodes
+        /// Gets the number of network nodes
         /// </summary>
         /// <returns></returns>
         public static int Count()
@@ -158,7 +161,7 @@
         }
 
         /// <summary>
-        /// Closes a node network
+        /// Closes the connection of a network node
         /// </summary>
         /// <param name="nnId"></param>
         /// <param name="removeNetNode">Whether to remove the NetNode</param>
@@ -168,7 +171,7 @@
         }
 
         /// <summary>
-        /// Closes all node networks
+        /// Closes the connections of all network nodes
         /// </summary>
         /// <param name="removeNetNode"></param>
         public static void CloseAll(bool removeNetNode = false)
