@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ebd4b70705a7394dbef385916144fcc, type: 3}
   m_Name: CodeBindingSettings
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: OxGFrame.CoreFrame.Editor::OxGFrame.CoreFrame.Editor.CodeBindingSettings
   methodType: 0
   attrReferenceRules:
     list:
@@ -33,131 +33,125 @@ MonoBehaviour:
   indicateModifier: 1
   tailRules:
     list:
-    - TailName: BoxCol
+    - TailName: Trans
       Reference:
-        componentName: BoxCollider
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: Btn
-      Reference:
-        componentName: Button
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: BtnPlus
-      Reference:
-        componentName: ButtonPlus
+        componentName: Transform
+        usingNamespace: UnityEngine
         pluralize:
           endRemoveCount: 0
           endPluralTxt: es
-    - TailName: CGroup
+    - TailName: RectTrans
       Reference:
-        componentName: CanvasGroup
+        componentName: RectTransform
+        usingNamespace: UnityEngine
         pluralize:
           endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: Drd
-      Reference:
-        componentName: Dropdown
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: Field
-      Reference:
-        componentName: InputField
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: Go
-      Reference:
-        componentName: GameObject
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
+          endPluralTxt: es
     - TailName: Img
       Reference:
         componentName: Image
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: MeshCol
-      Reference:
-        componentName: MeshCollider
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: NodePool
-      Reference:
-        componentName: NodePool
+        usingNamespace: UnityEngine.UI
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
     - TailName: RawImg
       Reference:
         componentName: RawImage
+        usingNamespace: UnityEngine.UI
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
-    - TailName: RectTrans
+    - TailName: Txt
       Reference:
-        componentName: RectTransform
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: es
-    - TailName: ScrBar
-      Reference:
-        componentName: Scrollbar
+        componentName: Text
+        usingNamespace: UnityEngine.UI
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
-    - TailName: ScrView
+    - TailName: Btn
       Reference:
-        componentName: ScrollRect
-        pluralize:
-          endRemoveCount: 0
-          endPluralTxt: s
-    - TailName: Sld
-      Reference:
-        componentName: Slider
+        componentName: Button
+        usingNamespace: UnityEngine.UI
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
     - TailName: Tgl
       Reference:
         componentName: Toggle
+        usingNamespace: UnityEngine.UI
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
-    - TailName: TmpDrd
+    - TailName: Sld
       Reference:
-        componentName: TMP_Dropdown
+        componentName: Slider
+        usingNamespace: UnityEngine.UI
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
-    - TailName: TmpField
+    - TailName: ScrBar
       Reference:
-        componentName: TMP_InputField
+        componentName: Scrollbar
+        usingNamespace: UnityEngine.UI
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: ScrView
+      Reference:
+        componentName: ScrollRect
+        usingNamespace: UnityEngine.UI
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: Drd
+      Reference:
+        componentName: Dropdown
+        usingNamespace: UnityEngine.UI
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: Field
+      Reference:
+        componentName: InputField
+        usingNamespace: UnityEngine.UI
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
     - TailName: TmpTxt
       Reference:
         componentName: TMP_Text
+        usingNamespace: TMPro
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
-    - TailName: Trans
+    - TailName: TmpDrd
       Reference:
-        componentName: Transform
+        componentName: TMP_Dropdown
+        usingNamespace: TMPro
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: TmpField
+      Reference:
+        componentName: TMP_InputField
+        usingNamespace: TMPro
+        pluralize:
+          endRemoveCount: 0
+          endPluralTxt: s
+    - TailName: BtnPlus
+      Reference:
+        componentName: ButtonPlus
+        usingNamespace: OxGKit.ButtonSystem
         pluralize:
           endRemoveCount: 0
           endPluralTxt: es
-    - TailName: Txt
+    - TailName: NodePool
       Reference:
-        componentName: Text
+        componentName: NodePool
+        usingNamespace: OxGKit.PoolSystem
         pluralize:
           endRemoveCount: 0
           endPluralTxt: s
     keyCollision: 0
   sortTailRules: 0
+  tryFindAllUsingNamespaces: 0
