@@ -1,5 +1,233 @@
 # CHANGELOG
 
+## [3.7.0] - 2026-07-30
+
+# English
+
+- MediaFrame
+  - ### New Features
+    - Inspector preview player for `AudioBase` / `VideoBase`
+      - Play / Pause / Resume / Stop with seek bar and timecode; supports all source types without entering Play Mode.
+      - Video renders inside the inspector (decoded internally with `VideoPlayer` in `VideoRenderMode.APIOnly`); audio plays through `AudioSampleProvider` on the audio thread.
+      - Detects blocked `http://` sources (Insecure HTTP, 2022.1+) and offers switching to "Only in development builds".
+    - Added `AudioBase.GetAudioUrlFromURL()`, `VideoBase.GetVideoUrlFromStreamingAssets()`, and `VideoBase.GetVideoUrlFromURL()`; init flows refactored to use them.
+  - ### Fixes
+    - Fixed inverted `ignoreTimeScale` (when enabled, `fixedUnscaledDeltaTime` is now used correctly); monoDrive FixedUpdate paths now honor the flag as well.
+    - Fixed direct full-url requests when `getUrlPathFromCfg` is disabled (no longer requests UrlCfg and throws on an unassigned TextAsset); added `UrlCfg` and `AudioManager` null guards.
+    - Fixed `GetMediaComponents<U>` throwing `InvalidCastException` for user subclasses (now filters with `is`).
+    - Fixed `AutoClearMixerExposedParams` / `AutoRestoreMixerExposedParams` leaking other mixers' records into the target mixer (now scoped by mixer prefix).
+  - ### Breaking Changes
+    - Renamed the `disabledEndEvent` parameter to `disableEndEvent` in `MediaFrames` Stop/StopAll series (only affects callers using named arguments).
+    - Renamed internal `reuqester` to `requester`.
+
+- CoreFrame
+  - ### New Features
+    - Code binding generator
+      - Tail rules gain a `usingNamespace` field: required `using` directives are inserted automatically in Auto mode or prepended to the clipboard in Manual mode (leave empty to manage usings manually).
+      - IDE-like namespace lookup: per-rule [Find] button (multiple candidates pop up a selection menu) plus a "Try Find All Using Namespaces" bulk button.
+      - Generated content self-adapts its indentation and preserves the file BOM on write.
+  - ### Fixes
+    - Fixed `CoreFrames.CPFrame.PreloadAsync<T>(packageName, assetName)` dropping the generic type (preloaded the wrong type).
+    - Fixed `GetComponent<U>` / `GetComponents<U>` throwing `InvalidCastException` for user subclasses (now uses `as` / `OfType`).
+    - Fixed sync `CoreFrames.USFrame.LoadScene(int buildIndex, ...)` loading by name (fails for not-yet-loaded scenes); now loads by build index.
+    - Fixed `Binder` dereferencing the bind name before validating its format (invalid names like `_Node` no longer abort the whole binding scan with `IndexOutOfRangeException`); same fix applied to the CodeBinding generator.
+    - Fixed `HideAll` / `RevealAll` iterating a mutable collection (now snapshots like `CloseAll`; prevents `InvalidOperationException` when handlers close UIs).
+    - Fixed `CheckHasAnyHiding` NRE on empty preload-mode stacks.
+    - Fixed reverse/stack-by-stack force-destroy safety cleanup missing index 0 (stale destroyed references no longer remain in caches); renamed `_PreprocessRemoveReserveSafety` to `_PreprocessRemoveReverseSafety`.
+    - Fixed `FrameManager.Destroy` popping the wrong stack element during batch destroys and added a missing null guard (now removes the exact instance).
+  - ### Breaking Changes
+    - Renamed the `disabledPreClose` parameter to `disableOnPreClose` across Close/Hide/CloseAll series (only affects callers using named arguments).
+  - ### Adjustments
+    - Renamed `CoreFrames.UIFrame/SRFrame` `enabledUpdate/enabledFixedUpdate/enabledLateUpdate` to `enableUpdate/enableFixedUpdate/enableLateUpdate`; old names remain as `[Obsolete]` forwards.
+
+- Common
+  - ### New Features
+    - Added the `Common` module (`com.michaelo.oxgframe.common`) — a framework-level shared module that hosts framework-wide editor tooling (`Common/Scripts/Editor`); every module package declares it as a dependency, so standalone module installs receive it automatically.
+    - API Updater ([OxGFrame/Others/API Updater]) — a tool for aligning project code with renamed framework APIs
+      - Reworked into a scan-and-review tool: scans the project, previews every deprecated API usage in a window, and only rewrites the selected items (each file keeps its BOM and line endings).
+      - Rules are generated automatically from the framework's `[Obsolete]` members; a manual table and an optional `APIUpdateRulesSettings` asset cover the rest — future renames need no rule maintenance.
+      - Type-aware matching: static APIs require the declaring-type prefix, inherited members only match verified subclasses, common names are never guessed, and named parameters always require manual review.
+      - Overload ambiguity is resolved by call arguments automatically; unresolved usages get a dropdown to choose the new API.
+      - Detects framework version changes on editor load and asks before opening the tool; never modifies files without confirmation.
+
+- AssetLoader
+  - ### New Features
+    - YooAsset dual-version support
+      - Compiles against both YooAsset 2.x (verified with 2.3.18~2.3.19) and 3.x (verified with 3.0.3-beta~3.0.5; 3.0.5+ recommended); `YOOASSET_2` / `YOOASSET_3` are defined automatically from the installed package version.
+      - The v3 code path uses native v3 APIs only: Options-based initialization, the new file systems, the split decryption interfaces, and raw files loaded as `RawFileObject`.
+      - All 8 built-in cryptogram services implement the matching v3 decrypt interfaces, plus `IBundleEncryptor` / `IManifestEncryptor` on the editor side.
+    - Added `BuildMode.ArchiveFileBuildPipeline` (YooAsset v3 only) so EditorSimulateMode simulates archive packages correctly; the BuildTool sample gains a matching "AFBP" build case.
+  - ### Fixes
+    - Fixed `AssetLoaders.ReleaseScenes()` throwing NRE whenever additive scenes were loaded (additive packages are now collected from the additive cache).
+    - Fixed `PackageEvents.PatchCheckDiskNotEnoughSpace` not routing `groupId`, which prevented `PackageOperation.onPatchCheckDiskNotEnoughSpace` from ever firing (DLC patch flow stalled silently on low disk space).
+    - Fixed `AssetPatcher.GetPatchVersion()` NRE when called before the first patch check.
+    - Fixed `AssetPatcher.SetPresetPackages` NRE when called before `PatchLauncher` awakes (now falls back to `BundleConfig` with a warning).
+    - Fixed decryption args shorter than 4 characters (e.g. "xor") throwing during `PatchLauncher` initialization (now uses case-insensitive `StartsWith`; empty args are treated as NONE).
+    - Fixed download progression emitting `NaN` when total size is 0 (also fixed in Hotfixer events).
+    - Fixed `GetRawFilePath(Async)` force-unloading shared raw files out from under other holders (now decrements normally).
+    - Fixed `UnityWebRequest` / `CancellationTokenSource` leaks in `StreamingAssetsHelper`.
+    - Fixed `ParameterParser` numeric parsing being culture-sensitive (now `InvariantCulture`).
+  - ### Optimization
+    - Replaced reflection type checks (`IsInstanceOfType`) with the `is` operator on the asset handle hot path.
+    - `DownloadSpeedCalculator` now uses a private lock object and `DateTime.UtcNow`.
+    - Modernized `BundleUtility` MD5 helpers (`MD5.Create()` with `using`; `FileInfo` overload now disposes its stream).
+  - ### Adjustments
+    - Renamed public serialized field `DecryptInfo.scuredStringType` to `securedStringType` (serialization preserved via `FormerlySerializedAs`).
+    - Renamed `IDecryptInitialize.CheckIsIntialized()` to `CheckIsInitialized()` (breaking only for custom decryption implementations).
+    - Renamed internal const `DEFAULT_MAX_CONCURRENCY_MAX_DOWNLOAD_COUNT` to `DEFAULT_MAX_CONCURRENCY_DOWNLOAD_COUNT`.
+
+- GSIFrame
+  - ### Fixes
+    - `AddGameStage` now guards against null stage instances.
+    - `DeleteGameStage` now refuses to delete the currently running stage (prevents a dangling current stage that skips `OnExit`).
+    - `ChangeGameStage` now validates the target stage exists before setting the incoming id (fail-fast with a clear error).
+
+- NetFrame
+  - ### Fixes
+    - All net provider events (`OnOpen/OnBinary/OnMessage/OnError/OnClose`) are now invoked null-safely (prevents NRE on socket threads).
+    - `NetNode.Send` / auto-reconnect now guard against a disposed provider.
+    - `NetNode.Dispose()` now calls `GC.SuppressFinalize` (disposed nodes no longer enter the finalizer queue).
+  - ### Adjustments
+    - Renamed protected field `_hearBeatTicker` to `_heartBeatTicker`.
+
+- Hotfixer
+  - ### Fixes
+    - `CheckHotfix` config-driven overloads now invoke `errorAction` on empty data or config parsing failure instead of stalling silently; duplicated bodies unified into one helper.
+    - Hotfix assembly loading now hoists the AppDomain assembly enumeration out of the per-dll loop and safely trims the `.dll` extension (checks `EndsWith` first).
+    - Fixed hotfix download progression emitting `NaN` when total size is 0.
+
+- CenterFrame
+  - ### Fixes
+    - `Http.Acax` now disposes its `CancellationTokenSource` per request (no more timer registration leaks).
+
+- Samples
+  - ### New Features
+    - Added "AI Agent Skills" sample (`oxgframe-unity-skill`) importable via Package Manager. Ships `SKILL.md` + 9 source-verified references that teach AI coding agents (Claude Code, Codex CLI, Cursor, etc.) OxGFrame usage; briefly covers the OxGKit APIs OxGFrame uses.
+    - `BuildTool` sample now targets both YooAsset versions (v3 build pipeline / parameter / collector renames are bridged via version defines).
+  - ### Fixes
+    - Fixed `NetFrameDemo.CloseKCP()` closing the TCP node instead of KCP.
+    - Fixed `BuildTool` Android AAB split setting failing to compile on Unity 2021 / 2022 (`PlayerSettings.Android.splitApplicationBinary` exists only on 2023.1+; older editors now use `useAPKExpansionFiles` via version defines).
+  - ### Adjustments
+    - Improved all sample descriptions in `package.json` (each entry now states what it demonstrates, the key APIs, and its scene requirements).
+
+- Other
+  - ### Adjustments
+    - Converted half-width punctuation in Chinese comments to full-width across all modules (comment-only; code and string literals untouched).
+    - Fixed various typos in logs, comments, and region names (package, default, Downloaders, Preset, Additive, Single-Flight, StreamingAssets, Powered by, loading, is not valid, flags, Hotfix, assetName, totalMinutes).
+
+# 中文
+
+- MediaFrame
+  - ### 新功能
+    - `AudioBase` / `VideoBase` 的 Inspector 預覽播放器
+      - Play / Pause / Resume / Stop、拖拉條與 Timecode，支援全部 SourceType，無需進入 Play Mode。
+      - 影片直接於 Inspector 內繪製畫面 (內部以 `VideoPlayer` 的 `VideoRenderMode.APIOnly` 渲染模式解碼)，音軌經 `AudioSampleProvider` 於音訊執行緒取樣播放。
+      - 偵測被 Insecure HTTP (2022.1+) 阻擋的 `http://` 來源，並詢問是否切換為 Only in development builds。
+    - 新增 `AudioBase.GetAudioUrlFromURL()`、`VideoBase.GetVideoUrlFromStreamingAssets()`、`VideoBase.GetVideoUrlFromURL()`，初始流程重構為共用。
+  - ### 修正
+    - 修正 `ignoreTimeScale` 判斷相反的問題 (啟用時正確使用 fixedUnscaledDeltaTime)；monoDrive 的 FixedUpdate 路徑同步遵循該旗標。
+    - 修正未勾選 `getUrlPathFromCfg` 直接使用完整 URL 時，仍請求 UrlCfg 導致未指定 TextAsset 拋出異常的問題；並補上 `UrlCfg` 與 `AudioManager` 空值防護。
+    - 修正 `GetMediaComponents<U>` 對使用者子類拋出 `InvalidCastException` (改用 is 過濾)。
+    - 修正 `AutoClearMixerExposedParams` / `AutoRestoreMixerExposedParams` 跨 Mixer 汙染參數記錄的問題 (改以 Mixer 前綴過濾)。
+  - ### 破壞性變更
+    - `MediaFrames` Stop/StopAll 系列參數 ~~disabledEndEvent~~ -> disableEndEvent (僅影響具名參數呼叫)。
+    - 內部 ~~reuqester~~ -> requester。
+
+- CoreFrame
+  - ### 新功能
+    - 代碼綁定產生器
+      - Tail Rules 新增 `usingNamespace` 欄位：自動模式直接將所需 `using` 插入目標腳本，手動模式附加於剪貼簿內容頂部 (欄位留空表示自行管理引用)。
+      - 仿 IDE 的 namespace 查找：每條規則附 [Find] 按鈕 (多候選彈出選單選擇)，另有「Try Find All Using Namespaces」批次填入按鈕。
+      - 生成內容依錨點自適應縮排，寫回時保留原始檔案的 BOM。
+  - ### 修正
+    - 修正 `CoreFrames.CPFrame.PreloadAsync<T>(packageName, assetName)` 遺漏泛型傳遞導致預載型別錯誤。
+    - 修正 `GetComponent<U>` / `GetComponents<U>` 對使用者子類拋出 `InvalidCastException` (改用 as / OfType)。
+    - 修正同步 `CoreFrames.USFrame.LoadScene(int buildIndex, ...)` 以名稱載入導致未載入場景失敗的問題 (改以 buildIndex 載入)。
+    - 修正 `Binder` 在驗證格式前先取值，無效命名 (如 `_Node`) 會以 `IndexOutOfRangeException` 中斷整個綁定掃描的問題；CodeBinding 產生器同步修正。
+    - 修正 `HideAll` / `RevealAll` 迭代中操作緩存會拋出 `InvalidOperationException` 的問題 (比照 `CloseAll` 使用快照)。
+    - 修正 `CheckHasAnyHiding` 對預加載模式空堆疊的 NRE。
+    - 修正 Reverse / StackByStack 強制銷毀安全清理漏掉 index 0，導致已銷毀參考殘留緩存的問題；~~_PreprocessRemoveReserveSafety~~ -> _PreprocessRemoveReverseSafety。
+    - 修正 `FrameManager.Destroy` 批次銷毀時恆彈出尾端元素導致移錯對象的問題，並補上空值防護 (改為移除確切實例)。
+  - ### 破壞性變更
+    - Close/Hide/CloseAll 系列參數 ~~disabledPreClose~~ -> disableOnPreClose (僅影響具名參數呼叫)。
+  - ### 調整
+    - `CoreFrames.UIFrame/SRFrame` ~~enabledUpdate/enabledFixedUpdate/enabledLateUpdate~~ -> enableUpdate/enableFixedUpdate/enableLateUpdate (舊名稱保留為 [Obsolete] 轉接)。
+
+- Common
+  - ### 新功能
+    - 新增 `Common` 模組 (`com.michaelo.oxgframe.common`)——框架層級的共用模組，承載框架級編輯器工具 (`Common/Scripts/Editor`)；所有模組套件皆宣告依賴它，單獨安裝任一模組也會自動取得。
+    - API 更新器 ([OxGFrame/Others/API Updater])——框架 API 對齊校驗工具
+      - 改版為掃描預覽式工具：掃描專案列出所有過時 API 用法，逐項勾選確認後才寫入 (保留各檔案的 BOM 與換行符)。
+      - 規則由框架的 `[Obsolete]` 標記自動生成，後續改名無需維護規則表；另有手動補充表與可選的 `APIUpdateRulesSettings` 資產可擴充。
+      - 型別感知比對：靜態 API 需帶宣告型別前綴、繼承成員僅在驗證過的衍生類別中比對、常見名稱絕不臆測、具名參數一律人工複核。
+      - 多載歧義依呼叫引數自動決議；無法決議的用法提供下拉選單指定新 API。
+      - 編輯器載入時偵測框架版本變更並詢問是否開啟工具，未經確認絕不修改任何檔案。
+
+- AssetLoader
+  - ### 新功能
+    - YooAsset 雙版本支援
+      - 同時相容 YooAsset 2.x (以 2.3.18~2.3.19 驗證) 與 3.x (以 3.0.3-beta~3.0.5 驗證，建議使用 3.0.5+)，依安裝版本自動定義 `YOOASSET_2` / `YOOASSET_3` 切換代碼。
+      - v3 路徑完全使用 v3 原生 API：Options 化初始化、新版檔案系統、拆分後的解密介面、Raw File 改以 `RawFileObject` 載入。
+      - 內建 8 種加解密服務全數實作對應的 v3 解密介面，編輯器側同步實作 `IBundleEncryptor` / `IManifestEncryptor`。
+    - 新增 `BuildMode.ArchiveFileBuildPipeline` (限 YooAsset v3)，EditorSimulateMode 可正確模擬歸檔資源包；BuildTool sample 同步新增 "AFBP" 建置分支。
+  - ### 修正
+    - 修正 `AssetLoaders.ReleaseScenes()` 在有 Additive 場景時必定 NRE 的問題 (改由 Additive 緩存收集所屬 Package)。
+    - 修正 `PackageEvents.PatchCheckDiskNotEnoughSpace` 未帶 `groupId` 發送，導致 `PackageOperation.onPatchCheckDiskNotEnoughSpace` 永遠收不到、磁碟空間不足時 DLC 補丁流程靜默卡住的問題。
+    - 修正 `AssetPatcher.GetPatchVersion()` 在首次 Check 完成前呼叫的 NRE。
+    - 修正 `AssetPatcher.SetPresetPackages` 在 `PatchLauncher` 尚未 Awake 時的 NRE (改為僅設置 `BundleConfig` 並輸出警告)。
+    - 修正解密參數字串長度不足 4 (如 "xor") 時 `PatchLauncher` 初始化拋出異常的問題 (改用不分大小寫 StartsWith；空字串視為 NONE)。
+    - 修正下載進度總大小為 0 時產生 NaN 的問題 (Hotfixer 事件同步修正)。
+    - 修正 `GetRawFilePath(Async)` 以強制卸載將其他持有者引用一併釋放的問題 (改為一般遞減)。
+    - 修正 `StreamingAssetsHelper` 的 `UnityWebRequest` / `CancellationTokenSource` 洩漏。
+    - 修正 `ParameterParser` 數值解析受地區文化影響的問題 (改用 InvariantCulture)。
+  - ### 優化
+    - 資源 Handle 熱路徑的反射型別檢查 (`IsInstanceOfType`) 改為 is 運算子。
+    - `DownloadSpeedCalculator` 改用私有鎖對象與 `DateTime.UtcNow`。
+    - `BundleUtility` MD5 改用 `MD5.Create()` 搭配 using (FileInfo 版本同步釋放檔案流)。
+  - ### 調整
+    - public 序列化欄位 ~~DecryptInfo.scuredStringType~~ -> securedStringType (以 FormerlySerializedAs 保留序列化)。
+    - ~~IDecryptInitialize.CheckIsIntialized()~~ -> CheckIsInitialized() (僅影響自訂解密實作)。
+    - 內部常數 ~~DEFAULT_MAX_CONCURRENCY_MAX_DOWNLOAD_COUNT~~ -> DEFAULT_MAX_CONCURRENCY_DOWNLOAD_COUNT。
+
+- GSIFrame
+  - ### 修正
+    - `AddGameStage` 補上空實例防護。
+    - `DeleteGameStage` 禁止刪除運行中的 GameStage (避免 OnExit 未被調用且當前參考懸空)。
+    - `ChangeGameStage` 先驗證目標存在再設置 incomingId (無效 Id 快速失敗並輸出明確錯誤)。
+
+- NetFrame
+  - ### 修正
+    - 三個 Provider 的事件 (`OnOpen/OnBinary/OnMessage/OnError/OnClose`) 改為 null 安全調用 (避免 socket 執行緒 NRE)。
+    - `NetNode.Send` 與自動重連補上 Provider 已釋放的防護。
+    - `NetNode.Dispose()` 加上 `GC.SuppressFinalize` (已釋放的節點不再進入 Finalizer 佇列)。
+  - ### 調整
+    - protected 欄位 ~~_hearBeatTicker~~ -> _heartBeatTicker。
+
+- Hotfixer
+  - ### 修正
+    - `CheckHotfix` 配置檔 overload 在空數據或解析失敗時確實回調 `errorAction` (不再靜默卡住)；重複邏輯抽取為共用方法。
+    - 熱更組件載入將 AppDomain 程序集列舉提升至迴圈外，並安全處理 `.dll` 去尾 (先檢查 EndsWith)。
+    - 修正熱更下載進度總大小為 0 時產生 NaN 的問題。
+
+- CenterFrame
+  - ### 修正
+    - `Http.Acax` 每次請求正確釋放 `CancellationTokenSource` (不再洩漏計時器)。
+
+- Samples
+  - ### 新功能
+    - 新增「AI Agent Skills」sample (`oxgframe-unity-skill`)，可經 Package Manager 匯入。內含 `SKILL.md` + 9 份經原始碼驗證的 references，讓 AI 開發代理 (Claude Code、Codex CLI、Cursor 等) 快速上手 OxGFrame；並簡述 OxGFrame 內部使用的 OxGKit APIs。
+    - `BuildTool` sample 同步支援 YooAsset 雙版本 (v3 的建置管線 / 參數 / 收集器改名皆以版本宏轉接)。
+  - ### 修正
+    - 修正 `NetFrameDemo.CloseKCP()` 誤關 TCP 節點的問題。
+    - 修正 `BuildTool` 的 Android AAB 分割設定在 Unity 2021 / 2022 無法編譯的問題 (`PlayerSettings.Android.splitApplicationBinary` 為 2023.1+ 新 API；舊版編輯器以版本宏改用 `useAPKExpansionFiles`)。
+  - ### 調整
+    - 完善 `package.json` 中全部 Samples 的說明 (每個條目皆註明示範內容、關鍵 API 與場景需求)。
+
+- 其他
+  - ### 調整
+    - 全模組中文註解半形標點轉為全形 (僅註解；程式碼與字串不受影響)。
+    - 修正多處 log / 註解 / region 的拼字錯誤。
+
 ## [3.6.1] - 2026-02-12
 
 # English
