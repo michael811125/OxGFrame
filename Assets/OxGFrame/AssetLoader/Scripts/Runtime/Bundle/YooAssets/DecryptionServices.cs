@@ -20,7 +20,7 @@ namespace OxGFrame.AssetLoader.Bundle
 
 #if YOOASSET_3
     /// <summary>
-    /// [YooAsset v3] v2 相容的解密文件訊息 (由 BundleDecryptArgs 轉出, 供既有解密實作沿用)
+    /// [YooAsset v3] v2 相容的解密文件訊息 (由 BundleDecryptArgs 轉出，供既有解密實作沿用)
     /// </summary>
     public struct DecryptFileInfo
     {
@@ -30,7 +30,7 @@ namespace OxGFrame.AssetLoader.Bundle
     }
 
     /// <summary>
-    /// [YooAsset v3] v2 相容的 Web 解密文件訊息 (由 BundleDecryptArgs 轉出, 供既有解密實作沿用)
+    /// [YooAsset v3] v2 相容的 Web 解密文件訊息 (由 BundleDecryptArgs 轉出，供既有解密實作沿用)
     /// </summary>
     public struct WebDecryptFileInfo
     {
@@ -185,7 +185,7 @@ namespace OxGFrame.AssetLoader.Bundle
         /// <returns></returns>
         public virtual byte[] GetDecryptedData(BundleDecryptArgs args)
         {
-            // 記憶體模式下 FileData 才有值, 否則以檔案路徑讀取解密
+            // 記憶體模式下 FileData 才有值，否則以檔案路徑讀取解密
             if (args.FileData != null)
             {
                 var fileInfo = new WebDecryptFileInfo() { FileData = args.FileData };

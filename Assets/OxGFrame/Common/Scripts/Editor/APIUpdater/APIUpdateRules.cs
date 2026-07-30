@@ -69,7 +69,7 @@ namespace OxGFrame.Common.Editor
         /// </summary>
         private static readonly APIUpdateRule[] _MANUAL_RULES = new APIUpdateRule[]
         {
-            // v2.13.0 (舊虛擬方法, 僅於 UIBase 衍生類別中比對)
+            // v2.13.0 (舊虛擬方法，僅於 UIBase 衍生類別中比對)
             new APIUpdateRule("ShowAnimation", "OnShowAnimation", APIUpdateRule.MatchKind.InheritedMember, APIUpdateRule.SourceType.Manual, "UIBase", "UIBase animation method renamed") { sinceVersion = "2.13.0" },
             new APIUpdateRule("HideAnimation", "OnCloseAnimation", APIUpdateRule.MatchKind.InheritedMember, APIUpdateRule.SourceType.Manual, "UIBase", "UIBase animation method renamed") { sinceVersion = "2.13.0" },
 
@@ -108,7 +108,7 @@ namespace OxGFrame.Common.Editor
                 _Dispatch(rule, allTypes, rules, manualOnlyRules);
             }
 
-            // 專案中的擴充設定 (選用, 讓維護者與使用者皆可補充規則而無需修改代碼)
+            // 專案中的擴充設定 (選用，讓維護者與使用者皆可補充規則而無需修改代碼)
             foreach (var rule in _CollectSettingsRules(allTypes))
             {
                 if (!seenKeys.Add($"{rule.declaringTypeName}.{rule.oldApi}"))
@@ -217,7 +217,7 @@ namespace OxGFrame.Common.Editor
 
                 case APIUpdateRule.MatchKind.NamedArgument:
                     {
-                        // 具名參數僅能比對 name: 形式, 無法驗證被呼叫的方法是否屬於框架, 一律需人工複核
+                        // 具名參數僅能比對 name: 形式，無法驗證被呼叫的方法是否屬於框架，一律需人工複核
                         rule.alwaysNeedsReview = true;
                         rule.reviewNote = _NAMED_ARGUMENT_REVIEW_NOTE;
                         rules.Add(rule);
@@ -246,7 +246,7 @@ namespace OxGFrame.Common.Editor
 
         /// <summary>
         /// 自動解析框架組件中的 [Obsolete] 成員，生成更新規則
-        /// <para>同一 (宣告型別, 舊 API) 因多載對應不同新 API 時，合併為單一歧義規則並保留所有候選與其參數資訊，供掃描時依呼叫引數自動決議。</para>
+        /// <para>同一 (宣告型別，舊 API) 因多載對應不同新 API 時，合併為單一歧義規則並保留所有候選與其參數資訊，供掃描時依呼叫引數自動決議。</para>
         /// </summary>
         /// <param name="allTypes"></param>
         /// <param name="manualOnlyRules">訊息含遷移提示但無法解析出新 API 的成員，列入此清單供人工參考</param>
@@ -328,7 +328,7 @@ namespace OxGFrame.Common.Editor
             if (string.IsNullOrEmpty(memberName))
                 return;
 
-            // 略過編譯器生成的存取子與運算子, 以及泛型型別的名稱修飾
+            // 略過編譯器生成的存取子與運算子，以及泛型型別的名稱修飾
             if (memberName.IndexOf('`') >= 0 ||
                 memberName.StartsWith("get_", StringComparison.Ordinal) ||
                 memberName.StartsWith("set_", StringComparison.Ordinal) ||
@@ -377,7 +377,7 @@ namespace OxGFrame.Common.Editor
 
             if (string.IsNullOrEmpty(newApi))
             {
-                // 訊息含遷移提示但無法解析出新 API 時, 列入需人工遷移的報告 (單純的說明性訊息則略過)
+                // 訊息含遷移提示但無法解析出新 API 時，列入需人工遷移的報告 (單純的說明性訊息則略過)
                 if (_MIGRATION_HINT_KEYWORDS.Any(keyword => obsolete.Message.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0))
                 {
                     var manualRule = new APIUpdateRule(memberName, "(see note)", APIUpdateRule.MatchKind.ManualOnly, APIUpdateRule.SourceType.Obsolete, declaringTypeName, $"[Obsolete] {obsolete.Message}");

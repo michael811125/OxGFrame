@@ -39,12 +39,12 @@ namespace OxGFrame.Common.Editor
                 return;
             }
 
-            // 版本已變更, 進行背景掃描 (有任何匹配才詢問, 包含需人工複核者)
+            // 版本已變更，進行背景掃描 (有任何匹配才詢問，包含需人工複核者)
             var result = APIUpdater.Scan();
             int readyMatchCount = result.GetReadyMatchCount();
             int reviewMatchCount = result.GetReviewMatchCount();
 
-            // 無論選擇皆記錄版本, 避免每次重載重複詢問 (仍可由選單手動開啟)
+            // 無論選擇皆記錄版本，避免每次重載重複詢問 (仍可由選單手動開啟)
             APIUpdater.SaveLastCheckedVersion(currentVersion);
 
             if (readyMatchCount == 0 &&

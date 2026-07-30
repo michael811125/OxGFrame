@@ -114,7 +114,7 @@ namespace OxGFrame.AssetLoader.Cacher
 #if YOOASSET_2
             return this.operationHandle is RawFileHandle;
 #else
-            // [YooAsset v3] RawFileHandle 已移除, Raw File 統一由 AssetHandle 載入 RawFileObject
+            // [YooAsset v3] RawFileHandle 已移除，Raw File 統一由 AssetHandle 載入 RawFileObject
             if (this.operationHandle is AssetHandle handle)
             {
                 if (handle.IsValid)
@@ -131,7 +131,7 @@ namespace OxGFrame.AssetLoader.Cacher
 
         public bool IsSceneOperationHandle()
         {
-            return typeof(YooAsset.SceneHandle).IsInstanceOfType(this.operationHandle);
+            return this.operationHandle is YooAsset.SceneHandle;
         }
 
         public bool IsSceneOperationHandleValid()

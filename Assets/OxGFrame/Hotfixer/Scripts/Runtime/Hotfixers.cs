@@ -101,8 +101,20 @@ namespace OxGFrame.Hotfixer
                     return;
                 }
 
-                var configInfo = BinaryHelper.DecryptToString(data);
-                var config = JsonUtility.FromJson<HotfixManifest>(configInfo.content);
+                // 解密或解析拋出例外時同樣回調 errorAction，避免熱更流程靜默卡住
+                HotfixManifest config;
+                try
+                {
+                    var configInfo = BinaryHelper.DecryptToString(data);
+                    config = JsonUtility.FromJson<HotfixManifest>(configInfo.content);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"<color=#FF0000>Hotfix config decrypt or parsing failed. Cannot start hotfix. URL: {url}, Error: {ex.Message}</color>");
+                    errorAction?.Invoke();
+                    return;
+                }
+
                 // 配置解析失敗防護
                 if (config == null ||
                     config.aotDlls == null ||

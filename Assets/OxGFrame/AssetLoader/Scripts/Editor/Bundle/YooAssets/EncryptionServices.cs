@@ -7,7 +7,7 @@ namespace OxGFrame.AssetLoader.Editor
 {
 #if YOOASSET_3
     /// <summary>
-    /// [YooAsset v3] v2 相容的加密文件訊息 (由 BundleEncryptArgs 轉出, 供既有加密實作沿用)
+    /// [YooAsset v3] v2 相容的加密文件訊息 (由 BundleEncryptArgs 轉出，供既有加密實作沿用)
     /// </summary>
     public struct EncryptFileInfo
     {

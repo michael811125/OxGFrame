@@ -9,7 +9,7 @@ using static OxGFrame.AssetLoader.Utility.DownloadSpeedCalculator;
 #if YOOASSET_2
 using static YooAsset.DownloaderOperation;
 #else
-// [YooAsset v3] 巢狀委派已移除, 以事件簽名型別取代 (讓公開 API 簽名維持一致)
+// [YooAsset v3] 巢狀委派已移除，以事件簽名型別取代 (讓公開 API 簽名維持一致)
 using DownloadError = System.Action<YooAsset.DownloadErrorEventArgs>;
 #endif
 

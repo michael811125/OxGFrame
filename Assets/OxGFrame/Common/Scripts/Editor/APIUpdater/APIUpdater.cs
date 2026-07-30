@@ -162,7 +162,7 @@ namespace OxGFrame.Common.Editor
 
                 result.scannedFileCount++;
 
-                // 快速預篩, 僅在檔案含有任一舊 API 文字時才進行完整比對
+                // 快速預篩，僅在檔案含有任一舊 API 文字時才進行完整比對
                 var hitRules = rules.Where(rule => content.IndexOf(rule.oldApi, StringComparison.Ordinal) >= 0).ToArray();
                 if (hitRules.Length == 0)
                     continue;
@@ -170,7 +170,7 @@ namespace OxGFrame.Common.Editor
                 bool[] codeMask = _BuildCodeMask(content);
                 int[] lineStarts = _BuildLineStarts(content);
 
-                // 同一位置僅保留先到的規則, 避免重複替換
+                // 同一位置僅保留先到的規則，避免重複替換
                 var occupiedSpans = new HashSet<long>();
 
                 foreach (var rule in hitRules)
@@ -258,7 +258,7 @@ namespace OxGFrame.Common.Editor
                 }
             }
 
-            // 依檔案與位置排序, 讓預覽結果穩定
+            // 依檔案與位置排序，讓預覽結果穩定
             result.matches = result.matches
                 .OrderBy(match => match.assetPath, StringComparer.Ordinal)
                 .ThenBy(match => match.startIndex)
@@ -320,7 +320,7 @@ namespace OxGFrame.Common.Editor
                 APIUpdateRules.IsDerivedFrom(scriptType, rule.declaringType))
                 return ContextVerification.Verified;
 
-            // 檔案可能含有多個型別或名稱與檔名不符, 退而檢查基底子句文字
+            // 檔案可能含有多個型別或名稱與檔名不符，退而檢查基底子句文字
             if (!string.IsNullOrEmpty(rule.declaringTypeName))
             {
                 string pattern = $@"\b(?:class|struct)\s+\w+\s*(?:<[^>]*>)?\s*:\s*[^{{]*\b{Regex.Escape(rule.declaringTypeName)}\b";
@@ -376,7 +376,7 @@ namespace OxGFrame.Common.Editor
                 bool hasBom = _HasBom(assetPath);
                 bool dirty = false;
 
-                // 由後往前替換, 避免索引位移
+                // 由後往前替換，避免索引位移
                 foreach (var match in group.OrderByDescending(match => match.startIndex))
                 {
                     // 歧義規則必須已具備決議後的新 API
@@ -485,7 +485,7 @@ namespace OxGFrame.Common.Editor
         /// <returns></returns>
         public static string GetFrameworkVersion()
         {
-            // 以實際運行的源碼目錄為準, 直接讀取 package.json
+            // 以實際運行的源碼目錄為準，直接讀取 package.json
             try
             {
                 string frameworkRoot = GetFrameworkRootAssetPath();

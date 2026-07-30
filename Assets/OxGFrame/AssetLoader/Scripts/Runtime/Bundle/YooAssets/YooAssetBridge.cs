@@ -83,7 +83,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 string methodName = "ConvertToWWWPath";
 #else
                 // [YooAsset v3] DownloadUrlHelper.ToLocalFileUrl()
-                // 注意: v3 會對空字串拋出例外, 並額外轉義 + # ? 字元
+                // 注意: v3 會對空字串拋出例外，並額外轉義 + # ? 字元
                 string typeName = "DownloadUrlHelper";
                 string methodName = "ToLocalFileUrl";
 #endif
@@ -262,7 +262,7 @@ namespace OxGFrame.AssetLoader.Bundle
                 if (type == null)
                     return null;
 
-                // 以參數型別精確匹配, 避免同名多載造成 AmbiguousMatchException (ex: v3 的 GetDefaultCacheRoot 具有多載)
+                // 以參數型別精確匹配，避免同名多載造成 AmbiguousMatchException (ex: v3 的 GetDefaultCacheRoot 具有多載)
                 Type[] argTypes = Type.EmptyTypes;
                 if (parameters != null && parameters.Length > 0)
                 {

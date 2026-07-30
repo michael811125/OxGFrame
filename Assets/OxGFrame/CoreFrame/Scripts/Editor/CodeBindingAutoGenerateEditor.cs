@@ -523,7 +523,7 @@ namespace OxGFrame.CoreFrame.Editor
 
             if (match.Success)
             {
-                // 量測插入點所在行的縮排, 讓生成內容自適應 namespace 與巢狀層級
+                // 量測插入點所在行的縮排，讓生成內容自適應 namespace 與巢狀層級
                 string baseIndent = _MeasureBaseIndent(scriptContent, match.Groups[0].Index);
 
                 // 將相對縮排的生成內容依插入點縮排逐行對齊
@@ -566,7 +566,7 @@ namespace OxGFrame.CoreFrame.Editor
             int lineStart = scriptContent.LastIndexOf('\n', Math.Max(0, insertIndex - 1)) + 1;
             string leading = scriptContent.Substring(lineStart, insertIndex - lineStart);
 
-            // 僅接受純空白的前綴, 避免同行前方有其他代碼造成錯誤縮排
+            // 僅接受純空白的前綴，避免同行前方有其他代碼造成錯誤縮排
             foreach (char c in leading)
             {
                 if (c != ' ' && c != '\t')
@@ -577,7 +577,7 @@ namespace OxGFrame.CoreFrame.Editor
         }
 
         /// <summary>
-        /// 將相對縮排的生成內容逐行加上基準縮排 (首行由原插入點自帶縮排, 空行不做處理)
+        /// 將相對縮排的生成內容逐行加上基準縮排 (首行由原插入點自帶縮排，空行不做處理)
         /// </summary>
         /// <param name="content"></param>
         /// <param name="baseIndent"></param>
@@ -609,7 +609,7 @@ namespace OxGFrame.CoreFrame.Editor
                 requiredNamespaces.Count == 0)
                 return scriptContent;
 
-            // 收集腳本中已存在的 using (寬鬆掃描全檔, 排除 alias 與 static 形式)
+            // 收集腳本中已存在的 using (寬鬆掃描全檔，排除 alias 與 static 形式)
             HashSet<string> existings = new HashSet<string>();
             foreach (Match m in Regex.Matches(scriptContent, @"^[ \t]*using\s+(?!static\s)([\w.]+)\s*;", RegexOptions.Multiline))
                 existings.Add(m.Groups[1].Value);

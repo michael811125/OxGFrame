@@ -118,7 +118,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// v2: ResourcePackage.CreateBundleDownloader (AssetNames) -> v3: Options 版本 (含依賴下載, 對齊 v2 行為)
+        /// v2: ResourcePackage.CreateBundleDownloader (AssetNames) -> v3: Options 版本 (含依賴下載，對齊 v2 行為)
         /// </summary>
         /// <param name="package"></param>
         /// <param name="assetNames"></param>
@@ -134,7 +134,7 @@ namespace OxGFrame.AssetLoader.Bundle
         }
 
         /// <summary>
-        /// v2: ResourcePackage.CreateBundleDownloader (AssetInfos) -> v3: Options 版本 (含依賴下載, 對齊 v2 行為)
+        /// v2: ResourcePackage.CreateBundleDownloader (AssetInfos) -> v3: Options 版本 (含依賴下載，對齊 v2 行為)
         /// </summary>
         /// <param name="package"></param>
         /// <param name="assetInfos"></param>

@@ -197,21 +197,21 @@ namespace OxGFrame.Common.Editor
                 {
                     case MatchKind.Qualified:
                         {
-                            // 必須帶型別前綴, 例如 AssetLoaders.OldApi; 靜態成員亦可透過衍生型別名稱呼叫, 故一併納入
+                            // 必須帶型別前綴，例如 AssetLoaders.OldApi; 靜態成員亦可透過衍生型別名稱呼叫，故一併納入
                             string[] qualifiers = (this.qualifierNames != null && this.qualifierNames.Length > 0) ?
                                 this.qualifierNames :
                                 new string[] { this.declaringTypeName };
                             string alternation = string.Join("|", qualifiers.Select(Regex.Escape));
-                            // 容許泛型限定寫法, 例如 GSIManagerBase<MyManager>.OldApi
+                            // 容許泛型限定寫法，例如 GSIManagerBase<MyManager>.OldApi
                             pattern = $@"(?<=\b(?:{alternation})(?:\s*<[^<>]*>)?\s*\.\s*){escapedOldApi}\b";
                         }
                         break;
                     case MatchKind.MemberAccess:
-                        // 必須為成員存取形式, 例如 xxx.OldApi
+                        // 必須為成員存取形式，例如 xxx.OldApi
                         pattern = $@"(?<=\.\s*){escapedOldApi}\b";
                         break;
                     case MatchKind.NamedArgument:
-                        // 必須為具名參數形式, 例如 (oldApi: true) 或 (x, oldApi: true)
+                        // 必須為具名參數形式，例如 (oldApi: true) 或 (x, oldApi: true)
                         // 前方限定 ( 或 , 以排除三元運算子與 case 標籤等同為 [識別字:] 形式的語法
                         pattern = $@"(?<=[(,]\s*){escapedOldApi}(?=\s*:(?!:))";
                         break;
